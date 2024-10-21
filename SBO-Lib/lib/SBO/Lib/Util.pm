@@ -205,8 +205,9 @@ my %supported = (
   '14.0' => 'rsync://slackbuilds.org/slackbuilds/14.0/',
   '14.1' => 'rsync://slackbuilds.org/slackbuilds/14.1/',
   '14.2' => 'rsync://slackbuilds.org/slackbuilds/14.2/',
-  '14.2+' => 'https://github.com/Ponce/slackbuilds.git',
-  '15.0' => 'https://github.com/Ponce/slackbuilds.git',
+  '15.0' => 'rsync://slackbuilds.org/slackbuilds/15.0/',
+  '15.0+' => 'https://github.com/Ponce/slackbuilds.git',
+  '15.1' => 'https://github.com/Ponce/slackbuilds.git',
   current => 'https://github.com/Ponce/slackbuilds.git',
 );
 
