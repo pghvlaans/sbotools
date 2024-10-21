@@ -180,7 +180,7 @@ FIRST: for my $sbo (@$build_queue) {
 	if (defined $warnings{$sbo} and $warnings{$sbo} eq 'nonexistent') {
 		say "Unable to locate $sbo in the SlackBuilds.org tree.";
 		if (not $non_int) {
-			exit 0 unless prompt "Do you want to ignore it and continue?", default => 'no';
+			exit 0 unless prompt "Do you want to ignore it and continue?", default => 'yes';
 		}
 		next FIRST;
 	}
