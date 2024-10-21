@@ -116,7 +116,7 @@ if ($options) {
 	} else {
 		if (-f "$opt_dir/$options" && $interactive) {
 			warn "This will clear the saved options for $options.\n";
-			unlink("$opt_dir/$options") if prompt("Proceed?", default => 'yes');
+			unlink("$opt_dir/$options") if prompt("Proceed?", default => 'no');
 		}
 		elsif (-f "$opt_dir/$options") {
 			unlink("$opt_dir/$options");
