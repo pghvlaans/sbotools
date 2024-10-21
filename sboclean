@@ -33,6 +33,8 @@ Options:
     clean distfiles.
   -w|--work:
     clean working directories.
+  -o|--option (ALL|package):
+    clean saved options.
   -i|--interactive:
     be interactive.
 
@@ -40,21 +42,22 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $dist, $work, $interactive);
+my ($help, $vers, $dist, $work, $options, $interactive);
 
 GetOptions(
 	'help|h'            => \$help,
 	'version|v'         => \$vers,
 	'dist|clean-dist|d' => \$dist,
 	'work|clean-work|w' => \$work,
+	'options|o=s'       => \$options,
 	'interactive|i'     => \$interactive,
 );
 
 if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
 
-usage_error("You must specify at least one of -d or -w.") unless
-	($dist || $work);
+usage_error("You must specify at least one of -d, -w or -o.") unless
+	($dist || $work || $options);
 
 sub rm_full {
 	script_error('rm_full requires an argument.') unless @_ == 1;
@@ -106,4 +109,21 @@ if ($work) {
 	clean_c32();
 }
 
+if ($options) {
+	my $opt_dir = "/var/log/sbotools";
+	if ($options eq 'ALL') {
+		remove_stuff($opt_dir)
+	} else {
+		if (-f "$opt_dir/$options" && $interactive) {
+			warn "This will clear the saved options for $options.\n";
+			unlink("$opt_dir/$options") if prompt("Proceed?", default => 'yes');
+		}
+		elsif (-f "$opt_dir/$options") {
+			unlink("$opt_dir/$options");
+		}
+		else {
+			warn "No options are saved for $options.\n";
+		}
+	}
+}
 exit 0;
