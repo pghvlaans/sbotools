@@ -1,9 +1,9 @@
 #!/usr/bin/bash
 
 # set DISTCLEAN TRUE to preserve space
-sboconfig -d TRUE
+sbopconfig -d TRUE
 # clear out work directories and distfiles
-sboclean -dw
+sbopclean -dw
 
 SBOS=$(find /usr/sbo -type f -iname \*.info | sed -r 's|.*/([^/]+)\.info$|\1|g');
 
@@ -28,8 +28,8 @@ function build_things() {
 			fi
 		done
 		echo "=============" > $TLOG
-		echo "sboinstall -r $1" >> $TLOG
-		sboinstall -r $1 >> $TLOG 2>&1
+		echo "sbopinstall -r $1" >> $TLOG
+		sbopinstall -r $1 >> $TLOG 2>&1
 		case "$?" in
 			"0") OLOG="" ;;
 			"3") OLOG=~/build.fail.log ;;
@@ -57,8 +57,8 @@ function build_things() {
 function remove_things() {
 	if [ ! -z $1 ]; then
 		echo "=============" > $TLOG
-		echo "sboremove --nointeractive $1" >> $TLOG
-		sboremove --nointeractive $1 >> $TLOG 2>&1
+		echo "sbopremove --nointeractive $1" >> $TLOG
+		sbopremove --nointeractive $1 >> $TLOG 2>&1
 		echo "" >> $RLOG
 		cat $TLOG >> $RLOG
 		:> $TLOG

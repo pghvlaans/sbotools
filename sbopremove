@@ -2,7 +2,7 @@
 #
 # vim: ts=2:et
 #
-# sboremove
+# sbopremove
 # script to remove an installed SlackBuild
 #
 # authors: Luke Williams <xocel@iquidus.org>

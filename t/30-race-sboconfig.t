@@ -13,9 +13,9 @@ use Cwd;
 
 plan tests => 2;
 
-# 1-2: sbocheck race test...
+# 1-2: sbopcheck race test...
 {
-	load('sboconfig');
+	load('sbopconfig');
 
   my $file = "/etc/sbotools/sbotools.conf";
   mkdir "/etc/sbotools";
@@ -27,8 +27,8 @@ plan tests => 2;
 	my $exit;
 	my $out = capture_merged { $exit = exit_code { main::config_write(1,2); }; };
 
-	like ($out, qr/\QUnable to open $file./, "sboconfig's config_write() gave correct output");
-	is ($exit, 6, "sboconfig's config_write() exited with 6");
+	like ($out, qr/\QUnable to open $file./, "sbopconfig's config_write() gave correct output");
+	is ($exit, 6, "sbopconfig's config_write() exited with 6");
 
   rename "$file.bak", $file;
 }

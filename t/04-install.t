@@ -7,7 +7,7 @@ use Test::More;
 use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
-use Test::Sbotools qw/ make_slackbuilds_txt set_lo sboinstall sboremove restore_perf_dummy /;
+use Test::Sbotools qw/ make_slackbuilds_txt set_lo sbopinstall sbopremove restore_perf_dummy /;
 
 if ($ENV{TEST_INSTALL}) {
 	plan tests => 22;
@@ -43,65 +43,65 @@ set_lo("$RealBin/LO");
 system("mv /usr/sbo/repo/* /usr/sbo");
 restore_perf_dummy();
 
-# 1-3: sboinstall nonexistentslackbuild
-sboinstall 'nonexistentslackbuild', { input => "y\ny", expected => qr/nonexistentslackbuild added to install queue.*Install queue: nonexistentslackbuild/s };
+# 1-3: sbopinstall nonexistentslackbuild
+sbopinstall 'nonexistentslackbuild', { input => "y\ny", expected => qr/nonexistentslackbuild added to install queue.*Install queue: nonexistentslackbuild/s };
 ok (! -e "$RealBin/LO/nonexistentslackbuild/perf.dummy", "Source symlink removed");
 ok (-e "/usr/sbo/repo/SLACKBUILDS.TXT", "SLACKBUILDS.TXT has been migrated back to its proper place");
-sboremove 'nonexistentslackbuild', { input => "y\ny", test => 0 };
+sbopremove 'nonexistentslackbuild', { input => "y\ny", test => 0 };
 
-# 4: sboinstall nonexistentslackbuild2
-sboinstall 'nonexistentslackbuild2', { exit => 0, expected => "Unable to locate nonexistentslackbuild3 in the SlackBuilds.org tree.\nDo you want to ignore it and continue? [n] ", input => "n" };
+# 4: sbopinstall nonexistentslackbuild2
+sbopinstall 'nonexistentslackbuild2', { exit => 0, expected => "Unable to locate nonexistentslackbuild3 in the SlackBuilds.org tree.\nDo you want to ignore it and continue? [n] ", input => "n" };
 
-# 5: sboinstall nonexistentslackbuild3
-sboinstall 'nonexistentslackbuild3', { exit => 1, expected => "Unable to locate nonexistentslackbuild3 in the SlackBuilds.org tree.\n" };
+# 5: sbopinstall nonexistentslackbuild3
+sbopinstall 'nonexistentslackbuild3', { exit => 1, expected => "Unable to locate nonexistentslackbuild3 in the SlackBuilds.org tree.\n" };
 
-# 6: sboinstall nonexistentslackbuild4
-sboinstall 'nonexistentslackbuild4', { input => "y\ny\ny",
+# 6: sbopinstall nonexistentslackbuild4
+sbopinstall 'nonexistentslackbuild4', { input => "y\ny\ny",
 	expected => qr/nonexistentslackbuild5 added to install queue.*nonexistentslackbuild4 added to install queue.*Install queue: nonexistentslackbuild5 nonexistentslackbuild4/s };
-sboremove 'nonexistentslackbuild5', { input => "y\ny", test => 0 };
+sbopremove 'nonexistentslackbuild5', { input => "y\ny", test => 0 };
 
-# 7: sboinstall nonexistentslackbuild5
-sboinstall 'nonexistentslackbuild5', { input => "y\ny", expected => qr/nonexistentslackbuild5 added to install queue.*Install queue: nonexistentslackbuild5/s };
-sboremove 'nonexistentslackbuild4', { input => "y\ny\ny", test => 0 };
+# 7: sbopinstall nonexistentslackbuild5
+sbopinstall 'nonexistentslackbuild5', { input => "y\ny", expected => qr/nonexistentslackbuild5 added to install queue.*Install queue: nonexistentslackbuild5/s };
+sbopremove 'nonexistentslackbuild4', { input => "y\ny\ny", test => 0 };
 
-# 8: sboinstall nonexistentslackbuild4
-sboinstall 'nonexistentslackbuild4', { input => "y\ny\ny",
+# 8: sbopinstall nonexistentslackbuild4
+sbopinstall 'nonexistentslackbuild4', { input => "y\ny\ny",
 	expected => qr/nonexistentslackbuild5 added to install queue.*nonexistentslackbuild4 added to install queue.*Install queue: nonexistentslackbuild5 nonexistentslackbuild4/s };
-sboremove 'nonexistentslackbuild5', { input => "y\ny", test => 0 };
+sbopremove 'nonexistentslackbuild5', { input => "y\ny", test => 0 };
 
-# 9: sboinstall nonexistentslackbuild4
-sboinstall 'nonexistentslackbuild4', { input => "y\ny", expected => qr/nonexistentslackbuild5 added to install queue.*Install queue: nonexistentslackbuild5/s };
-sboremove 'nonexistentslackbuild4', 'nonexistentslackbuild5', { input => "y\ny\ny", test => 0 };
+# 9: sbopinstall nonexistentslackbuild4
+sbopinstall 'nonexistentslackbuild4', { input => "y\ny", expected => qr/nonexistentslackbuild5 added to install queue.*Install queue: nonexistentslackbuild5/s };
+sbopremove 'nonexistentslackbuild4', 'nonexistentslackbuild5', { input => "y\ny\ny", test => 0 };
 
-# 10: sboinstall nonexistentslackbuild6
-sboinstall 'nonexistentslackbuild6', { input => "y\ny", expected => qr/aaa_base \(aaa_base-[^)]+\) is already installed.*nonexistentslackbuild6 added to install queue.*Install queue: nonexistentslackbuild6/s };
+# 10: sbopinstall nonexistentslackbuild6
+sbopinstall 'nonexistentslackbuild6', { input => "y\ny", expected => qr/aaa_base \(aaa_base-[^)]+\) is already installed.*nonexistentslackbuild6 added to install queue.*Install queue: nonexistentslackbuild6/s };
 
-# 11-12: sboinstall -i nonexistentslackbuild
-sboinstall qw/ -i nonexistentslackbuild /, { input => "y\ny", expected => qr/nonexistentslackbuild added to install queue/ };
+# 11-12: sbopinstall -i nonexistentslackbuild
+sbopinstall qw/ -i nonexistentslackbuild /, { input => "y\ny", expected => qr/nonexistentslackbuild added to install queue/ };
 ok(!-e "/var/log/packages/nonexistentslackbuild-1.0-noarch-1_SBo", "nonexistentslackbuild wasn't installed with -i");
 
-# 13-14: sboinstall nonexistentslackbuild
-sboinstall 'nonexistentslackbuild', { input => "y\nn", expected => qr/nonexistentslackbuild added to install queue/ };
+# 13-14: sbopinstall nonexistentslackbuild
+sbopinstall 'nonexistentslackbuild', { input => "y\nn", expected => qr/nonexistentslackbuild added to install queue/ };
 ok(!-e "/var/log/packages/nonexistentslackbuild-1.0-noarch-1_SBo", "nonexistentslackbuild wasn't installed when saying no");
 
-# 15: sboinstall nonexistentslackbuild
-sboinstall 'nonexistentslackbuild', { input => "n", expected => sub { not /nonexistentslackbuild added to install queue/ } };
+# 15: sbopinstall nonexistentslackbuild
+sbopinstall 'nonexistentslackbuild', { input => "n", expected => sub { not /nonexistentslackbuild added to install queue/ } };
 
-# 16: sboinstall nonexistentslackbuild4
-sboinstall qw/ -R nonexistentslackbuild4 /, { input => "y\ny", expected => sub { not /nonexistentslackbuild5 added to install queue/ } };
-sboremove 'nonexistentslackbuild4', { input => "y\ny\n", test => 0 };
+# 16: sbopinstall nonexistentslackbuild4
+sbopinstall qw/ -R nonexistentslackbuild4 /, { input => "y\ny", expected => sub { not /nonexistentslackbuild5 added to install queue/ } };
+sbopremove 'nonexistentslackbuild4', { input => "y\ny\n", test => 0 };
 
-# 17: sboinstall perl-Capture-Tiny
-sboinstall 'perl-Capture-Tiny', { expected => "perl-Capture-Tiny installed via the cpan.\n" };
+# 17: sbopinstall perl-Capture-Tiny
+sbopinstall 'perl-Capture-Tiny', { expected => "perl-Capture-Tiny installed via the cpan.\n" };
 
-# 18: sboinstall perl-nonexistentcpan
-sboinstall 'perl-nonexistentcpan', { input => "n", expected => qr/Proceed with perl-nonexistentcpan/ };
+# 18: sbopinstall perl-nonexistentcpan
+sbopinstall 'perl-nonexistentcpan', { input => "n", expected => qr/Proceed with perl-nonexistentcpan/ };
 
 # 19: check node status of slackbuild script
 {
 	my $sbo = "$RealBin/LO/nonexistentslackbuild/nonexistentslackbuild.SlackBuild";
 	my $inode = (stat($sbo))[1];
-	sboinstall 'nonexistentslackbuild', { input => "y\ny", test => 0 };
+	sbopinstall 'nonexistentslackbuild', { input => "y\ny", test => 0 };
 	is((stat($sbo))[1], $inode, "inode didn't change");
 }
 
@@ -109,12 +109,12 @@ sboinstall 'perl-nonexistentcpan', { input => "n", expected => qr/Proceed with p
 {
 	local $ENV{PATH} = "$RealBin/bin:$ENV{PATH}";
 
-	sboinstall '-p', 'foo', { expected => "compat32 only works on x86_64.\n", exit => 1 };
+	sbopinstall '-p', 'foo', { expected => "compat32 only works on x86_64.\n", exit => 1 };
 }
 
 # 21-22: check --reinstall option
-sboinstall '--reinstall', 'nonexistentslackbuild', { input => "n", expected => qr/\Qnonexistentslackbuild (nonexistentslackbuild-1.0-noarch-1_SBo) is already installed. Do you want to reinstall from SBo? [n]\E/ };
-sboinstall '--reinstall', 'nonexistentslackbuild', { input => "y\ny\ny", expected => qr/nonexistentslackbuild .* is already installed[.] Do you want to reinstall.*Install queue: nonexistentslackbuild/s };
+sbopinstall '--reinstall', 'nonexistentslackbuild', { input => "n", expected => qr/\Qnonexistentslackbuild (nonexistentslackbuild-1.0-noarch-1_SBo) is already installed. Do you want to reinstall from SBo? [n]\E/ };
+sbopinstall '--reinstall', 'nonexistentslackbuild', { input => "y\ny\ny", expected => qr/nonexistentslackbuild .* is already installed[.] Do you want to reinstall.*Install queue: nonexistentslackbuild/s };
 
 # Cleanup
 END {

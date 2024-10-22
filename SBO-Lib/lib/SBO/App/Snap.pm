@@ -2,7 +2,7 @@ package SBO::App::Snap;
 
 # vim: ts=2:et
 #
-# sbosnap
+# sbopsnap
 # script to pull down / update a local copy of the slackbuilds.org tree.
 #
 # authors: Jacob Pipkin <j@dawnrazor.net>
@@ -50,7 +50,7 @@ Options:
 Commands:
   fetch: initialize a local copy of the slackbuilds.org tree.
   update: update an existing local copy of the slackbuilds.org tree.
-          (generally, you may prefer "sbocheck" over "$fname update")
+          (generally, you may prefer "sbopcheck" over "$fname update")
 
 EOF
 	return 1;

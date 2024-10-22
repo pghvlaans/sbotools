@@ -10,7 +10,7 @@ use Capture::Tiny qw/ capture_merged /;
 use File::Temp 'tempdir';
 use Cwd;
 use feature 'state';
-use Test::Sbotools qw/ set_repo set_lo sboinstall sbosnap load /;
+use Test::Sbotools qw/ set_repo set_lo sbopinstall sbopsnap load /;
 
 if ($ENV{TEST_INSTALL}) {
 	plan tests => 2;
@@ -31,10 +31,10 @@ git add test
 git commit -m 'first commit'
 GIT
 set_repo("file://$tempdir");
-sbosnap 'fetch', { test => 0 };
+sbopsnap 'fetch', { test => 0 };
 
 # install the readme slackbuild
-sboinstall 'nonexistentslackbuild8', { input => "y\ny", test => 0 };
+sbopinstall 'nonexistentslackbuild8', { input => "y\ny", test => 0 };
 
 { package STDINTIE;
 	sub TIEHANDLE { bless {}, shift; }
@@ -49,7 +49,7 @@ sboinstall 'nonexistentslackbuild8', { input => "y\ny", test => 0 };
 
 tie *STDIN, 'STDINTIE';
 
-my $res = load('sboremove', argv => ['nonexistentslackbuild8']);
+my $res = load('sbopremove', argv => ['nonexistentslackbuild8']);
 
-like ($res->{out}, qr/Unable to open README for nonexistentslackbuild8\./, 'sboremove output with race condition correct');
-is ($res->{exit}, 0, 'sboremove did not exit in error');
+like ($res->{out}, qr/Unable to open README for nonexistentslackbuild8\./, 'sbopremove output with race condition correct');
+is ($res->{exit}, 0, 'sbopremove did not exit in error');

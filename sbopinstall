@@ -2,7 +2,7 @@
 #
 # vim: ts=4:noet
 #
-# sboinstall
+# sbopinstall
 # script to install (a) SlackBuild(s) by name
 #
 # authors: Jacob Pipkin <j@dawnrazor.net>

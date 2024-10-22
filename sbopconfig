@@ -2,7 +2,7 @@
 #
 # vim: ts=4:noet
 #
-# sboconfig
+# sbopconfig
 # script to handle sbotools configuration
 #
 # authors: Jacob Pipkin <j@dawnrazor.net>
@@ -89,7 +89,7 @@ my %params = (
 
 if (exists $options{list}) {
 	my @keys = sort {$a cmp $b} keys %config;
-	say "sboconfig -$params{$_}:\n    $_=$config{$_}" for @keys;
+	say "sbopconfig -$params{$_}:\n    $_=$config{$_}" for @keys;
 	exit 0;
 }
 

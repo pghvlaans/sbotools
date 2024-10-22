@@ -2,7 +2,7 @@
 #
 # vim: ts=4:noet
 #
-# sbocheck
+# sbopcheck
 # script to update the local sbo tree and check for updates
 #
 # authors: Jacob Pipkin <j@dawnrazor.net>
@@ -121,7 +121,7 @@ sub print_output {
 		say $_ for @listing;
 		print "\n";
 		# save a log of available updates
-		my $logfile = '/var/log/sbocheck.log';
+		my $logfile = '/var/log/sbopcheck.log';
 		unlink $logfile if -f $logfile;
 		my ($log_fh, $exit) = open_fh($logfile, '>');
 		# non-fatal

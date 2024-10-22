@@ -13,19 +13,19 @@ use Cwd;
 
 plan tests => 2;
 
-# 1-2: sbocheck race test...
+# 1-2: sbopcheck race test...
 {
-	load('sbocheck');
+	load('sbopcheck');
 
-	my $logfile = '/var/log/sbocheck.log';
+	my $logfile = '/var/log/sbopcheck.log';
 	unlink $logfile;
 	mkdir $logfile;
 
 	my $exit;
 	my $out = capture_merged { $exit = exit_code { main::print_output('foo'); }; };
 
-	like ($out, qr/\QUnable to open $logfile./, "sbocheck's print_output() gave correct output");
-	is ($exit, undef, "sbocheck's print_output() didn't exit");
+	like ($out, qr/\QUnable to open $logfile./, "sbopcheck's print_output() gave correct output");
+	is ($exit, undef, "sbopcheck's print_output() didn't exit");
 
 	rmdir $logfile;
 }

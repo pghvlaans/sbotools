@@ -1,4 +1,4 @@
-#compdef sboupgrade
+#compdef sbopupgrade
 
 # sbotools: https://pink-mist.github.io/sbotools/
 
@@ -10,7 +10,7 @@ _arguments -s -C \
 	   '(-)'{-h,--help}'[Show help]:' \
 	   '(-)'{-v,--version}'[Show version information.]:' \
 	   - commands \
-	   '(${sboupdates})--all[Upgrade all from sbocheck.]' \
+	   '(${sboupdates})--all[Upgrade all from sbopcheck.]' \
 	   '(-c --noclean)'{-c,--noclean}'[If TRUE, then do not clean working directories after build.]:clean work dirs?:((TRUE\:"Clean works directories" FALSE\:"Keep work directories"))' \
 	   '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code after building.]:clean source?:((TRUE\:"Remove source" FALSE\:"Keep source"))' \
 	   '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \

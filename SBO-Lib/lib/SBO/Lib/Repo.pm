@@ -334,7 +334,7 @@ sub rsync_sbo_tree {
   slackbuilds_or_fetch();
 
 C<slackbuilds_or_fetch()> will check if there is a C<SLACKBUILDS.TXT> in the
-C<$repo_path>, and if not, offer to run C<sbosnap fetch> for you.
+C<$repo_path>, and if not, offer to run C<sbopsnap fetch> for you.
 
 =cut
 
@@ -342,11 +342,11 @@ C<$repo_path>, and if not, offer to run C<sbosnap fetch> for you.
 # not been populated there; prompt the user to automagickally pull the tree.
 sub slackbuilds_or_fetch {
   unless (chk_slackbuilds_txt()) {
-    say 'It looks like you haven\'t run "sbosnap fetch" yet.';
+    say 'It looks like you haven\'t run "sbopsnap fetch" yet.';
     if (prompt("Would you like me to do this now?", default => 'yes')) {
       fetch_tree();
     } else {
-      say 'Please run "sbosnap fetch"';
+      say 'Please run "sbopsnap fetch"';
       exit 0;
     }
   }

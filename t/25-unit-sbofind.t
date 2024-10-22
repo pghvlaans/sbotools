@@ -13,25 +13,25 @@ use Cwd;
 
 plan tests => 6;
 
-# 1-6: sbofind unit tests...
+# 1-6: sbopfind unit tests...
 {
-	load('sbofind');
+	load('sbopfind');
 
 	my $exit;
 	my $out = capture_merged { $exit = exit_code { main::perform_search(); }; };
 
-	is ($out, "A fatal script error has occurred:\nperform_search requires an argument.\nExiting.\n", "sbofind's perform_search() gave correct output");
-	is ($exit, 2, "sbofind's perform_search() gave correct exit status");
+	is ($out, "A fatal script error has occurred:\nperform_search requires an argument.\nExiting.\n", "sbopfind's perform_search() gave correct output");
+	is ($exit, 2, "sbopfind's perform_search() gave correct exit status");
 
 	undef $exit;
 	$out = capture_merged { $exit = exit_code { main::get_file_contents(); }; };
 
-	is ($out, "A fatal script error has occurred:\nget_file_contents requires an argument.\nExiting.\n", "sbofind's get_file_contents() gave correct output");
-	is ($exit, 2, "sbofind's get_file_contents() gave correct exit status");
+	is ($out, "A fatal script error has occurred:\nget_file_contents requires an argument.\nExiting.\n", "sbopfind's get_file_contents() gave correct output");
+	is ($exit, 2, "sbopfind's get_file_contents() gave correct exit status");
 
 	undef $exit;
 	$out = capture_merged { $exit = exit_code { main::show_build_queue(); }; };
 
-	is ($out, "A fatal script error has occurred:\nshow_build_queue requires an argument.\nExiting.\n", "sbofind's show_build_queue() gave correct output");
-	is ($exit, 2, "sbofind's show_build_queue() gave correct exit status");
+	is ($out, "A fatal script error has occurred:\nshow_build_queue requires an argument.\nExiting.\n", "sbopfind's show_build_queue() gave correct output");
+	is ($exit, 2, "sbopfind's show_build_queue() gave correct exit status");
 }

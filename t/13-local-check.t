@@ -7,7 +7,7 @@ use Test::More;
 use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
-use Test::Sbotools qw/ make_slackbuilds_txt set_lo set_repo sbosnap sbocheck sboinstall sbofind restore_perf_dummy /;
+use Test::Sbotools qw/ make_slackbuilds_txt set_lo set_repo sbopsnap sbopcheck sbopinstall sbopfind restore_perf_dummy /;
 
 if ($ENV{TEST_INSTALL} and $ENV{TRAVIS}) {
 	plan tests => 14;
@@ -72,22 +72,22 @@ setup_gitrepo();
 set_repo("file://$RealBin/gitrepo/");
 restore_perf_dummy();
 
-# 1-2: sbofind without having a repo yet
-sbofind 'nonexistentslackbuild', { input => "n", expected => qr/It looks like you haven't run "sbosnap fetch" yet\.\nWould you like me to do this now\?.*Please run "sbosnap fetch"/ };
-sbofind 'nonexistentslackbuild', { input => "y", expected => qr/It looks like you haven't run "sbosnap fetch" yet\.\nWould you like me to do this now\?/ };
+# 1-2: sbopfind without having a repo yet
+sbopfind 'nonexistentslackbuild', { input => "n", expected => qr/It looks like you haven't run "sbopsnap fetch" yet\.\nWould you like me to do this now\?.*Please run "sbopsnap fetch"/ };
+sbopfind 'nonexistentslackbuild', { input => "y", expected => qr/It looks like you haven't run "sbopsnap fetch" yet\.\nWould you like me to do this now\?/ };
 
-# 3: sbocheck without having installed nonexistentslackbuild should not show it
-sbocheck { expected => sub { $_[0] !~ /nonexistentslackbuild/} };
+# 3: sbopcheck without having installed nonexistentslackbuild should not show it
+sbopcheck { expected => sub { $_[0] !~ /nonexistentslackbuild/} };
 
-# 4: sbocheck should list nonexistentslackbuild as being newer on SBo after we've installed it
-sboinstall 'nonexistentslackbuild', { input => "y\ny", test => 0 };
-sboinstall 'nonexistentslackbuild5', { input => "y\ny", test => 0 };
-sbocheck { expected => sub { /nonexistentslackbuild/ and not /nonexistentslackbuild5/ } };
+# 4: sbopcheck should list nonexistentslackbuild as being newer on SBo after we've installed it
+sbopinstall 'nonexistentslackbuild', { input => "y\ny", test => 0 };
+sbopinstall 'nonexistentslackbuild5', { input => "y\ny", test => 0 };
+sbopcheck { expected => sub { /nonexistentslackbuild/ and not /nonexistentslackbuild5/ } };
 
-# 5-7: sbocheck should make lines match up as best it can
-sboinstall 'nonexistentslackbuildwithareallyverylongnameasyoucansee', { input => "y\ny", test => 0 };
-sboinstall 's', { input => "y\ny", test => 0 };
-sbocheck { expected => sub { /Updating SlackBuilds tree/ and not /nonexistentslackbuildwithareallyverylongnameasyoucansee/ } };
+# 5-7: sbopcheck should make lines match up as best it can
+sbopinstall 'nonexistentslackbuildwithareallyverylongnameasyoucansee', { input => "y\ny", test => 0 };
+sbopinstall 's', { input => "y\ny", test => 0 };
+sbopcheck { expected => sub { /Updating SlackBuilds tree/ and not /nonexistentslackbuildwithareallyverylongnameasyoucansee/ } };
 
 capture_merged { system <<"GIT"; };
 	cd "$RealBin/gitrepo"
@@ -98,7 +98,7 @@ capture_merged { system <<"GIT"; };
 	git add "test"; git commit -m 'updates';
 GIT
 
-sbocheck { expected => qr/\Qs 1.0                      <  override outdated (1.1 from SBo)/ };
+sbopcheck { expected => qr/\Qs 1.0                      <  override outdated (1.1 from SBo)/ };
 
 capture_merged { system <<"GIT"; };
 	cd "$RealBin/gitrepo"
@@ -108,8 +108,8 @@ capture_merged { system <<"GIT"; };
 	git add "test"; git commit -m '2nd update'
 GIT
 
-sboinstall 'nonexistentslackbuildwithareallyverylo', { input => "y\ny", test => 0 };
-sbocheck { expected => qr/\Qs 1.0                                       <  override outdated (1.1 from SBo)/ };
+sbopinstall 'nonexistentslackbuildwithareallyverylo', { input => "y\ny", test => 0 };
+sbopcheck { expected => qr/\Qs 1.0                                       <  override outdated (1.1 from SBo)/ };
 
 capture_merged { system <<"GIT"; };
 	cd "$RealBin/gitrepo"
@@ -119,8 +119,8 @@ capture_merged { system <<"GIT"; };
 	git add "test"; git commit -m '3rd update'
 GIT
 
-sboinstall 'nonexistentslackbuildwithareallyverylon', { input => "y\ny", test => 0 };
-sbocheck { expected => qr/\Qs 1.0                                        <  override outdated (1.1 from SBo)/ };
+sbopinstall 'nonexistentslackbuildwithareallyverylon', { input => "y\ny", test => 0 };
+sbopcheck { expected => qr/\Qs 1.0                                        <  override outdated (1.1 from SBo)/ };
 
 capture_merged { system <<"GIT"; };
 	cd "$RealBin/gitrepo"
@@ -130,16 +130,16 @@ capture_merged { system <<"GIT"; };
 	git add "test"; git commit -m '4th update'
 GIT
 
-sboinstall 'nonexistentslackbuildwithareallyverylong', { input => "y\ny", test => 0 };
-sbocheck { expected => qr/\Qs 1.0                                        <  override outdated (1.1 from SBo)/ };
+sbopinstall 'nonexistentslackbuildwithareallyverylong', { input => "y\ny", test => 0 };
+sbopcheck { expected => qr/\Qs 1.0                                        <  override outdated (1.1 from SBo)/ };
 
 # 10: check different version in repo and LO and installed
 set_lo("$RealBin/LO3");
-sbocheck { expected => qr/\Qs 1.0                       <  needs updating (0.9 from overrides, 1.1 from SBo)/ };
+sbopcheck { expected => qr/\Qs 1.0                       <  needs updating (0.9 from overrides, 1.1 from SBo)/ };
 
 # 11: check different version on SBo than what's installed
 set_lo('FALSE');
-sbocheck { expected => qr/\Qs 1.0                                         <  needs updating (1.1 from SBo)/ };
+sbopcheck { expected => qr/\Qs 1.0                                         <  needs updating (1.1 from SBo)/ };
 
 # 12: check s2 being the same version in SBo but newer in LO
 capture_merged { system <<"GIT"; };
@@ -148,23 +148,23 @@ capture_merged { system <<"GIT"; };
 	cp -a "$RealBin"/LO/s2 test/
 	git add "test/s2"; git commit -m '5th update'
 GIT
-sbosnap 'update', { test => 0 };
-sboinstall 's2', { input => "y\ny", test => 0 };
+sbopsnap 'update', { test => 0 };
+sbopinstall 's2', { input => "y\ny", test => 0 };
 set_lo("$RealBin/LO2");
-sbocheck { expected => qr/\Qs2 1.0                      <  needs updating (1.1 from overrides)/ };
+sbopcheck { expected => qr/\Qs2 1.0                      <  needs updating (1.1 from overrides)/ };
 
 # 13: check weird-versionsbo isn't picked up erroneously
 set_lo("$RealBin/LO");
-sboinstall 'weird-versionsbo', { input => "y\ny", test => 0 };
-sbocheck { expected => sub { not /weird-versionsbo/ } };
+sbopinstall 'weird-versionsbo', { input => "y\ny", test => 0 };
+sbopcheck { expected => sub { not /weird-versionsbo/ } };
 
 # 14: check sbo no longer available
 cleanup();
 setup_gitrepo();
-sbosnap 'update', { test => 0 };
-sboinstall 'nonexistentslackbuild8', { input => "y\ny", test => 0 };
+sbopsnap 'update', { test => 0 };
+sbopinstall 'nonexistentslackbuild8', { input => "y\ny", test => 0 };
 set_lo("$RealBin/LO2");
-sbocheck { expected => qr/No updates available[.]/ };
+sbopcheck { expected => qr/No updates available[.]/ };
 
 # Cleanup
 END {

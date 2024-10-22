@@ -1,0 +1,113 @@
+.TH sbopupgrade 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools 2.7" dawnrazor.net
+.SH NAME
+.P
+sbopupgrade - install or upgrade slackbuilds
+.SH SYNAPSES
+.P
+sbopupgrade [-h|-v] [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] [-fNrRiz] --all|sbo_name (sbo_name)
+.SH DESCRIPTION
+.P
+sbopupgrade is used to upgrade packages installed from slackbuilds. If the -r flag is NOT specified, sbopupgrade will pull the list of requirements from the .info file for any specified slackbuild. If such a list exists, sbopupgrade will look to see whether or not those requirements are already installed, and if not, it will ask whether or not it should attempt to install them first. This is recursive, so that ordering happens correctly. sbopupgrade will refuse to handle circular requirements. sbopupgrade will also note groupadd and useradd commands in README files and offer to run those first. If the README documents options of the KEY=value form, sbopupgrade will offer the opportunity to set options. If options were entered previously, they will be displayed and can be used again. If --all is supplied it will try to upgrade everything that sbopcheck(1) reports.
+.P
+sbopupgrade will attempt to download the sources from the DOWNLOAD or DOWNLOAD_x86_64 variables in the .info file. If such a download fails or the file can't be verified, it'll attempt to download the file from ftp://slackware.uk/sbosrcarch/ instead.
+.SH OPTIONS
+.P
+-h|--help
+.RS
+Show help information.
+.RE
+.P
+-v|--version
+.RS
+Show version information.
+.RE
+.P
+-c|--noclean (FALSE|TRUE)
+.RS
+If TRUE, then DO NOT clean working directories after building the slackbuild. These are the directories where the source is unpacked and compiled, and where the package is put together in, which are under /tmp/SBo (or $TMP). By default, these directories are removed after building an slackbuild. This option leaves those directories in place. This can be set as default via the sbopconfig(1) command. Also see sbotools.conf(5). This option overrides the default.
+.RE
+.P
+-d|--distclean (FALSE|TRUE)
+.RS
+If TRUE, then DO remove the source code after building the slackbuild. By default, the source code is not removed, and lives under $SBO_HOME/distfiles, which, by default, is /usr/sbo/distfiles; this option can be set as default via the sbopconfig(1) command. See also sbotools.conf(5). This option overrides the default.
+.RE
+.P
+-f|--force
+.RS
+Force an upgrade, even if the installed version is equal to or less than the slackbuilds.org version.
+.RE
+.P
+-i|--noinstall
+.RS
+Do not actually install the package created at the end of the build process. So, the slackbuild will be run, and the package will be left in /tmp (or $OUTPUT), or in $PKG_DIR if so defined (see sbopconfig(1) and sbotools.conf(5)).
+.RE
+.P
+-j|--jobs (FALSE|#)
+.RS
+If numeric (2,5,10, etc), then that number will be fed to the "-j" argument to make when a slackbuild which invokes "make" is run. This only makes sense on multicore systems, where one might set the JOBS to the number of available cores, or half that number, etc.
+.RE
+.P
+-r|--nointeractive
+.RS
+Skip viewing of the README and the yes or no question which accompanies it. Anytime sbopupgrade is run, the first thing the command will attempt to do is show you the README for a given slackbuild and ask whether or not you wish to proceed; this option skips the README and bypasses the question. This also disables dependency resolution, since you have no way of confirming which dependencies you actually want to install. If multiple slackbuilds are specified, this option bypasses them all.
+.RE
+.P
+-z|--force-reqs
+.RS
+When used in combination with the -f option, to force an update even if it would not constitute an update, this will cause sbopupgrade to also rebuild all of that slackbuild's requirements. Normally with -f, only the slackbuild(s) specified, and any requirements not already installed, will be rebuilt. This allows for recursive upgrades, among other things.
+.RE
+.P
+--all
+.RS
+You can specify --all instead of an sbo_name to upgrade all the packages sbopcheck(1) reports.
+.RE
+.SH EXIT CODES
+.P
+sbopupgrade can exit with the following exit codes:
+.RS
+
+0: all operations were succesful.
+.RE
+.RS
+1: a usage error occured, such as specifying invalid options.
+.RE
+.RS
+3: a .SlackBuild exited non-zero.
+.RE
+.RS
+4: unable to md5sum verify an SBo's source file(s).
+.RE
+.RS
+5: unable to download an SBo's source file(s).
+.RE
+.RS
+6: unable to obtain a required file handle.
+.RE
+.RS
+7: unable to get required info from the SBo's .info file.
+.RE
+.RS
+8: unable to unset the exec-on-close bit on a temporary file.
+.RE
+.RS
+9: multilib hasn't been setup (where required).
+.RE
+.RS
+10: convertpkg-compat32 exited non-zero.
+.RE
+.RS
+11: the convertpkg-compat32 script can't be found (where required).
+.RE
+.SH BUGS
+.P
+None known, but there may be some. Please report any found to https://github.com/pink-mist/sbotools/issues ; patches are always welcome.
+.SH SEE ALSO
+.P
+sbopcheck(1), sbopclean(1), sbopconfig(1), sbopfind(1), sbopinstall(1), sbopremove(1), sbopsnap(1), sbotools.conf(5)
+.SH AUTHORS
+.P
+Jacob Pipkin <j@dawnrazor.net>
+.P
+Luke Williams <xocel@iquidus.org>
+.P
+Andreas Guldstrand <andreas.guldstrand@gmail.com>

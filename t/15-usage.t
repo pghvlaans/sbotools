@@ -7,7 +7,7 @@ use Test::More;
 use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
-use Test::Sbotools qw/ make_slackbuilds_txt sbocheck sboclean sboconfig sbofind sboinstall sboremove sbosnap sboupgrade /;
+use Test::Sbotools qw/ make_slackbuilds_txt sbopcheck sbopclean sbopconfig sbopfind sbopinstall sbopremove sbopsnap sbopupgrade /;
 
 plan tests => 14;
 
@@ -15,9 +15,9 @@ make_slackbuilds_txt();
 
 # 1-8: test -h output of sbo* scripts
 
-## sbocheck
-sbocheck '-h', { expected => <<'SBOCHECK' };
-Usage: sbocheck
+## sbopcheck
+sbopcheck '-h', { expected => <<'SBOCHECK' };
+Usage: sbopcheck
 
 Options:
   -h|--help:
@@ -27,9 +27,9 @@ Options:
 
 SBOCHECK
 
-## sboclean
-sboclean '-h', { expected => <<'SBOCLEAN' };
-Usage: sboclean (options) [package]
+## sbopclean
+sbopclean '-h', { expected => <<'SBOCLEAN' };
+Usage: sbopclean (options) [package]
 
 Options:
   -h|--help:
@@ -45,9 +45,9 @@ Options:
 
 SBOCLEAN
 
-## sboconfig
-my $sboconfig = <<'SBOCONFIG';
-Usage: sboconfig [options] [arguments]
+## sbopconfig
+my $sbopconfig = <<'SBOCONFIG';
+Usage: sbopconfig [options] [arguments]
 
 Options:
   -h|--help:
@@ -76,12 +76,12 @@ Config options (defaults shown):
       REPO: use a repository other than SBo.
 
 SBOCONFIG
-sboconfig '-h', { expected => $sboconfig };
-sboconfig { expected => $sboconfig };
+sbopconfig '-h', { expected => $sbopconfig };
+sbopconfig { expected => $sbopconfig };
 
-## sbofind
-my $sbofind = <<'SBOFIND';
-Usage: sbofind (search_term)
+## sbopfind
+my $sbopfind = <<'SBOFIND';
+Usage: sbopfind (search_term)
 
 Options:
   -h|--help:
@@ -100,16 +100,16 @@ Options:
     show the build queue for each found item.
 
 Example:
-  sbofind libsexy
+  sbopfind libsexy
 
 SBOFIND
-sbofind '-h', { expected => $sbofind };
-sbofind { expected => $sbofind, exit => 1 };
+sbopfind '-h', { expected => $sbopfind };
+sbopfind { expected => $sbopfind, exit => 1 };
 
-## sboinstall
-my $sboinstall = <<'SBOINSTALL';
-Usage: sboinstall [options] sbo
-       sboinstall --use-template file
+## sbopinstall
+my $sbopinstall = <<'SBOINSTALL';
+Usage: sbopinstall [options] sbo
+       sbopinstall --use-template file
 
 Options (defaults shown first where applicable):
   -h|--help:
@@ -139,12 +139,12 @@ Options (defaults shown first where applicable):
     specified commands and options. This also enables the --nointeractive flag.
 
 SBOINSTALL
-sboinstall '-h', { expected => $sboinstall };
-sboinstall { expected => $sboinstall, exit => 1 };
+sbopinstall '-h', { expected => $sbopinstall };
+sbopinstall { expected => $sbopinstall, exit => 1 };
 
-## sboremove
-my $sboremove = <<'SBOREMOVE';
-Usage: sboremove [options] sbo
+## sbopremove
+my $sbopremove = <<'SBOREMOVE';
+Usage: sbopremove [options] sbo
 
 Options (defaults shown first where applicable):
   -h|--help:
@@ -157,12 +157,12 @@ Options (defaults shown first where applicable):
 Note: optional dependencies need to be removed separately.
 
 SBOREMOVE
-sboremove '-h', { expected => $sboremove };
-sboremove { expected => $sboremove, exit => 1 };
+sbopremove '-h', { expected => $sbopremove };
+sbopremove { expected => $sbopremove, exit => 1 };
 
-## sbosnap
-my $sbosnap = <<'SBOSNAP';
-Usage: sbosnap [options|command]
+## sbopsnap
+my $sbopsnap = <<'SBOSNAP';
+Usage: sbopsnap [options|command]
 
 Options:
   -h|--help:
@@ -173,15 +173,15 @@ Options:
 Commands:
   fetch: initialize a local copy of the slackbuilds.org tree.
   update: update an existing local copy of the slackbuilds.org tree.
-          (generally, you may prefer "sbocheck" over "sbosnap update")
+          (generally, you may prefer "sbopcheck" over "sbopsnap update")
 
 SBOSNAP
-sbosnap '-h', { expected => $sbosnap };
-sbosnap { expected => $sbosnap, exit => 1 };
+sbopsnap '-h', { expected => $sbopsnap };
+sbopsnap { expected => $sbopsnap, exit => 1 };
 
-## sboupgrade
-my $sboupgrade = <<'SBOUPGRADE';
-Usage: sboupgrade (options) [package]
+## sbopupgrade
+my $sbopupgrade = <<'SBOUPGRADE';
+Usage: sbopupgrade (options) [package]
 
 Options (defaults shown first where applicable):
   -h|--help:
@@ -203,9 +203,9 @@ Options (defaults shown first where applicable):
   -z|--force-reqs:
     when used with -f, will force rebuilding an SBo's requirements as well.
   --all
-    this flag will upgrade everything reported by sbocheck(1).
+    this flag will upgrade everything reported by sbopcheck(1).
 
 SBOUPGRADE
-sboupgrade '-h', { expected => $sboupgrade };
-sboupgrade { expected => $sboupgrade, exit => 1 };
+sbopupgrade '-h', { expected => $sbopupgrade };
+sbopupgrade { expected => $sbopupgrade, exit => 1 };
 

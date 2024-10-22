@@ -14,7 +14,7 @@ use feature 'state';
 
 plan tests => 9;
 
-load('sbofind');
+load('sbopfind');
 my $tags_file = '/usr/sbo/repo/TAGS.txt';
 
 # 1: tags file

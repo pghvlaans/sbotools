@@ -7,7 +7,7 @@ use Test::More;
 use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
-use Test::Sbotools qw/ make_slackbuilds_txt set_lo sbofind replace_tags_txt set_repo sbosnap /;
+use Test::Sbotools qw/ make_slackbuilds_txt set_lo sbopfind replace_tags_txt set_repo sbopsnap /;
 use File::Temp 'tempdir';
 
 plan tests => 10;
@@ -15,24 +15,24 @@ plan tests => 10;
 make_slackbuilds_txt();
 set_lo("$RealBin/LO");
 
-# 1: basic sbofind testing
-sbofind 'nonexistentslackbuild4', { expected => qr!Local:\s+nonexistentslackbuild4 .*\nPath:\s+\Q$RealBin/LO/nonexistentslackbuild4! };
+# 1: basic sbopfind testing
+sbopfind 'nonexistentslackbuild4', { expected => qr!Local:\s+nonexistentslackbuild4 .*\nPath:\s+\Q$RealBin/LO/nonexistentslackbuild4! };
 
-# 2: basic sbofind testing - nothing found
-sbofind 'nonexistentslackbuild3', { expected => "Nothing found for search term: nonexistentslackbuild3\n" };
+# 2: basic sbopfind testing - nothing found
+sbopfind 'nonexistentslackbuild3', { expected => "Nothing found for search term: nonexistentslackbuild3\n" };
 
 # 3: find something using a tag
 replace_tags_txt("nonexistentslackbuild2: testingtag\n");
-sbofind 'testingtag', { expected => qr!Local:\s+nonexistentslackbuild2 .*\nPath:\s+\Q$RealBin/LO/nonexistentslackbuild2! };
+sbopfind 'testingtag', { expected => qr!Local:\s+nonexistentslackbuild2 .*\nPath:\s+\Q$RealBin/LO/nonexistentslackbuild2! };
 
 # 4: show build queue
-sbofind '-q', 'nonexistentslackbuild2', { expected => qr/Queue:\s+nonexistentslackbuild3 nonexistentslackbuild2/ };
+sbopfind '-q', 'nonexistentslackbuild2', { expected => qr/Queue:\s+nonexistentslackbuild3 nonexistentslackbuild2/ };
 
 # 5: show readme
-sbofind '-r', 'nonexistentslackbuild4', { expected => qr/README: \n      This doesn't exist!/ };
+sbopfind '-r', 'nonexistentslackbuild4', { expected => qr/README: \n      This doesn't exist!/ };
 
 # 6: show info
-sbofind '-i', 'nonexistentslackbuild4', { expected => qr/info:   \n      PRGNAM="nonexistentslackbuild4"/ };
+sbopfind '-i', 'nonexistentslackbuild4', { expected => qr/info:   \n      PRGNAM="nonexistentslackbuild4"/ };
 
 # 7: find even if SLACKBUILDS.TXT doesn't have LOCATION as second entry
 my $tempdir = tempdir(CLEANUP => 1);
@@ -58,14 +58,14 @@ git commit -m 'initial'
 GIT
 set_repo("file://$tempdir");
 set_lo('FALSE');
-sbosnap 'fetch', { test => 0, note => 1 };
+sbopsnap 'fetch', { test => 0, note => 1 };
 
-sbofind 'nonexistentslackbuild', { expected => qr!\Q/usr/sbo/repo/test/nonexistentslackbuild! };
+sbopfind 'nonexistentslackbuild', { expected => qr!\Q/usr/sbo/repo/test/nonexistentslackbuild! };
 
 replace_tags_txt("R: r\nfoo: r\nbar: rar");
 
 # 8: non-restricted search finds a lot
-sbofind qw/R/, { expected => <<"END" };
+sbopfind qw/R/, { expected => <<"END" };
 SBo:    R 1.0
 Path:   /usr/sbo/repo/test/R
 
@@ -78,7 +78,7 @@ Path:   /usr/sbo/repo/test/bar
 END
 
 # 9: checking for exact matches (including tags)
-sbofind qw/ -e R /, { expected => <<"END" };
+sbopfind qw/ -e R /, { expected => <<"END" };
 SBo:    R 1.0
 Path:   /usr/sbo/repo/test/R
 
@@ -88,7 +88,7 @@ Path:   /usr/sbo/repo/test/foo
 END
 
 # 10: exact matches (excluding tags)
-sbofind qw/ -et R /, { expected => <<"END" };
+sbopfind qw/ -et R /, { expected => <<"END" };
 SBo:    R 1.0
 Path:   /usr/sbo/repo/test/R
 

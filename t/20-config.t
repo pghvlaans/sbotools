@@ -6,18 +6,18 @@ use warnings FATAL => 'all';
 use Test::More;
 use FindBin '$RealBin';
 use lib $RealBin;
-use Test::Sbotools qw/ sboconfig /;
+use Test::Sbotools qw/ sbopconfig /;
 
 plan tests => 20;
 
 # 1-7: test invalid arguments
-sboconfig '-c', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -c\n" };
-sboconfig '-d', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -d\n" };
-sboconfig '-j', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -j\n" };
-sboconfig '-p', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -p\n" };
-sboconfig '-s', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -s\n" };
-sboconfig '-o', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -o\n" };
-sboconfig '-V', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -V\n" };
+sbopconfig '-c', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -c\n" };
+sbopconfig '-d', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -d\n" };
+sbopconfig '-j', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -j\n" };
+sbopconfig '-p', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -p\n" };
+sbopconfig '-s', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -s\n" };
+sbopconfig '-o', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -o\n" };
+sbopconfig '-V', 'invalid', { exit => 1, expected => "You have provided an invalid parameter for -V\n" };
 
 # 8-9: move original dir away and run tests on the config file
 SKIP: {
@@ -27,11 +27,11 @@ SKIP: {
 	rename $dir, "$dir.moved";
 	system 'touch', $dir;
 
-	sboconfig '-V', '14.1', { exit => 1, expected => qr"\QUnable to create $dir. Exiting." };
+	sbopconfig '-V', '14.1', { exit => 1, expected => qr"\QUnable to create $dir. Exiting." };
 
 	unlink $dir;
 
-	sboconfig '-V', '14.1', { test => 0 };
+	sbopconfig '-V', '14.1', { test => 0 };
 	ok(-d $dir, "$dir created correctly.");
 
 	unlink "$dir/sbotools.conf";
@@ -57,7 +57,7 @@ SKIP: {
 
 	close $fh;
 
-	sboconfig '-V', '14.1', { test => 0 };
+	sbopconfig '-V', '14.1', { test => 0 };
 
 	open my $cfh, '<', "$dir/sbotools.conf" or do {
 		my $err = $!;
@@ -80,7 +80,7 @@ SKIP: {
 	is($lines[6], "SLACKWARE_VERSION=14.1", "SLACKWARE_VERSION correctly set.");
 	is($lines[7], undef, "SLACKWARE_VERSION correctly collapsed.");
 
-	sboconfig qw[ -V 14.0 -j 2 ], { test => 0 };
+	sbopconfig qw[ -V 14.0 -j 2 ], { test => 0 };
 
 	open $cfh, '<', "$dir/sbotools.conf" or do {
 		my $err = $!;

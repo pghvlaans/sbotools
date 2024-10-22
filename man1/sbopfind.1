@@ -1,13 +1,13 @@
-.TH sbofind 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools 2.7" dawnrazor.net
+.TH sbopfind 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools 2.7" dawnrazor.net
 .SH NAME
 .P
-sbofind - search slackbuilds.org tree for a given name
+sbopfind - search slackbuilds.org tree for a given name
 .SH SYNAPSES
 .P
-sbofind [-h|-v] [-ir] search_term
+sbopfind [-h|-v] [-ir] search_term
 .SH DESCRIPTION
 .P
-sbofind searches the names of all slackbuilds for a given term. It reports back any slackbuilds found along with the path for each. This is equivalent to running "cd /usr/ports; make search name=$search_term display=name,path" on a FreeBSD system. If the repository includes a TAGS.txt file, that will be used to find more results as well.
+sbopfind searches the names of all slackbuilds for a given term. It reports back any slackbuilds found along with the path for each. This is equivalent to running "cd /usr/ports; make search name=$search_term display=name,path" on a FreeBSD system. If the repository includes a TAGS.txt file, that will be used to find more results as well.
 .SH OPTIONS
 .P
 -h|--help
@@ -46,23 +46,23 @@ Show the build queue for each slackbuild found.
 .RE
 .SH EXIT CODES
 .P
-sbofind can exit with the following exit codes:
+sbopfind can exit with the following exit codes:
 .RS
 
 0: all operations were succesful.
 .RE
 .RS
-1: a usage error occured, ie sbofind was ran with nothing to find.
+1: a usage error occured, ie sbopfind was ran with nothing to find.
 .RE
 .RS
-6: sbofind was unable to obtain a required file handle.
+6: sbopfind was unable to obtain a required file handle.
 .RE
 .SH BUGS
 .P
 None known, but there may be some. Please report any found to https://github.com/pink-mist/sbotools/issues ; patches are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sboinstall(1), sboremove(1), sbosnap(1), sboupgrade(1), sbotools.conf(5)
+sbopcheck(1), sbopclean(1), sbopconfig(1), sbopinstall(1), sbopremove(1), sbopsnap(1), sbopupgrade(1), sbotools.conf(5)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>

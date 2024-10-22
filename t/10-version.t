@@ -8,7 +8,7 @@ use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
 use lib "$RealBin/../SBO-Lib/lib";
-use Test::Sbotools qw/ make_slackbuilds_txt sbocheck sboclean sboconfig sbofind sboinstall sboremove sbosnap sboupgrade /;
+use Test::Sbotools qw/ make_slackbuilds_txt sbopcheck sbopclean sbopconfig sbopfind sbopinstall sbopremove sbopsnap sbopupgrade /;
 use SBO::Lib;
 
 plan tests => 8;
@@ -23,12 +23,12 @@ licensed under the WTFPL
 VERSION
 
 # 1-8: test -v output of sbo* scripts
-sbocheck '-v', { expected => $ver_text };
-sboclean '-v', { expected => $ver_text };
-sboconfig '-v', { expected => $ver_text };
-sbofind '-v', { expected => $ver_text };
-sboinstall '-v', { expected => $ver_text };
-sboremove '-v', { expected => $ver_text };
-sbosnap '-v', { expected => $ver_text };
-sboupgrade '-v', { expected => $ver_text };
+sbopcheck '-v', { expected => $ver_text };
+sbopclean '-v', { expected => $ver_text };
+sbopconfig '-v', { expected => $ver_text };
+sbopfind '-v', { expected => $ver_text };
+sbopinstall '-v', { expected => $ver_text };
+sbopremove '-v', { expected => $ver_text };
+sbopsnap '-v', { expected => $ver_text };
+sbopupgrade '-v', { expected => $ver_text };
 

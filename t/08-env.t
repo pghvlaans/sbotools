@@ -7,7 +7,7 @@ use Test::More;
 use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
-use Test::Sbotools qw/ make_slackbuilds_txt set_lo sboinstall restore_perf_dummy /;
+use Test::Sbotools qw/ make_slackbuilds_txt set_lo sbopinstall restore_perf_dummy /;
 
 if ($ENV{TEST_INSTALL}) {
 	plan tests => 5;
@@ -140,26 +140,26 @@ sub env_tests {
 	ok (! -e "$output/package-nonexistentslackbuild", "package dir 1 doesn't exist ($outmsg)");
 	ok (! -e "$output/package-nonexistentslackbuild4", "package4 dir 1 doesn't exist ($outmsg)");
 	ok (! -e "$output/package-nonexistentslackbuild5", "package5 dir 1 doesn't exist ($outmsg)");
-	sboinstall qw/ -c FALSE nonexistentslackbuild /, { input => "y\ny", expected => qr!Cleaning for nonexistentslackbuild-1\.0!, note => 0 };
-	ok (! -e "$tmp/nonexistentslackbuild-1.0/README", "README file 1 doesn't exist after sboinstall ($tmpmsg)");
-	ok (! -e "$output/package-nonexistentslackbuild", "package dir 1 doesn't exist after sboinstall ($outmsg)");
-	sboinstall qw/ -c FALSE nonexistentslackbuild4 /,
+	sbopinstall qw/ -c FALSE nonexistentslackbuild /, { input => "y\ny", expected => qr!Cleaning for nonexistentslackbuild-1\.0!, note => 0 };
+	ok (! -e "$tmp/nonexistentslackbuild-1.0/README", "README file 1 doesn't exist after sbopinstall ($tmpmsg)");
+	ok (! -e "$output/package-nonexistentslackbuild", "package dir 1 doesn't exist after sbopinstall ($outmsg)");
+	sbopinstall qw/ -c FALSE nonexistentslackbuild4 /,
 		{ input => "y\ny\ny", expected => qr!Cleaning for nonexistentslackbuild5-1\.0.*Cleaning for nonexistentslackbuild4-1\.0!s, note => 0 };
-	ok (! -e "$tmp/nonexistentslackbuild4-1.0/README", "README file 4 doesn't exist after sboinstall ($tmpmsg)");
-	ok (! -e "$tmp/nonexistentslackbuild5-1.0/README", "README file 5 doesn't exist after sboinstall ($tmpmsg)");
-	ok (! -e "$output/package-nonexistentslackbuild4", "package dir 4 doesn't exist after sboinstall ($outmsg)");
-	ok (! -e "$output/package-nonexistentslackbuild5", "package dir 5 doesn't exist after sboinstall ($outmsg)");
+	ok (! -e "$tmp/nonexistentslackbuild4-1.0/README", "README file 4 doesn't exist after sbopinstall ($tmpmsg)");
+	ok (! -e "$tmp/nonexistentslackbuild5-1.0/README", "README file 5 doesn't exist after sbopinstall ($tmpmsg)");
+	ok (! -e "$output/package-nonexistentslackbuild4", "package dir 4 doesn't exist after sbopinstall ($outmsg)");
+	ok (! -e "$output/package-nonexistentslackbuild5", "package dir 5 doesn't exist after sbopinstall ($outmsg)");
 
 	cleanup($tmp, $output);
 
-	sboinstall qw/ -c TRUE nonexistentslackbuild /, { input => "y\ny", test => 0, note => 0 };
-	ok (-e "$tmp/nonexistentslackbuild-1.0/README", "README file 1 exists after sboinstall -c TRUE ($tmpmsg)");
-	ok (-e "$output/package-nonexistentslackbuild", "package dir 1 exists after sboinstall -c TRUE ($outmsg)");
-	sboinstall qw/ -c TRUE nonexistentslackbuild4 /, { input => "y\ny\ny", test => 0, note => 0 };
-	ok (-e "$tmp/nonexistentslackbuild4-1.0/README", "README file 4 exists after sboinstall -c TRUE ($tmpmsg)");
-	ok (-e "$tmp/nonexistentslackbuild5-1.0/README", "README file 5 exists after sboinstall -c TRUE ($tmpmsg)");
-	ok (-e "$output/package-nonexistentslackbuild4", "package dir 4 exists after sboinstall -c TRUE ($outmsg)");
-	ok (-e "$output/package-nonexistentslackbuild5", "package dir 5 exists after sboinstall -c TRUE ($outmsg)");
+	sbopinstall qw/ -c TRUE nonexistentslackbuild /, { input => "y\ny", test => 0, note => 0 };
+	ok (-e "$tmp/nonexistentslackbuild-1.0/README", "README file 1 exists after sbopinstall -c TRUE ($tmpmsg)");
+	ok (-e "$output/package-nonexistentslackbuild", "package dir 1 exists after sbopinstall -c TRUE ($outmsg)");
+	sbopinstall qw/ -c TRUE nonexistentslackbuild4 /, { input => "y\ny\ny", test => 0, note => 0 };
+	ok (-e "$tmp/nonexistentslackbuild4-1.0/README", "README file 4 exists after sbopinstall -c TRUE ($tmpmsg)");
+	ok (-e "$tmp/nonexistentslackbuild5-1.0/README", "README file 5 exists after sbopinstall -c TRUE ($tmpmsg)");
+	ok (-e "$output/package-nonexistentslackbuild4", "package dir 4 exists after sbopinstall -c TRUE ($outmsg)");
+	ok (-e "$output/package-nonexistentslackbuild5", "package dir 5 exists after sbopinstall -c TRUE ($outmsg)");
 
 	cleanup($tmp, $output);
 }

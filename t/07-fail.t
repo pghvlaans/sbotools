@@ -7,7 +7,7 @@ use Test::More;
 use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
-use Test::Sbotools qw/ make_slackbuilds_txt set_lo set_repo sboinstall sboremove sbosnap restore_perf_dummy sboupgrade /;
+use Test::Sbotools qw/ make_slackbuilds_txt set_lo set_repo sbopinstall sbopremove sbopsnap restore_perf_dummy sbopupgrade /;
 use File::Temp 'tempdir';
 
 if ($ENV{TEST_INSTALL}) {
@@ -87,55 +87,55 @@ set_lo("$RealBin/LO-fail");
 restore_perf_dummy();
 
 # 1: Failing slackbuild script
-sboinstall 'failingslackbuild', { input => "y\ny", expected => qr/Failures:\n  failingslackbuild: failingslackbuild.SlackBuild return non-zero\n\z/, exit => 3 };
+sbopinstall 'failingslackbuild', { input => "y\ny", expected => qr/Failures:\n  failingslackbuild: failingslackbuild.SlackBuild return non-zero\n\z/, exit => 3 };
 
 # 2-3: Failing download and md5sum
 SKIP: {
 	skip "Not doing online tests", 2 unless $ENV{TEST_ONLINE};
 
-	sboinstall 'failingdownload', { input => "y\ny\nn", expected => qr!Failures:\n  failingdownload: Unable to wget http://pink-mist[.]github[.]io/sbotools/testing/perf[.]dummy[.]fail[.]\n!, exit => 5 };
-	sboinstall 'failingmd5sum', { input => "y\ny\nn", expected => qr!Failures:\n  failingmd5sum: md5sum failure for /usr/sbo/distfiles/perf[.]dummy[.]\n!, exit => 4 };
+	sbopinstall 'failingdownload', { input => "y\ny\nn", expected => qr!Failures:\n  failingdownload: Unable to wget http://pink-mist[.]github[.]io/sbotools/testing/perf[.]dummy[.]fail[.]\n!, exit => 5 };
+	sbopinstall 'failingmd5sum', { input => "y\ny\nn", expected => qr!Failures:\n  failingmd5sum: md5sum failure for /usr/sbo/distfiles/perf[.]dummy[.]\n!, exit => 4 };
 }
 
 # 4: Failing dependency
-sboinstall 'nonexistentslackbuild2', { input => "y\ny\ny\nn", expected => qr/Failures:\n  failingslackbuild: failingslackbuild.SlackBuild return non-zero\n/, exit => 3 };
+sbopinstall 'nonexistentslackbuild2', { input => "y\ny\ny\nn", expected => qr/Failures:\n  failingslackbuild: failingslackbuild.SlackBuild return non-zero\n/, exit => 3 };
 
 # 5-6: Failing download and md5sum in dependency
 SKIP: {
 	skip "Not doing online tests", 2 unless $ENV{TEST_ONLINE};
 
-	sboinstall 'nonexistentslackbuild3', { input => "y\ny\ny\nn", expected => qr!Failures:\n  failingdownload: Unable to wget http://pink-mist[.]github[.]io/sbotools/testing/perf[.]dummy[.]fail[.]\n!, exit => 5 };
-	sboinstall 'nonexistentslackbuild4', { input => "y\ny\ny\nn", expected => qr!Failures:\n  failingmd5sum: md5sum failure for /usr/sbo/distfiles/perf[.]dummy[.]\n!, exit => 4 };
+	sbopinstall 'nonexistentslackbuild3', { input => "y\ny\ny\nn", expected => qr!Failures:\n  failingdownload: Unable to wget http://pink-mist[.]github[.]io/sbotools/testing/perf[.]dummy[.]fail[.]\n!, exit => 5 };
+	sbopinstall 'nonexistentslackbuild4', { input => "y\ny\ny\nn", expected => qr!Failures:\n  failingmd5sum: md5sum failure for /usr/sbo/distfiles/perf[.]dummy[.]\n!, exit => 4 };
 }
 
 # 7: Failing build with working dep
-sboinstall 'failingslackbuild2', { input => "y\ny\ny", expected => qr/Failures:\n  failingslackbuild2: failingslackbuild2[.]SlackBuild return non-zero\n\z/, exit => 3 };
-sboremove 'nonexistentslackbuild', { input => "y\ny", test => 0 };
+sbopinstall 'failingslackbuild2', { input => "y\ny\ny", expected => qr/Failures:\n  failingslackbuild2: failingslackbuild2[.]SlackBuild return non-zero\n\z/, exit => 3 };
+sbopremove 'nonexistentslackbuild', { input => "y\ny", test => 0 };
 
 # 8-9: Failing download and md5sum with working dep
 SKIP: {
 	skip "Not doing online tests", 2 unless $ENV{TEST_ONLINE};
 
-	sboinstall 'failingdownload2', { input => "y\ny\ny\nn", expected => qr!Failures:\n!, exit => 5 };
-	sboinstall 'failingmd5sum2', { input => "y\ny\ny\nn", expected => qr!Failures:\n!, exit => 4 };
+	sbopinstall 'failingdownload2', { input => "y\ny\ny\nn", expected => qr!Failures:\n!, exit => 5 };
+	sbopinstall 'failingmd5sum2', { input => "y\ny\ny\nn", expected => qr!Failures:\n!, exit => 4 };
 }
 
 # 10: Malformed slackbuild - no .info
-sboinstall 'malformed-noinfo', { expected => "get_from_info: could not read $RealBin/LO-fail/malformed-noinfo/malformed-noinfo.info.\n", exit => 1 };
+sbopinstall 'malformed-noinfo', { expected => "get_from_info: could not read $RealBin/LO-fail/malformed-noinfo/malformed-noinfo.info.\n", exit => 1 };
 
 # 11-13: Malformed slackbuild - malformed .info
-sboinstall 'malformed-info', { input => "y\ny\nn", expected => qr!Failures:\n  malformed-info: Unable to get download info from $RealBin/LO-fail/malformed-info/malformed-info[.]info\n!, exit => 7 };
-sboinstall 'malformed-info2', { input => "y\ny\nn", expected => qr!Failures:\n  malformed-info2: Unable to get download info from $RealBin/LO-fail/malformed-info2/malformed-info2[.]info\n!, exit => 7 };
-sboinstall 'malformed-info3', { exit => 2, expected => "A fatal script error has occurred:\nerror when parsing malformed-info3.info file.\nExiting.\n" };
+sbopinstall 'malformed-info', { input => "y\ny\nn", expected => qr!Failures:\n  malformed-info: Unable to get download info from $RealBin/LO-fail/malformed-info/malformed-info[.]info\n!, exit => 7 };
+sbopinstall 'malformed-info2', { input => "y\ny\nn", expected => qr!Failures:\n  malformed-info2: Unable to get download info from $RealBin/LO-fail/malformed-info2/malformed-info2[.]info\n!, exit => 7 };
+sbopinstall 'malformed-info3', { exit => 2, expected => "A fatal script error has occurred:\nerror when parsing malformed-info3.info file.\nExiting.\n" };
 
 # 14-15: Malformed slackbuild - no readme
-sboinstall 'malformed-readme', { expected => "Unable to open README for malformed-readme.\n", exit => 6 };
-sboinstall qw/ -r malformed-readme /, { test => 0 };
-sboupgrade qw/ -f malformed-readme /, { expected => "Unable to open README for malformed-readme.\n", exit => 6 };
-sboremove 'malformed-readme', { input => "y\ny", test => 0 };
+sbopinstall 'malformed-readme', { expected => "Unable to open README for malformed-readme.\n", exit => 6 };
+sbopinstall qw/ -r malformed-readme /, { test => 0 };
+sbopupgrade qw/ -f malformed-readme /, { expected => "Unable to open README for malformed-readme.\n", exit => 6 };
+sbopremove 'malformed-readme', { input => "y\ny", test => 0 };
 
 # 16: Malformed slackbuild - no .SlackBuild
-sboinstall 'malformed-slackbuild',
+sbopinstall 'malformed-slackbuild',
 	{ input => "y\ny", expected => qr!Failures:\n  malformed-slackbuild: Unable to backup \Q$RealBin/LO-fail/malformed-slackbuild/malformed-slackbuild.SlackBuild to $RealBin/LO-fail/malformed-slackbuild/malformed-slackbuild.SlackBuild.orig\E!, exit => 6 };
 
 # 17: Multilib fails - no multilib
@@ -143,8 +143,8 @@ SKIP: {
 	skip "No multilib test only valid when TEST_MULTILIB=0", 1 unless $ENV{TEST_MULTILIB} == 0;
 	skip "/etc/profile.d/32dev.sh exists", 1 if -e "/etc/profile.d/32dev.sh";
 
-	sboinstall qw/ -p nonexistentslackbuild /, { input => "y\ny\ny", expected => qr/Failures:\n  nonexistentslackbuild-compat32: compat32 requires multilib[.]\n/, exit => 9 };
-	sboremove 'nonexistentslackbuild', { input => "y\ny", test => 0 };
+	sbopinstall qw/ -p nonexistentslackbuild /, { input => "y\ny\ny", expected => qr/Failures:\n  nonexistentslackbuild-compat32: compat32 requires multilib[.]\n/, exit => 9 };
+	sbopremove 'nonexistentslackbuild', { input => "y\ny", test => 0 };
 }
 
 # 18: Multilib fails - no convertpkg
@@ -153,7 +153,7 @@ SKIP: {
 	skip "/etc/profile.d/32dev.sh doesn't exist", 1 unless -e "/etc/profile.d/32dev.sh";
 	skip "/usr/sbin/convertpkg-compat32 exists", 1 if -e "/usr/sbin/convertpkg-compat32";
 
-	sboinstall qw/ -p nonexistentslackbuild /, { input => "y\ny\ny", expected => qr!Failures:\n  nonexistentslackbuild-compat32: compat32 requires /usr/sbin/convertpkg-compat32[.]\n!, exit => 11 };
+	sbopinstall qw/ -p nonexistentslackbuild /, { input => "y\ny\ny", expected => qr!Failures:\n  nonexistentslackbuild-compat32: compat32 requires /usr/sbin/convertpkg-compat32[.]\n!, exit => 11 };
 }
 
 # 19: Multilib fails - convertpkg fail
@@ -163,23 +163,23 @@ SKIP: {
 	skip "No /etc/profile.d/32dev.sh", 1 unless -e "/etc/profile.d/32dev.sh";
 	skip "No /usr/sbin/convertpkg-compat32", 1 unless -e "/usr/sbin/convertpkg-compat32";
 
-	sboinstall qw/ -p multilibfail /, { input => "y\ny\ny", expected => qr/Failures:\n  multilibfail-compat32: convertpkg-compt32 returned non-zero exit status\n/, exit => 10 };
+	sbopinstall qw/ -p multilibfail /, { input => "y\ny\ny", expected => qr/Failures:\n  multilibfail-compat32: convertpkg-compt32 returned non-zero exit status\n/, exit => 10 };
 }
 
 # 20: Slackbuild exits 0 but doesn't create a package
-sboinstall 'failingslackbuild3', { input => "y\ny", expected => qr/Failures:\n  failingslackbuild3: failingslackbuild3.SlackBuild didn't create a package\n\z/, exit => 3 };
+sbopinstall 'failingslackbuild3', { input => "y\ny", expected => qr/Failures:\n  failingslackbuild3: failingslackbuild3.SlackBuild didn't create a package\n\z/, exit => 3 };
 
 # 21: Slackbuild fails, but we still want to continue with the queue
-sboinstall 'nonexistentslackbuild2', { input => "y\ny\ny\ny", expected => qr/Failures:\n  failingslackbuild: failingslackbuild.SlackBuild return non-zero\n/, exit => 0 };
-sboremove 'nonexistentslackbuild2', { input => "y\ny", test => 0 };
+sbopinstall 'nonexistentslackbuild2', { input => "y\ny\ny\ny", expected => qr/Failures:\n  failingslackbuild: failingslackbuild.SlackBuild return non-zero\n/, exit => 0 };
+sbopremove 'nonexistentslackbuild2', { input => "y\ny", test => 0 };
 
 # 22: Slackbuild fails during noninteractive run
-sboinstall qw/ -r failingslackbuild /, { expected => qr/Failures:\n  failingslackbuild: failingslackbuild.SlackBuild return non-zero\n/, exit => 3 };
+sbopinstall qw/ -r failingslackbuild /, { expected => qr/Failures:\n  failingslackbuild: failingslackbuild.SlackBuild return non-zero\n/, exit => 3 };
 
 # 23-24: Slackbuild with %README% req without a readme
-sboinstall qw/ -r noreadmebutreadmereq /, { test => 0 };
-sboremove qw/ noreadmebutreadmereq /, { input => "y\nn", expected => qr/Unable to open README for noreadmebutreadmereq[.]/s, exit => 0 };
-sboremove qw/ noreadmebutreadmereq /, { input => "n\ny\ny", expected => qr/Display README.*Remove noreadme.*Added to remove queue.*Removing 1 pack.*noreadme.*All operations/s, exit => 0 };
+sbopinstall qw/ -r noreadmebutreadmereq /, { test => 0 };
+sbopremove qw/ noreadmebutreadmereq /, { input => "y\nn", expected => qr/Unable to open README for noreadmebutreadmereq[.]/s, exit => 0 };
+sbopremove qw/ noreadmebutreadmereq /, { input => "n\ny\ny", expected => qr/Display README.*Remove noreadme.*Added to remove queue.*Removing 1 pack.*noreadme.*All operations/s, exit => 0 };
 
 # 25: compat32 should fail for a perl sbo
 SKIP: {
@@ -195,9 +195,9 @@ cp -a "$RealBin/LO/perl-nonexistentcpan" perl
 git add .
 git commit -m 'added perl-nonexistentcpan'
 END
-	sbosnap 'fetch', { test => 0 };
+	sbopsnap 'fetch', { test => 0 };
 
-	sboinstall qw/ -p perl-nonexistentcpan /, { expected => "-p|--compat32 is not supported with Perl SBos.\n", exit => 1 };
+	sbopinstall qw/ -p perl-nonexistentcpan /, { expected => "-p|--compat32 is not supported with Perl SBos.\n", exit => 1 };
 }
 
 # 26: compat32 for malformed-readme fail
@@ -206,17 +206,17 @@ SKIP: {
 	skip "No /etc/profile.d/32dev.sh", 1 unless -e "/etc/profile.d/32dev.sh";
 	skip "No /usr/sbin/convertpkg-compat32", 1 unless -e "/usr/sbin/convertpkg-compat32";
 
-	sboinstall qw/ -p malformed-readme /, { expected => sub { m/\QUnable to open README for malformed-readme.\E\n/ and m/\Qmalformed-readme-compat32 requires malformed-readme.\E\n/ }, exit => 6 };
+	sbopinstall qw/ -p malformed-readme /, { expected => sub { m/\QUnable to open README for malformed-readme.\E\n/ and m/\Qmalformed-readme-compat32 requires malformed-readme.\E\n/ }, exit => 6 };
 }
 
-# 27: sboupgrade with -r and -z
+# 27: sbopupgrade with -r and -z
 set_lo "$RealBin/LO";
-sboinstall qw/ -r nonexistentslackbuild /, { test => 0 };
+sbopinstall qw/ -r nonexistentslackbuild /, { test => 0 };
 set_lo "$RealBin/LO2";
-sboupgrade qw/ -z -r nonexistentslackbuild /, { exit => 1, expected => "-r|--nointeractive and -z|--force-reqs can not be used together.\n" };
+sbopupgrade qw/ -z -r nonexistentslackbuild /, { exit => 1, expected => "-r|--nointeractive and -z|--force-reqs can not be used together.\n" };
 
-# 28: sboupgrade nonexistentslackbuildname
-sboupgrade 'nonexistentslackbuildname', { exit => 1, expected => "Unable to locate nonexistentslackbuildname in the SlackBuilds.org tree.\n" };
+# 28: sbopupgrade nonexistentslackbuildname
+sbopupgrade 'nonexistentslackbuildname', { exit => 1, expected => "Unable to locate nonexistentslackbuildname in the SlackBuilds.org tree.\n" };
 
 # Cleanup
 END {

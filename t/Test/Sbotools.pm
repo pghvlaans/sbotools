@@ -15,14 +15,14 @@ use lib "$RealBin/../SBO-Lib/lib";
 $path = "$RealBin/../";
 
 our @EXPORT_OK = qw/
-  sbocheck
-  sboclean
-  sboconfig
-  sbofind
-  sboinstall
-  sboremove
-  sbosnap
-  sboupgrade
+  sbopcheck
+  sbopclean
+  sbopconfig
+  sbopfind
+  sbopinstall
+  sbopremove
+  sbopsnap
+  sbopupgrade
   set_noclean
   set_distclean
   set_jobs
@@ -39,14 +39,14 @@ our @EXPORT_OK = qw/
 
 local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-sub sbocheck { script('sbocheck', @_); }
-sub sboclean { script('sboclean', @_); }
-sub sboconfig { script('sboconfig', @_); }
-sub sbofind { script('sbofind', @_); }
-sub sboinstall { script('sboinstall', @_); }
-sub sboremove { script('sboremove', @_); }
-sub sbosnap { script('sbosnap', @_); }
-sub sboupgrade { script('sboupgrade', @_); }
+sub sbopcheck { script('sbopcheck', @_); }
+sub sbopclean { script('sbopclean', @_); }
+sub sbopconfig { script('sbopconfig', @_); }
+sub sbopfind { script('sbopfind', @_); }
+sub sbopinstall { script('sbopinstall', @_); }
+sub sbopremove { script('sbopremove', @_); }
+sub sbopsnap { script('sbopsnap', @_); }
+sub sbopupgrade { script('sbopupgrade', @_); }
 
 sub set_noclean { _set_config('NOCLEAN', @_); }
 sub set_distclean { _set_config('DISTCLEAN', @_); }
@@ -86,7 +86,7 @@ sub _set_config {
 
 	# if %config is empty, populate it
 	if (not %config) {
-		sboconfig('-l', { test => 0, expected =>
+		sbopconfig('-l', { test => 0, expected =>
 			sub {
 				my $text = shift;
 				foreach my $setting (keys %settings) { $text =~ /\Q$setting\E=(.*)/ and $config{$setting} = $1 // 'FALSE'; }
@@ -95,10 +95,10 @@ sub _set_config {
 	}
 
 	if (defined $value) {
-		sboconfig($settings{$config}, $value, { test => 0 });
+		sbopconfig($settings{$config}, $value, { test => 0 });
 		note "Saving original value of '$config': $config{$config}";
 	} else {
-		sboconfig($settings{$config}, $config{$config}, { test => 0 });
+		sbopconfig($settings{$config}, $config{$config}, { test => 0 });
 	}
 }
 

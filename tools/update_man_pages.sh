@@ -31,7 +31,7 @@ if ! [[ -d "./man1" ]]; then
 	exit 1
 fi
 
-old_version=$(head -1 man1/sbocheck.1 | rev | cut -d' ' -f2 | rev \
+old_version=$(head -1 man1/sbopcheck.1 | rev | cut -d' ' -f2 | rev \
 	| sed 's/"//g')
 
 tmpfile=$(mktemp /tmp/XXXXXXXXX)
@@ -73,7 +73,7 @@ update_date() {
 		return 1
 	fi
 
-	old_date=$(head -1 man1/sbocheck.1 | cut -d' ' -f4- | rev \
+	old_date=$(head -1 man1/sbopcheck.1 | cut -d' ' -f4- | rev \
 		| cut -d' ' -f4- | rev | sed 's/"//g')
 
 	new_date=$(ddate +"%{%A, %B %d%}, %Y YOLD%N - %H")

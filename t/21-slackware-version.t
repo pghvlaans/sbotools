@@ -36,13 +36,13 @@ sub set_ver {
 	state $set = 0;
 	state $ver;
 	if ($_[0]) {
-		if ($set) { script (qw/ sboconfig -V /, $ver, { test => 0 }); }
+		if ($set) { script (qw/ sbopconfig -V /, $ver, { test => 0 }); }
 	} else {
-		($ver) = script (qw/ sboconfig -l /, { expected => qr/SLACKWARE_VERSION=(.*)/, test => 0 });
+		($ver) = script (qw/ sbopconfig -l /, { expected => qr/SLACKWARE_VERSION=(.*)/, test => 0 });
 		$ver //= 'FALSE';
 		note "Saving original value of SLACKWARE_VERSION: $ver";
 		$set = 1;
-		script (qw/ sboconfig -V FALSE /, { test => 0 });
+		script (qw/ sbopconfig -V FALSE /, { test => 0 });
 	}
 }
 
@@ -52,14 +52,14 @@ sub set_repo {
 	if ($_[0]) {
 		if ($set) {
 			capture_merged { system(qw!rm -rf /usr/sbo/repo!); system('mv', "$RealBin/repo.backup", "/usr/sbo/repo"); } if -e "$RealBin/repo.backup";
-			script (qw/ sboconfig -r /, $orig, { test => 0 });
+			script (qw/ sbopconfig -r /, $orig, { test => 0 });
 		}
 	} else {
-		($orig) = script (qw/ sboconfig -l /, { expected => qr/REPO=(.*)/, test => 0 });
+		($orig) = script (qw/ sbopconfig -l /, { expected => qr/REPO=(.*)/, test => 0 });
 		$orig //= 'FALSE';
 		note "Saving original value of REPO: $orig";
 		$set = 1;
-		script (qw/ sboconfig -r FALSE /, { test => 0 });
+		script (qw/ sbopconfig -r FALSE /, { test => 0 });
 		capture_merged { system(qw! mv /usr/sbo/repo !, "$RealBin/repo.backup"); } if -e "/usr/sbo/repo";
 	}
 }
@@ -70,14 +70,14 @@ set_ver();
 move_slackware_version();
 
 # 1: Fail properly when no /etc/slackware-version file exists
-script (qw/ sbocheck /, { exit => 2, expected => qr!^A fatal script error has occurred:\nopen_fh, /etc/slackware-version is not a file\nExiting\.$!m });
+script (qw/ sbopcheck /, { exit => 2, expected => qr!^A fatal script error has occurred:\nopen_fh, /etc/slackware-version is not a file\nExiting\.$!m });
 
 # 2: Fail properly when /etc/slackware-version has a too old version
 if (open(my $fh, '>', '/etc/slackware-version')) {
 	print $fh "Slackware 13.37\n";
 	close $fh;
 
-	script (qw/ sbocheck /, { exit => 1, expected => qr!^Unsupported Slackware version: 13\.37$!m });
+	script (qw/ sbopcheck /, { exit => 1, expected => qr!^Unsupported Slackware version: 13\.37$!m });
 	unlink '/etc/slackware-version';
 } else {
 	fail "Could not write old version to /etc/slackware-version.";
