@@ -13,7 +13,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree get_available_updates script_error open_fh is_local show_version get_local_outdated_versions /;
+use SBO::Lib qw/ update_tree get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions /;
 use Getopt::Long;
 use File::Basename;
 use List::Util 'max';
@@ -43,6 +43,28 @@ if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
 
 update_tree();
+
+# retrieve and format list of removed builds
+sub get_removed_list {
+	print "Checking for out-of-tree SlackBuilds marked _SBo...\n";
+	my @removes = @{ get_removed_builds() };
+
+	my %removes;
+	for my $remove (@removes) {
+		$removes{$remove->{name}} = {
+			installed => $remove->{installed}
+		};
+	}
+
+	my @remove_list;
+	foreach my $gone (keys %removes) {
+		my $info = $removes{$gone};
+		my $item = sprintf "%s %s", $gone, $info->{installed};
+		push @remove_list, $item;
+	}
+
+	return @remove_list;
+}
 
 # retrieve and format list of available updates
 sub get_update_list {
@@ -114,7 +136,7 @@ sub get_update_list {
 }
 
 # print list of updates
-sub print_output {
+sub print_upgrades {
 	my @listing = @_;
 	if (@listing) {
 		print "\n";
@@ -138,7 +160,22 @@ sub print_output {
 	return 1;
 }
 
+# print list of removed builds
+sub print_removed {
+	my @listing = @_;
+	if (@listing) {
+		print "\n";
+		say $_ for @listing;
+		print "\n";
+	} else {
+		say "\nNo SlackBuilds marked _SBo are out-of-tree.\n"
+	}
+	return 1;
+}
+
 my @listing = get_update_list();
-print_output(@listing);
+print_upgrades(@listing);
+my @removed = get_removed_list();
+print_removed(@removed);
 
 exit 0;

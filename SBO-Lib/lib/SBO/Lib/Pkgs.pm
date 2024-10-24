@@ -18,6 +18,7 @@ our @EXPORT_OK = qw{
   get_installed_cpans
   get_installed_packages
   get_local_outdated_versions
+  get_removed_builds
 };
 
 our %EXPORT_TAGS = (
@@ -73,6 +74,18 @@ sub get_available_updates {
     }
 
     return \@updates;
+}
+
+# For each installed SlackBuild, find out whether it still exists in the tree
+sub get_removed_builds {
+    my @removed;
+    my $pkg_list = get_installed_packages('DIRTY');
+
+    for my $pkg (@$pkg_list) {
+        push @removed, { name => $pkg->{name}, installed => $pkg->{version} };
+    }
+
+    return \@removed;
 }
 
 =head2 get_inst_names
@@ -134,7 +147,7 @@ both names, versions, and full installed package name of the returned packages.
 =cut
 
 # pull an array of hashes, each hash containing the name and version of a
-# package currently installed. Gets filtered using STD, SBO or ALL.
+# package currently installed. Gets filtered using STD, SBO, DIRTY or ALL.
 sub get_installed_packages {
   script_error('get_installed_packages requires an argument.') unless @_ == 1;
   my $filter = shift;
@@ -153,13 +166,18 @@ sub get_installed_packages {
   return [ map { +{ name => $_->{name}, version => $_->{version}, pkg => $_->{pkg} } } @pkgs ]
     if $filter eq 'ALL';
 
-  # Otherwise, mark the SBO ones and filter
+  # Otherwise, SlackBuilds with locations can be marked with SBO, and packages with
+  # the _SBo tag but no location can be marked with DIRTY
   my @sbos = map { $_->{name} } grep { $_->{build} =~ m/_SBo(|compat32)$/ }
     @pkgs;
   if (@sbos) {
     my %locations = get_sbo_locations(map { s/-compat32//gr } @sbos);
-    foreach my $sbo (@sbos) { $types{$sbo} = 'SBO'
-      if $locations{ $sbo =~ s/-compat32//gr }; }
+    foreach my $sbo (@sbos) {
+      $types{$sbo} = 'DIRTY';
+      if ($locations{ $sbo =~ s/-compat32//gr }) {
+         $types{$sbo} = 'SBO';
+      }
+    }
   }
   return [ map { +{ name => $_->{name}, version => $_->{version}, pkg => $_->{pkg} } }
     grep { $types{$_->{name}} eq $filter } @pkgs ];
