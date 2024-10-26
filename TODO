@@ -1,6 +1,5 @@
 TO DO
 
-* Save build options when built from a template as well
 * Punctuation and grammar fixes, especially for on-screen messaging
 * Update the zsh completions
 * Add bash completions
@@ -8,7 +7,7 @@ TO DO
 
 IN PROGRESS
 
-* Configurable git branch selection (RE #22)
+* Save build options when built from a template as well
 
 DONE
 
@@ -16,6 +15,7 @@ DONE
 * Compatible default repo for 15.0
 * sbocheck reports out-of-tree _SBo SlackBuilds (i.e., removed ones) (RE #70)
 * Detect BUILD bumps; optionally, upgrade (RE #68, #93)
+* Configurable git branch selection (RE #22)
 
 NOTE
 

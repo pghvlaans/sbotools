@@ -2,9 +2,9 @@
 .SH NAME
 .P
 sboconfig - set sbotools configuration options.
-.SH SYNAPSES
+.SH SYNOPSIS
 .P
-sboconfig [-h|-v] [-l] [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo]
+sboconfig [-h|-v] [-l] [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE]
 .SH DESCRIPTION
 .P
 sboconfig is a front-end for managing sbotools configuration options. The sbotools.conf(5) file can also be manually edited; any fields not relevant to sbotools configuration will be ignored.
@@ -23,6 +23,11 @@ Show version information.
 -l|--list
 .RS
 List out current configuration options, including unmodified default configuration options (meaning that if a given option is not set in the sbotools.conf(5) file, the default will be shown for that option). Also shows the flag to sboconfig used to set each option.
+.RE
+.P
+-B|--branch (FALSE|branch_name)
+.RS
+GIT_BRANCH: If FALSE, use the default git branch for the Slackware version, if any. If branch_name, attempt to change branches to branch_name when using sbosnap(1) or sbocheck(1) with an upstream git repository.
 .RE
 .P
 -b|--build-ignore (FALSE|TRUE)

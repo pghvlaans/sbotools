@@ -35,6 +35,10 @@ Options:
     show current options.
 
 Config options (defaults shown):
+  -B|--branch FALSE:
+      GIT_BRANCH: the name of a git branch to use, or FALSE for the Slackware version default.
+  -b|--build-ignore FALSE:
+      BUILD_IGNORE: if TRUE, only attempt to upgrade if the version number is different.
   -c|--clean FALSE:
       NOCLEAN: if TRUE, do NOT clean up after building by default.
   -d|--distclean FALSE:
@@ -51,8 +55,6 @@ Config options (defaults shown):
       SLACKWARE_VERSION: use the SBo repository for this version.
   -r|--repo FALSE:
       REPO: use a repository other than SBo.
-  -b|--build-ignore FALSE:
-      BUILD_IGNORE: if TRUE, only attempt to upgrade if the version number is different.
 
 EOF
 	return 1;
@@ -63,7 +65,7 @@ my %options;
 GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'noclean|c=s',
 	'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 	'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
-    'build-ignore|b=s');
+    'build-ignore|b=s', 'branch|B=s');
 
 if ($options{help}) { show_usage(); exit 0 }
 if ($options{version}) { show_version(); exit 0 }
@@ -78,6 +80,7 @@ my %valid_confs = (
 	'slackware-version' => 'SLACKWARE_VERSION',
 	'repo'              => 'REPO',
 	'build-ignore'   => 'BUILD_IGNORE',
+	'branch'            => 'GIT_BRANCH',
 );
 
 my %params = (
@@ -89,6 +92,7 @@ my %params = (
 	LOCAL_OVERRIDES   => 'o|--local-overrides',
 	SLACKWARE_VERSION => 'V|--slackware-version',
 	REPO              => 'r|--repo',
+	GIT_BRANCH        => 'B|--branch',
 	BUILD_IGNORE   => 'b|--build-ignore',
 );
 

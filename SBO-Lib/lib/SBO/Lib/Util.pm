@@ -40,6 +40,7 @@ our @EXPORT_OK = (
     get_arch
     get_kernel_version
     get_sbo_from_loc
+    get_slack_branch
     get_slack_version
     get_slack_version_url
     idx
@@ -115,6 +116,7 @@ our %config = (
   SLACKWARE_VERSION => 'FALSE',
   REPO => 'FALSE',
   BUILD_IGNORE => 'FALSE',
+  GIT_BRANCH => 'FALSE',
 );
 
 read_config();
@@ -202,15 +204,22 @@ will exit.
 
 =cut
 
-# %supported maps what's in /etc/slackware-version to an rsync or https URL
+# %supported maps what's in /etc/slackware-version to an https URL
 my %supported = (
-  '14.0' => 'rsync://slackbuilds.org/slackbuilds/14.0/',
-  '14.1' => 'rsync://slackbuilds.org/slackbuilds/14.1/',
-  '14.2' => 'rsync://slackbuilds.org/slackbuilds/14.2/',
-  '15.0' => 'rsync://slackbuilds.org/slackbuilds/15.0/',
+  '14.0' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
+  '14.1' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
+  '14.2' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
+  '15.0' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
   '15.0+' => 'https://github.com/Ponce/slackbuilds.git',
   '15.1' => 'https://github.com/Ponce/slackbuilds.git',
   current => 'https://github.com/Ponce/slackbuilds.git',
+);
+
+my %branch = (
+  '14.0' => '14.0',
+  '14.1' => '14.1',
+  '14.2' => '14.2',
+  '15.0' => '15.0',
 );
 
 sub get_slack_version {
@@ -245,6 +254,19 @@ sub get_slack_version_url {
   return $supported{get_slack_version()};
 }
 
+=head2 get_slack_branch
+
+  my $url = get_slack_branch();
+
+C<get_slack_branch()> returns the default git branch for the given slackware
+version, if any. If the pulled repository does not have this branch, an onscreen
+message will appear.
+
+=cut
+
+sub get_slack_branch {
+  return $branch{get_slack_version()};
+}
 
 =head2 idx
 

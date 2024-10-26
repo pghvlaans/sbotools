@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '2.7';
 
-use SBO::Lib::Util qw/ %config prompt usage_error get_slack_version get_slack_version_url script_error open_fh open_read in _ERR_DOWNLOAD /;
+use SBO::Lib::Util qw/ %config prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in _ERR_DOWNLOAD /;
 
 use Cwd;
 use File::Copy;
@@ -229,6 +229,13 @@ sub git_sbo_tree {
   my $url = shift;
   my $cwd = getcwd();
   my $res;
+  my $branch;
+  my $branchres;
+  if ($config{GIT_BRANCH} eq 'FALSE') {
+    $branch = get_slack_branch();
+  } else {
+    $branch = $config{GIT_BRANCH};
+  }
   if (-d "$repo_path/.git" and check_git_remote($repo_path, $url)) {
     _race::cond '$repo_path can be deleted after -d check';
     chdir $repo_path or return 0;
@@ -237,12 +244,23 @@ sub git_sbo_tree {
       _race::cond 'git repo could be changed or deleted here';
       die unless system(qw! git reset --hard origin !) == 0;
       unlink "$repo_path/SLACKBUILDS.TXT";
+      if ($branch) {
+        $branchres=system(qw/ git checkout /, $branch) == 0;
+        if (not $branchres) { say "\nThis git repository does not have a branch named $branch. Remaining in the default branch.\n"; }
+      }
       1;
     };
   } else {
     chdir $config{SBO_HOME} or return 0;
     remove_tree($repo_path) if -d $repo_path;
     $res = system(qw/ git clone --no-local /, $url, $repo_path) == 0;
+    if ($res) {
+      chdir $repo_path or return 0;
+      if($branch) {
+        $branchres=system(qw/ git checkout /, $branch) == 0;
+        if (not $branchres) { say "\nThis git repository does not have a branch named $branch. Remaining in the default branch.\n"; }
+      }
+    }
   }
   _race::cond '$cwd could be deleted here';
   return 1 if chdir $cwd and $res;

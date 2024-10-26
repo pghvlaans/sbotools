@@ -2,9 +2,9 @@
 .SH NAME
 .P
 sbofind - search slackbuilds.org tree for a given name
-.SH SYNAPSES
+.SH SYNOPSIS
 .P
-sbofind [-h|-v] [-ir] search_term
+sbofind [-h|-v] [-etirq] search_term
 .SH DESCRIPTION
 .P
 sbofind searches the names of all slackbuilds for a given term. It reports back any slackbuilds found along with the path for each. This is equivalent to running "cd /usr/ports; make search name=$search_term display=name,path" on a FreeBSD system. If the repository includes a TAGS.txt file, that will be used to find more results as well.
