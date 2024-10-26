@@ -141,10 +141,14 @@ sub get_update_list {
 	return @listing;
 }
 
-# print list of updates
-sub print_upgrades {
+# print a list
+sub print_output {
 	my $logfile = shift;
 	my @listing = @_;
+	my $message = "";
+	if($logfile eq '/var/log/sbocheck.log') { $message="\nNo updates available.\n"; }
+	if($logfile eq '/var/log/sbocheck-bumps.log') { $message="\nNo build numbers differ.\n"; }
+	if($logfile eq '/var/log/sbocheck-out-of-tree.log') { $message="\nNo SlackBuilds marked _SBo are out-of-tree.\n"; }
 	if (@listing) {
 		print "\n";
 		say $_ for @listing;
@@ -158,32 +162,19 @@ sub print_upgrades {
 		} else {
 			say {$log_fh} $_ for @listing;
 			close $log_fh;
-			say "A copy of the above result is kept in $logfile\n";
+			say "A copy of the above result is kept in $logfile.\n";
 		}
 	} else {
-		say "\nNo updates available.";
-	}
-	return 1;
-}
-
-# print list of removed builds
-sub print_removed {
-	my @listing = @_;
-	if (@listing) {
-		print "\n";
-		say $_ for @listing;
-		print "\n";
-	} else {
-		say "\nNo SlackBuilds marked _SBo are out-of-tree.\n"
+		say "$message";
 	}
 	return 1;
 }
 
 my @listing = get_update_list('VERS');
-print_upgrades('/var/log/sbocheck.log', @listing);
+print_output('/var/log/sbocheck.log', @listing);
 my @bumps = get_update_list('BUILD');
-print_upgrades('/var/log/sbocheck-bumps.log', @bumps);
+print_output('/var/log/sbocheck-bumps.log', @bumps);
 my @removed = get_removed_list();
-print_removed(@removed);
+print_output('/var/log/sbocheck-out-of-tree.log', @removed);
 
 exit 0;
