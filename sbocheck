@@ -68,9 +68,11 @@ sub get_removed_list {
 
 # retrieve and format list of available updates
 sub get_update_list {
-	print "Checking for updated SlackBuilds...\n";
-	my @updates = @{ get_available_updates() };
-	my @outdated = get_local_outdated_versions();
+	my $filter = shift;
+	if ($filter eq 'VERS') { print "Checking for updated SlackBuilds...\n"; }
+	if ($filter eq 'BUILD') { print "Checking for bumped SlackBuilds...\n"; }
+	my @updates = @{ get_available_updates($filter) };
+	my @outdated = get_local_outdated_versions($filter);
 	return() unless @outdated + @updates;
 
 	my %updates;
@@ -80,6 +82,7 @@ sub get_update_list {
 			available => $update->{update},
 			local => is_local($update->{name})
 		};
+		if ($filter eq 'BUILD') { $updates{$update->{name}}{available} = $update->{bump}; }
 	}
 	for my $update (@outdated) {
 		my $name = $update->{name};
@@ -101,13 +104,16 @@ sub get_update_list {
 
 		my $available = '';
 		if (defined $info->{available} and defined $info->{sbo}) {
-			$available = sprintf "needs updating (%s from overrides, %s from SBo)", $info->{available}, $info->{sbo};
+			if ($filter eq 'VERS') { $available = sprintf "needs updating (%s from overrides, %s from SBo)", $info->{available}, $info->{sbo}; }
+			if ($filter eq 'BUILD') { $available = sprintf "was bumped (build %s from overrides, %s from SBo)", $info->{available}, $info->{sbo}; }
 		}
 		elsif ($info->{available}) {
-			$available = sprintf "needs updating (%s from %s)", $info->{available}, $info->{local} ? "overrides" : "SBo";
+			if ($filter eq 'VERS') { $available = sprintf "needs updating (%s from %s)", $info->{available}, $info->{local} ? "overrides" : "SBo"; }
+			if ($filter eq 'BUILD') { $available = sprintf "was bumped (build %s from %s)", $info->{available}, $info->{local} ? "overrides" : "SBo"; }
 		}
 		else {
-			$available = sprintf "override outdated (%s from SBo)", $info->{sbo};
+			if ($filter eq 'VERS') { $available = sprintf "override outdated (%s from SBo)", $info->{sbo}; }
+			if ($filter eq 'BUILD') { $available = sprintf "was bumped (build %s from SBo)", $info->{sbo}; }
 		}
 		$info->{name_str} = $current;
 		$info->{upd_str} = $available;
@@ -137,13 +143,13 @@ sub get_update_list {
 
 # print list of updates
 sub print_upgrades {
+	my $logfile = shift;
 	my @listing = @_;
 	if (@listing) {
 		print "\n";
 		say $_ for @listing;
 		print "\n";
 		# save a log of available updates
-		my $logfile = '/var/log/sbocheck.log';
 		unlink $logfile if -f $logfile;
 		my ($log_fh, $exit) = open_fh($logfile, '>');
 		# non-fatal
@@ -173,8 +179,10 @@ sub print_removed {
 	return 1;
 }
 
-my @listing = get_update_list();
-print_upgrades(@listing);
+my @listing = get_update_list('VERS');
+print_upgrades('/var/log/sbocheck.log', @listing);
+my @bumps = get_update_list('BUILD');
+print_upgrades('/var/log/sbocheck-bumps.log', @bumps);
 my @removed = get_removed_list();
 print_removed(@removed);
 

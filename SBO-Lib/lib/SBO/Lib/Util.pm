@@ -35,6 +35,7 @@ my @EXPORT_CONFIG = qw{
 
 our @EXPORT_OK = (
   qw{
+    build_cmp
     check_multilib
     get_arch
     get_kernel_version
@@ -97,7 +98,7 @@ the values will change according to the configuration, and C<SBO_HOME> will by
 default get changed to C</usr/sbo>.
 
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
-C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>.
+C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>
 
 =cut
 
@@ -113,6 +114,7 @@ our %config = (
   LOCAL_OVERRIDES => 'FALSE',
   SLACKWARE_VERSION => 'FALSE',
   REPO => 'FALSE',
+  BUILD_IGNORE => 'FALSE',
 );
 
 read_config();
@@ -555,6 +557,24 @@ sub version_cmp {
   }
 
   versioncmp($v1, $v2);
+}
+
+=head2 build_cmp
+
+  my $cmp = build_cmp($build1, $build2, $ver1, $ver2);
+
+C<build_cmp()> will compare C<$build1> with C<$build2> while checking that C<$ver1>
+and C<$ver2> are different. If the build numbers are not the same and the version
+numbers are, upgrading for a script bump may be in order.
+
+=cut
+
+sub build_cmp {
+  my ($b1, $b2, $v1, $v2) = @_;
+  if (versioncmp($v1, $v2)) { return 0; }
+  if ($b1 != $b2) { return 1; }
+
+  return 0;
 }
 
 # _race::cond will allow both documenting and testing race conditions

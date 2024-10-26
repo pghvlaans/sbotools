@@ -25,6 +25,11 @@ Show version information.
 List out current configuration options, including unmodified default configuration options (meaning that if a given option is not set in the sbotools.conf(5) file, the default will be shown for that option). Also shows the flag to sboconfig used to set each option.
 .RE
 .P
+-b|--build-ignore (FALSE|TRUE)
+.RS
+BUILD_IGNORE: If TRUE, only do upgrades if the version number differs. By default, upgrades are done when the build number of the SlackBuild differs as well.
+.RE
+.P
 -c|--noclean (FALSE|TRUE)
 .RS
 NOCLEAN: If TRUE, then DO NOT clean working directories after building the slackbuild. These are the directories where the source is unpacked and compiled, and where the package is put together in, which are under /tmp/SBo (or $TMP). By default, these directories are removed after building an slackbuild. Setting this option to TRUE causes the working directories to not be cleaned by default. This can be overridden when running sboupgrade(1)/sboinstall(1).

@@ -15,8 +15,10 @@ our @EXPORT_OK = qw{
   check_x32
   get_download_info
   get_from_info
+  get_orig_build_number
   get_orig_version
   get_requires
+  get_sbo_build_number
   get_sbo_version
   parse_info
 };
@@ -169,6 +171,26 @@ sub get_orig_version {
   return get_sbo_version($location);
 }
 
+=head2 get_orig_build_number
+
+  my $build = get_orig_build_number($sbo);
+
+C<get_orig_build_number()> returns the build number in the SlackBuilds.org tree for the
+given C<$sbo>.
+
+=cut
+
+sub get_orig_build_number {
+  script_error('get_orig_build_number requires an argument.') unless @_ == 1;
+  my $sbo = shift;
+
+  my $location = get_orig_location($sbo);
+
+  return $location if not defined $location;
+
+  return get_sbo_build_number($location);
+}
+
 =head2 get_requires
 
   my $reqs = get_requires($sbo);
@@ -199,6 +221,22 @@ sub get_sbo_version {
   script_error('get_sbo_version requires an argument.') unless @_ == 1;
   my $version = get_from_info(LOCATION => shift, GET => 'VERSION');
   return $version->[0];
+}
+
+# find the build number in the tree for a given sbo (provided a location)
+sub get_sbo_build_number {
+  script_error('get_sbo_build_number requires an argument.') unless @_ == 1;
+
+  my $location = shift;
+  my $sbo = get_sbo_from_loc($location);
+
+  my $build = `grep -hm 1 "^BUILD=" $location/$sbo.SlackBuild`;
+  usage_error("get_from_info: could not read $location/$sbo.SlackBuild.") unless
+    defined $build;
+
+  $build =~ s/\D//g;
+
+  return $build;
 }
 
 =head2 parse_info

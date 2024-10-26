@@ -6,9 +6,9 @@ use warnings;
 
 our $VERSION = '2.7';
 
-use SBO::Lib::Util qw/ %config script_error open_read version_cmp /;
+use SBO::Lib::Util qw/ %config build_cmp script_error open_read version_cmp /;
 use SBO::Lib::Tree qw/ get_sbo_location get_sbo_locations is_local /;
-use SBO::Lib::Info qw/ get_orig_version get_sbo_version /;
+use SBO::Lib::Info qw/ get_orig_build_number get_sbo_build_number get_orig_version get_sbo_build_number get_sbo_version /;
 
 use Exporter 'import';
 
@@ -57,9 +57,13 @@ installed and available versions.
 
 =cut
 
-# for each installed sbo, find out whether or not the version in the tree is
-# newer, and compile an array of hashes containing those which are
+# for each installed sbo, find out whether or not the version or build number in
+# the tree is newer, and compile an array of hashes containing those which are.
+# Takes BUILD for build number only, VERS for version only and BOTH for both
 sub get_available_updates {
+    script_error('get_available_updates requires an argument.') unless @_ == 1;
+
+    my $filter = shift;
     my @updates;
     my $pkg_list = get_installed_packages('SBO');
 
@@ -68,11 +72,21 @@ sub get_available_updates {
         next unless $location;
 
         my $version = get_sbo_version($location);
-        if (version_cmp($version, $pkg->{version}) != 0) {
-            push @updates, { name => $pkg->{name}, installed => $pkg->{version}, update => $version };
+	my $bump = get_sbo_build_number($location);
+	if ($filter eq 'VERS') {
+            if (version_cmp($version, $pkg->{version}) != 0) {
+                push @updates, { name => $pkg->{name}, installed => $pkg->{version}, build => $pkg->{numbuild}, update => $version };
+            }
+        } elsif ($filter eq 'BUILD') {
+	    if (build_cmp($bump, $pkg->{numbuild}, $version, $pkg->{version})) {
+                push @updates, { name => $pkg->{name}, installed => $pkg->{version}, build => $pkg->{numbuild}, update => $version, bump => $bump };
+            }
+        } else {
+            if (version_cmp($version, $pkg->{version}) != 0 || build_cmp($bump, $pkg->{numbuild}, $version, $pkg->{version})) {
+                push @updates, { name => $pkg->{name}, installed => $pkg->{version}, build => $pkg->{numbuild}, update => $version, bump => $bump };
+	    }
         }
     }
-
     return \@updates;
 }
 
@@ -158,12 +172,14 @@ sub get_installed_packages {
     $pkg =~ s!^\Q$pkg_db/\E!!;
     my ($name, $version, $build) = $pkg =~ m#^([^/]+)-([^-]+)-[^-]+-([^-]+)$#
       or next;
-    push @pkgs, { name => $name, version => $version, build => $build, pkg => $pkg };
+    my $numbuild = $build;
+    $numbuild =~ s/_SBo(|compat32)$//g ;
+    push @pkgs, { name => $name, version => $version, build => $build, numbuild => $numbuild, pkg => $pkg };
     $types{$name} = 'STD';
   }
 
   # If we want all packages, let's just return them all
-  return [ map { +{ name => $_->{name}, version => $_->{version}, pkg => $_->{pkg} } } @pkgs ]
+  return [ map { +{ name => $_->{name}, version => $_->{version}, build=> $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg} } } @pkgs ]
     if $filter eq 'ALL';
 
   # Otherwise, SlackBuilds with locations can be marked with SBO, and packages with
@@ -179,21 +195,24 @@ sub get_installed_packages {
       }
     }
   }
-  return [ map { +{ name => $_->{name}, version => $_->{version}, pkg => $_->{pkg} } }
+  return [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg} } }
     grep { $types{$_->{name}} eq $filter } @pkgs ];
 }
 
 =head2 get_local_outdated_versions
 
-  my @outdated = get_local_outdated_versions();
+  my @outdated = get_local_outdated_versions($filter);
 
 C<get_local_outdated_versions()> checks the installed SBo packages and returns
 a list of the ones for which the C<LOCAL_OVERRIDES> version is different to the
-the version on SlackBuilds.org.
+the version on SlackBuilds.org. Use VERS for version upgrades only, BUILD for
+build bumps only or BOTH for both.
 
 =cut
 
 sub get_local_outdated_versions {
+  script_error('get_local_outdated_versions requires an argument.') unless @_ == 1;
+  my $filter = shift;
   my @outdated;
 
   my $local = $config{LOCAL_OVERRIDES};
@@ -204,7 +223,17 @@ sub get_local_outdated_versions {
     foreach my $sbo (@local) {
       my $orig = get_orig_version($sbo->{name});
       next if not defined $orig;
-      next if not version_cmp($orig, $sbo->{version});
+      if ($filter eq 'VERS') { next if not version_cmp($orig, $sbo->{version}); }
+      if ($filter eq 'BUILD') {
+        if (build_cmp(get_orig_build_number($sbo), $sbo->{numbuild}, $orig, $sbo->{version})) {
+	  next;
+        }
+      }
+      if ($filter eq 'BOTH') {
+	if (build_cmp(get_orig_build_number($sbo), $sbo->{numbuild}, $orig, $sbo->{version}) && not version_cmp($orig, $sbo->{version})) {
+          next;
+        }
+      }
 
       push @outdated, { %$sbo, orig => $orig };
     }

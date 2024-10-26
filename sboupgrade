@@ -43,6 +43,8 @@ Options (defaults shown first where applicable):
     non-interactive; skips README and all prompts.
   -z|--force-reqs:
     when used with -f, will force rebuilding an SBo's requirements as well.
+  -b|--build-ignore (FALSE|TRUE):
+    if TRUE, only offer to upgrade on version changes (not build number changes).
   --all
     this flag will upgrade everything reported by sbocheck(1).
 
@@ -53,6 +55,7 @@ EOF
 my $noclean = $config{NOCLEAN};
 my $distclean = $config{DISTCLEAN};
 my $jobs = $config{JOBS};
+my $build_ignore = $config{BUILD_IGNORE};
 my ($help, $vers, $force, $no_install, $non_int, $force_reqs, $all);
 
 GetOptions(
@@ -65,25 +68,31 @@ GetOptions(
 	'jobs|j=s'          => \$jobs,
 	'nointeractive|r'   => \$non_int,
 	'force-reqs|z'      => \$force_reqs,
+	'build-ignore|b=s'	=> \$build_ignore,
 	'all'               => \$all,
 );
 
 if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
 
+$noclean = $noclean eq 'TRUE' ? 1 : 0;
+$distclean = $distclean eq 'TRUE' ? 1 : 0;
+$build_ignore = $build_ignore eq 'TRUE' ? 1 : 0;
+
 my $updates;
 if ($all) {
 	slackbuilds_or_fetch();
 	print "Checking for updated SlackBuilds...\n";
-	$updates = get_available_updates();
+	if ($build_ignore) {
+		$updates = get_available_updates('VERS');
+	} else {
+		$updates = get_available_updates('BOTH');
+	}
 	push @ARGV, map { $_->{name} } @$updates;
 	if (!@ARGV) { print "Nothing to update.\n"; exit 0 }
 }
 
 if (!@ARGV) { show_usage(); exit 1 }
-
-$noclean = $noclean eq 'TRUE' ? 1 : 0;
-$distclean = $distclean eq 'TRUE' ? 1 : 0;
 
 if ($jobs) {
 	usage_error("You have provided an invalid value for -j|--jobs")
@@ -125,7 +134,11 @@ my %inst_names;
 $inst_names{$_} = 1 for @$inst_names;
 my %updates;
 if (not $non_int or not $force) {
-	$updates = get_available_updates() if not defined $updates;
+	if ($build_ignore) {
+		$updates = get_available_updates('VERS') if not defined $updates;
+	} else {
+		$updates = get_available_updates('BOTH') if not defined $updates;
+	}
 	$updates{$$_{name}} = 1 for @$updates;
 }
 

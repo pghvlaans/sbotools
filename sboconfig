@@ -51,6 +51,8 @@ Config options (defaults shown):
       SLACKWARE_VERSION: use the SBo repository for this version.
   -r|--repo FALSE:
       REPO: use a repository other than SBo.
+  -b|--build-ignore FALSE:
+      BUILD_IGNORE: if TRUE, only attempt to upgrade if the version number is different.
 
 EOF
 	return 1;
@@ -60,7 +62,8 @@ my %options;
 
 GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'noclean|c=s',
 	'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
-	'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s');
+	'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
+    'build-ignore|b=s');
 
 if ($options{help}) { show_usage(); exit 0 }
 if ($options{version}) { show_version(); exit 0 }
@@ -74,6 +77,7 @@ my %valid_confs = (
 	'local-overrides'   => 'LOCAL_OVERRIDES',
 	'slackware-version' => 'SLACKWARE_VERSION',
 	'repo'              => 'REPO',
+	'build-ignore'   => 'BUILD_IGNORE',
 );
 
 my %params = (
@@ -85,6 +89,7 @@ my %params = (
 	LOCAL_OVERRIDES   => 'o|--local-overrides',
 	SLACKWARE_VERSION => 'V|--slackware-version',
 	REPO              => 'r|--repo',
+	BUILD_IGNORE   => 'b|--build-ignore',
 );
 
 if (exists $options{list}) {
@@ -127,6 +132,9 @@ if (exists $changes{LOCAL_OVERRIDES}) {
 }
 if (exists $changes{SLACKWARE_VERSION}) {
 	usage_error("$warn -V") unless $changes{SLACKWARE_VERSION} =~ m/^(\d+\.\d+|FALSE)$/;
+}
+if (exists $changes{BUILD_IGNORE}) {
+	usage_error("$warn -s") unless $changes{BUILD_IGNORE} =~ /^(TRUE|FALSE)$/;
 }
 
 sub config_write {
