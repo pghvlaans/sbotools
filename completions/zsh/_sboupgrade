@@ -3,7 +3,7 @@
 # sbotools: https://pink-mist.github.io/sbotools/
 
 # get a list of available upgrades
-sboupdates=( ${(uf)"$(perl -MSBO::Lib::Pkgs=get_available_updates -E 'say $_->{name} for @{ get_available_updates; }')"} )
+sboupdates=( ${(uf)"$(perl -MSBO::Lib::Pkgs=get_available_updates -E 'say $_->{name} for @{ get_available_updates("BOTH"); }')"} )
 
 _arguments -s -C \
 	   - info \
@@ -11,6 +11,7 @@ _arguments -s -C \
 	   '(-)'{-v,--version}'[Show version information.]:' \
 	   - commands \
 	   '(${sboupdates})--all[Upgrade all from sbocheck.]' \
+	   '(-b --build-ignore)'{-b,--build-ignore}'[If TRUE, then only do upgrades if the version number differs.]:ignore build number?:((TRUE\:"Version upgrades only" FALSE\:"Script bump upgrades"))' \
 	   '(-c --noclean)'{-c,--noclean}'[If TRUE, then do not clean working directories after build.]:clean work dirs?:((TRUE\:"Clean works directories" FALSE\:"Keep work directories"))' \
 	   '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code after building.]:clean source?:((TRUE\:"Remove source" FALSE\:"Keep source"))' \
 	   '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \

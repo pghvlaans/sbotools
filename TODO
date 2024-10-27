@@ -5,7 +5,6 @@ TO DO
 
 IN PROGRESS
 
-* Update the zsh completions
 * Add bash completions
 
 DONE
@@ -15,6 +14,7 @@ DONE
 * sbocheck reports out-of-tree _SBo SlackBuilds (i.e., removed ones) (RE #70)
 * Detect BUILD bumps; optionally, upgrade (RE #68, #93)
 * Configurable git branch selection (RE #69)
+* Update the zsh completions
 
 NOTE
 
