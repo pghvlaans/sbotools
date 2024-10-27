@@ -3,10 +3,6 @@ TO DO
 * Release version 2.8 (but probably sbotools3 1.0)
 * Punctuation and grammar fixes, especially for on-screen messaging
 
-MAYBE NEXT TIME
-
-* Install a default configuration file (would require a rework of sboconfig)
-
 DONE
 
 * Save the build options when the SlackBuild runs (all cases); clean with sboclean
@@ -16,6 +12,7 @@ DONE
 * Use git for default repos; 15.0-compatible default repo
 * Add bash completions
 * Update the zsh completions
+* Install a default configuration file (and tweak sboconfig to work better with it)
 
 NOTE
 
