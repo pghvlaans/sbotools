@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '2.7';
 
-use SBO::Lib::Util qw/ :const prompt script_error get_sbo_from_loc get_arch check_multilib uniq %config in /;
+use SBO::Lib::Util qw/ :const prompt script_error get_sbo_from_loc get_arch check_multilib uniq save_options %config in /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
@@ -462,7 +462,10 @@ sub perform_sbo {
   if ($args{JOBS} and $args{JOBS} ne 'FALSE') {
     $changes{jobs} = 1;
   }
-  $cmd .= " $args{OPTS}" if $args{OPTS};
+  if ($args{OPTS}) {
+    save_options($sbo, $args{OPTS});
+    $cmd .= " $args{OPTS}";
+  }
   $cmd .= " MAKEOPTS=\"-j$args{JOBS}\"" if $changes{jobs};
 
   # set TMP/OUTPUT if set in the environment

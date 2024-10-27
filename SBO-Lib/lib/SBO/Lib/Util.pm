@@ -7,6 +7,7 @@ use warnings;
 our $VERSION = '2.7';
 
 use Exporter 'import';
+use File::Copy;
 use Sort::Versions;
 
 my $consts;
@@ -50,6 +51,7 @@ our @EXPORT_OK = (
     open_read
     print_failures
     prompt
+    save_options
     script_error
     show_version
     slurp
@@ -447,6 +449,36 @@ sub read_config {
     warn "Unable to open $conf_file.\n" if -f $conf_file;
   }
   $config{SBO_HOME} = '/usr/sbo' if $config{SBO_HOME} eq 'FALSE';
+}
+
+=head2 save_options
+
+  save_options($sbo, $opts)
+
+save_options() will save build options to /var/log/sbotools/sbo.
+
+=cut
+
+sub save_options {
+  my $sbo = shift;
+  my $args = shift;
+  my $argdir = "/var/log/sbotools";
+  my $logfile = "$argdir/$sbo";
+
+  if(! -d $argdir) { mkdir $argdir; }
+  if(-f $logfile) { move($logfile, "$logfile.bk"); }
+  my ($args_fh, $exit) = open_fh($logfile, '>');
+  if ($exit) {
+    warn $args_fh;
+    move("$logfile.bk", $logfile);
+    return 0;
+  } else {
+    print $args_fh $args;
+    close $args_fh;
+    if (-f "$logfile.bk") { unlink("$logfile.bk"); }
+    say "\nA copy of the options has been saved to $logfile.";
+  }
+  return 1;
 }
 
 =head2 script_error

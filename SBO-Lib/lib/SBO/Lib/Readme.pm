@@ -9,8 +9,6 @@ our $VERSION = '2.7';
 use SBO::Lib::Util qw/ prompt script_error slurp open_read open_fh _ERR_OPENFH usage_error /;
 use SBO::Lib::Tree qw/ is_local /;
 
-use File::Copy;
-
 use Exporter 'import';
 
 our @EXPORT_OK = qw{
@@ -72,7 +70,7 @@ sub ask_opts {
       warn $prev_fh;
     } else {
       my $prev_opts = <$prev_fh>;
-      if(prompt("\nIt looks like options were previously specified for $sbo:\n\n$prev_opts\n\nWould you like to use these options to build $sbo?", default => 'no')) {
+      if(prompt("It looks like options were previously specified for $sbo:\n\n$prev_opts\n\nWould you like to use these options to build $sbo?", default => 'no')) {
         my $opts = $prev_opts;
 	return $opts;
       }
@@ -90,26 +88,6 @@ sub ask_opts {
       warn "Invalid input received.\n";
       $opts = $ask->();
       return() unless $opts;
-    }
-    if (defined $opts) {
-      if (!-d "/var/log/sbotools") {
-        mkdir "/var/log/sbotools";
-      }
-      if (-f $opts_log) {
-        move($opts_log, $opts_bk);
-      }
-      my ($opts_fh, $exit) = open_fh($opts_log, '>');
-      if ($exit) {
-        warn $opts_fh;
-        move($opts_bk, $opts_log);
-      } else {
-        print $opts_fh $opts;
-        close $opts_fh;
-        if (-f $opts_bk) {
-          unlink($opts_bk);
-        }
-        say "\nA copy of the options has been saved to $opts_log.\n";
-      }
     }
     return $opts;
   }
