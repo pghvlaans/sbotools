@@ -1,8 +1,15 @@
-# sbotools [![Build Status](https://travis-ci.org/pink-mist/sbotools.svg)](https://travis-ci.org/pink-mist/sbotools)
+# sbotools
 
 **[sbotools](https://pink-mist.github.io/sbotools/)** provides a ports-like interface to [slackbuilds.org](http://www.slackbuilds.org/).
 
 ## Changes
+* Post-Fork
+  * Change the git branch to match the Slackware version, or to a user-configured branch
+  * Change the default URLs to support Slackware 15.0 and use git repositories
+  * Detect build number changes and optionally upgrade
+  * Detect and report out-of-tree _SBo SlackBuilds with sbocheck
+  * Save any build options when running a SlackBuild
+
 * 2.7 - 2019-04-28
   * Actually fix the sbofind -e bug #71
       
