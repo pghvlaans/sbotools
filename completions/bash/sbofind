@@ -1,0 +1,37 @@
+_sbofind() {
+  local i cur prev opts cmd
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+  cmd=""
+  opts=""
+
+  for i in ${COMP_WORDS[@]} ; do
+    case "${cmd},${i}" in
+      ",$1")
+        cmd="sbofind"
+        ;;
+      *)
+        ;;
+    esac
+  done
+
+  case "${cmd}" in
+    sbofind)
+      opts="-h -v -e -t -i -r -q --help --version --exact --no-tags --info --readme --queue"
+      if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+        return 0
+      fi
+      ;;
+    *)
+      return 0
+      ;;
+  esac
+}
+
+if [[ "${BASH_VERSINFO[0]}" -eq 4 && "${BASH_VERSINFO[1]}" -ge 4 || "${BASH_VERSINFO[0]}" -gt 4 ]]; then
+    complete -F _sbofind -o nosort -o bashdefault -o default sbofind
+else
+    complete -F _sbofind -o bashdefault -o default sbofind
+fi

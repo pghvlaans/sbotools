@@ -1,0 +1,51 @@
+_sboclean() {
+  local i cur prev opts cmd
+  COMPREPLY=()
+  SAVED="$(find /var/log/sbotools -type f -exec basename {} \; | tr \\n ' ')"
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+  cmd=""
+  opts=""
+
+  for i in ${COMP_WORDS[@]} ; do
+    case "${cmd},${i}" in
+      ",$1")
+        cmd="sboclean"
+        ;;
+      *)
+        ;;
+    esac
+  done
+
+  case "${cmd}" in
+    sboclean)
+      opts="-h -v -d -w -o -i --help --version --dist --work --options --interactive"
+      if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+        return 0
+      fi
+
+      case "${prev}" in
+        -h|--help|-v|--version|-d|--dist|-w|--work|-i|--interactive)
+          return 0
+          ;;
+        -o|--options)
+          COMPREPLY=( $(compgen -W "ALL $SAVED" -- "${cur}") )
+          return 0
+          ;;
+        *)
+          return 0
+          ;;
+      esac
+      ;;
+    *)
+      return 0
+    ;;
+  esac
+}
+
+if [[ "${BASH_VERSINFO[0]}" -eq 4 && "${BASH_VERSINFO[1]}" -ge 4 || "${BASH_VERSINFO[0]}" -gt 4 ]]; then
+    complete -F _sboclean -o nosort -o bashdefault -o default sboclean
+else
+    complete -F _sboclean -o bashdefault -o default sboclean
+fi

@@ -48,10 +48,11 @@ find -L . \
 SCRIPTS="check clean config find install remove snap upgrade"
 MANS="man1 man5"
 
-mkdir -p $PKG/usr/sbin $PKG/usr/share/zsh/site-functions
+mkdir -p $PKG/usr/sbin $PKG/usr/share/zsh/site-functions $PKG/usr/share/bash-completion/completions
 for i in $SCRIPTS; do
   cp sbo$i $PKG/usr/sbin/sbo$i
   cp completions/zsh/_sbo$i $PKG/usr/share/zsh/site-functions/_sbo$i
+  cp completions/bash/sbo$i $PKG/usr/share/bash-completion/completions/sbo$i
 done
 
 for i in $MANS; do

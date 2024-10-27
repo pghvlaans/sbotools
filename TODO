@@ -1,19 +1,20 @@
 TO DO
 
+* Release version 2.8 (but probably sbotools3 1.0)
 * Punctuation and grammar fixes, especially for on-screen messaging
-* Release version 2.8 (or version 1.0 of a renamed fork)
 
-IN PROGRESS
+MAYBE NEXT TIME
 
-* Add bash completions
+* Install a default configuration file (would require a rework of sboconfig)
 
 DONE
 
 * Save the build options when the SlackBuild runs (all cases); clean with sboclean
-* Compatible default repo for 15.0
 * sbocheck reports out-of-tree _SBo SlackBuilds (i.e., removed ones) (RE #70)
 * Detect BUILD bumps; optionally, upgrade (RE #68, #93)
 * Configurable git branch selection (RE #69)
+* Use git for default repos; 15.0-compatible default repo
+* Add bash completions
 * Update the zsh completions
 
 NOTE
