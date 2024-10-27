@@ -10,6 +10,7 @@
   * Detect and report out-of-tree _SBo SlackBuilds with sbocheck
   * Save any build options when running a SlackBuild
   * Install bash completions; zsh completions have been updated
+  * Install a default configuration file; tweak sboconfig to play somewhat nicely with it
 
 * 2.7 - 2019-04-28
   * Actually fix the sbofind -e bug #71
