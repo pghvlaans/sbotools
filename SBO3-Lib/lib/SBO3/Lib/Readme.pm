@@ -1,4 +1,4 @@
-package SBO::Lib::Readme;
+package SBO3::Lib::Readme;
 
 use 5.016;
 use strict;
@@ -6,8 +6,8 @@ use warnings;
 
 our $VERSION = '2.7';
 
-use SBO::Lib::Util qw/ prompt script_error slurp open_read open_fh _ERR_OPENFH usage_error /;
-use SBO::Lib::Tree qw/ is_local /;
+use SBO3::Lib::Util qw/ prompt script_error slurp open_read open_fh _ERR_OPENFH usage_error /;
+use SBO3::Lib::Tree qw/ is_local /;
 
 use Exporter 'import';
 
@@ -31,11 +31,11 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Readme - Routines for interacting with a typical SBo README file.
+SBO3::Lib::Readme - Routines for interacting with a typical SBo README file.
 
 =head1 SYNOPSIS
 
-  use SBO::Lib::Readme qw/ get_readme_contents /;
+  use SBO3::Lib::Readme qw/ get_readme_contents /;
 
   print get_readme_contents($sbo);
 

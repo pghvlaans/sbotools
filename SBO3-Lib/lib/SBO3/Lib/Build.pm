@@ -1,4 +1,4 @@
-package SBO::Lib::Build;
+package SBO3::Lib::Build;
 
 use 5.016;
 use strict;
@@ -6,10 +6,10 @@ use warnings;
 
 our $VERSION = '2.7';
 
-use SBO::Lib::Util qw/ :const prompt script_error get_sbo_from_loc get_arch check_multilib uniq save_options %config in /;
-use SBO::Lib::Tree qw/ get_sbo_location /;
-use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires /;
-use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
+use SBO3::Lib::Util qw/ :const prompt script_error get_sbo_from_loc get_arch check_multilib uniq save_options %config in /;
+use SBO3::Lib::Tree qw/ get_sbo_location /;
+use SBO3::Lib::Info qw/ get_sbo_version check_x32 get_requires /;
+use SBO3::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
 
 use Exporter 'import';
 use Fcntl qw(F_SETFD F_GETFD);
@@ -52,11 +52,11 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Build - Routines for building slackware packages from SlackBuilds.org.
+SBO3::Lib::Build - Routines for building slackware packages from SlackBuilds.org.
 
 =head1 SYNOPSIS
 
-  use SBO::Lib::Build qw/ perform_sbo /;
+  use SBO3::Lib::Build qw/ perform_sbo /;
 
   my ($foo, $bar, $exit) = perform_sbo(LOCATION => $location, ARCH => 'x86_64');
 
@@ -316,7 +316,7 @@ sub get_tmp_extfn {
 
 =head2 make_clean
 
-  make_clean(SBO => $sbo, SRC => $src, VERSION => $ver);
+  make_clean(SBO3 => $sbo, SRC => $src, VERSION => $ver);
 
 C<make_clean()> removes source directories, package directories, and compat32
 directories that are left over from a slackbuild run.
@@ -328,29 +328,29 @@ It has no useful return value.
 # remove work directories (source and packaging dirs under /tmp/SBo or $TMP and /tmp or $OUTPUT)
 sub make_clean {
   my %args = (
-    SBO      => '',
+    SBO3      => '',
     SRC      => '',
     VERSION  => '',
     @_
   );
-  unless ($args{SBO} && $args{SRC} && $args{VERSION}) {
+  unless ($args{SBO3} && $args{SRC} && $args{VERSION}) {
     script_error('make_clean requires three arguments.');
   }
   my $src = $args{SRC};
-  say "Cleaning for $args{SBO}-$args{VERSION}...";
+  say "Cleaning for $args{SBO3}-$args{VERSION}...";
   for my $dir (@$src) {
     remove_tree("$tmpd/$dir") if -d "$tmpd/$dir";
   }
 
   my $output = $ENV{OUTPUT} // '/tmp';
-  remove_tree("$output/package-$args{SBO}") if
-    -d "$output/package-$args{SBO}";
+  remove_tree("$output/package-$args{SBO3}") if
+    -d "$output/package-$args{SBO3}";
 
-  if ($args{SBO} =~ /^(.+)-compat32$/) {
+  if ($args{SBO3} =~ /^(.+)-compat32$/) {
     my $pkg_name = $1;
-    remove_tree("/tmp/package-$args{SBO}") if
+    remove_tree("/tmp/package-$args{SBO3}") if
       not defined $env_tmp and
-      -d "/tmp/package-$args{SBO}";
+      -d "/tmp/package-$args{SBO3}";
     remove_tree("$tmpd/package-$pkg_name") if
       -d "$tmpd/package-$pkg_name";
   }
@@ -380,7 +380,7 @@ sub make_distclean {
     script_error('make_distclean requires four arguments.');
   }
   my $sbo = get_sbo_from_loc($args{LOCATION});
-  make_clean(SBO => $sbo, SRC => $args{SRC}, VERSION => $args{VERSION});
+  make_clean(SBO3 => $sbo, SRC => $args{SRC}, VERSION => $args{VERSION});
   say "Distcleaning for $sbo-$args{VERSION}...";
   # remove any distfiles for this particular SBo.
   my $downloads = get_sbo_downloads(LOCATION => $args{LOCATION});
@@ -475,7 +475,7 @@ sub perform_sbo {
 
   # attempt to rewrite the slackbuild, or exit if we can't
   my ($fail, $exit) = rewrite_slackbuild(
-    SBO => $sbo,
+    SBO3 => $sbo,
     SLACKBUILD => "$location/$sbo.SlackBuild",
     CHANGES => \%changes,
     C32 => $args{C32},
@@ -589,11 +589,11 @@ sub process_sbos {
     do_upgradepkg($pkg) unless $args{NOINSTALL};
 
     unless ($args{DISTCLEAN}) {
-      make_clean(SBO => $sbo, SRC => $src, VERSION => $version)
+      make_clean(SBO3 => $sbo, SRC => $src, VERSION => $version)
         unless $args{NOCLEAN};
     } else {
       make_distclean(
-        SBO       => $sbo,
+        SBO3       => $sbo,
         SRC       => $src,
         VERSION   => $version,
         LOCATION  => $$locs{$sbo},
@@ -655,7 +655,7 @@ is true, the first value will be an error message.
 # make a backup of the existent SlackBuild, and rewrite the original as needed
 sub rewrite_slackbuild {
   my %args = (
-    SBO         => '',
+    SBO3         => '',
     SLACKBUILD  => '',
     CHANGES     => {},
     C32         => 0,
@@ -686,7 +686,7 @@ sub rewrite_slackbuild {
   # if we're dealing with a compat32, we need to change the tar line(s) so
   # that the 32-bit source is untarred
   if ($args{C32}) {
-    my $location = get_sbo_location($args{SBO});
+    my $location = get_sbo_location($args{SBO3});
     my $downloads = get_sbo_downloads(
       LOCATION => $location,
       32 => 1,

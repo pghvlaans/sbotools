@@ -1,4 +1,4 @@
-package SBO::App;
+package SBO3::App;
 
 # vim: ts=2:et
 #

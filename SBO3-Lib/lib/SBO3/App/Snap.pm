@@ -1,4 +1,4 @@
-package SBO::App::Snap;
+package SBO3::App::Snap;
 
 # vim: ts=2:et
 #
@@ -13,10 +13,10 @@ package SBO::App::Snap;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ fetch_tree update_tree %config show_version /;
+use SBO3::Lib qw/ fetch_tree update_tree %config show_version /;
 use Getopt::Long qw/ GetOptionsFromArray /;
 
-use parent 'SBO::App';
+use parent 'SBO3::App';
 
 our $VERSION = '2.7';
 

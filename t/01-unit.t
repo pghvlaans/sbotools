@@ -6,7 +6,7 @@ use Test::More;
 use Test::Exit;
 use FindBin '$RealBin';
 use lib "$RealBin/../SBO-Lib/lib";
-use SBO::Lib qw/ %config check_multilib get_installed_packages get_local_outdated_versions get_readme_contents get_sbo_location get_sbo_locations indent open_fh script_error usage_error user_prompt /;
+use SBO3::Lib qw/ %config check_multilib get_installed_packages get_local_outdated_versions get_readme_contents get_sbo_location get_sbo_locations indent open_fh script_error usage_error user_prompt /;
 use Capture::Tiny qw/ capture_merged /;
 use File::Temp 'tempdir';
 use Cwd;
@@ -55,7 +55,7 @@ SKIP: {
 	local $config{SLACKWARE_VERSION} = 'FALSE';
 
 	my $exit;
-	my $out = capture_merged { $exit = exit_code{ SBO::Lib::get_slack_version(); }; };
+	my $out = capture_merged { $exit = exit_code{ SBO3::Lib::get_slack_version(); }; };
 
 	is ($exit, 2, 'get_slack_version() exited with 2');
 	is ($out, "A fatal script error has occurred:\nopen_fh, /etc/slackware-version is not a file\nExiting.\n", 'get_slack_version() gave correct output');
@@ -65,7 +65,7 @@ SKIP: {
 	close $fh;
 
 	undef $exit;
-	$out = capture_merged { $exit = exit_code{ SBO::Lib::get_slack_version(); }; };
+	$out = capture_merged { $exit = exit_code{ SBO3::Lib::get_slack_version(); }; };
 
 	is ($exit, 1, 'get_slack_version() exited with 1');
 	is ($out, "Unsupported Slackware version: 0.0\nSuggest you set the sbotools REPO setting to https://github.com/Ponce/slackbuilds.git\n\n", 'get_slack_version() gave correct output (Unsupported)');
@@ -74,7 +74,7 @@ SKIP: {
 	print $fh "Slackware 14.1\n";
 	close $fh;
 
-	is (SBO::Lib::get_slack_version(), '14.1', 'get_slack_version() returned the correct version');
+	is (SBO3::Lib::get_slack_version(), '14.1', 'get_slack_version() returned the correct version');
 
 	unlink '/etc/slackware-version';
 }
@@ -91,15 +91,15 @@ SKIP: {
 	system(qw"rm -rf", "$RealBin/repo.backup");
 	system(qw"mv /usr/sbo/repo", "$RealBin/repo.backup");
 
-	is (SBO::Lib::check_repo(), 1, 'check_repo() returned 1 when /usr/sbo/repo was empty');
+	is (SBO3::Lib::check_repo(), 1, 'check_repo() returned 1 when /usr/sbo/repo was empty');
 
-	SBO::Lib::migrate_repo();
+	SBO3::Lib::migrate_repo();
 	ok (-e '/usr/sbo/repo/SLACKBUILDS.TXT', '/usr/sbo/repo/SLACKBUILDS.TXT moved back by migrate_repo()');
 
 	system("mv /usr/sbo/repo/* /usr/sbo");
 	system(qw! rmdir /usr/sbo/repo !);
 
-	SBO::Lib::migrate_repo();
+	SBO3::Lib::migrate_repo();
 	ok (-d '/usr/sbo/repo', '/usr/sbo/repo correctly recreated by migrate_repo()');
 
 	system(qw"rm /usr/sbo/repo/SLACKBUILDS.TXT");
@@ -107,7 +107,7 @@ SKIP: {
 
 	system('touch', '/usr/sbo/repo');
 	my $exit;
-	my $out = capture_merged { $exit = exit_code { SBO::Lib::check_repo(); }; };
+	my $out = capture_merged { $exit = exit_code { SBO3::Lib::check_repo(); }; };
 
 	is ($out, "Unable to create /usr/sbo/repo.\n\n", 'check_repo() output is good');
 	is ($exit, 1, 'check-repo() exit code is good');
@@ -121,7 +121,7 @@ SKIP: {
 	skip 'Test invalid if no SLACKBUILDS.TXT exists.', 5 if ! -e '/usr/sbo/repo/SLACKBUILDS.TXT';
 
 	my $exit;
-	my $out = capture_merged { $exit = exit_code { SBO::Lib::check_repo(); }; };
+	my $out = capture_merged { $exit = exit_code { SBO3::Lib::check_repo(); }; };
 
 	is ($exit, 1, 'check_repo() exited with 1');
 	is ($out, "/usr/sbo/repo exists and is not empty. Exiting.\n\n", 'check_repo() gave correct output');
@@ -132,7 +132,7 @@ SKIP: {
 
 	undef $exit;
 	my $res;
-	$out = capture_merged { $exit = exit_code { $res = SBO::Lib::check_repo(); }; };
+	$out = capture_merged { $exit = exit_code { $res = SBO3::Lib::check_repo(); }; };
 
 	is ($exit, undef, "check_repo() didn't exit");
 	is ($out, '', "check_repo() didn't print anything");
@@ -149,7 +149,7 @@ SKIP: {
 	local $config{SLACKWARE_VERSION} = '14.1';
 
 	my $res;
-	my $out = capture_merged { $res = SBO::Lib::rsync_sbo_tree('/foo-bar'); };
+	my $out = capture_merged { $res = SBO3::Lib::rsync_sbo_tree('/foo-bar'); };
 
 	ok (!$res, q"rsync_sbo_tree('/foo-bar') returned false");
 	like ($out, qr!rsync: change_dir "/foo-bar" failed!, q"rsync_sbo_tree('/foo-bar') gave correct output");
@@ -161,7 +161,7 @@ SKIP: {
 	system(qw! mkdir -p /usr/sbo/repo/.git !);
 
 	my $res;
-	capture_merged { $res = SBO::Lib::git_sbo_tree(''); };
+	capture_merged { $res = SBO3::Lib::git_sbo_tree(''); };
 	is ($res, 0, q!git_sbo_tree('') returned 0!);
 
 	system(qw! rm -r /usr/sbo/repo !) if -d '/usr/sbo/repo';
@@ -171,10 +171,10 @@ SKIP: {
 	close $fh;
 
 	undef $res;
-	capture_merged { $res = SBO::Lib::git_sbo_tree(''); };
+	capture_merged { $res = SBO3::Lib::git_sbo_tree(''); };
 	is ($res, 0, q!git_sbo_tree('') with .git/config returned 0 !);
 	undef $res;
-	capture_merged { $res = SBO::Lib::git_sbo_tree('foo'); };
+	capture_merged { $res = SBO3::Lib::git_sbo_tree('foo'); };
 	is ($res, 0, q!git_sbo_tree('foo') returned 0!);
 
 	system(qw! rm -r /usr/sbo/repo !) if -d '/usr/sbo/repo';
@@ -184,16 +184,16 @@ SKIP: {
 	close $fh;
 
 	undef $res;
-	capture_merged { $res = SBO::Lib::check_git_remote('/usr/sbo/repo', 'foo'); };
+	capture_merged { $res = SBO3::Lib::check_git_remote('/usr/sbo/repo', 'foo'); };
 	is ($res, 0, 'check_git_remote() returned 0');
 
 	system(qw! rm -r /usr/sbo/repo !) if -d '/usr/sbo/repo';
 
-	is (SBO::Lib::generate_slackbuilds_txt(), 0, 'generate_slackbuilds_txt() returned 0');
+	is (SBO3::Lib::generate_slackbuilds_txt(), 0, 'generate_slackbuilds_txt() returned 0');
 
 	system(qw! mkdir -p /usr/sbo/repo/foo/bar !);
 
-	is (SBO::Lib::generate_slackbuilds_txt(), 1, 'generate_slackbuilds_txt() returned 1');
+	is (SBO3::Lib::generate_slackbuilds_txt(), 1, 'generate_slackbuilds_txt() returned 1');
 
 	system(qw! rm -r /usr/sbo/repo !) if -d '/usr/sbo/repo';
 	system(qw! mv /usr/sbo/backup /usr/sbo/repo !) if -d '/usr/sbo/backup';
@@ -203,7 +203,7 @@ SKIP: {
 
 	my $cwd = getcwd();
 	undef $res;
-	my $out = capture_merged { $res = SBO::Lib::git_sbo_tree(''); };
+	my $out = capture_merged { $res = SBO3::Lib::git_sbo_tree(''); };
 
 	is ($out, '', 'git_sbo_tree() no output');
 	is ($res, 0, 'git_sbo_tree() returned 0');
@@ -247,16 +247,16 @@ SKIP: {
 
 # 42: test get_filename_from_link();
 {
-	is (SBO::Lib::get_filename_from_link('/'), undef, "get_filename_from_link() returned undef");
+	is (SBO3::Lib::get_filename_from_link('/'), undef, "get_filename_from_link() returned undef");
 }
 
 # 43-46: test revert_slackbuild();
 {
 	my $tmp = tempdir(CLEANUP => 1);
-	is (SBO::Lib::revert_slackbuild("$tmp/foo"), 1, "revert_slackbuild() returned 1");
+	is (SBO3::Lib::revert_slackbuild("$tmp/foo"), 1, "revert_slackbuild() returned 1");
 
 	system('touch', "$tmp/foo.orig");
-	is (SBO::Lib::revert_slackbuild("$tmp/foo"), 1, "revert_slackbuild() returned 1");
+	is (SBO3::Lib::revert_slackbuild("$tmp/foo"), 1, "revert_slackbuild() returned 1");
 	ok (-f "$tmp/foo", 'foo.orig renamed to foo');
 	ok (!-f "$tmp/foo.orig", 'foo.orig is no more');
 }
@@ -267,8 +267,8 @@ SKIP: {
 	my $scalar = '';
 	open(my $fh, '<', \$scalar) or skip "Could not open needed filehandle", 1;
 
-	local $SBO::Lib::Build::tmpd = "/foo-bar";
-	is (scalar @{ SBO::Lib::get_src_dir($fh) }, 0, "get_src_dir() returned an empty array ref");
+	local $SBO3::Lib::Build::tmpd = "/foo-bar";
+	is (scalar @{ SBO3::Lib::get_src_dir($fh) }, 0, "get_src_dir() returned an empty array ref");
 }
 
 # 48: test get_readme_contents();
@@ -290,7 +290,7 @@ SKIP: {
 SKIP: {
 	skip 'Tests invalid if /foo exists.', 3 if -e "/foo";
 
-	my @res = SBO::Lib::perform_sbo(JOBS => 'FALSE', LOCATION => '/foo', ARCH => 1);
+	my @res = SBO3::Lib::perform_sbo(JOBS => 'FALSE', LOCATION => '/foo', ARCH => 1);
 
 	is ($res[0], "Unable to backup /foo/foo.SlackBuild to /foo/foo.SlackBuild.orig\n", 'perform_sbo returned correct pkg');
 	is ($res[1], undef, 'perform_sbo returned correct src');
@@ -302,7 +302,7 @@ SKIP: {
 	chomp(my $kv = `uname -r`);
 	$kv =~ s/-/_/g;
 
-	my @res = map { SBO::Lib::version_cmp(@$_); } [ '1.0', '1.0' ], [ "1.0_$kv", '1.0' ], [ '1.0', "1.0_$kv" ], [ "1.0_$kv", "1.0_$kv" ];
+	my @res = map { SBO3::Lib::version_cmp(@$_); } [ '1.0', '1.0' ], [ "1.0_$kv", '1.0' ], [ '1.0', "1.0_$kv" ], [ "1.0_$kv", "1.0_$kv" ];
 
 	is ($res[0], 0, "version_cmp(1.0, 1.0) returned 0");
 	is ($res[1], 0, "version_cmp(1.0_k, 1.0) returned 0");
@@ -310,12 +310,12 @@ SKIP: {
 	is ($res[3], 0, "version_cmp(1.0_k, 1.0_k) returned 0");
 
 	no warnings 'redefine';
-	local *SBO::Lib::Util::get_kernel_version = sub { "foo_bar" };
+	local *SBO3::Lib::Util::get_kernel_version = sub { "foo_bar" };
 
-	is (SBO::Lib::version_cmp('1.0', '1.0_foo_bar'), 0, "version_cmp(1.0, 1.0_foo_bar) returned 0");
+	is (SBO3::Lib::version_cmp('1.0', '1.0_foo_bar'), 0, "version_cmp(1.0, 1.0_foo_bar) returned 0");
 
-  is (SBO::Lib::version_cmp('1.0_en_US', '1.0'), 0, "version_cmp(1.0_en_US, 1.0) returned 0");
-  is (SBO::Lib::version_cmp('1.0', '1.0_en_US'), 0, "version_cmp(1.0, 1.0_en_US) returned 0");
+  is (SBO3::Lib::version_cmp('1.0_en_US', '1.0'), 0, "version_cmp(1.0_en_US, 1.0) returned 0");
+  is (SBO3::Lib::version_cmp('1.0', '1.0_en_US'), 0, "version_cmp(1.0, 1.0_en_US) returned 0");
 }
 
 # 61: test check_multilib();

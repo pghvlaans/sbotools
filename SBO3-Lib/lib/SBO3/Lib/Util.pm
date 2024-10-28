@@ -1,4 +1,4 @@
-package SBO::Lib::Util;
+package SBO3::Lib::Util;
 
 use 5.016;
 use strict;
@@ -75,11 +75,11 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Util - Utility functions for SBO::Lib and the sbotools
+SBO3::Lib::Util - Utility functions for SBO3::Lib and the sbotools
 
 =head1 SYNOPSIS
 
-  use SBO::Lib::Util qw/uniq/;
+  use SBO3::Lib::Util qw/uniq/;
 
   # ('duplicate');
   my @uniq = uniq('duplicate', 'duplicate');
@@ -97,11 +97,11 @@ By default, C<$conf_file> will be C</etc/sbotools/sbotools.conf>.
 =head2 %config
 
 By default, all values are set to C<"FALSE">, but when C<read_config()> is run,
-the values will change according to the configuration, and C<SBO_HOME> will by
+the values will change according to the configuration, and C<SBO3_HOME> will by
 default get changed to C</usr/sbo>.
 
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
-C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>
+C<SBO3_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>
 and C<RSYNC_DEFAULT>.
 
 =cut
@@ -114,7 +114,7 @@ our %config = (
   DISTCLEAN => 'FALSE',
   JOBS => 'FALSE',
   PKG_DIR => 'FALSE',
-  SBO_HOME => 'FALSE',
+  SBO3_HOME => 'FALSE',
   LOCAL_OVERRIDES => 'FALSE',
   SLACKWARE_VERSION => 'FALSE',
   REPO => 'FALSE',
@@ -463,7 +463,7 @@ sub read_config {
   } else {
     warn "Unable to open $conf_file.\n" if -f $conf_file;
   }
-  $config{SBO_HOME} = '/usr/sbo' if $config{SBO_HOME} eq 'FALSE';
+  $config{SBO3_HOME} = '/usr/sbo' if $config{SBO3_HOME} eq 'FALSE';
 }
 
 =head2 save_options
@@ -537,7 +537,7 @@ There is no useful return value.
 =cut
 
 sub show_version {
-  say "sbotools version $SBO::Lib::VERSION";
+  say "sbotools version $SBO3::Lib::VERSION";
   say 'licensed under the WTFPL';
   say '<http://sam.zoy.org/wtfpl/COPYING>';
 }

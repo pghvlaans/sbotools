@@ -8,8 +8,8 @@
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=sbotools
-VERSION=${VERSION:-2.7}
+PRGNAM=sbotools3
+VERSION=${VERSION:-1.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 PKGTYPE=${PKGTYPE:-tgz}

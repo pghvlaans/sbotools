@@ -6,7 +6,7 @@ use Test::More;
 use Test::Exit;
 use FindBin '$RealBin';
 use lib "$RealBin/../SBO-Lib/lib";
-use SBO::Lib qw/ open_fh %config /;
+use SBO3::Lib qw/ open_fh %config /;
 use Capture::Tiny qw/ capture_merged /;
 use File::Temp 'tempdir';
 use Cwd;
@@ -15,7 +15,7 @@ plan tests => 8;
 
 sub emulate_race {
 	my ($file, $caller) = @_;
-	$caller = "SBO::Lib::$caller";
+	$caller = "SBO3::Lib::$caller";
 
 	no warnings 'redefine';
 	*_race::cond = sub { unlink $file if $caller eq (caller(1))[3]; };
@@ -45,7 +45,7 @@ sub emulate_race {
 	my $exit;
 	emulate_race($sv_file, 'Util::open_fh');
 	local $config{SLACKWARE_VERSION} = 'FALSE';
-	my $out = capture_merged { $exit = exit_code { SBO::Lib::get_slack_version(); }; };
+	my $out = capture_merged { $exit = exit_code { SBO3::Lib::get_slack_version(); }; };
 
 	is ($exit, 6, 'get_slackware_version() exited with correct exitcode');
 	is ($out, "Unable to open $sv_file.\n", 'get_slackware_version output correct');
@@ -76,7 +76,7 @@ GIT
 	*_race::cond = sub { system('rm', '-rf', $repo) if $_[0] eq '$repo_path can be deleted after -d check' };
 
 	my $res;
-	my $out = capture_merged { $res = SBO::Lib::git_sbo_tree("file://$tempdir"); };
+	my $out = capture_merged { $res = SBO3::Lib::git_sbo_tree("file://$tempdir"); };
 
 	is ($out, '', 'git_sbo_tree() no output');
 	is ($res, 0, 'git_sbo_tree() returned 0');
@@ -91,7 +91,7 @@ GIT
 	};
 
 	undef $res;
-	$out = capture_merged { $res = SBO::Lib::git_sbo_tree("file://$tempdir"); };
+	$out = capture_merged { $res = SBO3::Lib::git_sbo_tree("file://$tempdir"); };
 
 	is ($res, 0, 'git_sbo_tree() returned 0');
 	is ($out, "fatal: Not a git repository (or any of the parent directories): .git\n", 'git_sbo_tree() gave correct output');
@@ -111,9 +111,9 @@ GIT
 
   no warnings 'redefine';
 
-  local *SBO::Lib::Util::open_read = sub { return undef, 1 };
+  local *SBO3::Lib::Util::open_read = sub { return undef, 1 };
 
-  my $out = capture_merged { SBO::Lib::Util::read_config(); };
+  my $out = capture_merged { SBO3::Lib::Util::read_config(); };
 
   is ($out, "Unable to open $conf_file.\n", "read_config() output correct");
 

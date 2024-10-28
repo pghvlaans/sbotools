@@ -1,4 +1,4 @@
-package SBO::App::Remove;
+package SBO3::App::Remove;
 
 # vim: ts=2:et
 #
@@ -10,10 +10,10 @@ package SBO::App::Remove;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_build_queue merge_queues get_requires get_readme_contents prompt show_version in /;
+use SBO3::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_build_queue merge_queues get_requires get_readme_contents prompt show_version in /;
 use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
-use parent 'SBO::App';
+use parent 'SBO3::App';
 
 our $VERSION = '2.7';
 
@@ -52,7 +52,7 @@ sub run {
 
   my @args = @{ $self->{args} };
 
-  my @installed = @{ get_installed_packages('SBO') };
+  my @installed = @{ get_installed_packages('SBO3') };
   my $installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
 
   @args = grep { check_sbo($_, $installed) } @args;

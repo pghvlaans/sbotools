@@ -6,7 +6,7 @@ use Test::More;
 use Test::Exit;
 use FindBin '$RealBin';
 use lib "$RealBin/../SBO-Lib/lib";
-use SBO::Lib;
+use SBO3::Lib;
 use Capture::Tiny qw/ capture_merged /;
 
 plan tests => 59;
@@ -18,7 +18,7 @@ sub test_args {
 		plan tests => 2;
 
 		my $exit;
-		my $out = capture_merged { $exit = exit_code { SBO::Lib->can("SBO::Lib::$sub")->(@args); }; };
+		my $out = capture_merged { $exit = exit_code { SBO3::Lib->can("SBO3::Lib::$sub")->(@args); }; };
 
 		is ($exit, 2, "$sub(@args) exited with 2");
 		like ($out, qr!\QA fatal script error has occurred:\E\n\Q$sub\E.*\nExiting\.\n!, "$sub(@args) gave correct output");

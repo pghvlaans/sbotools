@@ -1,4 +1,4 @@
-package SBO::Lib::Tree;
+package SBO3::Lib::Tree;
 
 use 5.016;
 use strict;
@@ -6,8 +6,8 @@ use warnings;
 
 our $VERSION = '2.7';
 
-use SBO::Lib::Util qw/ script_error open_read idx %config /;
-use SBO::Lib::Repo qw/ $repo_path $slackbuilds_txt /;
+use SBO3::Lib::Util qw/ script_error open_read idx %config /;
+use SBO3::Lib::Repo qw/ $repo_path $slackbuilds_txt /;
 
 use Exporter 'import';
 
@@ -28,11 +28,11 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Tree - Routines for interacting with a SlackBuilds.org tree.
+SBO3::Lib::Tree - Routines for interacting with a SlackBuilds.org tree.
 
 =head1 SYNOPSIS
 
-  use SBO::Lib::tree qw/ is_local /;
+  use SBO3::Lib::tree qw/ is_local /;
 
   my $bool = is_local($sbo);
 

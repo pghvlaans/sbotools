@@ -1,4 +1,4 @@
-package SBO::Lib::Info;
+package SBO3::Lib::Info;
 
 use 5.016;
 use strict;
@@ -6,8 +6,8 @@ use warnings;
 
 our $VERSION = '2.7';
 
-use SBO::Lib::Util qw/ get_arch get_sbo_from_loc open_read script_error slurp usage_error /;
-use SBO::Lib::Tree qw/ get_orig_location get_sbo_location is_local /;
+use SBO3::Lib::Util qw/ get_arch get_sbo_from_loc open_read script_error slurp usage_error /;
+use SBO3::Lib::Tree qw/ get_orig_location get_sbo_location is_local /;
 
 use Exporter 'import';
 
@@ -33,11 +33,11 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Info - Utilities to get data from SBo .info files.
+SBO3::Lib::Info - Utilities to get data from SBo .info files.
 
 =head1 SYNOPSIS
 
-  use SBO::Lib::Info qw/ get_reqs /;
+  use SBO3::Lib::Info qw/ get_reqs /;
 
   my @reqs = @{ get_requires($sbo) };
 

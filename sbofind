@@ -13,7 +13,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue %config $slackbuilds_txt $repo_path show_version in indent get_from_info /;
+use SBO3::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue %config $slackbuilds_txt $repo_path show_version in indent get_from_info /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 
