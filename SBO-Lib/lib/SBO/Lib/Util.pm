@@ -102,6 +102,7 @@ default get changed to C</usr/sbo>.
 
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>
+and C<RSYNC_DEFAULT>.
 
 =cut
 
@@ -119,6 +120,7 @@ our %config = (
   REPO => 'FALSE',
   BUILD_IGNORE => 'FALSE',
   GIT_BRANCH => 'FALSE',
+  RSYNC_DEFAULT => 'FALSE',
 );
 
 read_config();
@@ -206,7 +208,8 @@ will exit.
 
 =cut
 
-# %supported maps what's in /etc/slackware-version to an https URL
+# %supported maps what's in /etc/slackware-version to an https URL, or to an
+# rsync URL if RSYNC_DEFAULT is true.
 my %supported = (
   '14.0' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
   '14.1' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
@@ -216,6 +219,18 @@ my %supported = (
   '15.1' => 'https://github.com/Ponce/slackbuilds.git',
   current => 'https://github.com/Ponce/slackbuilds.git',
 );
+
+if ($config{RSYNC_DEFAULT} eq 'TRUE') {
+  %supported = (
+    '14.0' => 'rsync://slackbuilds.org/slackbuilds/14.0/',
+    '14.1' => 'rsync://slackbuilds.org/slackbuilds/14.1/',
+    '14.2' => 'rsync://slackbuilds.org/slackbuilds/14.2/',
+    '15.0' => 'rsync://slackbuilds.org/slackbuilds/15.0/',
+    '15.0+' => 'https://github.com/Ponce/slackbuilds.git',
+    '15.1' => 'https://github.com/Ponce/slackbuilds.git',
+    current => 'https://github.com/Ponce/slackbuilds.git',
+  );
+}
 
 my %branch = (
   '14.0' => '14.0',

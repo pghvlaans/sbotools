@@ -18,6 +18,7 @@ _arguments \
     '(-o --local-overrides)'{-o,--local-overrides}'[Directory for local SlackBuild overrides.]:overrides directory:_files -/' \
     '(-V --slackware-version)'{-V,--slackware-version}'[Use SBo repo for this version (instead of /etc/slackware-version).]:Slackware version:()' \
     '(-r --repo)'{-r,--repo}'[Use git/rsync repo at URL instead of the SBo repo for your SLACKWARE_VERSION.]:repo URL:()' \
+    '(-R --rsync)'{-R,--rsync}'[If TRUE, then default mirrors are rsync except for -current.]:rsync default mirror?:((TRUE\:"Default mirrors are rsync." FALSE\:"No rsync preference."))' \
     && return 0
 
 return 1

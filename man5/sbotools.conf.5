@@ -57,6 +57,11 @@ REPO=(FALSE|url)
 .RS
 If set to a url, use that repository instead of the SlackBuilds.org repository for your SLACKWARE_VERSION. Setting this will make the SLACKWARE_VERSION setting redundant. URLs need to either lead to a git repository or an rsync repository. The repository needs to be laid out like the SlackBuilds.org one with a couple of broad categories at the root and under those are subdirectories for each package.
 .RE
+.P
+RSYNC_DEFAULT(FALSE|TRUE)
+.RS
+If set to TRUE, use rsync default mirrors except for Slackware -current.
+.RE
 .SH SEE ALSO
 .P
 sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sbosnap(1), sboupgrade(1)

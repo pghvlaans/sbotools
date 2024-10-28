@@ -4,7 +4,7 @@
 sboconfig - set sbotools configuration options.
 .SH SYNOPSIS
 .P
-sboconfig [-h|-v] [-l] [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE]
+sboconfig [-h|-v] [-l] [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE] [-R TRUE|FALSE]
 .SH DESCRIPTION
 .P
 sboconfig is a front-end for managing sbotools configuration options. The sbotools.conf(5) file can also be manually edited; any fields not relevant to sbotools configuration will be ignored.
@@ -73,6 +73,11 @@ SLACKWARE_VERSION: If set to a version specification, use the SBo repository for
 -r|--repo (FALSE|url)
 .RS
 REPO: If set to a url, use that repository instead of the SlackBuilds.org repository for your SLACKWARE_VERSION. Setting this will make the SLACKWARE_VERSION setting redundant. URLs need to either lead to a git repository or an rsync repository. The repository needs to be laid out like the SlackBuilds.org one with a couple of broad categories at the root and under those are subdirectories for each package.
+.RE
+.P
+-R|--rsync (FALSE|TRUE)
+.RS
+RSYNC_DEFAULT: If set to TRUE, use rsync default mirrors except for Slackware -current.
 .RE
 .SH EXIT CODES
 .P
