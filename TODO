@@ -1,7 +1,12 @@
 TO DO
 
-* Release version 2.8 (but probably sbotools3 1.0)
+* Release sbotools3 1.0
+* Make a GitHub page
+
+SEPARATE BRANCH
+
 * Punctuation and grammar fixes, especially for on-screen messaging
+* Rename to sbotools3, attribution, etc.
 
 DONE
 
