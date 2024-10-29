@@ -1,4 +1,4 @@
-.TH sboconfig 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools3 1.0"
+.TH sboconfig 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools3 1.0" sbotools3
 .SH NAME
 .P
 sboconfig - set sbotools configuration options.
@@ -37,22 +37,22 @@ BUILD_IGNORE: If TRUE, only do upgrades if the version number differs. By defaul
 .P
 -c|--noclean (FALSE|TRUE)
 .RS
-NOCLEAN: If TRUE, then DO NOT clean working directories after building the slackbuild. These are the directories where the source is unpacked and compiled, and where the package is put together in, which are under /tmp/SBo (or $TMP). By default, these directories are removed after building an slackbuild. Setting this option to TRUE causes the working directories to not be cleaned by default. This can be overridden when running sboupgrade(1)/sboinstall(1).
+NOCLEAN: If TRUE, then DO NOT clean working directories after building the SlackBuild. These are the directories where the source is unpacked and compiled, and where the package is put together in, which are under /tmp/SBo (or $TMP). By default, these directories are removed after building an SlackBuild. Setting this option to TRUE causes the working directories to not be cleaned by default. This can be overridden when running sboupgrade(1)/sboinstall(1).
 .RE
 .P
 -d|--distclean (FALSE|TRUE)
 .RS
-DISTCLEAN: If TRUE, then DO remove the source code after building the slackbuild. By default, the source code is not removed, and lives under $SBO_HOME/distfiles, which, by default, is /usr/sbo/distfiles. Setting this option to TRUE causes the source code to be removed by default. This can be overridden when running sboupgrade(1)/sboinstall(1).
+DISTCLEAN: If TRUE, then DO remove the source code after building the SlackBuild. By default, the source code is not removed, and lives under $SBO_HOME/distfiles, which, by default, is /usr/sbo/distfiles. Setting this option to TRUE causes the source code to be removed by default. This can be overridden when running sboupgrade(1)/sboinstall(1).
 .RE
 .P
 -j|--jobs (FALSE|#)
 .RS
-JOBS: If numeric (2,5,10, etc), then that number will be fed to the "-j" argument to make when a slackbuild which invokes "make" is run. This only makes sense on multicore systems, where one might set the JOBS to the number of available cores, or half that number, etc.
+JOBS: If numeric (2,5,10, etc), then that number will be fed to the "-j" argument to make when a SlackBuild which invokes "make" is run. This only makes sense on multicore systems, where one might set the JOBS to the number of available cores, or half that number, etc.
 .RE
 .P
 -p|--pkg-dir (FALSE|/path)
 .RS
-PKG_DIR: If set to a path, packages will be stored at the given location after building and installing. By default, packages are left where they are deposited by slackbuilds, which is typically (probably always) /tmp (or $OUTPUT). If PKG_DIR is FALSE and DISTCLEAN is TRUE (either in sbotools.conf(5) or at sboupgrade/sboinstall runtime), the package will be deleted. If this option is set to a path in the filesystem, the package will be stored in that directory, regardless of any DISTCLEAN option.
+PKG_DIR: If set to a path, packages will be stored at the given location after building and installing. By default, packages are left where they are deposited by SlackBuilds, which is typically (probably always) /tmp (or $OUTPUT). If PKG_DIR is FALSE and DISTCLEAN is TRUE (either in sbotools.conf(5) or at sboupgrade/sboinstall runtime), the package will be deleted. If this option is set to a path in the filesystem, the package will be stored in that directory, regardless of any DISTCLEAN option.
 .RE
 .P
 -s|--sbo-home (/usr/sbo|/path)
@@ -62,7 +62,7 @@ SBO_HOME: If set to a path, this is where the slackbuilds.org tree will live; by
 .P
 -o|--local-overrides (FALSE|/path)
 .RS
-LOCAL_OVERRIDES: If set to a path, any directory name under that path that matches a slackbuild name will be used instead of anything found on SBo. This will even work if it isn't on SBo at all. It still requires all the usual files present in an SBo directory such as README, name.info, and name.SlackBuild.
+LOCAL_OVERRIDES: If set to a path, any directory name under that path that matches a SlackBuild name will be used instead of anything found on SBo. This will even work if it is not on SBo at all. It still requires all the usual files present in an SBo directory such as README, name.info, and name.SlackBuild.
 .RE
 .P
 -V|--slackware-version (FALSE|#.#)
@@ -72,7 +72,7 @@ SLACKWARE_VERSION: If set to a version specification, use the SBo repository for
 .P
 -r|--repo (FALSE|url)
 .RS
-REPO: If set to a url, use that repository instead of the SlackBuilds.org repository for your SLACKWARE_VERSION. Setting this will make the SLACKWARE_VERSION setting redundant. URLs need to either lead to a git repository or an rsync repository. The repository needs to be laid out like the SlackBuilds.org one with a couple of broad categories at the root and under those are subdirectories for each package.
+REPO: If set to a url, use that repository instead of the slackbuilds.org repository for your SLACKWARE_VERSION. Setting this will make the SLACKWARE_VERSION setting redundant. URLs need to either lead to a git repository or an rsync repository. The repository needs to be laid out like the slackbuilds.org one with a couple of broad categories at the root and under those are subdirectories for each package.
 .RE
 .P
 -R|--rsync (FALSE|TRUE)

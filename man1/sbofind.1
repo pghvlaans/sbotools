@@ -1,4 +1,4 @@
-.TH sbofind 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools3 1.0"
+.TH sbofind 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools3 1.0" sbotools3
 .SH NAME
 .P
 sbofind - search slackbuilds.org tree for a given name
@@ -7,7 +7,7 @@ sbofind - search slackbuilds.org tree for a given name
 sbofind [-h|-v] [-etirq] search_term
 .SH DESCRIPTION
 .P
-sbofind searches the names of all slackbuilds for a given term. It reports back any slackbuilds found along with the path for each. This is equivalent to running "cd /usr/ports; make search name=$search_term display=name,path" on a FreeBSD system. If the repository includes a TAGS.txt file, that will be used to find more results as well.
+sbofind searches the names of all SlackBuilds for a given term. It reports back any SlackBuilds found along with the path for each. This is equivalent to running "cd /usr/ports; make search name=$search_term display=name,path" on a FreeBSD system. If the repository includes a TAGS.txt file, that will be used to find more results as well.
 .SH OPTIONS
 .P
 -h|--help
@@ -32,17 +32,17 @@ Exclude tags from search.
 .P
 -i|--info
 .RS
-Show the contents of the .info file for each slackbuild found.
+Show the contents of the .info file for each SlackBuild found.
 .RE
 .P
 -r|--readme
 .RS
-Show the contents of the README file for each slackbuild found.
+Show the contents of the README file for each SlackBuild found.
 .RE
 .P
 -q|--queue
 .RS
-Show the build queue for each slackbuild found.
+Show the build queue for each SlackBuild found.
 .RE
 .SH EXIT CODES
 .P

@@ -1,13 +1,13 @@
-.TH sboupgrade 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools3 1.0"
+.TH sboupgrade 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools3 1.0" sbotools3
 .SH NAME
 .P
-sboupgrade - install or upgrade slackbuilds
+sboupgrade - install or upgrade SlackBuilds
 .SH SYNOPSIS
 .P
 sboupgrade [-h|-v] [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] [-b TRUE|FALSE] [-fNrRiz] --all|sbo_name (sbo_name)
 .SH DESCRIPTION
 .P
-sboupgrade is used to upgrade packages installed from slackbuilds. If the -r flag is NOT specified, sboupgrade will pull the list of requirements from the .info file for any specified slackbuild. If such a list exists, sboupgrade will look to see whether or not those requirements are already installed, and if not, it will ask whether or not it should attempt to install them first. This is recursive, so that ordering happens correctly. sboupgrade will refuse to handle circular requirements. sboupgrade will also note groupadd and useradd commands in README files and offer to run those first. If the README documents options of the KEY=value form, sboupgrade will offer the opportunity to set options. If options were entered previously, they will be displayed and can be used again. Any build options, whether passed here or in a template, will be saved to /var/log/sbotools when the SlackBuild runs. If --all is supplied it will try to upgrade everything that sbocheck(1) reports.
+sboupgrade is used to upgrade packages installed from SlackBuilds. If the -r flag is NOT specified, sboupgrade will pull the list of requirements from the .info file for any specified SlackBuild. If such a list exists, sboupgrade will look to see whether or not those requirements are already installed, and if not, it will ask whether or not it should attempt to install them first. This is recursive, so that ordering happens correctly. sboupgrade will refuse to handle circular requirements. sboupgrade will also note groupadd and useradd commands in README files and offer to run those first. If the README documents options of the KEY=value form, sboupgrade will offer the opportunity to set options. If options were entered previously, they will be displayed and can be used again. Any build options, whether passed here or in a template, will be saved to /var/log/sbotools when the SlackBuild runs. If --all is supplied it will try to upgrade everything that sbocheck(1) reports.
 .P
 sboupgrade will attempt to download the sources from the DOWNLOAD or DOWNLOAD_x86_64 variables in the .info file. If such a download fails or the file can't be verified, it'll attempt to download the file from ftp://slackware.uk/sbosrcarch/ instead.
 .SH OPTIONS
@@ -29,12 +29,12 @@ If TRUE, then do not do upgrades unless the version number differs. By default, 
 .P
 -c|--noclean (FALSE|TRUE)
 .RS
-If TRUE, then DO NOT clean working directories after building the slackbuild. These are the directories where the source is unpacked and compiled, and where the package is put together in, which are under /tmp/SBo (or $TMP). By default, these directories are removed after building an slackbuild. This option leaves those directories in place. This can be set as default via the sboconfig(1) command. Also see sbotools.conf(5). This option overrides the default.
+If TRUE, then DO NOT clean working directories after building the SlackBuild. These are the directories where the source is unpacked and compiled, and where the package is put together in, which are under /tmp/SBo (or $TMP). By default, these directories are removed after building an SlackBuild. This option leaves those directories in place. This can be set as default via the sboconfig(1) command. Also see sbotools.conf(5). This option overrides the default.
 .RE
 .P
 -d|--distclean (FALSE|TRUE)
 .RS
-If TRUE, then DO remove the source code after building the slackbuild. By default, the source code is not removed, and lives under $SBO_HOME/distfiles, which, by default, is /usr/sbo/distfiles; this option can be set as default via the sboconfig(1) command. See also sbotools.conf(5). This option overrides the default.
+If TRUE, then DO remove the source code after building the SlackBuild. By default, the source code is not removed, and lives under $SBO_HOME/distfiles, which, by default, is /usr/sbo/distfiles; this option can be set as default via the sboconfig(1) command. See also sbotools.conf(5). This option overrides the default.
 .RE
 .P
 -f|--force
@@ -44,22 +44,22 @@ Force an upgrade, even if the installed version is equal to the slackbuilds.org 
 .P
 -i|--noinstall
 .RS
-Do not actually install the package created at the end of the build process. So, the slackbuild will be run, and the package will be left in /tmp (or $OUTPUT), or in $PKG_DIR if so defined (see sboconfig(1) and sbotools.conf(5)).
+Do not actually install the package created at the end of the build process. So, the SlackBuild will be run, and the package will be left in /tmp (or $OUTPUT), or in $PKG_DIR if so defined (see sboconfig(1) and sbotools.conf(5)).
 .RE
 .P
 -j|--jobs (FALSE|#)
 .RS
-If numeric (2,5,10, etc), then that number will be fed to the "-j" argument to make when a slackbuild which invokes "make" is run. This only makes sense on multicore systems, where one might set the JOBS to the number of available cores, or half that number, etc.
+If numeric (2,5,10, etc), then that number will be fed to the "-j" argument to make when a SlackBuild which invokes "make" is run. This only makes sense on multicore systems, where one might set the JOBS to the number of available cores, or half that number, etc.
 .RE
 .P
 -r|--nointeractive
 .RS
-Skip viewing of the README and the yes or no question which accompanies it. Anytime sboupgrade is run, the first thing the command will attempt to do is show you the README for a given slackbuild and ask whether or not you wish to proceed; this option skips the README and bypasses the question. This also disables dependency resolution, since you have no way of confirming which dependencies you actually want to install. If multiple slackbuilds are specified, this option bypasses them all.
+Skip viewing of the README and the yes or no question which accompanies it. Anytime sboupgrade is run, the first thing the command will attempt to do is show you the README for a given SlackBuild and ask whether or not you wish to proceed; this option skips the README and bypasses the question. This also disables dependency resolution, since you have no way of confirming which dependencies you actually want to install. If multiple SlackBuilds are specified, this option bypasses them all.
 .RE
 .P
 -z|--force-reqs
 .RS
-When used in combination with the -f option, to force an update even if it would not constitute an update, this will cause sboupgrade to also rebuild all of that slackbuild's requirements. Normally with -f, only the slackbuild(s) specified, and any requirements not already installed, will be rebuilt. This allows for recursive upgrades, among other things.
+When used in combination with the -f option, to force an update even if it would not constitute an update, this will cause sboupgrade to also rebuild all of that SlackBuild's requirements. Normally with -f, only the SlackBuild(s) specified, and any requirements not already installed, will be rebuilt. This allows for recursive upgrades, among other things.
 .RE
 .P
 --all
