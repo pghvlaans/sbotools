@@ -34,7 +34,7 @@ rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+tar xvf $CWD/$PRGNAM-$VERSION.tar.xz
 cd $PRGNAM-$VERSION
 chown -R root:root .
 find -L . \
@@ -58,16 +58,18 @@ find -L . \
 SCRIPTS="check clean config find install remove snap upgrade"
 MANS="man1 man5"
 
-mkdir -p $PKG/usr/sbin $PKG/usr/share/zsh/site-functions $PKG/usr/share/bash-completion/completions
+mkdir -p $PKG/usr/sbin \
+         $PKG/usr/share/zsh/site-functions \
+         $PKG/usr/share/bash-completion/completions
 for i in $SCRIPTS; do
-  cp sbo$i $PKG/usr/sbin/sbo$i
-  cp completions/zsh/_sbo$i $PKG/usr/share/zsh/site-functions/_sbo$i
-  cp completions/bash/sbo$i $PKG/usr/share/bash-completion/completions/sbo$i
+  install -m 0755 sbo$i $PKG/usr/sbin
+  install -m 0644 completions/zsh/_sbo$i $PKG/usr/share/zsh/site-functions
+  install -m 0644 completions/bash/sbo$i $PKG/usr/share/bash-completion/completions/sbo$i
 done
 
 for i in $MANS; do
   mkdir -p $PKG/usr/man/$i
-  cp $i/* $PKG/usr/man/$i/
+  install -m 0644 $i/* $PKG/usr/man/$i
 done
 
 mkdir -p $PKG/etc/sbotools

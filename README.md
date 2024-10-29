@@ -1,18 +1,21 @@
-# sbotools
+# sbotools3
 
-**[sbotools](https://pink-mist.github.io/sbotools/)** provides a ports-like interface to [slackbuilds.org](http://www.slackbuilds.org/).
+**[sbotools3](https://pghvlaans.github.io/sbotools3/)** provides a ports-like interface to [slackbuilds.org](http://www.slackbuilds.org/). It is the continuation of **sbotools**.
+
+A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
 ## Changes
-* Post-Fork
+* 1.0
   * Change the git branch to match the Slackware version, or to a user-configured branch
   * Change the default URLs to support Slackware 15.0 and use git repositories
+  * Use rsync default mirrors with RSYNC_DEFAULT (except for -current)
   * Detect build number changes and optionally upgrade
   * Detect and report out-of-tree _SBo SlackBuilds with sbocheck
   * Save any build options when running a SlackBuild
   * Install bash completions; zsh completions have been updated
   * Install a default configuration file; tweak sboconfig to play somewhat nicely with it
-  * Use rsync default mirrors with RSYNC_DEFAULT (except for -current)
 
+## Historical Changes
 * 2.7 - 2019-04-28
   * Actually fix the sbofind -e bug #71
       

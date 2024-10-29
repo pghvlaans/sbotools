@@ -4,7 +4,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '2.7';
+our $VERSION = '1.0';
 
 use SBO3::Lib::Util qw/ %config prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in _ERR_DOWNLOAD /;
 
@@ -393,11 +393,14 @@ SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
 contributions from Luke Williams <xocel@iquidus.org> and Andreas
 Guldstrand <andreas.guldstrand@gmail.com>.
 
+SBO3::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
+
 =head1 LICENSE
 
 The sbotools are licensed under the WTFPL <http://sam.zoy.org/wtfpl/COPYING>.
 
 Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
+Copyright (C) 2024, K. Eugene Carlson.
 
 =cut
 
