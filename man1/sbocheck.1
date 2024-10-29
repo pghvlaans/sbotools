@@ -1,13 +1,35 @@
-.TH sbocheck 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools3 1.0" sbotools3
+.TH sbocheck 1 "Pungenday, Aftermath 11, 3190 YOLD" "sbotools3 1.0" sbotools3
 .SH NAME
 .P
-sbocheck - update a local slackbuilds.org tree and check for updates.
+.B
+sbocheck
+- update a local slackbuilds.org tree and check for updates.
 .SH SYNOPSIS
 .P
 sbocheck [-h|-v]
 .SH DESCRIPTION
 .P
-sbocheck first updates a previously-fetched copy of the slackbuilds.org tree (see sbosnap(1)) and then checks to see if any packages installed from slackbuilds.org have updates, and reports what it finds. SlackBuilds with differing build numbers are reported separately, as are any SlackBuilds marked _SBo that are not found in the repository.
+.B
+sbocheck
+first updates a previously-fetched copy of the slackbuilds.org
+tree (see
+.B
+sbosnap(1)\fR\
+\&) checks for available upgrades, and reports what it finds.
+SlackBuilds with differing build numbers are reported separately,
+as are any SlackBuilds marked _SBo that are not found in the
+repository.
+.P
+The three output categories are logged separately to
+.I
+/etc/sbocheck.log\fR\
+\&,
+.I
+/etc/sbocheck-bumps.log
+and
+.I
+/etc/sbocheck-out-of-tree.log\fR\
+\&.
 .SH OPTIONS
 .P
 -h|--help
@@ -21,7 +43,10 @@ Show version information.
 .RE
 .SH BUGS
 .P
-None known, but there may be some. Please report any found to https://github.com/pghvlaans/sbotools3/issues ; patches are always welcome.
+None known. If found, Issues and Pull Requests to
+.I
+https://github.com/pghvlaans/sbotools3/
+are always welcome.
 .SH SEE ALSO
 .P
 sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sbosnap(1), sboupgrade(1), sbotools.conf(5)

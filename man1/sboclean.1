@@ -1,13 +1,52 @@
-.TH sboclean 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools3 1.0" sbotools3
+.TH sboclean 1 "Pungenday, Aftermath 11, 3190 YOLD" "sbotools3 1.0" sbotools3
 .SH NAME
 .P
-sboclean - clean files left around by sbotools.
+.B
+sboclean
+- clean files left by sbotools3.
 .SH SYNOPSIS
 .P
 sboclean [-h|-v] [-dwi] [-o ALL|package]
 .SH DESCRIPTION
 .P
-sboclean is used to clean files left around by sbotools, such as saved options (in /var/log/sbotools), downloaded source files ("distfiles"), or work directories under /tmp/SBo (or $TMP) and, for compat32 installs, under /tmp (or $TMP). Note that if not run with the -i flag, sboclean will remove anything in the distfiles or /tmp/SBo (or $TMP) folders and any /tmp/package-*-compat32 (or $TMP/package-*-compat32) directories with extreme prejudice. One of -d, -w or -o must be specified for this script to do anything.
+.B
+sboclean
+is used to clean files left by sbotools,
+such as saved options (in
+.I
+/var/log/sbotools\fR\
+\&), downloaded source files ("distfiles"), or
+working directories under
+.I
+/tmp/SBo
+(or $TMP) and, for compat32 installs, under
+.I
+/tmp
+(or $TMP). Note that if not run with the
+.B
+--interactive
+flag,
+.B
+sboclean will remove anything in the distfiles and/or
+.I
+/tmp/SBo
+(or $TMP) directories and any
+.I
+/tmp/package-*-compat32
+(or
+.I
+$TMP/package-*-compat32\fR\
+\&) directories with extreme prejudice. One of
+.B
+-d\fR\
+,
+.B
+-w
+.B
+or
+.B
+-o
+must be specified for this script to do anything.
 .SH OPTIONS
 .P
 -h|--help
@@ -22,22 +61,39 @@ Show version information.
 .P
 -d|--dist
 .RS
-Clean distfiles, by default located at /usr/sbo/distfiles.
+Clean distfiles, located at
+.I
+/usr/sbo/distfiles
+by default.
 .RE
 .P
 -w|--work
 .RS
-Clean working directories, located, by default under /tmp/SBo and, for compat32 installs, by default, /tmp.
+Clean working directories, located by default under
+.I
+/tmp/SBo
+and, for compat32 installs,
+.I
+/tmp\fR\
+\&.
 .RE
 .P
 -o|--options (ALL|sbo_name)
 .RS
-With ALL, clean all saved options from /var/log/sbotools. With the name of a SlackBuild, clean the saved options for that SlackBuild only.
+With ALL, clean all saved options from
+.I
+/var/log/sbotools\fR\
+\&. With the name of a SlackBuild, clean the saved
+options for that SlackBuild only.
 .RE
 .P
 -i|--interactive
 .RS
-Be interactive; sboclean will ask for confirmation for each item which it thinks should be removed.
+Be interactive;
+.B
+sboclean
+will use confirmation prompts for each item that could be
+removed.
 .SH EXIT CODES
 .P
 sboclean can exit with the following codes:
@@ -46,12 +102,17 @@ sboclean can exit with the following codes:
 0: all operations completed successfully.
 .RE
 .RS
-1: a usage error occurred, such as running sboclean with nothing to clean.
+1: a usage error occurred, such as running
+.B
+sboclean with nothing to clean.
 .RE
 
 .SH BUGS
 .P
-None known, but there may be some. Please report any found to https://github.com/pghvlaans/sbotools3/issues ; patches are always welcome.
+None known. If found, Issues and Pull Requests to
+.I
+https://github.com/pghvlaans/sbotools3/
+are always welcome.
 .SH SEE ALSO
 .P
 sbocheck(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sbosnap(1), sboupgrade(1), sbotools.conf(5)
