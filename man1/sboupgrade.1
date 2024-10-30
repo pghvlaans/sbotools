@@ -6,7 +6,9 @@ sboupgrade
 - install or upgrade SlackBuilds
 .SH SYNOPSIS
 .P
-sboupgrade [-h|-v] [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] [-b TRUE|FALSE] [-fiprz] --all|sbo_name (sbo_name)
+sboupgrade [-h|-v]
+.P
+sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] [-b TRUE|FALSE] [-fiprz] --all|sbo_name (sbo_name)
 .SH DESCRIPTION
 .P
 .B
@@ -112,8 +114,8 @@ sbotools.conf(5)\fR\
 .P
 -d|--distclean (FALSE|TRUE)
 .RS
-If TRUE, then remove the source code after building. The
-source code is retained in
+If TRUE, then remove the source archives after building. They
+are retained in
 .I
 SBO_HOME/distfiles
 by default. This option can be set as default via the
@@ -128,7 +130,10 @@ sbotools.conf(5)\fR\
 -f|--force
 .RS
 Force an upgrade, even if the installed version and
-build number are equal to the slackbuilds.org version.
+build number are equal to the
+.I
+slackbuilds.org
+version.
 .RE
 .P
 -i|--noinstall
@@ -250,7 +255,7 @@ can exit with the following codes:
 8: unable to unset the exec-on-close bit on a temporary file.
 .RE
 .RS
-9: multilib has not been setup (where required).
+9: multilib has not been set up (where required).
 .RE
 .RS
 10:

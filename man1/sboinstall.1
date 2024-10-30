@@ -92,8 +92,8 @@ sbotools.conf(5)\fR\
 .P
 -d|--distclean (FALSE|TRUE)
 .RS
-If TRUE, then remove the source code after building. The
-source code is retained in
+If TRUE, then remove the source archives after building. They
+are retained in
 .I
 SBO_HOME/distfiles
 by default. This option can be set as default via the
@@ -149,11 +149,7 @@ should be combined with
 .B
 --noinstall
 so that the contents of the package can be inspected prior
-to installation. Ensure that the running shell has already
-sourced
-.I
-/etc/profile.d/32dev.{c,}sh
-before running, and that the
+to installation. Ensure that the
 .B
 DISTCLEAN
 option is set to

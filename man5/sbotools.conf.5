@@ -1,66 +1,211 @@
-.TH sbotools.conf 5 "Pungenday, Discord 45, 3185 YOLD" "sbotools3 1.0" sbotools3
+.TH sbotools.conf 5 "Pungenday, Aftermath 11, 3190 YOLD" "sbotools3 1.0" sbotools3
 .SH NAME
 .P
-sbotools.conf - configuration file for sbotools commands.
+.B
+sbotools.conf
+- configuration file for
+.B
+sbotools3
+commands
 .SH DESCRIPTION
 .P
-This file, location at /etc/sbotools/sbotools.conf, contains KEY=VALUE configuration parameters, and is read by all of the sbotools commands.
+.I
+/etc/sbotools/sbotools.conf
+contains
+.I
+KEY=VALUE
+configuration parameters, and is read by all
+.B
+sbotools3
+commands.
 .P
 The current configuration keys are as follows:
 .P
+.B
 DISTCLEAN=(FALSE|TRUE)
 .RS
-If TRUE, then DO remove the source code after building the SlackBuild. By default, the source code is not removed, and lives under $SBO_HOME/distfiles, which, by default, is /usr/sbo/distfiles. Setting this option to TRUE causes the source code to be removed by default. This can be overridden when running sboupgrade(1)/sboinstall(1).
+If
+.B
+TRUE\fR\
+\&, then remove the source archives after building. They
+are retained in
+.I
+/usr/sbo/distfiles
+(with
+.B
+SBO_HOME\fR\
+\&=
+.I
+/usr/sbo\fR\
+\&)
+by default.
 .RE
 .P
+.B
 JOBS=(FALSE|#)
 .RS
-If numeric (2,5,10, etc), then that number will be fed to the "-j" argument to make when a SlackBuild which invokes "make" is run. This only makes sense on multicore systems, where one might set the JOBS to the number of available cores, or half that number, etc.
+If
+.B
+numerical\fR\
+\&, pass to the
+.B
+-j
+argument when a SlackBuild invoking
+.B
+make
+is run.
 .RE
 .P
+.B
 NOCLEAN=(FALSE|TRUE)
 .RS
-If TRUE, then DO NOT clean working directories after building the SlackBuild. These are the directories where the source is unpacked and compiled, and where the package is put together in, which are under /tmp/SBo (or $TMP). By default, these directories are removed after building a SlackBuild. Setting this option to TRUE causes the working directories to not be cleaned by default. This can be overridden when running sboupgrade(1)/sboinstall(1).
+If
+.B
+TRUE\fR\
+\&, do not clean working directories after building.
+These are the build and
+.I
+package-(sbo)
+directories under
+.I
+/tmp/SBo
+(or $TMP).
 .RE
 .P
+.B
 GIT_BRANCH=(FALSE|branch_name)
 .RS
-If FALSE, use the default git branch for the Slackware version, if any. If branch_name, attempt to change branches to branch_name when using sbosnap(1) or sbocheck(1) with an upstream git repository.
+If
+.B
+FALSE\fR\
+\&, use the default git branch for the Slackware
+version, if any. If
+.B branch_name\fR\
+\&, attempt to change
+branches to
+.B
+branch_name
+when using
+.B
+sbosnap(1)
+or
+.B
+sbocheck(1)
+with an upstream git repository.
 .RE
 .P
+.B
 BUILD_IGNORE=(FALSE|TRUE)
 .RS
-If TRUE, only do upgrades if the version number differs. By default, upgrades are done when the build number of the SlackBuild differs as well.
+If
+.B
+TRUE\fR\
+\&, do not perform upgrades unless the
+version number differs. By default, upgrades
+also occur when the build number differs.
 .RE
 .P
 PKG_DIR=(FALSE|/path)
 .RS
-If set to a path, packages will be stored at the given location after building and installing. By default, packages are left where they are deposited by SlackBuilds, which is typically (probably always) /tmp (or $OUTPUT). If PKG_DIR is FALSE and DISTCLEAN is TRUE (either in sbotools.conf(5) or at sboupgrade/sboinstall runtime), the package will be deleted. If this option is set to a path in the filesystem, the package will be stored in that directory, regardless of any DISTCLEAN option.
+If set to a
+.B
+path\fR\
+\&, packages will be stored there after installation. This
+overrides the
+.B
+DISTCLEAN
+setting for saved packages.
 .RE
 .P
+.B
 SBO_HOME=(/usr/sbo|/path)
 .RS
-If set to a path, this is where the slackbuilds.org tree will live; by default, /usr/sbo will be used. If the tree should live elsewhere, this option can be set to the path where the tree should live. Note that if you set this option after fetching the tree to a different location (such as the default), you will need to fetch the tree again.
+If set to a
+.B
+path\fR\
+\&, this is where the
+.I
+slackbuilds.org
+tree will be stored. The default setting is
+.I
+/usr/sbo\fR\
+\&. The tree must be re-downloaded with
+.B
+sbosnap fetch
+if the
+.B
+SBO_HOME
+setting changes.
 .RE
 .P
+.B
 LOCAL_OVERRIDES=(FALSE|/path)
 .RS
-If set to a path, any directory name under that path that matches a SlackBuild name will be used instead of anything found in the main repo. (By default SBo, but this can be changed using the REPO setting. See below.) This will even work if it is not on SBo at all. It still requires all the usual files present in an SBo directory such as README, name.info, and name.SlackBuild.
+If set to a
+.B
+path\fR\
+\&, any directory name under that path matching a
+SlackBuild name will be used in preference to the
+in-tree version. This will work even if the SlackBuild
+is out-of-tree. README, slack-desc, an .info file and
+a SlackBuild must all be present.
 .RE
 .P
+.B
 SLACKWARE_VERSION=(FALSE|#.#)
 .RS
-If set to a version specification, use the SBo repository for that version instead of the one you can find in /etc/slackware-version.
+If set to a
+.B
+version number\fR\
+\&, use the
+.I
+slackbuilds.org
+repository for that version of Slackware rather than
+the one specified in
+.I
+/etc/slackware-version\fR\
+\&.
 .RE
 .P
+.B
 REPO=(FALSE|url)
 .RS
-If set to a url, use that repository instead of the slackbuilds.org repository for your SLACKWARE_VERSION. Setting this will make the SLACKWARE_VERSION setting redundant. URLs need to either lead to a git repository or an rsync repository. The repository needs to be laid out like the slackbuilds.org one with a couple of broad categories at the root and under those are subdirectories for each package.
+If set to a git or rsync
+.B
+URL\fR\
+\&, use that repository instead of the
+.B
+sbotools3
+default for your
+.B
+SLACKWARE_VERSION\fR\
+\&. The default repositories are under
+.I
+rsync://slackbuilds.org/slackbuilds
+if
+.B
+RSYNC_DEFAULT
+is
+.B
+TRUE
+and
+.I
+https://gitlab.com/SlackBuilds.org
+otherwise. The repository must be laid out in the same
+manner as one found at
+.I
+https://git.slackbuilds.org/slackbuilds\fR\
+\&, such that SlackBuild directories are under the
+category directories.
 .RE
 .P
+.B
 RSYNC_DEFAULT(FALSE|TRUE)
 .RS
-If set to TRUE, use rsync default mirrors except for Slackware -current.
+If set to
+.B
+TRUE\fR\
+\&, use rsync default mirrors except for Slackware -current.
 .RE
 .SH SEE ALSO
 .P

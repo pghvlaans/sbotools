@@ -1,13 +1,38 @@
-.TH sboremove 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools3 1.0" sbotools3
+.TH sboremove 1 "Pungenday, Aftermath 11, 3190 YOLD" "sbotools3 1.0" sbotools3
 .SH NAME
 .P
-sboremove - remove packages installed from SlackBuilds
+.B
+sboremove
+- remove packages installed from SlackBuilds
 .SH SYNOPSIS
 .P
-sboremove [-h|-v] [-a] sbo_name
+sboremove [-h|-v]
+.P
+sboremove [-a] sbo_name (sbo_name)
 .SH DESCRIPTION
 .P
-sboremove is used to remove packages installed from SlackBuilds. It pulls the list of requirements from the .info file for any specified SlackBuild. If such a list exists, sboremove will look to see whether or not those requirements are installed. Those that are will then be checked to see whether they are requirements of other packages also installed. If a package is no longer required, or the -a flag is specified sboremove will ask whether or not it should also remove it from the system.
+.B
+sboremove
+removes packages installed from SlackBuilds, along with
+any unneeded dependencies. Dependency information is
+pulled recursively from .info files; any dependencies
+that are required by no other SlackBuilds will be eligible
+for removal as well. If
+.B
+sboremove
+is called with the
+.B
+--alwaysask
+flag, the dependency requirements of other installed SlackBuilds
+will not be checked.
+.P
+In all cases, this script prompts the user package-by-package
+before performing any removal operations. No option exists to enable
+.B
+sboremove
+to uninstall packages without confirmation prompts,
+and there are no plans to add such a feature in the
+future.
 .SH OPTIONS
 .P
 -h|--help
@@ -22,11 +47,14 @@ Show version information.
 .P
 -a|--alwaysask
 .RS
-Always ask to remove requirements, even those required by other packages currently installed (ignored by default)
+Always ask to remove dependencies, even if they are
+required by other packages installed to the system.
 .RE
 .SH EXIT CODES
 .P
-sboremove can exit with the following codes:
+.B
+sboremove
+can exit with the following codes:
 .RS
 
 0: all operations completed successfully.
@@ -36,7 +64,10 @@ sboremove can exit with the following codes:
 .RE
 .SH BUGS
 .P
-None known, but there may be some. Please report any found to https://github.com/pghvlaans/sbotools3/issues ; patches are always welcome.
+None known. If found, Issues and Pull Requests to
+.I
+https://github.com/pghvlaans/sbotools3/
+are always welcome.
 .SH SEE ALSO
 .P
 sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sbosnap(1), sboupgrade(1), sbotools.conf(5)
