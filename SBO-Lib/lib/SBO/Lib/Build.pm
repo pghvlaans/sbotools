@@ -455,7 +455,10 @@ sub perform_sbo {
     if ($args{C32}) {
       $changes{libdirsuffix} = '';
     } elsif ($args{X32}) {
-      $changes{arch_out} = 'i486';
+      if (`grep -q "ARCH=i686" $location/$sbo.SlackBuild` == 0) { $changes{arch_out} = 'i686'; }
+      elsif (`grep -q "ARCH=i586" $location/$sbo.SlackBuild` == 0) { $changes{arch_out} = 'i586'; }
+      elsif (`grep -q "ARCH=i486" $location/$sbo.SlackBuild` == 0) { $changes{arch_out} = 'i486'; }
+      elsif (`grep -q "ARCH=x86" $location/$sbo.SlackBuild` == 0) { $changes{arch_out} = 'x86'; }
     }
     $cmd .= '. /etc/profile.d/32dev.sh &&';
   }

@@ -12,6 +12,7 @@
   * Install bash completions; zsh completions have been updated
   * Install a default configuration file; tweak sboconfig to play somewhat nicely with it
   * Use rsync default mirrors with RSYNC_DEFAULT (except for -current)
+  * Fix making -compat32 packages for non-i486 SlackBuilds
 
 * 2.7 - 2019-04-28
   * Actually fix the sbofind -e bug #71
