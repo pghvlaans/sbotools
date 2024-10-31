@@ -61,16 +61,19 @@ ftp://slackware.uk/sbosrcarch/
 as a fallback measure.
 .SH OPTIONS
 .P
+.B
 -h|--help
 .RS
 Show help information.
 .RE
 .P
+.B
 -v|--version
 .RS
 Show version information.
 .RE
 .P
+.B
 -c|--noclean (FALSE|TRUE)
 .RS
 If TRUE, do not clean working directories after building.
@@ -90,6 +93,7 @@ sbotools.conf(5)\fR\
 \&. This option overrides the default.
 .RE
 .P
+.B
 -d|--distclean (FALSE|TRUE)
 .RS
 If TRUE, then remove the source archives after building. They
@@ -105,6 +109,7 @@ sbotools.conf(5)\fR\
 \&. This option overrides the default.
 .RE
 .P
+.B
 -i|--noinstall
 .RS
 Do not install the package at the end of the build process.
@@ -123,6 +128,7 @@ sbotools.conf(5)\fR\
 \&.
 .RE
 .P
+.B
 -j|--jobs (FALSE|#)
 .RS
 If numerical, pass to the
@@ -134,9 +140,10 @@ make
 is run.
 .RE
 .P
+.B
 -p|--compat32
 .RS
-Create a -compat32 package on multilib x86_64 systems.
+Create a compat32 package on multilib x86_64 systems.
 This requires the
 .B
 compat32-tools
@@ -149,38 +156,39 @@ should be combined with
 .B
 --noinstall
 so that the contents of the package can be inspected prior
-to installation. Ensure that the
+to installation. If the base package and compat32 package
+are to be built at the same time, ensure that the
 .B
 DISTCLEAN
 option is set to
 .B
 FALSE.
 GitHub Issues are welcome in case of unexpected failure.
--compat32 packages are currently
-.B
-incompatible
-with templates.
 .RE
 .P
+.B
 -r|--nointeractive
 .RS
 Bypass all user prompts and all dependency resolution for
-the requested SlackBuilds. This option should not be used
-unless it is obvious that dependency resolution and build
-options are not required.
+the requested SlackBuilds. Unless it is obvious that dependency
+resolution and build options are not required, consider using
+a template instead.
 .RE
 .P
+.B
 -R|--norequirements
 .RS
 Bypass dependency resolution, but still show README and the
 user prompts before proceeding with the build.
 .RE
 .P
+.B
 --reinstall
 .RS
 Offer to reinstall all packages in the build queue.
 .RE
 .P
+.B
 --create-template (FILE)
 .RS
 Create a template for one or more SlackBuilds including any
@@ -190,6 +198,7 @@ FILE\fR\
 \&.
 .RE
 .P
+.B
 --use-template (FILE)
 .RS
 Build using the template saved to

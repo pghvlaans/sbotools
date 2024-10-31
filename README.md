@@ -16,6 +16,7 @@ A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maint
   * Install a default configuration file; tweak sboconfig to play somewhat nicely with it
   * Use rsync default mirrors with RSYNC_DEFAULT (except for -current)
   * Fix making -compat32 packages for non-i486 SlackBuilds
+  * Fix building -compat32 packages from templates
 
 ## Historical Changes
 * 2.7 - 2019-04-28

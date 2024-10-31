@@ -59,20 +59,20 @@ SBO3::Lib::Repo - Routines for downloading and updating the SBo repo.
 By default $distfiles is set to C</usr/sbo/distfiles>, and it is where all the
 downloaded sources are kept.
 
-The location depends on the C<SBO3_HOME> config setting.
+The location depends on the C<SBO_HOME> config setting.
 
 =head2 $repo_path
 
 By default $repo_path is set to C</usr/sbo/repo>, and it is where the
 SlackBuilds.org tree is kept.
 
-The location depends on the C<SBO3_HOME> config setting.
+The location depends on the C<SBO_HOME> config setting.
 
 =cut
 
 # some stuff we'll need later
-our $distfiles = "$config{SBO3_HOME}/distfiles";
-our $repo_path = "$config{SBO3_HOME}/repo";
+our $distfiles = "$config{SBO_HOME}/distfiles";
+our $repo_path = "$config{SBO_HOME}/repo";
 our $slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
 
 =head1 SUBROUTINES
@@ -126,7 +126,7 @@ it fails to create it, it will exit with a usage error.
 
 sub check_repo {
   if (-d $repo_path) {
-    _race::cond '$repo_path could be deleted after -d check';
+    _race::cond '$repo_path could be deleted after -d check.';
     opendir(my $repo_handle, $repo_path);
     FIRST: while (my $dir = readdir $repo_handle) {
       next FIRST if in($dir => qw/ . .. /);
@@ -155,7 +155,7 @@ give a false negative if the repository hasn't been migrated to its sbotools
 
 # does the SLACKBUILDS.TXT file exist in the sbo tree?
 sub chk_slackbuilds_txt {
-  if (-f "$config{SBO3_HOME}/SLACKBUILDS.TXT") { migrate_repo(); }
+  if (-f "$config{SBO_HOME}/SLACKBUILDS.TXT") { migrate_repo(); }
   return -f $slackbuilds_txt ? 1 : undef;
 }
 
@@ -237,11 +237,11 @@ sub git_sbo_tree {
     $branch = $config{GIT_BRANCH};
   }
   if (-d "$repo_path/.git" and check_git_remote($repo_path, $url)) {
-    _race::cond '$repo_path can be deleted after -d check';
+    _race::cond '$repo_path can be deleted after -d check.';
     chdir $repo_path or return 0;
     $res = eval {
       die unless system(qw! git fetch !) == 0; # if system() doesn't return 0, there was an error
-      _race::cond 'git repo could be changed or deleted here';
+      _race::cond 'The git repo could be changed or deleted here.';
       die unless system(qw! git reset --hard origin !) == 0;
       unlink "$repo_path/SLACKBUILDS.TXT";
       if ($branch) {
@@ -251,7 +251,7 @@ sub git_sbo_tree {
       1;
     };
   } else {
-    chdir $config{SBO3_HOME} or return 0;
+    chdir $config{SBO_HOME} or return 0;
     remove_tree($repo_path) if -d $repo_path;
     $res = system(qw/ git clone --no-local /, $url, $repo_path) == 0;
     if ($res) {
@@ -282,10 +282,10 @@ C</usr/sbo/repo>.
 sub migrate_repo {
   make_path($repo_path) unless -d $repo_path;
   _race::cond '$repo_path can be deleted between being made and being used';
-  opendir(my $dh, $config{SBO3_HOME});
+  opendir(my $dh, $config{SBO_HOME});
   foreach my $entry (readdir($dh)) {
     next if in($entry => qw/ . .. repo distfiles /);
-    move("$config{SBO3_HOME}/$entry", "$repo_path/$entry");
+    move("$config{SBO_HOME}/$entry", "$repo_path/$entry");
   }
   close $dh;
 }
@@ -360,8 +360,8 @@ C<$repo_path>, and if not, offer to run C<sbosnap fetch> for you.
 # not been populated there; prompt the user to automagickally pull the tree.
 sub slackbuilds_or_fetch {
   unless (chk_slackbuilds_txt()) {
-    say 'It looks like you haven\'t run "sbosnap fetch" yet.';
-    if (prompt("Would you like me to do this now?", default => 'yes')) {
+    say 'It looks like "sbosnap fetch" has not yet been run.';
+    if (prompt("Fetch the repository now?", default => 'yes')) {
       fetch_tree();
     } else {
       say 'Please run "sbosnap fetch"';

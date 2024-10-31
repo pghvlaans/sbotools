@@ -136,7 +136,7 @@ sub get_from_info {
     defined $contents;
 
   my %parse = parse_info($contents);
-  script_error("error when parsing $sbo.info file.") unless %parse;
+  script_error("Error when parsing file $sbo.info.") unless %parse;
 
   $store = {};
   $store->{LOCATION} = [$args{LOCATION}];

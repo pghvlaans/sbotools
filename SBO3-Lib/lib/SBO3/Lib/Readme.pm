@@ -59,7 +59,7 @@ again.
 # provide an opportunity to set options or retrieve previously-used options
 sub ask_opts {
   # TODO: check number of args
-  script_error('ask_opts requires an argument') unless @_;
+  script_error('ask_opts requires an argument.') unless @_;
   my ($sbo, $readme) = @_;
   say "\n". $readme;
   my ($opts_log) = "/var/log/sbotools/$sbo";
@@ -78,7 +78,7 @@ sub ask_opts {
   }
   if (prompt("\nIt looks like $sbo has options; would you like to set any when the slackbuild is run?", default => 'no')) {
     my $ask = sub {
-      chomp(my $opts = prompt("\nPlease supply any options here, or enter to skip: "));
+      chomp(my $opts = prompt("\nPlease supply any options here, or press Enter to skip: "));
       return $opts;
     };
     my $kv_regex = qr/[A-Z0-9]+=[^\s]+(|\s([A-Z]+=[^\s]+){0,})/;
@@ -110,7 +110,7 @@ sub ask_other_readmes {
 
   return unless @readmes;
 
-  return unless prompt("\nIt looks like $sbo has additional README files. Would you like to see those too?", default => 'yes');
+  return unless prompt("\nIt looks like $sbo has additional README files. Would you like to view those as well?", default => 'yes');
 
   for my $fn (@readmes) {
     my ($display_fn) = $fn =~ m!/(README.*)$!;
@@ -138,7 +138,7 @@ sub ask_user_group {
   print "\nIt looks like this slackbuild requires the following";
   say ' command(s) to be run first:';
   say "    # $_" for @$cmds;
-  return prompt('Shall I run them prior to building?', default => 'yes') ? $cmds : undef;
+  return prompt('Run the commands prior to building?', default => 'yes') ? $cmds : undef;
 }
 
 =head2 get_opts
@@ -152,7 +152,7 @@ returns a true value. Otherwise it returns a false value.
 
 # see if the README mentions any options
 sub get_opts {
-  script_error('get_opts requires an argument') unless @_ == 1;
+  script_error('get_opts requires an argument.') unless @_ == 1;
   my $readme = shift;
   return $readme =~ /[A-Z0-9]+=[^\s]/ ? 1 : undef;
 }
@@ -184,7 +184,7 @@ C<groupadd> commands, and returns them in an array reference.
 
 # look for any (user|group)add commands in the README
 sub get_user_group {
-  script_error('get_user_group requires an argument') unless @_ == 1;
+  script_error('get_user_group requires an argument.') unless @_ == 1;
   my $readme = shift;
   my @cmds = $readme =~ /^\s*#*\s*(useradd.*?|groupadd.*?)(?<!\\)\n/msg;
   return \@cmds;
@@ -213,7 +213,7 @@ B<Note>: This should really be changed.
 sub user_prompt {
   script_error('user_prompt requires two arguments.') unless @_ == 2;
   my ($sbo, $location) = @_;
-  if (not defined $location) { usage_error("Unable to locate $sbo in the SlackBuilds.org tree."); }
+  if (not defined $location) { usage_error("Unable to locate $sbo in the slackbuilds.org tree."); }
   my $readme = get_readme_contents($location);
   return "Could not open README for $sbo.", undef, _ERR_OPENFH if not defined $readme;
   if (is_local($sbo)) { print "\nFound $sbo in local overrides.\n"; }

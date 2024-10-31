@@ -113,12 +113,12 @@ sub check_sbo {
   my ($sbo, $installed) = @_;
 
   if (not get_sbo_location($sbo)) {
-    say "Unable to locate $sbo in the SlackBuilds.org tree.";
+    say "Unable to locate $sbo in the slackbuilds.org tree.";
     return 0;
   }
 
   if (not exists $installed->{$sbo}) {
-    say "$sbo is not installed from SlackBuilds.org.";
+    say "$sbo is not installed from slackbuilds.org.";
     return 0;
   }
 
@@ -180,7 +180,7 @@ sub confirm {
   }
 
   if ($remove->{warning}) {
-    say "It is recommended that you view the README before continuing.";
+    say "Viewing the README before continuing is recommended.";
     if (prompt("Display README now?", default => 'yes')) {
       my $readme = get_readme_contents(get_sbo_location($remove->{name}));
       if (not defined $readme) {
@@ -192,10 +192,10 @@ sub confirm {
   }
 
   if (prompt("Remove $remove->{name}?", default => @required_by ? 'no' : 'yes')) {
-    say " * Added to remove queue\n";
+    say " * Added to remove queue.\n";
     return 1;
   }
-  say " * Ignoring\n";
+  say " * Ignoring.\n";
   return 0;
 }
 
@@ -204,7 +204,7 @@ sub remove {
   my $non_int = $self->{non_int};
   my @confirmed = @_;
 
-  say sprintf "Removing %d package(s)", scalar @confirmed;
+  say sprintf "Removing %d package(s).", scalar @confirmed;
   say join " ", map { $_->{name} } @confirmed;
 
   if (!$non_int and !prompt("\nAre you sure you want to continue?", default => 'no')) {

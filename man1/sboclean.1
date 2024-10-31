@@ -3,7 +3,9 @@
 .P
 .B
 sboclean
-- clean files left by sbotools3.
+- clean files left by
+.B
+sbotools3.
 .SH SYNOPSIS
 .P
 sboclean [-h|-v] [-dwi] [-o ALL|package]
@@ -27,7 +29,8 @@ working directories under
 --interactive
 flag,
 .B
-sboclean will remove anything in the distfiles and/or
+sboclean
+will remove anything in the distfiles and/or
 .I
 /tmp/SBo
 (or $TMP) directories and any
@@ -38,27 +41,29 @@ sboclean will remove anything in the distfiles and/or
 $TMP/package-*-compat32\fR\
 \&) directories with extreme prejudice. One of
 .B
--d\fR\
+--dist\fR\
 ,
 .B
--w
-.B
+--work
 or
 .B
--o
+--option
 must be specified for this script to do anything.
 .SH OPTIONS
 .P
+.B
 -h|--help
 .RS
 Show help information.
 .RE
 .P
+.B
 -v|--version
 .RS
 Show version information.
 .RE
 .P
+.B
 -d|--dist
 .RS
 Clean distfiles, located at
@@ -67,6 +72,7 @@ Clean distfiles, located at
 by default.
 .RE
 .P
+.B
 -w|--work
 .RS
 Clean working directories, located by default under
@@ -78,15 +84,20 @@ and, for compat32 installs,
 \&.
 .RE
 .P
+.B
 -o|--options (ALL|sbo_name)
 .RS
-With ALL, clean all saved options from
+With
+.B
+ALL\fR\
+\&, clean all saved options from
 .I
 /var/log/sbotools\fR\
 \&. With the name of a SlackBuild, clean the saved
 options for that SlackBuild only.
 .RE
 .P
+.B
 -i|--interactive
 .RS
 Be interactive;
@@ -96,7 +107,9 @@ will use confirmation prompts for each item that could be
 removed.
 .SH EXIT CODES
 .P
-sboclean can exit with the following codes:
+.B
+sboclean
+can exit with the following codes:
 .RS
 
 0: all operations completed successfully.
@@ -104,7 +117,8 @@ sboclean can exit with the following codes:
 .RS
 1: a usage error occurred, such as running
 .B
-sboclean with nothing to clean.
+sboclean
+with nothing to clean.
 .RE
 
 .SH BUGS

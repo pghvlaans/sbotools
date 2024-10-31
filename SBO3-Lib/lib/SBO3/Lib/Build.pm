@@ -151,7 +151,7 @@ sub do_slackbuild {
   # ensure x32 stuff is set correctly, or that we're setup for it
   if ($args{COMPAT32}) {
     unless ($multilib) {
-      return "compat32 requires multilib.\n", (undef) x 2,
+      return "compat32 packages can only be built on multilib systems.\n", (undef) x 2,
         _ERR_NOMULTILIB;
     }
     unless (-f '/usr/sbin/convertpkg-compat32') {
@@ -163,7 +163,7 @@ sub do_slackbuild {
       $x32 = check_x32 $args{LOCATION};
       if ($x32 && ! $multilib) {
         my $warn =
-          "$sbo is 32-bit which requires multilib on x86_64.\n";
+          "$sbo is 32-bit, which requires multilib on x86_64.\n";
         return $warn, (undef) x 2, _ERR_NOMULTILIB;
       }
     }
@@ -561,7 +561,7 @@ sub process_sbos {
     my $options = $$opts{$sbo} // 0;
     my $cmds = $$cmds{$sbo} // [];
     for my $cmd (@$cmds) {
-      system($cmd) == 0 or warn "\"$cmd\" exited non-zero\n";
+      system($cmd) == 0 or warn "\"$cmd\" exited non-zero.\n";
     }
     # switch compat32 on if upgrading/installing a -compat32
     # else make sure compat32 is off
@@ -579,7 +579,7 @@ sub process_sbos {
       return \@failures, $exit if $args{NON_INT};
       # or if this is the last $sbo
       return \@failures, $exit if $count == @$todo;
-      say "Failure encountered while building $sbo:";
+      say "A failure occurred while building $sbo:";
       say "  $fail";
       if (prompt('Do you want to proceed?', default => 'no')) {
         next FIRST;
@@ -606,12 +606,12 @@ sub process_sbos {
     unless ($config{PKG_DIR} eq 'FALSE') {
       my $dir = $config{PKG_DIR};
       unless (-d $dir) {
-        mkdir($dir) or warn "Unable to create $dir\n";
+        mkdir($dir) or warn "Unable to create $dir.\n";
       }
       if (-d $dir) {
-        move($pkg, $dir), say "$pkg stored in $dir";
+        move($pkg, $dir), say "$pkg stored in $dir.";
       } else {
-        warn "$pkg left in $tmpd\n";
+        warn "$pkg left in $tmpd.\n";
       }
     } elsif ($args{DISTCLEAN}) {
       unlink $pkg;
@@ -634,7 +634,7 @@ There is no useful return value.
 
 # move a backed-up .SlackBuild file back into place
 sub revert_slackbuild {
-  script_error('revert_slackbuild requires an argument') unless @_ == 1;
+  script_error('revert_slackbuild requires an argument.') unless @_ == 1;
   my $slackbuild = shift;
   if (-f "$slackbuild.orig") {
     unlink $slackbuild if -f $slackbuild;

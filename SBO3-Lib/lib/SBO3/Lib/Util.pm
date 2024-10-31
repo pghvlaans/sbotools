@@ -97,11 +97,11 @@ By default, C<$conf_file> will be C</etc/sbotools/sbotools.conf>.
 =head2 %config
 
 By default, all values are set to C<"FALSE">, but when C<read_config()> is run,
-the values will change according to the configuration, and C<SBO3_HOME> will by
+the values will change according to the configuration, and C<SBO_HOME> will by
 default get changed to C</usr/sbo>.
 
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
-C<SBO3_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>
+C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>
 and C<RSYNC_DEFAULT>.
 
 =cut
@@ -114,7 +114,7 @@ our %config = (
   DISTCLEAN => 'FALSE',
   JOBS => 'FALSE',
   PKG_DIR => 'FALSE',
-  SBO3_HOME => 'FALSE',
+  SBO_HOME => 'FALSE',
   LOCAL_OVERRIDES => 'FALSE',
   SLACKWARE_VERSION => 'FALSE',
   REPO => 'FALSE',
@@ -249,8 +249,8 @@ sub get_slack_version {
   chomp(my $line = <$fh>);
   close $fh;
   my $version = ($line =~ /\s+(\d+[^\s]+)$/)[0];
-  usage_error("Unsupported Slackware version: $version\n" .
-    "Suggest you set the sbotools REPO setting to $supported{current}\n")
+  usage_error("The running Slackware version is unsupported: $version\n" .
+    "Consider running \"sboconfig -r $supported{current}\" to use a repository for -current.\n")
     unless $supported{$version};
   return $version;
 }
@@ -463,7 +463,7 @@ sub read_config {
   } else {
     warn "Unable to open $conf_file.\n" if -f $conf_file;
   }
-  $config{SBO3_HOME} = '/usr/sbo' if $config{SBO3_HOME} eq 'FALSE';
+  $config{SBO_HOME} = '/usr/sbo' if $config{SBO_HOME} eq 'FALSE';
 }
 
 =head2 save_options
@@ -491,7 +491,7 @@ sub save_options {
     print $args_fh $args;
     close $args_fh;
     if (-f "$logfile.bk") { unlink("$logfile.bk"); }
-    say "\nA copy of the options has been saved to $logfile.";
+    say "\nA copy of the build options has been saved to $logfile.";
   }
   return 1;
 }
@@ -537,7 +537,7 @@ There is no useful return value.
 =cut
 
 sub show_version {
-  say "sbotools version $SBO3::Lib::VERSION";
+  say "sbotools3 version $SBO3::Lib::VERSION";
   say 'licensed under the WTFPL';
   say '<http://sam.zoy.org/wtfpl/COPYING>';
 }

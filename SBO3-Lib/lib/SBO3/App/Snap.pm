@@ -50,7 +50,7 @@ Options:
 Commands:
   fetch: initialize a local copy of the slackbuilds.org tree.
   update: update an existing local copy of the slackbuilds.org tree.
-          (generally, you may prefer "sbocheck" over "$fname update")
+          (generally, "sbocheck" may be preferred over "$fname update")
 
 EOF
 	return 1;

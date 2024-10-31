@@ -132,6 +132,13 @@ $inst_names{$_->{name}} = $_ for @$inst_pkgs;
 # populate %locations and sanity check
 my %locations = get_sbo_locations($build_queue);
 for my $sbo (@$build_queue) {
+	# Fall-backs for compat32 and templates.
+	if ($compat32 and not $locations{$sbo}) {
+		$locations{$sbo} = get_sbo_location($sbo);
+	}
+	if ($utemp and not $locations{$sbo}) {
+		$locations{$sbo} = get_sbo_location($sbo);
+	}
 	next if $inst_names{$sbo};
 
 	if (not $locations{$sbo} and in(@ARGV, $sbo)) {

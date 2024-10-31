@@ -81,7 +81,7 @@ sub check_distfiles {
   );
   # return an error if we're unable to get download info
   unless (keys %$downloads > 0) {
-    return "Unable to get download info from $location/$sbo.info\n",
+    return "Unable to get download informtion from $location/$sbo.info\n",
       _ERR_NOINFO;
   }
   for my $link (keys %$downloads) {
@@ -151,7 +151,7 @@ second value is true, the first one will have an error message.
 # for a given distfile, attempt to retrieve it and, if successful, check its
 # md5sum against that in the sbo's .info file
 sub get_distfile {
-  script_error('get_distfile requires two arguments') unless @_ == 2;
+  script_error('get_distfile requires two arguments.') unless @_ == 2;
   my ($link, $info_md5) = @_;
   my $filename = get_filename_from_link($link);
   mkdir $distfiles unless -d $distfiles;
@@ -167,7 +167,7 @@ sub get_distfile {
   }
   return 1 if not %$fail and verify_distfile(@_);
   if (not %$fail) {
-    $fail->{msg} = "md5sum failure for $filename.\n";
+    $fail->{msg} = "The md5sum could not be verified for $filename.\n";
     $fail->{err} = _ERR_MD5SUM;
   }
 
@@ -212,7 +212,7 @@ C<$link>.
 =cut
 
 sub get_filename_from_link {
-  script_error('get_filename_from_link requires an argument') unless @_ == 1;
+  script_error('get_filename_from_link requires an argument.') unless @_ == 1;
   my $filename = _get_fname(shift);
   return undef unless defined $filename;
   return "$distfiles/$filename";
@@ -236,7 +236,7 @@ sub get_sbo_downloads {
   );
   $args{LOCATION} or script_error('get_sbo_downloads requires LOCATION.');
   my $location = $args{LOCATION};
-  -d $location or script_error('get_sbo_downloads given a non-directory.');
+  -d $location or script_error('get_sbo_downloads was given a non-directory.');
   my $arch = get_arch();
   my $dl_info;
   if ($arch eq 'x86_64') {
@@ -259,8 +259,8 @@ the C<$path>.
 
 # for a given distfile, figure out what the full path to its symlink will be
 sub get_symlink_from_filename {
-  script_error('get_symlink_from_filename requires two arguments') unless @_ == 2;
-  script_error('get_symlink_from_filename first argument is not a file') unless -f $_[0];
+  script_error('get_symlink_from_filename requires two arguments.') unless @_ == 2;
+  script_error('get_symlink_from_filename first argument is not a file.') unless -f $_[0];
   my ($filename, $location) = @_;
   return "$location/". ($filename =~ qr#/([^/]+)$#)[0];
 }
