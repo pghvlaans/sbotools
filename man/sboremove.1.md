@@ -1,28 +1,27 @@
-# sboremove {#sboremove align="center"}
+# sboremove
 
-[NAME](#NAME)\
-[SYNOPSIS](#SYNOPSIS)\
-[DESCRIPTION](#DESCRIPTION)\
-[OPTIONS](#OPTIONS)\
-[EXIT CODES](#EXIT%20CODES)\
-[BUGS](#BUGS)\
-[SEE ALSO](#SEE%20ALSO)\
-[AUTHORS](#AUTHORS)\
-[MAINTAINER](#MAINTAINER)\
+[NAME](#name)\
+[SYNOPSIS](#synopsis)\
+[DESCRIPTION](#description)\
+[OPTIONS](#options)\
+[BUGS](#bugs)\
+[SEE ALSO](#see-also)\
+[AUTHORS](#authors)\
+[MAINTAINER](#maintainer)
 
 ------------------------------------------------------------------------
 
-## NAME []{#NAME}
+## NAME
 
 **sboremove** - remove packages installed from SlackBuilds
 
-## SYNOPSIS []{#SYNOPSIS}
+## SYNOPSIS
 
 sboremove \[-h\|-v\]
 
 sboremove \[-a\] sbo_name (sbo_name)
 
-## DESCRIPTION []{#DESCRIPTION}
+## DESCRIPTION
 
 **sboremove** removes packages installed from SlackBuilds, along with
 any unneeded dependencies. Dependency information is pulled recursively
@@ -36,7 +35,7 @@ performing any removal operations. No option exists to enable
 **sboremove** to uninstall packages without confirmation prompts, and
 there are no plans to add that functionality in the future.
 
-## OPTIONS []{#OPTIONS}
+## OPTIONS
 
 **-h\|\--help**
 
@@ -51,7 +50,7 @@ Show version information.
 Always ask to remove dependencies, even if they are required by other
 packages installed to the system.
 
-## EXIT CODES []{#EXIT CODES}
+## EXIT CODES
 
 **sboremove** can exit with the following codes:
 
@@ -59,17 +58,17 @@ packages installed to the system.
 1: a usage error occurred, such as running **sboremove** with nothing to
 remove.
 
-## BUGS []{#BUGS}
+## BUGS
 
 None known. If found, Issues and Pull Requests to
 <https://github.com/pghvlaans/sbotools3/> are always welcome.
 
-## SEE ALSO []{#SEE ALSO}
+## SEE ALSO
 
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1),
-sbosnap(1), sboupgrade(1), sbotools.conf(5)
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md),
+[sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), sbotools.conf(5)
 
-## AUTHORS []{#AUTHORS}
+## AUTHORS
 
 Luke Williams \<xocel (at) iquidus (dot) org\>
 
@@ -77,7 +76,7 @@ Jacob Pipkin \<j (at) dawnrazor (dot) net\>
 
 Andreas Guldstrand \<andreas (dot) guldstrand (at) gmail (dot) com\>
 
-## MAINTAINER []{#MAINTAINER}
+## MAINTAINER
 
 K. Eugene Carlson \<kvngncrlsn (at) gmail (dot) com\>
 

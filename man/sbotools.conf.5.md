@@ -1,18 +1,18 @@
-# sbotools.conf {#sbotools.conf align="center"}
+# sbotools.conf
 
-[NAME](#NAME)\
-[DESCRIPTION](#DESCRIPTION)\
-[SEE ALSO](#SEE%20ALSO)\
-[AUTHORS](#AUTHORS)\
-[MAINTAINER](#MAINTAINER)\
+[NAME](#name)\
+[DESCRIPTION](#description)\
+[SEE ALSO](#see-also)\
+[AUTHORS](#authors)\
+[MAINTAINER](#maintainer)\
 
 ------------------------------------------------------------------------
 
-## NAME []{#NAME}
+## NAME
 
 **sbotools.conf** - configuration file for **sbotools3** commands
 
-## DESCRIPTION []{#DESCRIPTION}
+## DESCRIPTION
 
 `/etc/sbotools/sbotools.conf` contains *KEY=VALUE* configuration
 parameters, and is read by all **sbotools3** commands.
@@ -39,7 +39,7 @@ the build and `package-(sbo)` directories under `/tmp/SBo` (or `$TMP`).
 
 If **FALSE**, use the default git branch for the Slackware version, if
 any. If **branch_name**, attempt to change branches to **branch_name**
-when using **sbosnap(1)** or **sbocheck(1)** with an upstream git
+when using **[sbosnap(1)](sbosnap.1.md)** or **[sbocheck(1)](sbocheck.1.md)** with an upstream git
 repository.
 
 **BUILD_IGNORE=(FALSE\|TRUE)**
@@ -87,12 +87,12 @@ SlackBuild directories are under the category directories.
 If set to **TRUE**, use rsync default mirrors except for Slackware
 -current.
 
-## SEE ALSO []{#SEE ALSO}
+## SEE ALSO
 
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1),
-sboremove(1), sbosnap(1), sboupgrade(1)
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md),
+[sboremove(1)](sboremove.1.md), [sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md)
 
-## AUTHORS []{#AUTHORS}
+## AUTHORS
 
 Jacob Pipkin \<j (at) dawnrazor (dot) net\>
 
@@ -100,7 +100,7 @@ Luke Williams \<xocel (at) iquidus (dot) org\>
 
 Andreas Guldstrand \<andreas (dot) guldstrand (at) gmail (dot) com\>
 
-## MAINTAINER []{#MAINTAINER}
+## MAINTAINER
 
 K. Eugene Carlson \<kvngncrlsn (at) gmail (dot) com\>
 

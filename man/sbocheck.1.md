@@ -23,7 +23,7 @@ sbocheck \[-h\|-v\]
 ## DESCRIPTION
 
 **sbocheck** first updates a previously-fetched copy of the
-**slackbuilds.org** tree (see **sbosnap(1)**) checks for available
+**slackbuilds.org** tree (see **[sbosnap(1)](sbosnap.1.md)**) checks for available
 upgrades, and reports what it finds. SlackBuilds with differing build
 numbers are reported separately, as are any SlackBuilds marked `_SBo`
 that are not found in the repository.
@@ -49,8 +49,8 @@ None known. If found, Issues and Pull Requests to
 
 ## SEE ALSO
 
-sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1),
-sbosnap(1), sboupgrade(1), sbotools.conf(5)
+[sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md),
+[sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), sbotools.conf(5)
 
 ## AUTHORS
 

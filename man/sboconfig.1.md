@@ -1,22 +1,21 @@
-# sboconfig {#sboconfig align="center"}
+# sboconfig
 
-[NAME](#NAME)\
-[SYNOPSIS](#SYNOPSIS)\
-[DESCRIPTION](#DESCRIPTION)\
-[OPTIONS](#OPTIONS)\
-[EXIT CODES](#EXIT%20CODES)\
-[BUGS](#BUGS)\
-[SEE ALSO](#SEE%20ALSO)\
-[AUTHORS](#AUTHORS)\
-[MAINTAINER](#MAINTAINER)\
+[NAME](#name)\
+[SYNOPSIS](#synopsis)\
+[DESCRIPTION](#description)\
+[OPTIONS](#options)\
+[BUGS](#bugs)\
+[SEE ALSO](#see-also)\
+[AUTHORS](#authors)\
+[MAINTAINER](#maintainer)
 
 ------------------------------------------------------------------------
 
-## NAME []{#NAME}
+## NAME
 
 **sboconfig** - set **sbotools3 configuration options.**
 
-## SYNOPSIS []{#SYNOPSIS}
+## SYNOPSIS
 
 sboconfig \[-h\|-v\]
 
@@ -27,13 +26,13 @@ sboconfig \[-c TRUE\|FALSE\] \[-d TRUE\|FALSE\] \[-j #\|FALSE\] \[-p
 TRUE\|FALSE\] \[-o /path\|FALSE\] \[-V #.#\|FALSE\] \[-r url\|FALSE\]
 \[-R TRUE\|FALSE\]
 
-## DESCRIPTION []{#DESCRIPTION}
+## DESCRIPTION
 
 **sboconfig** is a front-end for managing **sbotools3** configuration
 options. The **sbotools.conf(5)** file can also be manually edited; any
 fields not relevant to **sbotools3 configuration will be ignored.**
 
-## OPTIONS []{#OPTIONS}
+## OPTIONS
 
 **-h\|\--help**
 
@@ -53,7 +52,7 @@ for reference.
 
 **GIT_BRANCH**: If **FALSE**, use the default git branch for the
 Slackware version, if any. If **branch_name**, attempt to change
-branches to **branch_name** when using **sbosnap(1)** or **sbocheck(1)**
+branches to **branch_name** when using **[sbosnap(1)](sbosnap.1.md)** or **[sbocheck(1)](sbocheck.1.md)**
 with an upstream git repository.
 
 **-b\|\--build-ignore (FALSE\|TRUE)**
@@ -121,7 +120,7 @@ directories are under the category directories.
 **RSYNC_DEFAULT**: If set to **TRUE**, use rsync default mirrors except
 for Slackware -current.
 
-## EXIT CODES []{#EXIT CODES}
+## EXIT CODES
 
 **sboconfig** can exit with the following codes:
 
@@ -129,17 +128,17 @@ for Slackware -current.
 1: a usage error occurred (e.g. passing invalid option specifications)\
 6: **sboconfig** was unable to obtain a required file handle.
 
-## BUGS []{#BUGS}
+## BUGS
 
 None known. If found, Issues and Pull Requests to
 <https://github.com/pghvlaans/sbotools3/> are always welcome.
 
-## SEE ALSO []{#SEE ALSO}
+## SEE ALSO
 
-sbocheck(1), sboclean(1), sbofind(1), sboinstall(1), sboremove(1),
-sbosnap(1), sboupgrade(1), sbotools.conf(5)
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md),
+[sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), sbotools.conf(5)
 
-## AUTHORS []{#AUTHORS}
+## AUTHORS
 
 Jacob Pipkin \<j (at) dawnrazor (dot) net\>
 
@@ -147,7 +146,7 @@ Luke Williams \<xocel (at) iquidus (dot) org\>
 
 Andreas Guldstrand \<andreas (dot) guldstrand (at) gmail (dot) com\>
 
-## MAINTAINER []{#MAINTAINER}
+## MAINTAINER
 
 K. Eugene Carlson \<kvngncrlsn (at) gmail (dot) com\>
 

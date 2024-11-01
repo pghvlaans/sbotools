@@ -1,29 +1,28 @@
-# sboupgrade {#sboupgrade align="center"}
+# sboupgrade
 
-[NAME](#NAME)\
-[SYNOPSIS](#SYNOPSIS)\
-[DESCRIPTION](#DESCRIPTION)\
-[OPTIONS](#OPTIONS)\
-[EXIT CODES](#EXIT%20CODES)\
-[BUGS](#BUGS)\
-[SEE ALSO](#SEE%20ALSO)\
-[AUTHORS](#AUTHORS)\
-[MAINTAINER](#MAINTAINER)\
+[NAME](#name)\
+[SYNOPSIS](#synopsis)\
+[DESCRIPTION](#description)\
+[OPTIONS](#options)\
+[BUGS](#bugs)\
+[SEE ALSO](#see-also)\
+[AUTHORS](#authors)\
+[MAINTAINER](#maintainer)
 
 ------------------------------------------------------------------------
 
-## NAME []{#NAME}
+## NAME
 
 **sboupgrade** - install or upgrade SlackBuilds
 
-## SYNOPSIS []{#SYNOPSIS}
+## SYNOPSIS
 
 sboupgrade \[-h\|-v\]
 
 sboupgrade \[-c TRUE\|FALSE\] \[-d TRUE\|FALSE\] \[-j #\|FALSE\] \[-b
 TRUE\|FALSE\] \[-fiprz\] \--all\|sbo_name (sbo_name)
 
-## DESCRIPTION []{#DESCRIPTION}
+## DESCRIPTION
 
 **sboupgrade** is used to upgrade SlackBuilds. If the **-r** flag is not
 specified, **sboupgrade** will pull the list of requirements from the
@@ -46,7 +45,7 @@ from <ftp://slackware.uk/sbosrcarch/> as a fallback measure. The
 **\--all** flag may be passed to upgrade all eligible SlackBuilds
 simultaneously.
 
-## OPTIONS []{#OPTIONS}
+## OPTIONS
 
 **-h\|\--help**
 
@@ -69,14 +68,14 @@ upgrades even if the build number is unchanged. This overrides the
 If **TRUE**, do not clean working directories after building. These are
 the build and *package-(sbo)* directories under `/tmp/SBo` (or `$TMP`).
 Cleaning these directories can be set as default via the
-**sboconfig(1)** command. See also **sbotools.conf(5)**. This option
+**[sboconfig(1)](sboconfig.1.md)** command. See also **sbotools.conf(5)**. This option
 overrides the default.
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
 If TRUE, then remove the source archives after building. They are
 retained in `SBO_HOME/distfiles` by default. This option can be set as
-default via the **sboconfig(1)** command. See also **sbotools.conf(5)**.
+default via the **[sboconfig(1)](sboconfig.1.md)** command. See also **sbotools.conf(5)**.
 This option overrides the default.
 
 **-f\|\--force**
@@ -88,7 +87,7 @@ equal to the **slackbuilds.org** version.
 
 Do not install the package at the end of the build process. It will be
 left in `/tmp` (or `$OUTPUT`), or in **PKG_DIR** if so defined. See
-**sboconfig(1)** and **sbotools.conf(5)**.
+**[sboconfig(1)](sboconfig.1.md)** and **sbotools.conf(5)**.
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -121,10 +120,10 @@ require upgrades as well.
 **\--all**
 
 Upgrade all installed SlackBuilds that are eligible for upgrades. This
-takes the **BUILD_IGNORE** setting into account. See **sboconfig(1)**
+takes the **BUILD_IGNORE** setting into account. See **[sboconfig(1)](sboconfig.1.md)**
 and **sbotools.conf(5)**.
 
-## EXIT CODES []{#EXIT CODES}
+## EXIT CODES
 
 **sboupgrade** can exit with the following codes:
 
@@ -140,17 +139,17 @@ and **sbotools.conf(5)**.
 10: **convertpkg-compat32** exited non-zero.\
 11: the **convertpkg-compat32** script cannot be found (where required).
 
-## BUGS []{#BUGS}
+## BUGS
 
 None known. If found, Issues and Pull Requests to
 <https://github.com/pghvlaans/sbotools3/> are always welcome.
 
-## SEE ALSO []{#SEE ALSO}
+## SEE ALSO
 
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1),
-sboremove(1), sbosnap(1), sbotools.conf(5)
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md),
+[sboremove(1)](sboremove.1.md), [sbosnap(1)](sbosnap.1.md), sbotools.conf(5)
 
-## AUTHORS []{#AUTHORS}
+## AUTHORS
 
 Jacob Pipkin \<j (at) dawnrazor (dot) net\>
 
@@ -158,7 +157,7 @@ Luke Williams \<xocel (at) iquidus (dot) org\>
 
 Andreas Guldstrand \<andreas (dot) guldstrand (at) gmail (dot) com\>
 
-## MAINTAINER []{#MAINTAINER}
+## MAINTAINER
 
 K. Eugene Carlson \<kvngncrlsn (at) gmail (dot) com\>
 

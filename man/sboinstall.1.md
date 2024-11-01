@@ -1,22 +1,21 @@
-# sboinstall {#sboinstall align="center"}
+# sboinstall
 
-[NAME](#NAME)\
-[SYNOPSIS](#SYNOPSIS)\
-[DESCRIPTION](#DESCRIPTION)\
-[OPTIONS](#OPTIONS)\
-[EXIT CODES](#EXIT%20CODES)\
-[BUGS](#BUGS)\
-[SEE ALSO](#SEE%20ALSO)\
-[AUTHORS](#AUTHORS)\
-[MAINTAINER](#MAINTAINER)\
+[NAME](#name)\
+[SYNOPSIS](#synopsis)\
+[DESCRIPTION](#description)\
+[OPTIONS](#options)\
+[BUGS](#bugs)\
+[SEE ALSO](#see-also)\
+[AUTHORS](#authors)\
+[MAINTAINER](#maintainer)
 
 ------------------------------------------------------------------------
 
-## NAME []{#NAME}
+## NAME
 
 **sboinstall** - install SlackBuilds
 
-## SYNOPSIS []{#SYNOPSIS}
+## SYNOPSIS
 
 sboinstall \[-h\|-v\]
 
@@ -26,7 +25,7 @@ sboinstall \[-d TRUE\|FALSE\] \[-j #\|FALSE\] \[-c TRUE\|FALSE\]
 sboinstall \[-d TRUE\|FALSE\] \[-j #\|FALSE\] \[-c TRUE\|FALSE\] \[-i\]
 \--use-template FILE
 
-## DESCRIPTION []{#DESCRIPTION}
+## DESCRIPTION
 
 **sboinstall** is used to install SlackBuilds. If the **-r** flag is not
 specified, **sboinstall** will pull the list of requirements from the
@@ -47,7 +46,7 @@ or `DOWNLOAD_x86_64` variables in the `info` file. If either the
 download or the md5sum check fails, a new download will be attempted
 from <ftp://slackware.uk/sbosrcarch/> as a fallback measure.
 
-## OPTIONS []{#OPTIONS}
+## OPTIONS
 
 **-h\|\--help**
 
@@ -62,21 +61,21 @@ Show version information.
 If TRUE, do not clean working directories after building. These are the
 build and `package-(sbo)` directories under `/tmp/SBo` (or `$TMP`).
 Cleaning these directories can be set as default via the
-**sboconfig(1)** command. See also **sbotools.conf(5)**. This option
+**[sboconfig(1)](sboconfig.1.md)** command. See also **sbotools.conf(5)**. This option
 overrides the default.
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
 If **TRUE**, then remove the source archives after building. They are
 retained in `SBO_HOME/distfiles` by default. This option can be set as
-default via the **sboconfig(1)** command. See also **sbotools.conf(5)**.
+default via the **[sboconfig(1)](sboconfig.1.md)** command. See also **sbotools.conf(5)**.
 This option overrides the default.
 
 **-i\|\--noinstall**
 
 Do not install the package at the end of the build process. It will be
 left in `/tmp` (or `$OUTPUT`), or in **PKG_DIR** if so defined. See
-**sboconfig(1)** and **sbotools.conf(5)**.
+**[sboconfig(1)](sboconfig.1.md)** and **sbotools.conf(5)**.
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -119,7 +118,7 @@ commands and build options and save to the specified **FILE**.
 Build using the template saved to **FILE.** This disables all user
 prompts.
 
-## EXIT CODES []{#EXIT CODES}
+## EXIT CODES
 
 **sboinstall** can exit with the following codes:
 
@@ -135,17 +134,17 @@ prompts.
 10: **convertpkg-compat32** exited non-zero.\
 11: the **convertpkg-compat32** script cannot be found (where required).
 
-## BUGS []{#BUGS}
+## BUGS
 
 None known. If found, Issues and Pull Requests to
 <https://github.com/pghvlaans/sbotools3/> are always welcome.
 
-## SEE ALSO []{#SEE ALSO}
+## SEE ALSO
 
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboremove(1),
-sbosnap(1), sboupgrade(1), sbotools.conf(5)
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboremove(1)](sboremove.1.md),
+[sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), sbotools.conf(5)
 
-## AUTHORS []{#AUTHORS}
+## AUTHORS
 
 Jacob Pipkin \<j (at) dawnrazor (dot) net\>
 
@@ -153,7 +152,7 @@ Luke Williams \<xocel (at) iquidus (dot) org\>
 
 Andreas Guldstrand \<andreas (dot) guldstrand (at) gmail (dot) com\>
 
-## MAINTAINER []{#MAINTAINER}
+## MAINTAINER
 
 K. Eugene Carlson \<kvngncrlsn (at) gmail (dot) com\>
 

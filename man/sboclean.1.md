@@ -1,26 +1,25 @@
-# sboclean {#sboclean align="center"}
+# sboclean
 
-[NAME](#NAME)\
-[SYNOPSIS](#SYNOPSIS)\
-[DESCRIPTION](#DESCRIPTION)\
-[OPTIONS](#OPTIONS)\
-[EXIT CODES](#EXIT%20CODES)\
-[BUGS](#BUGS)\
-[SEE ALSO](#SEE%20ALSO)\
-[AUTHOR](#AUTHOR)\
-[MAINTAINER](#MAINTAINER)\
+[NAME](#name)\
+[SYNOPSIS](#synopsis)\
+[DESCRIPTION](#description)\
+[OPTIONS](#options)\
+[BUGS](#bugs)\
+[SEE ALSO](#see-also)\
+[AUTHORS](#authors)\
+[MAINTAINER](#maintainer)
 
 ------------------------------------------------------------------------
 
-## NAME []{#NAME}
+## NAME
 
 **sboclean** - clean files left by **sbotools3.**
 
-## SYNOPSIS []{#SYNOPSIS}
+## SYNOPSIS
 
 sboclean \[-h\|-v\] \[-dwi\] \[-o ALL\|package\]
 
-## DESCRIPTION []{#DESCRIPTION}
+## DESCRIPTION
 
 **sboclean** is used to clean files left by **sbotools3**, such as saved
 options (in `/var/log/sbotools`), downloaded source files ("distfiles"),
@@ -32,7 +31,7 @@ distfiles and/or `/tmp/SBo` (or `$TMP`) directories and any
 with extreme prejudice. One of **\--dist**, **\--work** or **\--option**
 must be specified for this script to do anything.
 
-## OPTIONS []{#OPTIONS}
+## OPTIONS
 
 **-h\|\--help**
 
@@ -61,7 +60,7 @@ name of a SlackBuild, clean the saved options for that SlackBuild only.
 Be interactive; **sboclean** will use confirmation prompts for each item
 that could be removed.
 
-## EXIT CODES []{#EXIT CODES}
+## EXIT CODES
 
 **sboclean** can exit with the following codes:
 
@@ -69,17 +68,17 @@ that could be removed.
 1: a usage error occurred, such as running **sboclean** with nothing to
 clean.
 
-## BUGS []{#BUGS}
+## BUGS
 
 None known. If found, Issues and Pull Requests to
 <https://github.com/pghvlaans/sbotools3/> are always welcome.
 
-## SEE ALSO []{#SEE ALSO}
+## SEE ALSO
 
-sbocheck(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1),
-sbosnap(1), sboupgrade(1), sbotools.conf(5)
+[sbocheck(1)](sbocheck.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md),
+[sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), sbotools.conf(5)
 
-## AUTHOR []{#AUTHOR}
+## AUTHORS
 
 Jacob Pipkin \<j (at) dawnrazor (dot) net\>
 
@@ -87,7 +86,7 @@ Luke Williams \<xocel (at) iquidus (dot) org\>
 
 Andreas Guldstrand \<andreas (dot) guldstrand (at) gmail (dot) com\>
 
-## MAINTAINER []{#MAINTAINER}
+## MAINTAINER
 
 K. Eugene Carlson \<kvngncrlsn (at) gmail (dot) com\>
 
