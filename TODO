@@ -3,11 +3,6 @@ TO DO
 * Release sbotools3 1.0
 * Make a GitHub page
 
-SEPARATE BRANCH
-
-* Punctuation and grammar fixes, especially for on-screen messaging
-* Rename to sbotools3, attribution, etc.
-
 DONE
 
 * Save the build options when the SlackBuild runs (all cases); clean with sboclean
@@ -18,6 +13,8 @@ DONE
 * Add bash completions
 * Update the zsh completions
 * Install a default configuration file (and tweak sboconfig to work better with it)
+* Punctuation and grammar fixes, especially for on-screen messaging
+* Rename to sbotools3, attribution, etc.
 
 NOTE
 
