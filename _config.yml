@@ -14,7 +14,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: sbotools3
-subtitle: A ports-like interface to slackbuilds.org
+subtitle: A ports-like interface to slackbuilds.org.
 email:
 description: >- # this means to ignore newlines until "baseurl:"
   sbotools3 is the continuation of sbotools. It is a
@@ -32,6 +32,7 @@ remote_theme: mmistakes/minimal-mistakes
 include:
   - _pages
   - man
+  - downloads
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
@@ -78,6 +79,14 @@ defaults:
   # man
   - scope:
       path: "man"
+      type: pages
+    values:
+      layout: single
+      author_profile: false
+      title: false
+  # downloads
+  - scope:
+      path: "downloads"
       type: pages
     values:
       layout: single

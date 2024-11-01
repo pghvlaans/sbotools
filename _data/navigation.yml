@@ -3,3 +3,7 @@ main:
     url: /man/
   - title: "ChangeLog"
     url: /ChangeLog.html
+  - title: "Downloads"
+    url: /downloads/
+  - title: "Development"
+    url: https://github.com/pghvlaans/sbotools3/
