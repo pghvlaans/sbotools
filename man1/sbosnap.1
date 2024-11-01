@@ -4,7 +4,7 @@
 .B
 sbosnap
 -
-.I
+.B
 slackbuilds.org
 tree fetch and update command
 .SH SYNOPSIS
@@ -17,12 +17,12 @@ sbosnap (fetch|update)
 .B
 sbosnap
 is used to download and update a local copy of the
-.I
+.B
 slackbuilds.org
 tree, without the
-.I
-*.tar.gz{,.asc}
-files. Note that
+.I 
+*.tar.gz{,.asc}\fR\
+ files. Note that
 .B
 sbocheck(1)
 also updates the tree and checks for updated and removed
@@ -50,17 +50,20 @@ sbotools.conf(5)\fR\
 \&.
 .SH OPTIONS
 .P
+.B
 -h|--help
 .RS
 Show help information.
 .RE
 .P
+.B
 -v|--version
 .RS
 Show version information.
 .RE
 .SH COMMANDS
 .P
+.B
 fetch
 .RS
 Download a local copy of the
@@ -75,15 +78,16 @@ sboconfig(1)
 and
 sbotools.conf(5)\fR\
 \&),
-.I
-/usr/sbo
-by default.
+.I 
+/usr/sbo\fR\
+ by default.
 .RE
 .P
+.B
 update
 .RS
-Update a previously fetch'd copy of the
-.I
+Update a previously fetched copy of the
+.B
 slackbuilds.org
 tree.
 .RE
@@ -105,8 +109,8 @@ can exit with the following codes:
 .SH BUGS
 .P
 None known. If found, Issues and Pull Requests to
-.I
-https://github.com/pghvlaans/sbotools3/
+.UR https://github.com/pghvlaans/sbotools3/
+.UE
 are always welcome.
 .SH SEE ALSO
 .P

@@ -9,9 +9,9 @@ sbotools3
 commands
 .SH DESCRIPTION
 .P
-.I
-/etc/sbotools/sbotools.conf
-contains
+.I 
+/etc/sbotools/sbotools.conf\fR\
+ contains
 .I
 KEY=VALUE
 configuration parameters, and is read by all
@@ -29,13 +29,13 @@ If
 TRUE\fR\
 \&, then remove the source archives after building. They
 are retained in
-.I
-/usr/sbo/distfiles
-(with
+.I 
+/usr/sbo/distfiles\fR\
+ (with
 .B
 SBO_HOME\fR\
 \&=
-.I
+.I 
 /usr/sbo\fR\
 \&)
 by default.
@@ -64,12 +64,15 @@ If
 TRUE\fR\
 \&, do not clean working directories after building.
 These are the build and
-.I
-package-(sbo)
-directories under
-.I
-/tmp/SBo
-(or $TMP).
+.I 
+package-(sbo)\fR\
+ directories under
+.I 
+/tmp/SBo\fR\
+ (or
+.I 
+$TMP\fR\
+).
 .RE
 .P
 .B
@@ -80,7 +83,8 @@ If
 FALSE\fR\
 \&, use the default git branch for the Slackware
 version, if any. If
-.B branch_name\fR\
+.B
+branch_name\fR\
 \&, attempt to change
 branches to
 .B
@@ -105,6 +109,7 @@ version number differs. By default, upgrades
 also occur when the build number differs.
 .RE
 .P
+.B
 PKG_DIR=(FALSE|/path)
 .RS
 If set to a
@@ -124,10 +129,10 @@ If set to a
 .B
 path\fR\
 \&, this is where the
-.I
+.B
 slackbuilds.org
 tree will be stored. The default setting is
-.I
+.I 
 /usr/sbo\fR\
 \&. The tree must be re-downloaded with
 .B
@@ -147,7 +152,16 @@ path\fR\
 \&, any directory name under that path matching a
 SlackBuild name will be used in preference to the
 in-tree version. This will work even if the SlackBuild
-is out-of-tree. README, slack-desc, an .info file and
+is out-of-tree.
+.I 
+README\fR\
+\&,
+.I 
+slack-desc\fR\
+\&, an
+.I 
+info\fR\
+ file and
 a SlackBuild must all be present.
 .RE
 .P
@@ -158,11 +172,11 @@ If set to a
 .B
 version number\fR\
 \&, use the
-.I
+.B
 slackbuilds.org
 repository for that version of Slackware rather than
 the one specified in
-.I
+.I 
 /etc/slackware-version\fR\
 \&.
 .RE
@@ -180,8 +194,8 @@ default for your
 .B
 SLACKWARE_VERSION\fR\
 \&. The default repositories are under
-.I
-rsync://slackbuilds.org/slackbuilds
+.UR rsync://slackbuilds.org/slackbuilds
+.UE
 if
 .B
 RSYNC_DEFAULT
@@ -189,12 +203,12 @@ is
 .B
 TRUE
 and
-.I
-https://gitlab.com/SlackBuilds.org
+.UR https://gitlab.com/SlackBuilds.org
+.UE
 otherwise. The repository must be laid out in the same
 manner as one found at
-.I
-https://git.slackbuilds.org/slackbuilds\fR\
+.UR https://git.slackbuilds.org/slackbuilds
+.UE
 \&, such that SlackBuild directories are under the
 category directories.
 .RE

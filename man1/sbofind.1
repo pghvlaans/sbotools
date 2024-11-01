@@ -21,8 +21,11 @@ given term. It reports back any SlackBuilds found along
 with path and version information. This is equivalent to
 running
 .RS
-.B
-cd /usr/ports; make search name=$search_term display=name,path
+
+.I 
+cd /usr/ports; make search name=$search_term display=name,path\fR\
+
+
 .RE
 on a FreeBSD system. If the repository includes a
 .I
@@ -57,13 +60,19 @@ Exclude tags from the search.
 .B
 -i|--info
 .RS
-Show the contents of the .info file for each SlackBuild found.
+Show the contents of the
+.I 
+info\fR\
+ file for each SlackBuild found.
 .RE
 .P
 .B
 -r|--readme
 .RS
-Show the contents of the README file for each SlackBuild found.
+Show the contents of the
+.I 
+README\fR\
+ file for each SlackBuild found.
 .RE
 .P
 .B
@@ -95,8 +104,8 @@ was unable to obtain a required file handle.
 .SH BUGS
 .P
 None known. If found, Issues and Pull Requests to
-.I
-https://github.com/pghvlaans/sbotools3/
+.UR https://github.com/pghvlaans/sbotools3/
+.UE
 are always welcome.
 .SH SEE ALSO
 .P

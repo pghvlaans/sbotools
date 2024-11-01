@@ -13,31 +13,43 @@ sboclean [-h|-v] [-dwi] [-o ALL|package]
 .P
 .B
 sboclean
-is used to clean files left by sbotools,
+is used to clean files left by
+.B
+sbotools3\fR\
+\&,
 such as saved options (in
-.I
+.I 
 /var/log/sbotools\fR\
-\&), downloaded source files ("distfiles"), or
+\&), downloaded source files (\(lqdistfiles\(rq), or
 working directories under
-.I
-/tmp/SBo
-(or $TMP) and, for compat32 installs, under
-.I
-/tmp
-(or $TMP). Note that if not run with the
+.I 
+/tmp/SBo\fR\
+ (or
+.I 
+$TMP\fR\
+\&) and, for compat32 installs, under
+.I 
+/tmp\fR\
+ (or
+.I 
+$TMP\fR\
+\&). Note that if not run with the
 .B
 --interactive
 flag,
 .B
 sboclean
 will remove anything in the distfiles and/or
-.I
-/tmp/SBo
-(or $TMP) directories and any
-.I
-/tmp/package-*-compat32
-(or
-.I
+.I 
+/tmp/SBo\fR\
+ (or
+.I 
+$TMP\fR\
+\&) directories and any
+.I 
+/tmp/package-*-compat32\fR\
+ (or
+.I 
 $TMP/package-*-compat32\fR\
 \&) directories with extreme prejudice. One of
 .B
@@ -67,19 +79,19 @@ Show version information.
 -d|--dist
 .RS
 Clean distfiles, located at
-.I
-/usr/sbo/distfiles
-by default.
+.I 
+/usr/sbo/distfiles\fR\
+ by default.
 .RE
 .P
 .B
 -w|--work
 .RS
 Clean working directories, located by default under
-.I
-/tmp/SBo
-and, for compat32 installs,
-.I
+.I 
+/tmp/SBo\fR\
+ and, for compat32 installs,
+.I 
 /tmp\fR\
 \&.
 .RE
@@ -91,7 +103,7 @@ With
 .B
 ALL\fR\
 \&, clean all saved options from
-.I
+.I 
 /var/log/sbotools\fR\
 \&. With the name of a SlackBuild, clean the saved
 options for that SlackBuild only.
@@ -124,8 +136,8 @@ with nothing to clean.
 .SH BUGS
 .P
 None known. If found, Issues and Pull Requests to
-.I
-https://github.com/pghvlaans/sbotools3/
+.UR https://github.com/pghvlaans/sbotools3/
+.UE
 are always welcome.
 .SH SEE ALSO
 .P

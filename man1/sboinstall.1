@@ -21,8 +21,10 @@ is used to install SlackBuilds. If the
 flag is not specified,
 .B
 sboinstall
-will pull the list of requirements from the .info
-file for any specified SlackBuild. This is a recursive
+will pull the list of requirements from the
+.I 
+info\fR\
+ file for any specified SlackBuild. This is a recursive
 operation over all dependencies.
 .B
 sboinstall
@@ -30,7 +32,9 @@ will offer to install any non-installed dependencies in
 the build queue. This program will not handle circular
 dependencies.
 .P
-README files are parsed for
+.I 
+README\fR\
+ files are parsed for
 .B
 groupadd
 and
@@ -39,25 +43,35 @@ useradd
 commands, and
 .B
 sboinstall
-will offer to run them prior to building. If the README
-is judged to document options in
+will offer to run them prior to building. If the
+.I 
+README\fR\
+ is judged to document options in
 .I
 KEY=VALUE
 form, a prompt for setting options will appear. Any
 build options, whether passed interactively or in a
 template, will be saved to
-.I
-/var/log/sbotools
-when the SlackBuild runs.
+.I 
+/var/log/sbotools\fR\
+ when the SlackBuild runs.
 .P
 .B
 sboinstall
-will attempt to download the sources from the DOWNLOAD
-or DOWNLOAD_x86_64 variables in the .info file. If
+will attempt to download the sources from the
+.I 
+DOWNLOAD\fR\
+ or
+.I 
+DOWNLOAD_x86_64\fR\
+ variables in the
+.I 
+info\fR\
+ file. If
 either the download or the md5sum check fails, a new
 download will be attempted from
-.I
-ftp://slackware.uk/sbosrcarch/
+.UR ftp://slackware.uk/sbosrcarch/
+.UE
 as a fallback measure.
 .SH OPTIONS
 .P
@@ -78,12 +92,15 @@ Show version information.
 .RS
 If TRUE, do not clean working directories after building.
 These are the build and
-.I
-package-(sbo)
-directories under
-.I
-/tmp/SBo
-(or $TMP). Cleaning these directories can be set as default
+.I 
+package-(sbo)\fR\
+ directories under
+.I 
+/tmp/SBo\fR\
+ (or
+.I 
+$TMP\fR\
+). Cleaning these directories can be set as default
 via the
 .B
 sboconfig(1)
@@ -96,11 +113,14 @@ sbotools.conf(5)\fR\
 .B
 -d|--distclean (FALSE|TRUE)
 .RS
-If TRUE, then remove the source archives after building. They
+If
+.B
+TRUE\fR\
+\&, then remove the source archives after building. They
 are retained in
-.I
-SBO_HOME/distfiles
-by default. This option can be set as default via the
+.I 
+SBO_HOME/distfiles\fR\
+ by default. This option can be set as default via the
 .B
 sboconfig(1)
 command. See also
@@ -114,9 +134,12 @@ sbotools.conf(5)\fR\
 .RS
 Do not install the package at the end of the build process.
 It will be left in
-.I
-/tmp
-(or $OUTPUT), or in
+.I 
+/tmp\fR\
+ (or
+.I 
+$OUTPUT\fR\
+), or in
 .B
 PKG_DIR
 if so defined. See
@@ -178,7 +201,10 @@ a template instead.
 .B
 -R|--norequirements
 .RS
-Bypass dependency resolution, but still show README and the
+Bypass dependency resolution, but still show
+.I 
+README\fR\
+ and the
 user prompts before proceeding with the build.
 .RE
 .P
@@ -254,8 +280,8 @@ script cannot be found (where required).
 .SH BUGS
 .P
 None known. If found, Issues and Pull Requests to
-.I
-https://github.com/pghvlaans/sbotools3/
+.UR https://github.com/pghvlaans/sbotools3/
+.UE
 are always welcome.
 .SH SEE ALSO
 .P

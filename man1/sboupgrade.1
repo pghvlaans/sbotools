@@ -28,7 +28,9 @@ will offer to install any non-installed dependencies in
 the build queue. This program will not handle circular
 dependencies.
 .P
-README files are parsed for
+.I 
+README\fR\
+ files are parsed for
 .B
 groupadd
 and
@@ -37,25 +39,35 @@ useradd
 commands, and
 .B
 sboinstall
-will offer to run them prior to building. If the README
-is judged to document options in
+will offer to run them prior to building. If the
+.I 
+README\fR\
+ is judged to document options in
 .I
 KEY=VALUE
 form, a prompt for setting options will appear. Any
 build options, whether passed interactively or in a
 template, will be saved to
-.I
-/var/log/sbotools
-when the SlackBuild runs.
+.I 
+/var/log/sbotools\fR\
+ when the SlackBuild runs.
 .P
 .B
 sboupgrade
-will attempt to download the sources from the DOWNLOAD
-or DOWNLOAD_x86_64 variables in the .info file. If
+will attempt to download the sources from the
+.I 
+DOWNLOAD\fR\
+ or
+.I 
+DOWNLOAD_x86_64\fR\
+ variables in the
+.I 
+info\fR\
+ file. If
 either the download or the md5sum check fails, a new
 download will be attempted from
-.I
-ftp://slackware.uk/sbosrcarch/
+.UR ftp://slackware.uk/sbosrcarch/
+.UE
 as a fallback measure. The
 .B
 --all
@@ -63,19 +75,25 @@ flag may be passed to upgrade all eligible SlackBuilds
 simultaneously.
 .SH OPTIONS
 .P
+.B
 -h|--help
 .RS
 Show help information.
 .RE
 .P
+.B
 -v|--version
 .RS
 Show version information.
 .RE
 .P
+.B
 -b|--build-ignore (FALSE|TRUE)
 .RS
-If TRUE, do not perform upgrades unless the
+If
+.B
+TRUE\fR\
+\&, do not perform upgrades unless the
 version number differs. By default, upgrades
 also occur when the build number differs.
 This setting and
@@ -83,7 +101,8 @@ This setting and
 --force
 are not the same;
 .B
---force will initiate upgrades even if the
+--force
+will initiate upgrades even if the
 build number is unchanged. This overrides the
 .B
 BUILD_IGNORE
@@ -93,16 +112,23 @@ sbotools.conf(5)\fR\
 \&.
 .RE
 .P
+.B
 -c|--noclean (FALSE|TRUE)
 .RS
-If TRUE, do not clean working directories after building.
+If
+.B
+TRUE\fR\
+\&, do not clean working directories after building.
 These are the build and
 .I
 package-(sbo)
 directories under
-.I
-/tmp/SBo
-(or $TMP). Cleaning these directories can be set as default
+.I 
+/tmp/SBo\fR\
+ (or
+.I 
+$TMP\fR\
+). Cleaning these directories can be set as default
 via the
 .B
 sboconfig(1)
@@ -112,13 +138,14 @@ sbotools.conf(5)\fR\
 \&. This option overrides the default.
 .RE
 .P
+.B
 -d|--distclean (FALSE|TRUE)
 .RS
 If TRUE, then remove the source archives after building. They
 are retained in
-.I
-SBO_HOME/distfiles
-by default. This option can be set as default via the
+.I 
+SBO_HOME/distfiles\fR\
+ by default. This option can be set as default via the
 .B
 sboconfig(1)
 command. See also
@@ -127,22 +154,27 @@ sbotools.conf(5)\fR\
 \&. This option overrides the default.
 .RE
 .P
+.B
 -f|--force
 .RS
 Force an upgrade, even if the installed version and
 build number are equal to the
-.I
+.B
 slackbuilds.org
 version.
 .RE
 .P
+.B
 -i|--noinstall
 .RS
 Do not install the package at the end of the build process.
 It will be left in
-.I
-/tmp
-(or $OUTPUT), or in
+.I 
+/tmp\fR\
+ (or
+.I 
+$OUTPUT\fR\
+), or in
 .B
 PKG_DIR
 if so defined. See
@@ -154,6 +186,7 @@ sbotools.conf(5)\fR\
 \&.
 .RE
 .P
+.B
 -j|--jobs (FALSE|#)
 .RS
 If numerical, pass to the
@@ -165,6 +198,7 @@ make
 is run.
 .RE
 .P
+.B
 -p|--compat32
 .RS
 Create a -compat32 package on multilib x86_64 systems.
@@ -182,9 +216,9 @@ should be combined with
 so that the contents of the package can be inspected prior
 to installation. Ensure that the running shell has already
 sourced
-.I
-/etc/profile.d/32dev.{c,}sh
-before running, and that the
+.I 
+/etc/profile.d/32dev.{c,}sh\fR\
+ before running, and that the
 .B
 DISTCLEAN
 option is set to
@@ -193,6 +227,7 @@ FALSE.
 GitHub Issues are welcome in case of unexpected failure.
 .RE
 .P
+.B
 -r|--nointeractive
 .RS
 Bypass all user prompts and all dependency resolution for
@@ -201,6 +236,7 @@ unless it is obvious that dependency resolution and build
 options are not required.
 .RE
 .P
+.B
 -z|--force-reqs
 .RS
 In combination with
@@ -210,6 +246,7 @@ In combination with
 rebuild dependencies that do not require upgrades as well.
 .RE
 .P
+.B
 --all
 .RS
 Upgrade all installed SlackBuilds that are eligible for
@@ -272,8 +309,8 @@ script cannot be found (where required).
 .SH BUGS
 .P
 None known. If found, Issues and Pull Requests to
-.I
-https://github.com/pghvlaans/sbotools3/
+.UR https://github.com/pghvlaans/sbotools3/
+.UE
 are always welcome.
 .SH SEE ALSO
 .P

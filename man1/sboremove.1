@@ -15,7 +15,10 @@ sboremove [-a] sbo_name (sbo_name)
 sboremove
 removes packages installed from SlackBuilds, along with
 any unneeded dependencies. Dependency information is
-pulled recursively from .info files; any dependencies
+pulled recursively from
+.I 
+info\fR\
+ files; any dependencies
 that are required by no other SlackBuilds will be eligible
 for removal as well. If
 .B
@@ -31,20 +34,23 @@ before performing any removal operations. No option exists to enable
 .B
 sboremove
 to uninstall packages without confirmation prompts,
-and there are no plans to add such a feature in the
+and there are no plans to add that functionality in the
 future.
 .SH OPTIONS
 .P
+.B
 -h|--help
 .RS
 Show help information.
 .RE
 .P
+.B
 -v|--version
 .RS
 Show version information.
 .RE
 .P
+.B
 -a|--alwaysask
 .RS
 Always ask to remove dependencies, even if they are
@@ -60,13 +66,16 @@ can exit with the following codes:
 0: all operations completed successfully.
 .RE
 .RS
-1: a usage error occurred, such as running sboremove with nothing to remove.
+1: a usage error occurred, such as running
+.B
+sboremove
+with nothing to remove.
 .RE
 .SH BUGS
 .P
 None known. If found, Issues and Pull Requests to
-.I
-https://github.com/pghvlaans/sbotools3/
+.UR https://github.com/pghvlaans/sbotools3/
+.UE
 are always welcome.
 .SH SEE ALSO
 .P
