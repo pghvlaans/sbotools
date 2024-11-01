@@ -62,6 +62,7 @@ defaults:
     values:
       layout: single
       author_profile: false
+      title: false
   # _pages
   - scope:
       path: "_pages"
@@ -69,6 +70,7 @@ defaults:
     values:
       layout: single
       author_profile: false
+      title: false
   # man
   - scope:
       path: "man"
@@ -76,3 +78,4 @@ defaults:
     values:
       layout: single
       author_profile: false
+      title: false
