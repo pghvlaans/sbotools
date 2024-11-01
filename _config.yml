@@ -60,7 +60,7 @@ defaults:
       author_profile: false
   # man
   - scope:
-      path: "pages"
+      path: "man"
       type: pages
     values:
       layout: single
