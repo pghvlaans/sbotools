@@ -17,9 +17,9 @@
 
 ## SYNOPSIS
 
-sbosnap \[-h\|-v\]
+`sbosnap [-h|-v]`
 
-sbosnap (fetch\|update)
+`sbosnap (fetch|update)`
 
 ## DESCRIPTION
 

@@ -17,10 +17,9 @@
 
 ## SYNOPSIS
 
-sboupgrade \[-h\|-v\]
+`sboupgrade [-h|-v]`
 
-sboupgrade \[-c TRUE\|FALSE\] \[-d TRUE\|FALSE\] \[-j #\|FALSE\] \[-b
-TRUE\|FALSE\] \[-fiprz\] \--all\|sbo_name (sbo_name)
+`sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] [-b TRUE|FALSE] [-fiprz] --all|sbo_name (sbo_name)`
 
 ## DESCRIPTION
 
