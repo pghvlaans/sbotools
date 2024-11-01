@@ -1,13 +1,13 @@
-# sbocheck {#sbocheck align="center"}
+# sbocheck
 
-[NAME](#NAME)\
-[SYNOPSIS](#SYNOPSIS)\
-[DESCRIPTION](#DESCRIPTION)\
-[OPTIONS](#OPTIONS)\
-[BUGS](#BUGS)\
-[SEE ALSO](#SEE%20ALSO)\
-[AUTHORS](#AUTHORS)\
-[MAINTAINER](#MAINTAINER)\
+[NAME](#NAME)
+[SYNOPSIS](#SYNOPSIS)
+[DESCRIPTION](#DESCRIPTION)
+[OPTIONS](#OPTIONS)
+[BUGS](#BUGS)
+[SEE ALSO](#SEE%20ALSO)
+[AUTHORS](#AUTHORS)
+[MAINTAINER](#MAINTAINER)
 
 ------------------------------------------------------------------------
 
