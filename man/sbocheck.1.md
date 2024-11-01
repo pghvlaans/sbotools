@@ -11,16 +11,16 @@
 
 ------------------------------------------------------------------------
 
-## NAME []{#NAME}
+## NAME
 
 **sbocheck** - update a local **slackbuilds.org** tree and check for
 updates.
 
-## SYNOPSIS []{#SYNOPSIS}
+## SYNOPSIS
 
 sbocheck \[-h\|-v\]
 
-## DESCRIPTION []{#DESCRIPTION}
+## DESCRIPTION
 
 **sbocheck** first updates a previously-fetched copy of the
 **slackbuilds.org** tree (see **sbosnap(1)**) checks for available
@@ -32,7 +32,7 @@ The three output categories are logged separately to
 `/etc/sbocheck.log`, `/etc/sbocheck-bumps.log` and
 `/etc/sbocheck-out-of-tree.log`.
 
-## OPTIONS []{#OPTIONS}
+## OPTIONS
 
 **-h\|\--help**
 
@@ -42,17 +42,17 @@ Show help information.
 
 Show version information.
 
-## BUGS []{#BUGS}
+## BUGS
 
 None known. If found, Issues and Pull Requests to
 <https://github.com/pghvlaans/sbotools3/> are always welcome.
 
-## SEE ALSO []{#SEE ALSO}
+## SEE ALSO
 
 sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1),
 sbosnap(1), sboupgrade(1), sbotools.conf(5)
 
-## AUTHORS []{#AUTHORS}
+## AUTHORS
 
 Jacob Pipkin \<j (at) dawnrazor (dot) net\>
 
@@ -60,7 +60,7 @@ Luke Williams \<xocel (at) iquidus (dot) org\>
 
 Andreas Guldstrand \<andreas (dot) guldstrand (at) gmail (dot) com\>
 
-## MAINTAINER []{#MAINTAINER}
+## MAINTAINER
 
 K. Eugene Carlson \<kvngncrlsn (at) gmail (dot) com\>
 
