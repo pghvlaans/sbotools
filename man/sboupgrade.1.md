@@ -61,21 +61,21 @@ If **TRUE**, do not perform upgrades unless the version number differs.
 By default, upgrades also occur when the build number differs. This
 setting and **\--force** are not the same; **\--force** will initiate
 upgrades even if the build number is unchanged. This overrides the
-**BUILD_IGNORE** setting in **[sbotools.conf(5)](sbotools.conf.5.md)**.
+**BUILD_IGNORE** setting in [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-c\|\--noclean (FALSE\|TRUE)**
 
 If **TRUE**, do not clean working directories after building. These are
 the build and *package-(sbo)* directories under `/tmp/SBo` (or `$TMP`).
 Cleaning these directories can be set as default via the
-**[sboconfig(1)](sboconfig.1.md)** command. See also **[sbotools.conf(5)](sbotools.conf.5.md)**. This option
+[sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This option
 overrides the default.
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
 If **TRUE**, then remove the source archives after building. They are
 retained in `SBO_HOME/distfiles` by default. This option can be set as
-default via the **[sboconfig(1)](sboconfig.1.md)** command. See also **[sbotools.conf(5)](sbotools.conf.5.md)**.
+default via the [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md).
 This option overrides the default.
 
 **-f\|\--force**
@@ -87,7 +87,7 @@ equal to the **slackbuilds.org** version.
 
 Do not install the package at the end of the build process. It will be
 left in `/tmp` (or `$OUTPUT`), or in **PKG_DIR** if so defined. See
-**[sboconfig(1)](sboconfig.1.md)** and **[sbotools.conf(5)](sbotools.conf.5.md)**.
+[sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -120,8 +120,8 @@ require upgrades as well.
 **\--all**
 
 Upgrade all installed SlackBuilds that are eligible for upgrades. This
-takes the **BUILD_IGNORE** setting into account. See **[sboconfig(1)](sboconfig.1.md)**
-and **[sbotools.conf(5)](sbotools.conf.5.md)**.
+takes the **BUILD_IGNORE** setting into account. See [sboconfig(1)](sboconfig.1.md)
+and [sbotools.conf(5)](sbotools.conf.5.md).
 
 ## EXIT CODES
 

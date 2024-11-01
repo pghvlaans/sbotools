@@ -18,12 +18,12 @@ updates.
 
 ## SYNOPSIS
 
-sbocheck \[-h\|-v\]
+`sbocheck [-h|-v]`
 
 ## DESCRIPTION
 
 **sbocheck** first updates a previously-fetched copy of the
-**slackbuilds.org** tree (see **[sbosnap(1)](sbosnap.1.md)**) checks for available
+**slackbuilds.org** tree (see [sbosnap(1)](sbosnap.1.md)) checks for available
 upgrades, and reports what it finds. SlackBuilds with differing build
 numbers are reported separately, as are any SlackBuilds marked `_SBo`
 that are not found in the repository.

@@ -9,7 +9,7 @@
 * [sboinstall(1)](sboinstall.1.md)
     * Install SlackBuilds with their dependencies; handle compat32 packages and build from templates.
 * [sboremove(1)](sboremove.1.md)
-    * Interactively remove installed SlackBuilds with any unused dependencies.
+    * Interactively remove installed SlackBuilds along with any unused dependencies.
 * [sbosnap(1)](sbosnap.1.md)
     * Fetch or update the upstream SlackBuilds repository with `fetch` and `update`.
 * [sboupgrade(1)](sboupgrade.1.md)

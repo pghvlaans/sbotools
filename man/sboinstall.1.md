@@ -61,14 +61,14 @@ Show version information.
 If TRUE, do not clean working directories after building. These are the
 build and `package-(sbo)` directories under `/tmp/SBo` (or `$TMP`).
 Cleaning these directories can be set as default via the
-**[sboconfig(1)](sboconfig.1.md)** command. See also **[sbotools.conf(5)](sbotools.conf.5.md)**. This option
+[sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This option
 overrides the default.
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
 If **TRUE**, then remove the source archives after building. They are
 retained in `SBO_HOME/distfiles` by default. This option can be set as
-default via the **[sboconfig(1)](sboconfig.1.md)** command. See also **[sbotools.conf(5)](sbotools.conf.5.md)**.
+default via the [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md).
 This option overrides the default.
 
 **-i\|\--noinstall**

@@ -39,7 +39,7 @@ the build and `package-(sbo)` directories under `/tmp/SBo` (or `$TMP`).
 
 If **FALSE**, use the default git branch for the Slackware version, if
 any. If **branch_name**, attempt to change branches to **branch_name**
-when using **[sbosnap(1)](sbosnap.1.md)** or **[sbocheck(1)](sbocheck.1.md)** with an upstream git
+when using [sbosnap(1)](sbosnap.1.md) or [sbocheck(1)](sbocheck.1.md) with an upstream git
 repository.
 
 **BUILD_IGNORE=(FALSE\|TRUE)**

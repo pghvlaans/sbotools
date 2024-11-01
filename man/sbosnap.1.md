@@ -28,8 +28,8 @@ sbosnap (fetch\|update)
 **[sbocheck(1)](sbocheck.1.md)** also updates the tree and checks for updated and removed
 SlackBuilds. **rsync** is used for rsync repositories, and **git** is
 used for git repositories. **sbotools3** defaults to git unless
-**RSYNC_DEFAULT** is **TRUE**. See **[sboconfig(1)](sboconfig.1.md)** or
-**[sbotools.conf(5)](sbotools.conf.5.md)**.
+**RSYNC_DEFAULT** is **TRUE**. See [sboconfig(1)](sboconfig.1.md) or
+[sbotools.conf(5)](sbotools.conf.5.md).
 
 ## OPTIONS
 
@@ -45,8 +45,8 @@ Show version information.
 
 **fetch**
 
-Download a local copy of the *slackbuilds.org* tree. The copy will be
-downloaded to the path in the **SBO_HOME** setting (see **[sboconfig(1)](sboconfig.1.md)**
+Download a local copy of the **slackbuilds.org** tree. The copy will be
+downloaded to the path in the **SBO_HOME** setting (see [sboconfig(1)](sboconfig.1.md)
 and [sbotools.conf(5)](sbotools.conf.5.md)), `/usr/sbo` by default.
 
 **update**
