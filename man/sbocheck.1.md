@@ -18,7 +18,7 @@ updates.
 
 ## SYNOPSIS
 
-`sbocheck [-h|-v]`
+    sbocheck [-h|-v]
 
 ## DESCRIPTION
 
