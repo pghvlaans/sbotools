@@ -1,0 +1,156 @@
+<!-- Creator     : groff version 1.23.0 -->
+<!-- CreationDate: Fri Nov  1 12:02:57 2024 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
+<title>sboremove</title>
+
+</head>
+<body>
+
+<h1 align="center">sboremove</h1>
+
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#EXIT CODES">EXIT CODES</a><br>
+<a href="#BUGS">BUGS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
+<a href="#AUTHORS">AUTHORS</a><br>
+<a href="#MAINTAINER">MAINTAINER</a><br>
+
+<hr>
+
+
+<h2>NAME
+<a name="NAME"></a>
+</h2>
+
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>sboremove</b>
+- remove packages installed from SlackBuilds</p>
+
+<h2>SYNOPSIS
+<a name="SYNOPSIS"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">sboremove
+[-h|-v]</p>
+
+<p style="margin-left:9%; margin-top: 1em">sboremove [-a]
+sbo_name (sbo_name)</p>
+
+<h2>DESCRIPTION
+<a name="DESCRIPTION"></a>
+</h2>
+
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>sboremove</b>
+removes packages installed from SlackBuilds, along with any
+unneeded dependencies. Dependency information is pulled
+recursively from <tt>info</tt> files; any dependencies that
+are required by no other SlackBuilds will be eligible for
+removal as well. If <b>sboremove</b> is called with the
+<b>--alwaysask</b> flag, the dependency requirements of
+other installed SlackBuilds will not be checked.</p>
+
+<p style="margin-left:9%; margin-top: 1em">In all cases,
+this script prompts the user package-by-package before
+performing any removal operations. No option exists to
+enable <b>sboremove</b> to uninstall packages without
+confirmation prompts, and there are no plans to add that
+functionality in the future.</p>
+
+<h2>OPTIONS
+<a name="OPTIONS"></a>
+</h2>
+
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>-h|--help</b></p>
+
+<p style="margin-left:18%;">Show help information.</p>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>-v|--version</b></p>
+
+<p style="margin-left:18%;">Show version information.</p>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>-a|--alwaysask</b></p>
+
+<p style="margin-left:18%;">Always ask to remove
+dependencies, even if they are required by other packages
+installed to the system.</p>
+
+<h2>EXIT CODES
+<a name="EXIT CODES"></a>
+</h2>
+
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>sboremove</b>
+can exit with the following codes:</p>
+
+<p style="margin-left:18%; margin-top: 1em">0: all
+operations completed successfully. <br>
+1: a usage error occurred, such as running <b>sboremove</b>
+with nothing to remove.</p>
+
+<h2>BUGS
+<a name="BUGS"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">None known. If
+found, Issues and Pull Requests to
+<a href="https://github.com/pghvlaans/sbotools3/">https://github.com/pghvlaans/sbotools3/</a>
+are always welcome.</p>
+
+<h2>SEE ALSO
+<a name="SEE ALSO"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">sbocheck(1),
+sboclean(1), sboconfig(1), sbofind(1), sboinstall(1),
+sbosnap(1), sboupgrade(1), sbotools.conf(5)</p>
+
+<h2>AUTHORS
+<a name="AUTHORS"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">Luke Williams
+&lt;xocel (at) iquidus (dot) org&gt;</p>
+
+<p style="margin-left:9%; margin-top: 1em">Jacob Pipkin
+&lt;j (at) dawnrazor (dot) net&gt;</p>
+
+<p style="margin-left:9%; margin-top: 1em">Andreas
+Guldstrand &lt;andreas (dot) guldstrand (at) gmail (dot) com&gt;</p>
+
+<h2>MAINTAINER
+<a name="MAINTAINER"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">K. Eugene
+Carlson &lt;kvngncrlsn (at) gmail (dot) com&gt;</p>
+<hr>
+</body>
+</html>

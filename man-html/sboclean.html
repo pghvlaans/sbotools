@@ -1,0 +1,171 @@
+<!-- Creator     : groff version 1.23.0 -->
+<!-- CreationDate: Fri Nov  1 12:02:57 2024 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
+<title>sboclean</title>
+
+</head>
+<body>
+
+<h1 align="center">sboclean</h1>
+
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#EXIT CODES">EXIT CODES</a><br>
+<a href="#BUGS">BUGS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
+<a href="#AUTHOR">AUTHOR</a><br>
+<a href="#MAINTAINER">MAINTAINER</a><br>
+
+<hr>
+
+
+<h2>NAME
+<a name="NAME"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>sboclean</b>
+- clean files left by <b>sbotools3.</b></p>
+
+<h2>SYNOPSIS
+<a name="SYNOPSIS"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">sboclean [-h|-v]
+[-dwi] [-o ALL|package]</p>
+
+<h2>DESCRIPTION
+<a name="DESCRIPTION"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>sboclean</b>
+is used to clean files left by <b>sbotools3</b>, such as
+saved options (in <tt>/var/log/sbotools</tt>), downloaded
+source files (&ldquo;distfiles&rdquo;), or working
+directories under <tt>/tmp/SBo</tt> (or <tt>$TMP</tt>) and,
+for compat32 installs, under <tt>/tmp</tt> (or
+<tt>$TMP</tt>). Note that if not run with the
+<b>--interactive</b> flag, <b>sboclean</b> will remove
+anything in the distfiles and/or <tt>/tmp/SBo</tt> (or
+<tt>$TMP</tt>) directories and any
+<tt>/tmp/package-*-compat32</tt> (or
+<tt>$TMP/package-*-compat32</tt>) directories with extreme
+prejudice. One of <b>--dist</b>, <b>--work</b> or
+<b>--option</b> must be specified for this script to do
+anything.</p>
+
+<h2>OPTIONS
+<a name="OPTIONS"></a>
+</h2>
+
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>-h|--help</b></p>
+
+<p style="margin-left:18%;">Show help information.</p>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>-v|--version</b></p>
+
+<p style="margin-left:18%;">Show version information.</p>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>-d|--dist</b></p>
+
+<p style="margin-left:18%;">Clean distfiles, located at
+<tt>/usr/sbo/distfiles</tt> by default.</p>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>-w|--work</b></p>
+
+<p style="margin-left:18%;">Clean working directories,
+located by default under <tt>/tmp/SBo</tt> and, for compat32
+installs, <tt>/tmp</tt>.</p>
+
+<p style="margin-left:9%; margin-top: 1em"><b>-o|--options
+(ALL|sbo_name)</b></p>
+
+<p style="margin-left:18%;">With <b>ALL</b>, clean all
+saved options from <tt>/var/log/sbotools</tt>. With the name
+of a SlackBuild, clean the saved options for that SlackBuild
+only.</p>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>-i|--interactive</b></p>
+
+<p style="margin-left:18%;">Be interactive; <b>sboclean</b>
+will use confirmation prompts for each item that could be
+removed.</p>
+
+<h2>EXIT CODES
+<a name="EXIT CODES"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>sboclean</b>
+can exit with the following codes:</p>
+
+<p style="margin-left:18%; margin-top: 1em">0: all
+operations completed successfully. <br>
+1: a usage error occurred, such as running <b>sboclean</b>
+with nothing to clean.</p>
+
+<h2>BUGS
+<a name="BUGS"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">None known. If
+found, Issues and Pull Requests to
+<a href="https://github.com/pghvlaans/sbotools3/">https://github.com/pghvlaans/sbotools3/</a>
+are always welcome.</p>
+
+<h2>SEE ALSO
+<a name="SEE ALSO"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">sbocheck(1),
+sboconfig(1), sbofind(1), sboinstall(1), sboremove(1),
+sbosnap(1), sboupgrade(1), sbotools.conf(5)</p>
+
+<h2>AUTHOR
+<a name="AUTHOR"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">Jacob Pipkin
+&lt;j (at) dawnrazor (dot) net&gt;</p>
+
+<p style="margin-left:9%; margin-top: 1em">Luke Williams
+&lt;xocel (at) iquidus (dot) org&gt;</p>
+
+<p style="margin-left:9%; margin-top: 1em">Andreas
+Guldstrand &lt;andreas (dot) guldstrand (at) gmail (dot) com&gt;</p>
+
+<h2>MAINTAINER
+<a name="MAINTAINER"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">K. Eugene
+Carlson &lt;kvngncrlsn (at) gmail (dot) com&gt;</p>
+<hr>
+</body>
+</html>
