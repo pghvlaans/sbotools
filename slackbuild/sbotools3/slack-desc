@@ -9,9 +9,9 @@
 sbotools3: sbotools3 (ports-like interface to slackbuilds.org)
 sbotools3:
 sbotools3: sbotools3 is the continuation of sbotools. It is a set of Perl scripts
-sbotools3: providing a ports-like automation interface to slackbuilds.org. Its
-sbotools3: features include dependency handling and the ability to manage 32-bit
-sbotools3: 32-bit and compat32 builds on multilib x86_64 systems.
+sbotools3: providing a ports-like automation interface to slackbuilds.org.
+sbotools3: Features include dependency handling, using a custom git branch,
+sbotools3: generating 32-bit and compat32 builds on multilib systems, and more.
 sbotools3:
 sbotools3: Homepage: https://pghvlaans.github.io/sbotools3/
 sbotools3: Original Author: Jacob Pipkin

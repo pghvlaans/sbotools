@@ -141,7 +141,10 @@ sbotools.conf(5)\fR\
 .B
 -d|--distclean (FALSE|TRUE)
 .RS
-If TRUE, then remove the source archives after building. They
+If
+.B
+TRUE\fR\
+\&, then remove the source archives after building. They
 are retained in
 .I 
 SBO_HOME/distfiles\fR\
@@ -231,9 +234,9 @@ GitHub Issues are welcome in case of unexpected failure.
 -r|--nointeractive
 .RS
 Bypass all user prompts and all dependency resolution for
-the requested SlackBuilds. This option should not be used
-unless it is obvious that dependency resolution and build
-options are not required.
+the requested SlackBuilds. Unless it is obvious that dependency
+resolution and build options are not required, consider using
+a template instead.
 .RE
 .P
 .B

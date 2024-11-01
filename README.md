@@ -4,6 +4,8 @@
 
 A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
+To make **sbotools3** packages from the master branch, see [sbotools3-git-slackbuild](https://github.com/pghvlaans/sbotools3-git-slackbuild) and follow the instructions in `README`.
+
 ## Changes
 * 1.0
   * Change the git branch to match the Slackware version, or to a user-configured branch
