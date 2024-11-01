@@ -1,6 +1,6 @@
 # sbotools3
 
-**[sbotools3](https://pghvlaans.github.io/sbotools3/)** provides a ports-like interface to [slackbuilds.org](http://www.slackbuilds.org/). It is the continuation of **sbotools**.
+**[sbotools3]** provides a ports-like interface to [slackbuilds.org](http://www.slackbuilds.org/). It is the continuation of **sbotools**.
 
 A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
