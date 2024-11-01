@@ -7,7 +7,7 @@ A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maint
 To make **sbotools3** packages from the master branch, see [sbotools3-git-slackbuild](https://github.com/pghvlaans/sbotools3-git-slackbuild) and follow the instructions in `README`.
 
 ## Changes
-* 1.0
+* 1.0 - 2024-11-01
   * Change the git branch to match the Slackware version, or to a user-configured branch
   * Change the default URLs to support Slackware 15.0 and use git repositories
   * Use rsync default mirrors with RSYNC_DEFAULT (except for -current)
