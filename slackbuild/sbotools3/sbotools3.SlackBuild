@@ -43,7 +43,7 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-( cd SBO-Lib
+( cd SBO3-Lib
 	/usr/bin/perl Makefile.PL \
 	  PREFIX=/usr \
 	  INSTALLDIRS=site \
@@ -82,8 +82,8 @@ find $PKG -name perllocal.pod -o -name ".packlist" -o -name "*.bs" | xargs rm -f
 
 find $PKG -depth -type d -empty -delete || true
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION/SBO-Lib
-cp -a SBO-Lib/README SBO-Lib/Changes $PKG/usr/doc/$PRGNAM-$VERSION/SBO-Lib
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION/SBO3-Lib
+cp -a SBO3-Lib/README SBO3-Lib/Changes $PKG/usr/doc/$PRGNAM-$VERSION/SBO3-Lib
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
