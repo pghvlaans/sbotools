@@ -61,21 +61,21 @@ Show version information.
 If TRUE, do not clean working directories after building. These are the
 build and `package-(sbo)` directories under `/tmp/SBo` (or `$TMP`).
 Cleaning these directories can be set as default via the
-**[sboconfig(1)](sboconfig.1.md)** command. See also **sbotools.conf(5)**. This option
+**[sboconfig(1)](sboconfig.1.md)** command. See also **[sbotools.conf(5)](sbotools.conf.5.md)**. This option
 overrides the default.
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
 If **TRUE**, then remove the source archives after building. They are
 retained in `SBO_HOME/distfiles` by default. This option can be set as
-default via the **[sboconfig(1)](sboconfig.1.md)** command. See also **sbotools.conf(5)**.
+default via the **[sboconfig(1)](sboconfig.1.md)** command. See also **[sbotools.conf(5)](sbotools.conf.5.md)**.
 This option overrides the default.
 
 **-i\|\--noinstall**
 
 Do not install the package at the end of the build process. It will be
 left in `/tmp` (or `$OUTPUT`), or in **PKG_DIR** if so defined. See
-**[sboconfig(1)](sboconfig.1.md)** and **sbotools.conf(5)**.
+**[sboconfig(1)](sboconfig.1.md)** and **[sbotools.conf(5)](sbotools.conf.5.md)**.
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -142,7 +142,7 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboremove(1)](sboremove.1.md),
-[sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), sbotools.conf(5)
+[sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md)
 
 ## AUTHORS
 
