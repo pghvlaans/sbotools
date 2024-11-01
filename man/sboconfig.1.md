@@ -21,10 +21,10 @@
 
 `sboconfig [-l]`
 
-`sboconfig [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #\|FALSE] \`
-`           [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \`
-`           [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] \`
-`           [-r url|FALSE] [-R TRUE|FALSE]`
+`sboconfig [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #\|FALSE] \`\
+`          [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \`\
+`          [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] \`\
+`          [-r url|FALSE] [-R TRUE|FALSE]`
 
 ## DESCRIPTION
 
