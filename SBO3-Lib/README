@@ -1,0 +1,37 @@
+SBO3-Lib version 1.0
+===================
+
+SBO3::Lib is a library for the sbotools scripts.
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+This module bundles Sort::Versions 1.62 which has its own license:
+
+   The files in this package are copyright Kenneth J. Albanowski, Ed
+   Avis, and Matt Johnson.  This package is free software; you can
+   redistribute it and/or modify it under the same terms as Perl itself.
+
+COPYRIGHT AND LICENCE
+
+DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+Version 2, December 2004
+
+Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
+
+Everyone is permitted to copy and distribute verbatim or modified
+copies of this license document, and changing it is allowed as long
+as the name is changed.
+
+DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+0. You just DO WHAT THE FUCK YOU WANT TO.

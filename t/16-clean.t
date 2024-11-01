@@ -8,7 +8,7 @@ use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
 use Test::Sbotools qw/ make_slackbuilds_txt set_pkg_dir set_distclean set_noclean set_lo sboinstall sboclean sboremove restore_perf_dummy set_sbo_home sboupgrade /;
-use SBO::Lib;
+use SBO3::Lib;
 use File::Temp 'tempdir';
 
 if ($ENV{TEST_INSTALL}) {

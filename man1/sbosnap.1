@@ -1,38 +1,101 @@
-.TH sbosnap 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools 2.7" dawnrazor.net
+.TH sbosnap 1 "Setting Orange, The Aftermath 11, 3190 YOLD" "sbotools3 1.0" sbotools3
 .SH NAME
 .P
-sbosnap - slackbuilds.org tree fetch and update command.
+.B
+sbosnap
+-
+.B
+slackbuilds.org
+tree fetch and update command
 .SH SYNOPSIS
 .P
-sbosnap [-h|-v] (fetch|update)
+sbosnap [-h|-v]
+.P
+sbosnap (fetch|update)
 .SH DESCRIPTION
 .P
-sbosnap is used to download and update a local copy of the slackbuilds.org tree, minus the .tar.gz{,.asc} files. Note that sbocheck(1) will also update the tree, and will then also check for updated slackbuilds. rsync is used for both operations.
+.B
+sbosnap
+is used to download and update a local copy of the
+.B
+slackbuilds.org
+tree, without the
+.I 
+*.tar.gz{,.asc}\fR\
+ files. Note that
+.B
+sbocheck(1)
+also updates the tree and checks for updated and removed
+SlackBuilds.
+.B
+rsync
+is used for rsync repositories, and
+.B
+git
+is used for git repositories.
+.B
+sbotools3
+defaults to git unless
+.B
+RSYNC_DEFAULT
+is
+.B
+TRUE\fR\
+\&. See
+.B
+sboconfig(1)
+or
+.B
+sbotools.conf(5)\fR\
+\&.
 .SH OPTIONS
 .P
+.B
 -h|--help
 .RS
 Show help information.
 .RE
 .P
+.B
 -v|--version
 .RS
 Show version information.
 .RE
 .SH COMMANDS
 .P
+.B
 fetch
 .RS
-Download a local copy of the slackbuilds.org tree. The copy will be downloaded to the SBO_HOME setting (see sboconfig(1) and sbotools.conf(5)), which, by default, is /usr/sbo
+Download a local copy of the
+.I
+slackbuilds.org
+tree. The copy will be downloaded to the path in the
+.B
+SBO_HOME
+setting (see
+.B
+sboconfig(1)
+and
+sbotools.conf(5)\fR\
+\&),
+.I 
+/usr/sbo\fR\
+ by default.
 .RE
 .P
+.B
 update
 .RS
-Update a previously fetch'd copy of the slackbuilds.org tree.
+Update a previously fetched copy of the
+.B
+slackbuilds.org
+tree.
 .RE
 .SH EXIT CODES
 .P
-sbosnap can exit with the following codes:
+.B
+sbosnap
+can exit with the following codes:
 .RS
 
 0: all operations completed successfully.
@@ -45,7 +108,10 @@ sbosnap can exit with the following codes:
 .RE
 .SH BUGS
 .P
-None known, but there may be some. Please report any found to https://github.com/pink-mist/sbotools/issues ; patches are always welcome.
+None known. If found, Issues and Pull Requests to
+.UR https://github.com/pghvlaans/sbotools3/
+.UE
+are always welcome.
 .SH SEE ALSO
 .P
 sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.conf(5)
@@ -56,3 +122,6 @@ Jacob Pipkin <j@dawnrazor.net>
 Luke Williams <xocel@iquidus.org>
 .P
 Andreas Guldstrand <andreas.guldstrand@gmail.com>
+.SH MAINTAINER
+.P
+K. Eugene Carlson <kvngncrlsn@gmail.com>

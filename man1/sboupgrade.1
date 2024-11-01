@@ -1,74 +1,271 @@
-.TH sboupgrade 1 "Pungenday, Discord 45, 3185 YOLD" "sbotools 2.7" dawnrazor.net
+.TH sboupgrade 1 "Setting Orange, The Aftermath 11, 3190 YOLD" "sbotools3 1.0" sbotools3
 .SH NAME
 .P
-sboupgrade - install or upgrade slackbuilds
+.B
+sboupgrade
+- install or upgrade SlackBuilds
 .SH SYNOPSIS
 .P
-sboupgrade [-h|-v] [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] [-b TRUE|FALSE] [-fNrRiz] --all|sbo_name (sbo_name)
+sboupgrade [-h|-v]
+.P
+sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] [-b TRUE|FALSE] [-fiprz] --all|sbo_name (sbo_name)
 .SH DESCRIPTION
 .P
-sboupgrade is used to upgrade packages installed from slackbuilds. If the -r flag is NOT specified, sboupgrade will pull the list of requirements from the .info file for any specified slackbuild. If such a list exists, sboupgrade will look to see whether or not those requirements are already installed, and if not, it will ask whether or not it should attempt to install them first. This is recursive, so that ordering happens correctly. sboupgrade will refuse to handle circular requirements. sboupgrade will also note groupadd and useradd commands in README files and offer to run those first. If the README documents options of the KEY=value form, sboupgrade will offer the opportunity to set options. If options were entered previously, they will be displayed and can be used again. Any build options, whether passed here or in a template, will be saved to /var/log/sbotools when the SlackBuild runs. If --all is supplied it will try to upgrade everything that sbocheck(1) reports.
+.B
+sboupgrade
+is used to upgrade SlackBuilds. If the
+.B
+-r
+flag is not specified,
+.B
+sboupgrade
+will pull the list of requirements from the .info
+file for any specified SlackBuild. This is a recursive
+operation over all dependencies.
+.B
+sboinstall
+will offer to install any non-installed dependencies in
+the build queue. This program will not handle circular
+dependencies.
 .P
-sboupgrade will attempt to download the sources from the DOWNLOAD or DOWNLOAD_x86_64 variables in the .info file. If such a download fails or the file can't be verified, it'll attempt to download the file from ftp://slackware.uk/sbosrcarch/ instead.
+.I 
+README\fR\
+ files are parsed for
+.B
+groupadd
+and
+.B
+useradd
+commands, and
+.B
+sboinstall
+will offer to run them prior to building. If the
+.I 
+README\fR\
+ is judged to document options in
+.I
+KEY=VALUE
+form, a prompt for setting options will appear. Any
+build options, whether passed interactively or in a
+template, will be saved to
+.I 
+/var/log/sbotools\fR\
+ when the SlackBuild runs.
+.P
+.B
+sboupgrade
+will attempt to download the sources from the
+.I 
+DOWNLOAD\fR\
+ or
+.I 
+DOWNLOAD_x86_64\fR\
+ variables in the
+.I 
+info\fR\
+ file. If
+either the download or the md5sum check fails, a new
+download will be attempted from
+.UR ftp://slackware.uk/sbosrcarch/
+.UE
+as a fallback measure. The
+.B
+--all
+flag may be passed to upgrade all eligible SlackBuilds
+simultaneously.
 .SH OPTIONS
 .P
+.B
 -h|--help
 .RS
 Show help information.
 .RE
 .P
+.B
 -v|--version
 .RS
 Show version information.
 .RE
 .P
+.B
 -b|--build-ignore (FALSE|TRUE)
 .RS
-If TRUE, then do not do upgrades unless the version number differs. By default, upgrades occur when the build number differs. This setting and --force are not the same; --force will initiate upgrades even if the build number is unchanged.
+If
+.B
+TRUE\fR\
+\&, do not perform upgrades unless the
+version number differs. By default, upgrades
+also occur when the build number differs.
+This setting and
+.B
+--force
+are not the same;
+.B
+--force
+will initiate upgrades even if the
+build number is unchanged. This overrides the
+.B
+BUILD_IGNORE
+setting in
+.B
+sbotools.conf(5)\fR\
+\&.
 .RE
 .P
+.B
 -c|--noclean (FALSE|TRUE)
 .RS
-If TRUE, then DO NOT clean working directories after building the slackbuild. These are the directories where the source is unpacked and compiled, and where the package is put together in, which are under /tmp/SBo (or $TMP). By default, these directories are removed after building an slackbuild. This option leaves those directories in place. This can be set as default via the sboconfig(1) command. Also see sbotools.conf(5). This option overrides the default.
+If
+.B
+TRUE\fR\
+\&, do not clean working directories after building.
+These are the build and
+.I
+package-(sbo)
+directories under
+.I 
+/tmp/SBo\fR\
+ (or
+.I 
+$TMP\fR\
+). Cleaning these directories can be set as default
+via the
+.B
+sboconfig(1)
+command. See also
+.B
+sbotools.conf(5)\fR\
+\&. This option overrides the default.
 .RE
 .P
+.B
 -d|--distclean (FALSE|TRUE)
 .RS
-If TRUE, then DO remove the source code after building the slackbuild. By default, the source code is not removed, and lives under $SBO_HOME/distfiles, which, by default, is /usr/sbo/distfiles; this option can be set as default via the sboconfig(1) command. See also sbotools.conf(5). This option overrides the default.
+If TRUE, then remove the source archives after building. They
+are retained in
+.I 
+SBO_HOME/distfiles\fR\
+ by default. This option can be set as default via the
+.B
+sboconfig(1)
+command. See also
+.B
+sbotools.conf(5)\fR\
+\&. This option overrides the default.
 .RE
 .P
+.B
 -f|--force
 .RS
-Force an upgrade, even if the installed version is equal to the slackbuilds.org version.
+Force an upgrade, even if the installed version and
+build number are equal to the
+.B
+slackbuilds.org
+version.
 .RE
 .P
+.B
 -i|--noinstall
 .RS
-Do not actually install the package created at the end of the build process. So, the slackbuild will be run, and the package will be left in /tmp (or $OUTPUT), or in $PKG_DIR if so defined (see sboconfig(1) and sbotools.conf(5)).
+Do not install the package at the end of the build process.
+It will be left in
+.I 
+/tmp\fR\
+ (or
+.I 
+$OUTPUT\fR\
+), or in
+.B
+PKG_DIR
+if so defined. See
+.B
+sboconfig(1)
+and
+.B
+sbotools.conf(5)\fR\
+\&.
 .RE
 .P
+.B
 -j|--jobs (FALSE|#)
 .RS
-If numeric (2,5,10, etc), then that number will be fed to the "-j" argument to make when a slackbuild which invokes "make" is run. This only makes sense on multicore systems, where one might set the JOBS to the number of available cores, or half that number, etc.
+If numerical, pass to the
+.B
+-j
+argument when a SlackBuild invoking
+.B
+make
+is run.
 .RE
 .P
+.B
+-p|--compat32
+.RS
+Create a -compat32 package on multilib x86_64 systems.
+This requires the
+.B
+compat32-tools
+package by Eric Hameleers. Please note that this operation
+is not necessarily foolproof, and is unsupported by anyone
+in principle. As a best practice,
+.B
+--compat32
+should be combined with
+.B
+--noinstall
+so that the contents of the package can be inspected prior
+to installation. Ensure that the running shell has already
+sourced
+.I 
+/etc/profile.d/32dev.{c,}sh\fR\
+ before running, and that the
+.B
+DISTCLEAN
+option is set to
+.B
+FALSE.
+GitHub Issues are welcome in case of unexpected failure.
+.RE
+.P
+.B
 -r|--nointeractive
 .RS
-Skip viewing of the README and the yes or no question which accompanies it. Anytime sboupgrade is run, the first thing the command will attempt to do is show you the README for a given slackbuild and ask whether or not you wish to proceed; this option skips the README and bypasses the question. This also disables dependency resolution, since you have no way of confirming which dependencies you actually want to install. If multiple slackbuilds are specified, this option bypasses them all.
+Bypass all user prompts and all dependency resolution for
+the requested SlackBuilds. This option should not be used
+unless it is obvious that dependency resolution and build
+options are not required.
 .RE
 .P
+.B
 -z|--force-reqs
 .RS
-When used in combination with the -f option, to force an update even if it would not constitute an update, this will cause sboupgrade to also rebuild all of that slackbuild's requirements. Normally with -f, only the slackbuild(s) specified, and any requirements not already installed, will be rebuilt. This allows for recursive upgrades, among other things.
+In combination with
+.B
+--force\fR\
+\&,
+rebuild dependencies that do not require upgrades as well.
 .RE
 .P
+.B
 --all
 .RS
-You can specify --all instead of an sbo_name to upgrade all the packages sbocheck(1) reports.
+Upgrade all installed SlackBuilds that are eligible for
+upgrades. This takes the
+.B
+BUILD_IGNORE
+setting into account. See
+.B
+sboconfig(1)
+and
+.B
+sbotools.conf(5)\fR\
+\&.
 .RE
 .SH EXIT CODES
 .P
-sboupgrade can exit with the following exit codes:
+.B
+sboupgrade
+can exit with the following codes:
 .RS
 
 0: all operations were succesful.
@@ -77,35 +274,44 @@ sboupgrade can exit with the following exit codes:
 1: a usage error occured, such as specifying invalid options.
 .RE
 .RS
-3: a .SlackBuild exited non-zero.
+3: a SlackBuild exited non-zero.
 .RE
 .RS
-4: unable to md5sum verify an SBo's source file(s).
+4: unable to md5sum verify the source file(s).
 .RE
 .RS
-5: unable to download an SBo's source file(s).
+5: unable to download the source file(s).
 .RE
 .RS
 6: unable to obtain a required file handle.
 .RE
 .RS
-7: unable to get required info from the SBo's .info file.
+7: unable to get required info from the .info file.
 .RE
 .RS
 8: unable to unset the exec-on-close bit on a temporary file.
 .RE
 .RS
-9: multilib hasn't been setup (where required).
+9: multilib has not been set up (where required).
 .RE
 .RS
-10: convertpkg-compat32 exited non-zero.
+10:
+.B
+convertpkg-compat32
+exited non-zero.
 .RE
 .RS
-11: the convertpkg-compat32 script can't be found (where required).
+11: the
+.B
+convertpkg-compat32
+script cannot be found (where required).
 .RE
 .SH BUGS
 .P
-None known, but there may be some. Please report any found to https://github.com/pink-mist/sbotools/issues ; patches are always welcome.
+None known. If found, Issues and Pull Requests to
+.UR https://github.com/pghvlaans/sbotools3/
+.UE
+are always welcome.
 .SH SEE ALSO
 .P
 sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sbosnap(1), sbotools.conf(5)
@@ -116,3 +322,6 @@ Jacob Pipkin <j@dawnrazor.net>
 Luke Williams <xocel@iquidus.org>
 .P
 Andreas Guldstrand <andreas.guldstrand@gmail.com>
+.SH MAINTAINER
+.P
+K. Eugene Carlson <kvngncrlsn@gmail.com>

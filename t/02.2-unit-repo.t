@@ -6,7 +6,7 @@ use Test::More;
 use Test::Exit;
 use FindBin '$RealBin';
 use lib "$RealBin/../SBO-Lib/lib";
-use SBO::Lib qw/ do_slackbuild rsync_sbo_tree get_sbo_downloads /;
+use SBO3::Lib qw/ do_slackbuild rsync_sbo_tree get_sbo_downloads /;
 use Capture::Tiny qw/ capture_merged /;
 use File::Path qw/ remove_tree /;
 
@@ -25,7 +25,7 @@ my $rsync_res;
 note "Unit repo: $url";
 note "rsync $url:\n" . capture_merged {
 	no warnings 'redefine';
-	local *SBO::Lib::Repo::get_slack_version = sub { '14.1' };
+	local *SBO3::Lib::Repo::get_slack_version = sub { '14.1' };
 
 	$rsync_res = exit_code { rsync_sbo_tree($url); };
 };
@@ -73,8 +73,8 @@ SKIP: {
 {
 	no warnings 'redefine';
 
-	local *SBO::Lib::Build::get_arch = sub { return 'x86_64' };
-	local *SBO::Lib::Build::check_multilib = sub { return (); };
+	local *SBO3::Lib::Build::get_arch = sub { return 'x86_64' };
+	local *SBO3::Lib::Build::check_multilib = sub { return (); };
 
 	my ($exit, @ret);
 	my $out = capture_merged { $exit = exit_code { @ret = do_slackbuild(LOCATION => "/usr/sbo/repo/test/test" ); }; };
@@ -88,8 +88,8 @@ SKIP: {
 {
 	no warnings 'redefine';
 
-	local *SBO::Lib::Build::get_arch = sub { return 'i586' };
-	local *SBO::Lib::Build::perform_sbo = sub { return 'sentinel', undef, -1 };
+	local *SBO3::Lib::Build::get_arch = sub { return 'i586' };
+	local *SBO3::Lib::Build::perform_sbo = sub { return 'sentinel', undef, -1 };
 
 	my ($exit, @ret);
 	my $out = capture_merged { $exit = exit_code { @ret = do_slackbuild(LOCATION => "/usr/sbo/repo/test/test" ); }; };
@@ -102,7 +102,7 @@ SKIP: {
 # 13: test get_sbo_downloads() which thinks it's on 32bit
 {
   no warnings 'redefine';
-  local *SBO::Lib::Download::get_arch = sub { return 'i586' };
+  local *SBO3::Lib::Download::get_arch = sub { return 'i586' };
 
   my $ret = get_sbo_downloads(LOCATION => "/usr/sbo/repo/test/test2");
 
