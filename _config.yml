@@ -14,12 +14,16 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: sbotools3
+subtitle: A ports-like interface to slackbuilds.org
 email:
 description: >- # this means to ignore newlines until "baseurl:"
-  A ports-like interface to slackbuilds.org
+  sbotools3 is the continuation of sbotools. It is a
+  ports-like interface to slackbuilds.org written in
+  Perl.
 minimal_mistakes_skin: default
 search: false
 copyright: K. Eugene Carlson
+minimal_mistakes_skin: air
 
 # Build settings
 markdown: kramdown
