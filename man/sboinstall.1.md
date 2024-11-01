@@ -19,9 +19,11 @@
 
 `sboinstall [-h|-v]`
 
-`sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] [-ipRr] [--create-template FILE] sbo_name (sbo_name)`
+`sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
+            [-ipRr] [--create-template FILE] sbo_name (sbo_name)`
 
-`sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] [-i] --use-template FILE`
+`sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
+            [-i] --use-template FILE`
 
 ## DESCRIPTION
 
