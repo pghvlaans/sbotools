@@ -10,7 +10,7 @@ For online man pages and executive summaries of all commands, see [man](/man/). 
 
 **sbotools** has gone without commits for a number of years. During this time, the default URL for release Slackware beyond 14.2 became unusable, and building compat32 and 32-bit packages on multilib systems stopped working for nearly all SBo SlackBuilds. Both of these issues have been fixed in **sbotools3**.
 
-Nonetheless, this repository was originally a simple fork adding a feature: Saving previously-used build options to be shown to the user when using a SlackBuild again. In that spirit, the main focus of **sbotools3** has been to implement new functionality, some of which was originally planned by Andreas Guldstrand:
+Nonetheless, this repository was originally a simple fork adding a feature: Saving previously-used build options to be shown to the user when installing a SlackBuild again. In that spirit, the main focus of **sbotools3** has been to implement new functionality, some of which was originally planned by Andreas Guldstrand:
 
 * Use a customizable git branch to clone the local repository
 * New git-based default URLs, with the option to use default rsync URLs instead
