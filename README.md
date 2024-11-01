@@ -4,7 +4,7 @@
 
 A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
-For online man pages and executive summaries of all commands, see [man](/man/). Downloads will soon be available in [downloads](/downloads/). A record of changes to **sbotools3** and **sbotools** back to version 1.9 can be found in [ChangeLog](/ChangeLog.html).
+For online man pages and executive summaries of all commands, see [man](/man/). The 1.0 release tarball is available at [downloads](/downloads/). A record of changes to **sbotools3** and **sbotools** back to version 1.9 can be found in [ChangeLog](/ChangeLog.html).
 
 ## Why a Continuation?
 
