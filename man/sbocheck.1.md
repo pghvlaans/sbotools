@@ -1,13 +1,13 @@
 # sbocheck
 
-[NAME](#NAME)
-[SYNOPSIS](#SYNOPSIS)
-[DESCRIPTION](#DESCRIPTION)
-[OPTIONS](#OPTIONS)
-[BUGS](#BUGS)
-[SEE ALSO](#SEE%20ALSO)
-[AUTHORS](#AUTHORS)
-[MAINTAINER](#MAINTAINER)
+[NAME](#name)\
+[SYNOPSIS](#synopsis)\
+[DESCRIPTION](#description)\
+[OPTIONS](#options)\
+[BUGS](#bugs)\
+[SEE ALSO](#see-also)\
+[AUTHORS](#authors)\
+[MAINTAINER](#maintainer)
 
 ------------------------------------------------------------------------
 
