@@ -73,7 +73,7 @@ overrides the default.
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
-If TRUE, then remove the source archives after building. They are
+If **TRUE**, then remove the source archives after building. They are
 retained in `SBO_HOME/distfiles` by default. This option can be set as
 default via the **[sboconfig(1)](sboconfig.1.md)** command. See also **[sbotools.conf(5)](sbotools.conf.5.md)**.
 This option overrides the default.
@@ -109,8 +109,8 @@ unexpected failure.
 **-r\|\--nointeractive**
 
 Bypass all user prompts and all dependency resolution for the requested
-SlackBuilds. This option should not be used unless it is obvious that
-dependency resolution and build options are not required.
+SlackBuilds. Unless it is obvious that dependency resolution and build
+options are not required, consider using a template instead.
 
 **-z\|\--force-reqs**
 

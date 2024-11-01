@@ -13,7 +13,7 @@
 
 ## NAME
 
-**sboconfig** - set **sbotools3 configuration options.**
+**sboconfig** - set **sbotools3** configuration options.
 
 ## SYNOPSIS
 
@@ -30,7 +30,7 @@ TRUE\|FALSE\] \[-o /path\|FALSE\] \[-V #.#\|FALSE\] \[-r url\|FALSE\]
 
 **sboconfig** is a front-end for managing **sbotools3** configuration
 options. The **[sbotools.conf(5)](sbotools.conf.5.md)** file can also be manually edited; any
-fields not relevant to **sbotools3 configuration will be ignored.**
+fields not relevant to **sbotools3** configuration will be ignored.
 
 ## OPTIONS
 
@@ -109,7 +109,7 @@ the one specified in `/etc/slackware-version`.
 
 **REPO**: If set to a git or rsync **URL**, use that repository instead
 of the **sbotools3** default for your **SLACKWARE_VERSION**. The default
-repositories are under <rsync://slackbuilds.org/slackbuilds> if
+repositories are under rsync://slackbuilds.org/slackbuilds if
 **RSYNC_DEFAULT** is **TRUE** and <https://gitlab.com/SlackBuilds.org>
 otherwise. The repository must be laid out in the same manner as one
 found at <https://git.slackbuilds.org/slackbuilds> such that SlackBuild

@@ -13,7 +13,7 @@
 
 ## NAME
 
-**sbofind** - search the local copy of the *slackbuilds.org* tree for a
+**sbofind** - search the local copy of the **slackbuilds.org** tree for a
 given name
 
 ## SYNOPSIS
@@ -30,7 +30,7 @@ information. This is equivalent to running
 
 `cd /usr/ports; make search name=$search_term display=name,path`
 
-on a FreeBSD system. If the repository includes a *TAGS.txt* file, that
+on a FreeBSD system. If the repository includes a `TAGS.txt` file, that
 will be used to find additional results.
 
 ## OPTIONS
