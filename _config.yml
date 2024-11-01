@@ -1,3 +1,9 @@
 theme: jekyll-theme-slate
 title: sbotools3
 description: A ports-like interface to slackbuilds.org
+
+include:
+  - man
+
+plugins:
+  - jekyll-include-cache
