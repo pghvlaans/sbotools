@@ -1,5 +1,3 @@
-# Development
-
 Visit [pghvlaans/sbotools3](https://github.com/pghvlaans/sbotools3) for Issues, Pull Requests and the latest changes.
 
 ## Following Development
