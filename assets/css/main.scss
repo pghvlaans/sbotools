@@ -26,7 +26,7 @@ $base0d: #b5b5b5 !default;
 $base0e: #b5b5b5 !default;
 $base0f: #b5b5b5 !default;
 
-$primary-color: #881700 !default;
+$primary-color: #c0a080 !default;
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
