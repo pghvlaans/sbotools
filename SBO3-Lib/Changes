@@ -1,5 +1,5 @@
 sbotools3
-1.1 - 2024-11-02
+1.1 - 2024-11-03
   * Bugfix: incorrect variable name caused sboupgrade to rebuild when unneeded.
 
 1.0 - 2024-11-01
