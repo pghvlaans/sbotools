@@ -217,7 +217,7 @@ SKIP: {
 	system(qw!mv /var/log/packages /var/log/packages.backup!);
 	system(qw!mkdir -p /var/log/packages!);
 	system(qw!touch /var/log/packages/sbotoolstestingfile!);
-	is (@{ get_installed_packages('SBO') }, 0, 'get_installed_packages() returned an empty arrayref');
+	is (@{ get_installed_packages('SBO3') }, 0, 'get_installed_packages() returned an empty arrayref');
 	system(qw!rm -r /var/log/packages!);
 	system(qw!mv /var/log/packages.backup /var/log/packages!);
 }

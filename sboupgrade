@@ -129,7 +129,7 @@ for my $sbo (@sbos) {
 }
 
 # get a list of installed SBos to check upgradability against
-my $inst_names = get_inst_names(get_installed_packages('SBO'));
+my $inst_names = get_inst_names(get_installed_packages('SBO3'));
 my %inst_names;
 $inst_names{$_} = 1 for @$inst_names;
 my %updates;
