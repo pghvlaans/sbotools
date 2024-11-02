@@ -75,7 +75,7 @@ This option overrides the default.
 
 Do not install the package at the end of the build process. It will be
 left in `/tmp` (or `$OUTPUT`), or in **PKG_DIR** if so defined. See
-**[sboconfig(1)](sboconfig.1.md)** and **[sbotools.conf(5)](sbotools.conf.5.md)**.
+[sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-j\|\--jobs (FALSE\|#)**
 

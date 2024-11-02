@@ -29,7 +29,7 @@
 ## DESCRIPTION
 
 **sboconfig** is a front-end for managing **sbotools3** configuration
-options. The **[sbotools.conf(5)](sbotools.conf.5.md)** file can also be manually edited; any
+options. The [sbotools.conf(5)](sbotools.conf.5.md) file can also be manually edited; any
 fields not relevant to **sbotools3** configuration will be ignored.
 
 ## OPTIONS
