@@ -9,8 +9,8 @@ $serif: "IBM Plex Sans";
 $sans-serif: "IBM Plex Sans";
 $monospace: "IBM Plex Mono";
 
-$base0: #121212;
-$base7: #b5b5b5;
+$base00: #121212 !default;
+$base07: #b5b5b5 !default;
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
