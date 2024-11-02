@@ -33,6 +33,7 @@ include:
   - _pages
   - man
   - downloads
+  - development
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
@@ -87,6 +88,14 @@ defaults:
   # downloads
   - scope:
       path: "downloads"
+      type: pages
+    values:
+      layout: single
+      author_profile: false
+      title: false
+  # development
+  - scope:
+      path: "development"
       type: pages
     values:
       layout: single
