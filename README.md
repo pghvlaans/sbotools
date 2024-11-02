@@ -7,6 +7,9 @@ A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maint
 To make **sbotools3** packages from the master branch, see [sbotools3-git-slackbuild](https://github.com/pghvlaans/sbotools3-git-slackbuild) and follow the instructions in `README`. For release **sbotools3**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools3/) at slackbuilds.org.
 
 ## Changes
+* 1.1 - 2024-11-02
+  * Bugfix: incorrect variable name caused sboupgrade to rebuild when unneeded.
+
 * 1.0 - 2024-11-01
   * Change the git branch to match the Slackware version, or to a user-configured branch
   * Change the default URLs to support Slackware 15.0 and use git repositories
