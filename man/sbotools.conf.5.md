@@ -1,5 +1,3 @@
-# sbotools.conf
-
 [NAME](#name)\
 [DESCRIPTION](#description)\
 [SEE ALSO](#see-also)\

@@ -1,5 +1,3 @@
-# Downloads
-
 ## Notes
 
 `sbotools3` conflicts with `sbotools`. Uninstalling `sbotools` before installing `sbotools3` is recommended.

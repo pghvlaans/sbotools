@@ -1,5 +1,3 @@
-# sboremove
-
 [NAME](#name)\
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\

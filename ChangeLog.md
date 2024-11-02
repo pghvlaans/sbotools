@@ -1,4 +1,3 @@
-# ChangeLog
 * 1.0 - 2024-11-01
   * Change the git branch to match the Slackware version, or to a user-configured branch
   * Change the default URLs to support Slackware 15.0 and use git repositories

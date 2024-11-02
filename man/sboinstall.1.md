@@ -1,5 +1,3 @@
-# sboinstall
-
 [NAME](#name)\
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
