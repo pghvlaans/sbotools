@@ -8,6 +8,8 @@ search: false
 $serif: "IBM Plex Sans";
 $sans-serif: "IBM Plex Sans";
 $monospace: "IBM Plex Mono";
+$global-font-family: 'IBM Plex Sans', sans-serif !default;
+$header-font-family: 'IBM Plex Sans', sans-serif !default;
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
