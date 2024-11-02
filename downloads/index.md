@@ -1,5 +1,7 @@
 # Downloads
 
+A SlackBuild for `sbotools3` is [available](https://slackbuilds.org/repository/15.0/system/sbotools3/) on SlackBuilds.org.
+
 ## Notes
 
 `sbotools3` conflicts with `sbotools`. Uninstalling `sbotools` before installing `sbotools3` is recommended.
