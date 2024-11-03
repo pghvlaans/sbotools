@@ -2,7 +2,7 @@ main:
   - title: "man"
     url: /man/
   - title: "ChangeLog"
-    url: /ChangeLog.html
+    url: /ChangeLog/ChangeLog.html
   - title: "Downloads"
     url: /downloads/
   - title: "Development"
