@@ -7,7 +7,7 @@
   * Change the default URLs to support Slackware 15.0 and use git repositories
   * Use rsync default mirrors with **RSYNC_DEFAULT** (except for -current)
   * Detect build number changes and optionally upgrade
-  * Detect and report out-of-tree *_SBo* SlackBuilds with sbocheck
+  * Detect and report out-of-tree *_SBo* SlackBuilds with *sbocheck*
   * Save any build options when running a SlackBuild
   * Install *bash* completions; *zsh* completions have been updated
   * Install a default configuration file; tweak *sboconfig* to play somewhat nicely with it
@@ -72,14 +72,14 @@
       Allows to specify the slackware version to sync from *SBo*. Previously only
       the version in your */etc/slackware-version* was used for this, and if that
       had gotten updated in -current, you'd have needed to wait both for a new
-      version of sbotools, as well as *SBo* to get the new repository online
-      before sbotools would work for you again. #19
+      version of *sbotools*, as well as *SBo* to get the new repository online
+      before *sbotools* would work for you again. #19
     * **REPO** setting
 
       This will override the **SLACKWARE_VERSION** setting. It's used to specify an
       absolute URL for the *SBo* repository you want to sync with. #6 #19 #27
     * Use sbosrcarch source archive if download fails #7 #19 #24
-    * *sboupgrade* **--all** option to upgrade everything listed by sbocheck. #9 #19
+    * *sboupgrade* **--all** option to upgrade everything listed by *sbocheck*. #9 #19
     * Travis CI integration
 
       Every push will now cause the test-suite to be run. #18
