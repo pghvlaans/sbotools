@@ -70,7 +70,7 @@ defaults:
       title: false
   # man
   - scope:
-      path: "man/*"
+      path: "man"
       type: pages
     values:
       layout: man
