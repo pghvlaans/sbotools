@@ -68,6 +68,14 @@ defaults:
       layout: single
       author_profile: false
       title: false
+  # man/index.html
+  - scope:
+      path: "man/index.html"
+      type: pages
+    values:
+      layout: singe
+      author_profile: false
+      title: false
   # man
   - scope:
       path: "man"

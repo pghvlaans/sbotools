@@ -4,7 +4,7 @@
 [DESCRIPTION](#description)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
-[MAINTAINER](#maintainer)\
+[MAINTAINER](#maintainer)
 
 ------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ The current configuration keys are as follows:
 **DISTCLEAN=(FALSE\|TRUE)**
 
 If **TRUE**, then remove the source archives after building. They are
-retained in */usr/sbo/distfiles* (with **SBO_HOME**= */usr/sbo*) by
+retained in */usr/sbo/distfiles* (with **SBO_HOME**=*/usr/sbo*) by
 default.
 
 **JOBS=(FALSE\|#)**
@@ -79,7 +79,7 @@ If set to a git or rsync **URL**, use that repository instead of the
 repositories are under rsync://slackbuilds.org/slackbuilds if
 **RSYNC_DEFAULT** is **TRUE** and <https://gitlab.com/SlackBuilds.org>
 otherwise. The repository must be laid out in the same manner as one
-found at <https://git.slackbuilds.org/slackbuilds> , such that
+found at <https://git.slackbuilds.org/slackbuilds>, such that
 SlackBuild directories are under the category directories.
 
 **RSYNC_DEFAULT(FALSE\|TRUE)**
