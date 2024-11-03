@@ -9,9 +9,9 @@ sbotools3
 commands
 .SH DESCRIPTION
 .P
-.I 
-/etc/sbotools/sbotools.conf\fR\
- contains
+.I
+/etc/sbotools/sbotools.conf
+contains
 .I
 KEY=VALUE
 configuration parameters, and is read by all
@@ -29,14 +29,11 @@ If
 TRUE\fR\
 \&, then remove the source archives after building. They
 are retained in
-.I 
-/usr/sbo/distfiles\fR\
- (with
-.B
-SBO_HOME\fR\
-\&=
-.I 
-/usr/sbo\fR\
+.I
+/usr/sbo/distfiles
+(with
+.I
+SBO_HOME=/usr/sbo\fR\
 \&)
 by default.
 .RE
@@ -64,13 +61,13 @@ If
 TRUE\fR\
 \&, do not clean working directories after building.
 These are the build and
-.I 
-package-(sbo)\fR\
- directories under
-.I 
-/tmp/SBo\fR\
- (or
-.I 
+.I
+package-(sbo)
+directories under
+.I
+/tmp/SBo
+(or
+.I
 $TMP\fR\
 ).
 .RE
@@ -132,7 +129,7 @@ path\fR\
 .B
 slackbuilds.org
 tree will be stored. The default setting is
-.I 
+.I
 /usr/sbo\fR\
 \&. The tree must be re-downloaded with
 .B
@@ -153,15 +150,15 @@ path\fR\
 SlackBuild name will be used in preference to the
 in-tree version. This will work even if the SlackBuild
 is out-of-tree.
-.I 
+.I
 README\fR\
 \&,
-.I 
+.I
 slack-desc\fR\
 \&, an
-.I 
-info\fR\
- file and
+.I
+info
+file and
 a SlackBuild must all be present.
 .RE
 .P
@@ -176,7 +173,7 @@ version number\fR\
 slackbuilds.org
 repository for that version of Slackware rather than
 the one specified in
-.I 
+.I
 /etc/slackware-version\fR\
 \&.
 .RE
@@ -209,12 +206,12 @@ otherwise. The repository must be laid out in the same
 manner as one found at
 .UR https://git.slackbuilds.org/slackbuilds
 .UE
-\&, such that SlackBuild directories are under the
+such that SlackBuild directories are under the
 category directories.
 .RE
 .P
 .B
-RSYNC_DEFAULT(FALSE|TRUE)
+RSYNC_DEFAULT=(FALSE|TRUE)
 .RS
 If set to
 .B

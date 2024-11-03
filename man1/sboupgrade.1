@@ -20,7 +20,9 @@ is used to upgrade SlackBuilds. If the
 flag is not specified,
 .B
 sboupgrade
-will pull the list of requirements from the .info
+will pull the list of requirements from the
+.I
+info
 file for any specified SlackBuild. This is a recursive
 operation over all dependencies.
 .B
@@ -29,9 +31,9 @@ will offer to install any non-installed dependencies in
 the build queue. This program will not handle circular
 dependencies.
 .P
-.I 
-README\fR\
- files are parsed for
+.I
+README
+files are parsed for
 .B
 groupadd
 and
@@ -41,30 +43,30 @@ commands, and
 .B
 sboinstall
 will offer to run them prior to building. If the
-.I 
-README\fR\
- is judged to document options in
+.I
+README
+is judged to document options in
 .I
 KEY=VALUE
 form, a prompt for setting options will appear. Any
 build options, whether passed interactively or in a
 template, will be saved to
-.I 
-/var/log/sbotools\fR\
- when the SlackBuild runs.
+.I
+/var/log/sbotools
+when the SlackBuild runs.
 .P
 .B
 sboupgrade
 will attempt to download the sources from the
-.I 
-DOWNLOAD\fR\
- or
-.I 
-DOWNLOAD_x86_64\fR\
- variables in the
-.I 
-info\fR\
- file. If
+.I
+DOWNLOAD
+or
+.I
+DOWNLOAD_x86_64
+variables in the
+.I
+info
+file. If
 either the download or the md5sum check fails, a new
 download will be attempted from
 .UR ftp://slackware.uk/sbosrcarch/
@@ -124,10 +126,10 @@ These are the build and
 .I
 package-(sbo)
 directories under
-.I 
-/tmp/SBo\fR\
- (or
-.I 
+.I
+/tmp/SBo
+(or
+.I
 $TMP\fR\
 ). Cleaning these directories can be set as default
 via the
@@ -147,9 +149,9 @@ If
 TRUE\fR\
 \&, then remove the source archives after building. They
 are retained in
-.I 
-SBO_HOME/distfiles\fR\
- by default. This option can be set as default via the
+.I
+SBO_HOME/distfiles
+by default. This option can be set as default via the
 .B
 sboconfig(1)
 command. See also
@@ -173,10 +175,10 @@ version.
 .RS
 Do not install the package at the end of the build process.
 It will be left in
-.I 
-/tmp\fR\
- (or
-.I 
+.I
+/tmp
+(or
+.I
 $OUTPUT\fR\
 ), or in
 .B
@@ -218,11 +220,8 @@ should be combined with
 .B
 --noinstall
 so that the contents of the package can be inspected prior
-to installation. Ensure that the running shell has already
-sourced
-.I 
-/etc/profile.d/32dev.{c,}sh\fR\
- before running, and that the
+to installation. If the base package and compat32 package are
+to be built at the same time, ensure that the
 .B
 DISTCLEAN
 option is set to
@@ -236,8 +235,11 @@ GitHub Issues are welcome in case of unexpected failure.
 .RS
 Bypass all user prompts and all dependency resolution for
 the requested SlackBuilds. Unless it is obvious that dependency
-resolution and build options are not required, consider using
-a template instead.
+resolution and build options are not required, this option should
+not be used with
+.B
+sboupgrade\fR\
+\&.
 .RE
 .P
 .B
@@ -290,7 +292,10 @@ can exit with the following codes:
 6: unable to obtain a required file handle.
 .RE
 .RS
-7: unable to get required info from the .info file.
+7: unable to get required info from the
+.I
+info
+file.
 .RE
 .RS
 8: unable to unset the exec-on-close bit on a temporary file.
