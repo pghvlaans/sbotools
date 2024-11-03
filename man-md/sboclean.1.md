@@ -7,7 +7,7 @@
 [EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
-[AUTHOR](#AUTHOR)\
+[AUTHORS](#authors)\
 [MAINTAINER](#maintainer)
 
 ------------------------------------------------------------------------
@@ -79,7 +79,7 @@ None known. If found, Issues and Pull Requests to
 [sbocheck(1)](sbocheck.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md),
 [sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md)
 
-## AUTHOR []{#AUTHOR}
+## AUTHORS
 
 Jacob Pipkin \<j (at) dawnrazor (dot) net\>
 
