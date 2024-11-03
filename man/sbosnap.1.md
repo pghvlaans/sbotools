@@ -24,7 +24,7 @@
 ## DESCRIPTION
 
 **sbosnap** is used to download and update a local copy of the
-**slackbuilds.org** tree, without the `*.tar.gz{,.asc}` files. Note that
+**slackbuilds.org** tree, without the **.tar.gz{,.asc}* files. Note that
 [sbocheck(1)](sbocheck.1.md) also updates the tree and checks for updated and removed
 SlackBuilds. **rsync** is used for rsync repositories, and **git** is
 used for git repositories. **sbotools3** defaults to git unless
@@ -47,7 +47,7 @@ Show version information.
 
 Download a local copy of the **slackbuilds.org** tree. The copy will be
 downloaded to the path in the **SBO_HOME** setting (see [sboconfig(1)](sboconfig.1.md)
-and [sbotools.conf(5)](sbotools.conf.5.md)), `/usr/sbo` by default.
+and [sbotools.conf(5)](sbotools.conf.5.md)), */usr/sbo* by default.
 
 **update**
 

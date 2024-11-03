@@ -22,12 +22,12 @@
 ## DESCRIPTION
 
 **sboclean** is used to clean files left by **sbotools3**, such as saved
-options (in `/var/log/sbotools`), downloaded source files ("distfiles"),
-or working directories under `/tmp/SBo` (or `$TMP`) and, for compat32
-installs, under `/tmp` (or `$TMP`). Note that if not run with the
+options (in */var/log/sbotools*), downloaded source files ("distfiles"),
+or working directories under */tmp/SBo* (or *$TMP*) and, for compat32
+installs, under */tmp* (or *$TMP*). Note that if not run with the
 **\--interactive** flag, **sboclean** will remove anything in the
-distfiles and/or `/tmp/SBo` (or `$TMP`) directories and any
-`/tmp/package-*-compat32` (or `$TMP/package-*-compat32`) directories
+distfiles and/or */tmp/SBo* (or *$TMP*) directories and any
+*/tmp/package-*-compat32* (or *$TMP/package-*-compat32*) directories
 with extreme prejudice. One of **\--dist**, **\--work** or **\--option**
 must be specified for this script to do anything.
 
@@ -43,16 +43,16 @@ Show version information.
 
 **-d\|\--dist**
 
-Clean distfiles, located at `/usr/sbo/distfiles` by default.
+Clean distfiles, located at */usr/sbo/distfiles* by default.
 
 **-w\|\--work**
 
-Clean working directories, located by default under `/tmp/SBo` and, for
-compat32 installs, `/tmp`.
+Clean working directories, located by default under */tmp/SBo* and, for
+compat32 installs, */tmp*.
 
 **-o\|\--options (ALL\|sbo_name)**
 
-With **ALL**, clean all saved options from `/var/log/sbotools`. With the
+With **ALL**, clean all saved options from */var/log/sbotools*. With the
 name of a SlackBuild, clean the saved options for that SlackBuild only.
 
 **-i\|\--interactive**

@@ -26,20 +26,20 @@
 
 **sboupgrade** is used to upgrade SlackBuilds. If the **-r** flag is not
 specified, **sboupgrade** will pull the list of requirements from the
-.info file for any specified SlackBuild. This is a recursive operation
+*info* file for any specified SlackBuild. This is a recursive operation
 over all dependencies. **sboinstall** will offer to install any
 non-installed dependencies in the build queue. This program will not
 handle circular dependencies.
 
-`README` files are parsed for **groupadd** and **useradd** commands, and
-**sboinstall** will offer to run them prior to building. If the `README`
+*README* files are parsed for **groupadd** and **useradd** commands, and
+**sboinstall** will offer to run them prior to building. If the *README*
 is judged to document options in *KEY=VALUE* form, a prompt for setting
 options will appear. Any build options, whether passed interactively or
-in a template, will be saved to `/var/log/sbotools` when the SlackBuild
+in a template, will be saved to */var/log/sbotools* when the SlackBuild
 runs.
 
-**sboupgrade** will attempt to download the sources from the `DOWNLOAD`
-or `DOWNLOAD_x86_64` variables in the `info` file. If either the
+**sboupgrade** will attempt to download the sources from the *DOWNLOAD*
+or *DOWNLOAD_x86_64* variables in the *info* file. If either the
 download or the md5sum check fails, a new download will be attempted
 from <ftp://slackware.uk/sbosrcarch/> as a fallback measure. The
 **\--all** flag may be passed to upgrade all eligible SlackBuilds
@@ -66,7 +66,7 @@ upgrades even if the build number is unchanged. This overrides the
 **-c\|\--noclean (FALSE\|TRUE)**
 
 If **TRUE**, do not clean working directories after building. These are
-the build and *package-(sbo)* directories under `/tmp/SBo` (or `$TMP`).
+the build and *package-(sbo)* directories under */tmp/SBo* (or *$TMP*).
 Cleaning these directories can be set as default via the
 [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This option
 overrides the default.
@@ -74,7 +74,7 @@ overrides the default.
 **-d\|\--distclean (FALSE\|TRUE)**
 
 If **TRUE**, then remove the source archives after building. They are
-retained in `SBO_HOME/distfiles` by default. This option can be set as
+retained in *SBO_HOME/distfiles* by default. This option can be set as
 default via the [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md).
 This option overrides the default.
 
@@ -86,7 +86,7 @@ equal to the **slackbuilds.org** version.
 **-i\|\--noinstall**
 
 Do not install the package at the end of the build process. It will be
-left in `/tmp` (or `$OUTPUT`), or in **PKG_DIR** if so defined. See
+left in */tmp* (or *$OUTPUT*), or in **PKG_DIR** if so defined. See
 [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-j\|\--jobs (FALSE\|#)**
@@ -102,7 +102,7 @@ operation is not necessarily foolproof, and is unsupported by anyone in
 principle. As a best practice, **\--compat32** should be combined with
 **\--noinstall** so that the contents of the package can be inspected
 prior to installation. Ensure that the running shell has already sourced
-`/etc/profile.d/32dev.{c,}sh` before running, and that the **DISTCLEAN**
+*/etc/profile.d/32dev.{c,}sh* before running, and that the **DISTCLEAN**
 option is set to **FALSE.** GitHub Issues are welcome in case of
 unexpected failure.
 
@@ -133,7 +133,7 @@ and [sbotools.conf(5)](sbotools.conf.5.md).
 4: unable to md5sum verify the source file(s).\
 5: unable to download the source file(s).\
 6: unable to obtain a required file handle.\
-7: unable to get required info from the .info file.\
+7: unable to get required info from the *info* file.\
 8: unable to unset the exec-on-close bit on a temporary file.\
 9: multilib has not been set up (where required).\
 10: **convertpkg-compat32** exited non-zero.\

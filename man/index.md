@@ -5,7 +5,7 @@ The pages here are current as of version 1.1 (2024-11-03).
 * [sboclean(1)](sboclean.1.md)
     * Remove cruft by cleaning source archives, build directories and saved build options.
 * [sboconfig(1)](sboconfig.1.md)
-    * A command line interface for changing `/etc/sbotools/sbotools.conf`.
+    * A command line interface for changing */etc/sbotools/sbotools.conf*.
 * [sbofind(1)](sbofind.1.md)
     * Search the local copy of the repository for SlackBuilds.
 * [sboinstall(1)](sboinstall.1.md)
@@ -13,8 +13,8 @@ The pages here are current as of version 1.1 (2024-11-03).
 * [sboremove(1)](sboremove.1.md)
     * Interactively remove installed SlackBuilds along with any unused dependencies.
 * [sbosnap(1)](sbosnap.1.md)
-    * Fetch or update the upstream SlackBuilds repository with `fetch` and `update`.
+    * Fetch or update the upstream SlackBuilds repository with *fetch* and *update*.
 * [sboupgrade(1)](sboupgrade.1.md)
     * Upgrade previously-installed SlackBuilds.
 * [sbotools.conf(5)](sbotools.conf.5.md)
-    * View details about all configuration options in `sbotools.conf`.
+    * View details about all configuration options in *sbotools.conf*.

@@ -29,20 +29,20 @@
 
 **sboinstall** is used to install SlackBuilds. If the **-r** flag is not
 specified, **sboinstall** will pull the list of requirements from the
-`info` file for any specified SlackBuild. This is a recursive operation
+*info* file for any specified SlackBuild. This is a recursive operation
 over all dependencies. **sboinstall** will offer to install any
 non-installed dependencies in the build queue. This program will not
 handle circular dependencies.
 
-`README` files are parsed for **groupadd** and **useradd** commands, and
-**sboinstall** will offer to run them prior to building. If the `README`
+*README* files are parsed for **groupadd** and **useradd** commands, and
+**sboinstall** will offer to run them prior to building. If the *README*
 is judged to document options in *KEY=VALUE* form, a prompt for setting
 options will appear. Any build options, whether passed interactively or
-in a template, will be saved to `/var/log/sbotools` when the SlackBuild
+in a template, will be saved to */var/log/sbotools* when the SlackBuild
 runs.
 
-**sboinstall** will attempt to download the sources from the `DOWNLOAD`
-or `DOWNLOAD_x86_64` variables in the `info` file. If either the
+**sboinstall** will attempt to download the sources from the *DOWNLOAD*
+or *DOWNLOAD_x86_64* variables in the *info* file. If either the
 download or the md5sum check fails, a new download will be attempted
 from <ftp://slackware.uk/sbosrcarch/> as a fallback measure.
 
@@ -59,7 +59,7 @@ Show version information.
 **-c\|\--noclean (FALSE\|TRUE)**
 
 If TRUE, do not clean working directories after building. These are the
-build and `package-(sbo)` directories under `/tmp/SBo` (or `$TMP`).
+build and *package-(sbo)* directories under */tmp/SBo* (or *$TMP*).
 Cleaning these directories can be set as default via the
 [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This option
 overrides the default.
@@ -67,14 +67,14 @@ overrides the default.
 **-d\|\--distclean (FALSE\|TRUE)**
 
 If **TRUE**, then remove the source archives after building. They are
-retained in `SBO_HOME/distfiles` by default. This option can be set as
+retained in *SBO_HOME/distfiles* by default. This option can be set as
 default via the [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md).
 This option overrides the default.
 
 **-i\|\--noinstall**
 
 Do not install the package at the end of the build process. It will be
-left in `/tmp` (or `$OUTPUT`), or in **PKG_DIR** if so defined. See
+left in */tmp* (or *$OUTPUT*), or in **PKG_DIR** if so defined. See
 [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-j\|\--jobs (FALSE\|#)**
@@ -101,7 +101,7 @@ options are not required, consider using a template instead.
 
 **-R\|\--norequirements**
 
-Bypass dependency resolution, but still show `README` and the user
+Bypass dependency resolution, but still show *README* and the user
 prompts before proceeding with the build.
 
 **\--reinstall**

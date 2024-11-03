@@ -30,7 +30,7 @@ information. This is equivalent to running
 
     cd /usr/ports; make search name=$search_term display=name,path
 
-on a FreeBSD system. If the repository includes a `TAGS.txt` file, that
+on a FreeBSD system. If the repository includes a *TAGS.txt* file, that
 will be used to find additional results.
 
 ## OPTIONS
@@ -53,11 +53,11 @@ Exclude tags from the search.
 
 **-i\|\--info**
 
-Show the contents of the `info` file for each SlackBuild found.
+Show the contents of the *info* file for each SlackBuild found.
 
 **-r\|\--readme**
 
-Show the contents of the `README` file for each SlackBuild found.
+Show the contents of the *README* file for each SlackBuild found.
 
 **-q\|\--queue**
 

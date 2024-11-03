@@ -64,13 +64,13 @@ number differs.
 **-c\|\--noclean (FALSE\|TRUE)**
 
 **NOCLEAN**:If **TRUE**, do not clean working directories after
-building. These are the build and `package-(sbo)` directories under
-`/tmp/SBo` (or `$TMP`).
+building. These are the build and *package-(sbo)* directories under
+*/tmp/SBo* (or *$TMP*).
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
 **DISTCLEAN**: If **TRUE**, then remove the source archives after
-building. They are retained in `/usr/sbo/distfiles` (with default
+building. They are retained in */usr/sbo/distfiles* (with default
 **SBO_HOME**).
 
 **-j\|\--jobs (FALSE\|#)**
@@ -88,7 +88,7 @@ packages.
 
 **SBO_HOME**: If set to a **path**, this is where the
 **slackbuilds.org** tree will be stored. The default setting is
-`/usr/sbo`. The tree must be re-downloaded with **sbosnap fetch** if the
+*/usr/sbo*. The tree must be re-downloaded with **sbosnap fetch** if the
 **SBO_HOME** setting changes.
 
 **-o\|\--local-overrides (FALSE\|/path)**
@@ -96,14 +96,14 @@ packages.
 **LOCAL_OVERRIDES**: If set to a **path**, any directory name under that
 path matching a SlackBuild name will be used in preference to the
 in-tree version. This will work even if the SlackBuild is out-of-tree.
-`README`, `slack-desc`, an `info` file and a SlackBuild must all be
+*README*, *slack-desc*, an *info* file and a SlackBuild must all be
 present.
 
 **-V\|\--slackware-version (FALSE\|#.#)**
 
 **SLACKWARE_VERSION**: If set to a **version number**, use the
 **slackbuilds.org** repository for that version of Slackware rather than
-the one specified in `/etc/slackware-version`.
+the one specified in */etc/slackware-version*.
 
 **-r\|\--repo (FALSE\|url)**
 
