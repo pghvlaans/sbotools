@@ -27,7 +27,7 @@ or working directories under */tmp/SBo* (or *$TMP*) and, for compat32
 installs, under */tmp* (or *$TMP*). Note that if not run with the
 **\--interactive** flag, **sboclean** will remove anything in the
 distfiles and/or */tmp/SBo* (or *$TMP*) directories and any
-*/tmp/package-*-compat32* (or *$TMP/package-*-compat32*) directories
+*/tmp/package-\*-compat32* (or *$TMP/package-\*-compat32*) directories
 with extreme prejudice. One of **\--dist**, **\--work** or **\--option**
 must be specified for this script to do anything.
 
