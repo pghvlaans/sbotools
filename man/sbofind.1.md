@@ -4,6 +4,7 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
@@ -13,8 +14,8 @@
 
 ## NAME
 
-**sbofind** - search the local copy of the **slackbuilds.org** tree for a
-given name
+**sbofind** - search the local copy of the **slackbuilds.org** tree for
+a given name
 
 ## SYNOPSIS
 
@@ -28,7 +29,7 @@ given name
 term. It reports back any SlackBuilds found along with path and version
 information. This is equivalent to running
 
-    cd /usr/ports; make search name=$search_term display=name,path
+    cd /usr/ports; make search name=\$search_term display=name,path
 
 on a FreeBSD system. If the repository includes a *TAGS.txt* file, that
 will be used to find additional results.

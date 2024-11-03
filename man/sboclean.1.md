@@ -4,9 +4,10 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
-[AUTHORS](#authors)\
+[AUTHOR](#AUTHOR)\
 [MAINTAINER](#maintainer)
 
 ------------------------------------------------------------------------
@@ -23,11 +24,11 @@
 
 **sboclean** is used to clean files left by **sbotools3**, such as saved
 options (in */var/log/sbotools*), downloaded source files ("distfiles"),
-or working directories under */tmp/SBo* (or *$TMP*) and, for compat32
-installs, under */tmp* (or *$TMP*). Note that if not run with the
+or working directories under */tmp/SBo* (or *\$TMP*) and, for compat32
+installs, under */tmp* (or *\$TMP*). Note that if not run with the
 **\--interactive** flag, **sboclean** will remove anything in the
-distfiles and/or */tmp/SBo* (or *$TMP*) directories and any
-*/tmp/package-\*-compat32* (or *$TMP/package-\*-compat32*) directories
+distfiles and/or */tmp/SBo* (or *\$TMP*) directories and any
+*/tmp/package-\*-compat32* (or *\$TMP/package-\*-compat32*) directories
 with extreme prejudice. One of **\--dist**, **\--work** or **\--option**
 must be specified for this script to do anything.
 
@@ -78,7 +79,7 @@ None known. If found, Issues and Pull Requests to
 [sbocheck(1)](sbocheck.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md),
 [sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md)
 
-## AUTHORS
+## AUTHOR []{#AUTHOR}
 
 Jacob Pipkin \<j (at) dawnrazor (dot) net\>
 

@@ -4,6 +4,7 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
@@ -58,8 +59,8 @@ Show version information.
 
 **-c\|\--noclean (FALSE\|TRUE)**
 
-If TRUE, do not clean working directories after building. These are the
-build and *package-(sbo)* directories under */tmp/SBo* (or *$TMP*).
+If **TRUE**, do not clean working directories after building. These are
+the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
 Cleaning these directories can be set as default via the
 [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This option
 overrides the default.
@@ -74,12 +75,12 @@ This option overrides the default.
 **-i\|\--noinstall**
 
 Do not install the package at the end of the build process. It will be
-left in */tmp* (or *$OUTPUT*), or in **PKG_DIR** if so defined. See
+left in */tmp* (or *\$OUTPUT*), or in **PKG_DIR** if so defined. See
 [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-j\|\--jobs (FALSE\|#)**
 
-If numerical, pass to the **-j** argument when a SlackBuild invoking
+If **numerical**, pass to the **-j** argument when a SlackBuild invoking
 **make** is run.
 
 **-p\|\--compat32**
@@ -128,7 +129,7 @@ prompts.
 4: unable to md5sum verify the source file(s).\
 5: unable to download the source file(s).\
 6: unable to obtain a required file handle.\
-7: unable to get required info from the .info file.\
+7: unable to get required info from the *info* file.\
 8: unable to unset the exec-on-close bit on a temporary file.\
 9: multilib has not been set up (where required).\
 10: **convertpkg-compat32** exited non-zero.\

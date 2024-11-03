@@ -4,6 +4,7 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
@@ -21,7 +22,7 @@
 
     sboconfig [-l]
 
-    sboconfig [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #\|FALSE] \
+    sboconfig [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \
               [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \
               [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] \
               [-r url|FALSE] [-R TRUE|FALSE]
@@ -65,7 +66,7 @@ number differs.
 
 **NOCLEAN**:If **TRUE**, do not clean working directories after
 building. These are the build and *package-(sbo)* directories under
-*/tmp/SBo* (or *$TMP*).
+*/tmp/SBo* (or *\$TMP*).
 
 **-d\|\--distclean (FALSE\|TRUE)**
 

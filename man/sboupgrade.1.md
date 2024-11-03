@@ -4,6 +4,7 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
@@ -66,7 +67,7 @@ upgrades even if the build number is unchanged. This overrides the
 **-c\|\--noclean (FALSE\|TRUE)**
 
 If **TRUE**, do not clean working directories after building. These are
-the build and *package-(sbo)* directories under */tmp/SBo* (or *$TMP*).
+the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
 Cleaning these directories can be set as default via the
 [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This option
 overrides the default.
@@ -86,7 +87,7 @@ equal to the **slackbuilds.org** version.
 **-i\|\--noinstall**
 
 Do not install the package at the end of the build process. It will be
-left in */tmp* (or *$OUTPUT*), or in **PKG_DIR** if so defined. See
+left in */tmp* (or *\$OUTPUT*), or in **PKG_DIR** if so defined. See
 [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-j\|\--jobs (FALSE\|#)**
@@ -101,16 +102,16 @@ Create a -compat32 package on multilib x86_64 systems. This requires the
 operation is not necessarily foolproof, and is unsupported by anyone in
 principle. As a best practice, **\--compat32** should be combined with
 **\--noinstall** so that the contents of the package can be inspected
-prior to installation. Ensure that the running shell has already sourced
-*/etc/profile.d/32dev.{c,}sh* before running, and that the **DISTCLEAN**
-option is set to **FALSE.** GitHub Issues are welcome in case of
-unexpected failure.
+prior to installation. If the base package and compat32 package are to
+be built at the same time, ensure that the **DISTCLEAN** option is set
+to **FALSE.** GitHub Issues are welcome in case of unexpected failure.
 
 **-r\|\--nointeractive**
 
 Bypass all user prompts and all dependency resolution for the requested
 SlackBuilds. Unless it is obvious that dependency resolution and build
-options are not required, consider using a template instead.
+options are not required, this option should not be used with
+**sboupgrade**.
 
 **-z\|\--force-reqs**
 
