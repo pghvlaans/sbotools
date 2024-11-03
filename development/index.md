@@ -13,5 +13,6 @@ These features may be added in the future:
 * Reverse dependency search
 * Using (and generating?) `sqf` files
 * Running `sbocheck` without updating the tree
+* Blacklist scripts
 
 The above list is non-exhaustive and nothing on it is guaranteed to appear in `sbotools3`.
