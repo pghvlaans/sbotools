@@ -19,7 +19,7 @@ a given name
 
 ## SYNOPSIS
 
-    sbofind [-h\|-v]
+    sbofind [-h|-v]
 
     sbofind [-etirq] search_term
 

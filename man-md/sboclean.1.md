@@ -18,7 +18,7 @@
 
 ## SYNOPSIS
 
-    sboclean [-h\|-v] [-dwi] [-o ALL\|package]
+    sboclean [-h|-v] [-dwi] [-o ALL|package]
 
 ## DESCRIPTION
 

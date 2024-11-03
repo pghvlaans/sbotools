@@ -18,7 +18,7 @@
 
 ## SYNOPSIS
 
-    sboremove [-h\|-v]
+    sboremove [-h|-v]
 
     sboremove [-a] sbo_name (sbo_name)
 
