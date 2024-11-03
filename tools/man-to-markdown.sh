@@ -81,9 +81,11 @@ for item in check clean config find install remove snap upgrade ; do
   sed -i "s/^\\\\\[/$SPACES\\\\[/g" sbo$item.1.md
 done
 
+# Why, yes, these lines are horrible.
 sed -i "s/\\\\\[/[/g" *
 sed -i "s/\\\\\]/]/g" *
 sed -i "s/^cd /    cd /g" *
 sed -i 's|\\\\\\$|\\|g' *
 sed -i "/^    /s/\\\|/|/g" *
 sed -i "/^    /s/\\\-/-/g" *
+sed -i "/^    /s/\\\\\\$/$/g" *

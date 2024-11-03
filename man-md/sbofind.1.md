@@ -29,7 +29,7 @@ a given name
 term. It reports back any SlackBuilds found along with path and version
 information. This is equivalent to running
 
-    cd /usr/ports; make search name=\$search_term display=name,path
+    cd /usr/ports; make search name=$search_term display=name,path
 
 on a FreeBSD system. If the repository includes a *TAGS.txt* file, that
 will be used to find additional results.
