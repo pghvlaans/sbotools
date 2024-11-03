@@ -33,6 +33,7 @@ include:
   - man
   - downloads
   - development
+  - ChangeLog.html
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
@@ -70,7 +71,7 @@ defaults:
       title: false
   # ChangeLog
   - scope:
-      path: "/ChangeLog.html"
+      path: "ChangeLog.html"
       type: pages
     values:
       layout: man
