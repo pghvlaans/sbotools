@@ -2,9 +2,7 @@
 
 # Convert man pages to markdown; requires pandoc.
 
-# This won't get it the whole way (a little manual editing will
-# still be required under SYNOPSIS before adding to the website),
-# but it'll be pretty close.
+# This should be just about everything.
 
 cd $(dirname $0) || exit
 cp ../man1/* ../man-md
@@ -87,3 +85,5 @@ sed -i "s/\\\\\[/[/g" *
 sed -i "s/\\\\\]/]/g" *
 sed -i "s/^cd /    cd /g" *
 sed -i 's|\\\\\\$|\\|g' *
+sed -i "/^    /s/\\\|/|/g" *
+sed -i "/^    /s/\\\-/-/g" *
