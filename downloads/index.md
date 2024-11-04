@@ -11,8 +11,8 @@ A SlackBuild for `sbotools3` is [available](https://slackbuilds.org/repository/1
 ## Release Tarballs
 
 * [sbotools3-1.1.tar.gz](sbotools3-1.1.tar.gz)
-    * md5sum: f98cb7133ea399826f679c9caf8711d2
+    * md5sum: `f98cb7133ea399826f679c9caf8711d2`
 * [sbotools3-1.0.tar.gz](sbotools3-1.0.tar.gz)
-    * md5sum: 18fbc61818d450877656861d03c5a63d
+    * md5sum: `18fbc61818d450877656861d03c5a63d`
 * [sbotools3-1.0.tar.xz](sbotools3-1.0.tar.xz)
-    * md5sum: 1fe2e6ee91258267b8987d74dae985df
+    * md5sum: `1fe2e6ee91258267b8987d74dae985df`
