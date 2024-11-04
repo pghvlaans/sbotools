@@ -6,7 +6,7 @@ A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maint
 
 **sbotools3** is [available](https://slackbuilds.org/repository/15.0/system/sbotools3/) on slackbuilds.org for Slackware 15.0.
 
-For online man pages and executive summaries of all commands, see [man](/man/). Installation notes and release tarballs are available at [Downloads](/downloads/). A record of changes to **sbotools3** and **sbotools** back to version 1.9 can be found in [ChangeLog](/ChangeLog/). [Development](/development/) has links to **sbotools3**-related repositories and information about future plans.
+For online man pages and executive summaries of all commands, see [man](/sbotools3/man/). Installation notes and release tarballs are available at [Downloads](/sbotools3/downloads/). A record of changes to **sbotools3** and **sbotools** back to version 1.9 can be found in [ChangeLog](/sbotools3/ChangeLog/). [Development](/sbotools3/development/) has links to **sbotools3**-related repositories and information about future plans.
 
 ## Why a Continuation?
 
