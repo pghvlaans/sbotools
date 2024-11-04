@@ -13,7 +13,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO3::Lib qw/ update_tree get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions /;
+use SBO3::Lib qw/ update_tree fetch_tree get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions $slackbuilds_txt slackbuilds_or_fetch /;
 use Getopt::Long;
 use File::Basename;
 use List::Util 'max';
@@ -30,19 +30,26 @@ Options:
     this screen.
   -v|--version:
     version information.
+  -n|--nopull:
+    run without updating the tree.
 
 EOF
 	return 1;
 }
 
-my ($help, $vers);
+my ($help, $vers, $nopull);
 
-GetOptions('help|h' => \$help, 'version|v' => \$vers);
+GetOptions('help|h' => \$help, 'version|v' => \$vers, 'nopull|n' => \$nopull);
 
 if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
 
-update_tree();
+update_tree() unless $nopull;
+if ($nopull and not -f $slackbuilds_txt) {
+	slackbuilds_or_fetch();
+} elsif ($nopull) {
+	print "Not updating the SlackBuilds tree...\n";
+}
 
 # retrieve and format list of removed builds
 sub get_removed_list {

@@ -20,6 +20,8 @@ updates.
 
     sbocheck [-h|-v]
 
+    sbocheck [-n]
+
 ## DESCRIPTION
 
 **sbocheck** first updates a previously-fetched copy of the
@@ -32,7 +34,14 @@ The three output categories are logged separately to
 */etc/sbocheck.log*, */etc/sbocheck-bumps.log* and
 */etc/sbocheck-out-of-tree.log*.
 
+To check for updated SlackBuilds without updating the SlackBuilds tree,
+pass the **\--nopull** option.
+
 ## OPTIONS
+
+**-n\|\--nopull**
+
+Check for updated SlackBuilds without updating the SlackBuilds tree.
 
 **-h\|\--help**
 

@@ -10,6 +10,8 @@ tree and check for updates.
 .SH SYNOPSIS
 .P
 sbocheck [-h|-v]
+.P
+sbocheck [-n]
 .SH DESCRIPTION
 .P
 .B
@@ -38,7 +40,21 @@ and
 .I
 /etc/sbocheck-out-of-tree.log\fR\
 \&.
+.P
+To check for updated SlackBuilds without updating the SlackBuilds
+tree, pass
+the
+.B
+--nopull
+option.
 .SH OPTIONS
+.P
+.B
+-n|--nopull
+.RS
+Check for updated SlackBuilds without updating the SlackBuilds
+tree.
+.RE
 .P
 .B
 -h|--help
