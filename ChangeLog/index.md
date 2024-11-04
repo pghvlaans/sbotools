@@ -1,6 +1,6 @@
 # ChangeLog
 * Post-1.1
-  * *sbocheck*: Use **--nopull** to check for updated SlackBuilds without updating the tree
+  * *sbocheck*: Use **\--nopull** to check for updated SlackBuilds without updating the tree
 
 * 1.1 - 2024-11-03
   * Bugfix: incorrect variable name caused *sboupgrade* to rebuild when unneeded.
@@ -24,11 +24,11 @@
 * 2.6 - 2019-04-27
   * Compatibility with new *perl* versions where you need to escape *{* in regexp
     #75 #77 #78
-  * Add a *--tries 5* option when downloading from sbosrcarch, which is a
+  * Add a *\--tries 5* option when downloading from sbosrcarch, which is a
     saner limit than the default of 20. #79
-  * Change *sboclean* options **--clean-dist** and **--clean-work** to shorter forms #52
+  * Change *sboclean* options **\--clean-dist** and **\--clean-work** to shorter forms #52
   * Add limited -current support using ponce's *SBo* repo for -current #73
-  * Fix bug with *sboinstall --reinstall -r* #72
+  * Fix bug with *sboinstall \--reinstall -r* #72
   * Fix bug with *sbofind -e* #71
 
 * 2.5 - 2018-02-14
@@ -40,7 +40,7 @@
 * 2.4 - 2017-05-18
   * Rewrite *sboremove* from the ground up so it relies less on global state
   * Fix for parsing *README* with *useradd*/*groupadd* commands which span lines #57
-  * Add **--reinstall** option to *sboinstall* #58
+  * Add **\--reinstall** option to *sboinstall* #58
   * Exit with error when *sbosnap* fails to sync with a repo #61
   * Add version information to *sbofind* output #60
 
@@ -82,7 +82,7 @@
       This will override the **SLACKWARE_VERSION** setting. It's used to specify an
       absolute URL for the *SBo* repository you want to sync with. #6 #19 #27
     * Use sbosrcarch source archive if download fails #7 #19 #24
-    * *sboupgrade* **--all** option to upgrade everything listed by *sbocheck*. #9 #19
+    * *sboupgrade* **\--all** option to upgrade everything listed by *sbocheck*. #9 #19
     * Travis CI integration
 
       Every push will now cause the test-suite to be run. #18
