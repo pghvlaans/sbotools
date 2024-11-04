@@ -17,6 +17,6 @@ These features may be added in the future:
 
 The above list is non-exhaustive and nothing on it is guaranteed to appear in `sbotools3`.
 
-## Arriving in Version 1.2
+## Done for Version 1.2
 
-* Running `sbocheck` without updating the tree (use `sbocheck -n`)
+* Run `sbocheck` without updating the tree (use `sbocheck -n`)
