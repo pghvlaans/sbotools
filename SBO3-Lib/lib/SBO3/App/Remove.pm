@@ -21,17 +21,16 @@ sub _parse_opts {
   my $class = shift;
   my @ARGS = @_;
 
-  my ($help, $vers, $non_int, $alwaysask);
+  my ($help, $vers, $alwaysask);
 
   GetOptionsFromArray(
     \@ARGS,
     'help|h'        => \$help,
     'version|v'     => \$vers,
-    'nointeractive' => \$non_int,
     'alwaysask|a'   => \$alwaysask,
   );
 
-  return { help => $help, vers => $vers, non_int => $non_int, alwaysask => $alwaysask, args => \@ARGS, };
+  return { help => $help, vers => $vers, alwaysask => $alwaysask, args => \@ARGS, };
 }
 
 sub run {
@@ -46,7 +45,7 @@ sub run {
   # * compare commandline args to SBo packages as well as installed SBo packages
   # * add reverse deps to list if they're not a dep of something else (which is not also already on the list)
   # * confirm removal of each package on the list
-  #   - while taking into account the options passed in such as $non_int, and $alwaysask
+  #   - while taking into account the options passed in such as $alwaysask
   #   - also offering to display README if %README% is passed
   # * remove the confirmed packages
 
@@ -63,20 +62,16 @@ sub run {
 
   my @confirmed;
 
-  if ($self->{non_int}) {
-    @confirmed = @remove;
-  } else {
-    my $required_by = get_reverse_reqs($installed);
-    for my $remove (@remove) {
-      # if $remove was on the commandline, mark it as not needed,
-      # otherwise check if it is needed by something else.
-      my @required_by = get_required_by($remove->{name}, [map { $_->{name} } @confirmed], $required_by);
-      my $needed = $sbos{$remove->{name}} ? 0 : @required_by;
+  my $required_by = get_reverse_reqs($installed);
+  for my $remove (@remove) {
+    # if $remove was on the commandline, mark it as not needed,
+    # otherwise check if it is needed by something else.
+    my @required_by = get_required_by($remove->{name}, [map { $_->{name} } @confirmed], $required_by);
+    my $needed = $sbos{$remove->{name}} ? 0 : @required_by;
 
-      next if $needed and not $self->{alwaysask};
+    next if $needed and not $self->{alwaysask};
 
-      push @confirmed, $remove if confirm($remove, $needed ? @required_by : ());
-    }
+    push @confirmed, $remove if confirm($remove, $needed ? @required_by : ());
   }
 
   if (@confirmed) {
@@ -201,13 +196,12 @@ sub confirm {
 
 sub remove {
   my $self = shift;
-  my $non_int = $self->{non_int};
   my @confirmed = @_;
 
   say sprintf "Removing %d package(s).", scalar @confirmed;
   say join " ", map { $_->{name} } @confirmed;
 
-  if (!$non_int and !prompt("\nAre you sure you want to continue?", default => 'no')) {
+  if (!prompt("\nAre you sure you want to continue?", default => 'no')) {
     return say 'Exiting.';
   }
 
