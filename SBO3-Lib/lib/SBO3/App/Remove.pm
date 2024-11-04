@@ -10,7 +10,7 @@ package SBO3::App::Remove;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO3::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_build_queue merge_queues get_requires get_readme_contents prompt show_version in /;
+use SBO3::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_build_queue merge_queues get_required_by get_requires get_readme_contents get_reverse_reqs prompt show_version in /;
 use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO3::App';
@@ -138,31 +138,6 @@ sub get_full_queue {
     } }
     grep { exists $installed->{$_} }
     @$remove_queue;
-}
-
-sub get_reverse_reqs {
-  my $installed = shift;
-  my %required_by;
-
-  for my $inst (keys %$installed) {
-    for my $req (@{ get_requires($inst) }) {
-      $required_by{$req}{$inst} = 1 if exists $installed->{$req};
-    }
-  }
-
-  return \%required_by;
-}
-
-sub get_required_by {
-  my ($sbo, $confirmed, $required_by) = @_;
-  my @dep_of;
-
-  if ( $required_by->{$sbo} ) {
-    for my $req_by (keys %{$required_by->{$sbo}}) {
-      push @dep_of, $req_by unless in($req_by => @$confirmed);
-    }
-  }
-  return @dep_of;
 }
 
 sub confirm {
