@@ -5,6 +5,7 @@ package SBO3::App;
 # authors: Luke Williams <xocel@iquidus.org>
 #          Jacob Pipkin <j@dawnrazor.net>
 #          Andreas Guldstrand <andreas.guldstrand@gmail.com>
+# maintainer: K. Eugene Carlson <kvngncrlsn@gmail.com>
 # license: WTFPL <http://sam.zoy.org/wtfpl/COPYING>
 
 use 5.16.0;
