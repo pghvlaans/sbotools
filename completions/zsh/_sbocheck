@@ -5,6 +5,7 @@
 _arguments \
     '(-)'{-h,--help}'[Show help.]:' \
     '(-)'{-v,--version}'[Show version.]:' \
+    '(-)'{-n,--nopull}'[Check for updates without updating the tree.]:' \
     && return 0
 
 return 1
