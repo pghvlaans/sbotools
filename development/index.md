@@ -12,8 +12,11 @@ These features may be added in the future:
 
 * Reverse dependency search
 * Using (and generating?) `sqf` files
-* Running `sbocheck` without updating the tree
 * Blacklist scripts
 * "Classic Mode" setting for a more traditional `sbotools` look and feel
 
 The above list is non-exhaustive and nothing on it is guaranteed to appear in `sbotools3`.
+
+## Arriving in Version 1.2
+
+* Running `sbocheck` without updating the tree (use `sbocheck -n`)
