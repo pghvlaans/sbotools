@@ -1,7 +1,7 @@
 #!/bin/sh
 
 usage_exit() {
-	echo "Usage: $(basename $0) (-d) (-g)"
+	echo "Usage: $(basename $0) (-d)"
 	exit 1
 }
 
@@ -18,12 +18,7 @@ if [[ "$1" == "-d" ]]; then
 	shift
 fi
 
-if [[ "$1" == "-g" ]]; then
-	git=true
-	shift
-fi
-
-version=$(grep '^our $VERSION' SBO-Lib/lib/SBO/Lib.pm | grep -Eo '[0-9]+(\.[0-9RC@gita-f]+){0,1}')
+version=$(grep '^our $VERSION' SBO3-Lib/lib/SBO3/Lib.pm | grep -Eo '[0-9]+(\.[0-9RC@gita-f]+){0,1}')
 
 if ! [[ -d "./man1" ]]; then
 	echo "you do not seem to be at the right place to run this."
@@ -73,10 +68,10 @@ update_date() {
 		return 1
 	fi
 
-	old_date=$(head -1 man1/sbocheck.1 | cut -d' ' -f4- | rev \
-		| cut -d' ' -f4- | rev | sed 's/"//g')
+	old_date="$(head -1 man1/sbocheck.1 | cut -d' ' -f4- | rev \
+		| cut -d' ' -f4- | rev | sed 's/"//g')"
 
-	new_date=$(ddate +"%{%A, %B %d%}, %Y YOLD%N - %H")
+	new_date="$(ddate +"%{%A, %B %d%}, %Y YOLD%N - %H")"
 
 	for i in man1/*; do
 		sed_file $i "s/$old_date/$new_date/g"
@@ -95,42 +90,13 @@ update_date() {
 	return 0
 }
 
-update_git() {
-	if ! which git >/dev/null 2>&1; then
-		echo "I can't find git."
-		return 1
-	fi
-
-	if [[ "$date" == "true" ]]; then
-		extra=" and dates"
-	fi
-
-	git add man1/* man5/*
-	git commit -m "updated versions$extra for man pages"
-	git push
-
-	if [[ "$?" == "0" ]]; then
-		echo "git updated."
-	else
-		return 1
-	fi
-
-	return 0
-}
-
 date_return=0
 if [[ "$date" == "true" ]]; then
 	update_date
 	date_return=$?
 fi
 
-git_return=0
-if [[ "$git" == "true" ]]; then
-	update_git
-	git_return=$?
-fi
-
-if [[ "$date_return" != "0" || "$git_return" != "0" ]]; then
+if [[ "$date_return" != "0" ]]; then
 	exit 1
 fi
 

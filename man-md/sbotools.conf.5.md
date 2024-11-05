@@ -21,7 +21,7 @@ The current configuration keys are as follows:
 
 **CLASSIC=(FALSE\|TRUE)**
 
-If **TRUE**, automatically enable **RSYNC_DEFAULT and BUILD_IGNORE**
+If **TRUE**, automatically enable **RSYNC_DEFAULT** and **BUILD_IGNORE**
 (overriding the contents of this file). Build increment and out-of-tree
 SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are disabled, and previously-used
 build options will not be displayed. This provides a more traditional

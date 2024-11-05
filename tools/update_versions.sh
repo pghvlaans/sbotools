@@ -44,8 +44,8 @@ update_perl="
 "
 update_other="
   SBO3-Lib/README
-	slackbuild/sbotools/sbotools.SlackBuild
-	slackbuild/sbotools/sbotools.info
+	slackbuild/sbotools3/sbotools3.SlackBuild
+	slackbuild/sbotools3/sbotools3.info
 "
 
 old_version=$(grep '^our $VERSION' SBO3-Lib/lib/SBO3/Lib.pm | grep -Eo '[0-9]+(\.[0-9RC@gita-f]+){0,1}')

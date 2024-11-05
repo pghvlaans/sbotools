@@ -71,7 +71,7 @@ sub ask_opts {
     } else {
       my $prev_opts = <$prev_fh>;
       if ($config{CLASSIC} ne "TRUE") {
-        if(prompt("It looks like options were previously specified for $sbo:\n\n$prev_opts\n\nWould you like to use these options to build $sbo?", default => 'no')) {
+        if (prompt("It looks like options were previously specified for $sbo:\n\n$prev_opts\n\nWould you like to use these options to build $sbo?", default => 'no')) {
           my $opts = $prev_opts;
 	  return $opts;
         }
