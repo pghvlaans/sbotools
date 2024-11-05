@@ -16,7 +16,7 @@ These features may be added in the future:
 * "Classic Mode" setting for a more traditional `sbotools` look and feel
   * This is almost certainly going in soon. The plan is to make a meta-setting called `CLASSIC` that would do the following:
     * Turn on `RSYNC_DEFAULT` and `BUILD_IGNORE`
-    * Disable the extra `sbocheck` output introducted in version 1.0
+    * Disable the extra `sbocheck` output introduced in version 1.0
     * Disable displaying (not saving) previous build options
   * Basically, it will act like `sbotools` with working compat32, working default repositories and a handful of extra flags.
 
