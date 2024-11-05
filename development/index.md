@@ -10,7 +10,6 @@ A separate repository called [sbotools3-git-slackbuild](https://github.com/pghvl
 
 These features may be added in the future:
 
-* Reverse dependency search
 * Using (and generating?) `sqf` files
 * Blacklist scripts
 * "Classic Mode" setting for a more traditional `sbotools` look and feel
@@ -20,3 +19,4 @@ The above list is non-exhaustive and nothing on it is guaranteed to appear in `s
 ## Done for Version 1.2
 
 * Run `sbocheck` without updating the tree (use `sbocheck -n`)
+* `sbofind` reports installed reverse dependencies (use `sbofind -R`)

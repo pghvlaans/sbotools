@@ -1,6 +1,7 @@
 # ChangeLog
 * Post-1.1
   * *sbocheck*: Use **\--nopull** to check for updated SlackBuilds without updating the tree
+  * *sbofind*: Use **\--reverse** to check for installed reverse dependencies
 
 * 1.1 - 2024-11-03
   * Bugfix: incorrect variable name caused *sboupgrade* to rebuild when unneeded.
