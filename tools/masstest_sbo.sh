@@ -1,5 +1,9 @@
 #!/usr/bin/bash
 
+# This script removes all packages with the tag _SBo
+# from the system. It is intended for clean-build
+# virtual machines.
+
 # set DISTCLEAN TRUE to preserve space
 sboconfig -d TRUE
 # clear out work directories and distfiles
@@ -57,13 +61,22 @@ function build_things() {
 function remove_things() {
 	if [ ! -z $1 ]; then
 		echo "=============" > $TLOG
-		echo "sboremove --nointeractive $1" >> $TLOG
-		sboremove --nointeractive $1 >> $TLOG 2>&1
+		echo "removepkg $1 with dependencies:" >> $TLOG
+		DEPS="$(sbofind -eq $1 | awk -F\: '/Queue/{print $2}')"
+		/sbin/removepkg --terse $1 $DEPS >> $TLOG 2>&1
 		echo "" >> $RLOG
 		cat $TLOG >> $RLOG
 		:> $TLOG
 	fi
 }
+
+echo This script removes all packages with the tag _SBo
+echo from the system. It is intended for clean-build
+echo virtual machines.
+echo ""
+echo Starting in 15 seconds...
+echo ""
+sleep 15
 
 for i in $SBOS; do
 	echo $i
