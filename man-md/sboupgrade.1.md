@@ -39,6 +39,10 @@ options will appear. Any build options, whether passed interactively or
 in a template, will be saved to */var/log/sbotools* when the SlackBuild
 runs.
 
+Please note that saved build options will not be displayed when
+**CLASSIC** is set to **TRUE**. See [sboconfig(1)](sboconfig.1.md) or
+[sbotools.conf(5)](sbotools.conf.5.md).
+
 **sboupgrade** will attempt to download the sources from the *DOWNLOAD*
 or *DOWNLOAD_x86_64* variables in the *info* file. If either the
 download or the md5sum check fails, a new download will be attempted

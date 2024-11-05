@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO3::Lib qw/ update_tree fetch_tree get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions $slackbuilds_txt slackbuilds_or_fetch /;
+use SBO3::Lib qw/ update_tree fetch_tree get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions $slackbuilds_txt slackbuilds_or_fetch %config /;
 use Getopt::Long;
 use File::Basename;
 use List::Util 'max';
@@ -180,9 +180,11 @@ sub print_output {
 
 my @listing = get_update_list('VERS');
 print_output('/var/log/sbocheck.log', @listing);
-my @bumps = get_update_list('BUILD');
-print_output('/var/log/sbocheck-bumps.log', @bumps);
-my @removed = get_removed_list();
-print_output('/var/log/sbocheck-out-of-tree.log', @removed);
+if ($config{CLASSIC} ne "TRUE") {
+	my @bumps = get_update_list('BUILD');
+	print_output('/var/log/sbocheck-bumps.log', @bumps);
+	my @removed = get_removed_list();
+	print_output('/var/log/sbocheck-out-of-tree.log', @removed);
+}
 
 exit 0;

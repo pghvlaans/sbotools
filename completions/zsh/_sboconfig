@@ -10,6 +10,7 @@ _arguments \
     - commands \
     '(-B --git-branch)'{-B,--git-branch}'[Use this git branch (instead of the default for the Slackware version).]:Git branch:()' \
     '(-b --build-ignore)'{-b,--build-ignore}'[If TRUE, then only do upgrades if the version number differs.]:ignore build number?:((TRUE\:"Version upgrades only" FALSE\:"Script bump upgrades"))' \
+    '(-C --classic)'{-C,--classic}'[If TRUE, a more traditional sbotools look and feel; see the man pages before turning this on.]:use Classic Mode?:((TRUE\:"Classic Mode" FALSE\:"No Classic Mode"))' \
     '(-c --noclean)'{-c,--noclean}'[If TRUE, then do not clean working directories after build.]:clean work dirs?:((TRUE\:"Clean works directories" FALSE\:"Keep work directories"))' \
     '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code after building.]:clean source?:((TRUE\:"Remove source" FALSE\:"Keep source"))' \
     '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \

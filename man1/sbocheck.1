@@ -39,7 +39,20 @@ The three output categories are logged separately to
 and
 .I
 /etc/sbocheck-out-of-tree.log\fR\
-\&.
+\&. The out-of-tree and build number increment checks are disabled
+when
+.B
+CLASSIC
+is
+.B
+TRUE
+(see
+.B
+sboconfig(1)
+or
+.B
+sbotools.conf(5)\fR\
+).
 .P
 To check for updated SlackBuilds without updating the SlackBuilds
 tree, pass

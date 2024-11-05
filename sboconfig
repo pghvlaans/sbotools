@@ -40,6 +40,8 @@ Config options (defaults shown):
       GIT_BRANCH: the name of a git branch to use, or FALSE for the Slackware version default.
   -b|--build-ignore FALSE:
       BUILD_IGNORE: if TRUE, only attempt to upgrade if the version number is different.
+  -C|--classic FALSE:
+      CLASSIC: if TRUE, enable BUILD_IGNORE and RSYNC_DEFAULT and suppress extra sbotools3 output.
   -c|--clean FALSE:
       NOCLEAN: if TRUE, do NOT clean up after building by default.
   -d|--distclean FALSE:
@@ -65,7 +67,7 @@ EOF
 
 my %options;
 
-GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'noclean|c=s',
+GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'classic|C=s', 'noclean|c=s',
 	'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 	'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
     'build-ignore|b=s', 'branch|B=s', 'rsync|R=s');
@@ -74,6 +76,7 @@ if ($options{help}) { show_usage(); exit 0 }
 if ($options{version}) { show_version(); exit 0 }
 
 my %valid_confs = (
+	classic             => 'CLASSIC',
 	noclean             => 'NOCLEAN',
 	distclean           => 'DISTCLEAN',
 	jobs                => 'JOBS',
@@ -88,6 +91,7 @@ my %valid_confs = (
 );
 
 my %params = (
+	CLASSIC           => 'C|--classic',
 	NOCLEAN           => 'c|--noclean',
 	DISTCLEAN         => 'd|--distclean',
 	JOBS              => 'j|--jobs',
@@ -121,6 +125,9 @@ for my $key (keys %valid_confs) {
 
 my $warn = 'You have provided an invalid parameter for';
 
+if (exists $changes{CLASSIC}) {
+	usage_error("$warn -C") unless $changes{CLASSIC} =~ /^(TRUE|FALSE)$/;
+}
 if (exists $changes{NOCLEAN}) {
 	usage_error("$warn -c") unless $changes{NOCLEAN} =~ /^(TRUE|FALSE)$/;
 }

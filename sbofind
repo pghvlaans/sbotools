@@ -180,7 +180,7 @@ sub show_reverse_dependencies {
 	my $found = shift;
 	my @list;
 	for my $sbo (keys %$installed) {
-			push @list, $sbo if $fulldeps->{$found}->{$sbo};
+		push @list, $sbo if $fulldeps->{$found}->{$sbo};
 	}
 
 	if (@list) {

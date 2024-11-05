@@ -32,7 +32,9 @@ that are not found in the repository.
 
 The three output categories are logged separately to
 */etc/sbocheck.log*, */etc/sbocheck-bumps.log* and
-*/etc/sbocheck-out-of-tree.log*.
+*/etc/sbocheck-out-of-tree.log*. The out-of-tree and build number
+increment checks are disabled when **CLASSIC** is **TRUE** (see
+[sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
 To check for updated SlackBuilds without updating the SlackBuilds tree,
 pass the **\--nopull** option.

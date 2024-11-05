@@ -22,6 +22,28 @@ commands.
 The current configuration keys are as follows:
 .P
 .B
+CLASSIC=(FALSE|TRUE)
+.RS
+If
+.B
+TRUE\fR\
+\&, automatically enable
+.B
+RSYNC_DEFAULT and
+.B
+BUILD_IGNORE
+(overriding the contents of this file). Build increment and out-of-tree
+SlackBuild checks by
+.B
+sbocheck(1)
+are disabled, and previously-used build options will not be displayed.
+This provides a more traditional
+.B
+sbotools
+look and feel for those who want it.
+.RE
+.P
+.B
 DISTCLEAN=(FALSE|TRUE)
 .RS
 If

@@ -13,10 +13,10 @@ sboconfig [-h|-v]
 .P
 sboconfig [-l]
 .P
-sboconfig [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \\
-          [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \\
-          [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] \\
-          [-r url|FALSE] [-R TRUE|FALSE]
+sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \\
+          [-j #|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo] \\
+          [-B branch_name|FALSE] [-b TRUE|FALSE] [-o /path|FALSE] \\
+          [-V #.#|FALSE] [-r url|FALSE] [-R TRUE|FALSE]
 .SH DESCRIPTION
 .P
 .B
@@ -95,6 +95,34 @@ TRUE\fR\
 \&, do not perform upgrades unless the
 version number differs. By default, upgrades
 also occur when the build number differs.
+.RE
+.P
+.B
+-C|--classic (FALSE|TRUE)
+.RS
+.B
+CLASSIC\fR\
+\&: If
+.B
+TRUE\fR\
+\&, automatically enable
+.B
+RSYNC_DEFAULT
+and
+.B
+BUILD_IGNORE
+(overriding the contents of
+.B
+sbotools.conf(5)\fR\
+). Build increment and out-of-tree SlackBuild
+checks by
+.B
+sbocheck(1)
+are disabled, and previously-used build options will not be displayed.
+This provides a more traditional
+.B
+sbotools
+look and feel for those who want it.
 .RE
 .P
 .B

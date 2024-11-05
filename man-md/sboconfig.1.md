@@ -22,10 +22,10 @@
 
     sboconfig [-l]
 
-    sboconfig [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \
-              [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \
-              [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] \
-              [-r url|FALSE] [-R TRUE|FALSE]
+    sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \
+              [-j #|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo] \
+              [-B branch_name|FALSE] [-b TRUE|FALSE] [-o /path|FALSE] \
+              [-V #.#|FALSE] [-r url|FALSE] [-R TRUE|FALSE]
 
 ## DESCRIPTION
 
@@ -61,6 +61,15 @@ with an upstream git repository.
 **BUILD_IGNORE**: If **TRUE**, do not perform upgrades unless the
 version number differs. By default, upgrades also occur when the build
 number differs.
+
+**-C\|\--classic (FALSE\|TRUE)**
+
+**CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT** and
+**BUILD_IGNORE** (overriding the contents of [sbotools.conf(5)](sbotools.conf.5.md)).
+Build increment and out-of-tree SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are
+disabled, and previously-used build options will not be displayed. This
+provides a more traditional **sbotools** look and feel for those who
+want it.
 
 **-c\|\--noclean (FALSE\|TRUE)**
 

@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '1.1';
 
-use SBO3::Lib::Util qw/ prompt script_error slurp open_read open_fh _ERR_OPENFH usage_error /;
+use SBO3::Lib::Util qw/ prompt script_error slurp open_read open_fh _ERR_OPENFH usage_error %config /;
 use SBO3::Lib::Tree qw/ is_local /;
 
 use Exporter 'import';
@@ -70,9 +70,11 @@ sub ask_opts {
       warn $prev_fh;
     } else {
       my $prev_opts = <$prev_fh>;
-      if(prompt("It looks like options were previously specified for $sbo:\n\n$prev_opts\n\nWould you like to use these options to build $sbo?", default => 'no')) {
-        my $opts = $prev_opts;
-	return $opts;
+      if ($config{CLASSIC} ne "TRUE") {
+        if(prompt("It looks like options were previously specified for $sbo:\n\n$prev_opts\n\nWould you like to use these options to build $sbo?", default => 'no')) {
+          my $opts = $prev_opts;
+	  return $opts;
+        }
       }
     }
   }

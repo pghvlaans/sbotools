@@ -110,6 +110,7 @@ and C<RSYNC_DEFAULT>.
 our $conf_dir = '/etc/sbotools';
 our $conf_file = "$conf_dir/sbotools.conf";
 our %config = (
+  CLASSIC => 'FALSE',
   NOCLEAN => 'FALSE',
   DISTCLEAN => 'FALSE',
   JOBS => 'FALSE',
@@ -446,6 +447,7 @@ sub prompt {
 
 C<read_config()> reads in the configuration settings from
 C</etc/sbotools/sbotools.conf> and updates the C<%config> hash with them.
+Additionally, tun on BUILD_IGNORE and RSYNC_DEFAULT if CLASSIC is TRUE.
 
 There is no useful return value.
 
@@ -462,6 +464,10 @@ sub read_config {
     $config{JOBS} = 'FALSE' unless $config{JOBS} =~ /^\d+$/;
   } else {
     warn "Unable to open $conf_file.\n" if -f $conf_file;
+  }
+  if ($config{CLASSIC} eq "TRUE") {
+    $config{BUILD_IGNORE} = "TRUE";
+    $config{RSYNC_DEFAULT} = "TRUE";
   }
   $config{SBO_HOME} = '/usr/sbo' if $config{SBO_HOME} eq 'FALSE';
 }
@@ -491,7 +497,9 @@ sub save_options {
     print $args_fh $args;
     close $args_fh;
     if (-f "$logfile.bk") { unlink("$logfile.bk"); }
-    say "\nA copy of the build options has been saved to $logfile.";
+    if ($config{CLASSIC} ne "TRUE") {
+      say "\nA copy of the build options has been saved to $logfile.";
+    }
   }
   return 1;
 }
