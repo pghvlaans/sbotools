@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO3::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue %config $slackbuilds_txt $repo_path show_version in indent get_from_info /;
+use SBO3::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue get_installed_packages get_reverse_reqs %config $slackbuilds_txt $repo_path show_version in indent get_from_info uniq /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 
@@ -37,17 +37,19 @@ Options:
     show the .info for each found item.
   -r|--readme:
     show the README for each found item.
+  -R|--reverse:
+    show any installed reverse dependencies.
   -q|--queue:
     show the build queue for each found item.
 
 Example:
-  $self libsexy
+  $self regedit
 
 EOF
 	return 1;
 }
 
-my ($help, $vers, $search_exact, $exclude_tags, $show_info, $show_readme, $show_queue);
+my ($help, $vers, $search_exact, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue);
 
 GetOptions(
 	'help|h'    => \$help,
@@ -56,6 +58,7 @@ GetOptions(
 	'no-tags|t' => \$exclude_tags,
 	'info|i'    => \$show_info,
 	'readme|r'  => \$show_readme,
+	'reverse|R' => \$show_reverse,
 	'queue|q'   => \$show_queue,
 );
 
@@ -67,6 +70,15 @@ my $search = $ARGV[0];
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
+
+# get installed SlackBuilds and reverse dependency information if there is a
+# query, but only once
+my (@installed, $installed, $fulldeps);
+if ($show_reverse) {
+	@installed = @{ get_installed_packages('SBO3') };
+	$installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
+	$fulldeps = get_reverse_reqs($installed);
+}
 
 # find anything with $search in its name
 sub perform_search {
@@ -162,6 +174,28 @@ sub show_build_queue {
 	return join(" ", @$queue);
 }
 
+# get installed reverse dependencies and return them as a single line.
+sub show_reverse_dependencies {
+	script_error('show_reverse_dependencies requires an argument.') unless @_ == 1;
+	my $found = shift;
+	my @list;
+	for my $sbo (keys %$installed) {
+			push @list, $sbo if $fulldeps->{$found}->{$sbo};
+	}
+
+	if (@list) {
+		for my $revdep (@list) {
+			my $newlist = show_reverse_dependencies($revdep);
+			if ($newlist ne "None") { push @list, split(" ", $newlist); }
+		}
+		my @result = uniq @list;
+		my @return = sort(@result);
+		return join(" ", @return);
+	} else {
+		return "None";
+	}
+}
+
 my $findings = perform_search($search);
 
 # pretty formatting
@@ -176,6 +210,7 @@ if (exists $$findings[0]) {
 		say "info:   ". get_file_contents("$location/$name.info") if $show_info;
 		say "README: ". get_file_contents("$location/README") if $show_readme;
 		say "Queue:  ". show_build_queue($name) if $show_queue;
+		say "RevDep: ". show_reverse_dependencies($name) if $show_reverse;
 		say '';
 	}
 } else {

@@ -21,7 +21,7 @@ a given name
 
     sbofind [-h|-v]
 
-    sbofind [-etirq] search_term
+    sbofind [-etiRrq] search_term
 
 ## DESCRIPTION
 
@@ -59,6 +59,10 @@ Show the contents of the *info* file for each SlackBuild found.
 **-r\|\--readme**
 
 Show the contents of the *README* file for each SlackBuild found.
+
+**-R\|\--reverse**
+
+Show any reverse dependencies installed on the system.
 
 **-q\|\--queue**
 

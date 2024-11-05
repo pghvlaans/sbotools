@@ -18,7 +18,7 @@ _sbofind() {
 
   case "${cmd}" in
     sbofind)
-      opts="-h -v -e -t -i -r -q --help --version --exact --no-tags --info --readme --queue"
+      opts="-h -v -e -t -i -R -r -q --help --version --exact --no-tags --info --reverse --readme --queue"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0

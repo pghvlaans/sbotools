@@ -22,6 +22,7 @@ _arguments -s \
 	   '(-e --exact)'{-e,--exact}'[Only exact matching.]' \
 	   '(-t --no-tags)'{-t,--no-tags}'[Exclude tags from search.]' \
 	   '(-i --info)'{-i,--info}'[Show the contents of the .info file for each SlackBuild.]' \
+	   '(-R --reverse)'{-R,--reverse}'[Show any reverse dependencies installed on the system.]' \
 	   '(-r --readme)'{-r,--readme}'[Show the contents of the README file for each SlackBuild found.]' \
 	   '(-q --queue)'{-q,--queue}'[Show the build queue for each SlackBuild found.]' \
 	   '(-)*:SBo SlackBuild:(${slackbuilds:|words})' \
