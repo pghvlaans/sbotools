@@ -62,7 +62,9 @@ Show the contents of the *README* file for each SlackBuild found.
 
 **-R\|\--reverse**
 
-Show any reverse dependencies installed on the system.
+Show any reverse dependencies installed on the system. Please note that
+this does not include optional dependencies or packages with tags other
+than *\_SBo*.
 
 **-q\|\--queue**
 
