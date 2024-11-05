@@ -11,7 +11,7 @@ package SBO3::App::Remove;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO3::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_build_queue merge_queues get_required_by get_requires get_readme_contents get_reverse_reqs prompt show_version in /;
+use SBO3::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_build_queue get_full_queue merge_queues get_required_by get_requires get_readme_contents get_reverse_reqs prompt show_version in /;
 use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO3::App';
@@ -119,26 +119,6 @@ sub check_sbo {
   }
 
   return 1;
-}
-
-sub get_full_queue {
-  my ($installed, @sbos) = @_;
-
-  my $remove_queue = [];
-  my %warnings;
-  for my $sbo (@sbos) {
-    my $queue = get_build_queue([$sbo], \%warnings);
-    @$queue = reverse @$queue;
-    $remove_queue = merge_queues($remove_queue, $queue);
-  }
-
-  return map {; +{
-      name => $_,
-      pkg => $installed->{$_},
-      defined $warnings{$_} ? (warning => $warnings{$_}) : ()
-    } }
-    grep { exists $installed->{$_} }
-    @$remove_queue;
 }
 
 sub confirm {

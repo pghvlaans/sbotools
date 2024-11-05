@@ -25,6 +25,7 @@ our @EXPORT_OK = qw{
   do_upgradepkg
   get_build_queue
   get_dc_regex
+  get_full_queue
   get_pkg_name
   get_src_dir
   get_tmp_extfn
@@ -407,6 +408,35 @@ sub merge_queues {
   script_error('merge_queues requires two arguments.') unless @_ == 2;
 
   return [ uniq @{$_[0]}, @{$_[1]} ];
+}
+
+=head2 get_full_queue
+
+  my ($revdep_queue) = ($installed, @sbos);
+
+C<get_full_queue()> takes a list of installed SlackBuilds and an array
+of SlackBuilds to check. It returns a list of reverse dependencies.
+
+=cut
+
+sub get_full_queue {
+  my ($installed, @sbos) = @_;
+
+  my $revdep_queue = [];
+  my %warnings;
+  for my $sbo (@sbos) {
+    my $queue = get_build_queue([$sbo], \%warnings);
+    @$queue = reverse @$queue;
+    $revdep_queue = merge_queues($revdep_queue, $queue);
+  }
+
+  return map {; +{
+      name => $_,
+      pkg => $installed->{$_},
+      defined $warnings{$_} ? (warning => $warnings{$_}) : ()
+    } }
+    grep { exists $installed->{$_} }
+    @$revdep_queue;
 }
 
 =head2 perform_sbo
