@@ -1,4 +1,4 @@
-The pages here are based on current development. For the version 1.1 pages (2024-11-03), see [man](/sbotools/man/).
+The pages here reflect post-release development. For the version 1.1 pages (2024-11-03), see [man](/sbotools3/man/).
 
 * [sbocheck(1)](sbocheck.1.md)
     * Fetch the latest version of the upstream SlackBuilds repository; check for version updates, build number changes and out-of-tree installed SlackBuilds.

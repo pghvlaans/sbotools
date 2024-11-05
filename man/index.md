@@ -1,4 +1,4 @@
-The pages here are current as of version 1.1 (2024-11-03). For versions based on current development, see [current](current/).
+The pages here are current as of version 1.1 (2024-11-03). For pages from the master branch, see [post-release](post-release/).
 
 * [sbocheck(1)](sbocheck.1.md)
     * Fetch the latest version of the upstream SlackBuilds repository; check for version updates, build number changes and out-of-tree installed SlackBuilds.

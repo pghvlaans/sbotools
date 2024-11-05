@@ -1,6 +1,6 @@
 # Development
 
-Visit [pghvlaans/sbotools3](https://github.com/pghvlaans/sbotools3) for Issues, Pull Requests and the latest changes.
+Visit [pghvlaans/sbotools3](https://github.com/pghvlaans/sbotools3) for Issues, Pull Requests and the latest changes. The man pages from the `master` branch can be found [here](/sbotools3/man/post-release/).
 
 ## Following Development
 
