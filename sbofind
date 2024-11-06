@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO3::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue get_installed_packages get_reverse_reqs %config $slackbuilds_txt $repo_path show_version in indent get_from_info uniq /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue get_installed_packages get_reverse_reqs %config $slackbuilds_txt $repo_path show_version in indent get_from_info uniq /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 
@@ -75,7 +75,7 @@ slackbuilds_or_fetch();
 # query, but only once
 my (@installed, $installed, $fulldeps);
 if ($show_reverse) {
-	@installed = @{ get_installed_packages('SBO3') };
+	@installed = @{ get_installed_packages('SBO') };
 	$installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
 	$fulldeps = get_reverse_reqs($installed);
 }

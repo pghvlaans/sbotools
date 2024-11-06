@@ -1,10 +1,10 @@
-package SBO3::Lib::Util;
+package SBO::Lib::Util;
 
 use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '1.1';
+our $VERSION = '3.1';
 
 use Exporter 'import';
 use File::Copy;
@@ -75,11 +75,11 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO3::Lib::Util - Utility functions for SBO3::Lib and the sbotools
+SBO::Lib::Util - Utility functions for SBO::Lib and the sbotools
 
 =head1 SYNOPSIS
 
-  use SBO3::Lib::Util qw/uniq/;
+  use SBO::Lib::Util qw/uniq/;
 
   # ('duplicate');
   my @uniq = uniq('duplicate', 'duplicate');
@@ -545,7 +545,7 @@ There is no useful return value.
 =cut
 
 sub show_version {
-  say "sbotools3 version $SBO3::Lib::VERSION";
+  say "sbotools version $SBO::Lib::VERSION";
   say 'licensed under the WTFPL';
   say '<http://sam.zoy.org/wtfpl/COPYING>';
 }
@@ -664,7 +664,7 @@ SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
 contributions from Luke Williams <xocel@iquidus.org> and Andreas
 Guldstrand <andreas.guldstrand@gmail.com>.
 
-SBO3::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
+SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 
 =head1 LICENSE
 

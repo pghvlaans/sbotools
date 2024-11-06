@@ -1,12 +1,12 @@
-package SBO3::Lib::Repo;
+package SBO::Lib::Repo;
 
 use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '1.1';
+our $VERSION = '3.1';
 
-use SBO3::Lib::Util qw/ %config prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in _ERR_DOWNLOAD /;
+use SBO::Lib::Util qw/ %config prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in _ERR_DOWNLOAD /;
 
 use Cwd;
 use File::Copy;
@@ -44,11 +44,11 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO3::Lib::Repo - Routines for downloading and updating the SBo repo.
+SBO::Lib::Repo - Routines for downloading and updating the SBo repo.
 
 =head1 SYNOPSIS
 
-  use SBO3::Lib::Repo qw/ fetch_tree /;
+  use SBO::Lib::Repo qw/ fetch_tree /;
 
   fetch_tree();
 
@@ -393,7 +393,7 @@ SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
 contributions from Luke Williams <xocel@iquidus.org> and Andreas
 Guldstrand <andreas.guldstrand@gmail.com>.
 
-SBO3::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
+SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 
 =head1 LICENSE
 

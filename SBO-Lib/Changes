@@ -1,4 +1,4 @@
-sbotools3
+sbotools
 Post-1.1
   * sbocheck: Use --nopull to check for updated SlackBuilds without updating the tree
   * sboremove: Remove undocumented and dangerous nointeractive option

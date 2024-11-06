@@ -14,7 +14,7 @@
 
 ## NAME
 
-**sboclean** - clean files left by **sbotools3.**
+**sboclean** - clean files left by **sbotools.**
 
 ## SYNOPSIS
 
@@ -22,7 +22,7 @@
 
 ## DESCRIPTION
 
-**sboclean** is used to clean files left by **sbotools3**, such as saved
+**sboclean** is used to clean files left by **sbotools**, such as saved
 options (in */var/log/sbotools*), downloaded source files ("distfiles"),
 or working directories under */tmp/SBo* (or *\$TMP*) and, for compat32
 installs, under */tmp* (or *\$TMP*). Note that if not run with the
@@ -72,7 +72,7 @@ clean.
 ## BUGS
 
 None known. If found, Issues and Pull Requests to
-<https://github.com/pghvlaans/sbotools3/> are always welcome.
+<https://github.com/pghvlaans/sbotools/> are always welcome.
 
 ## SEE ALSO
 

@@ -14,8 +14,8 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO3::App::Snap;
+use SBO::App::Snap;
 
-my $app = SBO3::App::Snap->new(@ARGV);
+my $app = SBO::App::Snap->new(@ARGV);
 
 exit $app->run();

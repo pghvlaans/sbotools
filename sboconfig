@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO3::Lib qw/ slurp usage_error script_error $tempdir open_fh %config $conf_dir $conf_file show_version /;
+use SBO::Lib qw/ slurp usage_error script_error $tempdir open_fh %config $conf_dir $conf_file show_version /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always);
 use File::Copy;
@@ -41,7 +41,7 @@ Config options (defaults shown):
   -b|--build-ignore FALSE:
       BUILD_IGNORE: if TRUE, only attempt to upgrade if the version number is different.
   -C|--classic FALSE:
-      CLASSIC: if TRUE, enable BUILD_IGNORE and RSYNC_DEFAULT and suppress extra sbotools3 output.
+      CLASSIC: if TRUE, enable BUILD_IGNORE and RSYNC_DEFAULT and suppress extra sbotools output.
   -c|--clean FALSE:
       NOCLEAN: if TRUE, do NOT clean up after building by default.
   -d|--distclean FALSE:

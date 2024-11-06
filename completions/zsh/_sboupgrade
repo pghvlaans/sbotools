@@ -3,7 +3,7 @@
 # sbotools: https://pink-mist.github.io/sbotools/
 
 # get a list of available upgrades
-sboupdates=( ${(uf)"$(perl -MSBO3::Lib::Pkgs=get_available_updates -E 'say $_->{name} for @{ get_available_updates("BOTH"); }')"} )
+sboupdates=( ${(uf)"$(perl -MSBO::Lib::Pkgs=get_available_updates -E 'say $_->{name} for @{ get_available_updates("BOTH"); }')"} )
 
 _arguments -s -C \
 	   - info \

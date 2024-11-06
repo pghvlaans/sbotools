@@ -1,14 +1,14 @@
-package SBO3::Lib::Download;
+package SBO::Lib::Download;
 
 use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '1.1';
+our $VERSION = '3.1';
 
-use SBO3::Lib::Util qw/ :const script_error get_sbo_from_loc open_read get_arch /;
-use SBO3::Lib::Repo qw/ $distfiles /;
-use SBO3::Lib::Info qw/ get_download_info /;
+use SBO::Lib::Util qw/ :const script_error get_sbo_from_loc open_read get_arch /;
+use SBO::Lib::Repo qw/ $distfiles /;
+use SBO::Lib::Info qw/ get_download_info /;
 
 use Digest::MD5;
 use Exporter 'import';
@@ -35,11 +35,11 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO3::Lib::Download - Routines for downloading slackbuild sources.
+SBO::Lib::Download - Routines for downloading slackbuild sources.
 
 =head1 SYNOPSIS
 
-  use SBO3::Lib::Download qw/ check_distfiles /;
+  use SBO::Lib::Download qw/ check_distfiles /;
 
   my ($ret, $exit) = check_distfiles(LOCATION => $loc);
 
@@ -292,7 +292,7 @@ SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
 contributions from Luke Williams <xocel@iquidus.org> and Andreas
 Guldstrand <andreas.guldstrand@gmail.com>.
 
-SBO3::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
+SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 
 =head1 LICENSE
 

@@ -7,7 +7,7 @@ assignees: pghvlaans
 
 ---
 
-* Running version of `sbotools3`:
+* Running version of `sbotools`:
 
 * Output of `cat /etc/slackware-version`:
 

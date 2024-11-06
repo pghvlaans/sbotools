@@ -9,13 +9,13 @@ use FindBin '$RealBin';
 use lib $RealBin;
 use lib "$RealBin/../SBO-Lib/lib";
 use Test::Sbotools qw/ make_slackbuilds_txt sbocheck sboclean sboconfig sbofind sboinstall sboremove sbosnap sboupgrade /;
-use SBO3::Lib;
+use SBO::Lib;
 
 plan tests => 8;
 
 make_slackbuilds_txt();
 
-my $version = $SBO3::Lib::VERSION;
+my $version = $SBO::Lib::VERSION;
 my $ver_text = <<"VERSION";
 sbotools version $version
 licensed under the WTFPL

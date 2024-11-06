@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO3::Lib qw/ prompt usage_error script_error in show_version %config /;
+use SBO::Lib qw/ prompt usage_error script_error in show_version %config /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 use File::Path qw(remove_tree);
@@ -87,7 +87,7 @@ sub remove_stuff {
 }
 
 sub clean_c32 {
-	my $dir = $SBO3::Lib::tmpd;
+	my $dir = $SBO::Lib::tmpd;
 	opendir(my $dh, $dir);
 	FIRST: while (my $ls = readdir $dh) {
 		next FIRST unless $ls =~ /^package-.+-compat32$/;
@@ -99,8 +99,8 @@ sub clean_c32 {
 remove_stuff($config{SBO_HOME} .'/distfiles') if $dist;
 
 if ($work) {
-	my $env_tmp = $SBO3::Lib::env_tmp;
-	my $tsbo = $SBO3::Lib::tmpd;
+	my $env_tmp = $SBO::Lib::env_tmp;
+	my $tsbo = $SBO::Lib::tmpd;
 	if ($env_tmp && !$interactive) {
 		warn "This will remove the entire contents of $env_tmp\n";
 		remove_stuff($tsbo) if prompt("Proceed?", default => 'yes');

@@ -1,13 +1,13 @@
-package SBO3::Lib::Tree;
+package SBO::Lib::Tree;
 
 use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '1.1';
+our $VERSION = '3.1';
 
-use SBO3::Lib::Util qw/ script_error open_read idx %config /;
-use SBO3::Lib::Repo qw/ $repo_path $slackbuilds_txt /;
+use SBO::Lib::Util qw/ script_error open_read idx %config /;
+use SBO::Lib::Repo qw/ $repo_path $slackbuilds_txt /;
 
 use Exporter 'import';
 
@@ -28,11 +28,11 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO3::Lib::Tree - Routines for interacting with a SlackBuilds.org tree.
+SBO::Lib::Tree - Routines for interacting with a SlackBuilds.org tree.
 
 =head1 SYNOPSIS
 
-  use SBO3::Lib::tree qw/ is_local /;
+  use SBO::Lib::tree qw/ is_local /;
 
   my $bool = is_local($sbo);
 
@@ -164,7 +164,7 @@ SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
 contributions from Luke Williams <xocel@iquidus.org> and Andreas
 Guldstrand <andreas.guldstrand@gmail.com>.
 
-SBO3::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
+SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 
 =head1 LICENSE
 

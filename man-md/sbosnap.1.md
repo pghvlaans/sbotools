@@ -29,7 +29,7 @@
 **slackbuilds.org** tree, without the *\*.tar.gz{,.asc}* files. Note
 that [sbocheck(1)](sbocheck.1.md) also updates the tree and checks for updated and
 removed SlackBuilds. **rsync** is used for rsync repositories, and
-**git** is used for git repositories. **sbotools3** defaults to git
+**git** is used for git repositories. **sbotools** defaults to git
 unless **RSYNC_DEFAULT** is **TRUE**. See [sboconfig(1)](sboconfig.1.md) or
 [sbotools.conf(5)](sbotools.conf.5.md).
 
@@ -66,7 +66,7 @@ Update a previously fetched copy of the **slackbuilds.org** tree.
 ## BUGS
 
 None known. If found, Issues and Pull Requests to
-<https://github.com/pghvlaans/sbotools3/> are always welcome.
+<https://github.com/pghvlaans/sbotools/> are always welcome.
 
 ## SEE ALSO
 
