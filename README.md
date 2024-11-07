@@ -13,10 +13,13 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbofind: Use --reverse to check for installed reverse dependencies
   * Add setting CLASSIC; turn on BUILD_IGNORE and RSYNC_DEFAULT, and disable output added post-sbotools
 
-* 1.1 - 2024-11-03
+## Note
+This repository was renamed from sbotools3 to sbotools prior to the release of sbotools-3.0.
+
+* sbotools3 1.1 - 2024-11-03
   * Bugfix: incorrect variable name caused sboupgrade to rebuild when unneeded.
 
-* 1.0 - 2024-11-01
+* sbotools3 1.0 - 2024-11-01
   * Change the git branch to match the Slackware version, or to a user-configured branch
   * Change the default URLs to support Slackware 15.0 and use git repositories
   * Use rsync default mirrors with RSYNC_DEFAULT (except for -current)
