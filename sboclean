@@ -37,7 +37,7 @@ Options:
   -o|--option (ALL|package):
     clean saved options.
   -i|--interactive:
-    be interactive.
+    use prompts before deleting files.
 
 EOF
 	return 1;

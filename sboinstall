@@ -32,26 +32,26 @@ Options (defaults shown first where applicable):
   -v|--version:
     version information.
   -c|--noclean (FALSE|TRUE):
-    set whether or not to clean working files/directories after the build.
+    if TRUE, do not clean working directories after building.
   -d|--distclean (TRUE|FALSE):
-   set whether or not to clean distfiles afterward.
+    if TRUE, delete downloaded source archives after building.
   -i|--noinstall:
-    do not run installpkg at the end of the build process.
+    do not run installpkg after building.
   -j|--jobs (FALSE|#):
-    specify "-j" setting to make, for multicore systems; overrides conf file.
+    specify the number of parallel jobs (make).
   -p|--compat32:
-    install an SBo as a -compat32 pkg on a multilib x86_64 system.
+    install a -compat32 package (multilib systems only).
   -r|--nointeractive:
     non-interactive; skips README and all prompts.
   -R|--norequirements:
     view the README but do not parse requirements, commands, or options.
   --reinstall:
-    Ask to reinstall any already-installed packages in the requirement list.
+    ask to reinstall any installed packages in the requirements list.
   --create-template (FILE):
     create a template with specified requirements, commands, and options.
   --use-template (FILE):
     use a template created by --create-template to install requirements with
-    specified commands and options. This also enables the --nointeractive flag.
+    specified commands and options.
 
 EOF
 	return 1;
