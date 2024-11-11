@@ -12,6 +12,7 @@ To make **sbotools3** packages from the master branch, see [sbotools3-git-slackb
   * sboremove: Remove undocumented and dangerous nointeractive option
   * sbofind: Use --reverse to check for installed reverse dependencies
   * Add setting CLASSIC; turn on BUILD_IGNORE and RSYNC_DEFAULT, and disable output added post-sbotools
+  * Fix some --help verbiage
 
 * 1.1 - 2024-11-03
   * Bugfix: incorrect variable name caused sboupgrade to rebuild when unneeded.
@@ -29,6 +30,9 @@ To make **sbotools3** packages from the master branch, see [sbotools3-git-slackb
   * Fix building -compat32 packages from templates
 
 ## Historical Changes
+* Post-2.7 - 2019
+  * Add and install zsh completions
+
 * 2.7 - 2019-04-28
   * Actually fix the sbofind -e bug #71
       

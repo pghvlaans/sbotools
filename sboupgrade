@@ -30,24 +30,26 @@ Options (defaults shown first where applicable):
     this screen.
   -v|--version:
     version information.
+  --all
+    this flag will upgrade everything reported by sbocheck(1).
+  -b|--build-ignore (FALSE|TRUE):
+    if TRUE, only offer to upgrade on version changes (not build number changes).
   -c|--noclean (FALSE|TRUE):
-    set whether or not to clean working directories after building.
+    if TRUE, do not clean working directories after building.
   -d|--distclean (TRUE|FALSE):
-    set whether or not to clean distfiles afterward.
+    if TRUE, delete downloaded source archives after building.
   -f|--force:
-    force an update, even if the "upgrade" version is the same or lower.
+    force an upgrade, even if the version is the same.
   -i|--noinstall:
     do not run installpkg at the end of the build process.
   -j|--jobs (FALSE|#):
-    specify "-j" setting to make, for multicore systems; overrides conf file.
+    specify the number of parallel jobs (make).
+  -p|--compat32:
+    install a -compat32 package (multilib systems only).
   -r|--nointeractive:
     non-interactive; skips README and all prompts.
   -z|--force-reqs:
-    when used with -f, will force rebuilding an SBo's requirements as well.
-  -b|--build-ignore (FALSE|TRUE):
-    if TRUE, only offer to upgrade on version changes (not build number changes).
-  --all
-    this flag will upgrade everything reported by sbocheck(1).
+    when used with -f, will force rebuilding dependencies as well.
 
 EOF
 	return 1;
