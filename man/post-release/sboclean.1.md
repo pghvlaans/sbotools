@@ -14,7 +14,7 @@
 
 ## NAME
 
-**sboclean** - clean files left by **sbotools3.**
+**sboclean** - clean files left by **sbotools3**
 
 ## SYNOPSIS
 

@@ -14,7 +14,7 @@
 ## NAME
 
 **sbocheck** - update a local **slackbuilds.org** tree and check for
-updates.
+updates
 
 ## SYNOPSIS
 

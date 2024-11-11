@@ -14,7 +14,7 @@
 
 ## NAME
 
-**sboconfig** - set **sbotools3** configuration options.
+**sboconfig** - set **sbotools3** configuration options
 
 ## SYNOPSIS
 
@@ -73,7 +73,7 @@ want it.
 
 **-c\|\--noclean (FALSE\|TRUE)**
 
-**NOCLEAN**:If **TRUE**, do not clean working directories after
+**NOCLEAN**: If **TRUE**, do not clean working directories after
 building. These are the build and *package-(sbo)* directories under
 */tmp/SBo* (or *\$TMP*).
 

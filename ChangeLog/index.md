@@ -3,6 +3,7 @@
   * *sbocheck*: Use **\--nopull** to check for updated SlackBuilds without updating the tree
   * *sbofind*: Use **\--reverse** to check for installed reverse dependencies
   * Add setting **CLASSIC**: turn on **BUILD_IGNORE** and **RSYNC_DEFAULT**, and disable output added post-*sbotools*
+  * Fix some **--help** verbiage
 
 * 1.1 - 2024-11-03
   * Bugfix: incorrect variable name caused *sboupgrade* to rebuild when unneeded.
@@ -20,6 +21,9 @@
   * Fix building -compat32 packages from templates
 
 ## Historical Changes
+* Post-2.7 - 2019
+  * Add and install *zsh* completions
+
 * 2.7 - 2019-04-28
   * Actually fix the *sbofind* -e bug #71
       
