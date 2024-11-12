@@ -13,13 +13,12 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: sbotools3
+title: sbotools
 subtitle: A ports-like interface to slackbuilds.org.
 email:
 description: >- # this means to ignore newlines until "baseurl:"
-  sbotools3 is the continuation of sbotools. It is a
-  ports-like interface to slackbuilds.org written in
-  Perl.
+  sbotools is a ports-like interface to slackbuilds.org
+  written in Perl.
 minimal_mistakes_skin: default
 search: false
 copyright: K. Eugene Carlson
@@ -53,9 +52,9 @@ plugins:
 
 footer:
   links:
-    - label: "sbotools3 on GitHub"
+    - label: "sbotools on GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/pghvlaans/sbotools3/"
+      url: "https://github.com/pghvlaans/sbotools/"
 
 atom_feed:
   hide: true

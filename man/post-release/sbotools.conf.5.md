@@ -10,12 +10,12 @@
 
 ## NAME
 
-**sbotools.conf** - configuration file for **sbotools3** commands
+**sbotools.conf** - configuration file for **sbotools** commands
 
 ## DESCRIPTION
 
 */etc/sbotools/sbotools.conf* contains *KEY=VALUE* configuration
-parameters, and is read by all **sbotools3** commands.
+parameters, and is read by all **sbotools** commands.
 
 The current configuration keys are as follows:
 
@@ -82,7 +82,7 @@ for that version of Slackware rather than the one specified in
 **REPO=(FALSE\|url)**
 
 If set to a git or rsync **URL**, use that repository instead of the
-**sbotools3** default for your **SLACKWARE_VERSION**. The default
+**sbotools** default for your **SLACKWARE_VERSION**. The default
 repositories are under rsync://slackbuilds.org/slackbuilds if
 **RSYNC_DEFAULT** is **TRUE** and <https://gitlab.com/SlackBuilds.org>
 otherwise. The repository must be laid out in the same manner as one

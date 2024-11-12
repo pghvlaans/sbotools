@@ -1,18 +1,20 @@
-# sbotools3
+# sbotools
 
-**sbotools3** is the continuation of **sbotools**. It is a set of Perl scripts providing a ports-like automation interface to [slackbuilds.org](https://slackbuilds.org). Features include dependency handling, using a custom git branch, generating 32-bit and compat32 builds on multilib systems, and more.
+**sbotools** is a set of Perl scripts providing a ports-like automation interface to [slackbuilds.org](https://slackbuilds.org). Features include dependency handling, using a custom git branch, generating 32-bit and compat32 builds on multilib systems, and more.
+
+[This repository](https://github.com/pghvlaans/sbotools/) is the location of continuing **sbotools** development, and was forked from the [pink-mist repository](https://github.com/pghvlaans/pink-mist/sbotools/), which covered development from version 1.9 through version 2.7.
 
 A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
-**sbotools3** is [available](https://slackbuilds.org/repository/15.0/system/sbotools3/) on slackbuilds.org for Slackware 15.0.
+**sbotools** is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) on slackbuilds.org for Slackware 15.0.
 
-For online man pages and executive summaries of all commands, see [man](/sbotools3/man/). Installation notes and release tarballs are available at [Downloads](/sbotools3/downloads/). A record of changes to **sbotools3** and **sbotools** back to version 1.9 can be found in [ChangeLog](/sbotools3/ChangeLog/). [Development](/sbotools3/development/) has links to **sbotools3**-related repositories and information about future plans.
+For online man pages and executive summaries of all commands, see [man](/sbotools/man/). Installation notes and release tarballs are available at [Downloads](/sbotools/downloads/). A record of changes to **sbotools-3.x** and **sbotools** back to version 1.9 can be found in [ChangeLog](/sbotools/ChangeLog/). [Development](/sbotools/development/) has links to **sbotools**-related repositories and information about future plans.
 
-## Why a Continuation?
+## Why a Fork?
 
-**sbotools** has gone without commits for a number of years. During this time, the default URL for release Slackware beyond 14.2 became unusable, and building compat32 and 32-bit packages on multilib systems stopped working for nearly all SBo SlackBuilds. Both of these issues have been fixed in **sbotools3**.
+The previous **sbotools** repository had gone without commits for a number of years. During this time, the default URL for release Slackware beyond 14.2 became unusable, and building compat32 and 32-bit packages on multilib systems stopped working for nearly all SBo SlackBuilds. Both of these issues have been fixed in **sbotools-3.x**.
 
-Nonetheless, this repository was originally a simple fork adding a feature: Saving previously-used build options to be shown to the user when installing a SlackBuild again. In that spirit, the main focus of **sbotools3** has been to implement new functionality, some of which was originally planned by Andreas Guldstrand.
+Nonetheless, this repository was originally a simple fork adding a feature: Saving previously-used build options to be shown to the user when installing a SlackBuild again. In that spirit, the main focus of this fork of **sbotools** has been to implement new functionality, some of which was originally planned by Andreas Guldstrand.
 
 * Use a customizable git branch to clone the local repository
 * New git-based default URLs, with the option to use default rsync URLs instead

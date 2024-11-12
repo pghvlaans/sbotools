@@ -1,9 +1,12 @@
 # ChangeLog
-* Post-1.1
+* Post-`sbotools3-1.1`
   * *sbocheck*: Use **\--nopull** to check for updated SlackBuilds without updating the tree
   * *sbofind*: Use **\--reverse** to check for installed reverse dependencies
   * Add setting **CLASSIC**: turn on **BUILD_IGNORE** and **RSYNC_DEFAULT**, and disable output added post-*sbotools*
   * Fix some **--help** verbiage
+
+# sbotools3
+*Note*: this repository was named `sbotools3` for a brief period of time in late 2024.
 
 * 1.1 - 2024-11-03
   * Bugfix: incorrect variable name caused *sboupgrade* to rebuild when unneeded.
