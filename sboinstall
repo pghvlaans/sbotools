@@ -209,7 +209,7 @@ FIRST: for my $sbo (@$build_queue) {
 				}
 				push(@temp_queue, $sbo);
 				$commands{$sbo} = $cmds;
-				$options{$sbo} = $cmds;
+				$options{$sbo} = $opts;
 				say "$sbo$added";
 			}
 		}
