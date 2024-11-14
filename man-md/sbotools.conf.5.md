@@ -29,8 +29,10 @@ build options will not be displayed. This provides a more traditional
 
 **DISTCLEAN=(FALSE\|TRUE)**
 
-If **TRUE**, then remove the source archives after building. They are
-retained in */usr/sbo/distfiles* (with *SBO_HOME=/usr/sbo*) by default.
+If **TRUE**, then remove the package and source archives after building.
+Source archives are otherwise retained in */usr/sbo/distfiles* (with
+*SBO_HOME=/usr/sbo*) by default. If **PKG_DIR** is set, package archives
+will be saved there regardless of **DISTCLEAN**.
 
 **JOBS=(FALSE\|#)**
 

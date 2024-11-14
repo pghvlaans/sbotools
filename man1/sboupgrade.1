@@ -166,7 +166,10 @@ TRUE\fR\
 are retained in
 .I
 SBO_HOME/distfiles
-by default. This option can be set as default via the
+by default. The package archive (in
+.I
+/tmp
+by default) will also be removed. This option can be set as default via the
 .B
 sboconfig(1)
 command. See also
@@ -195,10 +198,19 @@ It will be left in
 (or
 .I
 $OUTPUT\fR\
-), or in
+) if
+.B
+DISTCLEAN
+is
+.B
+FALSE\fR\
+\&. Packages are retained in
 .B
 PKG_DIR
-if so defined. See
+if so defined regardless of
+.B
+DISTCLEAN\fR\
+\&. See
 .B
 sboconfig(1)
 and
