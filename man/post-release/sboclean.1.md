@@ -14,11 +14,13 @@
 
 ## NAME
 
-**sboclean** - clean files left by **sbotools3**
+**sboclean** - clean files left by **sbotools**
 
 ## SYNOPSIS
 
-    sboclean [-h|-v] [-dwi] [-o ALL|package]
+    sboclean [-h|-v]
+
+    sboclean [-dwi] [-o ALL|package]
 
 ## DESCRIPTION
 

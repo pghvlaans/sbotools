@@ -72,15 +72,17 @@ overrides the default.
 **-d\|\--distclean (FALSE\|TRUE)**
 
 If **TRUE**, then remove the source archives after building. They are
-retained in *SBO_HOME/distfiles* by default. This option can be set as
+retained in *SBO_HOME/distfiles* by default. The package archive (in
+*/tmp* by default) will also be removed. This option can be set as
 default via the [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md).
 This option overrides the default.
 
 **-i\|\--noinstall**
 
 Do not install the package at the end of the build process. It will be
-left in */tmp* (or *\$OUTPUT*), or in **PKG_DIR** if so defined. See
-[sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
+left in */tmp* (or *\$OUTPUT*) if **DISTCLEAN** is **FALSE**. Packages
+are retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**.
+See [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-j\|\--jobs (FALSE\|#)**
 
