@@ -79,9 +79,10 @@ building. These are the build and *package-(sbo)* directories under
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
-**DISTCLEAN**: If **TRUE**, then remove the source archives after
-building. They are retained in */usr/sbo/distfiles* (with default
-**SBO_HOME**).
+**DISTCLEAN**: If **TRUE**, then remove the package and source archives
+after building. Source archives are otherwise retained in
+*/usr/sbo/distfiles* (with default **SBO_HOME**). If **PKG_DIR** is set,
+package archives will be saved there regardless of **DISTCLEAN**.
 
 **-j\|\--jobs (FALSE\|#)**
 

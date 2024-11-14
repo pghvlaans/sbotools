@@ -154,14 +154,20 @@ DISTCLEAN\fR\
 \&: If
 .B
 TRUE\fR\
-\&, then remove the source archives after building. They
-are retained in
+\&, then remove the package and source archives after building. Source
+archives are otherwise retained in
 .I
 /usr/sbo/distfiles
 (with default
 .B
 SBO_HOME\fR\
-\&).
+\&). If
+.B
+PKG_DIR
+is set, package archives will be saved there regardless of
+.B
+DISTCLEAN\fR\
+\&.
 .RE
 .P
 .B
