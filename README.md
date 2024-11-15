@@ -2,7 +2,7 @@
 
 **sbotools** is a set of Perl scripts providing a ports-like automation interface to [slackbuilds.org](https://slackbuilds.org). Features include dependency handling, using a custom git branch, generating 32-bit and compat32 builds on multilib systems, and more.
 
-[This repository](https://github.com/pghvlaans/sbotools/) is the location of continuing **sbotools** development, and was forked from the [pink-mist repository](https://github.com/pghvlaans/pink-mist/sbotools/), which covered development from version 1.9 through version 2.7.
+[This repository](https://github.com/pghvlaans/sbotools/) is for continuing **sbotools** development, and was forked from the [pink-mist repository](https://github.com/pghvlaans/pink-mist/sbotools/), which covered development from version 1.9 through version 2.7.
 
 A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
@@ -16,8 +16,13 @@ The previous **sbotools** repository had gone without commits for a number of ye
 
 Nonetheless, this repository was originally a simple fork adding a feature: Saving previously-used build options to be shown to the user when installing a SlackBuild again. In that spirit, the main focus of this fork of **sbotools** has been to implement new functionality, some of which was originally planned by Andreas Guldstrand.
 
+## What's New, Compared to Version 2.7?
+**sbotools-3.x** is Slackware 15.0-compatible. While [ChangeLog](/sbotools/ChangeLog/) has a more complete list of changes, here are some of the highlights:
+
 * Use a customizable git branch to clone the local repository
 * New git-based default URLs, with the option to use default rsync URLs instead
 * Optionally upgrade on build increments and report out-of-tree SlackBuilds
 * Save build options and offer to re-use them
-* Install bash completions to go with the existing zsh completions
+* Search installed reverse dependencies
+
+Those who are interested in a more traditional **sbotools** experience can use the **CLASSIC** metasetting to disable new on-screen messaging and lock other settings to version 2.7 behavior.
