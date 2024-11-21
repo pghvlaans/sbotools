@@ -1,13 +1,13 @@
-package SBO3::Lib::Info;
+package SBO::Lib::Info;
 
 use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '1.1';
+our $VERSION = '3.0';
 
-use SBO3::Lib::Util qw/ in get_arch get_sbo_from_loc open_read script_error slurp usage_error /;
-use SBO3::Lib::Tree qw/ get_orig_location get_sbo_location is_local /;
+use SBO::Lib::Util qw/ in get_arch get_sbo_from_loc open_read script_error slurp usage_error /;
+use SBO::Lib::Tree qw/ get_orig_location get_sbo_location is_local /;
 
 use Exporter 'import';
 
@@ -35,11 +35,11 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO3::Lib::Info - Utilities to get data from SBo .info files.
+SBO::Lib::Info - Utilities to get data from SBo .info files.
 
 =head1 SYNOPSIS
 
-  use SBO3::Lib::Info qw/ get_reqs /;
+  use SBO::Lib::Info qw/ get_reqs /;
 
   my @reqs = @{ get_requires($sbo) };
 
@@ -321,7 +321,7 @@ SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
 contributions from Luke Williams <xocel@iquidus.org> and Andreas
 Guldstrand <andreas.guldstrand@gmail.com>.
 
-SBO3::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
+SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 
 =head1 LICENSE
 

@@ -1,4 +1,4 @@
-package SBO3::App;
+package SBO::App;
 
 # vim: ts=2:et
 #
@@ -13,7 +13,7 @@ use strict;
 use warnings FATAL => 'all';
 use File::Basename;
 
-our $VERSION = '1.1';
+our $VERSION = '3.0';
 
 sub new {
   my $class = shift;

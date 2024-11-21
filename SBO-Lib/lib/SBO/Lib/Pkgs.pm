@@ -1,14 +1,14 @@
-package SBO3::Lib::Pkgs;
+package SBO::Lib::Pkgs;
 
 use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '1.1';
+our $VERSION = '3.0';
 
-use SBO3::Lib::Util qw/ %config build_cmp script_error open_read version_cmp /;
-use SBO3::Lib::Tree qw/ get_sbo_location get_sbo_locations is_local /;
-use SBO3::Lib::Info qw/ get_orig_build_number get_sbo_build_number get_orig_version get_sbo_build_number get_sbo_version /;
+use SBO::Lib::Util qw/ %config build_cmp script_error open_read version_cmp /;
+use SBO::Lib::Tree qw/ get_sbo_location get_sbo_locations is_local /;
+use SBO::Lib::Info qw/ get_orig_build_number get_sbo_build_number get_orig_version get_sbo_build_number get_sbo_version /;
 
 use Exporter 'import';
 
@@ -31,13 +31,13 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO3::Lib::Pkgs - Routines for interacting with the Slackware package database.
+SBO::Lib::Pkgs - Routines for interacting with the Slackware package database.
 
 =head1 SYNOPSIS
 
-  use SBO3::Lib::Pkgs qw/ get_installed_packages /;
+  use SBO::Lib::Pkgs qw/ get_installed_packages /;
 
-  my @installed_sbos = get_installed_packages('SBO3');
+  my @installed_sbos = get_installed_packages('SBO');
 
 =head1 SUBROUTINES
 
@@ -65,7 +65,7 @@ sub get_available_updates {
 
     my $filter = shift;
     my @updates;
-    my $pkg_list = get_installed_packages('SBO3');
+    my $pkg_list = get_installed_packages('SBO');
 
     for my $pkg (@$pkg_list) {
         my $location = get_sbo_location($pkg->{name});
@@ -153,7 +153,7 @@ sub get_installed_cpans {
 
 C<get_installed_packages()> returns an array reference to a list of packages in
 C</var/log/packages> that match the specified C<$type>. The available types are
-C<STD> for non-SBo packages, C<SBO3> for SBo packages, and C<ALL> for both.
+C<STD> for non-SBo packages, C<SBO> for SBo packages, and C<ALL> for both.
 
 The returned array reference will hold a list of hash references representing
 both names, versions, and full installed package name of the returned packages.
@@ -161,12 +161,12 @@ both names, versions, and full installed package name of the returned packages.
 =cut
 
 # pull an array of hashes, each hash containing the name and version of a
-# package currently installed. Gets filtered using STD, SBO3, DIRTY or ALL.
+# package currently installed. Gets filtered using STD, SBO, DIRTY or ALL.
 sub get_installed_packages {
   script_error('get_installed_packages requires an argument.') unless @_ == 1;
   my $filter = shift;
 
-  # Valid types: STD, SBO3
+  # Valid types: STD, SBO
   my (@pkgs, %types);
   foreach my $pkg (glob("$pkg_db/*")) {
     $pkg =~ s!^\Q$pkg_db/\E!!;
@@ -182,7 +182,7 @@ sub get_installed_packages {
   return [ map { +{ name => $_->{name}, version => $_->{version}, build=> $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg} } } @pkgs ]
     if $filter eq 'ALL';
 
-  # Otherwise, SlackBuilds with locations can be marked with SBO3, and packages with
+  # Otherwise, SlackBuilds with locations can be marked with SBO, and packages with
   # the _SBo tag but no location can be marked with DIRTY
   my @sbos = map { $_->{name} } grep { $_->{build} =~ m/_SBo(|compat32)$/ }
     @pkgs;
@@ -191,7 +191,7 @@ sub get_installed_packages {
     foreach my $sbo (@sbos) {
       $types{$sbo} = 'DIRTY';
       if ($locations{ $sbo =~ s/-compat32//gr }) {
-         $types{$sbo} = 'SBO3';
+         $types{$sbo} = 'SBO';
       }
     }
   }
@@ -217,7 +217,7 @@ sub get_local_outdated_versions {
 
   my $local = $config{LOCAL_OVERRIDES};
   unless ( $local eq 'FALSE' ) {
-    my $pkglist = get_installed_packages('SBO3');
+    my $pkglist = get_installed_packages('SBO');
     my @local = grep { is_local($_->{name}) } @$pkglist;
 
     foreach my $sbo (@local) {
@@ -248,7 +248,7 @@ SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
 contributions from Luke Williams <xocel@iquidus.org> and Andreas
 Guldstrand <andreas.guldstrand@gmail.com>.
 
-SBO3::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
+SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 
 =head1 LICENSE
 

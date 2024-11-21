@@ -29,26 +29,26 @@ fi
 version="$1"
 
 update_perl="
-	SBO3-Lib/lib/SBO3/Lib.pm
-	SBO3-Lib/lib/SBO3/Lib/Util.pm
-	SBO3-Lib/lib/SBO3/Lib/Tree.pm
-	SBO3-Lib/lib/SBO3/Lib/Repo.pm
-	SBO3-Lib/lib/SBO3/Lib/Readme.pm
-	SBO3-Lib/lib/SBO3/Lib/Pkgs.pm
-	SBO3-Lib/lib/SBO3/Lib/Info.pm
-	SBO3-Lib/lib/SBO3/Lib/Download.pm
-	SBO3-Lib/lib/SBO3/Lib/Build.pm
-  SBO3-Lib/lib/SBO3/App.pm
-  SBO3-Lib/lib/SBO3/App/Remove.pm
-  SBO3-Lib/lib/SBO3/App/Snap.pm
+	SBO-Lib/lib/SBO/Lib.pm
+	SBO-Lib/lib/SBO/Lib/Util.pm
+	SBO-Lib/lib/SBO/Lib/Tree.pm
+	SBO-Lib/lib/SBO/Lib/Repo.pm
+	SBO-Lib/lib/SBO/Lib/Readme.pm
+	SBO-Lib/lib/SBO/Lib/Pkgs.pm
+	SBO-Lib/lib/SBO/Lib/Info.pm
+	SBO-Lib/lib/SBO/Lib/Download.pm
+	SBO-Lib/lib/SBO/Lib/Build.pm
+  SBO-Lib/lib/SBO/App.pm
+  SBO-Lib/lib/SBO/App/Remove.pm
+  SBO-Lib/lib/SBO/App/Snap.pm
 "
 update_other="
-  SBO3-Lib/README
-	slackbuild/sbotools3/sbotools3.SlackBuild
-	slackbuild/sbotools3/sbotools3.info
+  SBO-Lib/README
+	slackbuild/sbotools/sbotools.SlackBuild
+	slackbuild/sbotools/sbotools.info
 "
 
-old_version=$(grep '^our $VERSION' SBO3-Lib/lib/SBO3/Lib.pm | grep -Eo '[0-9]+(\.[0-9RC@gita-f]+){0,1}')
+old_version=$(grep '^our $VERSION' SBO-Lib/lib/SBO/Lib.pm | grep -Eo '[0-9]+(\.[0-9RC@gita-f]+){0,1}')
 
 tmpfile=$(mktemp /tmp/XXXXXXXXXX)
 

@@ -1,23 +1,24 @@
-# sbotools3
+# sbotools
 
-**[sbotools3](https://pghvlaans.github.io/sbotools3/)** provides a ports-like interface to [slackbuilds.org](http://www.slackbuilds.org/). It is the continuation of **sbotools**.
+**[sbotools](https://pghvlaans.github.io/sbotools/)** provides a ports-like interface to [slackbuilds.org](http://www.slackbuilds.org/).
 
 A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
-To make **sbotools3** packages from the master branch, see [sbotools3-git-slackbuild](https://github.com/pghvlaans/sbotools3-git-slackbuild) and follow the instructions in `README`. For release **sbotools3**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools3/) at slackbuilds.org.
-
 ## Changes
-* Post-1.1
+* 3.0 - 2024-11-22
   * sbocheck: Use --nopull to check for updated SlackBuilds without updating the tree
   * sboremove: Remove undocumented and dangerous nointeractive option
   * sbofind: Use --reverse to check for installed reverse dependencies
   * Add setting CLASSIC; turn on BUILD_IGNORE and RSYNC_DEFAULT, and disable output added post-sbotools
   * Fix some --help verbiage
 
-* 1.1 - 2024-11-03
+## Note
+This repository was renamed from sbotools3 to sbotools prior to the release of sbotools-3.0.
+
+* sbotools3 1.1 - 2024-11-03
   * Bugfix: incorrect variable name caused sboupgrade to rebuild when unneeded.
 
-* 1.0 - 2024-11-01
+* sbotools3 1.0 - 2024-11-01
   * Change the git branch to match the Slackware version, or to a user-configured branch
   * Change the default URLs to support Slackware 15.0 and use git repositories
   * Use rsync default mirrors with RSYNC_DEFAULT (except for -current)
@@ -30,6 +31,8 @@ To make **sbotools3** packages from the master branch, see [sbotools3-git-slackb
   * Fix building -compat32 packages from templates
 
 ## Historical Changes
+Development from version 1.9 through 2.7 took place at [pink-mist/sbotools](https://github.com/pink-mist/sbotools/).
+
 * Post-2.7 - 2019
   * Add and install zsh completions
 

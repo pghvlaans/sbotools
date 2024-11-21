@@ -7,7 +7,7 @@ use Test::More;
 
 use FindBin '$RealBin';
 use lib "$RealBin/../SBO-Lib/lib";
-use SBO3::Lib 'parse_info';
+use SBO::Lib 'parse_info';
 
 plan tests => 23;
 

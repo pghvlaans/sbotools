@@ -14,8 +14,8 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO3::App::Remove;
+use SBO::App::Remove;
 
-my $app = SBO3::App::Remove->new(@ARGV);
+my $app = SBO::App::Remove->new(@ARGV);
 
 exit $app->run();

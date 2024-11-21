@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Slackware build script for sbotools3
+# Slackware build script for sbotools
 #
 # Written by Jacob Pipkin <j@dawnrazor.net>
 # Altered by K. Eugene Carlson <kvngncrlsn@gmail.com>
@@ -8,8 +8,8 @@
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=sbotools3
-VERSION=${VERSION:-1.1}
+PRGNAM=sbotools
+VERSION=${VERSION:-3.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_pghv}
 PKGTYPE=${PKGTYPE:-tgz}
@@ -43,7 +43,7 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-( cd SBO3-Lib
+( cd SBO-Lib
 	/usr/bin/perl Makefile.PL \
 	  PREFIX=/usr \
 	  INSTALLDIRS=site \
@@ -82,8 +82,8 @@ find $PKG -name perllocal.pod -o -name ".packlist" -o -name "*.bs" | xargs rm -f
 
 find $PKG -depth -type d -empty -delete || true
 
-mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION/SBO3-Lib
-cp -a SBO3-Lib/README SBO3-Lib/Changes LICENSE $PKG/usr/doc/$PRGNAM-$VERSION/SBO3-Lib
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION/SBO-Lib
+cp -a SBO-Lib/README SBO-Lib/Changes LICENSE $PKG/usr/doc/$PRGNAM-$VERSION/SBO-Lib
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
