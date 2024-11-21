@@ -1,12 +1,12 @@
 # ChangeLog
-* Post-`sbotools3-1.1`
+* 3.0
   * *sbocheck*: Use **\--nopull** to check for updated SlackBuilds without updating the tree
   * *sbofind*: Use **\--reverse** to check for installed reverse dependencies
   * Add setting **CLASSIC**: turn on **BUILD_IGNORE** and **RSYNC_DEFAULT**, and disable output added post-*sbotools*
   * Fix some **--help** verbiage
 
 # sbotools3
-*Note*: this repository was named `sbotools3` for a brief period of time in late 2024.
+*Note*: this repository was named `sbotools3` for a brief period in late 2024.
 
 * 1.1 - 2024-11-03
   * Bugfix: incorrect variable name caused *sboupgrade* to rebuild when unneeded.
@@ -24,6 +24,8 @@
   * Fix building -compat32 packages from templates
 
 ## Historical Changes
+*Note*: [pink-mist/sbotools](https://github.com/pink-mist/sbotools/) was the home of **sbotools** development during this time.
+
 * Post-2.7 - 2019
   * Add and install *zsh* completions
 

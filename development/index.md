@@ -14,7 +14,7 @@ These features may be added in the future:
 * Blacklist scripts
   * I'm having second thoughts about adding a blacklist. Local overrides (and simply using tags other than `_SBo`) are alternatives, and blacklist-honoring build queue creation strikes me as failure-prone. If it goes in, it won't be for version 1.2.
 
-The above list is non-exhaustive and nothing on it is guaranteed to appear in `sbotools3`.
+The above list is non-exhaustive and nothing on it is guaranteed to appear in `sbotools`.
 
 ## Done for Version 3.0 (ETA: Late November 2024)
 
