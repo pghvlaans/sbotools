@@ -5,7 +5,7 @@
 A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
 ## Changes
-* 3.0 - 2024-11-23
+* 3.0 - 2024-11-22
   * sbocheck: Use --nopull to check for updated SlackBuilds without updating the tree
   * sboremove: Remove undocumented and dangerous nointeractive option
   * sbofind: Use --reverse to check for installed reverse dependencies

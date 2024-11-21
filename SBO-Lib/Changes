@@ -1,5 +1,5 @@
 sbotools
-Post-1.1
+3.0 - 2024-11-22
   * sbocheck: Use --nopull to check for updated SlackBuilds without updating the tree
   * sboremove: Remove undocumented and dangerous nointeractive option
   * sbofind: Use --reverse to check for installed reverse dependencies
