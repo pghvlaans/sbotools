@@ -14,25 +14,36 @@
 ## NAME
 
 **sbocheck** - update a local **slackbuilds.org** tree and check for
-updates.
+updates
 
 ## SYNOPSIS
 
     sbocheck [-h|-v]
 
+    sbocheck [-n]
+
 ## DESCRIPTION
 
 **sbocheck** first updates a previously-fetched copy of the
-**slackbuilds.org** tree (see [sbosnap(1)](sbosnap.1.md)) checks for available
+**slackbuilds.org** tree (see [sbosnap(1)](sbosnap.1.md)), checks for available
 upgrades, and reports what it finds. SlackBuilds with differing build
 numbers are reported separately, as are any SlackBuilds marked *\_SBo*
 that are not found in the repository.
 
 The three output categories are logged separately to
 */etc/sbocheck.log*, */etc/sbocheck-bumps.log* and
-*/etc/sbocheck-out-of-tree.log*.
+*/etc/sbocheck-out-of-tree.log*. The out-of-tree and build number
+increment checks are disabled when **CLASSIC** is **TRUE** (see
+[sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
+
+To check for updated SlackBuilds without updating the SlackBuilds tree,
+pass the **\--nopull** option.
 
 ## OPTIONS
+
+**-n\|\--nopull**
+
+Check for updated SlackBuilds without updating the SlackBuilds tree.
 
 **-h\|\--help**
 
@@ -45,7 +56,7 @@ Show version information.
 ## BUGS
 
 None known. If found, Issues and Pull Requests to
-<https://github.com/pghvlaans/sbotools3/> are always welcome.
+<https://github.com/pghvlaans/sbotools/> are always welcome.
 
 ## SEE ALSO
 

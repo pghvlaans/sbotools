@@ -21,7 +21,7 @@ a given name
 
     sbofind [-h|-v]
 
-    sbofind [-etirq] search_term
+    sbofind [-etiRrq] search_term
 
 ## DESCRIPTION
 
@@ -60,6 +60,12 @@ Show the contents of the *info* file for each SlackBuild found.
 
 Show the contents of the *README* file for each SlackBuild found.
 
+**-R\|\--reverse**
+
+Show any reverse dependencies installed on the system. Please note that
+this does not include optional dependencies or packages with tags other
+than *\_SBo*.
+
 **-q\|\--queue**
 
 Show the build queue for each SlackBuild found.
@@ -75,7 +81,7 @@ Show the build queue for each SlackBuild found.
 ## BUGS
 
 None known. If found, Issues and Pull Requests to
-<https://github.com/pghvlaans/sbotools3/> are always welcome.
+<https://github.com/pghvlaans/sbotools/> are always welcome.
 
 ## SEE ALSO
 

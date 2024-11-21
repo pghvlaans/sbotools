@@ -1,5 +1,5 @@
 # ChangeLog
-* 3.0
+* 3.0 - 2024-11-22
   * *sbocheck*: Use **\--nopull** to check for updated SlackBuilds without updating the tree
   * *sbofind*: Use **\--reverse** to check for installed reverse dependencies
   * Add setting **CLASSIC**: turn on **BUILD_IGNORE** and **RSYNC_DEFAULT**, and disable output added post-*sbotools*

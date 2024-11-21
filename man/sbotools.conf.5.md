@@ -10,19 +10,29 @@
 
 ## NAME
 
-**sbotools.conf** - configuration file for **sbotools3** commands
+**sbotools.conf** - configuration file for **sbotools** commands
 
 ## DESCRIPTION
 
 */etc/sbotools/sbotools.conf* contains *KEY=VALUE* configuration
-parameters, and is read by all **sbotools3** commands.
+parameters, and is read by all **sbotools** commands.
 
 The current configuration keys are as follows:
 
+**CLASSIC=(FALSE\|TRUE)**
+
+If **TRUE**, automatically enable **RSYNC_DEFAULT** and **BUILD_IGNORE**
+(overriding the contents of this file). Build increment and out-of-tree
+SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are disabled, and previously-used
+build options will not be displayed. This provides a more traditional
+**sbotools** look and feel for those who want it.
+
 **DISTCLEAN=(FALSE\|TRUE)**
 
-If **TRUE**, then remove the source archives after building. They are
-retained in */usr/sbo/distfiles* (with *SBO_HOME=/usr/sbo*) by default.
+If **TRUE**, then remove the package and source archives after building.
+Source archives are otherwise retained in */usr/sbo/distfiles* (with
+*SBO_HOME=/usr/sbo*) by default. If **PKG_DIR** is set, package archives
+will be saved there regardless of **DISTCLEAN**.
 
 **JOBS=(FALSE\|#)**
 
@@ -74,7 +84,7 @@ for that version of Slackware rather than the one specified in
 **REPO=(FALSE\|url)**
 
 If set to a git or rsync **URL**, use that repository instead of the
-**sbotools3** default for your **SLACKWARE_VERSION**. The default
+**sbotools** default for your **SLACKWARE_VERSION**. The default
 repositories are under rsync://slackbuilds.org/slackbuilds if
 **RSYNC_DEFAULT** is **TRUE** and <https://gitlab.com/SlackBuilds.org>
 otherwise. The repository must be laid out in the same manner as one

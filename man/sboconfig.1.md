@@ -14,7 +14,7 @@
 
 ## NAME
 
-**sboconfig** - set **sbotools3** configuration options.
+**sboconfig** - set **sbotools** configuration options
 
 ## SYNOPSIS
 
@@ -22,16 +22,16 @@
 
     sboconfig [-l]
 
-    sboconfig [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \
-              [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \
-              [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] \
-              [-r url|FALSE] [-R TRUE|FALSE]
+    sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \
+              [-j #|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo] \
+              [-B branch_name|FALSE] [-b TRUE|FALSE] [-o /path|FALSE] \
+              [-V #.#|FALSE] [-r url|FALSE] [-R TRUE|FALSE]
 
 ## DESCRIPTION
 
-**sboconfig** is a front-end for managing **sbotools3** configuration
+**sboconfig** is a front-end for managing **sbotools** configuration
 options. The [sbotools.conf(5)](sbotools.conf.5.md) file can also be manually edited; any
-fields not relevant to **sbotools3** configuration will be ignored.
+fields not relevant to **sbotools** configuration will be ignored.
 
 ## OPTIONS
 
@@ -62,17 +62,27 @@ with an upstream git repository.
 version number differs. By default, upgrades also occur when the build
 number differs.
 
+**-C\|\--classic (FALSE\|TRUE)**
+
+**CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT** and
+**BUILD_IGNORE** (overriding the contents of [sbotools.conf(5)](sbotools.conf.5.md)).
+Build increment and out-of-tree SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are
+disabled, and previously-used build options will not be displayed. This
+provides a more traditional **sbotools** look and feel for those who
+want it.
+
 **-c\|\--noclean (FALSE\|TRUE)**
 
-**NOCLEAN**:If **TRUE**, do not clean working directories after
+**NOCLEAN**: If **TRUE**, do not clean working directories after
 building. These are the build and *package-(sbo)* directories under
 */tmp/SBo* (or *\$TMP*).
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
-**DISTCLEAN**: If **TRUE**, then remove the source archives after
-building. They are retained in */usr/sbo/distfiles* (with default
-**SBO_HOME**).
+**DISTCLEAN**: If **TRUE**, then remove the package and source archives
+after building. Source archives are otherwise retained in
+*/usr/sbo/distfiles* (with default **SBO_HOME**). If **PKG_DIR** is set,
+package archives will be saved there regardless of **DISTCLEAN**.
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -109,7 +119,7 @@ the one specified in */etc/slackware-version*.
 **-r\|\--repo (FALSE\|url)**
 
 **REPO**: If set to a git or rsync **URL**, use that repository instead
-of the **sbotools3** default for your **SLACKWARE_VERSION**. The default
+of the **sbotools** default for your **SLACKWARE_VERSION**. The default
 repositories are under rsync://slackbuilds.org/slackbuilds if
 **RSYNC_DEFAULT** is **TRUE** and <https://gitlab.com/SlackBuilds.org>
 otherwise. The repository must be laid out in the same manner as one
@@ -132,7 +142,7 @@ for Slackware -current.
 ## BUGS
 
 None known. If found, Issues and Pull Requests to
-<https://github.com/pghvlaans/sbotools3/> are always welcome.
+<https://github.com/pghvlaans/sbotools/> are always welcome.
 
 ## SEE ALSO
 

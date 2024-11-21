@@ -39,6 +39,10 @@ options will appear. Any build options, whether passed interactively or
 in a template, will be saved to */var/log/sbotools* when the SlackBuild
 runs.
 
+Please note that saved build options will not be displayed when
+**CLASSIC** is set to **TRUE**. See [sboconfig(1)](sboconfig.1.md) or
+[sbotools.conf(5)](sbotools.conf.5.md).
+
 **sboupgrade** will attempt to download the sources from the *DOWNLOAD*
 or *DOWNLOAD_x86_64* variables in the *info* file. If either the
 download or the md5sum check fails, a new download will be attempted
@@ -75,7 +79,8 @@ overrides the default.
 **-d\|\--distclean (FALSE\|TRUE)**
 
 If **TRUE**, then remove the source archives after building. They are
-retained in *SBO_HOME/distfiles* by default. This option can be set as
+retained in *SBO_HOME/distfiles* by default. The package archive (in
+*/tmp* by default) will also be removed. This option can be set as
 default via the [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md).
 This option overrides the default.
 
@@ -87,8 +92,9 @@ equal to the **slackbuilds.org** version.
 **-i\|\--noinstall**
 
 Do not install the package at the end of the build process. It will be
-left in */tmp* (or *\$OUTPUT*), or in **PKG_DIR** if so defined. See
-[sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
+left in */tmp* (or *\$OUTPUT*) if **DISTCLEAN** is **FALSE**. Packages
+are retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**.
+See [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -143,7 +149,7 @@ and [sbotools.conf(5)](sbotools.conf.5.md).
 ## BUGS
 
 None known. If found, Issues and Pull Requests to
-<https://github.com/pghvlaans/sbotools3/> are always welcome.
+<https://github.com/pghvlaans/sbotools/> are always welcome.
 
 ## SEE ALSO
 
