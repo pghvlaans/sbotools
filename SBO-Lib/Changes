@@ -22,6 +22,8 @@ sbotools3 1.0 - 2024-11-01
   * Install a default configuration file; tweak sboconfig to play somewhat nicely with it
 
 Historical Changes
+Development from version 1.9 through 2.7 took place at the pink-mist/sbotools repository.
+
 Post-2.7 - 2019
   * Add and install zsh completions
 

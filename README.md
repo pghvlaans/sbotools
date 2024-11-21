@@ -4,10 +4,8 @@
 
 A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
-To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild) and follow the instructions in `README`. For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at slackbuilds.org.
-
 ## Changes
-* Post-1.1
+* 3.0 - 2024-11-23
   * sbocheck: Use --nopull to check for updated SlackBuilds without updating the tree
   * sboremove: Remove undocumented and dangerous nointeractive option
   * sbofind: Use --reverse to check for installed reverse dependencies
@@ -33,6 +31,8 @@ This repository was renamed from sbotools3 to sbotools prior to the release of s
   * Fix building -compat32 packages from templates
 
 ## Historical Changes
+Development from version 1.9 through 2.7 took place at [pink-mist/sbotools](https://github.com/pink-mist/sbotools/).
+
 * Post-2.7 - 2019
   * Add and install zsh completions
 
