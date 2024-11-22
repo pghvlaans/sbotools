@@ -1,6 +1,6 @@
 # Downloads
 
-A SlackBuild for `sbotools` will soon be [available](https://slackbuilds.org/repository/15.0/system/sbotools/) on SlackBuilds.org.
+A SlackBuild for `sbotools` should soon be [available](https://slackbuilds.org/repository/15.0/system/sbotools/) on SlackBuilds.org.
 
 ## Notes
 
@@ -10,6 +10,8 @@ This fork of `sbotools` was briefly available as `sbotools3` in late 2024. Any `
 
 ## Release Tarballs
 
+* [sbotools-3.0.tar.gz](sbotools-3.0.tar.gz)
+    * md5sum: `11a00ee87396bcd993c3cd1be8299f87`
 * [sbotools3-1.1.tar.gz](sbotools3-1.1.tar.gz)
     * md5sum: `f98cb7133ea399826f679c9caf8711d2`
 * [sbotools3-1.0.tar.gz](sbotools3-1.0.tar.gz)
