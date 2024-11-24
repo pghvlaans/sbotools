@@ -1,0 +1,113 @@
+.TH sbotools 1 "Sweetmorn, The Aftermath 34, 3190 YOLD" "sbotools 3.0" sbotools
+.SH NAME
+.P
+.B
+sbotools
+- Perl scripts providing a ports-like interface to
+.B
+slackbuilds.org
+.SH DESCRIPTION
+.P
+.B
+sbotools
+is a set of Perl scripts that collectively provide a ports-like interface to
+.B
+slackbuilds.org\fR\
+\&. Each tool is documented in its own man page.
+.P
+.B
+sbocheck(1)
+.RS
+Fetch the latest version of the upstream SlackBuilds repository. Check
+for version updates, build number changes and out-of-tree installed
+SlackBuilds with the
+.I
+_SBo
+tag.
+.RE
+.P
+.B
+sboclean(1)
+.RS
+Remove cruft by cleaning source archives, build directories and saved build options.
+.RE
+.P
+.B
+sboconfig(1)
+.RS
+A command line interface for changing
+.I
+/etc/sbotools/sbotools.conf\fR\
+\&.
+.RE
+.P
+.B
+sbofind(1)
+.RS
+Search the local copy of the repository for SlackBuilds. Optionally, display
+build queues,
+.I
+README
+and
+.I
+info
+files and installed reverse dependencies.
+.RE
+.P
+.B
+sboinstall(1)
+.RS
+Install SlackBuilds with their dependencies. Handle compat32 packages
+and create or build from templates.
+.RE
+.P
+.B
+sboremove(1)
+.RS
+Interactively remove installed SlackBuilds along with any unused dependencies.
+.RE
+.P
+.B
+sbosnap(1)
+.RS
+Fetch or update the upstream SlackBuilds repository with
+.B
+fetch
+and
+.B
+update\fR\
+\&.
+.RE
+.P
+.B
+sboupgrade(1)
+.RS
+Upgrade previously-installed SlackBuilds.
+.RE
+
+For details about all configuration options in
+.I
+sbotools.conf\fR\
+\&, see
+.B
+sbotools.conf(5)\fR\
+\&.
+.SH BUGS
+.P
+None known. If found, Issues and Pull Requests to
+.UR https://github.com/pghvlaans/sbotools/
+.UE
+are always welcome.
+.SH SEE ALSO
+.P
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sbosnap(1), sboupgrade(1), sbotools.conf(5)
+.SH AUTHORS
+.P
+Jacob Pipkin <j@dawnrazor.net>
+.P
+Luke Williams <xocel@iquidus.org>
+.P
+Andreas Guldstrand <andreas.guldstrand@gmail.com>
+.SH MAINTAINER
+.P
+K. Eugene Carlson <kvngncrlsn@gmail.com>
