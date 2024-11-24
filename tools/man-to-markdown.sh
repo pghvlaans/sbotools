@@ -56,6 +56,8 @@ for item in check clean config find install remove snap tools.conf upgrade ; do
   sed -i "s/^# sbo$item.*/# sbo$item/g" *
 done
 
+sed -i "s/^# sbotools.*/# sbotools/g" sbotools.1.md
+
 # Want man page links, but not bold ones.
 for item in check clean config find install remove snap upgrade ; do
   sed -i "s/sbo$item(1)/[sbo$item(1)](sbo$item.1.md)/g" *

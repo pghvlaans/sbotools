@@ -1,4 +1,4 @@
-# sbotools {#sbotools align="center"}
+# sbotools
 
 [NAME](#name)\
 [DESCRIPTION](#description)\
