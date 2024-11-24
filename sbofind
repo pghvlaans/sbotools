@@ -66,7 +66,6 @@ if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
 
 if (!@ARGV) { show_usage(); exit 1 }
-my $search = $ARGV[0];
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
@@ -196,25 +195,31 @@ sub show_reverse_dependencies {
 	}
 }
 
-my $findings = perform_search($search);
+my $notfound = 0;
+for my $search (@ARGV) {
+	my $findings = perform_search($search);
 
-# pretty formatting
-if (exists $$findings[0]) {
-	for my $hash (@$findings) {
-		my $name = $hash->{name};
-		my $location = $hash->{location};
-		my $version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
-		my $sbo = "SBo:   "; $sbo = "Local: " if $hash->{local};
-		say "$sbo $name $version";
-		say "Path:   $location";
-		say "info:   ". get_file_contents("$location/$name.info") if $show_info;
-		say "README: ". get_file_contents("$location/README") if $show_readme;
-		say "Queue:  ". show_build_queue($name) if $show_queue;
-		say "RevDep: ". show_reverse_dependencies($name) if $show_reverse;
-		say '';
+	# pretty formatting
+	if (exists $$findings[0]) {
+		for my $hash (@$findings) {
+			if ($notfound) { say ''; }
+			my $name = $hash->{name};
+			my $location = $hash->{location};
+			my $version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
+			my $sbo = "SBo:   "; $sbo = "Local: " if $hash->{local};
+			say "$sbo $name $version";
+			say "Path:   $location";
+			say "info:   ". get_file_contents("$location/$name.info") if $show_info;
+			say "README: ". get_file_contents("$location/README") if $show_readme;
+			say "Queue:  ". show_build_queue($name) if $show_queue;
+			say "RevDep: ". show_reverse_dependencies($name) if $show_reverse;
+			say '';
+			$notfound = 0;
+		}
+	} else {
+		say "Nothing found for search term: $search";
+		$notfound = 1;
 	}
-} else {
-	say "Nothing found for search term: $search";
 }
 
 exit 0;

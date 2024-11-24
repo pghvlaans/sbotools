@@ -8,6 +8,9 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 
 ## Changes
 
+* Post-3.0
+  * sbofind: Allow multiple search terms
+
 * 3.0 - 2024-11-22
   * sbocheck: Use --nopull to check for updated SlackBuilds without updating the tree
   * sboremove: Remove undocumented and dangerous nointeractive option
