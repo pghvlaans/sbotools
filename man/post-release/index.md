@@ -16,5 +16,7 @@ The pages here reflect post-release development. For the version 3.0 pages (2024
     * Fetch or update the upstream SlackBuilds repository with *fetch* and *update*.
 * [sboupgrade(1)](sboupgrade.1.md)
     * Upgrade previously-installed SlackBuilds.
+* [sbotools(1)](sbotools.1.md)
+    * A summary man page with brief descriptions of the tools.
 * [sbotools.conf(5)](sbotools.conf.5.md)
     * View details about all configuration options in *sbotools.conf*.
