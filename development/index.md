@@ -10,9 +10,12 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 These features may be added in the future:
 
-* Use multiple search terms in `sbofind`
 * Using (and generating?) `sqf` files
 * Blacklist scripts
   * I'm having second thoughts about adding a blacklist. Local overrides (and simply using tags other than `_SBo`) are alternatives, and blacklist-honoring build queue creation strikes me as failure-prone.
 
 The above list is non-exhaustive and nothing on it is guaranteed to appear in `sbotools`.
+
+## Completed for 3.1
+
+* Use multiple search terms in `sbofind`

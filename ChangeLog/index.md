@@ -1,4 +1,7 @@
 # ChangeLog
+* Post-3.0
+  * *sbofind*: Allow multiple search terms
+
 * 3.0 - 2024-11-22
   * *sbocheck*: Use **\--nopull** to check for updated SlackBuilds without updating the tree
   * *sbofind*: Use **\--reverse** to check for installed reverse dependencies

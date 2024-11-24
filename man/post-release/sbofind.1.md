@@ -15,19 +15,19 @@
 ## NAME
 
 **sbofind** - search the local copy of the **slackbuilds.org** tree for
-a given name
+a given name or names
 
 ## SYNOPSIS
 
     sbofind [-h|-v]
 
-    sbofind [-etiRrq] search_term
+    sbofind [-etiRrq] search_term (search_term)
 
 ## DESCRIPTION
 
-**sbofind** searches the names of all available SlackBuilds for a given
-term. It reports back any SlackBuilds found along with path and version
-information. This is equivalent to running
+**sbofind** searches the names of all available SlackBuilds for one or
+more search terms. It reports back any SlackBuilds found along with path
+and version information. This is equivalent to running
 
     cd /usr/ports; make search name=$search_term display=name,path
 
