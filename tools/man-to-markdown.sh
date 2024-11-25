@@ -35,6 +35,7 @@ sed -i "s/#SYNOPSIS/#synopsis/g" *
 sed -i "s/#OPTIONS/#options/g" *
 sed -i "s/#DESCRIPTION/#description/g" *
 sed -i "s/#COMMANDS/#commands/g" *
+sed -i "s/#STARTUP/#startup/g" *
 sed -i "s/#BUGS/#bugs/g" *
 sed -i "s/#SEE\%20ALSO/#see-also/g" *
 sed -i "s/#EXIT\%20CODES/#exit-codes/g" *
@@ -46,6 +47,7 @@ sed -i "s/^## SYNOPSIS.*/## SYNOPSIS/g" *
 sed -i "s/^## OPTIONS.*/## OPTIONS/g" *
 sed -i "s/^## DESCRIPTION.*/## DESCRIPTION/g" *
 sed -i "s/^## COMMANDS.*/## COMMANDS/g" *
+sed -i "s/^## STARTUP.*/## STARTUP/g" *
 sed -i "s/^## BUGS.*/## BUGS/g" *
 sed -i "s/^## SEE ALSO.*/## SEE ALSO/g" *
 sed -i "s/^## EXIT CODES.*/## EXIT CODES/g" *

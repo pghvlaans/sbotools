@@ -92,6 +92,87 @@ sbotools.conf\fR\
 .B
 sbotools.conf(5)\fR\
 \&.
+.SH STARTUP
+When using
+.B
+sbotools
+for the first time, a copy of the SlackBuilds repository
+must be fetched with
+.B
+sbosnap(1)\fR\
+\&:
+.RS
+
+sbosnap fetch
+
+
+.RE
+The local repository will be saved to
+.I
+/usr/sbo/repo\fR\
+\&.
+To use an alternative location, give an absolute file path to the
+.B
+SBO_HOME
+setting with
+.B
+sboconfig(1)
+or by editing
+.I
+/etc/sbotools/sbotools.conf\fR\
+\&.
+
+The default mirror depends on the running version of Slackware. Stable
+releases use the appropriate branch on
+.UR https://gitlab.com/SlackBuilds.org/slackbuilds/
+.UE
+and -current uses
+.UR https://github.com/Ponce/slackbuilds/
+.UE
+with the
+.B
+current
+branch.
+
+To use an rsync mirror with <rsync://slackbuilds.org/slackbuilds/*/>
+instead, set
+.B
+RSYNC_DEFAULT
+to
+.B
+TRUE\fR\
+\&. The
+.B
+REPO
+setting overrides the default mirror with a git or rsync URL, and
+.B
+GIT_BRANCH
+sets a custom git branch.
+
+To update the local repository, run
+.B
+sbocheck(1)\fR\
+\&. This will generate a report with potential version upgrades, SlackBuilds
+with incremented build numbers and out-of-tree SlackBuilds installed with
+the
+.I
+_SBo
+tag.
+
+The simplest way to upgrade all eligible SlackBuilds is to run
+.RS
+
+sboupgrade --all
+
+
+.RE
+Build number increments will be ignored if
+.B
+BUILD_IGNORE
+is set to
+.B
+TRUE\fR\
+\&.
 .SH BUGS
 .P
 None known. If found, Issues and Pull Requests to

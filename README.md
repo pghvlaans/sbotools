@@ -10,7 +10,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 
 * Post-3.0
   * sbofind: Allow multiple search terms
-  * Add a summary sbotools(1) man page
+  * Add a summary sbotools(1) man page with executive summaries and a startup guide
 
 * 3.0 - 2024-11-22
   * sbocheck: Use --nopull to check for updated SlackBuilds without updating the tree
