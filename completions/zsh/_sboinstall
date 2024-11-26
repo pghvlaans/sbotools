@@ -27,6 +27,7 @@ _arguments -s \
 	   '(-r --nointeractive)'{-r,--nointeractive}'[Skip README.]' \
 	   '(-R --norequirements)'{-R,--norequirements}'[Skip requirement handling.]' \
 	   '--reinstall[Asks for reinstall from the requirements.]' \
+	   '--mass-rebuild[Rebuild all installed SlackBuilds.]' \
 	   '(--use-template)''--create-template[Create a template for the SlackBuilds.]:Template file:()' \
 	   '(--create-template)''--use-template[Use a template file (also enables -r flag).]:Template file:_files' \
 	   '(-)*:SlackBuild:(${slackbuilds:|words})' \

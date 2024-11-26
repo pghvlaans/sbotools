@@ -13,6 +13,9 @@ sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
 .P
 sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
            [-i] --use-template FILE
+.P
+sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
+           [-ir] [--create-template FILE] --mass-rebuild
 .SH DESCRIPTION
 .P
 .B
@@ -268,6 +271,33 @@ Build using the template saved to
 FILE.
 This disables all user prompts.
 .RE
+.P
+.B
+--mass-rebuild
+.RS
+Generate build queues, rebuild and reinstall all in-tree
+.I
+_SBo
+SlackBuilds except for
+.I
+compat32
+builds. This is generally only useful when the Slackware version
+has been upgraded or (occasionally) on -current.  Additional
+SlackBuilds may be installed when dependencies have been
+added. In combination with
+.B
+--nointeractive\fR\
+\&, saved build options are reused automatically. Incompatible with
+.B
+--compat32\fR\
+\&,
+.B
+--use-template
+and
+.B
+--norequirements\fR\
+\&.
+.RS
 .SH EXIT CODES
 .P
 .B

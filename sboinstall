@@ -17,6 +17,7 @@ use warnings FATAL => 'all';
 use SBO::Lib qw/ %config _ERR_OPENFH get_arch get_build_queue get_installed_cpans get_installed_packages get_sbo_location get_sbo_locations in merge_queues open_fh print_failures process_sbos prompt show_version slackbuilds_or_fetch slurp usage_error user_prompt /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
+use File::Copy;
 use JSON::PP;
 
 my $self = basename($0);
@@ -52,6 +53,8 @@ Options (defaults shown first where applicable):
   --use-template (FILE):
     use a template created by --create-template to install requirements with
     specified commands and options.
+  --mass-rebuild:
+    rebuild all installed SlackBuilds at the available version.
 
 EOF
 	return 1;
@@ -60,7 +63,7 @@ EOF
 my $noclean = $config{NOCLEAN};
 my $distclean = $config{DISTCLEAN};
 my $jobs = $config{JOBS};
-my ($help, $vers, $no_install, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall);
+my ($help, $vers, $no_install, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild);
 
 GetOptions(
 	'help|h'            => \$help,
@@ -73,6 +76,7 @@ GetOptions(
 	'nointeractive|r'   => \$non_int,
 	'norequirements|R'  => \$no_reqs,
 	'reinstall'         => \$reinstall,
+	'mass-rebuild'      => \$mass_rebuild,
 	'create-template=s' => \$ctemp,
 	'use-template=s'    => \$utemp,
 );
@@ -80,7 +84,7 @@ GetOptions(
 if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
 
-if (!@ARGV and not length $utemp) { show_usage(); exit 1 }
+if (!@ARGV and not length $utemp and not $mass_rebuild) { show_usage(); exit 1 }
 if (defined $utemp and not length $utemp) { show_usage(); exit 1 }
 if (defined $ctemp and not length $ctemp) { show_usage(); exit 1 }
 
@@ -94,6 +98,15 @@ if ($jobs) {
 
 if ($compat32) {
 	usage_error("compat32 only works on x86_64.") unless get_arch eq 'x86_64';
+	usage_error("compat32 is incompatible with mass-rebuild.") unless not $mass_rebuild;
+}
+
+if ($utemp and $mass_rebuild) {
+	usage_error("mass-rebuild is incompatible with use-template.");
+}
+
+if ($no_reqs and $mass_rebuild) {
+	usage_error("mass-rebuild is incompatible with norequirements.");
 }
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
@@ -113,7 +126,7 @@ if (length $utemp) {
 
 	$build_queue = $template->{build_queue};
 } else {
-	if ($no_reqs or $non_int) {
+	if ($no_reqs or $non_int and not $mass_rebuild) {
 		$build_queue = \@ARGV;
 	} else {
 		for my $sbo (@ARGV) {
@@ -129,6 +142,21 @@ my $pms = get_installed_cpans();
 s/::/-/g for @$pms;
 my %inst_names;
 $inst_names{$_->{name}} = $_ for @$inst_pkgs;
+
+# prepare a queue in case of mass_rebuild
+if ($mass_rebuild) {
+	$reinstall = 1;
+	my $inst_sbos = get_installed_packages('SBO');
+	my %sbos_names;
+	$sbos_names{$_->{name}} = $_ for @$inst_sbos;
+	for my $sbo (%sbos_names) {
+		my $name = $sbos_names{$sbo}{name};
+		# mass_rebuild does not handle -compat32 builds
+		$name =~ s/-compat32$// unless not $name;
+		my $queue = get_build_queue([$name], \%warnings);
+		$build_queue = merge_queues($build_queue, $queue);
+	}
+}
 
 # populate %locations and sanity check
 my %locations = get_sbo_locations($build_queue);
@@ -164,7 +192,11 @@ FIRST: for my $sbo (@$build_queue) {
 	if ($inst_names{$name}) {
 		my $inst_msg = sprintf "%s (%s) is already installed.", $name, $inst_names{$name}{pkg};
 		if ($reinstall and not $non_int) {
-			next FIRST unless prompt("$inst_msg Do you want to reinstall from SBo?", default => 'no');
+			if ($mass_rebuild) {
+				next FIRST unless prompt("$inst_msg Do you want to reinstall from SBo?", default => 'yes');
+			} else {
+				next FIRST unless prompt("$inst_msg Do you want to reinstall from SBo?", default => 'no');
+			}
 		} elsif ($reinstall) {
 			say "$inst_msg Reinstalling.";
 		} else {
@@ -226,6 +258,18 @@ FIRST: for my $sbo (@$build_queue) {
 		$options{$sbo} = $opts;
 		say "$name$added";
 	} else {
+		if ($mass_rebuild) {
+			my $opts_log = "/var/log/sbotools/$sbo";
+			if (-f $opts_log) {
+				my ($prev_fh, $exit) = open_fh($opts_log, '<');
+				if ($exit) {
+					warn $prev_fh;
+				} else {
+					my $opts = <$prev_fh>;
+					$options{$sbo} = $opts;
+				}
+			}
+		}
 		push(@temp_queue, $sbo);
 		say "\n$name$added";
 	}

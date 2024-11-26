@@ -26,6 +26,9 @@
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
                [-i] --use-template FILE
 
+    sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
+               [-ir] [--create-template FILE] --mass-rebuild
+
 ## DESCRIPTION
 
 **sboinstall** is used to install SlackBuilds. If the **-r** flag is not
@@ -124,6 +127,16 @@ commands and build options and save to the specified **FILE**.
 
 Build using the template saved to **FILE.** This disables all user
 prompts.
+
+**\--mass-rebuild**
+
+Generate build queues, rebuild and reinstall all in-tree *\_SBo*
+SlackBuilds except for *compat32* builds. This is generally only useful
+when the Slackware version has been upgraded or (occasionally) on
+-current. Additional SlackBuilds may be installed when dependencies have
+been added. In combination with **\--nointeractive**, saved build
+options are reused automatically. Incompatible with **\--compat32**,
+**\--use-template** and **\--norequirements**.
 
 ## EXIT CODES
 
