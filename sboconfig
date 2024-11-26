@@ -150,10 +150,10 @@ if (exists $changes{SLACKWARE_VERSION}) {
 	usage_error("$warn -V") unless $changes{SLACKWARE_VERSION} =~ m/^(\d+\.\d+|FALSE)$/;
 }
 if (exists $changes{BUILD_IGNORE}) {
-	usage_error("$warn -s") unless $changes{BUILD_IGNORE} =~ /^(TRUE|FALSE)$/;
+	usage_error("$warn -b") unless $changes{BUILD_IGNORE} =~ /^(TRUE|FALSE)$/;
 }
 if (exists $changes{RSYNC_DEFAULT}) {
-	usage_error("$warn -c") unless $changes{RSYNC_DEFAULT} =~ /^(TRUE|FALSE)$/;
+	usage_error("$warn -R") unless $changes{RSYNC_DEFAULT} =~ /^(TRUE|FALSE)$/;
 }
 
 sub config_write {
