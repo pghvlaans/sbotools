@@ -2,6 +2,7 @@
 * Post-3.0
   * *sbofind*: Allow multiple search terms
   * Add a summary **sbotools(1)** man page with executive summaries and a startup guide
+  * *sboinstall*: Use **--mass-rebuild** to rebuild all non-compat32 SlackBuilds
 
 * 3.0 - 2024-11-22
   * *sbocheck*: Use **\--nopull** to check for updated SlackBuilds without updating the tree
