@@ -13,6 +13,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Add a summary sbotools(1) man page with executive summaries and a startup guide
   * sboinstall: Use --mass-rebuild to rebuild all non-compat32 SlackBuilds
   * sboconfig: Fix incorrect misconfiguration warnings
+  * sbocheck: More compact output.
 
 * 3.0 - 2024-11-22
   * sbocheck: Use --nopull to check for updated SlackBuilds without updating the tree

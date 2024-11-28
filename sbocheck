@@ -54,7 +54,7 @@ if ($nopull and not -f $slackbuilds_txt) {
 
 # retrieve and format list of removed builds
 sub get_removed_list {
-	print "Checking for out-of-tree SlackBuilds marked _SBo...\n";
+	print "Checking for out-of-tree builds...";
 	my @removes = @{ get_removed_builds() };
 
 	my %removes;
@@ -77,8 +77,8 @@ sub get_removed_list {
 # retrieve and format list of available updates
 sub get_update_list {
 	my $filter = shift;
-	if ($filter eq 'VERS') { print "Checking for updated SlackBuilds...\n"; }
-	if ($filter eq 'BUILD') { print "Checking for bumped SlackBuilds...\n"; }
+	if ($filter eq 'VERS') { print "\nChecking for updated SlackBuilds..."; }
+	if ($filter eq 'BUILD') { print "Checking for bumped SlackBuilds..."; }
 	my @updates = @{ get_available_updates($filter) };
 	my @outdated = get_local_outdated_versions($filter);
 	return() unless @outdated + @updates;
@@ -154,11 +154,11 @@ sub print_output {
 	my $logfile = shift;
 	my @listing = @_;
 	my $message = "";
-	if($logfile eq '/var/log/sbocheck.log') { $message="\nNo updates available.\n"; }
-	if($logfile eq '/var/log/sbocheck-bumps.log') { $message="\nNo build numbers differ.\n"; }
-	if($logfile eq '/var/log/sbocheck-out-of-tree.log') { $message="\nNo SlackBuilds marked _SBo are out-of-tree.\n"; }
+	if($logfile eq '/var/log/sbocheck.log') { $message="\tNo version updates available."; }
+	if($logfile eq '/var/log/sbocheck-bumps.log') { $message="\tNo build numbers differ."; }
+	if($logfile eq '/var/log/sbocheck-out-of-tree.log') { $message="\tNo out-of-tree _SBo builds."; }
 	if (@listing) {
-		print "\n";
+		print "\tSee $logfile.\n\n";
 		say $_ for @listing;
 		print "\n";
 		# save a log of available updates
@@ -170,7 +170,6 @@ sub print_output {
 		} else {
 			say {$log_fh} $_ for @listing;
 			close $log_fh;
-			say "A copy of the above result is kept in $logfile.\n";
 		}
 	} else {
 		say "$message";
