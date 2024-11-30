@@ -164,6 +164,7 @@ if ($non_int) {
 	for my $sbo (@sbos) {
 		my $name = $sbo;
 		$name =~ s/-compat32$//;
+		next if not $name;
 		my $queue = get_build_queue([$name], \%warnings);
 		if (not $force_reqs) {
 			@$queue = grep { !$inst_names{$_} or $updates{$_} } @$queue;
