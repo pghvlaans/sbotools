@@ -152,7 +152,13 @@ sub get_from_info {
   }
   my @optional = get_optional($sbo);
   for my $requested (@optional) {
-    push @{ $store->{REQUIRES} }, $requested unless $requested eq "NULL";
+    if ($requested ne "NULL") {
+      if ($store->{REQUIRES}[0] eq '') {
+        $store->{REQUIRES}[0] = $requested;
+      } else {
+        push @{ $store->{REQUIRES} }, $requested unless $requested eq "NULL";
+      }
+    }
   }
   return $store->{$args{GET}};
 }
