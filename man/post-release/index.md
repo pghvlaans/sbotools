@@ -20,3 +20,5 @@ The pages here reflect post-release development. For the version 3.0 pages (2024
     * A summary man page with brief descriptions of the tools.
 * [sbotools.conf(5)](sbotools.conf.5.md)
     * View details about all configuration options in *sbotools.conf*.
+* [sbotools.hints(5)](sbotools.hints.5.md)
+    * Blacklist scripts and request optional dependencies with this file.
