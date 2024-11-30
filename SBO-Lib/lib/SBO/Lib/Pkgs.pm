@@ -8,7 +8,7 @@ our $VERSION = '3.0';
 
 use SBO::Lib::Util qw/ %config build_cmp script_error open_read version_cmp /;
 use SBO::Lib::Tree qw/ get_sbo_location get_sbo_locations is_local /;
-use SBO::Lib::Info qw/ get_orig_build_number get_sbo_build_number get_orig_version get_sbo_build_number get_sbo_version /;
+use SBO::Lib::Info qw/ get_orig_build_number get_orig_version get_sbo_build_number get_sbo_version /;
 
 use Exporter 'import';
 
@@ -72,7 +72,9 @@ sub get_available_updates {
         next unless $location;
 
         my $version = get_sbo_version($location);
+	next unless $version;
 	my $bump = get_sbo_build_number($location);
+	next unless $bump;
 	if ($filter eq 'VERS') {
             if (version_cmp($version, $pkg->{version}) != 0) {
                 push @updates, { name => $pkg->{name}, installed => $pkg->{version}, build => $pkg->{numbuild}, update => $version };
@@ -224,16 +226,16 @@ sub get_local_outdated_versions {
       my $orig = get_orig_version($sbo->{name});
       next if not defined $orig;
       if ($filter eq 'VERS') { next if not version_cmp($orig, $sbo->{version}); }
-      if ($filter eq 'BUILD') {
-        if (build_cmp(get_orig_build_number($sbo), $sbo->{numbuild}, $orig, $sbo->{version})) {
+      my $orig_build_number = get_orig_build_number($sbo);
+      if ($filter eq 'BUILD' and defined $orig_build_number) {
+        if (build_cmp($orig_build_number, $sbo->{numbuild}, $orig, $sbo->{version})) {
 	  next;
         }
-      }
-      if ($filter eq 'BOTH') {
-	if (build_cmp(get_orig_build_number($sbo), $sbo->{numbuild}, $orig, $sbo->{version}) && not version_cmp($orig, $sbo->{version})) {
+      } elsif ($filter eq 'BOTH' and defined $orig_build_number) {
+	if (build_cmp($orig_build_number, $sbo->{numbuild}, $orig, $sbo->{version}) && not version_cmp($orig, $sbo->{version})) {
           next;
         }
-      }
+      } else { next; }
 
       push @outdated, { %$sbo, orig => $orig };
     }
