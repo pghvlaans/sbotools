@@ -2,10 +2,11 @@
 * Post-3.0
   * *sbofind*: Allow multiple search terms
   * Add a summary **sbotools(1)** man page with executive summaries and a startup guide
-  * *sboinstall*: Use **--mass-rebuild** to rebuild all non-compat32 SlackBuilds
+  * *sboinstall*: Use **\--mass-rebuild** to rebuild all non-compat32 SlackBuilds
   * *sboconfig*: Fix incorrect misconfiguration warnings
   * *sbocheck*: More compact output.
   * *sbotools.hints*: User-specified blacklist and optional dependency requests
+  * Bugfix: Prevent undefined build number checks with a local override directory
 
 * 3.0 - 2024-11-22
   * *sbocheck*: Use **\--nopull** to check for updated SlackBuilds without updating the tree
