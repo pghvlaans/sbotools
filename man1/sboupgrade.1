@@ -28,7 +28,11 @@ operation over all dependencies.
 .B
 sboinstall
 will offer to install any non-installed dependencies in
-the build queue. This program will not handle circular
+the build queue, taking blacklisted scripts and optional
+dependency specifications in
+.B
+sbotools.hints(5)
+into account. This program will not handle circular
 dependencies.
 .P
 .I
@@ -350,7 +354,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sbosnap(1), sbotools.conf(5)
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sbosnap(1), sbotools.conf(5), sbotools.hints(5)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>

@@ -40,6 +40,7 @@ our @EXPORT_OK = (
     check_multilib
     get_arch
     get_kernel_version
+    get_optional
     get_sbo_from_loc
     get_slack_branch
     get_slack_version
@@ -47,6 +48,7 @@ our @EXPORT_OK = (
     idx
     in
     indent
+    on_blacklist
     open_fh
     open_read
     print_failures
@@ -634,6 +636,72 @@ sub version_cmp {
   }
 
   versioncmp($v1, $v2);
+}
+
+=head2 read_hints
+
+  my $res = read_hints()
+
+C<read_hints> reads the contents of /etc/sbotools/sbotools.hints, returning an array
+of optional dependency requests and blacklisted scripts.
+
+=cut
+
+sub read_hints{
+  my @listings;
+  if(-f "/etc/sbotools/sbotools.hints") {
+    my $contents = slurp("/etc/sbotools/sbotools.hints");
+    usage_error("read_hints: could not read existing /etc/sbotools/sbotools.hints") unless
+      defined $contents;
+    my @contents = split("\n", $contents);
+    for my $entry (@contents) {
+      push @listings, $entry unless grep { /^#|^\s/ } $entry;
+    }
+  }
+  push @listings, "NULL" unless @listings;
+  return @listings;
+}
+
+=head2 get_optional
+
+  my $optional = get_optional($sbo)
+
+C<get_optional()> checks for user-requested optional dependencies for $sbo.
+
+=cut
+
+sub get_optional {
+  script_error("get_optional requires an argument.") unless @_ == 1;
+  my $sbo = shift;
+  my @listings = read_hints();
+  my @optional;
+  for my $entry (@listings) {
+    next if grep { /^#|^!/ } $entry;
+    next if not grep { /\s$sbo$/ } $entry;
+    $entry =~ s/\s$sbo$//;
+    @optional = split(" ", $entry);
+  }
+  push @optional, "NULL" unless @optional;
+
+  return @optional;
+}
+
+=head2 on_blacklist
+
+  my $result = on_blacklist($sbo);
+
+C<on_blacklist()> checks whether a given SlackBuild has been blacklisted.
+
+=cut
+
+sub on_blacklist {
+  script_error("on_blacklist requires an argument.") unless @_ == 1;
+  my $sbo = shift;
+  my @listings = read_hints();
+  for my $entry (@listings) {
+    next if grep { /\s/ } $entry;
+    return 1 if $entry eq "!$sbo"; }
+  return 0;
 }
 
 =head2 build_cmp

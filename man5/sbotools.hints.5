@@ -1,0 +1,58 @@
+.TH sbotools.hints 5 "Sweetmorn, The Aftermath 34, 3190 YOLD" "sbotools 3.0" sbotools
+.SH NAME
+.P
+.B
+sbotools.hints
+- blacklist and optional dependency requests for
+.B
+sbotools
+.SH DESCRIPTION
+.P
+The
+.I
+/etc/sbotools/sbotools.hints
+file is used to blacklist scripts and request optional dependencies.
+.P
+If a script is blacklisted, it will neither be included in build queues nor
+removed by
+.B
+sboremove(1)\fR\
+\&. To blacklist a script, place it on its own line with no whitespace, prepending
+an exclamation mark:
+.RS
+
+!javacc
+
+
+.RE
+Blacklist entries supersede optional dependency requests.
+.P
+Many scripts on
+.B
+slackbuilds.org
+have optional dependencies. To make
+.B
+sbotools
+recognize one or more optional dependencies for a script, make a space-delineated
+list of optional dependencies and place the name of the script at the end:
+.RS
+
+libcacard spice libiscsi qemu
+
+
+.RE
+Commented lines are ignored. There should not be whitespace to the left of any
+entry.
+.SH SEE ALSO
+.P
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sbosnap(1), sboupgrade(1), sbotools.conf(5)
+.SH AUTHORS
+.P
+Jacob Pipkin <j@dawnrazor.net>
+.P
+Luke Williams <xocel@iquidus.org>
+.P
+Andreas Guldstrand <andreas.guldstrand@gmail.com>
+.SH MAINTAINER
+.P
+K. Eugene Carlson <kvngncrlsn@gmail.com>

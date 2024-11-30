@@ -18,9 +18,15 @@ any unneeded dependencies. Dependency information is
 pulled recursively from
 .I
 info
-files; any dependencies
+files and honors the contents of
+.B
+sbotools.hints(5)\fR\
+\&; any dependencies
 that are required by no other installed SlackBuilds will be eligible
-for removal as well. If
+for removal as well.
+.B
+sboremove
+does not handle blacklisted scripts. If
 .B
 sboremove
 is called with the
@@ -79,7 +85,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sbosnap(1), sboupgrade(1), sbotools.conf(5)
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sbosnap(1), sboupgrade(1), sbotools.conf(5), sbotools.hints(5)
 .SH AUTHORS
 .P
 Luke Williams <xocel@iquidus.org>

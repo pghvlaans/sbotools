@@ -78,17 +78,23 @@ file for each SlackBuild found.
 -R|--reverse
 .RS
 Show any reverse dependencies installed on the system.
-Please note that this does not include optional dependencies
-or packages with tags other than
+Please note that optional dependencies must be specified in
+.B
+sbotools.hints(5)
+to be included. Packages with tags other than
 .I
 _SBo\fR\
-\&.
+are not included.
 .RE
 .P
 .B
 -q|--queue
 .RS
-Show the build queue for each SlackBuild found.
+Show the build queue for each SlackBuild found, given the contents
+of
+.I
+/etc/sbotools/sbotools.hints\fR\
+\&.
 .RE
 .SH EXIT CODES
 .P
@@ -119,7 +125,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sboinstall(1), sboremove(1), sbosnap(1), sboupgrade(1), sbotools.conf(5)
+sbocheck(1), sboclean(1), sboconfig(1), sboinstall(1), sboremove(1), sbosnap(1), sboupgrade(1), sbotools.conf(5), sbotools.hints(5)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>

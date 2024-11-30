@@ -29,8 +29,9 @@
 specified, **sboupgrade** will pull the list of requirements from the
 *info* file for any specified SlackBuild. This is a recursive operation
 over all dependencies. **sboinstall** will offer to install any
-non-installed dependencies in the build queue. This program will not
-handle circular dependencies.
+non-installed dependencies in the build queue, taking blacklisted
+scripts and optional dependency specifications in [sbotools.hints(5)](sbotools.hints.5.md)
+into account. This program will not handle circular dependencies.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
 **sboinstall** will offer to run them prior to building. If the *README*
@@ -154,7 +155,7 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sbosnap(1)](sbosnap.1.md), [sbotools.conf(5)](sbotools.conf.5.md)
+[sboremove(1)](sboremove.1.md), [sbosnap(1)](sbosnap.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 

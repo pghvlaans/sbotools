@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '3.0';
 
-use SBO::Lib::Util qw/ :const prompt script_error get_sbo_from_loc get_arch check_multilib uniq save_options %config in /;
+use SBO::Lib::Util qw/ :const prompt script_error get_sbo_from_loc get_arch check_multilib on_blacklist uniq save_options %config in /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
@@ -807,7 +807,8 @@ Copyright (C) 2024, K. Eugene Carlson.
 
 sub _build_queue {
   my ($sbos, $warnings) = @_;
-  my @queue = @$sbos;
+  my @queue;
+  for my $cand (@$sbos) { push @queue, $cand if not on_blacklist($cand); }
   my @result;
 
   while (my $sbo = shift @queue) {

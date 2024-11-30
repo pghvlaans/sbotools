@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '3.0';
 
-use SBO::Lib::Util qw/ in get_arch get_sbo_from_loc open_read script_error slurp usage_error /;
+use SBO::Lib::Util qw/ in get_arch get_sbo_from_loc get_optional open_read script_error slurp usage_error uniq /;
 use SBO::Lib::Tree qw/ get_orig_location get_sbo_location is_local /;
 
 use Exporter 'import';
@@ -149,6 +149,10 @@ sub get_from_info {
     for my $key (qw/DOWNLOAD_x86_64 MD5SUM_x86_64 REQUIRES/) {
       $store->{$key} //= ['']; # if they don't exist, treat them as empty
     }
+  }
+  my @optional = get_optional($sbo);
+  for my $requested (@optional) {
+    push @{ $store->{REQUIRES} }, $requested unless $requested eq "NULL";
   }
   return $store->{$args{GET}};
 }
