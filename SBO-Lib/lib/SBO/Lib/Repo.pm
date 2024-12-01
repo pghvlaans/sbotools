@@ -247,6 +247,7 @@ sub git_sbo_tree {
       if ($branch) {
         $branchres=system(qw/ git checkout /, $branch) == 0;
         if (not $branchres) { say "\nThis git repository does not have a branch named $branch. Remaining in the default branch.\n"; }
+        else { system(qw! git pull !); }
       }
       1;
     };
