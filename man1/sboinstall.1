@@ -301,6 +301,19 @@ and
 .B
 --norequirements\fR\
 \&.
+
+If the mass rebuild process is interrupted after downloading has
+been completed, whether by signal or by build failure, a template named
+.I
+resume.temp
+will be saved to
+.B
+SBO_HOME\fR\
+\&. If this file is present, the mass rebuild will restart from
+the script after the script that failed when
+.B
+--mass-rebuild
+is used again.
 .RS
 .SH EXIT CODES
 .P

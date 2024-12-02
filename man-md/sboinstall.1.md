@@ -139,6 +139,12 @@ been added. In combination with **\--nointeractive**, saved build
 options are reused automatically. Incompatible with **\--compat32**,
 **\--use-template** and **\--norequirements**.
 
+If the mass rebuild process is interrupted after downloading has been
+completed, whether by signal or by build failure, a template named
+*resume.temp* will be saved to **SBO_HOME**. If this file is present,
+the mass rebuild will restart from the script after the script that
+failed when **\--mass-rebuild** is used again.
+
 ## EXIT CODES
 
 **sboinstall** can exit with the following codes:

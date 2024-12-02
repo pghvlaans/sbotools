@@ -114,6 +114,16 @@ slackbuilds_or_fetch();
 
 my (%warnings, $build_queue, $template);
 
+# if SBO_HOME/resume.temp exists, resume the mass rebuild
+my $mtemp = "$config{SBO_HOME}/mass_rebuild.temp";
+my $mtemp_resume = "$config{SBO_HOME}/resume.temp";
+my $resume_mass_rebuild;
+if ($mass_rebuild and -f $mtemp_resume) {
+	$resume_mass_rebuild = 1;
+	$utemp = $mtemp_resume;
+}
+$reinstall = 1 if $mass_rebuild;
+
 if (length $utemp) {
 	my $json = JSON::PP->new->latin1;
 	$non_int = 1;
@@ -144,8 +154,7 @@ my %inst_names;
 $inst_names{$_->{name}} = $_ for @$inst_pkgs;
 
 # prepare a queue in case of mass_rebuild
-if ($mass_rebuild) {
-	$reinstall = 1;
+if ($mass_rebuild and not $resume_mass_rebuild) {
 	my $inst_sbos = get_installed_packages('SBO');
 	my %sbos_names;
 	$sbos_names{$_->{name}} = $_ for @$inst_sbos;
@@ -259,7 +268,7 @@ FIRST: for my $sbo (@$build_queue) {
 		$options{$sbo} = $opts;
 		say "$name$added";
 	} else {
-		if ($mass_rebuild) {
+		if ($mass_rebuild and not $resume_mass_rebuild) {
 			my $opts_log = "/var/log/sbotools/$sbo";
 			if (-f $opts_log) {
 				my ($prev_fh, $exit) = open_fh($opts_log, '<');
@@ -283,7 +292,8 @@ unless ($non_int) {
     exit 0 unless prompt("\nAre you sure you wish to continue?", default => 'yes');
 }
 
-if (defined $ctemp) {
+if (defined $ctemp or $mass_rebuild) {
+	$ctemp = $mtemp unless defined $ctemp;
 	my ($temp_fh, $exit) = open_fh($ctemp, '>');
 	do { warn $temp_fh; exit $exit } if $exit;
 
@@ -295,6 +305,11 @@ if (defined $ctemp) {
 	};
 	print {$temp_fh} $json->encode( $build_settings );
 	close $temp_fh;
+	if ($ctemp ne $mtemp and $mass_rebuild) {
+		my ($m_fh, $exit_m) = open_fh($mtemp, '>');
+		print {$m_fh} $json->encode( $build_settings );
+		close $m_fh;
+	}
 	print "\nTemplate $ctemp saved.\n";
 }
 
@@ -308,9 +323,11 @@ my ($failures, $exit) = process_sbos(
 	NOCLEAN   => $noclean,
 	DISTCLEAN => $distclean,
 	NON_INT   => $non_int,
+	MASS      => $mass_rebuild,
 );
 print_failures($failures);
 
+unlink $mtemp if -f $mtemp;
 if ($exit) {
 	exit $exit;
 } else {

@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '3.0';
 
-use SBO::Lib::Util qw/ :const prompt script_error get_sbo_from_loc get_arch check_multilib on_blacklist uniq save_options %config in /;
+use SBO::Lib::Util qw/ :const prompt script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh uniq save_options %config in /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
@@ -552,6 +552,7 @@ sub process_sbos {
     NOCLEAN    => 'FALSE',
     DISTCLEAN  => 'FALSE',
     NON_INT    => 0,
+    MASS       => 0,
     @_
   );
   my $todo = $args{TODO};
@@ -559,7 +560,10 @@ sub process_sbos {
   my $opts = $args{OPTS};
   my $locs = $args{LOCATIONS};
   my $jobs = $args{JOBS} =~ /^\d+$/ ? $args{JOBS} : 0;
+  my $mass = $args{MASS};
   @$todo >= 1 or script_error('process_sbos requires TODO.');
+  my $mtemp_in = "$config{SBO_HOME}/mass_rebuild.temp";
+  my $mtemp_resume = "$config{SBO_HOME}/resume.temp";
   my (@failures, @symlinks, $err);
   FIRST: for my $sbo (@$todo) {
     my $compat32 = $sbo =~ /-compat32$/ ? 1 : 0;
@@ -605,6 +609,20 @@ sub process_sbos {
     if ($exit) {
       my $fail = $version;
       push @failures, {$sbo => $fail};
+      if ($mass and -f $mtemp_in) {
+        my ($in_fh, $exit_in) = open_fh($mtemp_in, '<');
+        do { warn $in_fh; exit $exit_in } if $exit_in;
+        unlink $mtemp_resume if -f $mtemp_resume;
+        my ($out_fh, $exit_out) = open_fh($mtemp_resume, '>');
+        do { warn $out_fh; exit $exit_out } if $exit_out;
+        while(readline($in_fh)) {
+          if ($. < 3 or $. > $count + 2) {
+            print {$out_fh} $_;
+          }
+        }
+        close $in_fh;
+        close $out_fh;
+      }
       # return now if we're not interactive
       return \@failures, $exit if $args{NON_INT};
       # or if this is the last $sbo
@@ -647,6 +665,7 @@ sub process_sbos {
       unlink $pkg;
     }
   }
+  unlink $mtemp_resume if $mass and -f $mtemp_resume;
   unlink for @symlinks;
   return \@failures, $err;
 }
