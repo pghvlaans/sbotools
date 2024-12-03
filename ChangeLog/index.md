@@ -10,6 +10,7 @@
   * Bugfix: Add a missing `git pull` for custom git branches
   * sboinstall: Use a resume file for **\--mass-rebuild**
   * Clarify **LOCAL_OVERRIDES** documentation
+  * Detect and handle next version (currently 15.1) more effectively
 
 * 3.0 - 2024-11-22
   * *sbocheck*: Use **\--nopull** to check for updated SlackBuilds without updating the tree
