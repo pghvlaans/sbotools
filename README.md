@@ -18,6 +18,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Bugfix: Prevent undefined build number checks with a local override directory
   * Bugfix: Add a missing `git pull` for custom git branches
   * sboinstall: Use a resume file for --mass-rebuild
+  * Clarify LOCAL_OVERRIDES documentation
 
 * 3.0 - 2024-11-22
   * sbocheck: Use --nopull to check for updated SlackBuilds without updating the tree

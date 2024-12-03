@@ -233,10 +233,20 @@ LOCAL_OVERRIDES\fR\
 \&: If set to a
 .B
 path\fR\
-\&, any directory name under that path matching a
+\&, any directory name in the first level under that path matching a
 SlackBuild name will be used in preference to the
 in-tree version. This will work even if the SlackBuild
-is out-of-tree.
+is out-of-tree. Scripts installing packages not marked
+with the
+.I
+_SBo
+tag will not be upgradeable with
+.B
+sboupgrade(1)
+or removable with
+.B
+sboremove(1)\fR\
+\&.
 .I
 README\fR\
 \&,
