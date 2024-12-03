@@ -219,7 +219,8 @@ my %supported = (
   '14.2' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
   '15.0' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
   '15.0+' => 'https://github.com/Ponce/slackbuilds.git',
-  '15.1' => 'https://github.com/Ponce/slackbuilds.git',
+  '15.1' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
+  '15.1+' => 'https://github.com/Ponce/slackbuilds.git',
   current => 'https://github.com/Ponce/slackbuilds.git',
 );
 
@@ -230,7 +231,8 @@ if ($config{RSYNC_DEFAULT} eq 'TRUE') {
     '14.2' => 'rsync://slackbuilds.org/slackbuilds/14.2/',
     '15.0' => 'rsync://slackbuilds.org/slackbuilds/15.0/',
     '15.0+' => 'https://github.com/Ponce/slackbuilds.git',
-    '15.1' => 'https://github.com/Ponce/slackbuilds.git',
+    '15.1' => 'rsync://slackbuilds.org/slackbuilds/15.1/',
+    '15.1+' => 'https://github.com/Ponce/slackbuilds.git',
     current => 'https://github.com/Ponce/slackbuilds.git',
   );
 }
@@ -240,6 +242,7 @@ my %branch = (
   '14.1' => '14.1',
   '14.2' => '14.2',
   '15.0' => '15.0',
+  '15.1' => '15.1',
 );
 
 sub get_slack_version {
@@ -271,7 +274,11 @@ an error message will be shown on STDERR, and the program will exit.
 =cut
 
 sub get_slack_version_url {
-  return $supported{get_slack_version()};
+  my $version = get_slack_version();
+  return $supported{$version} unless $version eq "15.1";
+  my $exists = system(qw! git ls-remote --exit-code https://gitlab.com/SlackBuilds.org/slackbuilds.git --heads origin 15.1 !) == 0;
+  return $supported{$version} if $exists;
+  return $supported{current};
 }
 
 =head2 get_slack_branch

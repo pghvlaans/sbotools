@@ -231,9 +231,9 @@ sub git_sbo_tree {
   my $res;
   my $branch;
   my $branchres;
-  if ($config{GIT_BRANCH} eq 'FALSE') {
+  if ($config{GIT_BRANCH} eq 'FALSE' and $url ne "https://github.com/Ponce/slackbuilds.git") {
     $branch = get_slack_branch();
-  } else {
+  } elsif ($config{GIT_BRANCH} ne 'FALSE') {
     $branch = $config{GIT_BRANCH};
   }
   if (-d "$repo_path/.git" and check_git_remote($repo_path, $url)) {
