@@ -4,7 +4,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '3.0';
+our $VERSION = '3.1';
 
 use SBO::Lib::Util qw/ in get_arch get_sbo_from_loc get_optional open_read script_error slurp usage_error uniq /;
 use SBO::Lib::Tree qw/ get_orig_location get_sbo_location is_local /;
