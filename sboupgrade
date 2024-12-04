@@ -39,9 +39,9 @@ Options (defaults shown first where applicable):
   -d|--distclean (TRUE|FALSE):
     if TRUE, delete downloaded source archives after building.
   -f|--force:
-    force an upgrade, even if the version is the same.
+    force an upgrade, even if the version and build number are the same.
   -i|--noinstall:
-    do not run installpkg at the end of the build process.
+    do not run upgradepkg at the end of the build process.
   -j|--jobs (FALSE|#):
     specify the number of parallel jobs (make).
   -p|--compat32:
