@@ -13,9 +13,3 @@ These features may be added in the future:
 * Using (and generating?) `sqf` files
 
 The above list is non-exhaustive and nothing on it is guaranteed to appear in `sbotools`.
-
-## Completed for 3.1
-
-* Use multiple search terms in `sbofind`
-* Blacklist scripts and request optional dependencies in `/etc/sbotools/sbotools.hints`.
-* Mass rebuild with `sboinstall`; use `sboinstall --mass-rebuild` or `sboinstall -r --mass-rebuild`

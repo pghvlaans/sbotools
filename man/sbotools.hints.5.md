@@ -1,0 +1,56 @@
+# sbotools.hints
+
+[NAME](#name)\
+[DESCRIPTION](#description)\
+[SEE ALSO](#see-also)\
+[AUTHORS](#authors)\
+[MAINTAINER](#maintainer)
+
+------------------------------------------------------------------------
+
+## NAME
+
+**sbotools.hints** - blacklist and optional dependency requests for
+**sbotools**
+
+## DESCRIPTION
+
+The */etc/sbotools/sbotools.hints* file is used to blacklist scripts and
+request optional dependencies.
+
+If a script is blacklisted, it will neither be included in build queues
+nor removed by [sboremove(1)](sboremove.1.md). To blacklist a script, place it on its
+own line with no whitespace, prepending an exclamation mark:
+
+    !javacc 
+
+Blacklist entries supersede optional dependency requests.
+
+Many scripts on **slackbuilds.org** have optional dependencies. To make
+**sbotools** recognize one or more optional dependencies for a script,
+make a space-delineated list of optional dependencies and place the name
+of the script at the end:
+
+    libcacard spice libiscsi qemu
+
+Commented lines are ignored. There should not be whitespace to the left
+of any entry.
+
+## SEE ALSO
+
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md),
+[sboremove(1)](sboremove.1.md), [sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md)
+
+## AUTHORS
+
+Jacob Pipkin \<j (at) dawnrazor (dot) net\>
+
+Luke Williams \<xocel (at) iquidus (dot) org\>
+
+Andreas Guldstrand \<andreas (dot) guldstrand (at) gmail (dot) com\>
+
+## MAINTAINER
+
+K. Eugene Carlson \<kvngncrlsn (at) gmail (dot) com\>
+
+------------------------------------------------------------------------

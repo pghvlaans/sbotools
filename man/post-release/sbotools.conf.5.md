@@ -70,7 +70,7 @@ changes.
 
 **LOCAL_OVERRIDES=(FALSE\|/path)**
 
-If set to a **path**, any directory name in the first level under that
+If set to a **path**, any directory name in the top level under that
 path matching a SlackBuild name will be used in preference to the
 in-tree version. This will work even if the SlackBuild is out-of-tree.
 Scripts installing packages not marked with the *\_SBo* tag will not be

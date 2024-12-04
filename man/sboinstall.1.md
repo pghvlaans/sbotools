@@ -26,14 +26,18 @@
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
                [-i] --use-template FILE
 
+    sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
+               [-ir] [--create-template FILE] --mass-rebuild
+
 ## DESCRIPTION
 
 **sboinstall** is used to install SlackBuilds. If the **-r** flag is not
 specified, **sboinstall** will pull the list of requirements from the
 *info* file for any specified SlackBuild. This is a recursive operation
 over all dependencies. **sboinstall** will offer to install any
-non-installed dependencies in the build queue. This program will not
-handle circular dependencies.
+non-installed dependencies in the build queue, taking blacklisted
+scripts and optional dependency specifications in [sbotools.hints(5)](sbotools.hints.5.md)
+into account. This program will not handle circular dependencies.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
 **sboinstall** will offer to run them prior to building. If the *README*
@@ -125,6 +129,22 @@ commands and build options and save to the specified **FILE**.
 Build using the template saved to **FILE.** This disables all user
 prompts.
 
+**\--mass-rebuild**
+
+Generate build queues, rebuild and reinstall all in-tree *\_SBo*
+SlackBuilds except for *compat32* builds. This is generally only useful
+when the Slackware version has been upgraded or (occasionally) on
+-current. Additional SlackBuilds may be installed when dependencies have
+been added. In combination with **\--nointeractive**, saved build
+options are reused automatically. Incompatible with **\--compat32**,
+**\--use-template** and **\--norequirements**.
+
+If the mass rebuild process is interrupted after downloading has been
+completed, whether by signal or by build failure, a template named
+*resume.temp* will be saved to **SBO_HOME**. If this file is present,
+the mass rebuild will restart from the script after the script that
+failed when **\--mass-rebuild** is used again.
+
 ## EXIT CODES
 
 **sboinstall** can exit with the following codes:
@@ -149,7 +169,7 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboremove(1)](sboremove.1.md),
-[sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md)
+[sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 

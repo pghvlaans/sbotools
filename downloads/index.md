@@ -10,6 +10,8 @@ This fork of `sbotools` was briefly available as `sbotools3` in late 2024. Any `
 
 ## Release Tarballs
 
+* [sbotools-3.1.tar.gz](sbotools-3.1.tar.gz)
+    * md5sum: `2c3cced701e12dad89b70b01e6b934af`
 * [sbotools-3.0.tar.gz](sbotools-3.0.tar.gz)
     * md5sum: `11a00ee87396bcd993c3cd1be8299f87`
 * [sbotools3-1.1.tar.gz](sbotools3-1.1.tar.gz)
