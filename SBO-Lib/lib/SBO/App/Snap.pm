@@ -9,7 +9,7 @@ package SBO::App::Snap;
 #          Luke Williams <xocel@iquidus.org>
 #          Andreas Guldstrand <andreas.guldstrand@gmail.com>
 # maintainer: K. Eugene Carlson <kvngncrlsn@gmail.com>
-# license: WTFPL <http://sam.zoy.org/wtfpl/COPYING>
+# license: MIT License
 
 use 5.16.0;
 use strict;

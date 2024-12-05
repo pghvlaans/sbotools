@@ -6,7 +6,7 @@ package SBO::App;
 #          Jacob Pipkin <j@dawnrazor.net>
 #          Andreas Guldstrand <andreas.guldstrand@gmail.com>
 # maintainer: K. Eugene Carlson <kvngncrlsn@gmail.com>
-# license: WTFPL <http://sam.zoy.org/wtfpl/COPYING>
+# license: MIT License
 
 use 5.16.0;
 use strict;

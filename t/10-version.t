@@ -18,8 +18,7 @@ make_slackbuilds_txt();
 my $version = $SBO::Lib::VERSION;
 my $ver_text = <<"VERSION";
 sbotools version $version
-licensed under the WTFPL
-<http://sam.zoy.org/wtfpl/COPYING>
+licensed under the MIT License
 VERSION
 
 # 1-8: test -v output of sbo* scripts

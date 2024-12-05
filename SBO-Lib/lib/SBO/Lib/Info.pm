@@ -335,7 +335,7 @@ SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 
 =head1 LICENSE
 
-The sbotools are licensed under the WTFPL <http://sam.zoy.org/wtfpl/COPYING>.
+The sbotools are licensed under the MIT License.
 
 Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
 Copyright (C) 2024, K. Eugene Carlson.
