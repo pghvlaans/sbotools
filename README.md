@@ -8,6 +8,9 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 
 ## Changes
 
+* Post-Release
+  * sbocheck: Do not use compact format for CLASSIC mode
+
 * 3.1 - 2024-12-05
   * sbofind: Allow multiple search terms
   * Add a summary sbotools(1) man page with executive summaries and a startup guide
