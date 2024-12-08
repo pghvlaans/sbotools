@@ -10,6 +10,7 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 These features may be added in the future:
 
+* GPG verification
 * Edit pod and install man pages
 * Rebuild a reverse dependency queue
 * Using (and generating?) `sqf` files
