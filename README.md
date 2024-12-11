@@ -10,6 +10,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 
 * Post-Release
   * sbocheck: Do not use compact format for CLASSIC mode
+  * Repo.pm: Prompt for deletion if SBO_HOME/repo is malformed instead of simply erroring out
 
 * 3.1 - 2024-12-05
   * sbofind: Allow multiple search terms

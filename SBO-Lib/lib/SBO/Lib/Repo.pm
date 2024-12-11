@@ -114,13 +114,16 @@ sub check_git_remote {
 
   my $bool = check_repo();
 
-C<check_repo()> checks if the path in C<$repo_path> exists and is an empty
+C<check_repo()> is used when SLACKBUILDS.txt cannot be found.
+It checks if the path in C<$repo_path> exists and is an empty
 directory, and returns a true value if so.
 
-If it exists but isn't empty, it will exit with a usage error.
+If C<$repo_path> exists and is non-empty, it is malformed, and the user
+is prompted to delete it to proceed. A usage error results if deletion
+is declined.
 
-If it doesn't exist, it will attempt to create it and return a true value. If
-it fails to create it, it will exit with a usage error.
+If C<$repo_path> does not exist, creation will be attempted, returning a true
+value on success. Creation failure results in a usage error.
 
 =cut
 
@@ -130,7 +133,12 @@ sub check_repo {
     opendir(my $repo_handle, $repo_path);
     FIRST: while (my $dir = readdir $repo_handle) {
       next FIRST if in($dir => qw/ . .. /);
-      usage_error("$repo_path exists and is not empty. Exiting.\n");
+      if (prompt("$repo_path is malformed and fetching cannot proceed. Delete?", default=>"no")) {
+        remove_tree($repo_path);
+	return check_repo();
+      } else {
+        usage_error("$repo_path exists and is not empty. Exiting.\n");
+      }
     }
   } else {
     eval { make_path($repo_path) }
