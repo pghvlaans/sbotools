@@ -51,6 +51,9 @@ from <ftp://slackware.uk/sbosrcarch/> as a fallback measure. The
 **\--all** flag may be passed to upgrade all eligible SlackBuilds
 simultaneously.
 
+**sboupgrade** will verify the local repository with **gpg** if
+**GPG_VERIFY** is **TRUE**.
+
 ## OPTIONS
 
 **-h\|\--help**

@@ -23,9 +23,10 @@
     sboconfig [-l]
 
     sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \
-              [-j #|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo] \
-              [-B branch_name|FALSE] [-b TRUE|FALSE] [-o /path|FALSE] \
-              [-V #.#|FALSE] [-r url|FALSE] [-R TRUE|FALSE]
+              [-g TRUE|FALSE ] [-j #|FALSE] [-p /path|FALSE] \
+              [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] \
+              [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE] \
+              [-R TRUE|FALSE]
 
 ## DESCRIPTION
 
@@ -83,6 +84,15 @@ building. These are the build and *package-(sbo)* directories under
 after building. Source archives are otherwise retained in
 */usr/sbo/distfiles* (with default **SBO_HOME**). If **PKG_DIR** is set,
 package archives will be saved there regardless of **DISTCLEAN**.
+
+**-g\|\--gpg-verify (FALSE\|TRUE)**
+
+**GPG_VERIFY**: If **TRUE**, use **gpg** to verify the contents of the
+local repository when running [sbosnap(1)](sbosnap.1.md), [sbocheck(1)](sbocheck.1.md),
+[sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md). Missing public keys are
+detected, and a download from
+[keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 will be offered
+if available.
 
 **-j\|\--jobs (FALSE\|#)**
 

@@ -18,7 +18,7 @@ _sbocheck() {
 
   case "${cmd}" in
     sbocheck)
-      opts="-h -v -n --help --version --nopull"
+      opts="-h -v -g -n --help --version --gpg-verify --nopull"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0

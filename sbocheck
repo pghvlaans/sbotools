@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree fetch_tree get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions $slackbuilds_txt slackbuilds_or_fetch %config /;
+use SBO::Lib qw/ update_tree fetch_tree get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions $slackbuilds_txt slackbuilds_or_fetch verify_gpg %config /;
 use Getopt::Long;
 use File::Basename;
 use List::Util 'max';
@@ -31,6 +31,8 @@ Options:
     this screen.
   -v|--version:
     version information.
+  -g|--gpg-verify:
+    perform gpg verification.
   -n|--nopull:
     run without updating the tree.
 
@@ -38,12 +40,19 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $nopull);
+my ($help, $vers, $gpg, $nopull);
 
-GetOptions('help|h' => \$help, 'version|v' => \$vers, 'nopull|n' => \$nopull);
+GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'nopull|n' => \$nopull);
 
 if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
+
+if (not $gpg) {
+	$gpg = $config{GPG_VERIFY} if not $gpg;
+	$gpg = $gpg eq 'TRUE' ? 1 : 0;
+}
+if ($gpg and $nopull) { verify_gpg(); }
+elsif ($gpg) { $config{GPG_VERIFY} = "TRUE"; }
 
 update_tree() unless $nopull;
 if ($nopull and not -f $slackbuilds_txt) {

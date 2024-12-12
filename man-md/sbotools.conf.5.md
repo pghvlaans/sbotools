@@ -34,6 +34,13 @@ Source archives are otherwise retained in */usr/sbo/distfiles* (with
 *SBO_HOME=/usr/sbo*) by default. If **PKG_DIR** is set, package archives
 will be saved there regardless of **DISTCLEAN**.
 
+GPG_VERIFY: If **TRUE**, use **gpg** to verify the contents of the local
+repository when running [sbosnap(1)](sbosnap.1.md), [sbocheck(1)](sbocheck.1.md),
+[sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md). Missing public keys are
+detected, and a download from
+[keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 will be offered
+if available.
+
 **JOBS=(FALSE\|#)**
 
 If **numerical**, pass to the **-j** argument when a SlackBuild invoking

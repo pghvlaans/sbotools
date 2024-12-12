@@ -55,6 +55,9 @@ or *DOWNLOAD_x86_64* variables in the *info* file. If either the
 download or the md5sum check fails, a new download will be attempted
 from <ftp://slackware.uk/sbosrcarch/> as a fallback measure.
 
+**sboinstall** will verify the local repository with **gpg** if
+**GPG_VERIFY** is **TRUE**.
+
 ## OPTIONS
 
 **-h\|\--help**

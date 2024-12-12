@@ -6,12 +6,13 @@ use warnings;
 
 our $VERSION = '3.1';
 
-use SBO::Lib::Util qw/ %config prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in _ERR_DOWNLOAD /;
+use SBO::Lib::Util qw/ %config prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp _ERR_DOWNLOAD /;
 
 use Cwd;
 use File::Copy;
 use File::Find;
 use File::Path qw/ make_path remove_tree /;
+use File::Temp qw/ tempfile /;
 use Sort::Versions;
 
 use Exporter 'import';
@@ -28,6 +29,7 @@ our @EXPORT_OK = qw{
   rsync_sbo_tree
   slackbuilds_or_fetch
   update_tree
+  verify_gpg
 
   $distfiles
   $repo_path
@@ -133,7 +135,7 @@ sub check_repo {
     opendir(my $repo_handle, $repo_path);
     FIRST: while (my $dir = readdir $repo_handle) {
       next FIRST if in($dir => qw/ . .. /);
-      if (prompt("$repo_path is malformed and fetching cannot proceed. Delete?", default=>"no")) {
+      if (prompt("SLACKBUILDS.TXT is missing and the fetch cannot proceed. Delete $repo_path?", default=>"no")) {
         remove_tree($repo_path);
 	return check_repo();
       } else {
@@ -257,7 +259,6 @@ sub git_sbo_tree {
         if (not $branchres) { say "\nThis git repository does not have a branch named $branch. Remaining in the default branch.\n"; }
         else { system(qw! git pull !); }
       }
-      1;
     };
   } else {
     chdir $config{SBO_HOME} or return 0;
@@ -272,8 +273,13 @@ sub git_sbo_tree {
     }
   }
   _race::cond '$cwd could be deleted here';
-  return 1 if chdir $cwd and $res;
-  return 0;
+  if ($config{GPG_VERIFY} eq 'TRUE') {
+    return verify_git_commit($branch) if $branchres;
+    return verify_git_commit("origin");
+  } else {
+    return 1 if chdir $cwd and $res;
+    return 0;
+  }
 }
 
 =head2 migrate_repo
@@ -353,7 +359,11 @@ sub rsync_sbo_tree {
   # only slackware versions above 14.1 have an rsync that supports --info=progress2
   if (versioncmp(get_slack_version(), '14.1') == 1) { @info = ('--info=progress2'); }
   my @args = ('rsync', @info, '-a', '--delete', $url);
-  return system(@args, $repo_path) == 0;
+  my $res = system(@args, $repo_path) == 0;
+  if ($config{GPG_VERIFY}) {
+    return 0 unless $res;
+    return verify_rsync("fullcheck");
+  } else { return $res; }
 }
 
 =head2 slackbuilds_or_fetch
@@ -394,6 +404,197 @@ sub update_tree {
   fetch_tree(), return() unless chk_slackbuilds_txt();
   say 'Updating SlackBuilds tree...';
   pull_sbo_tree(), return 1;
+}
+
+=head2 verify_git_commit
+
+  verify_git_commit($branch);
+
+C<verify_git_commit()> attempts to verify the GPG signature of the most
+recent git commit, if any.
+
+=cut
+
+sub verify_git_commit {
+  script_error('verify_git_commit requires an argument.') unless @_ == 1;
+  my $branch = shift;
+  say "";
+  my $res = system(qw/ git verify-commit /, $branch) == 0;
+  return $res if $res;
+  # send stderr from --raw to file to determine reason for failure
+  # if no output from "verify commit", it simply wasn't a signed commit
+  my ($fh, $tempfile) = tempfile(DIR => "$config{SBO_HOME}");
+  `git verify-commit --raw $branch 2> $tempfile`;
+  if (not -s $tempfile) {
+    unlink $tempfile if -f $tempfile;
+    usage_error("The most recent commit on this git branch is unsigned.\n\nExiting. To use this branch, set GPG_VERIFY to FALSE.\n");
+  }
+  my @raw = split(" ", slurp($tempfile));
+  close $fh;
+  unlink($tempfile);
+  # ERRSIG: signed, but public key is missing; attempt download
+  if (grep(/ERRSIG/, @raw)) {
+    my $fingerprint;
+    my $next = 0;
+    for my $word (@raw) {
+      if ($next) {
+        $fingerprint = $word if $next;
+	last;
+      }
+      $next = 1 if $word eq "ERRSIG";
+    }
+    my $newkey = retrieve_key($fingerprint);
+    return verify_git_commit($branch) if $newkey;
+  }
+  # EXPSIG/EXPKEYSIG: warning and exit (note: EXPSIG is unimplemented in gnupg as of 2024-12-10)
+  if (grep(/EXPKEYSIG|EXPSIG/, @raw)) {
+    usage_error("The most recent commit on this git branch was signed with an expired key.\n\nExiting.\n");
+  }
+  # BADSIG: big warning and exit
+  if (grep(/BADSIG/, @raw)) {
+    usage_error("WARNING! The most recent commit on this git branch was signed with a bad key.\n\nUsing this repository is strongly discouraged. Exiting.\n");
+  }
+  # REVKEYSIG: warning and exit
+  if (grep(/REVKEYSIG/, @raw)) {
+    usage_error("WARNING! The most recent commit on this git branch was signed with a revoked key.\n\nUsing this repository is probably a bad idea. Exiting.\n");
+  }
+}
+
+=head2 verify_rsync
+
+  verify_rsync($fullcheck);
+
+C<verify_rsync()> checks the signature of CHECKSUMS.md5.asc, prompting the user to download
+the public key if unavailable.
+
+=cut
+
+sub verify_rsync {
+  script_error('verify_rsync requires an argument.') unless @_ == 1;
+  my $fullcheck = shift;
+  # This file indicates that a full verification on fetch failed, or that
+  # CHECKSUMS.md5 was altered afterwards.
+  my $rsync_lock = "$config{SBO_HOME}/.rsync.lock";
+  chdir $repo_path;
+  my $tempfile = tempfile(DIR => "$config{SBO_HOME}");
+  my $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw! --verify CHECKSUMS.md5.asc !) == 0;
+  my @raw = split(" ", slurp($tempfile));
+  unlink $tempfile;
+  if ($fullcheck) {
+    if (not $checksum_asc_ok) {
+      # ERRSIG: signed, but public key is missing; attempt download
+      if (grep(/ERRSIG/, @raw)) {
+	my $fingerprint;
+	my $next = 0;
+        for my $word (@raw) {
+          if ($next) {
+            $fingerprint = $word if $next;
+            last;
+          }
+          $next = 1 if $word eq "ERRSIG";
+        }
+        my $newkey = retrieve_key($fingerprint);
+        return verify_rsync("fullcheck") if $newkey;
+      }
+      # Every other failure scenario requires the lock file.
+      system(qw/ touch /, $rsync_lock);
+      # EXPKEYSIG/EXPSIG: warning and exit (note: EXPSIG is unimplemented in gnupg as of 2024-12-10)
+      if (grep(/EXPKEYSIG|EXPSIG/, @raw)) {
+        usage_error("\nCHECKSUMS.md5 was signed with an expired key.\n\nExiting.\n");
+      }
+      # BADSIG: big warning and exit
+      if (grep(/BADSIG/, @raw)) {
+        usage_error("\nWARNING! CHECKSUMS.md5 was signed with a bad key.\n\nUsing this repository is strongly discouraged. Exiting.\n");
+      }
+      # REVKEYSIG: warning and exit
+      if (grep(/REVKEYSIG/, @raw)) {
+        usage_error("\nWARNING! CHECKSUMS.md5 was signed with a revoked key.\n\nUsing this repository is probably a bad idea. Exiting.\n");
+      }
+    } else {
+      chdir("$repo_path");
+      my $res = system("tail +13 CHECKSUMS.md5 | md5sum -c --ignore-missing --quiet -") == 0;
+      if ($res) {
+        # All is well, so release the lock, if any.
+        unlink($rsync_lock) if -f $rsync_lock;
+        return $res;
+      } else {
+        system(qw/ touch /, $rsync_lock);
+        usage_error("\nOne or more md5 errors was detected after sync.\n\nRemove $rsync_lock or turn off GPG verification only if you are certain this is in error.\n\nExiting.\n");
+      }
+    }
+  } elsif (-f $rsync_lock) {
+    usage_error("\nThe previous rsync verification failed. Please run sbocheck.\n\nExiting.\n");
+  } else {
+    if (not $checksum_asc_ok) {
+      system(qw/ touch /, $rsync_lock);
+      usage_error("\nThe contents of CHECKSUMS.md5 have been altered. Please run sbocheck.\n\nExiting.\n") unless $checksum_asc_ok;
+    }
+    return 1;
+  }
+}
+
+=head2 verify_gpg
+
+  verify_gpg();
+
+C<verify_gpg> determines whether a git repo is in use, and then
+runs GnuPG verification. It can be called from outside Repo.pm.
+
+=cut
+
+sub verify_gpg {
+  my $url = $config{REPO};
+  if ($url eq 'FALSE') {
+    $url = get_slack_version_url();
+  } else {
+    usage_error("The origins of $repo_path are unclear.\n\nPlease check your REPO, VERSION and RSYNC_DEFAULT settings. Exiting.");
+  }
+  if ($url =~ m!^rsync://!) {
+    return verify_rsync(0);
+  } else {
+    chdir $repo_path or return 0;
+    my $branch;
+    if (-f "$repo_path/.git/HEAD") {
+      $branch = slurp("$repo_path/.git/HEAD");
+      $branch =~ s|.*/||s;
+      $branch =~ s|\n||s;
+    }
+    return verify_git_commit($branch) if $branch;
+    usage_error("$repo_path appears to be neither a git nor an rsync mirror.\n\nPlease check your REPO, VERSION and RSYNC_DEFAULT settings. Exiting.");
+  }
+}
+
+=head2 retrieve_key
+
+  retrieve_key($fingerprint);
+
+C<retrieve_key> attempts to retrieve a missing public key and add it to
+the keyring.
+
+=cut
+
+sub retrieve_key {
+  script_error('retrieve_key requires an argument.') unless @_ == 1;
+  my $fingerprint = shift;
+  say "\nThe public key for GPG verification is missing.";
+  say "Searching by keyid $fingerprint...\n";
+  open STDERR, '>', '/dev/null';
+  system(qw! gpg --no-tty --batch --keyserver hkp://keyserver.ubuntu.com:80 --search-keys !, $fingerprint);
+  say "";
+  if (prompt("Download and add this key?", default => "no")) {
+    my $res = system(qw\ gpg --keyserver hkp://keyserver.ubuntu.com:80 --receive-keys \, $fingerprint) == 0;
+    close STDERR;
+    if ($res) {
+      print("Key $fingerprint has been added.");
+      return $res;
+    } else {
+      print("Adding key $fingerprint failed.");
+      return 0;
+    }
+  } else {
+    close STDERR;
+    return 0;
+  }
 }
 
 =head1 AUTHORS

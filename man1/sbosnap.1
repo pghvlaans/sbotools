@@ -19,10 +19,7 @@ sbosnap
 is used to download and update a local copy of the
 .B
 slackbuilds.org
-tree, without the
-.I
-*.tar.gz{,.asc}
-files. Note that
+tree. Note that
 .B
 sbocheck(1)
 also updates the tree and checks for updated and removed
@@ -47,6 +44,19 @@ sboconfig(1)
 or
 .B
 sbotools.conf(5)\fR\
+\&.
+.P
+.B
+sbosnap
+will verify the local repository with
+.B
+gpg
+if
+.B
+GPG_VERIFY
+is
+.B
+TRUE\fR\
 \&.
 .SH OPTIONS
 .P

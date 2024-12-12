@@ -11,7 +11,7 @@ tree and check for updates
 .P
 sbocheck [-h|-v]
 .P
-sbocheck [-n]
+sbocheck [-g|-n]
 .SH DESCRIPTION
 .P
 .B
@@ -60,7 +60,52 @@ the
 .B
 --nopull
 option.
+.B
+sbocheck
+will perform
+.B
+gpg
+verification upon pulling the tree if
+.B
+GPG_VERIFY
+is
+.B
+TRUE
+(see
+.B
+sboconfig(1)
+or
+.B
+sbotools.conf(5)\fR\
+). The 
+.B
+--gpg-verify
+option has the same effect. Passing both
+.B
+--gpg-verify
+and
+.B
+--nopull
+verifies the repo in-place without fetching.
 .SH OPTIONS
+.P
+.B
+-g|--gpg-verify
+.RS
+Use
+.B
+gpg
+to verify the fetched repository, even if
+.B
+GPG_VERIFY
+is
+.B
+FALSE\fR\
+\&. When called with
+.B
+--nopull\fR\
+\&, verify the repo without fetching.
+.RE
 .P
 .B
 -n|--nopull

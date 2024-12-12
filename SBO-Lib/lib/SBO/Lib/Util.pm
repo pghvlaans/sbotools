@@ -124,6 +124,7 @@ our %config = (
   BUILD_IGNORE => 'FALSE',
   GIT_BRANCH => 'FALSE',
   RSYNC_DEFAULT => 'FALSE',
+  GPG_VERIFY => 'FALSE',
 );
 
 read_config();

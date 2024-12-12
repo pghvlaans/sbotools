@@ -14,9 +14,10 @@ sboconfig [-h|-v]
 sboconfig [-l]
 .P
 sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \\
-          [-j #|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo] \\
-          [-B branch_name|FALSE] [-b TRUE|FALSE] [-o /path|FALSE] \\
-          [-V #.#|FALSE] [-r url|FALSE] [-R TRUE|FALSE]
+          [-g TRUE|FALSE ] [-j #|FALSE] [-p /path|FALSE] \\
+          [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] \\
+          [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE] \\
+          [-R TRUE|FALSE]
 .SH DESCRIPTION
 .P
 .B
@@ -168,6 +169,35 @@ is set, package archives will be saved there regardless of
 .B
 DISTCLEAN\fR\
 \&.
+.RE
+.P
+.B
+-g|--gpg-verify (FALSE|TRUE)
+.RS
+.B
+GPG_VERIFY\fR\
+\&: If
+.B
+TRUE\fR\
+\&, use
+.B
+gpg
+to verify the contents of the local repository when running
+.B
+sbosnap(1)\fR\
+\&,
+.B
+sbocheck(1)\fR\
+\&,
+.B
+sboinstall(1)
+and
+.B
+sboupgrade(1)\fR\
+\&. Missing public keys are detected, and a download from
+.UR keyserver.ubuntu.com
+.UE
+on port 80 will be offered if available.
 .RE
 .P
 .B
