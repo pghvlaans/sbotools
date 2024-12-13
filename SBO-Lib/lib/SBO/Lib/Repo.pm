@@ -465,7 +465,10 @@ sub verify_git_commit {
   verify_rsync($fullcheck);
 
 C<verify_rsync()> checks the signature of CHECKSUMS.md5.asc, prompting the user to download
-the public key if unavailable.
+the public key if unavailable. If "fullcheck" is passed (i.e., when syncing the local
+repository), md5 verification is performed as well. Failure at any juncture leaves a lockfile
+.rsync.lock in SBO_HOME, which prevents script installation and upgrade until the issue has
+been resolved, GPG_TRUE is set to FALSE or the lockfile is removed.
 
 =cut
 
@@ -477,7 +480,7 @@ sub verify_rsync {
   my $rsync_lock = "$config{SBO_HOME}/.rsync.lock";
   chdir $repo_path;
   my $tempfile = tempfile(DIR => "$config{SBO_HOME}");
-  my $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw! --verify CHECKSUMS.md5.asc !) == 0;
+  my $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw/ --verify CHECKSUMS.md5.asc /) == 0;
   my @raw = split(" ", slurp($tempfile));
   unlink $tempfile;
   if ($fullcheck) {
@@ -519,7 +522,7 @@ sub verify_rsync {
         return $res;
       } else {
         system(qw/ touch /, $rsync_lock);
-        usage_error("\nOne or more md5 errors was detected after sync.\n\nRemove $rsync_lock or turn off GPG verification only if you are certain this is in error.\n\nExiting.\n");
+        usage_error("\nOne or more md5 errors was detected after sync.\n\nRemove $rsync_lock or turn off GPG verification with caution.\n\nExiting.\n");
       }
     }
   } elsif (-f $rsync_lock) {

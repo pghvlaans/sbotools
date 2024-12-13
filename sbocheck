@@ -48,7 +48,7 @@ if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
 
 if (not $gpg) {
-	$gpg = $config{GPG_VERIFY} if not $gpg;
+	$gpg = $config{GPG_VERIFY};
 	$gpg = $gpg eq 'TRUE' ? 1 : 0;
 }
 if ($gpg and $nopull) { verify_gpg(); }
