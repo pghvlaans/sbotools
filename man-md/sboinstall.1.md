@@ -56,7 +56,8 @@ download or the md5sum check fails, a new download will be attempted
 from <ftp://slackware.uk/sbosrcarch/> as a fallback measure.
 
 **sboinstall** will verify the local repository with **gpg** if
-**GPG_VERIFY** is **TRUE**.
+**GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
+Slackware 14.0 and Slackware 14.1.
 
 ## OPTIONS
 

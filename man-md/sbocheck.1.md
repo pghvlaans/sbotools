@@ -41,7 +41,8 @@ pass the **\--nopull** option. **sbocheck** will perform **gpg**
 verification upon pulling the tree if **GPG_VERIFY** is **TRUE** (see
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). The **\--gpg-verify** option
 has the same effect. Passing both **\--gpg-verify** and **\--nopull**
-verifies the repo in-place without fetching.
+verifies the repo in-place without fetching. Only rsync repositories can
+be verified on Slackware 14.0 and Slackware 14.1.
 
 ## OPTIONS
 
@@ -49,7 +50,8 @@ verifies the repo in-place without fetching.
 
 Use **gpg** to verify the fetched repository, even if **GPG_VERIFY** is
 **FALSE**. When called with **\--nopull**, verify the repo without
-fetching.
+fetching. Only rsync repositories can be verified on Slackware 14.0 and
+Slackware 14.1.
 
 **-n\|\--nopull**
 

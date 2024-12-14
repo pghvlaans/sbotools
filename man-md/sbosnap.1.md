@@ -33,7 +33,8 @@ for rsync repositories, and **git** is used for git repositories.
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
 
 **sbosnap** will verify the local repository with **gpg** if
-**GPG_VERIFY** is **TRUE**.
+**GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
+Slackware 14.0 and Slackware 14.1.
 
 ## OPTIONS
 

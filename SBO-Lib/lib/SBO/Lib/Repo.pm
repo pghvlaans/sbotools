@@ -495,7 +495,17 @@ sub verify_rsync {
     if ($fullcheck) {
       do {
         open STDERR, '>', '/dev/null';
-	$checksum_asc_ok = system(qw/ find . -name "*.asc" -exec gpg --verify {} \; /) == 0;
+        $checksum_asc_ok = 1;
+        say "\nChecking remaining .asc files...";
+        my @ascs = split(' ', `find . -name "*.asc"`);
+        for my $asc (@ascs) {
+          my $ascres = system(qw/ gpg --verify /, $asc) == 0;
+	  if (not $ascres) {
+            $checksum_asc_ok = 0;
+            last;
+          }
+        }
+	say "Done.";
 	close STDERR;
       }
     }
@@ -539,7 +549,24 @@ sub verify_rsync {
       if(versioncmp(get_slack_version(), '14.1') == 1) {
         $res = system("tail +13 CHECKSUMS.md5 | md5sum -c --ignore-missing --quiet -") == 0;
       } else {
-        $res = system("tail +13 CHECKSUMS.md5 | md5sum -c --quiet -") == 0;
+        # Disregard missing files.
+        my $md5temp = "$repo_path/CHECKSUMS.temp.md5";
+        unlink $md5temp if -f $md5temp;
+        my ($temp_fh, $exit) = open_fh($md5temp, '>');
+        return 0 if $exit;
+        my @checksum_lines = split('\n', slurp("CHECKSUMS.md5"));
+        for my $checksum_line (@checksum_lines){
+          my $checksum_file = $checksum_line;
+          $checksum_file =~ s/^.*\s//s;
+          print { $temp_fh } "$checksum_line\n" if -f $checksum_file;
+        }
+        close $temp_fh;
+        if (-f $md5temp) {
+          $res = system(qw/ md5sum -c --quiet /, $md5temp) == 0;
+          unlink $md5temp;
+        } else {
+          $res = 0;
+        }
       }
       if ($res) {
         # All is well, so release the lock, if any.
