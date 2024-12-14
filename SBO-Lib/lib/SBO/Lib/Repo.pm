@@ -487,27 +487,25 @@ sub verify_rsync {
   chdir $repo_path;
   my $tempfile = tempfile(DIR => "$config{SBO_HOME}");
   my $checksum_asc_ok;
-  # CHECKSUMS.md5.asc is unsigned in the 14.0 repository
+  # CHECKSUMS.md5.asc is unsigned in the 14.0 repository; check all .asc files
   if (versioncmp(get_slack_version(), '14.0') == 1) {
     $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw/ --verify CHECKSUMS.md5.asc /) == 0;
   } else {
     $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw! --verify system/sbotools.tar.gz.asc !) == 0;
-    if ($fullcheck) {
-      do {
-        open STDERR, '>', '/dev/null';
-        $checksum_asc_ok = 1;
-        say "\nChecking remaining .asc files...";
-        my @ascs = split(' ', `find . -name "*.asc"`);
-        for my $asc (@ascs) {
-          my $ascres = system(qw/ gpg --verify /, $asc) == 0;
-	  if (not $ascres) {
-            $checksum_asc_ok = 0;
-            last;
-          }
+    do {
+      open STDERR, '>', '/dev/null';
+      $checksum_asc_ok = 1;
+      say "\nChecking remaining .asc files...";
+      my @ascs = split(' ', `find . -name "*.asc"`);
+      for my $asc (@ascs) {
+        my $ascres = system(qw/ gpg --verify /, $asc) == 0;
+        if (not $ascres) {
+          $checksum_asc_ok = 0;
+          last;
         }
-	say "Done.";
-	close STDERR;
       }
+      say "Done.";
+      close STDERR;
     }
   }
   my @raw = split(" ", slurp($tempfile));
