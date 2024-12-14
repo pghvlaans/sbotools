@@ -419,8 +419,8 @@ Slackware 14.0 and Slackware 14.1.
 sub verify_git_commit {
   script_error('verify_git_commit requires an argument.') unless @_ == 1;
   # verifying git commits is only supported for 14.2 onwards
-  if (versioncmp(get_slack_version(), '14.1') != 1)) {
-    say "\nWarning: Git commit verification is only supported for Slackware 14.2 and up.\n";
+  if (versioncmp(get_slack_version(), '14.1') != 1) {
+    say "\nWarning: Git commit verification is only supported for Slackware 14.2 and up.";
     return 1;
   }
   my $branch = shift;
