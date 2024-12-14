@@ -522,7 +522,7 @@ sub verify_rsync {
         close STDERR;
       }
     }
-    say "asc files verified. See $gpg_log." if $checksum_asc_ok;
+    say ".asc files verified. See $gpg_log." if $checksum_asc_ok;
   }
   my @raw = split(" ", slurp($tempfile));
   unlink $tempfile;
