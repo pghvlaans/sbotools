@@ -75,6 +75,7 @@ The location depends on the C<SBO_HOME> config setting.
 # some stuff we'll need later
 our $distfiles = "$config{SBO_HOME}/distfiles";
 our $repo_path = "$config{SBO_HOME}/repo";
+our $gpg_log = "$config{SBO_HOME}/gpg.log";
 our $slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
 
 =head1 SUBROUTINES
@@ -424,8 +425,15 @@ sub verify_git_commit {
     return 1;
   }
   my $branch = shift;
+  my $res;
   say "";
-  my $res = system(qw/ git verify-commit /, $branch) == 0;
+  {
+    unlink $gpg_log if -f $gpg_log;
+    open STDERR, '>', $gpg_log;
+    $res = system(qw/ git verify-commit /, $branch) == 0;
+    close STDERR;
+    say "Commit signature verified. See $gpg_log." if $res;
+  }
   return $res if $res;
   # send stderr from --raw to file to determine reason for failure
   # if no output from "verify commit", it simply wasn't a signed commit
@@ -489,24 +497,32 @@ sub verify_rsync {
   my $checksum_asc_ok;
   # CHECKSUMS.md5.asc is unsigned in the 14.0 repository; check all .asc files
   if (versioncmp(get_slack_version(), '14.0') == 1) {
-    $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw/ --verify CHECKSUMS.md5.asc /) == 0;
-  } else {
-    $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw! --verify system/sbotools.tar.gz.asc !) == 0;
-    do {
-      open STDERR, '>', '/dev/null';
-      $checksum_asc_ok = 1;
-      say "\nChecking remaining .asc files...";
-      my @ascs = split(' ', `find . -name "*.asc"`);
-      for my $asc (@ascs) {
-        my $ascres = system(qw/ gpg --verify /, $asc) == 0;
-        if (not $ascres) {
-          $checksum_asc_ok = 0;
-          last;
-        }
-      }
-      say "Done.";
+    {
+      unlink $gpg_log if -f $gpg_log;
+      open STDERR, '>', $gpg_log;
+      $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw/ --verify CHECKSUMS.md5.asc /) == 0;
+      say "CHECKSUMS.md5.asc verified. See $gpg_log." if $checksum_asc_ok;
       close STDERR;
     }
+  } else {
+    {
+      say "\nChecking .asc files...";
+      unlink $gpg_log if -f $gpg_log;
+      open STDERR, '>', $gpg_log;
+      $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw! --verify system/sbotools.tar.gz.asc !) == 0;
+      if ($checksum_asc_ok) {
+        my @ascs = split(' ', `find . -name "*.asc"`);
+        for my $asc (@ascs) {
+          my $ascres = system(qw/ gpg --verify /, $asc) == 0;
+          if (not $ascres) {
+            $checksum_asc_ok = 0;
+            last;
+          }
+        }
+        close STDERR;
+      }
+    }
+    say "asc files verified. See $gpg_log." if $checksum_asc_ok;
   }
   my @raw = split(" ", slurp($tempfile));
   unlink $tempfile;
@@ -629,19 +645,21 @@ the keyring.
 sub retrieve_key {
   script_error('retrieve_key requires an argument.') unless @_ == 1;
   my $fingerprint = shift;
+  my $key_log = "$config{SBO_HOME}/.key_download-$fingerprint.log";
   say "\nThe public key for GPG verification is missing.";
   say "Searching by keyid $fingerprint...\n";
-  open STDERR, '>', '/dev/null';
+  unlink $key_log if -f $key_log;
+  open STDERR, '>', $key_log;
   system(qw! gpg --no-tty --batch --keyserver hkp://keyserver.ubuntu.com:80 --search-keys !, $fingerprint);
   say "";
   if (prompt("Download and add this key?", default => "no")) {
     my $res = system(qw\ gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key \, $fingerprint) == 0;
     close STDERR;
     if ($res) {
-      print("Key $fingerprint has been added.");
+      print("Key $fingerprint has been added. See $key_log.");
       return $res;
     } else {
-      print("Adding key $fingerprint failed.");
+      print("Adding key $fingerprint failed. See $key_log.");
       return 0;
     }
   } else {
