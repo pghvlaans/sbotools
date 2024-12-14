@@ -360,7 +360,7 @@ sub rsync_sbo_tree {
   if (versioncmp(get_slack_version(), '14.1') == 1) { @info = ('--info=progress2'); }
   my @args = ('rsync', @info, '-a', '--delete', $url);
   my $res = system(@args, $repo_path) == 0;
-  if ($config{GPG_VERIFY}) {
+  if ($config{GPG_VERIFY} eq "TRUE") {
     return 0 unless $res;
     return verify_rsync("fullcheck");
   } else { return $res; }
@@ -411,12 +411,18 @@ sub update_tree {
   verify_git_commit($branch);
 
 C<verify_git_commit()> attempts to verify the GPG signature of the most
-recent git commit, if any.
+recent git commit, if any. Git commit verification is unavailable for
+Slackware 14.0 and Slackware 14.1.
 
 =cut
 
 sub verify_git_commit {
   script_error('verify_git_commit requires an argument.') unless @_ == 1;
+  # verifying git commits is only supported for 14.2 onwards
+  if (versioncmp(get_slack_version(), '14.1') != 1)) {
+    say "\nWarning: Git commit verification is only supported for Slackware 14.2 and up.\n";
+    return 1;
+  }
   my $branch = shift;
   say "";
   my $res = system(qw/ git verify-commit /, $branch) == 0;
@@ -480,7 +486,20 @@ sub verify_rsync {
   my $rsync_lock = "$config{SBO_HOME}/.rsync.lock";
   chdir $repo_path;
   my $tempfile = tempfile(DIR => "$config{SBO_HOME}");
-  my $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw/ --verify CHECKSUMS.md5.asc /) == 0;
+  my $checksum_asc_ok;
+  # CHECKSUMS.md5.asc is unsigned in the 14.0 repository
+  if (versioncmp(get_slack_version(), '14.0') == 1) {
+    $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw/ --verify CHECKSUMS.md5.asc /) == 0;
+  } else {
+    $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw! --verify system/sbotools.tar.gz.asc !) == 0;
+    if ($fullcheck) {
+      do {
+        open STDERR, '>', '/dev/null';
+	$checksum_asc_ok = system(qw/ find . -name "*.asc" -exec gpg --verify {} \; /) == 0;
+	close STDERR;
+      }
+    }
+  }
   my @raw = split(" ", slurp($tempfile));
   unlink $tempfile;
   if ($fullcheck) {
@@ -515,7 +534,13 @@ sub verify_rsync {
       }
     } else {
       chdir("$repo_path");
-      my $res = system("tail +13 CHECKSUMS.md5 | md5sum -c --ignore-missing --quiet -") == 0;
+      my $res;
+      # --ignore-missing is available in 14.2 onwards
+      if(versioncmp(get_slack_version(), '14.1') == 1) {
+        $res = system("tail +13 CHECKSUMS.md5 | md5sum -c --ignore-missing --quiet -") == 0;
+      } else {
+        $res = system("tail +13 CHECKSUMS.md5 | md5sum -c --quiet -") == 0;
+      }
       if ($res) {
         # All is well, so release the lock, if any.
         unlink($rsync_lock) if -f $rsync_lock;
@@ -585,7 +610,7 @@ sub retrieve_key {
   system(qw! gpg --no-tty --batch --keyserver hkp://keyserver.ubuntu.com:80 --search-keys !, $fingerprint);
   say "";
   if (prompt("Download and add this key?", default => "no")) {
-    my $res = system(qw\ gpg --keyserver hkp://keyserver.ubuntu.com:80 --receive-keys \, $fingerprint) == 0;
+    my $res = system(qw\ gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key \, $fingerprint) == 0;
     close STDERR;
     if ($res) {
       print("Key $fingerprint has been added.");
