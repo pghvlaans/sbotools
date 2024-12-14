@@ -484,7 +484,7 @@ sub verify_rsync {
   # This file indicates that a full verification on fetch failed, or that
   # CHECKSUMS.md5 was altered afterwards.
   my $rsync_lock = "$config{SBO_HOME}/.rsync.lock";
-  chdir $repo_path;
+  chdir $repo_path or return 0;
   my $tempfile = tempfile(DIR => "$config{SBO_HOME}");
   my $checksum_asc_ok;
   # CHECKSUMS.md5.asc is unsigned in the 14.0 repository; check all .asc files
@@ -541,7 +541,7 @@ sub verify_rsync {
         usage_error("\nWARNING! CHECKSUMS.md5 was signed with a revoked key.\n\nUsing this repository is probably a bad idea. Exiting.\n");
       }
     } else {
-      chdir("$repo_path");
+      chdir $repo_path or return 0;
       my $res;
       # --ignore-missing is available in 14.2 onwards
       if(versioncmp(get_slack_version(), '14.1') == 1) {
