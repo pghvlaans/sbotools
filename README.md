@@ -10,6 +10,8 @@ For online man pages and executive summaries of all commands, see [man](/sbotool
 
 A SlackBuild for **sbotools** is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) on SlackBuilds.org.
 
+To verify commits (excluding resolved PR, which are verified with GitHub's key), use [GPG_KEY](/sbotools/downloads/GPG_KEY).
+
 ## Why a Fork?
 
 The previous **sbotools** repository had gone without commits for a number of years. During this time, the default URL for release Slackware beyond 14.2 became unusable, and building compat32 and 32-bit packages on multilib systems stopped working for nearly all SBo SlackBuilds. Both of these issues have been fixed in **sbotools-3.x**.
