@@ -65,17 +65,17 @@ SBO::Lib::Build - Routines for building slackware packages from SlackBuilds.org.
 
 =head2 $env_tmp
 
-This will reflect the C<$TMP> from the environment, being C<undef> if it is not
+This reflects C<$TMP> from the environment, being C<undef> if it is not
 set.
 
 =head2 $tmpd
 
-Will be the same as C<$TMP> if it is set, otherwise it will be C</tmp/SBo>.
+This is the same as C<$TMP> if it is set. Otherwise, it is C</tmp/SBo>.
 
 =head2 $tempdir
 
-This is a temporary directory created for sbotools' use, and it should be
-cleaned up when sbotools exits.
+This is a temporary directory created for sbotools' use. It should be
+removed when sbotools exits.
 
 =cut
 
@@ -98,8 +98,8 @@ our $tempdir = tempdir(CLEANUP => 1, DIR => $tmpd);
 
 C<do_convertpkg()> runs C<convertpkg> on the package in C<$name64>.
 
-It returns two values. If the second value is true, the first will contain an
-error message. Otherwise it will contain the name of the converted package.
+On success, it returns the name of the converted package and an exit status. On
+failure, it returns an error message instead of the package name.
 
 =cut
 
@@ -123,13 +123,12 @@ sub do_convertpkg {
 
   my ($ver, $pkg, $src, $exit) = do_slackbuild(LOCATION => $location);
 
-C<do_slackbuild()> will make some checks and set up the C<perform_sbo()> call,
-if needed run C<do_convertpkg()>, and return the results.
+C<do_slackbuild()> makes checks and sets up the C<perform_sbo()> call,
+running C<do_convertpkg()> if needed.
 
-It will return a list of four values. If the fourth one is a true value, the
-first one will be an error message. Otherwise the first will be the version,
-the second will be the package, and the third will be an array reference to the
-source directories created by the build.
+A list of four values is returned if successful: version number, package name,
+an array with source directories and an exit code. In case of failure, the first
+value is an error message; the second and third values are empty.
 
 =cut
 
@@ -207,9 +206,9 @@ sub do_upgradepkg {
 
   my @queue = @{ get_build_queue($sbo, my $warnings) };
 
-C<get_build_queue()> gets the prerequisites for C<$sbo>, and updates the
+C<get_build_queue()> gets the prerequisites for C<$sbo>, updating the
 C<$warnings> hash reference with any C<%README%> encountered. It returns the
-prerequisites and the C<$sbo> in the order in which they need to be built.
+prerequisites and C<$sbo> in the correct build order.
 
 =cut
 
@@ -222,9 +221,9 @@ sub get_build_queue {
 
   my ($rx, $initial) = get_dc_regex($line);
 
-C<get_dc_regex()> when given a line that is an untar or similar command, creates
-a regular expression which should match the filename. This is returned, together
-with the C<$initial> character which will start the filename match.
+C<get_dc_regex()> creates a regular expression that should match the filename
+given a line with e.g. an untar command. This is returned together with the C<$initial>
+character, which starts the filename match.
 
 =cut
 
@@ -256,8 +255,8 @@ sub get_dc_regex {
 
   my $name = get_pkg_name($str);
 
-C<get_pkg_name()> searches C<$str> for text matching the output of C<makepkg>
-where it outputs the filename of the package it made, and returns it.
+C<get_pkg_name()> searches C<$str> for text matching the package name output
+from C<makepkg>. The package name is returned.
 
 =cut
 
@@ -274,8 +273,8 @@ sub get_pkg_name {
 
   my @dirs = @{ get_src_dir(@orig_dirs) };
 
-C<get_src_dir()> returns a list of the directories under C</tmp/SBo> or C<$TMP>
-that aren't in @orig_dirs.
+C<get_src_dir()> returns a list of those directories under C</tmp/SBo> or C<$TMP>
+that are not in C<@orig_dirs>. That is, the source directories for the script.
 
 =cut
 
@@ -299,11 +298,10 @@ sub get_src_dir {
 
   my ($ret, $exit) = get_tmp_extfn($fh);
 
-C<get_tmp_extfn()> gets the filename in the form of C</dev/fd/X> for the C<$fh>
-passed in, setting flags on it that make it usable from other processes without
-messing things up.
+C<get_tmp_extfn()> gets the C</dev/fd/X> filename for the file handle C<$fh> passed
+in, setting flats to make it usable from other processes.
 
-It returns the filename if successful, otherwise it returns C<undef>.
+It returns the filename if successful, and C<undef> otherwise.
 
 =cut
 
@@ -319,8 +317,8 @@ sub get_tmp_extfn {
 
   make_clean(SBO => $sbo, SRC => $src, VERSION => $ver);
 
-C<make_clean()> removes source directories, package directories, and compat32
-directories that are left over from a slackbuild run.
+C<make_clean()> removes source, package and compat32 directories left after running
+a SlackBuild.
 
 It has no useful return value.
 
@@ -362,8 +360,8 @@ sub make_clean {
 
   make_distclean(SRC => $src, VERSION => $ver, LOCATION => $loc);
 
-C<make_distclean()> does everything C<make_clean()> does, but in addition it
-also removes distribution files, such as the downloaded source tarballs.
+C<make_distclean()> removes the same directories as C<make_clean()> does,
+as well as distribution files, such as the downloaded source tarballs.
 
 It has no useful return value.
 
@@ -396,9 +394,9 @@ sub make_distclean {
 
   my @merged = @{ merge_queues([@queue1], [@queue2]) };
 
-C<merge_queues> takes two array references and merges them with C<@queue1> in
-front, and then anything in C<@queue2> that wasn't already in C<@queue1>. This
-is then returned as an array reference.
+C<merge_queues> takes two array references and merges them such that C<@queue1>
+is in front, followed by any non-redundant items in C<@queue2>. This is returned
+as an array reference.
 
 =cut
 
@@ -443,11 +441,9 @@ sub get_full_queue {
 
   my ($pkg, $src, $exit) = perform_sbo(LOCATION => $location, ARCH => $arch);
 
-C<perform_sbo()> preps and runs a .SlackBuild. It returns a list of three
-values, and if the third one is a true value, the first one will be an error
-message. Otherwise the first one will be the package name that was built, and
-the second one will be an array reference containing the source directories
-that were created.
+C<perform_sbo()> prepares and runs a SlackBuild. It returns the package name,
+an array with source directories and an exit code if successful. If unsuccessful,
+the first value is instead an error message.
 
 =cut
 
@@ -534,9 +530,11 @@ sub perform_sbo {
 
   my ($failures, $exit) = process_sbos(TODO => [@queue]);
 
-C<process_sbos()> processes the C<@queue> of slackbuilds and returns a list of
-two values containing any failed builds in an array ref in the first value, and
-the exit status in the second.
+C<process_sbos()> processes a C<@queue> of SlackBuilds and returns an array
+with failed builds and the exit status.
+
+In case of a mass rebuild, C<process_sbos> updates the resume file C<resume.temp>
+when a build fails.
 
 =cut
 
@@ -674,7 +672,7 @@ sub process_sbos {
 
   revert_slackbuild($path);
 
-C<revert_slackbuild()> moves back a slackbuild that was rewritten by
+C<revert_slackbuild()> restores a SlackBuild rewritten by
 C<rewrite_slackbuild()>.
 
 There is no useful return value.
@@ -694,13 +692,16 @@ sub revert_slackbuild {
 
 =head2 rewrite_slackbuild
 
-  my ($ret, $exit) = rewrite_slackbuild(SLACKBUILD => $path);
+  my ($ret, $exit) = rewrite_slackbuild(%args);
 
-C<rewrite_slackbuild()> when given a path and some changes to make, will move
-and copy the C<$path> and rewrite the copy with the needed changes.
+C<rewrite_slackbuild()>, when given an argument hash, copies the SlackBuild
+at C<$path> and rewrites it with the needed changes. The required arguments include
+C<SBO> (the name of the script), C<SLACKBUILD> (the location of the unaltered
+SlackBuild), C<CHANGES> (the required changes) and C<C32> (0 if the build is not
+compat32, and 1 if it is).
 
-It returns a list of two values. The second value is the exit status, and if it
-is true, the first value will be an error message.
+On failure, an error message and the exit status are returned. On success, 1 and an exit
+status of 0 are returned.
 
 =cut
 
@@ -774,10 +775,11 @@ sub rewrite_slackbuild {
 
   my ($output, $exit) = run_tee($cmd);
 
-C<run_tee()> runs the C<$cmd >under C<tee(1)> to allow both displaying its
-output and returning it as a string. It returns a list of the output and the
-exit status (C<$?> in bash). If it can't even run the bash interpreter, the
-output will be C<undef> and the exit status will hold a true value.
+C<run_tee()> runs C<$cmd> under C<tee(1)> to display STDOUT and return it as
+a string. The second return value is the exit status.
+
+If the bash interpreter cannot be run, the first return value is C<undef> and
+the exit status holds a non-zero value.
 
 =cut
 
@@ -820,6 +822,7 @@ SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 The sbotools are licensed under the MIT License.
 
 Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
+
 Copyright (C) 2024, K. Eugene Carlson.
 
 =cut
