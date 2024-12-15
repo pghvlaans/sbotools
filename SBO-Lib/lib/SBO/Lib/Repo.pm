@@ -426,12 +426,13 @@ sub verify_git_commit {
   }
   my $branch = shift;
   my $res;
-  say "";
   {
     unlink $gpg_log if -f $gpg_log;
+    open OLDERR, '>&', \*STDERR;
     open STDERR, '>', $gpg_log;
     $res = system(qw/ git verify-commit /, $branch) == 0;
     close STDERR;
+    open STDERR, '>&', \*OLDERR;
     say "Commit signature verified. See $gpg_log." if $res;
   }
   return $res if $res;
@@ -460,7 +461,8 @@ sub verify_git_commit {
     my $newkey = retrieve_key($fingerprint);
     return verify_git_commit($branch) if $newkey;
   }
-  # EXPSIG/EXPKEYSIG: warning and exit (note: EXPSIG is unimplemented in gnupg as of 2024-12-10)
+  # EXPSIG/EXPKEYSIG: warning and exit
+  # Note: EXPSIG was unimplemented in gnupg as of December 2024.
   if (grep(/EXPKEYSIG|EXPSIG/, @raw)) {
     usage_error("The most recent commit on this git branch was signed with an expired key.\n\nExiting.\n");
   }
@@ -479,7 +481,7 @@ sub verify_git_commit {
   verify_rsync($fullcheck);
 
 C<verify_rsync()> checks the signature of CHECKSUMS.md5.asc, prompting the user to download
-the public key if unavailable. If "fullcheck" is passed (i.e., when syncing the local
+the public key if not present. If "fullcheck" is passed (i.e., when syncing the local
 repository), md5 verification is performed as well. Failure at any juncture leaves a lockfile
 .rsync.lock in SBO_HOME, which prevents script installation and upgrade until the issue has
 been resolved, GPG_TRUE is set to FALSE or the lockfile is removed.
@@ -489,26 +491,23 @@ been resolved, GPG_TRUE is set to FALSE or the lockfile is removed.
 sub verify_rsync {
   script_error('verify_rsync requires an argument.') unless @_ == 1;
   my $fullcheck = shift;
+  unlink $gpg_log if -f $gpg_log;
   # This file indicates that a full verification on fetch failed, or that
   # CHECKSUMS.md5 was altered afterwards.
   my $rsync_lock = "$config{SBO_HOME}/.rsync.lock";
   chdir $repo_path or return 0;
   my $tempfile = tempfile(DIR => "$config{SBO_HOME}");
   my $checksum_asc_ok;
-  # CHECKSUMS.md5.asc is unsigned in the 14.0 repository; check all .asc files
-  if (versioncmp(get_slack_version(), '14.0') == 1) {
-    {
-      unlink $gpg_log if -f $gpg_log;
-      open STDERR, '>', $gpg_log;
+  my $res;
+  {
+    open OLDERR, '>&', \*STDERR;
+    open STDERR, '>', $gpg_log;
+    if (versioncmp(get_slack_version(), '14.0') == 1) {
       $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw/ --verify CHECKSUMS.md5.asc /) == 0;
       say "CHECKSUMS.md5.asc verified. See $gpg_log." if $checksum_asc_ok;
-      close STDERR;
-    }
-  } else {
-    {
+    } else {
+      # CHECKSUMS.md5.asc is unsigned in the 14.0 repository; check all .asc files
       say "\nChecking .asc files...";
-      unlink $gpg_log if -f $gpg_log;
-      open STDERR, '>', $gpg_log;
       $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw! --verify system/sbotools.tar.gz.asc !) == 0;
       if ($checksum_asc_ok) {
         my @ascs = split(' ', `find . -name "*.asc"`);
@@ -519,79 +518,83 @@ sub verify_rsync {
             last;
           }
         }
-        close STDERR;
       }
+      say ".asc files verified. See $gpg_log." if $checksum_asc_ok;
     }
-    say ".asc files verified. See $gpg_log." if $checksum_asc_ok;
+    close STDERR;
+    open STDERR, '>&', \*OLDERR;
   }
   my @raw = split(" ", slurp($tempfile));
   unlink $tempfile;
+  if (not $checksum_asc_ok) {
+    # ERRSIG: signed, but public key is missing; attempt download
+    if (grep(/ERRSIG/, @raw)) {
+      my $fingerprint;
+      my $next = 0;
+      for my $word (@raw) {
+        if ($next) {
+          $fingerprint = $word if $next;
+          last;
+        }
+        $next = 1 if $word eq "ERRSIG";
+      }
+      my $newkey = retrieve_key($fingerprint);
+      return verify_rsync($fullcheck) if $newkey;
+    }
+    # REVKEYSIG: warning and exit
+    if (grep(/REVKEYSIG/, @raw)) {
+      system(qw/ touch /, $rsync_lock);
+      usage_error("\nWARNING! CHECKSUMS.md5 was signed with a revoked key.\n\nUsing this repository is probably a bad idea. Exiting.\n");
+    }
+    # EXPKEYSIG/EXPSIG: warning and exit
+    # Note: EXPSIG was unimplemented in gnupg as of December 2024.
+    if (grep(/EXPKEYSIG|EXPSIG/, @raw)) {
+      system(qw/ touch /, $rsync_lock);
+      usage_error("\nCHECKSUMS.md5 was signed with an expired key.\n\nExiting.\n");
+    }
+  }
   if ($fullcheck) {
     if (not $checksum_asc_ok) {
-      # ERRSIG: signed, but public key is missing; attempt download
-      if (grep(/ERRSIG/, @raw)) {
-	my $fingerprint;
-	my $next = 0;
-        for my $word (@raw) {
-          if ($next) {
-            $fingerprint = $word if $next;
-            last;
-          }
-          $next = 1 if $word eq "ERRSIG";
-        }
-        my $newkey = retrieve_key($fingerprint);
-        return verify_rsync("fullcheck") if $newkey;
-      }
-      # Every other failure scenario requires the lock file.
       system(qw/ touch /, $rsync_lock);
-      # EXPKEYSIG/EXPSIG: warning and exit (note: EXPSIG is unimplemented in gnupg as of 2024-12-10)
-      if (grep(/EXPKEYSIG|EXPSIG/, @raw)) {
-        usage_error("\nCHECKSUMS.md5 was signed with an expired key.\n\nExiting.\n");
-      }
       # BADSIG: big warning and exit
       if (grep(/BADSIG/, @raw)) {
         usage_error("\nWARNING! CHECKSUMS.md5 was signed with a bad key.\n\nUsing this repository is strongly discouraged. Exiting.\n");
       }
-      # REVKEYSIG: warning and exit
-      if (grep(/REVKEYSIG/, @raw)) {
-        usage_error("\nWARNING! CHECKSUMS.md5 was signed with a revoked key.\n\nUsing this repository is probably a bad idea. Exiting.\n");
-      }
+    }
+    chdir $repo_path or return 0;
+    # --ignore-missing is only available in 14.2 onwards.
+    if(versioncmp(get_slack_version(), '14.1') == 1) {
+      $res = system("tail +13 CHECKSUMS.md5 | md5sum -c --ignore-missing --quiet -") == 0;
     } else {
-      chdir $repo_path or return 0;
-      my $res;
-      # --ignore-missing is available in 14.2 onwards
-      if(versioncmp(get_slack_version(), '14.1') == 1) {
-        $res = system("tail +13 CHECKSUMS.md5 | md5sum -c --ignore-missing --quiet -") == 0;
-      } else {
-        # Disregard missing files.
-        my $md5temp = "$repo_path/CHECKSUMS.temp.md5";
-        unlink $md5temp if -f $md5temp;
-        my ($temp_fh, $exit) = open_fh($md5temp, '>');
-        return 0 if $exit;
-        my @checksum_lines = split('\n', slurp("CHECKSUMS.md5"));
-        for my $checksum_line (@checksum_lines){
-          my $checksum_file = $checksum_line;
-          $checksum_file =~ s/^.*\s//s;
-          print { $temp_fh } "$checksum_line\n" if -f $checksum_file;
-        }
-        close $temp_fh;
-        if (-f $md5temp) {
-          $res = system(qw/ md5sum -c --quiet /, $md5temp) == 0;
-          unlink $md5temp;
-        } else {
-          $res = 0;
-        }
+      # Disregard missing files in 14.0 and 14.1 as well.
+      my $md5temp = "$repo_path/CHECKSUMS.temp.md5";
+      unlink $md5temp if -f $md5temp;
+      my ($temp_fh, $exit) = open_fh($md5temp, '>');
+      return 0 if $exit;
+      my @checksum_lines = split('\n', slurp("CHECKSUMS.md5"));
+      for my $checksum_line (@checksum_lines){
+        my $checksum_file = $checksum_line;
+        $checksum_file =~ s/^.*\s//s;
+        print { $temp_fh } "$checksum_line\n" if -f $checksum_file;
       }
-      if ($res) {
-        # All is well, so release the lock, if any.
-        unlink($rsync_lock) if -f $rsync_lock;
-        return $res;
+      close $temp_fh;
+      if (-f $md5temp) {
+        $res = system(qw/ md5sum -c --quiet /, $md5temp) == 0;
+        unlink $md5temp;
       } else {
-        system(qw/ touch /, $rsync_lock);
-        usage_error("\nOne or more md5 errors was detected after sync.\n\nRemove $rsync_lock or turn off GPG verification with caution.\n\nExiting.\n");
+        $res = 0;
       }
     }
-  } elsif (-f $rsync_lock) {
+    if ($res) {
+      # All is well, so release the lock, if any.
+      unlink($rsync_lock) if -f $rsync_lock;
+      return $res;
+    } else {
+      system(qw/ touch /, $rsync_lock);
+      usage_error("\nOne or more md5 errors was detected after sync.\n\nRemove $rsync_lock or turn off GPG verification with caution.\n\nExiting.\n");
+    }
+  }
+  if (-f $rsync_lock) {
     usage_error("\nThe previous rsync verification failed. Please run sbocheck.\n\nExiting.\n");
   } else {
     if (not $checksum_asc_ok) {
@@ -645,25 +648,30 @@ the keyring.
 sub retrieve_key {
   script_error('retrieve_key requires an argument.') unless @_ == 1;
   my $fingerprint = shift;
+  my $res;
   my $key_log = "$config{SBO_HOME}/.key_download-$fingerprint.log";
   say "\nThe public key for GPG verification is missing.";
   say "Searching by keyid $fingerprint...\n";
   unlink $key_log if -f $key_log;
-  open STDERR, '>', $key_log;
+  open OLDERR, '>&', \*STDERR;
+  open STDERR,'>', $key_log;
   system(qw! gpg --no-tty --batch --keyserver hkp://keyserver.ubuntu.com:80 --search-keys !, $fingerprint);
-  say "";
   if (prompt("Download and add this key?", default => "no")) {
-    my $res = system(qw\ gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key \, $fingerprint) == 0;
-    close STDERR;
+    {
+      $res = system(qw\ gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key \, $fingerprint) == 0;
+      close STDERR;
+      open STDERR, '>&', \*OLDERR;
+    }
     if ($res) {
-      print("Key $fingerprint has been added. See $key_log.");
+      print("The key has been added. See $key_log.\n");
       return $res;
     } else {
-      print("Adding key $fingerprint failed. See $key_log.");
+      print("Failed to add the key. See $key_log.\n");
       return 0;
     }
   } else {
     close STDERR;
+    open STDERR, '>&', \*OLDERR;
     return 0;
   }
 }
