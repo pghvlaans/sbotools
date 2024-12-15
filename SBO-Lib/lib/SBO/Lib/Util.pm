@@ -133,6 +133,24 @@ read_config();
 
 =cut
 
+=head2 build_cmp
+
+  my $cmp = build_cmp($build1, $build2, $ver1, $ver2);
+
+C<build_cmp()> compares C<$build1> with C<$build2> while checking that C<$ver1>
+and C<$ver2> are different. If the build numbers are not the same and the version
+numbers are, upgrading for a script bump may be in order.
+
+=cut
+
+sub build_cmp {
+  my ($b1, $b2, $v1, $v2) = @_;
+  if (versioncmp($v1, $v2)) { return 0; }
+  if ($b1 != $b2) { return 1; }
+
+  return 0;
+}
+
 =head2 check_multilib
 
   my $ml = check_multilib();
@@ -181,6 +199,30 @@ sub get_kernel_version {
   chomp($kv = `uname -r`);
   $kv =~ s/-/_/g;
   return $kv;
+}
+
+=head2 get_optional
+
+  my $optional = get_optional($sbo)
+
+C<get_optional()> checks for user-requested optional dependencies for C<$sbo>.
+
+=cut
+
+sub get_optional {
+  script_error("get_optional requires an argument.") unless @_ == 1;
+  my $sbo = shift;
+  my @listings = read_hints();
+  my @optional;
+  for my $entry (@listings) {
+    next if grep { /^#|^!/ } $entry;
+    next if not grep { /\s$sbo$/ } $entry;
+    $entry =~ s/\s$sbo$//;
+    @optional = split(" ", $entry);
+  }
+  push @optional, "NULL" unless @optional;
+
+  return @optional;
 }
 
 =head2 get_sbo_from_loc
@@ -351,6 +393,24 @@ sub indent {
   return join "\n", @lines;
 }
 
+=head2 on_blacklist
+
+  my $result = on_blacklist($sbo);
+
+C<on_blacklist()> checks whether C<$sbo> has been blacklisted.
+
+=cut
+
+sub on_blacklist {
+  script_error("on_blacklist requires an argument.") unless @_ == 1;
+  my $sbo = shift;
+  my @listings = read_hints();
+  for my $entry (@listings) {
+    next if grep { /\s/ } $entry;
+    return 1 if $entry eq "!$sbo"; }
+  return 0;
+}
+
 =head2 open_fh
 
   my ($ret, $exit) = open_fh($fn, $op);
@@ -482,11 +542,35 @@ sub read_config {
   $config{SBO_HOME} = '/usr/sbo' if $config{SBO_HOME} eq 'FALSE';
 }
 
+=head2 read_hints
+
+  my @res = read_hints()
+
+C<read_hints()> reads the contents of C</etc/sbotools/sbotools.hints>, returning an array
+of optional dependency requests and blacklisted scripts.
+
+=cut
+
+sub read_hints{
+  my @listings;
+  if(-f "/etc/sbotools/sbotools.hints") {
+    my $contents = slurp("/etc/sbotools/sbotools.hints");
+    usage_error("read_hints: could not read existing /etc/sbotools/sbotools.hints") unless
+      defined $contents;
+    my @contents = split("\n", $contents);
+    for my $entry (@contents) {
+      push @listings, $entry unless grep { /^#|^\s/ } $entry;
+    }
+  }
+  push @listings, "NULL" unless @listings;
+  return @listings;
+}
+
 =head2 save_options
 
   save_options($sbo, $opts)
 
-save_options() saves build options to C</var/log/sbotools/sbo>. If the file
+C<save_options()> saves build options to C</var/log/sbotools/sbo>. If the file
 already exists and the user supplies no build options, the existing file is
 retained.
 
@@ -641,90 +725,6 @@ sub version_cmp {
   }
 
   versioncmp($v1, $v2);
-}
-
-=head2 read_hints
-
-  my $res = read_hints()
-
-C<read_hints> reads the contents of /etc/sbotools/sbotools.hints, returning an array
-of optional dependency requests and blacklisted scripts.
-
-=cut
-
-sub read_hints{
-  my @listings;
-  if(-f "/etc/sbotools/sbotools.hints") {
-    my $contents = slurp("/etc/sbotools/sbotools.hints");
-    usage_error("read_hints: could not read existing /etc/sbotools/sbotools.hints") unless
-      defined $contents;
-    my @contents = split("\n", $contents);
-    for my $entry (@contents) {
-      push @listings, $entry unless grep { /^#|^\s/ } $entry;
-    }
-  }
-  push @listings, "NULL" unless @listings;
-  return @listings;
-}
-
-=head2 get_optional
-
-  my $optional = get_optional($sbo)
-
-C<get_optional()> checks for user-requested optional dependencies for C<$sbo>.
-
-=cut
-
-sub get_optional {
-  script_error("get_optional requires an argument.") unless @_ == 1;
-  my $sbo = shift;
-  my @listings = read_hints();
-  my @optional;
-  for my $entry (@listings) {
-    next if grep { /^#|^!/ } $entry;
-    next if not grep { /\s$sbo$/ } $entry;
-    $entry =~ s/\s$sbo$//;
-    @optional = split(" ", $entry);
-  }
-  push @optional, "NULL" unless @optional;
-
-  return @optional;
-}
-
-=head2 on_blacklist
-
-  my $result = on_blacklist($sbo);
-
-C<on_blacklist()> checks whether C<$sbo> has been blacklisted.
-
-=cut
-
-sub on_blacklist {
-  script_error("on_blacklist requires an argument.") unless @_ == 1;
-  my $sbo = shift;
-  my @listings = read_hints();
-  for my $entry (@listings) {
-    next if grep { /\s/ } $entry;
-    return 1 if $entry eq "!$sbo"; }
-  return 0;
-}
-
-=head2 build_cmp
-
-  my $cmp = build_cmp($build1, $build2, $ver1, $ver2);
-
-C<build_cmp()> compares C<$build1> with C<$build2> while checking that C<$ver1>
-and C<$ver2> are different. If the build numbers are not the same and the version
-numbers are, upgrading for a script bump may be in order.
-
-=cut
-
-sub build_cmp {
-  my ($b1, $b2, $v1, $v2) = @_;
-  if (versioncmp($v1, $v2)) { return 0; }
-  if ($b1 != $b2) { return 1; }
-
-  return 0;
 }
 
 # _race::cond will allow both documenting and testing race conditions

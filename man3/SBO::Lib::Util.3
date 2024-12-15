@@ -92,6 +92,15 @@ The supported keys are: \f(CW\*(C`NOCLEAN\*(C'\fR, \f(CW\*(C`DISTCLEAN\*(C'\fR, 
 \&\f(CW\*(C`GPG_VERIFY\*(C'\fR and \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
+.SS build_cmp
+.IX Subsection "build_cmp"
+.Vb 1
+\&  my $cmp = build_cmp($build1, $build2, $ver1, $ver2);
+.Ve
+.PP
+\&\f(CWbuild_cmp()\fR compares \f(CW$build1\fR with \f(CW$build2\fR while checking that \f(CW$ver1\fR
+and \f(CW$ver2\fR are different. If the build numbers are not the same and the version
+numbers are, upgrading for a script bump may be in order.
 .SS check_multilib
 .IX Subsection "check_multilib"
 .Vb 1
@@ -118,6 +127,13 @@ Returns 1 if so, and 0 otherwise.
 .PP
 \&\f(CWget_kernel_version()\fR checks the version of the running kernel, and returns
 it in a format suitable for appending to a Slackware package version.
+.SS get_optional
+.IX Subsection "get_optional"
+.Vb 1
+\&  my $optional = get_optional($sbo)
+.Ve
+.PP
+\&\f(CWget_optional()\fR checks for user-requested optional dependencies for \f(CW$sbo\fR.
 .SS get_sbo_from_loc
 .IX Subsection "get_sbo_from_loc"
 .Vb 1
@@ -177,6 +193,13 @@ was found, and a false value otherwise.
 .PP
 \&\f(CWindent()\fR indents every non-empty line in \f(CW$text\fR by \f(CW$indent\fR spaces and
 returns the resulting string.
+.SS on_blacklist
+.IX Subsection "on_blacklist"
+.Vb 1
+\&  my $result = on_blacklist($sbo);
+.Ve
+.PP
+\&\f(CWon_blacklist()\fR checks whether \f(CW$sbo\fR has been blacklisted.
 .SS open_fh
 .IX Subsection "open_fh"
 .Vb 1
@@ -232,13 +255,21 @@ Additionally, \f(CW\*(C`BUILD_IGNORE\*(C'\fR and \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR
 \&\f(CW\*(C`CLASSIC\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR.
 .PP
 There is no useful return value.
+.SS read_hints
+.IX Subsection "read_hints"
+.Vb 1
+\&  my @res = read_hints()
+.Ve
+.PP
+\&\f(CWread_hints()\fR reads the contents of \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR, returning an array
+of optional dependency requests and blacklisted scripts.
 .SS save_options
 .IX Subsection "save_options"
 .Vb 1
 \&  save_options($sbo, $opts)
 .Ve
 .PP
-\&\fBsave_options()\fR saves build options to \f(CW\*(C`/var/log/sbotools/sbo\*(C'\fR. If the file
+\&\f(CWsave_options()\fR saves build options to \f(CW\*(C`/var/log/sbotools/sbo\*(C'\fR. If the file
 already exists and the user supplies no build options, the existing file is
 retained.
 .SS script_error
@@ -307,37 +338,6 @@ There is no useful return value.
 \&\f(CWversion_cmp()\fR compares \f(CW$ver1\fR with \f(CW$ver2\fR. It returns 1 if \f(CW$ver1\fR is higher,
 \&\-1 if \f(CW$ver2\fR is higher and 0 if they are equal. It strips the running kernel version,
 as well as any locale information that may have been appended to the version strings.
-.SS read_hints
-.IX Subsection "read_hints"
-.Vb 1
-\&  my $res = read_hints()
-.Ve
-.PP
-\&\f(CW\*(C`read_hints\*(C'\fR reads the contents of /etc/sbotools/sbotools.hints, returning an array
-of optional dependency requests and blacklisted scripts.
-.SS get_optional
-.IX Subsection "get_optional"
-.Vb 1
-\&  my $optional = get_optional($sbo)
-.Ve
-.PP
-\&\f(CWget_optional()\fR checks for user-requested optional dependencies for \f(CW$sbo\fR.
-.SS on_blacklist
-.IX Subsection "on_blacklist"
-.Vb 1
-\&  my $result = on_blacklist($sbo);
-.Ve
-.PP
-\&\f(CWon_blacklist()\fR checks whether \f(CW$sbo\fR has been blacklisted.
-.SS build_cmp
-.IX Subsection "build_cmp"
-.Vb 1
-\&  my $cmp = build_cmp($build1, $build2, $ver1, $ver2);
-.Ve
-.PP
-\&\f(CWbuild_cmp()\fR compares \f(CW$build1\fR with \f(CW$build2\fR while checking that \f(CW$ver1\fR
-and \f(CW$ver2\fR are different. If the build numbers are not the same and the version
-numbers are, upgrading for a script bump may be in order.
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
