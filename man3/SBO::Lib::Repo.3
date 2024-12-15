@@ -152,7 +152,7 @@ value. Otherwise it will return a true value.
 .Ve
 .PP
 \&\f(CWgit_sbo_tree()\fR will \f(CW\*(C`git clone\*(C'\fR the repository specified by \f(CW$url\fR to the
-\&\f(CW$repo_path\fR if the \f(CW$url\fR repository isn't already there. If it is, it will
+\&\f(CW$repo_path\fR if the \f(CW$url\fR repository is not already there. If it is, it will
 run \f(CW\*(C`git fetch && git reset \-\-hard origin\*(C'\fR.
 .PP
 If any command fails, it will return a false value. Otherwise it will return a
@@ -177,7 +177,7 @@ to be in for sbotools 2.x. This means every directory and file except for the
 \&\f(CW\*(C`rsync://slackbuilds.org/slackbuilds/$ver/\*(C'\fR or whatever the \f(CW\*(C`REPO\*(C'\fR
 configuration variable has been set to.
 .PP
-\&\f(CW$ver\fR is the version of Slackware you're running, provided it is supported,
+\&\f(CW$ver\fR is the version of Slackware you are running, provided it is supported,
 or whatever you've set in the \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR configuration variable.
 .SS rsync_sbo_tree
 .IX Subsection "rsync_sbo_tree"
@@ -252,4 +252,5 @@ SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 The sbotools are licensed under the MIT License.
 .PP
 Copyright (C) 2012\-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
+.PP
 Copyright (C) 2024, K. Eugene Carlson.

@@ -146,7 +146,7 @@ sub get_sbo_locations {
   my $bool = is_local($sbo);
 
 C<is_local()> checks whether the given C<$sbo> is in the C<LOCAL_OVERRIDES> or
-not, and returns a true value if it is, and a false value if it isn't.
+not, and returns a true value if it is, and a false value if it is not.
 
 =cut
 
@@ -171,6 +171,7 @@ SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 The sbotools are licensed under the MIT License.
 
 Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
+
 Copyright (C) 2024, K. Eugene Carlson.
 
 =cut

@@ -308,7 +308,7 @@ sub get_slack_version {
 
   my $url = get_slack_version_url();
 
-C<get_slack_version_url()> returns the default URL for the given slackware
+C<get_slack_version_url()> returns the default URL for the given Slackware
 version.
 
 The program exits if the version is unsupported or if an error occurs.
@@ -327,7 +327,7 @@ sub get_slack_version_url {
 
   my $url = get_slack_branch();
 
-C<get_slack_branch()> returns the default git branch for the given slackware
+C<get_slack_branch()> returns the default git branch for the given Slackware
 version, if any. If the pulled repository does not have this branch, an onscreen
 message will appear.
 

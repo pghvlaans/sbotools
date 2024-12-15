@@ -53,7 +53,7 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Build - Routines for building slackware packages from SlackBuilds.org.
+SBO::Lib::Build - Routines for building Slackware packages from SlackBuilds.org.
 
 =head1 SYNOPSIS
 
