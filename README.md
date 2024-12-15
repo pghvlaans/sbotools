@@ -10,7 +10,7 @@ For online man pages and executive summaries of all commands, see [man](/sbotool
 
 A SlackBuild for **sbotools** is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) on SlackBuilds.org.
 
-To verify commits (excluding resolved PR, which are verified with GitHub's key), use [GPG_KEY](/sbotools/downloads/GPG_KEY).
+To verify commits (excluding resolved PR, which are verified with GitHub's key), use [GPG_KEY](/sbotools/downloads/GPG_KEY). Key updated 2024-12-15.
 
 ## Why a Fork?
 
