@@ -248,17 +248,21 @@ my %branch = (
 );
 
 sub get_slack_version {
-  return $config{SLACKWARE_VERSION} unless $config{SLACKWARE_VERSION} eq 'FALSE';
-  my ($fh, $exit) = open_read('/etc/slackware-version');
-  if ($exit) {
-    warn $fh;
-    exit $exit;
+  my $version;
+  $version = $config{SLACKWARE_VERSION} unless $config{SLACKWARE_VERSION} eq 'FALSE';
+  if (not $version) {
+    my ($fh, $exit) = open_read('/etc/slackware-version');
+    if ($exit) {
+      warn $fh;
+      exit $exit;
+    }
+    chomp(my $line = <$fh>);
+    close $fh;
+    $version = ($line =~ /\s+(\d+[^\s]+)$/)[0];
   }
-  chomp(my $line = <$fh>);
-  close $fh;
-  my $version = ($line =~ /\s+(\d+[^\s]+)$/)[0];
-  usage_error("The running Slackware version is unsupported: $version\n" .
-    "Consider running \"sboconfig -r $supported{current}\" to use a repository for -current.\n")
+  usage_error("\nThe running or configured Slackware version is unsupported: $version\n" .
+    "Consider running \"sboconfig -r $supported{current}\" to\n" .
+    "use a repository for -current.\n")
     unless $supported{$version};
   return $version;
 }
