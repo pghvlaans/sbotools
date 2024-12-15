@@ -14,9 +14,10 @@ sboconfig [-h|-v]
 sboconfig [-l]
 .P
 sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \\
-          [-j #|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo] \\
-          [-B branch_name|FALSE] [-b TRUE|FALSE] [-o /path|FALSE] \\
-          [-V #.#|FALSE] [-r url|FALSE] [-R TRUE|FALSE]
+          [-g TRUE|FALSE ] [-j #|FALSE] [-p /path|FALSE] \\
+          [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] \\
+          [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE] \\
+          [-R TRUE|FALSE]
 .SH DESCRIPTION
 .P
 .B
@@ -171,6 +172,36 @@ DISTCLEAN\fR\
 .RE
 .P
 .B
+-g|--gpg-verify (FALSE|TRUE)
+.RS
+.B
+GPG_VERIFY\fR\
+\&: If
+.B
+TRUE\fR\
+\&, use
+.B
+gpg
+to verify the contents of the local repository when running
+.B
+sbosnap(1)\fR\
+\&,
+.B
+sbocheck(1)\fR\
+\&,
+.B
+sboinstall(1)
+and
+.B
+sboupgrade(1)\fR\
+\&. Missing public keys are detected, and a download from
+.UR keyserver.ubuntu.com
+.UE
+on port 80 will be offered if available.
+Only rsync repositories can be verified on Slackware 14.0 and Slackware 14.1.
+.RE
+.P
+.B
 -j|--jobs (FALSE|#)
 .RS
 .B
@@ -299,7 +330,7 @@ RSYNC_DEFAULT
 is
 .B
 TRUE
-and
+and for Slackware versions prior to 14.2, and
 .UR https://gitlab.com/SlackBuilds.org
 .UE
 otherwise. The repository must be laid out in the same

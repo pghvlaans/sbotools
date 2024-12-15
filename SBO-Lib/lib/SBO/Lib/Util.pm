@@ -124,6 +124,7 @@ our %config = (
   BUILD_IGNORE => 'FALSE',
   GIT_BRANCH => 'FALSE',
   RSYNC_DEFAULT => 'FALSE',
+  GPG_VERIFY => 'FALSE',
 );
 
 read_config();
@@ -212,10 +213,11 @@ will exit.
 =cut
 
 # %supported maps what's in /etc/slackware-version to an https URL, or to an
-# rsync URL if RSYNC_DEFAULT is true.
+# rsync URL if RSYNC_DEFAULT is true. Git commit verification is unavailable
+# prior to Slackware 14.2, so prior versions have rsync as well.
 my %supported = (
-  '14.0' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
-  '14.1' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
+  '14.0' => 'rsync://slackbuilds.org/slackbuilds/14.0/',
+  '14.1' => 'rsync://slackbuilds.org/slackbuilds/14.1/',
   '14.2' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
   '15.0' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
   '15.0+' => 'https://github.com/Ponce/slackbuilds.git',

@@ -51,6 +51,10 @@ from <ftp://slackware.uk/sbosrcarch/> as a fallback measure. The
 **\--all** flag may be passed to upgrade all eligible SlackBuilds
 simultaneously.
 
+**sboupgrade** will verify the local repository with **gpg** if
+**GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
+Slackware 14.0 and Slackware 14.1.
+
 ## OPTIONS
 
 **-h\|\--help**

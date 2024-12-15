@@ -46,6 +46,8 @@ Config options (defaults shown):
       NOCLEAN: if TRUE, do NOT clean up after building by default.
   -d|--distclean FALSE:
       DISTCLEAN: if TRUE, DO clean distfiles by default after building.
+  -g|--gpg-verify FALSE:
+      GPG_VERIFY: verify the repo with gnupg
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
   -p|--pkg-dir FALSE:
@@ -70,7 +72,7 @@ my %options;
 GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'classic|C=s', 'noclean|c=s',
 	'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 	'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
-    'build-ignore|b=s', 'branch|B=s', 'rsync|R=s');
+    'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s');
 
 if ($options{help}) { show_usage(); exit 0 }
 if ($options{version}) { show_version(); exit 0 }
@@ -88,12 +90,14 @@ my %valid_confs = (
 	rsync               => 'RSYNC_DEFAULT',
 	'branch'            => 'GIT_BRANCH',
 	'build-ignore'      => 'BUILD_IGNORE',
+	'gpg-verify'        => 'GPG_VERIFY',
 );
 
 my %params = (
 	CLASSIC           => 'C|--classic',
 	NOCLEAN           => 'c|--noclean',
 	DISTCLEAN         => 'd|--distclean',
+	GPG_VERIFY        => 'g|--gpg-verify',
 	JOBS              => 'j|--jobs',
 	PKG_DIR           => 'p|--pkg-dir',
 	SBO_HOME          => 's|--sbo-home',
@@ -154,6 +158,9 @@ if (exists $changes{BUILD_IGNORE}) {
 }
 if (exists $changes{RSYNC_DEFAULT}) {
 	usage_error("$warn -R") unless $changes{RSYNC_DEFAULT} =~ /^(TRUE|FALSE)$/;
+}
+if (exists $changes{GPG_VERIFY}) {
+	usage_error("$warn -g") unless $changes{GPG_VERIFY} =~ /^(TRUE|FALSE)$/;
 }
 
 sub config_write {

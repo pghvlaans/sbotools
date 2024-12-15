@@ -66,6 +66,31 @@ is set, package archives will be saved there regardless of
 DISTCLEAN\fR\
 \&.
 .RE
+GPG_VERIFY\fR\
+\&: If
+.B
+TRUE\fR\
+\&, use
+.B
+gpg
+to verify the contents of the local repository when running
+.B
+sbosnap(1)\fR\
+\&,
+.B
+sbocheck(1)\fR\
+\&,
+.B
+sboinstall(1)
+and
+.B
+sboupgrade(1)\fR\
+\&. Missing public keys are detected, and a download from
+.UR keyserver.ubuntu.com
+.UE
+on port 80 will be offered if available.
+Only rsync repositories can be verified on Slackware 14.0 and Slackware 14.1.
+.RE
 .P
 .B
 JOBS=(FALSE|#)
@@ -238,7 +263,7 @@ RSYNC_DEFAULT
 is
 .B
 TRUE
-and
+and for Slackware versions prior to 14.2, and
 .UR https://gitlab.com/SlackBuilds.org
 .UE
 otherwise. The repository must be laid out in the same

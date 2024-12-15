@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_sbo_location get_inst_names get_installed_packages get_build_queue get_sbo_locations in merge_queues user_prompt process_sbos print_failures %config show_version /;
+use SBO::Lib qw/ get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_sbo_location get_inst_names get_installed_packages get_build_queue get_sbo_locations in merge_queues user_prompt process_sbos print_failures verify_gpg %config show_version /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -59,6 +59,7 @@ my $noclean = $config{NOCLEAN};
 my $distclean = $config{DISTCLEAN};
 my $jobs = $config{JOBS};
 my $build_ignore = $config{BUILD_IGNORE};
+my $gpg = $config{GPG_VERIFY};
 my ($help, $vers, $force, $no_install, $non_int, $force_reqs, $all);
 
 GetOptions(
@@ -81,6 +82,9 @@ if ($vers) { show_version(); exit 0 }
 $noclean = $noclean eq 'TRUE' ? 1 : 0;
 $distclean = $distclean eq 'TRUE' ? 1 : 0;
 $build_ignore = $build_ignore eq 'TRUE' ? 1 : 0;
+$gpg = $gpg eq 'TRUE' ? 1 : 0;
+
+if ($gpg) { verify_gpg(); }
 
 my $updates;
 if ($all) {
