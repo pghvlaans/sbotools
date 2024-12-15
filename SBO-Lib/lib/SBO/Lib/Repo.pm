@@ -491,10 +491,13 @@ been resolved, GPG_TRUE is set to FALSE or the lockfile is removed.
 sub verify_rsync {
   script_error('verify_rsync requires an argument.') unless @_ == 1;
   my $fullcheck = shift;
+  my $rsync_lock = "$config{SBO_HOME}/.rsync.lock";
+  if (-f $rsync_lock and not $fullcheck) {
+    usage_error("\nThe previous rsync verification failed. Please run sbocheck.\n\nExiting.\n");
+  }
   unlink $gpg_log if -f $gpg_log;
   # This file indicates that a full verification on fetch failed, or that
   # CHECKSUMS.md5 was altered afterwards.
-  my $rsync_lock = "$config{SBO_HOME}/.rsync.lock";
   chdir $repo_path or return 0;
   my $tempfile = tempfile(DIR => "$config{SBO_HOME}");
   my $checksum_asc_ok;
@@ -594,15 +597,11 @@ sub verify_rsync {
       usage_error("\nOne or more md5 errors was detected after sync.\n\nRemove $rsync_lock or turn off GPG verification with caution.\n\nExiting.\n");
     }
   }
-  if (-f $rsync_lock) {
-    usage_error("\nThe previous rsync verification failed. Please run sbocheck.\n\nExiting.\n");
-  } else {
-    if (not $checksum_asc_ok) {
-      system(qw/ touch /, $rsync_lock);
-      usage_error("\nThe contents of CHECKSUMS.md5 have been altered. Please run sbocheck.\n\nExiting.\n") unless $checksum_asc_ok;
-    }
-    return 1;
+  if (not $checksum_asc_ok) {
+    system(qw/ touch /, $rsync_lock);
+    usage_error("\nThe contents of CHECKSUMS.md5 have been altered. Please run sbocheck.\n\nExiting.\n") unless $checksum_asc_ok;
   }
+  return 1;
 }
 
 =head2 verify_gpg
