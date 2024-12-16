@@ -122,7 +122,7 @@ It checks if the path in C<$repo_path> exists and is an empty
 directory, and returns a true value if so.
 
 If C<$repo_path> exists and is non-empty, it is malformed, and the user
-is prompted to delete it to proceed. A usage error results if deletion
+is prompted to regenerate it to proceed. A usage error results if deletion
 is declined.
 
 If C<$repo_path> does not exist, creation will be attempted, returning a true
@@ -136,9 +136,8 @@ sub check_repo {
     opendir(my $repo_handle, $repo_path);
     FIRST: while (my $dir = readdir $repo_handle) {
       next FIRST if in($dir => qw/ . .. /);
-      if (prompt("SLACKBUILDS.TXT is missing and the fetch cannot proceed. Delete $repo_path?", default=>"no")) {
-        remove_tree($repo_path);
-	return check_repo();
+      if (prompt("SLACKBUILDS.TXT is missing and the fetch cannot proceed. Regenerate?", default=>"no")) {
+        return 1 if generate_slackbuilds_txt();
       } else {
         usage_error("$repo_path exists and is not empty. Exiting.\n");
       }
@@ -260,6 +259,7 @@ sub git_sbo_tree {
         if (not $branchres) { say "\nThis git repository does not have a branch named $branch. Remaining in the default branch.\n"; }
         else { system(qw! git pull !); }
       }
+      1;
     };
   } else {
     chdir $config{SBO_HOME} or return 0;
@@ -331,6 +331,12 @@ sub pull_sbo_tree {
     $res = rsync_sbo_tree($url);
   } else {
     $res = git_sbo_tree($url);
+    if ($res == 0) {
+      if (prompt("Sync from $url failed. Retry?", default => 'no')) {
+        generate_slackbuilds_txt() if not chk_slackbuilds_txt();
+        return pull_sbo_tree();
+      }
+    }
   }
 
   if ($res == 0) { warn "Could not sync from $url.\n"; exit _ERR_DOWNLOAD; }
