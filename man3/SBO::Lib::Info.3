@@ -77,9 +77,8 @@ SBO::Lib::Info \- Utilities to get data from SBo info files.
 \&  my $bool = check_x32($location);
 .Ve
 .PP
-\&\f(CWcheck_x32()\fR checks if the SBo in \f(CW$location\fR considers 64bit builds
-\&\f(CW\*(C`UNTESTED\*(C'\fR or \f(CW\*(C`UNSUPPORTED\*(C'\fR, and if so returns a true value. Otherwise it
-returns a false value.
+\&\f(CWcheck_x32()\fR returns a true value if the SlackBuild in \f(CW$location\fR considers
+64bit builds \f(CW\*(C`UNTESTED\*(C'\fR or \f(CW\*(C`UNSUPPORTED\*(C'\fR. Otherwise, it returns a false value.
 .SS get_download_info
 .IX Subsection "get_download_info"
 .Vb 2
@@ -87,20 +86,19 @@ returns a false value.
 \&  my $downloads = get_download_info(LOCATION => $location);
 .Ve
 .PP
-\&\f(CWget_download_info()\fR takes a \f(CW$location\fR to read a .info file in, and
-\&\f(CW$x64\fR which is a flag to determine if the x64 link should be used or not.
+\&\f(CWget_download_info()\fR reads in an info file from \f(CW$location\fR. The flag
+\&\f(CW$x64\fR determines whether the 64\-bit download files should be used or not.
+\&\f(CW$x64\fR defaults to a true value if unspecified.
 .PP
-If the \f(CW$x64\fR flag is not given, it defaults to a true value.
-.PP
-It returns a hashref where each key is a download link, and the corresponding
-value is the md5sum it should have.
+This subroutine returns a hashref where each key is a download link; the
+corresponding value is the expected md5sum.
 .SS get_from_info
 .IX Subsection "get_from_info"
 .Vb 1
 \&  my $data = get_from_info(LOCATION => $location, GET => $key);
 .Ve
 .PP
-\&\f(CWget_from_info()\fR retrieves the information under \f(CW$key\fR from the .info file
+\&\f(CWget_from_info()\fR retrieves the information under \f(CW$key\fR from the info file
 in \f(CW$location\fR.
 .SS get_orig_build_number
 .IX Subsection "get_orig_build_number"
@@ -125,8 +123,9 @@ given \f(CW$sbo\fR.
 .Ve
 .PP
 \&\f(CWget_required_by()\fR takes a SlackBuild, an array with already-confirmed
-requirements and a hash with requirements for a group of SlackBuilds and returns
-an array with SlackBuilds depending on the SlackBuild in the first argument.
+requirements and a hash with requirements for a group of SlackBuilds (all
+installed SlackBuilds, for example). It returns an array with SlackBuilds
+depending on the SlackBuild in the first argument.
 .SS get_requires
 .IX Subsection "get_requires"
 .Vb 1
@@ -140,7 +139,7 @@ an array with SlackBuilds depending on the SlackBuild in the first argument.
 \&  my %required_by = get_reverse_reqs($slackbuilds);
 .Ve
 .PP
-\&\f(CWget_reverse_reqs()\fR takes a list of SlackBuilds and returns a hash with
+\&\f(CWget_reverse_reqs()\fR takes a list of SlackBuilds and returns a hashref with
 other SlackBuilds requiring them.
 .SS get_sbo_version
 .IX Subsection "get_sbo_version"
@@ -148,7 +147,7 @@ other SlackBuilds requiring them.
 \&  my $ver = get_sbo_version($location);
 .Ve
 .PP
-\&\f(CWget_sbo_version()\fR returns the version found in the .info file in
+\&\f(CWget_sbo_version()\fR returns the version found in the info file in
 \&\f(CW$location\fR.
 .SS parse_info
 .IX Subsection "parse_info"
@@ -156,8 +155,8 @@ other SlackBuilds requiring them.
 \&  my %parse = parse_info($str);
 .Ve
 .PP
-\&\f(CWparse_info()\fR parses the contents of an .info file from \f(CW$str\fR and returns
-a key-value list of it.
+\&\f(CWparse_info()\fR parses the contents of an info file from \f(CW$str\fR and returns
+a key-value list of all values present.
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

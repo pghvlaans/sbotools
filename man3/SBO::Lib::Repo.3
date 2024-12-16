@@ -107,9 +107,9 @@ return a false value.
 It checks if the path in \f(CW$repo_path\fR exists and is an empty
 directory, and returns a true value if so.
 .PP
-If \f(CW$repo_path\fR exists and is non-empty, it is malformed, and the user
-is prompted to delete it to proceed. A usage error results if deletion
-is declined.
+If \f(CW$repo_path\fR exists and is non-empty, it may be malformed. The user
+is prompted to regenerate SLACKBUILDS.TXT to proceed. A usage error results
+if regeneration is declined.
 .PP
 If \f(CW$repo_path\fR does not exist, creation will be attempted, returning a true
 value on success. Creation failure results in a usage error.

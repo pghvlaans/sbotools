@@ -121,9 +121,9 @@ C<check_repo()> is used when SLACKBUILDS.txt cannot be found.
 It checks if the path in C<$repo_path> exists and is an empty
 directory, and returns a true value if so.
 
-If C<$repo_path> exists and is non-empty, it is malformed, and the user
-is prompted to regenerate it to proceed. A usage error results if deletion
-is declined.
+If C<$repo_path> exists and is non-empty, it may be malformed. The user
+is prompted to regenerate SLACKBUILDS.TXT to proceed. A usage error results
+if regeneration is declined.
 
 If C<$repo_path> does not exist, creation will be attempted, returning a true
 value on success. Creation failure results in a usage error.
