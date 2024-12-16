@@ -120,6 +120,14 @@ both names, versions, and full installed package name of the returned packages.
 a list of the ones for which the \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR version is different to the
 the version on SlackBuilds.org. Use VERS for version upgrades only, BUILD for
 build bumps only or BOTH for both.
+.SS get_removed_builds
+.IX Subsection "get_removed_builds"
+.Vb 1
+\&  my @removed = get_removed_builds();
+.Ve
+.PP
+\&\f(CWget_removed_builds()\fR returns an array of SlackBuild names and versions of all out-of-tree
+installed packages marked \f(CW\*(C`_SBo\*(C'\fR.
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

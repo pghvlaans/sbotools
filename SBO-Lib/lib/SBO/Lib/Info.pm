@@ -35,7 +35,7 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Info - Utilities to get data from SBo .info files.
+SBO::Lib::Info - Utilities to get data from SBo info files.
 
 =head1 SYNOPSIS
 
@@ -163,26 +163,6 @@ sub get_from_info {
   return $store->{$args{GET}};
 }
 
-=head2 get_orig_version
-
-  my $ver = get_orig_version($sbo);
-
-C<get_orig_version()> returns the version in the SlackBuilds.org tree for the
-given C<$sbo>.
-
-=cut
-
-sub get_orig_version {
-  script_error('get_orig_version requires an argument.') unless @_ == 1;
-  my $sbo = shift;
-
-  my $location = get_orig_location($sbo);
-
-  return $location if not defined $location;
-
-  return get_sbo_version($location);
-}
-
 =head2 get_orig_build_number
 
   my $build = get_orig_build_number($sbo);
@@ -203,6 +183,48 @@ sub get_orig_build_number {
   return get_sbo_build_number($location);
 }
 
+=head2 get_orig_version
+
+  my $ver = get_orig_version($sbo);
+
+C<get_orig_version()> returns the version in the SlackBuilds.org tree for the
+given C<$sbo>.
+
+=cut
+
+sub get_orig_version {
+  script_error('get_orig_version requires an argument.') unless @_ == 1;
+  my $sbo = shift;
+
+  my $location = get_orig_location($sbo);
+
+  return $location if not defined $location;
+
+  return get_sbo_version($location);
+}
+
+=head2 get_required_by
+
+  my @dep_of = get_required_by($sbo, $confirmed, $required_by);
+
+C<get_required_by()> takes a SlackBuild, an array with already-confirmed
+requirements and a hash with requirements for a group of SlackBuilds and returns
+an array with SlackBuilds depending on the SlackBuild in the first argument.
+
+=cut
+
+sub get_required_by {
+  my ($sbo, $confirmed, $required_by) = @_;
+  my @dep_of;
+
+  if ( $required_by->{$sbo} ) {
+    for my $req_by (keys %{$required_by->{$sbo}}) {
+      push @dep_of, $req_by unless in($req_by => @$confirmed);
+    }
+  }
+  return @dep_of;
+}
+
 =head2 get_requires
 
   my $reqs = get_requires($sbo);
@@ -217,6 +239,28 @@ sub get_requires {
   return undef unless $location;
   my $info = get_from_info(LOCATION => $location, GET => 'REQUIRES');
   return $info;
+}
+
+=head2 get_reverse_reqs
+
+  my %required_by = get_reverse_reqs($slackbuilds);
+
+C<get_reverse_reqs()> takes a list of SlackBuilds and returns a hash with
+other SlackBuilds requiring them.
+
+=cut
+
+sub get_reverse_reqs {
+  my $slackbuilds = shift;
+  my %required_by;
+
+  for my $sbo (keys %$slackbuilds) {
+    for my $req (@{ get_requires($sbo) }) {
+      $required_by{$req}{$sbo} = 1 if exists $slackbuilds->{$req};
+    }
+  }
+
+  return \%required_by;
 }
 
 =head2 get_sbo_version
@@ -279,50 +323,6 @@ sub parse_info {
 
     return %ret;
 
-}
-
-=head2 get_reverse_reqs
-
-  my %required_by = get_reverse_reqs($slackbuilds);
-
-C<get_reverse_reqs()> takes a list of SlackBuilds and returns a hash with
-their requirements.
-
-=cut
-
-sub get_reverse_reqs {
-  my $slackbuilds = shift;
-  my %required_by;
-
-  for my $sbo (keys %$slackbuilds) {
-    for my $req (@{ get_requires($sbo) }) {
-      $required_by{$req}{$sbo} = 1 if exists $slackbuilds->{$req};
-    }
-  }
-
-  return \%required_by;
-}
-
-=head2 get_required_by
-
-  my @dep_of = get_required_by($sbo, $confirmed, $required_by);
-
-C<get_required_by()> takes a SlackBuild, an array with already-confirmed
-requirements and a hash with requirements for a group of SlackBuilds and returns
-an array with SlackBuilds depending on the SlackBuild in the first argument.
-
-=cut
-
-sub get_required_by {
-  my ($sbo, $confirmed, $required_by) = @_;
-  my @dep_of;
-
-  if ( $required_by->{$sbo} ) {
-    for my $req_by (keys %{$required_by->{$sbo}}) {
-      push @dep_of, $req_by unless in($req_by => @$confirmed);
-    }
-  }
-  return @dep_of;
 }
 
 =head1 AUTHORS

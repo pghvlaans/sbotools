@@ -61,7 +61,7 @@
 .if n .ad l
 .nh
 .SH NAME
-SBO::Lib::Info \- Utilities to get data from SBo .info files.
+SBO::Lib::Info \- Utilities to get data from SBo info files.
 .SH SYNOPSIS
 .IX Header "SYNOPSIS"
 .Vb 1
@@ -102,14 +102,6 @@ value is the md5sum it should have.
 .PP
 \&\f(CWget_from_info()\fR retrieves the information under \f(CW$key\fR from the .info file
 in \f(CW$location\fR.
-.SS get_orig_version
-.IX Subsection "get_orig_version"
-.Vb 1
-\&  my $ver = get_orig_version($sbo);
-.Ve
-.PP
-\&\f(CWget_orig_version()\fR returns the version in the SlackBuilds.org tree for the
-given \f(CW$sbo\fR.
 .SS get_orig_build_number
 .IX Subsection "get_orig_build_number"
 .Vb 1
@@ -118,6 +110,23 @@ given \f(CW$sbo\fR.
 .PP
 \&\f(CWget_orig_build_number()\fR returns the build number in the SlackBuilds.org tree for the
 given \f(CW$sbo\fR.
+.SS get_orig_version
+.IX Subsection "get_orig_version"
+.Vb 1
+\&  my $ver = get_orig_version($sbo);
+.Ve
+.PP
+\&\f(CWget_orig_version()\fR returns the version in the SlackBuilds.org tree for the
+given \f(CW$sbo\fR.
+.SS get_required_by
+.IX Subsection "get_required_by"
+.Vb 1
+\&  my @dep_of = get_required_by($sbo, $confirmed, $required_by);
+.Ve
+.PP
+\&\f(CWget_required_by()\fR takes a SlackBuild, an array with already-confirmed
+requirements and a hash with requirements for a group of SlackBuilds and returns
+an array with SlackBuilds depending on the SlackBuild in the first argument.
 .SS get_requires
 .IX Subsection "get_requires"
 .Vb 1
@@ -125,6 +134,14 @@ given \f(CW$sbo\fR.
 .Ve
 .PP
 \&\f(CWget_requires()\fR returns the requirements for a given \f(CW$sbo\fR.
+.SS get_reverse_reqs
+.IX Subsection "get_reverse_reqs"
+.Vb 1
+\&  my %required_by = get_reverse_reqs($slackbuilds);
+.Ve
+.PP
+\&\f(CWget_reverse_reqs()\fR takes a list of SlackBuilds and returns a hash with
+other SlackBuilds requiring them.
 .SS get_sbo_version
 .IX Subsection "get_sbo_version"
 .Vb 1
@@ -141,23 +158,6 @@ given \f(CW$sbo\fR.
 .PP
 \&\f(CWparse_info()\fR parses the contents of an .info file from \f(CW$str\fR and returns
 a key-value list of it.
-.SS get_reverse_reqs
-.IX Subsection "get_reverse_reqs"
-.Vb 1
-\&  my %required_by = get_reverse_reqs($slackbuilds);
-.Ve
-.PP
-\&\f(CWget_reverse_reqs()\fR takes a list of SlackBuilds and returns a hash with
-their requirements.
-.SS get_required_by
-.IX Subsection "get_required_by"
-.Vb 1
-\&  my @dep_of = get_required_by($sbo, $confirmed, $required_by);
-.Ve
-.PP
-\&\f(CWget_required_by()\fR takes a SlackBuild, an array with already-confirmed
-requirements and a hash with requirements for a group of SlackBuilds and returns
-an array with SlackBuilds depending on the SlackBuild in the first argument.
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
