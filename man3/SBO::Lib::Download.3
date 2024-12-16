@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Download 3"
-.TH SBO::Lib::Download 3 "Prickle-Prickle, The Aftermath 57, 3190 YOLD" "" "sbotools 3.1"
+.TH SBO::Lib::Download 3 "Setting Orange, The Aftermath 58, 3190 YOLD" "" "sbotools 3.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -77,53 +77,51 @@ SBO::Lib::Download \- Routines for downloading slackbuild sources.
 \&  my ($ret, $exit) = check_distfiles(LOCATION => $loc);
 .Ve
 .PP
-\&\f(CWcheck_distfiles()\fR gets the list of downloads from \f(CW$loc\fR, and checks to see
-if any of them are already downloaded. If so, it verifies that they're correct,
-otherwise it downloads them, verifies they're correct, and calls
-\&\f(CW\*(C`create_symlinks\*(C'\fR on them.
+\&\f(CWcheck_distfiles()\fR gets the list of downloads from \f(CW$loc\fR. Any previously-downloaded
+files have their checksums verified. Missing and unverifiable files are downloaded and
+verified. Finally, \f(CW\*(C`create_symlinks\*(C'\fR is run on each download.
 .PP
-It returns a list of two values. If the second value is true, the first value
-will contain an error message. Otherwise it will contain an array reference of
-symlinks as returned by \f(CW\*(C`create_symlinks\*(C'\fR.
+In case of success, an array of symlinks from \f(CW\*(C`create_symlinks\*(C'\fRis returned. In case of
+failure, an error message and an exit code are returned.
 .SS compute_md5sum
 .IX Subsection "compute_md5sum"
 .Vb 1
 \&  my $md5sum = compute_md5sum($file);
 .Ve
 .PP
-\&\f(CWcompute_md5sum()\fR computes the md5sum of the file in \f(CW$file\fR, and returns it.
+\&\f(CWcompute_md5sum()\fR computes and returns the md5sum of the file in \f(CW$file\fR.
 .SS create_symlinks
 .IX Subsection "create_symlinks"
 .Vb 1
-\&  my @symlinks = @{ create_symlinks($location, {%downloads});
+\&  my @symlinks = @{ create_symlinks($location, {%downloads}) };
 .Ve
 .PP
-\&\f(CWcreate_symlinks()\fR creates symlinks for the \f(CW%downloads\fR in \f(CW$location\fR,
-and returns an array reference of the symlinks created.
+\&\f(CWcreate_symlinks()\fR creates symlinks for the an array \f(CW%downloads\fR in
+\&\f(CW$location\fR, returning an array reference of the symlinks created.
 .SS get_distfile
 .IX Subsection "get_distfile"
 .Vb 1
 \&  my ($msg, $err) = get_distfile($link, $md5);
 .Ve
 .PP
-\&\f(CWget_distfile()\fR downloads the \f(CW$link\fR, and compares the downloaded file's
-md5sum to the one in \f(CW$md5\fR. It returns a list of two values, and if the
-second value is true, the first one will have an error message.
+\&\f(CWget_distfile()\fR downloads from the URL \f(CW$link\fR with \f(CWwget(1)\fR and compares
+the md5sum to \f(CW$md5\fR. It returns a message and an error code upon
+failure, and 1 upon success.
 .SS get_dl_fns
 .IX Subsection "get_dl_fns"
 .Vb 1
 \&  my @filenames = @{ get_dl_fns([@links]) };
 .Ve
 .PP
-\&\f(CWget_dl_fns()\fR returns the filename parts of the \f(CW@links\fR in an array
-reference.
+\&\f(CWget_dl_fns()\fR returns the filenames of the items in \f(CW@links\fR in an
+array reference.
 .SS get_filename_from_link
 .IX Subsection "get_filename_from_link"
 .Vb 1
 \&  my $path = get_filename_from_link($link);
 .Ve
 .PP
-\&\f(CW\*(C`get_filename_from_link\*(C'\fR returns the full path to the file downloaded from
+\&\f(CWget_filename_from_link()\fR returns the full path to the file downloaded from
 \&\f(CW$link\fR.
 .SS get_sbo_downloads
 .IX Subsection "get_sbo_downloads"
@@ -131,25 +129,24 @@ reference.
 \&  my %downloads = %{ get_sbo_downloads(LOCATION => $loc) };
 .Ve
 .PP
-\&\f(CWget_sbo_downloads()\fR gets the download links and md5sums for the slackbuild
-in \f(CW$loc\fR, and returns them in a hash reference.
+\&\f(CWget_sbo_downloads()\fR gets the download links and md5sums for the SlackBuild
+in location \f(CW$loc\fR, returning them in a hash reference.
 .SS get_symlink_from_filename
 .IX Subsection "get_symlink_from_filename"
 .Vb 1
 \&  my $symlink = get_symlink_from_filename($path, $loc);
 .Ve
 .PP
-\&\f(CWget_symlink_from_filename()\fR returns the path of the symlink in \f(CW$loc\fR for
-the \f(CW$path\fR.
+\&\f(CWget_symlink_from_filename()\fR, given a (source) file at \f(CW$path\fR and a location \f(CW$loc\fR,
+returns the path of the generated symlink.
 .SS verify_distfile
 .IX Subsection "verify_distfile"
 .Vb 1
 \&  my $bool = verify_distfile($link, $md5);
 .Ve
 .PP
-\&\f(CWverify_distfile()\fR verifies that the file downloaded from \f(CW$link\fR matches
-the \f(CW$md5\fR md5sum, and returns a true value if it does, and a false value
-otherwise.
+\&\f(CWverify_distfile()\fR verifies that the file downloaded from \f(CW$link\fR has an
+md5sum equal to \f(CW$md5\fR.
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

@@ -51,14 +51,12 @@ SBO::Lib::Download - Routines for downloading slackbuild sources.
 
   my ($ret, $exit) = check_distfiles(LOCATION => $loc);
 
-C<check_distfiles()> gets the list of downloads from C<$loc>, and checks to see
-if any of them are already downloaded. If so, it verifies that they're correct,
-otherwise it downloads them, verifies they're correct, and calls
-C<create_symlinks> on them.
+C<check_distfiles()> gets the list of downloads from C<$loc>. Any previously-downloaded
+files have their checksums verified. Missing and unverifiable files are downloaded and
+verified. Finally, C<create_symlinks> is run on each download.
 
-It returns a list of two values. If the second value is true, the first value
-will contain an error message. Otherwise it will contain an array reference of
-symlinks as returned by C<create_symlinks>.
+In case of success, an array of symlinks from C<create_symlinks>is returned. In case of
+failure, an error message and an exit code are returned.
 
 =cut
 
@@ -99,7 +97,7 @@ sub check_distfiles {
 
   my $md5sum = compute_md5sum($file);
 
-C<compute_md5sum()> computes the md5sum of the file in C<$file>, and returns it.
+C<compute_md5sum()> computes and returns the md5sum of the file in C<$file>.
 
 =cut
 
@@ -116,10 +114,10 @@ sub compute_md5sum {
 
 =head2 create_symlinks
 
-  my @symlinks = @{ create_symlinks($location, {%downloads});
+  my @symlinks = @{ create_symlinks($location, {%downloads}) };
 
-C<create_symlinks()> creates symlinks for the C<%downloads> in C<$location>,
-and returns an array reference of the symlinks created.
+C<create_symlinks()> creates symlinks for the an array C<%downloads> in
+C<$location>, returning an array reference of the symlinks created.
 
 =cut
 
@@ -142,9 +140,9 @@ sub create_symlinks {
 
   my ($msg, $err) = get_distfile($link, $md5);
 
-C<get_distfile()> downloads the C<$link>, and compares the downloaded file's
-md5sum to the one in C<$md5>. It returns a list of two values, and if the
-second value is true, the first one will have an error message.
+C<get_distfile()> downloads from the URL C<$link> with C<wget(1)> and compares
+the md5sum to C<$md5>. It returns a message and an error code upon
+failure, and 1 upon success.
 
 =cut
 
@@ -189,8 +187,8 @@ sub get_distfile {
 
   my @filenames = @{ get_dl_fns([@links]) };
 
-C<get_dl_fns()> returns the filename parts of the C<@links> in an array
-reference.
+C<get_dl_fns()> returns the filenames of the items in C<@links> in an
+array reference.
 
 =cut
 
@@ -206,7 +204,7 @@ sub get_dl_fns {
 
   my $path = get_filename_from_link($link);
 
-C<get_filename_from_link> returns the full path to the file downloaded from
+C<get_filename_from_link()> returns the full path to the file downloaded from
 C<$link>.
 
 =cut
@@ -222,8 +220,8 @@ sub get_filename_from_link {
 
   my %downloads = %{ get_sbo_downloads(LOCATION => $loc) };
 
-C<get_sbo_downloads()> gets the download links and md5sums for the slackbuild
-in $loc, and returns them in a hash reference.
+C<get_sbo_downloads()> gets the download links and md5sums for the SlackBuild
+in location C<$loc>, returning them in a hash reference.
 
 =cut
 
@@ -252,8 +250,8 @@ sub get_sbo_downloads {
 
   my $symlink = get_symlink_from_filename($path, $loc);
 
-C<get_symlink_from_filename()> returns the path of the symlink in C<$loc> for
-the C<$path>.
+C<get_symlink_from_filename()>, given a (source) file at C<$path> and a location C<$loc>,
+returns the path of the generated symlink.
 
 =cut
 
@@ -269,9 +267,8 @@ sub get_symlink_from_filename {
 
   my $bool = verify_distfile($link, $md5);
 
-C<verify_distfile()> verifies that the file downloaded from C<$link> matches
-the C<$md5> md5sum, and returns a true value if it does, and a false value
-otherwise.
+C<verify_distfile()> verifies that the file downloaded from C<$link> has an
+md5sum equal to C<$md5>.
 
 =cut
 
