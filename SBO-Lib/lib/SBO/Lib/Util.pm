@@ -831,7 +831,6 @@ sub build_cmp {
   return 0;
 }
 
->>>>>>> master
 # _race::cond will allow both documenting and testing race conditions
 # by overriding its implementation for tests
 sub _race::cond { return }
