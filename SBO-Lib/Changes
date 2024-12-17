@@ -6,6 +6,7 @@ sbotools
   * Bugfix: do not crash if sbotools.conf provides an improper value of SLACKWARE_VERSION
   * Repo.pm: Offer to retry failed git fetch
   * Bugfix: sbocheck reports version differences between LOCAL_OVERRIDES and the repository
+  * Util.pm: Read the hints file only once; allow multiple optional dependency specs for the same script
 
 3.1 - 2024-12-05
   * sbofind: Allow multiple search terms

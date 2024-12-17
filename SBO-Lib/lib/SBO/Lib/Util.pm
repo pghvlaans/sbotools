@@ -129,6 +129,9 @@ our %config = (
 
 read_config();
 
+# The hints file should be read in once and only once.
+our @listings = read_hints();
+
 =head1 SUBROUTINES
 
 =cut
@@ -652,15 +655,15 @@ sub version_cmp {
 
 =head2 read_hints
 
-  my $res = read_hints()
+  our @listings = read_hints()
 
-C<read_hints> reads the contents of /etc/sbotools/sbotools.hints, returning an array
-of optional dependency requests and blacklisted scripts.
+C<read_hints()> reads the contents of /etc/sbotools/sbotools.hints, returning an array
+of optional dependency requests and blacklisted scripts. C<read_hints()> is used to
+populate global array C<@listings>, and should only be called once.
 
 =cut
 
 sub read_hints{
-  my @listings;
   if(-f "/etc/sbotools/sbotools.hints") {
     my $contents = slurp("/etc/sbotools/sbotools.hints");
     usage_error("read_hints: could not read existing /etc/sbotools/sbotools.hints") unless
@@ -678,20 +681,21 @@ sub read_hints{
 
   my $optional = get_optional($sbo)
 
-C<get_optional()> checks for user-requested optional dependencies for $sbo.
+C<get_optional()> checks for user-requested optional dependencies for C<$sbo>. Note that
+global array C<@listings> is copied.
 
 =cut
 
 sub get_optional {
   script_error("get_optional requires an argument.") unless @_ == 1;
   my $sbo = shift;
-  my @listings = read_hints();
   my @optional;
-  for my $entry (@listings) {
+  my @loclistings = @listings;
+  for my $entry (@loclistings) {
     next if grep { /^#|^!/ } $entry;
     next if not grep { /\s$sbo$/ } $entry;
     $entry =~ s/\s$sbo$//;
-    @optional = split(" ", $entry);
+    push @optional, split(" ", $entry);
   }
   push @optional, "NULL" unless @optional;
 
@@ -702,15 +706,16 @@ sub get_optional {
 
   my $result = on_blacklist($sbo);
 
-C<on_blacklist()> checks whether a given SlackBuild has been blacklisted.
+C<on_blacklist()> checks whether C<$sbo> has been blacklisted. Note that
+global array C<@listings> is copied.
 
 =cut
 
 sub on_blacklist {
   script_error("on_blacklist requires an argument.") unless @_ == 1;
   my $sbo = shift;
-  my @listings = read_hints();
-  for my $entry (@listings) {
+  my @loclistings = @listings;
+  for my $entry (@loclistings) {
     next if grep { /\s/ } $entry;
     return 1 if $entry eq "!$sbo"; }
   return 0;
