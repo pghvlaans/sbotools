@@ -28,7 +28,8 @@ updates
 **slackbuilds.org** tree (see [sbosnap(1)](sbosnap.1.md)), checks for available
 upgrades, and reports what it finds. SlackBuilds with differing build
 numbers are reported separately, as are any SlackBuilds marked *\_SBo*
-that are not found in the repository.
+that are not found in the repository or local overrides (see
+[sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
 The three output categories are logged separately to
 */etc/sbocheck.log*, */etc/sbocheck-bumps.log* and
