@@ -290,11 +290,14 @@ sboupgrade\fR\
 .B
 -z|--force-reqs
 .RS
-In combination with
+In the same vein as
 .B
 --force\fR\
-\&,
-rebuild dependencies that do not require upgrades as well.
+\&, upgrade the SlackBuild and its dependencies, even if upgrades are not required.
+Incompatible with
+.B
+--nointeractive\fR\
+\&.
 .RE
 .P
 .B

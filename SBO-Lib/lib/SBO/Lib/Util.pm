@@ -48,6 +48,7 @@ our @EXPORT_OK = (
     idx
     in
     indent
+    lint_sbo_home
     on_blacklist
     open_fh
     open_read
@@ -128,6 +129,9 @@ our %config = (
 );
 
 read_config();
+
+# The hints file should be read in once and only once.
+our @listings = read_hints();
 
 =head1 SUBROUTINES
 
@@ -393,6 +397,21 @@ sub indent {
   return join "\n", @lines;
 }
 
+=head2 lint_sbo_home
+
+  lint_sbo_home();
+
+C<lint_sbo_home()> runs at the start of every script except for C<sboconfig>;
+it exits if C<SBO_HOME> is not an absolute directory path (or FALSE, which defaults to
+/usr/sbo).
+
+=cut
+
+sub lint_sbo_home {
+  usage_error("Lint failure: SBO_HOME is not set to FALSE or an absolute directory path.\nUse \"sboconfig -s\" or edit /etc/sbotools/sbotools.conf to set a good value.")
+    unless $config{SBO_HOME} =~ qr#^(/|$)#;
+}
+
 =head2 on_blacklist
 
   my $result = on_blacklist($sbo);
@@ -409,7 +428,6 @@ sub on_blacklist {
     next if grep { /\s/ } $entry;
     return 1 if $entry eq "!$sbo"; }
   return 0;
-}
 
 =head2 open_fh
 
@@ -727,6 +745,93 @@ sub version_cmp {
   versioncmp($v1, $v2);
 }
 
+=head2 read_hints
+
+  our @listings = read_hints()
+
+C<read_hints()> reads the contents of /etc/sbotools/sbotools.hints, returning an array
+of optional dependency requests and blacklisted scripts. C<read_hints()> is used to
+populate global array C<@listings>, and should only be called once.
+
+=cut
+
+sub read_hints{
+  if(-f "/etc/sbotools/sbotools.hints") {
+    my $contents = slurp("/etc/sbotools/sbotools.hints");
+    usage_error("read_hints: could not read existing /etc/sbotools/sbotools.hints") unless
+      defined $contents;
+    my @contents = split("\n", $contents);
+    for my $entry (@contents) {
+      push @listings, $entry unless grep { /^#|^\s/ } $entry;
+    }
+  }
+  push @listings, "NULL" unless @listings;
+  return @listings;
+}
+
+=head2 get_optional
+
+  my $optional = get_optional($sbo)
+
+C<get_optional()> checks for user-requested optional dependencies for C<$sbo>. Note that
+global array C<@listings> is copied.
+
+=cut
+
+sub get_optional {
+  script_error("get_optional requires an argument.") unless @_ == 1;
+  my $sbo = shift;
+  my @optional;
+  my @loclistings = @listings;
+  for my $entry (@loclistings) {
+    next if grep { /^#|^!/ } $entry;
+    next if not grep { /\s$sbo$/ } $entry;
+    $entry =~ s/\s$sbo$//;
+    push @optional, split(" ", $entry);
+  }
+  push @optional, "NULL" unless @optional;
+
+  return @optional;
+}
+
+=head2 on_blacklist
+
+  my $result = on_blacklist($sbo);
+
+C<on_blacklist()> checks whether C<$sbo> has been blacklisted. Note that
+global array C<@listings> is copied.
+
+=cut
+
+sub on_blacklist {
+  script_error("on_blacklist requires an argument.") unless @_ == 1;
+  my $sbo = shift;
+  my @loclistings = @listings;
+  for my $entry (@loclistings) {
+    next if grep { /\s/ } $entry;
+    return 1 if $entry eq "!$sbo"; }
+  return 0;
+}
+
+=head2 build_cmp
+
+  my $cmp = build_cmp($build1, $build2, $ver1, $ver2);
+
+C<build_cmp()> will compare C<$build1> with C<$build2> while checking that C<$ver1>
+and C<$ver2> are different. If the build numbers are not the same and the version
+numbers are, upgrading for a script bump may be in order.
+
+=cut
+
+sub build_cmp {
+  my ($b1, $b2, $v1, $v2) = @_;
+  if (versioncmp($v1, $v2)) { return 0; }
+  if ($b1 != $b2) { return 1; }
+
+  return 0;
+}
+
+>>>>>>> master
 # _race::cond will allow both documenting and testing race conditions
 # by overriding its implementation for tests
 sub _race::cond { return }

@@ -14,12 +14,14 @@ package SBO::App::Snap;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ fetch_tree update_tree %config show_version /;
+use SBO::Lib qw/ fetch_tree update_tree %config show_version lint_sbo_home /;
 use Getopt::Long qw/ GetOptionsFromArray /;
 
 use parent 'SBO::App';
 
 our $VERSION = '3.1';
+
+lint_sbo_home();
 
 sub _parse_opts {
   my $class = shift;

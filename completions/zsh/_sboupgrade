@@ -17,7 +17,7 @@ _arguments -s -C \
 	   '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \
 	   '(-r --nointeractive)'{-r,--nointeractive}'[Skip README.]' \
 	   '(-f --force)'{-f,--force}'[Force an upgrade (ignore version).]' \
-	   '(-z --force-reqs)'{-z,--force-reqs}'[Force update of requirements (use with -f).]' \
+	   '(-z --force-reqs)'{-z,--force-reqs}'[Force update of requirements.]' \
 	   '(-i --noinstall)'{-i,--noinstall}'[Build package but do not install.]' \
 	   '(-)*:SlackBuild:(${sboupdates:|words})' \
     && return 0
