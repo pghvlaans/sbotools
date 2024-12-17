@@ -109,31 +109,34 @@ sub get_update_list {
 		$updates{$name}{installed} = $update->{version};
 		$updates{$name}{sbo} = $update->{orig};
 		$updates{$name}{local} = 1;
+		if ($filter eq 'BUILD') {
+			$updates{$update->{name}}{available} = $update->{bump};
+			$updates{$update->{name}}{sbo} = $update->{intree};
+		}
 	}
 
 # Output should look like this where the < is aligned to the longest sboname 1.0 string (excepting ones that would then wrap):
 # sboname 1.0  <  needs updating (1.1 from overrides)
 # sboname 1.0  <  needs updating (1.1 from SBo)
 # sboname 1.0  <  needs updating (1.1 from overrides, 1.2 from SBo)
-# sboname 1.0  <  override outdated (1.1 from SBo)
+# sboname 1.0  <  override differs (1.1 from SBo)
 
 	my $max = 0;
 	foreach my $sbo (keys %updates) {
 		my $info = $updates{$sbo};
 		my $current = sprintf "%s %s", $sbo, $info->{installed};
 
+		# Packages from LOCAL_OVERRIDES only have build number differences with the overrides directory reported
 		my $available = '';
-		if (defined $info->{available} and defined $info->{sbo}) {
+		if (defined $info->{available} and defined $info->{sbo} and $filter ne 'BUILD') {
 			if ($filter eq 'VERS') { $available = sprintf "needs updating (%s from overrides, %s from SBo)", $info->{available}, $info->{sbo}; }
-			if ($filter eq 'BUILD') { $available = sprintf "was bumped (build %s from overrides, %s from SBo)", $info->{available}, $info->{sbo}; }
 		}
 		elsif ($info->{available}) {
 			if ($filter eq 'VERS') { $available = sprintf "needs updating (%s from %s)", $info->{available}, $info->{local} ? "overrides" : "SBo"; }
 			if ($filter eq 'BUILD') { $available = sprintf "was bumped (build %s from %s)", $info->{available}, $info->{local} ? "overrides" : "SBo"; }
 		}
 		else {
-			if ($filter eq 'VERS') { $available = sprintf "override outdated (%s from SBo)", $info->{sbo}; }
-			if ($filter eq 'BUILD') { $available = sprintf "was bumped (build %s from SBo)", $info->{sbo}; }
+			if ($filter eq 'VERS') { $available = sprintf "override differs (%s from SBo)", $info->{sbo}; }
 		}
 		$info->{name_str} = $current;
 		$info->{upd_str} = $available;

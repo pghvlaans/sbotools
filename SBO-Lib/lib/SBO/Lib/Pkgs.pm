@@ -223,21 +223,30 @@ sub get_local_outdated_versions {
     my @local = grep { is_local($_->{name}) } @$pkglist;
 
     foreach my $sbo (@local) {
+      my $local_location = get_sbo_location($sbo->{name});
+      next if not defined $local_location;
       my $orig = get_orig_version($sbo->{name});
       next if not defined $orig;
-      if ($filter eq 'VERS') { next if not version_cmp($orig, $sbo->{version}); }
-      my $orig_build_number = get_orig_build_number($sbo);
-      if ($filter eq 'BUILD' and defined $orig_build_number) {
-        if (build_cmp($orig_build_number, $sbo->{numbuild}, $orig, $sbo->{version})) {
+      my $orig_build_number = get_orig_build_number($sbo->{name});
+      my $local_build_number = get_sbo_build_number($local_location);
+
+      if ($filter eq 'VERS') {
+        next if not version_cmp($orig, $sbo->{version});
+      } elsif ($filter eq 'BUILD' and defined $local_build_number) {
+        if (not build_cmp($local_build_number, $sbo->{numbuild}, $orig, $sbo->{version})) {
 	  next;
         }
-      } elsif ($filter eq 'BOTH' and defined $orig_build_number) {
-	if (build_cmp($orig_build_number, $sbo->{numbuild}, $orig, $sbo->{version}) && not version_cmp($orig, $sbo->{version})) {
+      } elsif ($filter eq 'BOTH' and defined $local_build_number) {
+	if (not build_cmp($local_build_number, $sbo->{numbuild}, $orig, $sbo->{version}) && not version_cmp($orig, $sbo->{version})) {
           next;
         }
       } else { next; }
 
-      push @outdated, { %$sbo, orig => $orig };
+      if (defined $orig_build_number and defined $local_build_number) {
+        push @outdated, { %$sbo, orig => $orig, intree => $orig_build_number, bump => $local_build_number };
+      } else {
+        push @outdated, { %$sbo, orig => $orig };
+      }
     }
   }
 
