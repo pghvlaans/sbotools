@@ -77,21 +77,17 @@ SBO::Lib::Readme \- Routines for interacting with a typical SBo README file.
 \&  my $opts = ask_opts($sbo, $readme);
 .Ve
 .PP
-\&\f(CWask_opts()\fR displays the \f(CW$readme\fR and asks if we should set any of the
-options it defines. If the user indicates that we should, we prompt them for
-the options to set and then returns them as a string. If the user didn't supply
-any options or indicated that we shouldn't, it returns \f(CW\*(C`undef\*(C'\fR. In addition,
-if options were previously set by the user, they are retrieved and can be used
-again.
+\&\f(CWask_opts()\fR displays  \f(CW$readme\fR and asks if options should be set. If no options
+are set, it returns \f(CW\*(C`undef\*(C'\fR. Saved options under \f(CW\*(C`/var/log/sbotools/$sbo\*(C'\fR are retrieved
+and can be used again.
 .SS ask_other_readmes
 .IX Subsection "ask_other_readmes"
 .Vb 1
 \&  ask_other_readmes($sbo, $location);
 .Ve
 .PP
-\&\f(CWask_other_readmes()\fR checks if there are other readmes for the \f(CW$sbo\fR in
-\&\f(CW$location\fR, and if so, asks the user if they should be displayed, and then
-displays them if the user didn't decline.
+\&\f(CWask_other_readmes()\fR checks for secondary README files for \f(CW$sbo\fR in \f(CW$location\fR.
+It displays the files one by one upon prompt.
 .SS ask_user_group
 .IX Subsection "ask_user_group"
 .Vb 1
@@ -99,32 +95,31 @@ displays them if the user didn't decline.
 .Ve
 .PP
 \&\f(CWask_user_group()\fR displays the \f(CW$readme\fR and commands found in \f(CW$cmds\fR, and
-asks the user if we should automatically run the \f(CW\*(C`useradd\*(C'\fR/\f(CW\*(C`/groupadd\*(C'\fR
-commands found. If the user indicates that we should, it returns the \f(CW$cmds\fR,
-otherwise it returns \f(CW\*(C`undef\*(C'\fR.
+prompts for running the \f(CW\*(C`useradd\*(C'\fR and \f(CW\*(C`groupadd\*(C'\fR commands found. If so, the \f(CW$cmds\fR are
+returned; the return is otherwise \f(CW\*(C`undef\*(C'\fR.
 .SS get_opts
 .IX Subsection "get_opts"
 .Vb 1
 \&  my $bool = get_opts($readme);
 .Ve
 .PP
-\&\f(CWget_opts()\fR checks if the \f(CW$readme\fR has any options defined, and if so
-returns a true value. Otherwise it returns a false value.
+\&\f(CWget_opts()\fR checks the \f(CW$readme\fR for defined options. It returns a true
+value if any are found, and a false value otherwise.
 .SS get_readme_contents
 .IX Subsection "get_readme_contents"
 .Vb 1
 \&  my $contents = get_readme_contents($location);
 .Ve
 .PP
-\&\f(CWget_readme_contents()\fR will open the README file in \f(CW$location\fR and return
-its contents. On error, it will return \f(CW\*(C`undef\*(C'\fR.
+\&\f(CWget_readme_contents()\fR opens the README file in \f(CW$location\fR and returns
+its contents. On error, it returns \f(CW\*(C`undef\*(C'\fR.
 .SS get_user_group
 .IX Subsection "get_user_group"
 .Vb 1
 \&  my @cmds = @{ get_user_group($readme) };
 .Ve
 .PP
-\&\f(CWget_user_group()\fR searches through the \f(CW$readme\fR for \f(CW\*(C`useradd\*(C'\fR and
+\&\f(CWget_user_group()\fR searches the \f(CW$readme\fR for \f(CW\*(C`useradd\*(C'\fR and
 \&\f(CW\*(C`groupadd\*(C'\fR commands, and returns them in an array reference.
 .SS user_prompt
 .IX Subsection "user_prompt"
@@ -132,18 +127,22 @@ its contents. On error, it will return \f(CW\*(C`undef\*(C'\fR.
 \&  my ($cmds, $opts, $exit) = user_prompt($sbo, $location);
 .Ve
 .PP
-\&\f(CWuser_prompt()\fR checks for options and commands, to see if we should run them,
-and asks if we should proceed with the \f(CW$sbo\fR in question.
+\&\f(CWuser_prompt()\fR is the main point of access to the other commands in \f(CW\*(C`Readme.pm\*(C'\fR.
+It calls subroutines to find options and commands, and then prompts the user for
+installation. Three values are potentially returned.
 .PP
-It returns a list of three values, and if the third one is a true value, the
-first indicates an error message. Otherwise, the first value will either be an
-\&\f(CW\*(AqN\*(Aq\fR, \f(CW\*(C`undef\*(C'\fR, or an array reference. If it's \f(CW\*(AqN\*(Aq\fR, the user indicated
-that we should \fBnot\fR build this \f(CW$sbo\fR. Otherwise it indicates if we should
-run any \f(CW\*(C`useradd\*(C'\fR/\f(CW\*(C`groupadd\*(C'\fR commands, or if it's \f(CW\*(C`undef\*(C'\fR, that we
-shouldn't. The second return value indicates the options we should specify if
-we build this \f(CW$sbo\fR.
+In case of error, the first is the error message and the third is a true value.
+.PP
+If the user refuses the prompt to build \f(CW$sbo\fR, the first value is \f(CW\*(AqN\*(Aq\fR.
+.PP
+If \f(CW$sbo\fR is to be built, the first value is the commands that will be run
+in advance, or \f(CW$undef\fR if none. The second value contains build options.
 .PP
 \&\fBNote\fR: This should really be changed.
+.PP
+\&\fBNote\fR: The previous note is old. I (KEC) agree that this module is asked to do
+quite a lot. Keeping it in place might be the most parsimonious thing to do, but I
+have yet to look into the question closely.
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

@@ -47,12 +47,9 @@ SBO::Lib::Readme - Routines for interacting with a typical SBo README file.
 
   my $opts = ask_opts($sbo, $readme);
 
-C<ask_opts()> displays the C<$readme> and asks if we should set any of the
-options it defines. If the user indicates that we should, we prompt them for
-the options to set and then returns them as a string. If the user didn't supply
-any options or indicated that we shouldn't, it returns C<undef>. In addition,
-if options were previously set by the user, they are retrieved and can be used
-again.
+C<ask_opts()> displays  C<$readme> and asks if options should be set. If no options
+are set, it returns C<undef>. Saved options under C</var/log/sbotools/$sbo> are retrieved
+and can be used again.
 
 =cut
 
@@ -100,9 +97,8 @@ sub ask_opts {
 
   ask_other_readmes($sbo, $location);
 
-C<ask_other_readmes()> checks if there are other readmes for the C<$sbo> in
-C<$location>, and if so, asks the user if they should be displayed, and then
-displays them if the user didn't decline.
+C<ask_other_readmes()> checks for secondary README files for C<$sbo> in C<$location>.
+It displays the files one by one upon prompt.
 
 =cut
 
@@ -126,9 +122,8 @@ sub ask_other_readmes {
   my $bool = ask_user_group($cmds, $readme);
 
 C<ask_user_group()> displays the C<$readme> and commands found in C<$cmds>, and
-asks the user if we should automatically run the C<useradd>/C</groupadd>
-commands found. If the user indicates that we should, it returns the C<$cmds>,
-otherwise it returns C<undef>.
+prompts for running the C<useradd> and C<groupadd> commands found. If so, the C<$cmds> are
+returned; the return is otherwise C<undef>.
 
 =cut
 
@@ -147,8 +142,8 @@ sub ask_user_group {
 
   my $bool = get_opts($readme);
 
-C<get_opts()> checks if the C<$readme> has any options defined, and if so
-returns a true value. Otherwise it returns a false value.
+C<get_opts()> checks the C<$readme> for defined options. It returns a true
+value if any are found, and a false value otherwise.
 
 =cut
 
@@ -163,8 +158,8 @@ sub get_opts {
 
   my $contents = get_readme_contents($location);
 
-C<get_readme_contents()> will open the README file in C<$location> and return
-its contents. On error, it will return C<undef>.
+C<get_readme_contents()> opens the README file in C<$location> and returns
+its contents. On error, it returns C<undef>.
 
 =cut
 
@@ -179,7 +174,7 @@ sub get_readme_contents {
 
   my @cmds = @{ get_user_group($readme) };
 
-C<get_user_group()> searches through the C<$readme> for C<useradd> and
+C<get_user_group()> searches the C<$readme> for C<useradd> and
 C<groupadd> commands, and returns them in an array reference.
 
 =cut
@@ -196,18 +191,22 @@ sub get_user_group {
 
   my ($cmds, $opts, $exit) = user_prompt($sbo, $location);
 
-C<user_prompt()> checks for options and commands, to see if we should run them,
-and asks if we should proceed with the C<$sbo> in question.
+C<user_prompt()> is the main point of access to the other commands in C<Readme.pm>.
+It calls subroutines to find options and commands, and then prompts the user for
+installation. Three values are potentially returned.
 
-It returns a list of three values, and if the third one is a true value, the
-first indicates an error message. Otherwise, the first value will either be an
-C<'N'>, C<undef>, or an array reference. If it's C<'N'>, the user indicated
-that we should B<not> build this C<$sbo>. Otherwise it indicates if we should
-run any C<useradd>/C<groupadd> commands, or if it's C<undef>, that we
-shouldn't. The second return value indicates the options we should specify if
-we build this C<$sbo>.
+In case of error, the first is the error message and the third is a true value.
+
+If the user refuses the prompt to build C<$sbo>, the first value is C<'N'>.
+
+If C<$sbo> is to be built, the first value is the commands that will be run
+in advance, or C<$undef> if none. The second value contains build options.
 
 B<Note>: This should really be changed.
+
+B<Note>: The previous note is old. I (KEC) agree that this module is asked to do
+quite a lot. Keeping it in place might be the most parsimonious thing to do, but I
+have yet to look into the question closely.
 
 =cut
 
