@@ -49,11 +49,10 @@ my $pkg_db = '/var/log/packages';
 
   my @updates = @{ get_available_updates() };
 
-C<get_available_updates()> compares the installed versions in
-C</var/log/packages> that are tagged as SBo with the version available from
-the SlackBuilds.org or C<LOCAL_OVERRIDES> repository, and returns an array
-reference to an array of hash references which specify package names, and
-installed and available versions.
+C<get_available_updates()> compares version and build number information for
+packages installed with the _SBo tag with the local repository. It returns
+an array reference to an array of hash references specifying package names,
+installed versions and available versions.
 
 =cut
 
@@ -96,8 +95,8 @@ sub get_available_updates {
 
   my @names = get_inst_names(get_available_updates());
 
-C<get_inst_names()> returns a list of package names from an array reference
-such as the one returned by C<get_available_updates()>.
+C<get_inst_names()> returns a list of package names from an array reference, such
+as one returned by C<get_available_updates()>.
 
 =cut
 
@@ -115,8 +114,9 @@ sub get_inst_names {
 
   my @cpans = @{ get_installed_cpans() };
 
-C<get_installed_cpans()> returns an array reference to a list of the perl
-modules installed from the CPAN rather than from packages on SlackBuilds.org.
+C<get_installed_cpans()> returns an array reference to a list of Perl
+modules installed from the CPAN. This is used in C<sboinstall(1)> to
+prevent conflicting installations from the CPAN and SlackBuilds.
 
 =cut
 
@@ -141,12 +141,12 @@ sub get_installed_cpans {
 
   my @packages = @{ get_installed_packages($type) };
 
-C<get_installed_packages()> returns an array reference to a list of packages in
-C</var/log/packages> that match the specified C<$type>. The available types are
-C<STD> for non-SBo packages, C<SBO> for SBo packages, and C<ALL> for both.
+C<get_installed_packages()> returns an array reference to a list of installed packages
+matching the specified C<$type>. The available types are C<STD> for non-SBo packages,
+C<SBO> for in-tree _SBo packages, C<DIRTY> for out-of-tree _SBo packages and C<ALL> for all.
 
 The returned array reference will hold a list of hash references representing
-both names, versions, and full installed package name of the returned packages.
+the names, versions, and full installed package names of the returned packages.
 
 =cut
 
@@ -193,10 +193,12 @@ sub get_installed_packages {
 
   my @outdated = get_local_outdated_versions($filter);
 
-C<get_local_outdated_versions()> checks the installed SBo packages and returns
-a list of the ones for which the C<LOCAL_OVERRIDES> version is different to the
-the version on SlackBuilds.org. Use VERS for version upgrades only, BUILD for
-build bumps only or BOTH for both.
+C<get_local_outdated_versions()> checks installed SBo packages from C<LOCAL_OVERRIDES>.
+It returns an array with information about those that have version or build numbers
+differing from the local repository or the SlackBuild in C<LOCAL_OVERRIDES>.
+
+Build number differences with the SBo repository are returned, but are currently unused.
+This subroutine is used only by C<sbocheck(1)>.
 
 =cut
 

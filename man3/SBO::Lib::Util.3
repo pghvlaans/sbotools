@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Setting Orange, The Aftermath 58, 3190 YOLD" "" "sbotools 3.1"
+.TH SBO::Lib::Util 3 "Boomtime, The Aftermath 60, 3190 YOLD" "" "sbotools 3.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -133,7 +133,8 @@ it in a format suitable for appending to a Slackware package version.
 \&  my $optional = get_optional($sbo)
 .Ve
 .PP
-\&\f(CWget_optional()\fR checks for user-requested optional dependencies for \f(CW$sbo\fR.
+\&\f(CWget_optional()\fR checks for user-requested optional dependencies for \f(CW$sbo\fR. Note that
+global array \f(CW@listings\fR is copied.
 .SS get_sbo_from_loc
 .IX Subsection "get_sbo_from_loc"
 .Vb 1
@@ -193,13 +194,23 @@ was found, and a false value otherwise.
 .PP
 \&\f(CWindent()\fR indents every non-empty line in \f(CW$text\fR by \f(CW$indent\fR spaces and
 returns the resulting string.
+.SS lint_sbo_home
+.IX Subsection "lint_sbo_home"
+.Vb 1
+\&  lint_sbo_home();
+.Ve
+.PP
+\&\f(CWlint_sbo_home()\fR runs at the start of every script except for \f(CW\*(C`sboconfig\*(C'\fR;
+it exits if \f(CW\*(C`SBO_HOME\*(C'\fR is not an absolute directory path (or FALSE, which defaults to
+/usr/sbo).
 .SS on_blacklist
 .IX Subsection "on_blacklist"
 .Vb 1
 \&  my $result = on_blacklist($sbo);
 .Ve
 .PP
-\&\f(CWon_blacklist()\fR checks whether \f(CW$sbo\fR has been blacklisted.
+\&\f(CWon_blacklist()\fR checks whether \f(CW$sbo\fR has been blacklisted. Note that
+global array \f(CW@listings\fR is copied.
 .SS open_fh
 .IX Subsection "open_fh"
 .Vb 1
@@ -258,11 +269,12 @@ There is no useful return value.
 .SS read_hints
 .IX Subsection "read_hints"
 .Vb 1
-\&  my @res = read_hints()
+\&  our @listings = read_hints()
 .Ve
 .PP
-\&\f(CWread_hints()\fR reads the contents of \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR, returning an array
-of optional dependency requests and blacklisted scripts.
+\&\f(CWread_hints()\fR reads the contents of /etc/sbotools/sbotools.hints, returning an array
+of optional dependency requests and blacklisted scripts. \f(CWread_hints()\fR is used to
+populate global array \f(CW@listings\fR, and should only be called once.
 .SS save_options
 .IX Subsection "save_options"
 .Vb 1
