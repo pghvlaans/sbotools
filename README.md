@@ -14,6 +14,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Set GPG_VERIFY to TRUE to verify with gpg in case of repo fetch, sboinstall or sboupgrade
   * Bugfix: do not crash if sbotools.conf provides an improper value of SLACKWARE_VERSION
   * Repo.pm: Offer to retry failed git fetch
+  * Bugfix: sbocheck reports version differences between LOCAL_OVERRIDES and the repository
 
 * 3.1 - 2024-12-05
   * sbofind: Allow multiple search terms
