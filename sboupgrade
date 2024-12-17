@@ -49,7 +49,7 @@ Options (defaults shown first where applicable):
   -r|--nointeractive:
     non-interactive; skips README and all prompts.
   -z|--force-reqs:
-    when used with -f, will force rebuilding dependencies as well.
+    rebuild dependencies as well.
 
 EOF
 	return 1;
