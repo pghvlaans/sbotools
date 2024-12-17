@@ -14,13 +14,14 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree fetch_tree get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions $slackbuilds_txt slackbuilds_or_fetch verify_gpg %config /;
+use SBO::Lib qw/ update_tree fetch_tree get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_home %config /;
 use Getopt::Long;
 use File::Basename;
 use List::Util 'max';
 use Data::Dumper;
 
 my $self = basename($0);
+lint_sbo_home();
 
 sub show_usage {
 	print <<"EOF";

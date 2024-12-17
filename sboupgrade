@@ -14,12 +14,13 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_sbo_location get_inst_names get_installed_packages get_build_queue get_sbo_locations in merge_queues user_prompt process_sbos print_failures verify_gpg %config show_version /;
+use SBO::Lib qw/ get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_sbo_location get_inst_names get_installed_packages get_build_queue get_sbo_locations in merge_queues user_prompt process_sbos print_failures verify_gpg %config show_version lint_sbo_home /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
 
 my $self = basename($0);
+lint_sbo_home();
 
 sub show_usage {
     print <<"EOF";

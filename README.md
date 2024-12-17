@@ -16,6 +16,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Repo.pm: Offer to retry failed git fetch
   * Bugfix: sbocheck reports version differences between LOCAL_OVERRIDES and the repository
   * Util.pm: Read the hints file only once; allow multiple optional dependency specs for the same script
+  * Lint the value of SBO_HOME before running anything other than sboconfig
 
 * 3.1 - 2024-12-05
   * sbofind: Allow multiple search terms

@@ -48,6 +48,7 @@ our @EXPORT_OK = (
     idx
     in
     indent
+    lint_sbo_home
     on_blacklist
     open_fh
     open_read
@@ -360,6 +361,21 @@ sub indent {
   return join "\n", @lines;
 }
 
+=head2 lint_sbo_home
+
+  lint_sbo_home();
+
+C<lint_sbo_home()> runs at the start of every script except for C<sboconfig>;
+it exits if C<SBO_HOME> is not an absolute directory path (or FALSE, which defaults to
+/usr/sbo).
+
+=cut
+
+sub lint_sbo_home {
+  usage_error("Lint failure: SBO_HOME is not set to FALSE or an absolute directory path.\nUse \"sboconfig -s\" or edit /etc/sbotools/sbotools.conf to set a good value.")
+    unless $config{SBO_HOME} =~ qr#^(/|$)#;
+}
+
 =head2 open_fh
 
   my ($ret, $exit) = open_fh($fn, $op);
@@ -465,7 +481,7 @@ sub prompt {
 
 C<read_config()> reads in the configuration settings from
 C</etc/sbotools/sbotools.conf> and updates the C<%config> hash with them.
-Additionally, tun on BUILD_IGNORE and RSYNC_DEFAULT if CLASSIC is TRUE.
+Additionally, turn on BUILD_IGNORE and RSYNC_DEFAULT if CLASSIC is TRUE.
 
 There is no useful return value.
 

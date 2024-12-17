@@ -11,12 +11,14 @@ package SBO::App::Remove;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_build_queue get_full_queue merge_queues get_required_by get_requires get_readme_contents get_reverse_reqs prompt show_version in /;
+use SBO::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_build_queue get_full_queue merge_queues get_required_by get_requires get_readme_contents get_reverse_reqs prompt show_version in lint_sbo_home /;
 use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO::App';
 
 our $VERSION = '3.1';
+
+lint_sbo_home();
 
 sub _parse_opts {
   my $class = shift;
