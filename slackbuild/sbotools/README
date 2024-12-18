@@ -6,7 +6,8 @@ using a custom git branch, generating 32-bit and compat32 builds on
 multilib systems, reverse dependency search, gpg verification and more.
 
 There is a man page for each included command. For 'executive
-summaries' and online man pages, see the project's home page.
+summaries' and online man pages, see the project's home page. The
+sbotools Perl modules are documented in man3.
 
 sbotools bundles the required Perl module Sort::Versions. This does
 not interfere with a copy installed from the CPAN or from
