@@ -427,8 +427,11 @@ sub verify_git_commit {
   script_error('verify_git_commit requires an argument.') unless @_ == 1;
   # verifying git commits is only supported for 14.2 onwards
   if (versioncmp(get_slack_version(), '14.1') != 1) {
-    say "\nWarning: Git commit verification is only supported for Slackware 14.2 and up.";
-    return 1;
+    if (prompt("Git verification is unsupported for Slackware 14.0 and 14.1. Proceed anyway?", default => 'no')) {
+      return 1;
+    } else {
+      usage_error("Exiting. Consider using rsync or change GPG_VERIFY to FALSE.");
+    }
   }
   my $branch = shift;
   my $res;
