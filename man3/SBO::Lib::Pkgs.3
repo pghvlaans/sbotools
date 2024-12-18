@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Pkgs 3"
-.TH SBO::Lib::Pkgs 3 "Setting Orange, The Aftermath 58, 3190 YOLD" "" "sbotools 3.1"
+.TH SBO::Lib::Pkgs 3 "Boomtime, The Aftermath 60, 3190 YOLD" "" "sbotools 3.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -77,49 +77,51 @@ SBO::Lib::Pkgs \- Routines for interacting with the Slackware package database.
 \&  my @updates = @{ get_available_updates() };
 .Ve
 .PP
-\&\f(CWget_available_updates()\fR compares the installed versions in
-\&\f(CW\*(C`/var/log/packages\*(C'\fR that are tagged as SBo with the version available from
-the SlackBuilds.org or \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR repository, and returns an array
-reference to an array of hash references which specify package names, and
-installed and available versions.
+\&\f(CWget_available_updates()\fR compares version and build number information for
+packages installed with the _SBo tag with the local repository. It returns
+an array reference to an array of hash references specifying package names,
+installed versions and available versions.
 .SS get_inst_names
 .IX Subsection "get_inst_names"
 .Vb 1
 \&  my @names = get_inst_names(get_available_updates());
 .Ve
 .PP
-\&\f(CWget_inst_names()\fR returns a list of package names from an array reference
-such as the one returned by \f(CWget_available_updates()\fR.
+\&\f(CWget_inst_names()\fR returns a list of package names from an array reference, such
+as one returned by \f(CWget_available_updates()\fR.
 .SS get_installed_cpans
 .IX Subsection "get_installed_cpans"
 .Vb 1
 \&  my @cpans = @{ get_installed_cpans() };
 .Ve
 .PP
-\&\f(CWget_installed_cpans()\fR returns an array reference to a list of the perl
-modules installed from the CPAN rather than from packages on SlackBuilds.org.
+\&\f(CWget_installed_cpans()\fR returns an array reference to a list of Perl
+modules installed from the CPAN. This is used in \f(CWsboinstall(1)\fR to
+prevent conflicting installations from the CPAN and SlackBuilds.
 .SS get_installed_packages
 .IX Subsection "get_installed_packages"
 .Vb 1
 \&  my @packages = @{ get_installed_packages($type) };
 .Ve
 .PP
-\&\f(CWget_installed_packages()\fR returns an array reference to a list of packages in
-\&\f(CW\*(C`/var/log/packages\*(C'\fR that match the specified \f(CW$type\fR. The available types are
-\&\f(CW\*(C`STD\*(C'\fR for non-SBo packages, \f(CW\*(C`SBO\*(C'\fR for SBo packages, and \f(CW\*(C`ALL\*(C'\fR for both.
+\&\f(CWget_installed_packages()\fR returns an array reference to a list of installed packages
+matching the specified \f(CW$type\fR. The available types are \f(CW\*(C`STD\*(C'\fR for non-SBo packages,
+\&\f(CW\*(C`SBO\*(C'\fR for in-tree _SBo packages, \f(CW\*(C`DIRTY\*(C'\fR for out-of-tree _SBo packages and \f(CW\*(C`ALL\*(C'\fR for all.
 .PP
 The returned array reference will hold a list of hash references representing
-both names, versions, and full installed package name of the returned packages.
+the names, versions, and full installed package names of the returned packages.
 .SS get_local_outdated_versions
 .IX Subsection "get_local_outdated_versions"
 .Vb 1
 \&  my @outdated = get_local_outdated_versions($filter);
 .Ve
 .PP
-\&\f(CWget_local_outdated_versions()\fR checks the installed SBo packages and returns
-a list of the ones for which the \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR version is different to the
-the version on SlackBuilds.org. Use VERS for version upgrades only, BUILD for
-build bumps only or BOTH for both.
+\&\f(CWget_local_outdated_versions()\fR checks installed SBo packages from \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR.
+It returns an array with information about those that have version or build numbers
+differing from the local repository or the SlackBuild in \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR.
+.PP
+Build number differences with the SBo repository are returned, but are currently unused.
+This subroutine is used only by \f(CWsbocheck(1)\fR.
 .SS get_removed_builds
 .IX Subsection "get_removed_builds"
 .Vb 1

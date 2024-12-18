@@ -411,6 +411,7 @@ it exits if C<SBO_HOME> is not an absolute directory path (or FALSE, which defau
 sub lint_sbo_home {
   usage_error("Lint failure: SBO_HOME is not set to FALSE or an absolute directory path.\nUse \"sboconfig -s\" or edit /etc/sbotools/sbotools.conf to set a good value.")
     unless $config{SBO_HOME} =~ qr#^(/|$)#;
+}
 
 =head2 on_blacklist
 
