@@ -122,8 +122,10 @@ It checks if the path in C<$repo_path> exists and is an empty
 directory, and returns a true value if so.
 
 If C<$repo_path> exists and is non-empty, it may be malformed. The user
-is prompted to regenerate SLACKBUILDS.TXT to proceed. A usage error results
-if regeneration is declined.
+is prompted to regenerate SLACKBUILDS.TXT to proceed. If the directory
+C<$repo_path/.git> exists, all contents of the directory would be deleted
+in case of an rsync mirror. Otherwise, the contents would be deleted
+regardless of fetch method.
 
 If C<$repo_path> does not exist, creation will be attempted, returning a true
 value on success. Creation failure results in a usage error.
@@ -136,10 +138,18 @@ sub check_repo {
     opendir(my $repo_handle, $repo_path);
     FIRST: while (my $dir = readdir $repo_handle) {
       next FIRST if in($dir => qw/ . .. /);
-      if (prompt("SLACKBUILDS.TXT is missing and the fetch cannot proceed. Regenerate?", default=>"no")) {
-        return 1 if generate_slackbuilds_txt();
+      if (-d "$repo_path/.git") {
+        if (prompt("\n$slackbuilds_txt is missing and the fetch cannot proceed.\n\nRegenerate and continue?\nThe contents of $repo_path will be deleted if using an rsync mirror.", default=>"no")) {
+          return 1 if generate_slackbuilds_txt();
+        } else {
+          usage_error("$repo_path exists and is not empty. Exiting.\n");
+        }
       } else {
-        usage_error("$repo_path exists and is not empty. Exiting.\n");
+        if (prompt("\n$slackbuilds_txt is missing and the fetch cannot proceed.\n\nRegenerate and continue?\nThe contents of $repo_path will be deleted.", default=>"no")) {
+          return 1 if generate_slackbuilds_txt();
+        } else {
+          usage_error("$repo_path exists and is not empty. Exiting.\n");
+        }
       }
     }
   } else {
@@ -378,7 +388,7 @@ sub rsync_sbo_tree {
   slackbuilds_or_fetch();
 
 C<slackbuilds_or_fetch()> will check if there is a C<SLACKBUILDS.TXT> in the
-C<$repo_path>, and if not, offer to run C<sbosnap fetch> for you.
+C<$repo_path>, and if not, offer to fetch the tree.
 
 =cut
 
@@ -386,11 +396,14 @@ C<$repo_path>, and if not, offer to run C<sbosnap fetch> for you.
 # not been populated there; prompt the user to automagickally pull the tree.
 sub slackbuilds_or_fetch {
   unless (chk_slackbuilds_txt()) {
-    say 'It looks like "sbosnap fetch" has not yet been run.';
-    if (prompt("Fetch the repository now?", default => 'yes')) {
+    say "\"sbosnap fetch\" may not have been run yet.";
+    if (prompt("Fetch the repository to $repo_path now?", default => 'yes')) {
       fetch_tree();
+    } elsif (-d $repo_path) {
+      say "Please check the contents of $repo_path, and then run \"sbosnap fetch\"";
+      exit 0;
     } else {
-      say 'Please run "sbosnap fetch"';
+      say "Please run \"sbosnap fetch\"";
       exit 0;
     }
   }
