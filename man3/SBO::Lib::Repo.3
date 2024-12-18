@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Repo 3"
-.TH SBO::Lib::Repo 3 "Boomtime, The Aftermath 60, 3190 YOLD" "" "sbotools 3.1"
+.TH SBO::Lib::Repo 3 "Pungenday, The Aftermath 61, 3190 YOLD" "" "sbotools 3.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -124,10 +124,6 @@ value on success. Creation failure results in a usage error.
 \&\f(CWchk_slackbuilds_txt()\fR checks if the file \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR exists in the
 correct location, and returns a true value if it does, and a false value
 otherwise.
-.PP
-Before the check is made, it attempts to call \f(CWmigrate_repo()\fR so it doesn't
-give a false negative if the repository hasn't been migrated to its sbotools
-2.0 location yet.
 .SS fetch_tree
 .IX Subsection "fetch_tree"
 .Vb 1
@@ -159,16 +155,6 @@ run \f(CW\*(C`git fetch && git reset \-\-hard origin\*(C'\fR.
 .PP
 If any command fails, it will return a false value. Otherwise it will return a
 true value.
-.SS migrate_repo
-.IX Subsection "migrate_repo"
-.Vb 1
-\&  migrate_repo();
-.Ve
-.PP
-\&\f(CWmigrate_repo()\fR moves an old sbotools 1.x repository to the location it needs
-to be in for sbotools 2.x. This means every directory and file except for the
-\&\f(CW\*(C`distfiles\*(C'\fR directory in (by default) \f(CW\*(C`/usr/sbo/\*(C'\fR gets moved to
-\&\f(CW\*(C`/usr/sbo/repo\*(C'\fR.
 .SS pull_sbo_tree
 .IX Subsection "pull_sbo_tree"
 .Vb 1
