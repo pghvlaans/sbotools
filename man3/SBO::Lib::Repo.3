@@ -178,16 +178,6 @@ run \f(CW\*(C`git fetch && git reset \-\-hard origin\*(C'\fR.
 .PP
 If any command fails, it will return a false value. Otherwise it will return a
 true value.
-.SS migrate_repo
-.IX Subsection "migrate_repo"
-.Vb 1
-\&  migrate_repo();
-.Ve
-.PP
-\&\f(CWmigrate_repo()\fR moves an old sbotools 1.x repository to the location it needs
-to be in for sbotools 2.x. This means every directory and file except for the
-\&\f(CW\*(C`distfiles\*(C'\fR directory in (by default) \f(CW\*(C`/usr/sbo/\*(C'\fR gets moved to
-\&\f(CW\*(C`/usr/sbo/repo\*(C'\fR.
 .SS pull_sbo_tree
 .IX Subsection "pull_sbo_tree"
 .Vb 1

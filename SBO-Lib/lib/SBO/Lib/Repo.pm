@@ -24,7 +24,6 @@ our @EXPORT_OK = qw{
   fetch_tree
   generate_slackbuilds_txt
   git_sbo_tree
-  migrate_repo
   pull_sbo_tree
   rsync_sbo_tree
   slackbuilds_or_fetch
@@ -193,7 +192,6 @@ independent of C<SLACKBUILDS.TXT> will be placed here. (KEC)
 
 # does the SLACKBUILDS.TXT file exist in the sbo tree?
 sub chk_slackbuilds_txt {
-  if (-f "$config{SBO_HOME}/SLACKBUILDS.TXT") { migrate_repo(); }
   return -f $slackbuilds_txt ? 1 : undef;
 }
 
@@ -310,29 +308,6 @@ sub git_sbo_tree {
     return 1 if chdir $cwd and $res;
     return 0;
   }
-}
-
-=head2 migrate_repo
-
-  migrate_repo();
-
-C<migrate_repo()> moves an old sbotools 1.x repository to the location it needs
-to be in for sbotools 2.x. This means every directory and file except for the
-C<distfiles> directory in (by default) C</usr/sbo/> gets moved to
-C</usr/sbo/repo>.
-
-=cut
-
-# Move everything in /usr/sbo except distfiles and repo dirs into repo dir
-sub migrate_repo {
-  make_path($repo_path) unless -d $repo_path;
-  _race::cond '$repo_path can be deleted between being made and being used';
-  opendir(my $dh, $config{SBO_HOME});
-  foreach my $entry (readdir($dh)) {
-    next if in($entry => qw/ . .. repo distfiles /);
-    move("$config{SBO_HOME}/$entry", "$repo_path/$entry");
-  }
-  close $dh;
 }
 
 =head2 pull_sbo_tree

@@ -83,7 +83,7 @@ SKIP: {
 is(indent(0, 'foo'), 'foo', 'indent(0,...) returns correctly');
 is(indent(1, "foo\n\nbar"), " foo\n\n bar", 'indent(1,...) returns correctly');
 
-# 16-20: test check_repo() and migrate_repo();
+# 16-20: test check_repo();
 SKIP: {
 	skip 'Test invalid if no SLACKBUILDS.TXT exists.', 5 if ! -e '/usr/sbo/repo/SLACKBUILDS.TXT';
 
@@ -93,14 +93,8 @@ SKIP: {
 
 	is (SBO::Lib::check_repo(), 1, 'check_repo() returned 1 when /usr/sbo/repo was empty');
 
-	SBO::Lib::migrate_repo();
-	ok (-e '/usr/sbo/repo/SLACKBUILDS.TXT', '/usr/sbo/repo/SLACKBUILDS.TXT moved back by migrate_repo()');
-
 	system("mv /usr/sbo/repo/* /usr/sbo");
 	system(qw! rmdir /usr/sbo/repo !);
-
-	SBO::Lib::migrate_repo();
-	ok (-d '/usr/sbo/repo', '/usr/sbo/repo correctly recreated by migrate_repo()');
 
 	system(qw"rm /usr/sbo/repo/SLACKBUILDS.TXT");
 	system(qw! rmdir /usr/sbo/repo !);
