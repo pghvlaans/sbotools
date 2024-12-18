@@ -91,21 +91,21 @@ SBO::Lib::Util - Utility functions for SBO::Lib and the sbotools
 
 =head2 $conf_dir
 
-By default, C<$conf_dir> will be C</etc/sbotools>.
+C<$conf_dir> is C</etc/sbotools>.
 
 =head2 $conf_file
 
-By default, C<$conf_file> will be C</etc/sbotools/sbotools.conf>.
+C<$conf_file> is C</etc/sbotools/sbotools.conf>.
 
 =head2 %config
 
-By default, all values are set to C<"FALSE">, but when C<read_config()> is run,
-the values will change according to the configuration, and C<SBO_HOME> will by
-default get changed to C</usr/sbo>.
+All values default to C<"FALSE">, but when C<read_config()> is run,
+they change according to the configuration. C<SBO_HOME> is changed to
+C</usr/sbo> if still C<"FALSE">.
 
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
-C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>
-and C<RSYNC_DEFAULT>.
+C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
+C<GPG_VERIFY> and C<RSYNC_DEFAULT>.
 
 =cut
 
@@ -137,14 +137,32 @@ our @listings = read_hints();
 
 =cut
 
+=head2 build_cmp
+
+  my $cmp = build_cmp($build1, $build2, $ver1, $ver2);
+
+C<build_cmp()> compares C<$build1> with C<$build2> while checking that C<$ver1>
+and C<$ver2> are different. If the build numbers are not the same and the version
+numbers are, upgrading for a script bump may be in order.
+
+=cut
+
+sub build_cmp {
+  my ($b1, $b2, $v1, $v2) = @_;
+  if (versioncmp($v1, $v2)) { return 0; }
+  if ($b1 != $b2) { return 1; }
+
+  return 0;
+}
+
 =head2 check_multilib
 
   my $ml = check_multilib();
 
-C<check_multilib()> checks if the file C</etc/profile.d/32dev.sh> exists,
-because without it, there's no way to build 32bit things on an x64 arch.
+C<check_multilib()> for C</etc/profile.d/32dev.sh> existence.
+The sbotools use this file to build 32-bit packages on x64 architecture.
 
-Returns a true value if it exists, and a false value otherwise.
+Returns 1 if so, and 0 otherwise.
 
 =cut
 
@@ -159,7 +177,7 @@ sub check_multilib {
 
   my $arch = get_arch();
 
-C<get_arch()> returns the current machine architechture as reported by C<uname
+C<get_arch()> returns the machine architechture as reported by C<uname
 -m>.
 
 =cut
@@ -173,9 +191,8 @@ sub get_arch {
 
   my $kv = get_kernel_version();
 
-C<get_kernel_version()> will check what the version of the currently running
-kernel is and return it in a format suitable for appending to a slackware
-package version.
+C<get_kernel_version()> checks the version of the running kernel, and returns
+it in a format suitable for appending to a Slackware package version.
 
 =cut
 
@@ -188,12 +205,36 @@ sub get_kernel_version {
   return $kv;
 }
 
+=head2 get_optional
+
+  my $optional = get_optional($sbo)
+
+C<get_optional()> checks for user-requested optional dependencies for C<$sbo>. Note that
+global array C<@listings> is copied.
+
+=cut
+
+sub get_optional {
+  script_error("get_optional requires an argument.") unless @_ == 1;
+  my $sbo = shift;
+  my @optional;
+  my @loclistings = @listings;
+  for my $entry (@loclistings) {
+    next if grep { /^#|^!/ } $entry;
+    next if not grep { /\s$sbo$/ } $entry;
+    $entry =~ s/\s$sbo$//;
+    push @optional, split(" ", $entry);
+  }
+  push @optional, "NULL" unless @optional;
+
+  return @optional;
+}
+
 =head2 get_sbo_from_loc
 
   my $sbo = get_sbo_from_loc($location);
 
-C<get_sbo_from_loc()> gets the package name from the C<$location> passed in
-and returns it.
+C<get_sbo_from_loc()> returns the package name from the C<$location> passed in.
 
 =cut
 
@@ -207,12 +248,9 @@ sub get_sbo_from_loc {
 
   my $version = get_slack_version();
 
-C<get_slack_version()> checks which version of the SBo repository to use and if
-successful, returns it.
+C<get_slack_version()> returns the appropriate version of the SBo reposiotry.
 
-If there is an error in getting the slackware version, or if it's not a
-supported version, an error message will be shown on STDERR, and the program
-will exit.
+The program exits if the version is unsupported or if an error occurs.
 
 =cut
 
@@ -275,11 +313,10 @@ sub get_slack_version {
 
   my $url = get_slack_version_url();
 
-C<get_slack_version_url()> returns the default URL for the given slackware
+C<get_slack_version_url()> returns the default URL for the given Slackware
 version.
 
-If there is an error in getting the URL, or if it's not a supported version,
-an error message will be shown on STDERR, and the program will exit.
+The program exits if the version is unsupported or if an error occurs.
 
 =cut
 
@@ -295,7 +332,7 @@ sub get_slack_version_url {
 
   my $url = get_slack_branch();
 
-C<get_slack_branch()> returns the default git branch for the given slackware
+C<get_slack_branch()> returns the default git branch for the given Slackware
 version, if any. If the pulled repository does not have this branch, an onscreen
 message will appear.
 
@@ -310,7 +347,7 @@ sub get_slack_branch {
   my $idx = idx($needle, @haystack);
 
 C<idx()> looks for C<$needle> in C<@haystack>, and returns the index of where
-it was found, or C<undef> if it wasn't found.
+it was found, or C<undef> if it was not found.
 
 =cut
 
@@ -344,7 +381,7 @@ sub in {
 
   my $str = indent($indent, $text);
 
-C<indent()> indents every non-empty line in C<$text> C<$indent> spaces and
+C<indent()> indents every non-empty line in C<$text> by C<$indent> spaces and
 returns the resulting string.
 
 =cut
@@ -374,18 +411,35 @@ it exits if C<SBO_HOME> is not an absolute directory path (or FALSE, which defau
 sub lint_sbo_home {
   usage_error("Lint failure: SBO_HOME is not set to FALSE or an absolute directory path.\nUse \"sboconfig -s\" or edit /etc/sbotools/sbotools.conf to set a good value.")
     unless $config{SBO_HOME} =~ qr#^(/|$)#;
+
+=head2 on_blacklist
+
+  my $result = on_blacklist($sbo);
+
+C<on_blacklist()> checks whether C<$sbo> has been blacklisted. Note that
+global array C<@listings> is copied.
+
+=cut
+
+sub on_blacklist {
+  script_error("on_blacklist requires an argument.") unless @_ == 1;
+  my $sbo = shift;
+  my @loclistings = @listings;
+  for my $entry (@loclistings) {
+    next if grep { /\s/ } $entry;
+    return 1 if $entry eq "!$sbo"; }
+  return 0;
 }
 
 =head2 open_fh
 
   my ($ret, $exit) = open_fh($fn, $op);
 
-C<open_fh()> will open C<$fn> for reading and/or writing depending on what
-C<$op> is.
+C<open_fh()> will open C<$fn> for reading and/or writing depending on
+C<$op>.
 
-It returns a list of two values. The second value is the exit status, and if it
-is true, the first value will be an error message. Otherwise it will be the
-opened filehandle.
+It returns two values: the file handle and the exit status. If the exit status
+is non-zero, it will return an error message rather than a file handle.
 
 =cut
 
@@ -410,11 +464,10 @@ sub open_fh {
 
   my ($ret, $exit) = open_read($fn);
 
-C<open_read()> will open C<$fn> for reading.
+C<open_read()> opens C<$fn> for reading.
 
-It returns a list of two values. The second value is the exit status, and if it
-is true, the first value will be an error message. Otherwise it will be the
-opened filehandle.
+It returns two values: the file handle and the exit status. If the exit status
+is non-zero, it will return an error message rather than a file handle.
 
 =cut
 
@@ -426,8 +479,8 @@ sub open_read {
 
   print_failures($failures);
 
-C<print_failures()> prints all the failures in the C<$failures> array reference
-to STDERR if any.
+C<print_failures()> prints all failures in the C<$failures> array reference
+to STDERR, if any.
 
 There is no useful return value.
 
@@ -449,9 +502,10 @@ sub print_failures {
   exit unless prompt "Should we continue?", default => "yes";
 
 C<prompt()> prompts the user for an answer, optionally specifying a default of
-C<yes> or C<no>. If the default has been specified it returns a true value in
-case 'yes' was selected, and a false value if 'no' was selected. Otherwise it
-returns whatever the user answered.
+C<yes> or C<no>.
+
+If the default has been specified, it returns a true value for 'yes' and a false
+one for 'no'. Otherwise, it returns the content of the user's answer.
 
 =cut
 
@@ -480,8 +534,10 @@ sub prompt {
   read_config();
 
 C<read_config()> reads in the configuration settings from
-C</etc/sbotools/sbotools.conf> and updates the C<%config> hash with them.
-Additionally, turn on BUILD_IGNORE and RSYNC_DEFAULT if CLASSIC is TRUE.
+C</etc/sbotools/sbotools.conf>, updating the C<%config> hash. If
+C<SBO_HOME> is C<FALSE>, it changes to C</usr/sbo>.
+Additionally, C<BUILD_IGNORE> and C<RSYNC_DEFAULT> are turned on if
+C<CLASSIC> is C<TRUE>.
 
 There is no useful return value.
 
@@ -506,11 +562,37 @@ sub read_config {
   $config{SBO_HOME} = '/usr/sbo' if $config{SBO_HOME} eq 'FALSE';
 }
 
+=head2 read_hints
+
+  our @listings = read_hints()
+
+C<read_hints()> reads the contents of /etc/sbotools/sbotools.hints, returning an array
+of optional dependency requests and blacklisted scripts. C<read_hints()> is used to
+populate global array C<@listings>, and should only be called once.
+
+=cut
+
+sub read_hints{
+  if(-f "/etc/sbotools/sbotools.hints") {
+    my $contents = slurp("/etc/sbotools/sbotools.hints");
+    usage_error("read_hints: could not read existing /etc/sbotools/sbotools.hints") unless
+      defined $contents;
+    my @contents = split("\n", $contents);
+    for my $entry (@contents) {
+      push @listings, $entry unless grep { /^#|^\s/ } $entry;
+    }
+  }
+  push @listings, "NULL" unless @listings;
+  return @listings;
+}
+
 =head2 save_options
 
   save_options($sbo, $opts)
 
-save_options() will save build options to /var/log/sbotools/sbo.
+C<save_options()> saves build options to C</var/log/sbotools/sbo>. If the file
+already exists and the user supplies no build options, the existing file is
+retained.
 
 =cut
 
@@ -543,11 +625,11 @@ sub save_options {
   script_error();
   script_error($msg);
 
-script_error() will warn and exit, saying on STDERR
+script_error() warns and exits, printing the following to STDERR:
 
   A fatal script error has occurred. Exiting.
 
-If there was a $msg supplied, it will instead say
+If a $msg was supplied, it instead prints:
 
   A fatal script error has occurred:
   $msg.
@@ -571,7 +653,7 @@ sub script_error {
 
   show_version();
 
-C<show_version()> will print out the sbotools version and licensing information
+C<show_version()> prints the sbotools version and licensing information
 to STDOUT.
 
 There is no useful return value.
@@ -587,8 +669,8 @@ sub show_version {
 
   my $data = slurp($fn);
 
-C<slurp()> takes a filename in C<$fn>, opens it, and reads in the entire file,
-the contents of which is then returned. On error, it returns C<undef>.
+C<slurp()> takes a filename in C<$fn>, opens it, and reads in the entire file.
+The contents are then returned. On error, it returns C<undef>.
 
 =cut
 
@@ -605,7 +687,7 @@ sub slurp {
 
   my @uniq = uniq(@duplicates);
 
-C<uniq()> removes the duplicates from C<@duplicates> but otherwise returns the
+C<uniq()> removes any duplicates from C<@duplicates>, otherwise returning the
 list in the same order.
 
 =cut
@@ -619,9 +701,7 @@ sub uniq {
 
   usage_error($msg);
 
-usage_error will warn and exit, saying on STDERR
-
-  $msg
+C<usage_error> warns and exits, printing C<$msg> to STDERR.
 
 There is no useful return value.
 
@@ -637,11 +717,9 @@ sub usage_error {
 
   my $cmp = version_cmp($ver1, $ver2);
 
-C<version_cmp()> will compare C<$ver1> with C<$ver2> to try to determine which
-is bigger than the other, and returns 1 if C<$ver1> is bigger, -1 if C<$ver2>
-is bigger, and 0 if they are just as big. Before making the comparison, it will
-strip off the version of your running kernel as well as any locale information
-if it happens to be appended to the version string being compared.
+C<version_cmp()> compares C<$ver1> with C<$ver2>. It returns 1 if C<$ver1> is higher,
+-1 if C<$ver2> is higher and 0 if they are equal. It strips the running kernel version,
+as well as any locale information that may have been appended to the version strings.
 
 =cut
 
@@ -669,92 +747,6 @@ sub version_cmp {
   versioncmp($v1, $v2);
 }
 
-=head2 read_hints
-
-  our @listings = read_hints()
-
-C<read_hints()> reads the contents of /etc/sbotools/sbotools.hints, returning an array
-of optional dependency requests and blacklisted scripts. C<read_hints()> is used to
-populate global array C<@listings>, and should only be called once.
-
-=cut
-
-sub read_hints{
-  if(-f "/etc/sbotools/sbotools.hints") {
-    my $contents = slurp("/etc/sbotools/sbotools.hints");
-    usage_error("read_hints: could not read existing /etc/sbotools/sbotools.hints") unless
-      defined $contents;
-    my @contents = split("\n", $contents);
-    for my $entry (@contents) {
-      push @listings, $entry unless grep { /^#|^\s/ } $entry;
-    }
-  }
-  push @listings, "NULL" unless @listings;
-  return @listings;
-}
-
-=head2 get_optional
-
-  my $optional = get_optional($sbo)
-
-C<get_optional()> checks for user-requested optional dependencies for C<$sbo>. Note that
-global array C<@listings> is copied.
-
-=cut
-
-sub get_optional {
-  script_error("get_optional requires an argument.") unless @_ == 1;
-  my $sbo = shift;
-  my @optional;
-  my @loclistings = @listings;
-  for my $entry (@loclistings) {
-    next if grep { /^#|^!/ } $entry;
-    next if not grep { /\s$sbo$/ } $entry;
-    $entry =~ s/\s$sbo$//;
-    push @optional, split(" ", $entry);
-  }
-  push @optional, "NULL" unless @optional;
-
-  return @optional;
-}
-
-=head2 on_blacklist
-
-  my $result = on_blacklist($sbo);
-
-C<on_blacklist()> checks whether C<$sbo> has been blacklisted. Note that
-global array C<@listings> is copied.
-
-=cut
-
-sub on_blacklist {
-  script_error("on_blacklist requires an argument.") unless @_ == 1;
-  my $sbo = shift;
-  my @loclistings = @listings;
-  for my $entry (@loclistings) {
-    next if grep { /\s/ } $entry;
-    return 1 if $entry eq "!$sbo"; }
-  return 0;
-}
-
-=head2 build_cmp
-
-  my $cmp = build_cmp($build1, $build2, $ver1, $ver2);
-
-C<build_cmp()> will compare C<$build1> with C<$build2> while checking that C<$ver1>
-and C<$ver2> are different. If the build numbers are not the same and the version
-numbers are, upgrading for a script bump may be in order.
-
-=cut
-
-sub build_cmp {
-  my ($b1, $b2, $v1, $v2) = @_;
-  if (versioncmp($v1, $v2)) { return 0; }
-  if ($b1 != $b2) { return 1; }
-
-  return 0;
-}
-
 # _race::cond will allow both documenting and testing race conditions
 # by overriding its implementation for tests
 sub _race::cond { return }
@@ -772,6 +764,7 @@ SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 The sbotools are licensed under the MIT License.
 
 Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
+
 Copyright (C) 2024, K. Eugene Carlson.
 
 =cut

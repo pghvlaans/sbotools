@@ -35,7 +35,7 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Info - Utilities to get data from SBo .info files.
+SBO::Lib::Info - Utilities to get data from SBo info files.
 
 =head1 SYNOPSIS
 
@@ -51,9 +51,8 @@ SBO::Lib::Info - Utilities to get data from SBo .info files.
 
   my $bool = check_x32($location);
 
-C<check_x32()> checks if the SBo in C<$location> considers 64bit builds
-C<UNTESTED> or C<UNSUPPORTED>, and if so returns a true value. Otherwise it
-returns a false value.
+C<check_x32()> returns a true value if the SlackBuild in C<$location> considers
+64bit builds C<UNTESTED> or C<UNSUPPORTED>. Otherwise, it returns a false value.
 
 =cut
 
@@ -69,13 +68,12 @@ sub check_x32 {
   my $downloads = get_download_info(LOCATION => $location, X64 => $x64);
   my $downloads = get_download_info(LOCATION => $location);
 
-C<get_download_info()> takes a C<$location> to read a .info file in, and
-C<$x64> which is a flag to determine if the x64 link should be used or not.
+C<get_download_info()> reads in an info file from C<$location>. The flag
+C<$x64> determines whether the 64-bit download files should be used or not.
+C<$x64> defaults to a true value if unspecified.
 
-If the C<$x64> flag is not given, it defaults to a true value.
-
-It returns a hashref where each key is a download link, and the corresponding
-value is the md5sum it should have.
+This subroutine returns a hashref where each key is a download link; the
+corresponding value is the expected md5sum.
 
 =cut
 
@@ -113,7 +111,7 @@ sub get_download_info {
 
   my $data = get_from_info(LOCATION => $location, GET => $key);
 
-C<get_from_info()> retrieves the information under C<$key> from the .info file
+C<get_from_info()> retrieves the information under C<$key> from the info file
 in C<$location>.
 
 =cut
@@ -163,26 +161,6 @@ sub get_from_info {
   return $store->{$args{GET}};
 }
 
-=head2 get_orig_version
-
-  my $ver = get_orig_version($sbo);
-
-C<get_orig_version()> returns the version in the SlackBuilds.org tree for the
-given C<$sbo>.
-
-=cut
-
-sub get_orig_version {
-  script_error('get_orig_version requires an argument.') unless @_ == 1;
-  my $sbo = shift;
-
-  my $location = get_orig_location($sbo);
-
-  return $location if not defined $location;
-
-  return get_sbo_version($location);
-}
-
 =head2 get_orig_build_number
 
   my $build = get_orig_build_number($sbo);
@@ -203,6 +181,49 @@ sub get_orig_build_number {
   return get_sbo_build_number($location);
 }
 
+=head2 get_orig_version
+
+  my $ver = get_orig_version($sbo);
+
+C<get_orig_version()> returns the version in the SlackBuilds.org tree for the
+given C<$sbo>.
+
+=cut
+
+sub get_orig_version {
+  script_error('get_orig_version requires an argument.') unless @_ == 1;
+  my $sbo = shift;
+
+  my $location = get_orig_location($sbo);
+
+  return $location if not defined $location;
+
+  return get_sbo_version($location);
+}
+
+=head2 get_required_by
+
+  my @dep_of = get_required_by($sbo, $confirmed, $required_by);
+
+C<get_required_by()> takes a SlackBuild, an array with already-confirmed
+requirements and a hash with requirements for a group of SlackBuilds (all
+installed SlackBuilds, for example). It returns an array with SlackBuilds
+depending on the SlackBuild in the first argument.
+
+=cut
+
+sub get_required_by {
+  my ($sbo, $confirmed, $required_by) = @_;
+  my @dep_of;
+
+  if ( $required_by->{$sbo} ) {
+    for my $req_by (keys %{$required_by->{$sbo}}) {
+      push @dep_of, $req_by unless in($req_by => @$confirmed);
+    }
+  }
+  return @dep_of;
+}
+
 =head2 get_requires
 
   my $reqs = get_requires($sbo);
@@ -219,11 +240,33 @@ sub get_requires {
   return $info;
 }
 
+=head2 get_reverse_reqs
+
+  my %required_by = get_reverse_reqs($slackbuilds);
+
+C<get_reverse_reqs()> takes a list of SlackBuilds and returns a hashref with
+other SlackBuilds requiring them.
+
+=cut
+
+sub get_reverse_reqs {
+  my $slackbuilds = shift;
+  my %required_by;
+
+  for my $sbo (keys %$slackbuilds) {
+    for my $req (@{ get_requires($sbo) }) {
+      $required_by{$req}{$sbo} = 1 if exists $slackbuilds->{$req};
+    }
+  }
+
+  return \%required_by;
+}
+
 =head2 get_sbo_version
 
   my $ver = get_sbo_version($location);
 
-C<get_sbo_version()> returns the version found in the .info file in
+C<get_sbo_version()> returns the version found in the info file in
 C<$location>.
 
 =cut
@@ -255,8 +298,8 @@ sub get_sbo_build_number {
 
   my %parse = parse_info($str);
 
-C<parse_info()> parses the contents of an .info file from C<$str> and returns
-a key-value list of it.
+C<parse_info()> parses the contents of an info file from C<$str> and returns
+a key-value list of all values present.
 
 =cut
 
@@ -281,50 +324,6 @@ sub parse_info {
 
 }
 
-=head2 get_reverse_reqs
-
-  my %required_by = get_reverse_reqs($slackbuilds);
-
-C<get_reverse_reqs()> takes a list of SlackBuilds and returns a hash with
-their requirements.
-
-=cut
-
-sub get_reverse_reqs {
-  my $slackbuilds = shift;
-  my %required_by;
-
-  for my $sbo (keys %$slackbuilds) {
-    for my $req (@{ get_requires($sbo) }) {
-      $required_by{$req}{$sbo} = 1 if exists $slackbuilds->{$req};
-    }
-  }
-
-  return \%required_by;
-}
-
-=head2 get_required_by
-
-  my @dep_of = get_required_by($sbo, $confirmed, $required_by);
-
-C<get_required_by()> takes a SlackBuild, an array with already-confirmed
-requirements and a hash with requirements for a group of SlackBuilds and returns
-an array with SlackBuilds depending on the SlackBuild in the first argument.
-
-=cut
-
-sub get_required_by {
-  my ($sbo, $confirmed, $required_by) = @_;
-  my @dep_of;
-
-  if ( $required_by->{$sbo} ) {
-    for my $req_by (keys %{$required_by->{$sbo}}) {
-      push @dep_of, $req_by unless in($req_by => @$confirmed);
-    }
-  }
-  return @dep_of;
-}
-
 =head1 AUTHORS
 
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
@@ -338,6 +337,7 @@ SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 The sbotools are licensed under the MIT License.
 
 Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
+
 Copyright (C) 2024, K. Eugene Carlson.
 
 =cut

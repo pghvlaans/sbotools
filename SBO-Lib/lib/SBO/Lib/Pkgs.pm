@@ -92,18 +92,6 @@ sub get_available_updates {
     return \@updates;
 }
 
-# For each installed SlackBuild, find out whether it still exists in the tree
-sub get_removed_builds {
-    my @removed;
-    my $pkg_list = get_installed_packages('DIRTY');
-
-    for my $pkg (@$pkg_list) {
-        push @removed, { name => $pkg->{name}, installed => $pkg->{version} };
-    }
-
-    return \@removed;
-}
-
 =head2 get_inst_names
 
   my @names = get_inst_names(get_available_updates());
@@ -253,6 +241,27 @@ sub get_local_outdated_versions {
   return @outdated;
 }
 
+=head2 get_removed_builds
+
+  my @removed = get_removed_builds();
+
+C<get_removed_builds()> returns an array of SlackBuild names and versions of all out-of-tree
+installed packages marked C<_SBo>.
+
+=cut
+
+# For each installed SlackBuild, find out whether it still exists in the tree
+sub get_removed_builds {
+    my @removed;
+    my $pkg_list = get_installed_packages('DIRTY');
+
+    for my $pkg (@$pkg_list) {
+        push @removed, { name => $pkg->{name}, installed => $pkg->{version} };
+    }
+
+    return \@removed;
+}
+
 =head1 AUTHORS
 
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
@@ -266,6 +275,7 @@ SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 The sbotools are licensed under the MIT License.
 
 Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
+
 Copyright (C) 2024, K. Eugene Carlson.
 
 =cut

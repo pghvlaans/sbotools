@@ -121,9 +121,9 @@ C<check_repo()> is used when SLACKBUILDS.txt cannot be found.
 It checks if the path in C<$repo_path> exists and is an empty
 directory, and returns a true value if so.
 
-If C<$repo_path> exists and is non-empty, it is malformed, and the user
-is prompted to regenerate it to proceed. A usage error results if deletion
-is declined.
+If C<$repo_path> exists and is non-empty, it may be malformed. The user
+is prompted to regenerate SLACKBUILDS.TXT to proceed. A usage error results
+if regeneration is declined.
 
 If C<$repo_path> does not exist, creation will be attempted, returning a true
 value on success. Creation failure results in a usage error.
@@ -226,7 +226,7 @@ sub generate_slackbuilds_txt {
   my $bool = git_sbo_tree($url);
 
 C<git_sbo_tree()> will C<git clone> the repository specified by C<$url> to the
-C<$repo_path> if the C<$url> repository isn't already there. If it is, it will
+C<$repo_path> if the C<$url> repository is not already there. If it is, it will
 run C<git fetch && git reset --hard origin>.
 
 If any command fails, it will return a false value. Otherwise it will return a
@@ -314,7 +314,7 @@ C<pull_sbo_tree()> will pull the SlackBuilds.org repository tree from
 C<rsync://slackbuilds.org/slackbuilds/$ver/> or whatever the C<REPO>
 configuration variable has been set to.
 
-C<$ver> is the version of Slackware you're running, provided it is supported,
+C<$ver> is the version of Slackware you are running, provided it is supported,
 or whatever you've set in the C<SLACKWARE_VERSION> configuration variable.
 
 =cut
@@ -363,7 +363,7 @@ sub rsync_sbo_tree {
   my $url = shift;
   $url .= '/' unless $url =~ m!/$!; # make sure $url ends with /
   my @info;
-  # only slackware versions above 14.1 have an rsync that supports --info=progress2
+  # only Slackware versions above 14.1 have an rsync that supports --info=progress2
   if (versioncmp(get_slack_version(), '14.1') == 1) { @info = ('--info=progress2'); }
   my @args = ('rsync', @info, '-a', '--delete', $url);
   my $res = system(@args, $repo_path) == 0;
@@ -694,6 +694,7 @@ SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 The sbotools are licensed under the MIT License.
 
 Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
+
 Copyright (C) 2024, K. Eugene Carlson.
 
 =cut
