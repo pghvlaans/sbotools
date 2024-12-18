@@ -107,6 +107,11 @@ The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY> and C<RSYNC_DEFAULT>.
 
+=head2 @listings
+
+An array with blacklisted packages and optional dependency requests read in
+from C</etc/sbotools/sbotools.hints>. Non-exportable.
+
 =cut
 
 # global config variables
@@ -702,7 +707,7 @@ sub uniq {
 
   usage_error($msg);
 
-C<usage_error> warns and exits, printing C<$msg> to STDERR.
+C<usage_error()> warns and exits, printing C<$msg> to STDERR.
 
 There is no useful return value.
 

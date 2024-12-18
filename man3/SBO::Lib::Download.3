@@ -61,7 +61,7 @@
 .if n .ad l
 .nh
 .SH NAME
-SBO::Lib::Download \- Routines for downloading slackbuild sources.
+SBO::Lib::Download \- Routines for downloading SlackBuild sources.
 .SH SYNOPSIS
 .IX Header "SYNOPSIS"
 .Vb 1
@@ -69,8 +69,8 @@ SBO::Lib::Download \- Routines for downloading slackbuild sources.
 \&
 \&  my ($ret, $exit) = check_distfiles(LOCATION => $loc);
 .Ve
-.SS SUBROUTINES
-.IX Subsection "SUBROUTINES"
+.SH SUBROUTINES
+.IX Header "SUBROUTINES"
 .SS check_distfiles
 .IX Subsection "check_distfiles"
 .Vb 1
@@ -79,9 +79,9 @@ SBO::Lib::Download \- Routines for downloading slackbuild sources.
 .PP
 \&\f(CWcheck_distfiles()\fR gets the list of downloads from \f(CW$loc\fR. Any previously-downloaded
 files have their checksums verified. Missing and unverifiable files are downloaded and
-verified. Finally, \f(CW\*(C`create_symlinks\*(C'\fR is run on each download.
+verified. Finally, \f(CWcreate_symlinks()\fR is run on each download.
 .PP
-In case of success, an array of symlinks from \f(CW\*(C`create_symlinks\*(C'\fRis returned. In case of
+In case of success, an array of symlinks from \f(CWcreate_symlinks()\fR is returned. In case of
 failure, an error message and an exit code are returned.
 .SS compute_md5sum
 .IX Subsection "compute_md5sum"

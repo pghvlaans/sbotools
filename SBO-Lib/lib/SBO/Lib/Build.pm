@@ -189,7 +189,7 @@ sub do_slackbuild {
 
   do_upgradepkg($pkg);
 
-C<do_upgradepkg()> runs C<upgradepkg> on C<$pkg>.
+C<do_upgradepkg()> runs C<upgradepkg --reinstall --install-new> on C<$pkg>.
 
 There is no useful return value.
 
@@ -394,7 +394,7 @@ sub make_distclean {
 
   my @merged = @{ merge_queues([@queue1], [@queue2]) };
 
-C<merge_queues> takes two array references and merges them such that C<@queue1>
+C<merge_queues()> takes two array references and merges them such that C<@queue1>
 is in front, followed by any non-redundant items in C<@queue2>. This is returned
 as an array reference.
 
@@ -410,7 +410,7 @@ sub merge_queues {
 
 =head2 get_full_queue
 
-  my ($revdep_queue) = ($installed, @sbos);
+  my @revdep_queue = ($installed, @sbos);
 
 C<get_full_queue()> takes a list of installed SlackBuilds and an array
 of SlackBuilds to check. It returns a list of reverse dependencies.
@@ -528,9 +528,9 @@ sub perform_sbo {
 
 =head2 process_sbos
 
-  my ($failures, $exit) = process_sbos(TODO => [@queue]);
+  my (@failures, $exit) = process_sbos(TODO => [@queue]);
 
-C<process_sbos()> processes a C<@queue> of SlackBuilds and returns an array
+C<process_sbos()> processes a C<@queue> of SlackBuilds and returns an array reference
 with failed builds and the exit status.
 
 In case of a mass rebuild, C<process_sbos> updates the resume file C<resume.temp>

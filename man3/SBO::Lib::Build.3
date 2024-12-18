@@ -115,7 +115,7 @@ value is an error message; the second and third values are empty.
 \&  do_upgradepkg($pkg);
 .Ve
 .PP
-\&\f(CWdo_upgradepkg()\fR runs \f(CW\*(C`upgradepkg\*(C'\fR on \f(CW$pkg\fR.
+\&\f(CWdo_upgradepkg()\fR runs \f(CW\*(C`upgradepkg \-\-reinstall \-\-install\-new\*(C'\fR on \f(CW$pkg\fR.
 .PP
 There is no useful return value.
 .SS get_build_queue
@@ -188,13 +188,13 @@ It has no useful return value.
 \&  my @merged = @{ merge_queues([@queue1], [@queue2]) };
 .Ve
 .PP
-\&\f(CW\*(C`merge_queues\*(C'\fR takes two array references and merges them such that \f(CW@queue1\fR
+\&\f(CWmerge_queues()\fR takes two array references and merges them such that \f(CW@queue1\fR
 is in front, followed by any non-redundant items in \f(CW@queue2\fR. This is returned
 as an array reference.
 .SS get_full_queue
 .IX Subsection "get_full_queue"
 .Vb 1
-\&  my ($revdep_queue) = ($installed, @sbos);
+\&  my @revdep_queue = ($installed, @sbos);
 .Ve
 .PP
 \&\f(CWget_full_queue()\fR takes a list of installed SlackBuilds and an array
@@ -211,10 +211,10 @@ the first value is instead an error message.
 .SS process_sbos
 .IX Subsection "process_sbos"
 .Vb 1
-\&  my ($failures, $exit) = process_sbos(TODO => [@queue]);
+\&  my (@failures, $exit) = process_sbos(TODO => [@queue]);
 .Ve
 .PP
-\&\f(CWprocess_sbos()\fR processes a \f(CW@queue\fR of SlackBuilds and returns an array
+\&\f(CWprocess_sbos()\fR processes a \f(CW@queue\fR of SlackBuilds and returns an array reference
 with failed builds and the exit status.
 .PP
 In case of a mass rebuild, \f(CW\*(C`process_sbos\*(C'\fR updates the resume file \f(CW\*(C`resume.temp\*(C'\fR

@@ -35,7 +35,7 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Download - Routines for downloading slackbuild sources.
+SBO::Lib::Download - Routines for downloading SlackBuild sources.
 
 =head1 SYNOPSIS
 
@@ -43,7 +43,7 @@ SBO::Lib::Download - Routines for downloading slackbuild sources.
 
   my ($ret, $exit) = check_distfiles(LOCATION => $loc);
 
-=head2 SUBROUTINES
+=head1 SUBROUTINES
 
 =cut
 
@@ -53,9 +53,9 @@ SBO::Lib::Download - Routines for downloading slackbuild sources.
 
 C<check_distfiles()> gets the list of downloads from C<$loc>. Any previously-downloaded
 files have their checksums verified. Missing and unverifiable files are downloaded and
-verified. Finally, C<create_symlinks> is run on each download.
+verified. Finally, C<create_symlinks()> is run on each download.
 
-In case of success, an array of symlinks from C<create_symlinks>is returned. In case of
+In case of success, an array of symlinks from C<create_symlinks()> is returned. In case of
 failure, an error message and an exit code are returned.
 
 =cut

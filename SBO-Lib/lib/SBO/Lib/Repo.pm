@@ -512,7 +512,7 @@ the public key if not present. If "fullcheck" is passed (i.e., when syncing the 
 repository), md5sum verification is performed as well.
 
 Failure at any juncture leaves a lockfile C<.rsync.lock> in C<SBO_HOME>, which prevents
-script installation and upgrade until the issue hasbeen resolved, C<GPG_TRUE> is set to
+script installation and upgrade until the issue has been resolved, C<GPG_TRUE> is set to
 C<FALSE> or the lockfile is removed.
 
 =cut
