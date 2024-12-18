@@ -252,12 +252,15 @@ sub generate_slackbuilds_txt {
 
   my $bool = git_sbo_tree($url);
 
-C<git_sbo_tree()> will C<git clone> the repository specified by C<$url> to the
-C<$repo_path> if the C<$url> repository is not already there. If it is, it will
-run C<git fetch && git reset --hard origin>.
+C<git_sbo_tree()> will C<git clone --no-local> the repository specified by C<$url> to the
+C<$repo_path> if the C<$url> repository is not present. If it is, it runs
+C<git fetch && git reset --hard origin>.
 
-If any command fails, it will return a false value. Otherwise it will return a
-true value.
+If C<GIT_BRANCH> is set, or the if running or configured Slackware version has a
+recommended git branch, C<git checkout> is attempted. If successful, C<git pull> follows.
+
+If C<GPG_VERIFY> is C<TRUE>, C<gnupg> verification proceeds with C<verify_git_commit($branch)>
+at the end of the subroutine.
 
 =cut
 
@@ -314,12 +317,13 @@ sub git_sbo_tree {
 
   pull_sbo_tree();
 
-C<pull_sbo_tree()> will pull the SlackBuilds.org repository tree from
-C<rsync://slackbuilds.org/slackbuilds/$ver/> or whatever the C<REPO>
-configuration variable has been set to.
+C<pull_sbo_tree()> pulls the SlackBuilds.org repository tree from
+the default in C<%supported> for the running Slackware version (accounting
+for C<SLACKWARE_VERSION>, C<RSYNC_DEFAULT> and C<REPO>).
 
-C<$ver> is the version of Slackware you are running, provided it is supported,
-or whatever you've set in the C<SLACKWARE_VERSION> configuration variable.
+C<$ver> is the running or configured version of Slackware, provided that it
+is supported. Version support verification occurs in C<get_slack_version_url()>
+via C<get_slack_version()>; see C<SBO::Lib::Util(3)>.
 
 =cut
 
@@ -359,6 +363,9 @@ sub pull_sbo_tree {
 C<rsync_sbo_tree()> syncs the SlackBuilds.org repository to C<$repo_path> from
 the C<$url> provided.
 
+If C<GPG_VERIFY> is C<TRUE>, C<gnupg> verification proceeds with C<verify_rsync("fullcheck")>
+at the end of the subroutine.
+
 =cut
 
 # rsync the sbo tree from slackbuilds.org to $repo_path
@@ -381,8 +388,11 @@ sub rsync_sbo_tree {
 
   slackbuilds_or_fetch();
 
-C<slackbuilds_or_fetch()> will check if there is a C<SLACKBUILDS.TXT> in the
-C<$repo_path>, and if not, offer to fetch the tree.
+C<slackbuilds_or_fetch()> checks for the file C<SLACKBUILDS.TXT> in
+C<$repo_path>. If not, it offers to fetch the tree.
+
+B<Note>: Changes are likely once C<SLACKBUILDS.TXT> is no longer needed
+for checking that a local copy of the repository exists. (KEC)
 
 =cut
 
@@ -408,9 +418,8 @@ sub slackbuilds_or_fetch {
 
   update_tree();
 
-C<update_tree()> will check if there is a C<SLACKBUILDS.TXT> in the
-C<$repo_path>, and if not, will run C<fetch_tree()>. Otherwise it will update
-the SlackBuilds.org tree.
+C<update_tree()> checks for C<SLACKBUILDS.TXT> in C<$repo_path>. If not, it runs
+C<fetch_tree()>. Otherwise, it updates the SlackBuilds.org tree.
 
 =cut
 
@@ -425,8 +434,10 @@ sub update_tree {
   verify_git_commit($branch);
 
 C<verify_git_commit()> attempts to verify the GPG signature of the most
-recent git commit, if any. Git commit verification is unavailable for
-Slackware 14.0 and Slackware 14.1.
+recent git commit, if any.
+
+Git commit verification is unavailable for Slackware 14.0 and Slackware 14.1.
+A user prompt for continuation appears if C<GPG_VERIFY> is C<TRUE>.
 
 =cut
 
@@ -498,9 +509,11 @@ sub verify_git_commit {
 
 C<verify_rsync()> checks the signature of CHECKSUMS.md5.asc, prompting the user to download
 the public key if not present. If "fullcheck" is passed (i.e., when syncing the local
-repository), md5 verification is performed as well. Failure at any juncture leaves a lockfile
-.rsync.lock in SBO_HOME, which prevents script installation and upgrade until the issue has
-been resolved, GPG_TRUE is set to FALSE or the lockfile is removed.
+repository), md5sum verification is performed as well.
+
+Failure at any juncture leaves a lockfile C<.rsync.lock> in C<SBO_HOME>, which prevents
+script installation and upgrade until the issue hasbeen resolved, C<GPG_TRUE> is set to
+C<FALSE> or the lockfile is removed.
 
 =cut
 
@@ -625,7 +638,8 @@ sub verify_rsync {
   verify_gpg();
 
 C<verify_gpg> determines whether a git repo is in use, and then
-runs GnuPG verification. It can be called from outside Repo.pm.
+runs C<gnupg> verification. It is exportable, and is currently used in
+C<sboinstall(1)>, C<sboupgrade(1)> and C<sbocheck(1)>.
 
 =cut
 
@@ -655,8 +669,12 @@ sub verify_gpg {
 
   retrieve_key($fingerprint);
 
-C<retrieve_key> attempts to retrieve a missing public key and add it to
-the keyring.
+C<retrieve_key> attempts to retrieve a missing public key from
+C<hkp://keyserver.ubuntu.com:80> and add it to the keyring.
+
+C<gnupg> output is saved to C<$key_log>, and the output of
+C<gpg --no-batch --search-keys> is displayed with a prompt to ensure
+that the user can trust the key.
 
 =cut
 
