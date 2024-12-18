@@ -108,8 +108,10 @@ It checks if the path in \f(CW$repo_path\fR exists and is an empty
 directory, and returns a true value if so.
 .PP
 If \f(CW$repo_path\fR exists and is non-empty, it may be malformed. The user
-is prompted to regenerate SLACKBUILDS.TXT to proceed. A usage error results
-if regeneration is declined.
+is prompted to regenerate SLACKBUILDS.TXT to proceed. If the directory
+\&\f(CW\*(C`$repo_path/.git\*(C'\fR exists, all contents of the directory would be deleted
+in case of an rsync mirror. Otherwise, the contents would be deleted
+regardless of fetch method.
 .PP
 If \f(CW$repo_path\fR does not exist, creation will be attempted, returning a true
 value on success. Creation failure results in a usage error.
@@ -194,7 +196,7 @@ the \f(CW$url\fR provided.
 .Ve
 .PP
 \&\f(CWslackbuilds_or_fetch()\fR will check if there is a \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR in the
-\&\f(CW$repo_path\fR, and if not, offer to run \f(CW\*(C`sbosnap fetch\*(C'\fR for you.
+\&\f(CW$repo_path\fR, and if not, offer to fetch the tree.
 .SS update_tree
 .IX Subsection "update_tree"
 .Vb 1
