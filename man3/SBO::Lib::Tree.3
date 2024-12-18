@@ -86,18 +86,19 @@ given \f(CW$sbo\fR.
 \&  my $loc = get_sbo_location([$sbo, ...]);
 .Ve
 .PP
-\&\f(CWget_sbo_location()\fR returns the location in the \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR or the
+\&\f(CWget_sbo_location()\fR returns the location in \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR or the
 SlackBuilds.org tree for the first \f(CW$sbo\fR given.
 .PP
-Specifying more than one \f(CW$sbo\fR is useful for only needing to access the
-filesystem once when searching, and populating the internal cache.
+Specifying more than one \f(CW$sbo\fR is useful only for accessing the
+filesystem once when searching or populating the internal cache. No
+code does this currently.
 .SS get_sbo_locations
 .IX Subsection "get_sbo_locations"
 .Vb 1
 \&  my %locations = get_sbo_locations(@sbos);
 .Ve
 .PP
-\&\f(CW\*(C`get_sbo_locations\*(C'\fR tries to find all \f(CW@sbos\fR and returns a hash matching the
+\&\f(CW\*(C`get_sbo_locations\*(C'\fR finds all SlackBuilds in \f(CW@sbos\fR, returns a hash matching each
 package name to its location.
 .SS is_local
 .IX Subsection "is_local"
@@ -106,7 +107,7 @@ package name to its location.
 .Ve
 .PP
 \&\f(CWis_local()\fR checks whether the given \f(CW$sbo\fR is in the \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR or
-not, and returns a true value if it is, and a false value if it is not.
+not. The return value is true if it is, and false if it is not.
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
