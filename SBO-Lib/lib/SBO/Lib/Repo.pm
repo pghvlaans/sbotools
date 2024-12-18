@@ -46,7 +46,7 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Repo - Routines for downloading and updating the SBo repo.
+SBO::Lib::Repo - Routines for downloading and updating the SBo repository.
 
 =head1 SYNOPSIS
 
@@ -58,15 +58,31 @@ SBO::Lib::Repo - Routines for downloading and updating the SBo repo.
 
 =head2 $distfiles
 
-By default $distfiles is set to C</usr/sbo/distfiles>, and it is where all the
+C<$distfiles> defaults to C</usr/sbo/distfiles>, and it is where all
 downloaded sources are kept.
+
+The location depends on the C<SBO_HOME> config setting.
+
+=head2 $gpg_log
+
+C<$gpg_log> defaults to C</usr/sbo/gpg.log>, and it is where the output
+of the most recent C<gnupg> verification is kept.
 
 The location depends on the C<SBO_HOME> config setting.
 
 =head2 $repo_path
 
-By default $repo_path is set to C</usr/sbo/repo>, and it is where the
+C<$repo_path> defaults to C</usr/sbo/repo>, and it is where the
 SlackBuilds.org tree is kept.
+
+The location depends on the C<SBO_HOME> config setting.
+
+=head2 $slackbuilds_txt
+
+C<$slackbuilds_txt> defaults to C</usr/sbo/repo/SLACKBUILDS.TXT>. It is
+included in the official rsync repos, but not the git mirrors. Currently,
+this file is used to indicate that C<$repo_path> is a local mirror of the
+upstream repo. This is likely to change in an upcoming version.
 
 The location depends on the C<SBO_HOME> config setting.
 
@@ -86,10 +102,9 @@ our $slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
 
   my $bool = check_git_remote($path, $url);
 
-C<check_git_remote()> will check if the repository at C<$path> is a git
-repository and if so, it will check if it defined an C<origin> remote that
-matches the C<$url>. If so, it will return a true value. Otherwise it will
-return a false value.
+C<check_git_remote()> checks if the repository at C<$path> is a git repository.
+If so, it checks for a defined C<origin> remote matching C<$url>. If so, it returns
+a true value, and a false value otherwise.
 
 =cut
 
@@ -130,6 +145,10 @@ regardless of fetch method.
 If C<$repo_path> does not exist, creation will be attempted, returning a true
 value on success. Creation failure results in a usage error.
 
+B<Note>: This is a prime candidate for changes in an upcoming version.
+In principle, it would be better to check that the contents of C<$repo_path>
+are sufficiently similar to an SBo mirror to continue safely. (KEC)
+
 =cut
 
 sub check_repo {
@@ -167,9 +186,8 @@ C<chk_slackbuilds_txt()> checks if the file C<SLACKBUILDS.TXT> exists in the
 correct location, and returns a true value if it does, and a false value
 otherwise.
 
-Before the check is made, it attempts to call C<migrate_repo()> so it doesn't
-give a false negative if the repository hasn't been migrated to its sbotools
-2.0 location yet.
+B<Note>: It is possible that some code related to repository detection
+independent of C<SLACKBUILDS.TXT> will be placed here. (KEC)
 
 =cut
 
@@ -183,10 +201,11 @@ sub chk_slackbuilds_txt {
 
   fetch_tree();
 
-C<fetch_tree()> will make sure the C<$repo_path> exists and is empty, and then
-fetch the SlackBuilds.org repository tree there.
+C<fetch_tree()> checks that C<$repo_path> exists and is empty, and then fetches
+the SlackBuilds.org repository.
 
-If the C<$repo_path> is not empty, it will exit with a usage error.
+If the C<$repo_path> exists and is non-empty, the user will see a series of prompts
+from C<check_repo()> before the fetch proceeds.
 
 =cut
 
@@ -200,9 +219,9 @@ sub fetch_tree {
 
   my $bool = generate_slackbuilds_txt();
 
-C<generate_slackbuilds_txt()> will generate a minimal C<SLACKBUILDS.TXT> for a
-repository that doesn't come with one. If it fails, it will return a false
-value. Otherwise it will return a true value.
+C<generate_slackbuilds_txt()> generates a minimal C<SLACKBUILDS.TXT> for
+repositories that do not include this file. If the file cannot be opened for
+write, it returns a false value. Otherwise, it returns a true value.
 
 =cut
 
