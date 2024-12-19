@@ -51,6 +51,10 @@ from <ftp://slackware.uk/sbosrcarch/> as a fallback measure. The
 **\--all** flag may be passed to upgrade all eligible SlackBuilds
 simultaneously.
 
+**sboupgrade** will verify the local repository with **gpg** if
+**GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
+Slackware 14.0 and Slackware 14.1.
+
 ## OPTIONS
 
 **-h\|\--help**
@@ -122,14 +126,17 @@ options are not required, this option should not be used with
 
 **-z\|\--force-reqs**
 
-In combination with **\--force**, rebuild dependencies that do not
-require upgrades as well.
+In the same vein as **\--force**, upgrade the SlackBuild and its
+dependencies, even if upgrades are not required. Incompatible with
+**\--nointeractive**.
 
 **\--all**
 
 Upgrade all installed SlackBuilds that are eligible for upgrades. This
 takes the **BUILD_IGNORE** setting into account. See [sboconfig(1)](sboconfig.1.md)
-and [sbotools.conf(5)](sbotools.conf.5.md).
+and [sbotools.conf(5)](sbotools.conf.5.md). Please note that SlackBuilds installed from a
+**LOCAL_OVERRIDES** directory are upgraded only if the version or build
+number from this directory varies.
 
 ## EXIT CODES
 

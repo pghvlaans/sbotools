@@ -20,7 +20,7 @@ updates
 
     sbocheck [-h|-v]
 
-    sbocheck [-n]
+    sbocheck [-g|-n]
 
 ## DESCRIPTION
 
@@ -28,7 +28,8 @@ updates
 **slackbuilds.org** tree (see [sbosnap(1)](sbosnap.1.md)), checks for available
 upgrades, and reports what it finds. SlackBuilds with differing build
 numbers are reported separately, as are any SlackBuilds marked *\_SBo*
-that are not found in the repository.
+that are not found in the repository or local overrides (see
+[sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
 The three output categories are logged separately to
 */etc/sbocheck.log*, */etc/sbocheck-bumps.log* and
@@ -37,9 +38,21 @@ increment checks are disabled when **CLASSIC** is **TRUE** (see
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
 To check for updated SlackBuilds without updating the SlackBuilds tree,
-pass the **\--nopull** option.
+pass the **\--nopull** option. **sbocheck** will perform **gpg**
+verification upon pulling the tree if **GPG_VERIFY** is **TRUE** (see
+[sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). The **\--gpg-verify** option
+has the same effect. Passing both **\--gpg-verify** and **\--nopull**
+verifies the repo in-place without fetching. Only rsync repositories can
+be verified on Slackware 14.0 and Slackware 14.1.
 
 ## OPTIONS
+
+**-g\|\--gpg-verify**
+
+Use **gpg** to verify the fetched repository, even if **GPG_VERIFY** is
+**FALSE**. When called with **\--nopull**, verify the repo without
+fetching. Only rsync repositories can be verified on Slackware 14.0 and
+Slackware 14.1.
 
 **-n\|\--nopull**
 

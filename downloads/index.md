@@ -12,6 +12,8 @@ Use the key from the homepage (updated 2024-12-15) to verify downloads with gpg.
 
 ## Release Tarballs
 
+* [sbotools-3.2.tar.gz](sbotools-3.2.tar.gz) ([sbotools-3.2.tar.gz.asc](sbotools-3.2.tar.gz.asc))
+    * md5sum: `3c17527099b6cb27ce3640d610b5ca95`
 * [sbotools-3.1.tar.gz](sbotools-3.1.tar.gz) ([sbotools-3.1.tar.gz.asc](sbotools-3.1.tar.gz.asc))
     * md5sum: `49222b05184c7e9e0a9d5c53e715e0bd`
 * [sbotools-3.0.tar.gz](sbotools-3.0.tar.gz) ([sbotools-3.0.tar.gz.asc](sbotools-3.0.tar.gz.asc))

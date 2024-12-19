@@ -27,5 +27,6 @@ Nonetheless, this repository was originally a simple fork adding a feature: Savi
 * Optionally upgrade on build increments and report out-of-tree SlackBuilds
 * Save build options and offer to re-use them
 * Search installed reverse dependencies
+* Optionally use GPG to verify git commits and rsync clones
 
 Those who are interested in a more traditional **sbotools** experience can use the **CLASSIC** metasetting to disable new on-screen messaging and lock other settings to version 2.7 behavior.

@@ -79,12 +79,13 @@ setting with [sboconfig(1)](sboconfig.1.md) or by editing
 */etc/sbotools/sbotools.conf*.
 
 The default mirror depends on the running version of Slackware. Stable
-releases use the appropriate branch on
+releases beyond Slackware 14.1 use the appropriate branch on
 <https://gitlab.com/SlackBuilds.org/slackbuilds/> and -current uses
 <https://github.com/Ponce/slackbuilds/> with the **current** branch.
+Slackware 14.0 and 14.1 have default rsync mirrors.
 
 To use an rsync mirror with \<rsync://slackbuilds.org/slackbuilds/\*/\>
-instead, set **RSYNC_DEFAULT** to **TRUE**. The **REPO** setting
+as the default, set **RSYNC_DEFAULT** to **TRUE**. The **REPO** setting
 overrides the default mirror with a git or rsync URL, and **GIT_BRANCH**
 sets a custom git branch.
 
