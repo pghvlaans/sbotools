@@ -61,7 +61,7 @@
 .if n .ad l
 .nh
 .SH NAME
-SBO::Lib::Repo \- Routines for downloading and updating the SBo repo.
+SBO::Lib::Repo \- Routines for downloading and updating the SBo repository.
 .SH SYNOPSIS
 .IX Header "SYNOPSIS"
 .Vb 1
@@ -74,15 +74,31 @@ SBO::Lib::Repo \- Routines for downloading and updating the SBo repo.
 .ie n .SS $distfiles
 .el .SS \f(CW$distfiles\fP
 .IX Subsection "$distfiles"
-By default \f(CW$distfiles\fR is set to \f(CW\*(C`/usr/sbo/distfiles\*(C'\fR, and it is where all the
+\&\f(CW$distfiles\fR defaults to \f(CW\*(C`/usr/sbo/distfiles\*(C'\fR, and it is where all
 downloaded sources are kept.
+.PP
+The location depends on the \f(CW\*(C`SBO_HOME\*(C'\fR config setting.
+.ie n .SS $gpg_log
+.el .SS \f(CW$gpg_log\fP
+.IX Subsection "$gpg_log"
+\&\f(CW$gpg_log\fR defaults to \f(CW\*(C`/usr/sbo/gpg.log\*(C'\fR, and it is where the output
+of the most recent \f(CW\*(C`gnupg\*(C'\fR verification is kept.
 .PP
 The location depends on the \f(CW\*(C`SBO_HOME\*(C'\fR config setting.
 .ie n .SS $repo_path
 .el .SS \f(CW$repo_path\fP
 .IX Subsection "$repo_path"
-By default \f(CW$repo_path\fR is set to \f(CW\*(C`/usr/sbo/repo\*(C'\fR, and it is where the
+\&\f(CW$repo_path\fR defaults to \f(CW\*(C`/usr/sbo/repo\*(C'\fR, and it is where the
 SlackBuilds.org tree is kept.
+.PP
+The location depends on the \f(CW\*(C`SBO_HOME\*(C'\fR config setting.
+.ie n .SS $slackbuilds_txt
+.el .SS \f(CW$slackbuilds_txt\fP
+.IX Subsection "$slackbuilds_txt"
+\&\f(CW$slackbuilds_txt\fR defaults to \f(CW\*(C`/usr/sbo/repo/SLACKBUILDS.TXT\*(C'\fR. It is
+included in the official rsync repos, but not the git mirrors. Currently,
+this file is used to indicate that \f(CW$repo_path\fR is a local mirror of the
+upstream repo. This is likely to change in an upcoming version.
 .PP
 The location depends on the \f(CW\*(C`SBO_HOME\*(C'\fR config setting.
 .SH SUBROUTINES
@@ -93,10 +109,9 @@ The location depends on the \f(CW\*(C`SBO_HOME\*(C'\fR config setting.
 \&  my $bool = check_git_remote($path, $url);
 .Ve
 .PP
-\&\f(CWcheck_git_remote()\fR will check if the repository at \f(CW$path\fR is a git
-repository and if so, it will check if it defined an \f(CW\*(C`origin\*(C'\fR remote that
-matches the \f(CW$url\fR. If so, it will return a true value. Otherwise it will
-return a false value.
+\&\f(CWcheck_git_remote()\fR checks if the repository at \f(CW$path\fR is a git repository.
+If so, it checks for a defined \f(CW\*(C`origin\*(C'\fR remote matching \f(CW$url\fR. If so, it returns
+a true value, and a false value otherwise.
 .SS check_repo
 .IX Subsection "check_repo"
 .Vb 1
@@ -115,6 +130,10 @@ regardless of fetch method.
 .PP
 If \f(CW$repo_path\fR does not exist, creation will be attempted, returning a true
 value on success. Creation failure results in a usage error.
+.PP
+\&\fBNote\fR: This is a prime candidate for changes in an upcoming version.
+In principle, it would be better to check that the contents of \f(CW$repo_path\fR
+are sufficiently similar to an SBo mirror to continue safely. (KEC)
 .SS chk_slackbuilds_txt
 .IX Subsection "chk_slackbuilds_txt"
 .Vb 1
@@ -124,49 +143,57 @@ value on success. Creation failure results in a usage error.
 \&\f(CWchk_slackbuilds_txt()\fR checks if the file \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR exists in the
 correct location, and returns a true value if it does, and a false value
 otherwise.
+.PP
+\&\fBNote\fR: It is possible that some code related to repository detection
+independent of \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR will be placed here. (KEC)
 .SS fetch_tree
 .IX Subsection "fetch_tree"
 .Vb 1
 \&  fetch_tree();
 .Ve
 .PP
-\&\f(CWfetch_tree()\fR will make sure the \f(CW$repo_path\fR exists and is empty, and then
-fetch the SlackBuilds.org repository tree there.
+\&\f(CWfetch_tree()\fR checks that \f(CW$repo_path\fR exists and is empty, and then fetches
+the SlackBuilds.org repository.
 .PP
-If the \f(CW$repo_path\fR is not empty, it will exit with a usage error.
+If the \f(CW$repo_path\fR exists and is non-empty, the user will see a series of prompts
+from \f(CWcheck_repo()\fR before the fetch proceeds.
 .SS generate_slackbuilds_txt
 .IX Subsection "generate_slackbuilds_txt"
 .Vb 1
 \&  my $bool = generate_slackbuilds_txt();
 .Ve
 .PP
-\&\f(CWgenerate_slackbuilds_txt()\fR will generate a minimal \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR for a
-repository that doesn't come with one. If it fails, it will return a false
-value. Otherwise it will return a true value.
+\&\f(CWgenerate_slackbuilds_txt()\fR generates a minimal \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR for
+repositories that do not include this file. If the file cannot be opened for
+write, it returns a false value. Otherwise, it returns a true value.
 .SS git_sbo_tree
 .IX Subsection "git_sbo_tree"
 .Vb 1
 \&  my $bool = git_sbo_tree($url);
 .Ve
 .PP
-\&\f(CWgit_sbo_tree()\fR will \f(CW\*(C`git clone\*(C'\fR the repository specified by \f(CW$url\fR to the
-\&\f(CW$repo_path\fR if the \f(CW$url\fR repository is not already there. If it is, it will
-run \f(CW\*(C`git fetch && git reset \-\-hard origin\*(C'\fR.
+\&\f(CWgit_sbo_tree()\fR will \f(CW\*(C`git clone \-\-no\-local\*(C'\fR the repository specified by \f(CW$url\fR to the
+\&\f(CW$repo_path\fR if the \f(CW$url\fR repository is not present. If it is, it runs
+\&\f(CW\*(C`git fetch && git reset \-\-hard origin\*(C'\fR.
 .PP
-If any command fails, it will return a false value. Otherwise it will return a
-true value.
+If \f(CW\*(C`GIT_BRANCH\*(C'\fR is set, or the if running or configured Slackware version has a
+recommended git branch, \f(CW\*(C`git checkout\*(C'\fR is attempted. If successful, \f(CW\*(C`git pull\*(C'\fR follows.
+.PP
+If \f(CW\*(C`GPG_VERIFY\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR, \f(CW\*(C`gnupg\*(C'\fR verification proceeds with \f(CWverify_git_commit($branch)\fR
+at the end of the subroutine.
 .SS pull_sbo_tree
 .IX Subsection "pull_sbo_tree"
 .Vb 1
 \&  pull_sbo_tree();
 .Ve
 .PP
-\&\f(CWpull_sbo_tree()\fR will pull the SlackBuilds.org repository tree from
-\&\f(CW\*(C`rsync://slackbuilds.org/slackbuilds/$ver/\*(C'\fR or whatever the \f(CW\*(C`REPO\*(C'\fR
-configuration variable has been set to.
+\&\f(CWpull_sbo_tree()\fR pulls the SlackBuilds.org repository tree from
+the default in \f(CW%supported\fR for the running Slackware version (accounting
+for \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR, \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR and \f(CW\*(C`REPO\*(C'\fR).
 .PP
-\&\f(CW$ver\fR is the version of Slackware you are running, provided it is supported,
-or whatever you've set in the \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR configuration variable.
+\&\f(CW$ver\fR is the running or configured version of Slackware, provided that it
+is supported. Version support verification occurs in \f(CWget_slack_version_url()\fR
+via \f(CWget_slack_version()\fR; see \f(CWSBO::Lib::Util(3)\fR.
 .SS rsync_sbo_tree
 .IX Subsection "rsync_sbo_tree"
 .Vb 1
@@ -175,23 +202,28 @@ or whatever you've set in the \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR configuration 
 .PP
 \&\f(CWrsync_sbo_tree()\fR syncs the SlackBuilds.org repository to \f(CW$repo_path\fR from
 the \f(CW$url\fR provided.
+.PP
+If \f(CW\*(C`GPG_VERIFY\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR, \f(CW\*(C`gnupg\*(C'\fR verification proceeds with \f(CWverify_rsync("fullcheck")\fR
+at the end of the subroutine.
 .SS slackbuilds_or_fetch
 .IX Subsection "slackbuilds_or_fetch"
 .Vb 1
 \&  slackbuilds_or_fetch();
 .Ve
 .PP
-\&\f(CWslackbuilds_or_fetch()\fR will check if there is a \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR in the
-\&\f(CW$repo_path\fR, and if not, offer to fetch the tree.
+\&\f(CWslackbuilds_or_fetch()\fR checks for the file \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR in
+\&\f(CW$repo_path\fR. If not, it offers to fetch the tree.
+.PP
+\&\fBNote\fR: Changes are likely once \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR is no longer needed
+for checking that a local copy of the repository exists. (KEC)
 .SS update_tree
 .IX Subsection "update_tree"
 .Vb 1
 \&  update_tree();
 .Ve
 .PP
-\&\f(CWupdate_tree()\fR will check if there is a \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR in the
-\&\f(CW$repo_path\fR, and if not, will run \f(CWfetch_tree()\fR. Otherwise it will update
-the SlackBuilds.org tree.
+\&\f(CWupdate_tree()\fR checks for \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR in \f(CW$repo_path\fR. If not, it runs
+\&\f(CWfetch_tree()\fR. Otherwise, it updates the SlackBuilds.org tree.
 .SS verify_git_commit
 .IX Subsection "verify_git_commit"
 .Vb 1
@@ -199,8 +231,10 @@ the SlackBuilds.org tree.
 .Ve
 .PP
 \&\f(CWverify_git_commit()\fR attempts to verify the GPG signature of the most
-recent git commit, if any. Git commit verification is unavailable for
-Slackware 14.0 and Slackware 14.1.
+recent git commit, if any.
+.PP
+Git commit verification is unavailable for Slackware 14.0 and Slackware 14.1.
+A user prompt for continuation appears if \f(CW\*(C`GPG_VERIFY\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR.
 .SS verify_rsync
 .IX Subsection "verify_rsync"
 .Vb 1
@@ -209,9 +243,11 @@ Slackware 14.0 and Slackware 14.1.
 .PP
 \&\f(CWverify_rsync()\fR checks the signature of CHECKSUMS.md5.asc, prompting the user to download
 the public key if not present. If "fullcheck" is passed (i.e., when syncing the local
-repository), md5 verification is performed as well. Failure at any juncture leaves a lockfile
-\&.rsync.lock in SBO_HOME, which prevents script installation and upgrade until the issue has
-been resolved, GPG_TRUE is set to FALSE or the lockfile is removed.
+repository), md5sum verification is performed as well.
+.PP
+Failure at any juncture leaves a lockfile \f(CW\*(C`.rsync.lock\*(C'\fR in \f(CW\*(C`SBO_HOME\*(C'\fR, which prevents
+script installation and upgrade until the issue has been resolved, \f(CW\*(C`GPG_TRUE\*(C'\fR is set to
+\&\f(CW\*(C`FALSE\*(C'\fR or the lockfile is removed.
 .SS verify_gpg
 .IX Subsection "verify_gpg"
 .Vb 1
@@ -219,15 +255,20 @@ been resolved, GPG_TRUE is set to FALSE or the lockfile is removed.
 .Ve
 .PP
 \&\f(CW\*(C`verify_gpg\*(C'\fR determines whether a git repo is in use, and then
-runs GnuPG verification. It can be called from outside Repo.pm.
+runs \f(CW\*(C`gnupg\*(C'\fR verification. It is exportable, and is currently used in
+\&\f(CWsboinstall(1)\fR, \f(CWsboupgrade(1)\fR and \f(CWsbocheck(1)\fR.
 .SS retrieve_key
 .IX Subsection "retrieve_key"
 .Vb 1
 \&  retrieve_key($fingerprint);
 .Ve
 .PP
-\&\f(CW\*(C`retrieve_key\*(C'\fR attempts to retrieve a missing public key and add it to
-the keyring.
+\&\f(CW\*(C`retrieve_key\*(C'\fR attempts to retrieve a missing public key from
+\&\f(CW\*(C`hkp://keyserver.ubuntu.com:80\*(C'\fR and add it to the keyring.
+.PP
+\&\f(CW\*(C`gnupg\*(C'\fR output is saved to \f(CW$key_log\fR, and the output of
+\&\f(CW\*(C`gpg \-\-no\-batch \-\-search\-keys\*(C'\fR is displayed with a prompt to ensure
+that the user can trust the key.
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

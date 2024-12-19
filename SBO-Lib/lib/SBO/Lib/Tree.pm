@@ -67,11 +67,12 @@ sub get_orig_location {
   my $loc = get_sbo_location($sbo, ...);
   my $loc = get_sbo_location([$sbo, ...]);
 
-C<get_sbo_location()> returns the location in the C<LOCAL_OVERRIDES> or the
+C<get_sbo_location()> returns the location in C<LOCAL_OVERRIDES> or the
 SlackBuilds.org tree for the first C<$sbo> given.
 
-Specifying more than one C<$sbo> is useful for only needing to access the
-filesystem once when searching, and populating the internal cache.
+Specifying more than one C<$sbo> is useful only for accessing the
+filesystem once when searching or populating the internal cache. No
+code does this currently.
 
 =cut
 
@@ -89,7 +90,7 @@ sub get_sbo_location {
 
   my %locations = get_sbo_locations(@sbos);
 
-C<get_sbo_locations> tries to find all C<@sbos> and returns a hash matching the
+C<get_sbo_locations> finds all SlackBuilds in C<@sbos>, returns a hash matching each
 package name to its location.
 
 =cut
@@ -146,7 +147,7 @@ sub get_sbo_locations {
   my $bool = is_local($sbo);
 
 C<is_local()> checks whether the given C<$sbo> is in the C<LOCAL_OVERRIDES> or
-not, and returns a true value if it is, and a false value if it is not.
+not. The return value is true if it is, and false if it is not.
 
 =cut
 

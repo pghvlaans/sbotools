@@ -90,6 +90,11 @@ they change according to the configuration. \f(CW\*(C`SBO_HOME\*(C'\fR is change
 The supported keys are: \f(CW\*(C`NOCLEAN\*(C'\fR, \f(CW\*(C`DISTCLEAN\*(C'\fR, \f(CW\*(C`JOBS\*(C'\fR, \f(CW\*(C`PKG_DIR\*(C'\fR,
 \&\f(CW\*(C`SBO_HOME\*(C'\fR, \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR, \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR, \f(CW\*(C`REPO\*(C'\fR, \f(CW\*(C`BUILD_IGNORE\*(C'\fR,
 \&\f(CW\*(C`GPG_VERIFY\*(C'\fR and \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR.
+.ie n .SS @listings
+.el .SS \f(CW@listings\fP
+.IX Subsection "@listings"
+An array with blacklisted packages and optional dependency requests read in
+from \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR. Non-exportable.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS build_cmp
@@ -338,7 +343,7 @@ list in the same order.
 \&  usage_error($msg);
 .Ve
 .PP
-\&\f(CW\*(C`usage_error\*(C'\fR warns and exits, printing \f(CW$msg\fR to STDERR.
+\&\f(CWusage_error()\fR warns and exits, printing \f(CW$msg\fR to STDERR.
 .PP
 There is no useful return value.
 .SS version_cmp
