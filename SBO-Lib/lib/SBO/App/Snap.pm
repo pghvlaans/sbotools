@@ -19,7 +19,7 @@ use Getopt::Long qw/ GetOptionsFromArray /;
 
 use parent 'SBO::App';
 
-our $VERSION = '3.1';
+our $VERSION = '3.2';
 
 lint_sbo_home();
 

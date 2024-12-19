@@ -8,7 +8,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 
 ## Changes
 
-* Post-Release
+* 3.2 - 2024-12-19
   * sbocheck: Do not use compact format for CLASSIC mode
   * Repo.pm: Prompt for regeneration if SLACKBUILDS.TXT is missing instead of erroring out
   * Set GPG_VERIFY to TRUE to verify with gpg in case of repo fetch, sboinstall or sboupgrade
