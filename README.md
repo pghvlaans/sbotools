@@ -18,6 +18,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Util.pm: Read the hints file only once; allow multiple optional dependency specs for the same script
   * Lint the value of SBO_HOME before running anything other than sboconfig
   * Repo.pm: Remove antiquated subroutine migrate_repo()
+  * Install development man pages on SBO::Lib to man 3
 
 * 3.1 - 2024-12-05
   * sbofind: Allow multiple search terms
