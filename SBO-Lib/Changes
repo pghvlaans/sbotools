@@ -1,4 +1,7 @@
 sbotools
+* 3.2.1 - 2024-12-20
+  * Bugfix: sboinstall, sboupgrade GPG check for custom repositories (removed unneeded conditional)
+
 * 3.2 - 2024-12-19
   * sbocheck: Do not use compact format for CLASSIC mode
   * Repo.pm: Prompt for regeneration if SLACKBUILDS.TXT is missing instead of erroring out

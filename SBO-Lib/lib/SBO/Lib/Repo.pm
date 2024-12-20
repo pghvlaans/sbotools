@@ -4,7 +4,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '3.2';
+our $VERSION = '3.2.1';
 
 use SBO::Lib::Util qw/ %config prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp _ERR_DOWNLOAD /;
 
@@ -647,8 +647,6 @@ sub verify_gpg {
   my $url = $config{REPO};
   if ($url eq 'FALSE') {
     $url = get_slack_version_url();
-  } else {
-    usage_error("The origins of $repo_path are unclear.\n\nPlease check your REPO, VERSION and RSYNC_DEFAULT settings. Exiting.");
   }
   if ($url =~ m!^rsync://!) {
     return verify_rsync(0);

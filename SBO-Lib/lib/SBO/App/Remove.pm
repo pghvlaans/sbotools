@@ -16,7 +16,7 @@ use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO::App';
 
-our $VERSION = '3.2';
+our $VERSION = '3.2.1';
 
 lint_sbo_home();
 

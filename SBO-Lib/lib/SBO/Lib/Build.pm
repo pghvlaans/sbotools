@@ -4,7 +4,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '3.2';
+our $VERSION = '3.2.1';
 
 use SBO::Lib::Util qw/ :const prompt script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh uniq save_options %config in /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
