@@ -18,7 +18,7 @@ if [[ "$1" == "-d" ]]; then
 	shift
 fi
 
-version=$(grep '^our $VERSION' SBO-Lib/lib/SBO/Lib.pm | grep -Eo '[0-9]+(\.[0-9RC@gita-f]+){0,1}')
+version=$(grep '^our $VERSION' SBO-Lib/lib/SBO/Lib.pm | grep -Eo '[0-9]+(\.[0-9RC@gita-f]+){0,2}')
 
 if ! [[ -d "./man1" ]]; then
 	echo "you do not seem to be at the right place to run this."
