@@ -408,8 +408,8 @@ sub indent {
   lint_sbo_config($running_script, %configs);
 
 C<lint_sbo_config()> takes the name of an sbotools script and a hash with configuration
-parameters. It checks the validity of all parameters except for GIT_BRANCH and exits
-with an error message in case of invalid options.
+parameters. It checks the validity of all parameters except for GIT_BRANCH and REPO,
+exiting with an error message in case of invalid options.
 
 C<sboconfig(1)> runs this subroutine to lint any requested parameter changes;
 all other scripts lint the full configuration at startup.
@@ -473,12 +473,6 @@ sub lint_sbo_config {
     unless ($configs{PKG_DIR} =~ qr#^(/|FALSE$)#) {
       push @invalid, "PKG_DIR:" if $running ne 'sboconfig';
       push @invalid, "$warn -p (absolute path or FALSE)";
-    }
-  }
-  if (exists $configs{REPO}) {
-    unless ($configs{REPO} =~ qr#^(/|rsync://|.*\.git$|FALSE$)#) {
-      push @invalid, "REPO:" if $running ne 'sboconfig';
-      push @invalid, "$warn -r (absolute path, rsync://, .git or FALSE)";
     }
   }
   if (exists $configs{RSYNC_DEFAULT}) {
