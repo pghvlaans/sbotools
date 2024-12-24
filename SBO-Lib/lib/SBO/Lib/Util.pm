@@ -427,16 +427,16 @@ sub lint_sbo_config {
     $warn = 'sboconfig';
   }
 
+  if (exists $configs{BUILD_IGNORE}) {
+    unless ($configs{BUILD_IGNORE} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "BUILD_IGNORE:" if $running ne 'sboconfig';
+      push @invalid, "$warn -b (TRUE or FALSE)";
+    }
+  }
   if (exists $configs{CLASSIC}) {
     unless ($configs{CLASSIC} =~ /^(TRUE|FALSE)$/) {
       push @invalid, "CLASSIC:" if $running ne 'sboconfig';
       push @invalid, "$warn -C (TRUE or FALSE)";
-    }
-  }
-  if (exists $configs{NOCLEAN}) {
-    unless ($configs{NOCLEAN} =~ /^(TRUE|FALSE)$/) {
-      push @invalid, "NOCLEAN:" if $running ne 'sboconfig';
-      push @invalid, "$warn -c (TRUE or FALSE)";
     }
   }
   if (exists $configs{DISTCLEAN}) {
@@ -445,22 +445,16 @@ sub lint_sbo_config {
       push @invalid, "$warn -d (TRUE or FALSE)";
     }
   }
+  if (exists $configs{GPG_VERIFY}) {
+    unless ($configs{GPG_VERIFY} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "GPG_VERIFY:" if $running ne 'sboconfig';
+      push @invalid, "$warn -g (TRUE or FALSE)";
+    }
+  }
   if (exists $configs{JOBS}) {
     unless ($configs{JOBS} =~ /^(\d+|FALSE)$/) {
       push @invalid, "JOBS:" if $running ne 'sboconfig';
       push @invalid, "$warn -j (numeric or FALSE)";
-    }
-  }
-  if (exists $configs{PKG_DIR}) {
-    unless ($configs{PKG_DIR} =~ qr#^(/|FALSE$)#) {
-      push @invalid, "PKG_DIR:" if $running ne 'sboconfig';
-      push @invalid, "$warn -p (absolute path or FALSE)";
-    }
-  }
-  if (exists $configs{SBO_HOME}) {
-    unless ($configs{SBO_HOME} =~ qr#^(/|FALSE$)#) {
-      push @invalid, "SBO_HOME:" if $running ne 'sboconfig';
-      push @invalid, "$warn -s (absolute path or FALSE)";
     }
   }
   if (exists $configs{LOCAL_OVERRIDES}) {
@@ -469,16 +463,22 @@ sub lint_sbo_config {
       push @invalid, "$warn -o (absolute path or FALSE)";
     }
   }
-  if (exists $configs{SLACKWARE_VERSION}) {
-    unless ($configs{SLACKWARE_VERSION} =~ m/^(\d+\.\d+(|\+)|FALSE|current)$/) {
-      push @invalid, "SLACKWARE_VERSION:" if $running ne 'sboconfig';
-      push @invalid, "$warn -V (version number, current or FALSE)";
+  if (exists $configs{NOCLEAN}) {
+    unless ($configs{NOCLEAN} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "NOCLEAN:" if $running ne 'sboconfig';
+      push @invalid, "$warn -c (TRUE or FALSE)";
     }
   }
-  if (exists $configs{BUILD_IGNORE}) {
-    unless ($configs{BUILD_IGNORE} =~ /^(TRUE|FALSE)$/) {
-      push @invalid, "BUILD_IGNORE:" if $running ne 'sboconfig';
-      push @invalid, "$warn -b (TRUE or FALSE)";
+  if (exists $configs{PKG_DIR}) {
+    unless ($configs{PKG_DIR} =~ qr#^(/|FALSE$)#) {
+      push @invalid, "PKG_DIR:" if $running ne 'sboconfig';
+      push @invalid, "$warn -p (absolute path or FALSE)";
+    }
+  }
+  if (exists $configs{REPO}) {
+    unless ($configs{REPO} =~ qr#^(/|rsync://|.*\.git$|FALSE$)#) {
+      push @invalid, "REPO:" if $running ne 'sboconfig';
+      push @invalid, "$warn -r (absolute path, rsync://, .git or FALSE)";
     }
   }
   if (exists $configs{RSYNC_DEFAULT}) {
@@ -487,16 +487,16 @@ sub lint_sbo_config {
       push @invalid, "$warn -R (TRUE or FALSE)";
     }
   }
-  if (exists $configs{GPG_VERIFY}) {
-    unless ($configs{GPG_VERIFY} =~ /^(TRUE|FALSE)$/) {
-      push @invalid, "GPG_VERIFY:" if $running ne 'sboconfig';
-      push @invalid, "$warn -g (TRUE or FALSE)";
+  if (exists $configs{SBO_HOME}) {
+    unless ($configs{SBO_HOME} =~ qr#^(/|FALSE$)#) {
+      push @invalid, "SBO_HOME:" if $running ne 'sboconfig';
+      push @invalid, "$warn -s (absolute path or FALSE)";
     }
   }
-  if (exists $configs{REPO}) {
-    unless ($configs{REPO} =~ qr#^(/|rsync://|.*\.git$|FALSE$)#) {
-      push @invalid, "REPO:" if $running ne 'sboconfig';
-      push @invalid, "$warn -r (absolute path, rsync://, .git or FALSE)";
+  if (exists $configs{SLACKWARE_VERSION}) {
+    unless ($configs{SLACKWARE_VERSION} =~ m/^(\d+\.\d+(|\+)|FALSE|current)$/) {
+      push @invalid, "SLACKWARE_VERSION:" if $running ne 'sboconfig';
+      push @invalid, "$warn -V (version number, current or FALSE)";
     }
   }
 
