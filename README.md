@@ -7,6 +7,9 @@ A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maint
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at slackbuilds.org.
 
 ## Changes
+* Post-Release
+  * sboconfig: Lint REPO; allow versions "X.Y+" and "current"; more informative error messages
+
 * 3.2.1 - 2024-12-20
   * Bugfix: sboinstall, sboupgrade GPG check for custom repositories (removed unneeded conditional)
 
