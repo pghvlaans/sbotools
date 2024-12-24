@@ -490,7 +490,7 @@ sub lint_sbo_config {
   if (exists $configs{SLACKWARE_VERSION}) {
     unless ($configs{SLACKWARE_VERSION} =~ m/^(\d+\.\d+(|\+)|FALSE|current)$/) {
       push @invalid, "SLACKWARE_VERSION:" if $running ne 'sboconfig';
-      push @invalid, "$warn -V (version number, current or FALSE)";
+      push @invalid, "$warn -V (version number #.#(+), current or FALSE)";
     }
   }
 
