@@ -101,6 +101,6 @@ if [[ "$date_return" != "0" ]]; then
 fi
 
 # Regenerate the man3 pages, just in case.
-sh tools/dev_pages.sh
+sh tools/dev_pages.sh --all
 
 exit 0
