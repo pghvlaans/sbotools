@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slurp usage_error script_error $tempdir open_fh %config $conf_dir $conf_file show_version /;
+use SBO::Lib qw/ slurp usage_error script_error lint_sbo_config $tempdir open_fh %config $conf_dir $conf_file show_version /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always);
 use File::Copy;
@@ -127,48 +127,7 @@ for my $key (keys %valid_confs) {
 	$changes{$value} = $options{$key} if exists $options{$key};
 }
 
-my @invalid;
-my $warn = 'Invalid parameter for';
-
-if (exists $changes{CLASSIC}) {
-	push @invalid, "$warn -C (TRUE or FALSE)" unless $changes{CLASSIC} =~ /^(TRUE|FALSE)$/;
-}
-if (exists $changes{NOCLEAN}) {
-	push @invalid, "$warn -c (TRUE or FALSE)" unless $changes{NOCLEAN} =~ /^(TRUE|FALSE)$/;
-}
-if (exists $changes{DISTCLEAN}) {
-	push @invalid, "$warn -d (TRUE or FALSE)" unless $changes{DISTCLEAN} =~ /^(TRUE|FALSE)$/;
-}
-if (exists $changes{JOBS}) {
-	push @invalid, "$warn -j (numeric or FALSE)" unless $changes{JOBS} =~ /^(\d+|FALSE)$/;
-}
-if (exists $changes{PKG_DIR}) {
-	push @invalid, "$warn -p (absolute path or FALSE)" unless $changes{PKG_DIR} =~ qr#^(/|FALSE$)#;
-}
-if (exists $changes{SBO_HOME}) {
-	push @invalid, "$warn -s (absolute path or FALSE)" unless $changes{SBO_HOME} =~ qr#^(/|FALSE$)#;
-}
-if (exists $changes{LOCAL_OVERRIDES}) {
-	push @invalid, "$warn -o (absolute path or FALSE)" unless $changes{LOCAL_OVERRIDES} =~ qr#^(/|FALSE$)#;
-}
-if (exists $changes{SLACKWARE_VERSION}) {
-	push @invalid, "$warn -V (version number, current or FALSE)" unless $changes{SLACKWARE_VERSION} =~ m/^(\d+\.\d+(|\+)|FALSE|current)$/;
-}
-if (exists $changes{BUILD_IGNORE}) {
-	push @invalid, "$warn -b (TRUE or FALSE)" unless $changes{BUILD_IGNORE} =~ /^(TRUE|FALSE)$/;
-}
-if (exists $changes{RSYNC_DEFAULT}) {
-	push @invalid, "$warn -R (TRUE or FALSE)" unless $changes{RSYNC_DEFAULT} =~ /^(TRUE|FALSE)$/;
-}
-if (exists $changes{GPG_VERIFY}) {
-	push @invalid, "$warn -g (TRUE or FALSE)" unless $changes{GPG_VERIFY} =~ /^(TRUE|FALSE)$/;
-}
-if (exists $changes{REPO}) {
-	push @invalid, "$warn -r (absolute path, rsync://, .git or FALSE)" unless $changes{REPO} =~ qr#^(/|rsync://|.*\.git$|FALSE$)#;
-}
-
-my $invalid_string = join("\n", @invalid);
-usage_error("$invalid_string") if $invalid_string;
+lint_sbo_config($self, %changes);
 
 sub config_write {
 	script_error('config_write requires at least two arguments.') unless @_ >= 2;

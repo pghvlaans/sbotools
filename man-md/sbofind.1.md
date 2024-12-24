@@ -34,6 +34,10 @@ and version information. This is equivalent to running
 on a FreeBSD system. If the repository includes a *TAGS.txt* file, that
 will be used to find additional results.
 
+If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, the script will exit with a diagnostic
+message.
+
 ## OPTIONS
 
 **-h\|\--help**

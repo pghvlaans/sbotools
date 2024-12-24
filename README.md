@@ -9,6 +9,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 ## Changes
 * Post-Release
   * sboconfig: Lint REPO; allow versions "X.Y+" and "current"; more informative error messages
+  * Exit with invalid sbotools.conf parameters (breaking: If a URL, REPO needs either rsync:// or .git)
 
 * 3.2.1 - 2024-12-20
   * Bugfix: sboinstall, sboupgrade GPG check for custom repositories (removed unneeded conditional)

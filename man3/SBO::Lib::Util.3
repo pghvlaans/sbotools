@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Prickle-Prickle, The Aftermath 62, 3190 YOLD" "" "sbotools 3.2.1"
+.TH SBO::Lib::Util 3 "Pungenday, The Aftermath 66, 3190 YOLD" "" "sbotools 3.2.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -199,15 +199,18 @@ was found, and a false value otherwise.
 .PP
 \&\f(CWindent()\fR indents every non-empty line in \f(CW$text\fR by \f(CW$indent\fR spaces and
 returns the resulting string.
-.SS lint_sbo_home
-.IX Subsection "lint_sbo_home"
+.SS lint_sbo_config
+.IX Subsection "lint_sbo_config"
 .Vb 1
-\&  lint_sbo_home();
+\&  lint_sbo_config($running_script, %configs);
 .Ve
 .PP
-\&\f(CWlint_sbo_home()\fR runs at the start of every script except for \f(CW\*(C`sboconfig\*(C'\fR;
-it exits if \f(CW\*(C`SBO_HOME\*(C'\fR is not an absolute directory path (or FALSE, which defaults to
-/usr/sbo).
+\&\f(CWlint_sbo_config()\fR takes the name of an sbotools script and a hash with configuration
+parameters. It checks the validity of all parameters except for GIT_BRANCH and exits
+with an error message in case of invalid options.
+.PP
+\&\f(CWsboconfig(1)\fR runs this subroutine to lint any requested parameter changes;
+all other scripts lint the full configuration at startup.
 .SS on_blacklist
 .IX Subsection "on_blacklist"
 .Vb 1

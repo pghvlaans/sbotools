@@ -55,6 +55,10 @@ simultaneously.
 **GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
 Slackware 14.0 and Slackware 14.1.
 
+If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, the script will exit with a diagnostic
+message.
+
 ## OPTIONS
 
 **-h\|\--help**

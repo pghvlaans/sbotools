@@ -19,6 +19,11 @@ configuration parameters, and is read by all
 sbotools
 commands.
 .P
+If an invalid configuration is detected (or requested with
+.B
+sboconfig(1)\fR\
+), the script will exit with a diagnostic message.
+.P
 The current configuration keys are as follows:
 .P
 .B
@@ -68,8 +73,9 @@ DISTCLEAN\fR\
 .RE
 .P
 .B
-GPG_VERIFY\fR\
-\&: If
+GPG_VERIFY=(FALSE|TRUE)
+.RS
+If
 .B
 TRUE\fR\
 \&, use
@@ -245,12 +251,12 @@ the one specified in
 .RE
 .P
 .B
-REPO=(FALSE|url)
+REPO=(FALSE|url|/path)
 .RS
 If set to a git or rsync
 .B
-URL\fR\
-\&, use that repository instead of the
+URL
+(rsync:// or ending in .git), use that repository instead of the
 .B
 sbotools
 default for your

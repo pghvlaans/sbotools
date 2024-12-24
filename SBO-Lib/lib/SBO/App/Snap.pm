@@ -14,14 +14,12 @@ package SBO::App::Snap;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ fetch_tree update_tree %config show_version lint_sbo_home /;
+use SBO::Lib qw/ fetch_tree update_tree %config show_version lint_sbo_config /;
 use Getopt::Long qw/ GetOptionsFromArray /;
 
 use parent 'SBO::App';
 
 our $VERSION = '3.2.1';
-
-lint_sbo_home();
 
 sub _parse_opts {
   my $class = shift;
@@ -65,6 +63,8 @@ sub run {
 
   if ($self->{help}) { $self->show_usage(); return 0 }
   if ($self->{vers}) { $self->show_version(); return 0 }
+
+  lint_sbo_config($self, %config);
 
   # check for a command and, if found, execute it
   $args[0] //= '';

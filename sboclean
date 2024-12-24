@@ -14,13 +14,12 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ prompt usage_error script_error in show_version lint_sbo_home %config /;
+use SBO::Lib qw/ prompt usage_error script_error in show_version lint_sbo_config %config /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 use File::Path qw(remove_tree);
 
 my $self = basename($0);
-lint_sbo_home();
 
 sub show_usage {
 	print <<"EOF";
@@ -57,6 +56,8 @@ GetOptions(
 
 if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
+
+lint_sbo_config($self, %config);
 
 usage_error("You must specify at least one of -d, -w or -o.") unless
 	($dist || $work || $options);

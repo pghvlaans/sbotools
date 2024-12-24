@@ -48,7 +48,7 @@ our @EXPORT_OK = (
     idx
     in
     indent
-    lint_sbo_home
+    lint_sbo_config
     on_blacklist
     open_fh
     open_read
@@ -403,19 +403,108 @@ sub indent {
   return join "\n", @lines;
 }
 
-=head2 lint_sbo_home
+=head2 lint_sbo_config
 
-  lint_sbo_home();
+  lint_sbo_config($running_script, %configs);
 
-C<lint_sbo_home()> runs at the start of every script except for C<sboconfig>;
-it exits if C<SBO_HOME> is not an absolute directory path (or FALSE, which defaults to
-/usr/sbo).
+C<lint_sbo_config()> takes the name of an sbotools script and a hash with configuration
+parameters. It checks the validity of all parameters except for GIT_BRANCH and exits
+with an error message in case of invalid options.
+
+C<sboconfig(1)> runs this subroutine to lint any requested parameter changes;
+all other scripts lint the full configuration at startup.
 
 =cut
 
-sub lint_sbo_home {
-  usage_error("Lint failure: SBO_HOME is not set to FALSE or an absolute directory path.\nUse \"sboconfig -s\" or edit /etc/sbotools/sbotools.conf to set a good value.")
-    unless $config{SBO_HOME} =~ qr#^(/|$)#;
+sub lint_sbo_config {
+  script_error("lint_sbo_config requires two arguments.") unless @_ > 2;
+  my ($running, %configs) = @_;
+  my @invalid;
+  my $warn;
+  if ($running eq 'sboconfig') {
+    $warn = 'Invalid parameter for';
+  } else {
+    $warn = 'sboconfig';
+  }
+
+  if (exists $configs{CLASSIC}) {
+    unless ($configs{CLASSIC} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "CLASSIC:" if $running ne 'sboconfig';
+      push @invalid, "$warn -C (TRUE or FALSE)";
+    }
+  }
+  if (exists $configs{NOCLEAN}) {
+    unless ($configs{NOCLEAN} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "NOCLEAN:" if $running ne 'sboconfig';
+      push @invalid, "$warn -c (TRUE or FALSE)";
+    }
+  }
+  if (exists $configs{DISTCLEAN}) {
+    unless ($configs{DISTCLEAN} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "DISTCLEAN:" if $running ne 'sboconfig';
+      push @invalid, "$warn -d (TRUE or FALSE)";
+    }
+  }
+  if (exists $configs{JOBS}) {
+    unless ($configs{JOBS} =~ /^(\d+|FALSE)$/) {
+      push @invalid, "JOBS:" if $running ne 'sboconfig';
+      push @invalid, "$warn -j (numeric or FALSE)";
+    }
+  }
+  if (exists $configs{PKG_DIR}) {
+    unless ($configs{PKG_DIR} =~ qr#^(/|FALSE$)#) {
+      push @invalid, "PKG_DIR:" if $running ne 'sboconfig';
+      push @invalid, "$warn -p (absolute path or FALSE)";
+    }
+  }
+  if (exists $configs{SBO_HOME}) {
+    unless ($configs{SBO_HOME} =~ qr#^(/|FALSE$)#) {
+      push @invalid, "SBO_HOME:" if $running ne 'sboconfig';
+      push @invalid, "$warn -s (absolute path or FALSE)";
+    }
+  }
+  if (exists $configs{LOCAL_OVERRIDES}) {
+    unless ($configs{LOCAL_OVERRIDES} =~ qr#^(/|FALSE$)#) {
+      push @invalid, "LOCAL_OVERRIDES:" if $running ne 'sboconfig';
+      push @invalid, "$warn -o (absolute path or FALSE)";
+    }
+  }
+  if (exists $configs{SLACKWARE_VERSION}) {
+    unless ($configs{SLACKWARE_VERSION} =~ m/^(\d+\.\d+(|\+)|FALSE|current)$/) {
+      push @invalid, "SLACKWARE_VERSION:" if $running ne 'sboconfig';
+      push @invalid, "$warn -V (version number, current or FALSE)";
+    }
+  }
+  if (exists $configs{BUILD_IGNORE}) {
+    unless ($configs{BUILD_IGNORE} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "BUILD_IGNORE:" if $running ne 'sboconfig';
+      push @invalid, "$warn -b (TRUE or FALSE)";
+    }
+  }
+  if (exists $configs{RSYNC_DEFAULT}) {
+    unless ($configs{RSYNC_DEFAULT} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "RSYNC_DEFAULT:" if $running ne 'sboconfig';
+      push @invalid, "$warn -R (TRUE or FALSE)";
+    }
+  }
+  if (exists $configs{GPG_VERIFY}) {
+    unless ($configs{GPG_VERIFY} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "GPG_VERIFY:" if $running ne 'sboconfig';
+      push @invalid, "$warn -g (TRUE or FALSE)";
+    }
+  }
+  if (exists $configs{REPO}) {
+    unless ($configs{REPO} =~ qr#^(/|rsync://|.*\.git$|FALSE$)#) {
+      push @invalid, "REPO:" if $running ne 'sboconfig';
+      push @invalid, "$warn -r (absolute path, rsync://, .git or FALSE)";
+    }
+  }
+
+  my $invalid_string = join("\n", @invalid);
+  if ($invalid_string) {
+    say "The configuration in $conf_file contains one or more\ninvalid parameters.\n" if $running ne 'sboconfig';
+    usage_error("$invalid_string");
+  }
 }
 
 =head2 on_blacklist

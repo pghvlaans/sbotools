@@ -14,13 +14,12 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_sbo_location get_inst_names get_installed_packages get_build_queue get_sbo_locations in merge_queues user_prompt process_sbos print_failures verify_gpg %config show_version lint_sbo_home /;
+use SBO::Lib qw/ get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_sbo_location get_inst_names get_installed_packages get_build_queue get_sbo_locations in merge_queues user_prompt process_sbos print_failures verify_gpg %config show_version lint_sbo_config /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
 
 my $self = basename($0);
-lint_sbo_home();
 
 sub show_usage {
     print <<"EOF";
@@ -80,6 +79,29 @@ GetOptions(
 if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
 
+lint_sbo_config($self, %config);
+
+# invalid parameters may have been passed from the command line
+if ($noclean) {
+	usage_error("You have provided an invalid value for -c|--noclean")
+		unless ($noclean =~ /^(TRUE|FALSE)$/);
+}
+
+if ($distclean) {
+	usage_error("You have provided an invalid value for -d|--distclean")
+		unless ($distclean =~ /^(TRUE|FALSE)$/);
+}
+
+if ($build_ignore) {
+	usage_error("You have provided an invalid value for -b|--build-ignore")
+		unless ($build_ignore =~ /^(TRUE|FALSE)$/);
+}
+
+if ($jobs) {
+	usage_error("You have provided an invalid value for -j|--jobs")
+		unless ($jobs =~ /^\d+$/ || $jobs eq 'FALSE');
+}
+
 $noclean = $noclean eq 'TRUE' ? 1 : 0;
 $distclean = $distclean eq 'TRUE' ? 1 : 0;
 $build_ignore = $build_ignore eq 'TRUE' ? 1 : 0;
@@ -101,11 +123,6 @@ if ($all) {
 }
 
 if (!@ARGV) { show_usage(); exit 1 }
-
-if ($jobs) {
-	usage_error("You have provided an invalid value for -j|--jobs")
-		unless ($jobs =~ /^\d+$/ || $jobs eq 'FALSE');
-}
 
 usage_error("-r|--nointeractive and -z|--force-reqs can not be used together.")
 	if $non_int && $force_reqs;

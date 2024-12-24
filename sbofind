@@ -14,12 +14,11 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue get_installed_packages get_reverse_reqs %config $slackbuilds_txt $repo_path show_version in indent get_from_info uniq lint_sbo_home /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue get_installed_packages get_reverse_reqs %config $slackbuilds_txt $repo_path show_version in indent get_from_info uniq lint_sbo_config /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 
 my $self = basename($0);
-lint_sbo_home();
 
 sub show_usage {
 	print <<"EOF";
@@ -65,6 +64,8 @@ GetOptions(
 
 if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
+
+lint_sbo_config($self, %config);
 
 if (!@ARGV) { show_usage(); exit 1 }
 

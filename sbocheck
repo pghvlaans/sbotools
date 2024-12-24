@@ -14,14 +14,13 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree fetch_tree get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_home %config /;
+use SBO::Lib qw/ update_tree fetch_tree get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config %config /;
 use Getopt::Long;
 use File::Basename;
 use List::Util 'max';
 use Data::Dumper;
 
 my $self = basename($0);
-lint_sbo_home();
 
 sub show_usage {
 	print <<"EOF";
@@ -47,6 +46,8 @@ GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, '
 
 if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
+
+lint_sbo_config($self, %config);
 
 if (not $gpg) {
 	$gpg = $config{GPG_VERIFY};
