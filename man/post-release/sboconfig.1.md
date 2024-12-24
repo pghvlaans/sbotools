@@ -131,13 +131,12 @@ the one specified in */etc/slackware-version*.
 
 **-r\|\--repo (FALSE\|url)**
 
-**REPO**: If set to a git or rsync **URL** (rsync:// or ending with
-.git), use that repository instead of the **sbotools** default for your
-**SLACKWARE_VERSION**. The default repositories are under
-rsync://slackbuilds.org/slackbuilds if **RSYNC_DEFAULT** is **TRUE**
-and for Slackware versions prior to 14.2, and
-<https://gitlab.com/SlackBuilds.org> otherwise. The repository must be
-laid out in the same manner as one found at
+**REPO**: If set to a git or rsync **URL**, use that repository instead
+of the **sbotools** default for your **SLACKWARE_VERSION**. The default
+repositories are under rsync://slackbuilds.org/slackbuilds if
+**RSYNC_DEFAULT** is **TRUE** and for Slackware versions prior to 14.2,
+and <https://gitlab.com/SlackBuilds.org> otherwise. The repository must
+be laid out in the same manner as one found at
 <https://git.slackbuilds.org/slackbuilds> such that SlackBuild
 directories are under the category directories.
 
