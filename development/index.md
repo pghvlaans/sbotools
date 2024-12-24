@@ -14,6 +14,11 @@ These features may be added in the future:
 
 * Rebuild a reverse dependency queue
 * Detect an existing local repository more correctly
-* More extensive pre-run configuration linting (currently, this is only done for `SBO_HOME`)
 
 The above list is non-exhaustive and nothing on it is guaranteed to appear in `sbotools`.
+
+## Incoming Features
+
+To arrive in the next version:
+
+* More extensive pre-run configuration linting (currently, this is only done for `SBO_HOME`)

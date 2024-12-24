@@ -17,6 +17,9 @@
 */etc/sbotools/sbotools.conf* contains *KEY=VALUE* configuration
 parameters, and is read by all **sbotools** commands.
 
+If an invalid configuration is detected (or requested with
+[sboconfig(1)](sboconfig.1.md)), the script will exit with a diagnostic message.
+
 The current configuration keys are as follows:
 
 **CLASSIC=(FALSE\|TRUE)**
@@ -34,10 +37,11 @@ Source archives are otherwise retained in */usr/sbo/distfiles* (with
 *SBO_HOME=/usr/sbo*) by default. If **PKG_DIR** is set, package archives
 will be saved there regardless of **DISTCLEAN**.
 
-**GPG_VERIFY**: If **TRUE**, use **gpg** to verify the contents of the
-local repository when running [sbosnap(1)](sbosnap.1.md), [sbocheck(1)](sbocheck.1.md),
-[sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md). Missing public keys are
-detected, and a download from
+**GPG_VERIFY=(FALSE\|TRUE)**
+
+If **TRUE**, use **gpg** to verify the contents of the local repository
+when running [sbosnap(1)](sbosnap.1.md), [sbocheck(1)](sbocheck.1.md), [sboinstall(1)](sboinstall.1.md) and
+[sboupgrade(1)](sboupgrade.1.md). Missing public keys are detected, and a download from
 [keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 will be offered
 if available. Only rsync repositories can be verified on Slackware 14.0
 and Slackware 14.1.
@@ -92,14 +96,15 @@ If set to a **version number**, use the **slackbuilds.org** repository
 for that version of Slackware rather than the one specified in
 */etc/slackware-version*.
 
-**REPO=(FALSE\|url)**
+**REPO=(FALSE\|url\|/path)**
 
-If set to a git or rsync **URL**, use that repository instead of the
-**sbotools** default for your **SLACKWARE_VERSION**. The default
-repositories are under rsync://slackbuilds.org/slackbuilds if
-**RSYNC_DEFAULT** is **TRUE** and for Slackware versions prior to 14.2,
-and <https://gitlab.com/SlackBuilds.org> otherwise. The repository must
-be laid out in the same manner as one found at
+If set to a git or rsync **URL** (rsync:// or ending in .git), use that
+repository instead of the **sbotools** default for your
+**SLACKWARE_VERSION**. The default repositories are under
+rsync://slackbuilds.org/slackbuilds if **RSYNC_DEFAULT** is **TRUE**
+and for Slackware versions prior to 14.2, and
+<https://gitlab.com/SlackBuilds.org> otherwise. The repository must be
+laid out in the same manner as one found at
 <https://git.slackbuilds.org/slackbuilds> such that SlackBuild
 directories are under the category directories.
 
