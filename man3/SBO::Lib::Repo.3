@@ -65,9 +65,9 @@ SBO::Lib::Repo \- Routines for downloading and updating the SBo repository.
 .SH SYNOPSIS
 .IX Header "SYNOPSIS"
 .Vb 1
-\&  use SBO::Lib::Repo qw/ fetch_tree /;
+\&  use SBO::Lib::Repo qw/ update_tree /;
 \&
-\&  fetch_tree();
+\&  update_tree();
 .Ve
 .SH VARIABLES
 .IX Header "VARIABLES"
@@ -137,17 +137,6 @@ value on success. Creation failure results in a usage error.
 \&\f(CWchk_slackbuilds_txt()\fR checks if a non-empty file \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR exists in the
 correct location, and returns a true value if it does, and a false value
 otherwise.
-.SS fetch_tree
-.IX Subsection "fetch_tree"
-.Vb 1
-\&  fetch_tree();
-.Ve
-.PP
-\&\f(CWfetch_tree()\fR checks that \f(CW$repo_path\fR exists and is empty (or closely resembles
-the SlackBuilds.org repository), and then fetches the SBo repository.
-.PP
-If \f(CW$repo_path\fR exists, is non-empty and does not closely resemble an SBo
-repository, the user will see a prompt from \f(CWcheck_repo()\fR before the fetch proceeds.
 .SS generate_slackbuilds_txt
 .IX Subsection "generate_slackbuilds_txt"
 .Vb 1
@@ -213,12 +202,11 @@ and \f(CWsboupdate(1)\fR. It checks for the file \f(CW\*(C`SLACKBUILDS.TXT\*(C'\
 \&  update_tree();
 .Ve
 .PP
-\&\f(CWupdate_tree()\fR checks for \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR in \f(CW$repo_path\fR. If not, it runs
-\&\f(CWfetch_tree()\fR. Otherwise, it updates the SlackBuilds.org tree. Functionally,
-this only affects the content of the initial onscreen message.
+\&\f(CWupdate_tree()\fR checks for \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR in \f(CW$repo_path\fR to determine an
+appropriate onscreen message. It then updates the SlackBuilds.org tree.
 .PP
 The local repository is checked for existence and similarity to the SBo repository
-before any fetch or update proceeds.
+before any update proceeds.
 .SS verify_git_commit
 .IX Subsection "verify_git_commit"
 .Vb 1

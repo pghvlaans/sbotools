@@ -7,7 +7,7 @@ use Test::More;
 use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
-use Test::Sbotools qw/ set_repo sbosnap /;
+use Test::Sbotools qw/ set_repo /;
 
 if ($ENV{TEST_INSTALL}) {
 	plan tests => 5;
@@ -54,8 +54,8 @@ END
 
 set_repo("$RealBin/gitrepo/");
 
-# 1: sbosnap get initial repo
-sbosnap 'fetch', { expected => qr!Pulling SlackBuilds tree.*Cloning into '/usr/sbo/repo'!s };
+# 1: sbocheck get initial repo
+sbocheck, { expected => qr!Pulling SlackBuilds tree.*Cloning into '/usr/sbo/repo'!s };
 
 # 2-3: check ownership of repodir if under TRAVIS
 SKIP: {
@@ -73,8 +73,8 @@ capture_merged { system(<<"END"); };
 cd "$RealBin"; cd gitrepo; git reset --hard b1
 END
 
-# 4: sbosnap update through merge conflict
-sbosnap 'update', { expected => qr!Updating SlackBuilds tree.*master.*->.*origin/master.*forced update.*HEAD is now at!s };
+# 4: sbocheck update through merge conflict
+sbocheck 'update', { expected => qr!Updating SlackBuilds tree.*master.*->.*origin/master.*forced update.*HEAD is now at!s };
 
 # 5: make sure test repo is merged correctly
 is (slurp('/usr/sbo/repo/test'), <<"END", 'repo test file updated correctly');

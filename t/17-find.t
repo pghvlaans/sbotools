@@ -7,7 +7,7 @@ use Test::More;
 use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
-use Test::Sbotools qw/ make_slackbuilds_txt set_lo sbofind replace_tags_txt set_repo sbosnap /;
+use Test::Sbotools qw/ make_slackbuilds_txt set_lo sbofind replace_tags_txt set_repo /;
 use File::Temp 'tempdir';
 
 plan tests => 10;
@@ -58,7 +58,7 @@ git commit -m 'initial'
 GIT
 set_repo("file://$tempdir");
 set_lo('FALSE');
-sbosnap 'fetch', { test => 0, note => 1 };
+sbocheck, { test => 0, note => 1 };
 
 sbofind 'nonexistentslackbuild', { expected => qr!\Q/usr/sbo/repo/test/nonexistentslackbuild! };
 

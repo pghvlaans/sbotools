@@ -21,7 +21,6 @@ our @EXPORT_OK = qw{
   check_git_remote
   check_repo
   chk_slackbuilds_txt
-  fetch_tree
   generate_slackbuilds_txt
   git_sbo_tree
   pull_sbo_tree
@@ -49,9 +48,9 @@ SBO::Lib::Repo - Routines for downloading and updating the SBo repository.
 
 =head1 SYNOPSIS
 
-  use SBO::Lib::Repo qw/ fetch_tree /;
+  use SBO::Lib::Repo qw/ update_tree /;
 
-  fetch_tree();
+  update_tree();
 
 =head1 VARIABLES
 
@@ -241,24 +240,6 @@ otherwise.
 # does a non-empty SLACKBUILDS.TXT file exist in the sbo tree?
 sub chk_slackbuilds_txt {
   return -s $slackbuilds_txt ? 1 : undef;
-}
-
-=head2 fetch_tree
-
-  fetch_tree();
-
-C<fetch_tree()> checks that C<$repo_path> exists and is empty (or closely resembles
-the SlackBuilds.org repository), and then fetches the SBo repository.
-
-If C<$repo_path> exists, is non-empty and does not closely resemble an SBo
-repository, the user will see a prompt from C<check_repo()> before the fetch proceeds.
-
-=cut
-
-sub fetch_tree {
-  check_repo();
-  say 'Pulling SlackBuilds tree...';
-  pull_sbo_tree(), return 1;
 }
 
 =head2 generate_slackbuilds_txt
@@ -467,14 +448,13 @@ C<$repo_path>. If not, it offers to fetch the tree.
 # not been populated there; prompt the user to automagickally pull the tree.
 sub slackbuilds_or_fetch {
   unless (chk_slackbuilds_txt()) {
-    say "\"sbosnap fetch\" may not have been run yet.";
     if (prompt("Fetch the repository to $repo_path now?", default => 'yes')) {
-      fetch_tree();
+      update_tree();
     } elsif (-d $repo_path) {
-      say "Please check the contents of $repo_path, and then run \"sbosnap fetch\"";
+      say "Please check the contents of $repo_path, and then run \"sbocheck\"";
       exit 0;
     } else {
-      say "Please run \"sbosnap fetch\"";
+      say "Please run \"sbocheck\"";
       exit 0;
     }
   }
@@ -485,18 +465,20 @@ sub slackbuilds_or_fetch {
 
   update_tree();
 
-C<update_tree()> checks for C<SLACKBUILDS.TXT> in C<$repo_path>. If not, it runs
-C<fetch_tree()>. Otherwise, it updates the SlackBuilds.org tree. Functionally,
-this only affects the content of the initial onscreen message.
+C<update_tree()> checks for C<SLACKBUILDS.TXT> in C<$repo_path> to determine an
+appropriate onscreen message. It then updates the SlackBuilds.org tree.
 
 The local repository is checked for existence and similarity to the SBo repository
-before any fetch or update proceeds.
+before any update proceeds.
 
 =cut
 
 sub update_tree {
-  fetch_tree(), return() unless chk_slackbuilds_txt();
-  say 'Updating SlackBuilds tree...';
+  if (chk_slackbuilds_txt()) {
+    say 'Pulling SlackBuilds tree...';
+  } else {
+    say 'Updating SlackBuilds tree...';
+  }
   check_repo();
   pull_sbo_tree(), return 1;
 }

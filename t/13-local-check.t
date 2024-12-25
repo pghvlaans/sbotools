@@ -7,7 +7,7 @@ use Test::More;
 use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
-use Test::Sbotools qw/ make_slackbuilds_txt set_lo set_repo sbosnap sbocheck sboinstall sbofind restore_perf_dummy /;
+use Test::Sbotools qw/ make_slackbuilds_txt set_lo set_repo sbocheck sboinstall sbofind restore_perf_dummy /;
 
 if ($ENV{TEST_INSTALL} and $ENV{TRAVIS}) {
 	plan tests => 14;
@@ -71,10 +71,6 @@ set_lo("$RealBin/LO");
 setup_gitrepo();
 set_repo("file://$RealBin/gitrepo/");
 restore_perf_dummy();
-
-# 1-2: sbofind without having a repo yet
-sbofind 'nonexistentslackbuild', { input => "n", expected => qr/It looks like you haven't run "sbosnap fetch" yet\.\nWould you like me to do this now\?.*Please run "sbosnap fetch"/ };
-sbofind 'nonexistentslackbuild', { input => "y", expected => qr/It looks like you haven't run "sbosnap fetch" yet\.\nWould you like me to do this now\?/ };
 
 # 3: sbocheck without having installed nonexistentslackbuild should not show it
 sbocheck { expected => sub { $_[0] !~ /nonexistentslackbuild/} };
@@ -148,7 +144,7 @@ capture_merged { system <<"GIT"; };
 	cp -a "$RealBin"/LO/s2 test/
 	git add "test/s2"; git commit -m '5th update'
 GIT
-sbosnap 'update', { test => 0 };
+sbocheck, { test => 0 };
 sboinstall 's2', { input => "y\ny", test => 0 };
 set_lo("$RealBin/LO2");
 sbocheck { expected => qr/\Qs2 1.0                      <  needs updating (1.1 from overrides)/ };
@@ -161,7 +157,7 @@ sbocheck { expected => sub { not /weird-versionsbo/ } };
 # 14: check sbo no longer available
 cleanup();
 setup_gitrepo();
-sbosnap 'update', { test => 0 };
+sbocheck, { test => 0 };
 sboinstall 'nonexistentslackbuild8', { input => "y\ny", test => 0 };
 set_lo("$RealBin/LO2");
 sbocheck { expected => qr/No updates available[.]/ };

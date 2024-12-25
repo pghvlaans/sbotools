@@ -7,7 +7,7 @@ use Test::More;
 use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
-use Test::Sbotools qw/ make_slackbuilds_txt set_lo sboconfig sboinstall sboupgrade restore_perf_dummy set_repo sbosnap /;
+use Test::Sbotools qw/ make_slackbuilds_txt set_lo sboconfig sboinstall sboupgrade restore_perf_dummy set_repo /;
 use File::Temp 'tempdir';
 
 if ($ENV{TEST_INSTALL}) {
@@ -116,13 +116,13 @@ sboupgrade 'nonexistentslackbuild4', { input => "y\ny", expected => qr/Proceed w
 install( 'LO3', 'nonexistentslackbuild5', 'nonexistentslackbuild4' );
 sboupgrade qw/ -f nonexistentslackbuild4 /, { input => "y\ny\ny", expected => qr/Proceed with nonexistentslackbuild5\b.*Proceed with nonexistentslackbuild4\b.*Upgrade queue: nonexistentslackbuild5 nonexistentslackbuild4\n/s };
 
-# 13-16: sbosnap + sboupgrade --all
+# 13-16: sbocheck + sboupgrade --all
 my $temp = tempdir(CLEANUP => 1);
 set_repo("file://$temp");
 capture_merged { system <<"END"; };
 cd $temp; git init;
 END
-sbosnap 'fetch', { expected => qr/Pulling SlackBuilds tree[.][.][.]/ };
+sbocheck, { expected => qr/Pulling SlackBuilds tree[.][.][.]/ };
 install( 'LO2', 'nonexistentslackbuild' );
 my @sbos = glob("/var/log/packages/*_SBo");
 sboupgrade '--all', { input => ("n\n" x (@sbos+1)), expected => qr/Proceed with nonexistentslackbuild\b/ };

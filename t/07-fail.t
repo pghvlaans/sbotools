@@ -7,7 +7,7 @@ use Test::More;
 use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
-use Test::Sbotools qw/ make_slackbuilds_txt set_lo set_repo sboinstall sboremove sbosnap restore_perf_dummy sboupgrade /;
+use Test::Sbotools qw/ make_slackbuilds_txt set_lo set_repo sboinstall sboremove restore_perf_dummy sboupgrade /;
 use File::Temp 'tempdir';
 
 if ($ENV{TEST_INSTALL}) {
@@ -195,7 +195,7 @@ cp -a "$RealBin/LO/perl-nonexistentcpan" perl
 git add .
 git commit -m 'added perl-nonexistentcpan'
 END
-	sbosnap 'fetch', { test => 0 };
+	sbocheck, { test => 0 };
 
 	sboinstall qw/ -p perl-nonexistentcpan /, { expected => "-p|--compat32 is not supported with Perl SBos.\n", exit => 1 };
 }

@@ -4,131 +4,24 @@
 .B
 sbosnap
 -
-.B
-slackbuilds.org
-tree fetch and update command
-.SH SYNOPSIS
-.P
-sbosnap [-h|-v]
-.P
-sbosnap (fetch|update)
+backwards compatibility wrapper for sbocheck
 .SH DESCRIPTION
 .P
 .B
 sbosnap
-is used to download and update a local copy of the
+was removed as an indepedent script in
 .B
-slackbuilds.org
-tree. Note that
+sbotools-3.3\fR\
+\&. It is a compatibility symlink to
 .B
-sbocheck(1)
-also updates the tree and checks for updated and removed
-SlackBuilds.
-.B
-rsync
-is used for rsync repositories, and
-.B
-git
-is used for git repositories.
-.B
-sbotools
-defaults to git unless
-.B
-RSYNC_DEFAULT
-is
-.B
-TRUE\fR\
-\&. See
-.B
-sboconfig(1)
-or
-.B
-sbotools.conf(5)\fR\
-\&.
-.P
-.B
-sbosnap
-will verify the local repository with
-.B
-gpg
-if
-.B
-GPG_VERIFY
-is
-.B
-TRUE\fR\
-\&.
-Only rsync repositories can be verified on Slackware 14.0 and Slackware 14.1.
-.P
-If an invalid configuration is detected in
-.I
-/etc/sbotools/sbotools.conf\fR\
-\&, the script will exit with a diagnostic message.
-.SH OPTIONS
-.P
-.B
--h|--help
-.RS
-Show help information.
-.RE
-.P
-.B
--v|--version
-.RS
-Show version information.
-.RE
-.SH COMMANDS
-.P
-.B
-fetch
-.RS
-Download a local copy of the
-.I
-slackbuilds.org
-tree. The copy will be downloaded to the path in the
-.B
-SBO_HOME
-setting (see
-.B
-sboconfig(1)
-and
-.B
-sbotools.conf(5)\fR\
-),
-.I
-/usr/sbo
-by default.
-.RE
-.P
+sbocheck(1)\fR\
+\&; the
 .B
 update
-.RS
-Update a previously fetched copy of the
+and
 .B
-slackbuilds.org
-tree.
-.RE
-.SH EXIT CODES
-.P
-.B
-sbosnap
-can exit with the following codes:
-.RS
-
-0: all operations completed successfully.
-.RE
-.RS
-1: a usage error occurred, such as running sbosnap with no command.
-.RE
-.RS
-5: error downloading from the repository.
-.RE
-.SH BUGS
-.P
-None known. If found, Issues and Pull Requests to
-.UR https://github.com/pghvlaans/sbotools/
-.UE
-are always welcome.
+fetch
+options have no effect.
 .SH SEE ALSO
 .P
 sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.conf(5), sbotools.hints(5)

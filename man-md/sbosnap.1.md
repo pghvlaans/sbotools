@@ -1,12 +1,7 @@
 # sbosnap
 
 [NAME](#name)\
-[SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
-[OPTIONS](#options)\
-[COMMANDS](#commands)\
-[EXIT CODES](#exit-codes)\
-[BUGS](#bugs)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
 [MAINTAINER](#maintainer)
@@ -15,65 +10,13 @@
 
 ## NAME
 
-**sbosnap** - **slackbuilds.org** tree fetch and update command
-
-## SYNOPSIS
-
-    sbosnap [-h|-v]
-
-    sbosnap (fetch|update)
+**sbosnap** - backwards compatibility wrapper for sbocheck
 
 ## DESCRIPTION
 
-**sbosnap** is used to download and update a local copy of the
-**slackbuilds.org** tree. Note that [sbocheck(1)](sbocheck.1.md) also updates the
-tree and checks for updated and removed SlackBuilds. **rsync** is used
-for rsync repositories, and **git** is used for git repositories.
-**sbotools** defaults to git unless **RSYNC_DEFAULT** is **TRUE**. See
-[sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
-
-**sbosnap** will verify the local repository with **gpg** if
-**GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
-Slackware 14.0 and Slackware 14.1.
-
-If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script will exit with a diagnostic
-message.
-
-## OPTIONS
-
-**-h\|\--help**
-
-Show help information.
-
-**-v\|\--version**
-
-Show version information.
-
-## COMMANDS
-
-**fetch**
-
-Download a local copy of the *slackbuilds.org* tree. The copy will be
-downloaded to the path in the **SBO_HOME** setting (see [sboconfig(1)](sboconfig.1.md)
-and [sbotools.conf(5)](sbotools.conf.5.md)), */usr/sbo* by default.
-
-**update**
-
-Update a previously fetched copy of the **slackbuilds.org** tree.
-
-## EXIT CODES
-
-**sbosnap** can exit with the following codes:
-
-0: all operations completed successfully.\
-1: a usage error occurred, such as running sbosnap with no command.\
-5: error downloading from the repository.
-
-## BUGS
-
-None known. If found, Issues and Pull Requests to
-<https://github.com/pghvlaans/sbotools/> are always welcome.
+**sbosnap** was removed as an indepedent script in **sbotools-3.3**. It
+is a compatibility symlink to [sbocheck(1)](sbocheck.1.md); the **update** and
+**fetch** options have no effect.
 
 ## SEE ALSO
 
