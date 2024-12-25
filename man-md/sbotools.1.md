@@ -52,10 +52,6 @@ and create or build from templates.
 Interactively remove installed SlackBuilds along with any unused
 dependencies.
 
-[sbosnap(1)](sbosnap.1.md)
-
-A backwards compatibility symlink for [sbocheck(1)](sbocheck.1.md).
-
 [sboupgrade(1)](sboupgrade.1.md)
 
 Upgrade previously-installed SlackBuilds.
