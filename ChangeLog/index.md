@@ -2,6 +2,7 @@
 * Post-Release
   * *sboconfig*: Allow versions "X.Y+" and "current"; more informative error messages
   * Exit with invalid *sbotools.conf* parameters
+  * *sbocheck*, *sbosnap*: Before fetch, offer to exit if the git branch does not exist
 
 * 3.2.1 - 2024-12-20
   * Bugfix: *sboinstall*, *sboupgrade* GPG check for custom repositories (removed unneeded conditional)
