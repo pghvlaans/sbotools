@@ -256,8 +256,10 @@ C<git_sbo_tree()> will C<git clone --no-local> the repository specified by C<$ur
 C<$repo_path> if the C<$url> repository is not present. If it is, it runs
 C<git fetch && git reset --hard origin>.
 
-If C<GIT_BRANCH> is set, or the if running or configured Slackware version has a
-recommended git branch, C<git checkout> is attempted. If successful, C<git pull> follows.
+If C<GIT_BRANCH> is set, or if the running or configured Slackware version has a
+recommended git branch, existence is checked with C<git ls-remote>. If the branch does not
+exist, the user is prompted to continue. The script continues with the upstream default
+branch if the repo is to be cloned, or with the existing branch otherwise.
 
 If C<GPG_VERIFY> is C<TRUE>, C<gnupg> verification proceeds with C<verify_git_commit($branch)>
 at the end of the subroutine.
@@ -270,11 +272,32 @@ sub git_sbo_tree {
   my $cwd = getcwd();
   my $res;
   my $branch;
+  my $backup_branch;
   my $branchres;
   if ($config{GIT_BRANCH} eq 'FALSE' and $url ne "https://github.com/Ponce/slackbuilds.git") {
     $branch = get_slack_branch();
   } elsif ($config{GIT_BRANCH} ne 'FALSE') {
     $branch = $config{GIT_BRANCH};
+  }
+  if ($branch) {
+    $branchres = system(qw/ git ls-remote --exit-code /, $url, $branch) == 0;
+    if (not $branchres) {
+      if (-d "$repo_path/.git" and check_git_remote($repo_path, $url)) {
+        chdir $repo_path or return 0;
+        $backup_branch = slurp("$repo_path/.git/HEAD");
+        $backup_branch =~ s|.*/||s;
+        $backup_branch =~ s|\n||s;
+        $backup_branch = "branch $backup_branch";
+        chdir $cwd;
+      } else {
+        $backup_branch = "origin";
+      }
+      unless (prompt("\nThis git repository does not have a branch named $branch.\nContinue with $backup_branch?", default => 'no')) {
+        usage_error("Exiting.");
+      }
+    }
+  } else {
+    $branchres = 0;
   }
   if (-d "$repo_path/.git" and check_git_remote($repo_path, $url)) {
     _race::cond '$repo_path can be deleted after -d check.';
@@ -284,10 +307,9 @@ sub git_sbo_tree {
       _race::cond 'The git repo could be changed or deleted here.';
       die unless system(qw! git reset --hard origin !) == 0;
       unlink "$repo_path/SLACKBUILDS.TXT";
-      if ($branch) {
-        $branchres=system(qw/ git checkout /, $branch) == 0;
-        if (not $branchres) { say "\nThis git repository does not have a branch named $branch. Remaining in the default branch.\n"; }
-        else { system(qw! git pull !); }
+      if ($branchres) {
+        die unless system(qw/ git checkout /, $branch) == 0;
+        system(qw! git pull !);
       }
       1;
     };
@@ -297,9 +319,8 @@ sub git_sbo_tree {
     $res = system(qw/ git clone --no-local /, $url, $repo_path) == 0;
     if ($res) {
       chdir $repo_path or return 0;
-      if($branch) {
-        $branchres=system(qw/ git checkout /, $branch) == 0;
-        if (not $branchres) { say "\nThis git repository does not have a branch named $branch. Remaining in the default branch.\n"; }
+      if($branchres) {
+        die unless system(qw/ git checkout /, $branch) == 0;
       }
     }
   }
