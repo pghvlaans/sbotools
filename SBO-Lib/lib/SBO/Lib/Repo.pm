@@ -55,35 +55,30 @@ SBO::Lib::Repo - Routines for downloading and updating the SBo repository.
 
 =head1 VARIABLES
 
+The location of all variables depends on the C<SBO_HOME> config setting.
+
 =head2 $distfiles
 
 C<$distfiles> defaults to C</usr/sbo/distfiles>, and it is where all
 downloaded sources are kept.
-
-The location depends on the C<SBO_HOME> config setting.
 
 =head2 $gpg_log
 
 C<$gpg_log> defaults to C</usr/sbo/gpg.log>, and it is where the output
 of the most recent C<gnupg> verification is kept.
 
-The location depends on the C<SBO_HOME> config setting.
-
 =head2 $repo_path
 
 C<$repo_path> defaults to C</usr/sbo/repo>, and it is where the
 SlackBuilds.org tree is kept.
 
-The location depends on the C<SBO_HOME> config setting.
-
 =head2 $slackbuilds_txt
 
 C<$slackbuilds_txt> defaults to C</usr/sbo/repo/SLACKBUILDS.TXT>. It is
-included in the official rsync repos, but not the git mirrors. Currently,
-this file is used to indicate that C<$repo_path> is a local mirror of the
-upstream repo. This is likely to change in an upcoming version.
-
-The location depends on the C<SBO_HOME> config setting.
+included in the official rsync repos, but not the git mirrors.
+If this file exists, is non-empty and C<$repo_path> has an identical top-level
+directory structure to the SlackBuilds.org tree, pulling into an existent
+C<$repo_path> proceeds without prompting.
 
 =cut
 
@@ -131,7 +126,7 @@ sub check_git_remote {
 
   my $bool = check_repo();
 
-C<check_repo()> is used when SLACKBUILDS.txt cannot be found.
+C<check_repo()> is used when the tree is to be fetched or updated.
 It checks if the path in C<$repo_path> exists and is an empty
 directory, and returns a true value if so.
 
@@ -141,11 +136,12 @@ warning prompts varying in severity depending on whether
 directories not belonging to the repository exist, repository
 directories are missing or, in the worst case, both.
 
+If C<$repo_path> contains all expected category directories and
+no unexpected directories, C<check_repo()> returns a true value
+if C<$slackbuilds_txt> is non-empty, and prompts the user if not.
+
 If C<$repo_path> does not exist, creation will be attempted, returning a true
 value on success. Creation failure results in a usage error.
-
-B<Note>: This is a decent start. It would be best to call this
-regardless of C<SLACKBUILDS.TXT> existence.
 
 =cut
 
@@ -177,7 +173,6 @@ sub check_repo {
     opendir(my $repo_handle, $repo_path);
     my $extra_dir;
     my $incomplete;
-    my @no_good_dirs;
     FIRST: while (my $dir = readdir $repo_handle) {
       next FIRST if in($dir => qw/ . .. /);
       my @found_dirs =
@@ -212,6 +207,12 @@ sub check_repo {
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.\n");
         }
+      } elsif (not -s $slackbuilds_txt) {
+        if (prompt("$repo_path is non-empty, but has an identical top-level directory structure to an SBo repository.\n\nRegenerate $slackbuilds_txt and proceed?", default=>"no")) {
+          return 1 if generate_slackbuilds_txt();
+        } else {
+          usage_error("$repo_path exists and is not empty. Exiting.\n");
+        }
       }
     }
   } else {
@@ -225,29 +226,26 @@ sub check_repo {
 
   my $bool = chk_slackbuilds_txt();
 
-C<chk_slackbuilds_txt()> checks if the file C<SLACKBUILDS.TXT> exists in the
+C<chk_slackbuilds_txt()> checks if a non-empty file C<SLACKBUILDS.TXT> exists in the
 correct location, and returns a true value if it does, and a false value
 otherwise.
 
-B<Note>: It is possible that some code related to repository detection
-independent of C<SLACKBUILDS.TXT> will be placed here. (KEC)
-
 =cut
 
-# does the SLACKBUILDS.TXT file exist in the sbo tree?
+# does a non-empty SLACKBUILDS.TXT file exist in the sbo tree?
 sub chk_slackbuilds_txt {
-  return -f $slackbuilds_txt ? 1 : undef;
+  return -s $slackbuilds_txt ? 1 : undef;
 }
 
 =head2 fetch_tree
 
   fetch_tree();
 
-C<fetch_tree()> checks that C<$repo_path> exists and is empty, and then fetches
-the SlackBuilds.org repository.
+C<fetch_tree()> checks that C<$repo_path> exists and is empty (or closely resembles
+the SlackBuilds.org repository), and then fetches the SBo repository.
 
-If the C<$repo_path> exists and is non-empty, the user will see a series of prompts
-from C<check_repo()> before the fetch proceeds.
+If C<$repo_path> exists, is non-empty and does not closely resemble an SBo
+repository, the user will see a prompt from C<check_repo()> before the fetch proceeds.
 
 =cut
 
@@ -453,11 +451,9 @@ sub rsync_sbo_tree {
 
   slackbuilds_or_fetch();
 
-C<slackbuilds_or_fetch()> checks for the file C<SLACKBUILDS.TXT> in
+C<slackbuilds_or_fetch()> is called from C<sbocheck(1)>, C<sbofind(1)>, C<sboinstall(1)>
+and C<sboupdate(1)>. It checks for the file C<SLACKBUILDS.TXT> in
 C<$repo_path>. If not, it offers to fetch the tree.
-
-B<Note>: Changes are likely once C<SLACKBUILDS.TXT> is no longer needed
-for checking that a local copy of the repository exists. (KEC)
 
 =cut
 
@@ -484,13 +480,18 @@ sub slackbuilds_or_fetch {
   update_tree();
 
 C<update_tree()> checks for C<SLACKBUILDS.TXT> in C<$repo_path>. If not, it runs
-C<fetch_tree()>. Otherwise, it updates the SlackBuilds.org tree.
+C<fetch_tree()>. Otherwise, it updates the SlackBuilds.org tree. Functionally,
+this only affects the content of the initial onscreen message.
+
+The local repository is checked for existence and similarity to the SBo repository
+before any fetch or update proceeds.
 
 =cut
 
 sub update_tree {
   fetch_tree(), return() unless chk_slackbuilds_txt();
   say 'Updating SlackBuilds tree...';
+  check_repo();
   pull_sbo_tree(), return 1;
 }
 

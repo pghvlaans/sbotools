@@ -71,36 +71,30 @@ SBO::Lib::Repo \- Routines for downloading and updating the SBo repository.
 .Ve
 .SH VARIABLES
 .IX Header "VARIABLES"
+The location of all variables depends on the \f(CW\*(C`SBO_HOME\*(C'\fR config setting.
 .ie n .SS $distfiles
 .el .SS \f(CW$distfiles\fP
 .IX Subsection "$distfiles"
 \&\f(CW$distfiles\fR defaults to \f(CW\*(C`/usr/sbo/distfiles\*(C'\fR, and it is where all
 downloaded sources are kept.
-.PP
-The location depends on the \f(CW\*(C`SBO_HOME\*(C'\fR config setting.
 .ie n .SS $gpg_log
 .el .SS \f(CW$gpg_log\fP
 .IX Subsection "$gpg_log"
 \&\f(CW$gpg_log\fR defaults to \f(CW\*(C`/usr/sbo/gpg.log\*(C'\fR, and it is where the output
 of the most recent \f(CW\*(C`gnupg\*(C'\fR verification is kept.
-.PP
-The location depends on the \f(CW\*(C`SBO_HOME\*(C'\fR config setting.
 .ie n .SS $repo_path
 .el .SS \f(CW$repo_path\fP
 .IX Subsection "$repo_path"
 \&\f(CW$repo_path\fR defaults to \f(CW\*(C`/usr/sbo/repo\*(C'\fR, and it is where the
 SlackBuilds.org tree is kept.
-.PP
-The location depends on the \f(CW\*(C`SBO_HOME\*(C'\fR config setting.
 .ie n .SS $slackbuilds_txt
 .el .SS \f(CW$slackbuilds_txt\fP
 .IX Subsection "$slackbuilds_txt"
 \&\f(CW$slackbuilds_txt\fR defaults to \f(CW\*(C`/usr/sbo/repo/SLACKBUILDS.TXT\*(C'\fR. It is
-included in the official rsync repos, but not the git mirrors. Currently,
-this file is used to indicate that \f(CW$repo_path\fR is a local mirror of the
-upstream repo. This is likely to change in an upcoming version.
-.PP
-The location depends on the \f(CW\*(C`SBO_HOME\*(C'\fR config setting.
+included in the official rsync repos, but not the git mirrors.
+If this file exists, is non-empty and \f(CW$repo_path\fR has an identical top-level
+directory structure to the SlackBuilds.org tree, pulling into an existent
+\&\f(CW$repo_path\fR proceeds without prompting.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS check_git_remote
@@ -118,7 +112,7 @@ a true value, and a false value otherwise.
 \&  my $bool = check_repo();
 .Ve
 .PP
-\&\f(CWcheck_repo()\fR is used when SLACKBUILDS.txt cannot be found.
+\&\f(CWcheck_repo()\fR is used when the tree is to be fetched or updated.
 It checks if the path in \f(CW$repo_path\fR exists and is an empty
 directory, and returns a true value if so.
 .PP
@@ -128,34 +122,32 @@ warning prompts varying in severity depending on whether
 directories not belonging to the repository exist, repository
 directories are missing or, in the worst case, both.
 .PP
+If \f(CW$repo_path\fR contains all expected category directories and
+no unexpected directories, \f(CWcheck_repo()\fR returns a true value
+if \f(CW$slackbuilds_txt\fR is non-empty, and prompts the user if not.
+.PP
 If \f(CW$repo_path\fR does not exist, creation will be attempted, returning a true
 value on success. Creation failure results in a usage error.
-.PP
-\&\fBNote\fR: This is a decent start. It would be best to call this
-regardless of \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR existence.
 .SS chk_slackbuilds_txt
 .IX Subsection "chk_slackbuilds_txt"
 .Vb 1
 \&  my $bool = chk_slackbuilds_txt();
 .Ve
 .PP
-\&\f(CWchk_slackbuilds_txt()\fR checks if the file \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR exists in the
+\&\f(CWchk_slackbuilds_txt()\fR checks if a non-empty file \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR exists in the
 correct location, and returns a true value if it does, and a false value
 otherwise.
-.PP
-\&\fBNote\fR: It is possible that some code related to repository detection
-independent of \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR will be placed here. (KEC)
 .SS fetch_tree
 .IX Subsection "fetch_tree"
 .Vb 1
 \&  fetch_tree();
 .Ve
 .PP
-\&\f(CWfetch_tree()\fR checks that \f(CW$repo_path\fR exists and is empty, and then fetches
-the SlackBuilds.org repository.
+\&\f(CWfetch_tree()\fR checks that \f(CW$repo_path\fR exists and is empty (or closely resembles
+the SlackBuilds.org repository), and then fetches the SBo repository.
 .PP
-If the \f(CW$repo_path\fR exists and is non-empty, the user will see a series of prompts
-from \f(CWcheck_repo()\fR before the fetch proceeds.
+If \f(CW$repo_path\fR exists, is non-empty and does not closely resemble an SBo
+repository, the user will see a prompt from \f(CWcheck_repo()\fR before the fetch proceeds.
 .SS generate_slackbuilds_txt
 .IX Subsection "generate_slackbuilds_txt"
 .Vb 1
@@ -212,11 +204,9 @@ at the end of the subroutine.
 \&  slackbuilds_or_fetch();
 .Ve
 .PP
-\&\f(CWslackbuilds_or_fetch()\fR checks for the file \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR in
+\&\f(CWslackbuilds_or_fetch()\fR is called from \f(CWsbocheck(1)\fR, \f(CWsbofind(1)\fR, \f(CWsboinstall(1)\fR
+and \f(CWsboupdate(1)\fR. It checks for the file \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR in
 \&\f(CW$repo_path\fR. If not, it offers to fetch the tree.
-.PP
-\&\fBNote\fR: Changes are likely once \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR is no longer needed
-for checking that a local copy of the repository exists. (KEC)
 .SS update_tree
 .IX Subsection "update_tree"
 .Vb 1
@@ -224,7 +214,11 @@ for checking that a local copy of the repository exists. (KEC)
 .Ve
 .PP
 \&\f(CWupdate_tree()\fR checks for \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR in \f(CW$repo_path\fR. If not, it runs
-\&\f(CWfetch_tree()\fR. Otherwise, it updates the SlackBuilds.org tree.
+\&\f(CWfetch_tree()\fR. Otherwise, it updates the SlackBuilds.org tree. Functionally,
+this only affects the content of the initial onscreen message.
+.PP
+The local repository is checked for existence and similarity to the SBo repository
+before any fetch or update proceeds.
 .SS verify_git_commit
 .IX Subsection "verify_git_commit"
 .Vb 1

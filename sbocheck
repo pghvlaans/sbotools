@@ -57,9 +57,7 @@ if ($gpg and $nopull) { verify_gpg(); }
 elsif ($gpg) { $config{GPG_VERIFY} = "TRUE"; }
 
 update_tree() unless $nopull;
-if ($nopull and not -f $slackbuilds_txt) {
-	slackbuilds_or_fetch();
-} elsif ($nopull) {
+if ($nopull and slackbuilds_or_fetch()) {
 	print "Not updating the SlackBuilds tree...\n";
 }
 
