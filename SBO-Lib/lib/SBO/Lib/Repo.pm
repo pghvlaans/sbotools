@@ -178,7 +178,6 @@ sub check_repo {
       last unless in($dir => qw/ . .. /);
       $is_empty = 1;
     }
-    say "It's empty!" if $is_empty;
     close($repo_handle);
     unless ($is_empty) {
       opendir($repo_handle, $repo_path);
