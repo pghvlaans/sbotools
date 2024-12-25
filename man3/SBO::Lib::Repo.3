@@ -122,18 +122,17 @@ a true value, and a false value otherwise.
 It checks if the path in \f(CW$repo_path\fR exists and is an empty
 directory, and returns a true value if so.
 .PP
-If \f(CW$repo_path\fR exists and is non-empty, it may be malformed. The user
-is prompted to regenerate SLACKBUILDS.TXT to proceed. If the directory
-\&\f(CW\*(C`$repo_path/.git\*(C'\fR exists, all contents of the directory would be deleted
-in case of an rsync mirror. Otherwise, the contents would be deleted
-regardless of fetch method.
+If \f(CW$repo_path\fR exists and is non-empty, it is checked for
+its resemblance to a complete SBo repository. The user receives
+warning prompts varying in severity depending on whether
+directories not belonging to the repository exist, repository
+directories are missing or, in the worst case, both.
 .PP
 If \f(CW$repo_path\fR does not exist, creation will be attempted, returning a true
 value on success. Creation failure results in a usage error.
 .PP
-\&\fBNote\fR: This is a prime candidate for changes in an upcoming version.
-In principle, it would be better to check that the contents of \f(CW$repo_path\fR
-are sufficiently similar to an SBo mirror to continue safely. (KEC)
+\&\fBNote\fR: This is a decent start. It would be best to call this
+regardless of \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR existence.
 .SS chk_slackbuilds_txt
 .IX Subsection "chk_slackbuilds_txt"
 .Vb 1

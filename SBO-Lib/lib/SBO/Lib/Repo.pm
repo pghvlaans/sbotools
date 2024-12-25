@@ -135,35 +135,79 @@ C<check_repo()> is used when SLACKBUILDS.txt cannot be found.
 It checks if the path in C<$repo_path> exists and is an empty
 directory, and returns a true value if so.
 
-If C<$repo_path> exists and is non-empty, it may be malformed. The user
-is prompted to regenerate SLACKBUILDS.TXT to proceed. If the directory
-C<$repo_path/.git> exists, all contents of the directory would be deleted
-in case of an rsync mirror. Otherwise, the contents would be deleted
-regardless of fetch method.
+If C<$repo_path> exists and is non-empty, it is checked for
+its resemblance to a complete SBo repository. The user receives
+warning prompts varying in severity depending on whether
+directories not belonging to the repository exist, repository
+directories are missing or, in the worst case, both.
 
 If C<$repo_path> does not exist, creation will be attempted, returning a true
 value on success. Creation failure results in a usage error.
 
-B<Note>: This is a prime candidate for changes in an upcoming version.
-In principle, it would be better to check that the contents of C<$repo_path>
-are sufficiently similar to an SBo mirror to continue safely. (KEC)
+B<Note>: This is a decent start. It would be best to call this
+regardless of C<SLACKBUILDS.TXT> existence.
 
 =cut
 
 sub check_repo {
+  my @categories = qw{
+    academic
+    accessibility
+    audio
+    business
+    desktop
+    development
+    games
+    gis
+    graphics
+    ham
+    haskell
+    libraries
+    misc
+    multimedia
+    network
+    office
+    perl
+    python
+    ruby
+    system
+  };
   if (-d $repo_path) {
     _race::cond '$repo_path could be deleted after -d check.';
     opendir(my $repo_handle, $repo_path);
+    my $extra_dir;
+    my $incomplete;
+    my @no_good_dirs;
     FIRST: while (my $dir = readdir $repo_handle) {
       next FIRST if in($dir => qw/ . .. /);
-      if (-d "$repo_path/.git") {
-        if (prompt("\n$slackbuilds_txt is missing and the fetch cannot proceed.\n\nRegenerate and continue?\nThe contents of $repo_path will be deleted if using an rsync mirror.", default=>"no")) {
+      my @found_dirs =
+        grep { -d "$repo_path/$_" }
+        grep { $_ !~ /^\./ }
+        readdir($repo_handle);
+      for my $found (@found_dirs) {
+        $extra_dir = 1 if not grep(/^$found$/, @categories);
+        last if $extra_dir;
+      }
+      for my $cat (@categories) {
+        # The gis category was added in 14.1.
+        next if $cat eq "gis";
+        $incomplete = 1 if not grep(/^$cat$/, @found_dirs);
+        last if $incomplete;
+      }
+      if ($extra_dir and $incomplete) {
+        if (prompt("\nWARNING! $repo_path exists and is non-empty.\n\nIt does not resemble an SBo repository.\n\nData loss is certain if you continue.\nContinue anyway?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.\n");
         }
-      } else {
-        if (prompt("\n$slackbuilds_txt is missing and the fetch cannot proceed.\n\nRegenerate and continue?\nThe contents of $repo_path will be deleted.", default=>"no")) {
+      } elsif ($incomplete) {
+        if (prompt("\nWarning! $repo_path exists and is non-empty.\n\nIt may be an incomplete SBo repository.\n\nData loss is possible if you continue.\nContinue anyway?", default=>"no")) {
+          return 1 if generate_slackbuilds_txt();
+        } else {
+          usage_error("$repo_path exists and is not empty. Exiting.\n");
+        }
+      } elsif ($extra_dir) {
+        if (prompt("\nWARNING! $repo_path exists and is non-empty.\n\nIt contains at least one directory that does not belong to the repository.\n\nData loss is likely if you continue.\nContinue anyway?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.\n");
