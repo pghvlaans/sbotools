@@ -173,8 +173,15 @@ sub check_repo {
     opendir(my $repo_handle, $repo_path);
     my $extra_dir;
     my $incomplete;
-    FIRST: while (my $dir = readdir $repo_handle) {
-      next FIRST if in($dir => qw/ . .. /);
+    my $is_empty;
+    while (my $dir = readdir $repo_handle) {
+      last unless in($dir => qw/ . .. /);
+      $is_empty = 1;
+    }
+    say "It's empty!" if $is_empty;
+    close($repo_handle);
+    unless ($is_empty) {
+      opendir($repo_handle, $repo_path);
       my @found_dirs =
         grep { -d "$repo_path/$_" }
         grep { $_ !~ /^\./ }
@@ -208,7 +215,7 @@ sub check_repo {
           usage_error("$repo_path exists and is not empty. Exiting.\n");
         }
       } elsif (not -s $slackbuilds_txt) {
-        if (prompt("$repo_path is non-empty, but has an identical top-level directory structure to an SBo repository.\n\nRegenerate $slackbuilds_txt and proceed?", default=>"no")) {
+        if (prompt("$repo_path is non-empty, but has an identical\ntop-level directory structure to an SBo repository.\n\nRegenerate $slackbuilds_txt and proceed?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.\n");
