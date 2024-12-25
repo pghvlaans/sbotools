@@ -128,15 +128,6 @@ if \f(CW$slackbuilds_txt\fR is non-empty, and prompts the user if not.
 .PP
 If \f(CW$repo_path\fR does not exist, creation will be attempted, returning a true
 value on success. Creation failure results in a usage error.
-.SS chk_slackbuilds_txt
-.IX Subsection "chk_slackbuilds_txt"
-.Vb 1
-\&  my $bool = chk_slackbuilds_txt();
-.Ve
-.PP
-\&\f(CWchk_slackbuilds_txt()\fR checks if a non-empty file \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR exists in the
-correct location, and returns a true value if it does, and a false value
-otherwise.
 .SS generate_slackbuilds_txt
 .IX Subsection "generate_slackbuilds_txt"
 .Vb 1

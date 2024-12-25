@@ -20,7 +20,6 @@ use Exporter 'import';
 our @EXPORT_OK = qw{
   check_git_remote
   check_repo
-  chk_slackbuilds_txt
   generate_slackbuilds_txt
   git_sbo_tree
   pull_sbo_tree
@@ -227,21 +226,6 @@ sub check_repo {
   return 1;
 }
 
-=head2 chk_slackbuilds_txt
-
-  my $bool = chk_slackbuilds_txt();
-
-C<chk_slackbuilds_txt()> checks if a non-empty file C<SLACKBUILDS.TXT> exists in the
-correct location, and returns a true value if it does, and a false value
-otherwise.
-
-=cut
-
-# does a non-empty SLACKBUILDS.TXT file exist in the sbo tree?
-sub chk_slackbuilds_txt {
-  return -s $slackbuilds_txt ? 1 : undef;
-}
-
 =head2 generate_slackbuilds_txt
 
   my $bool = generate_slackbuilds_txt();
@@ -391,7 +375,7 @@ sub pull_sbo_tree {
     $res = git_sbo_tree($url);
     if ($res == 0) {
       if (prompt("Sync from $url failed. Retry?", default => 'no')) {
-        generate_slackbuilds_txt() if not chk_slackbuilds_txt();
+        generate_slackbuilds_txt() if not -s $slackbuilds_txt;
         return pull_sbo_tree();
       }
     }
@@ -401,7 +385,7 @@ sub pull_sbo_tree {
 
   my $wanted = sub { chown 0, 0, $File::Find::name; };
   find($wanted, $repo_path) if -d $repo_path;
-  if ($res and not chk_slackbuilds_txt()) {
+  if ($res and not -s $slackbuilds_txt) {
     generate_slackbuilds_txt();
   }
 }
@@ -447,7 +431,7 @@ C<$repo_path>. If not, it offers to fetch the tree.
 # if the SLACKBUILDS.TXT is not in $repo_path, we assume the tree has
 # not been populated there; prompt the user to automagickally pull the tree.
 sub slackbuilds_or_fetch {
-  unless (chk_slackbuilds_txt()) {
+  unless (-s $slackbuilds_txt) {
     if (prompt("Fetch the repository to $repo_path now?", default => 'yes')) {
       update_tree();
     } elsif (-d $repo_path) {
@@ -474,7 +458,7 @@ before any update proceeds.
 =cut
 
 sub update_tree {
-  if (chk_slackbuilds_txt()) {
+  if (-s $slackbuilds_txt) {
     say 'Pulling SlackBuilds tree...';
   } else {
     say 'Updating SlackBuilds tree...';
