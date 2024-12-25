@@ -183,6 +183,7 @@ sub check_repo {
         grep { -d "$repo_path/$_" }
         grep { $_ !~ /^\./ }
         readdir($repo_handle);
+      close($repo_handle);
       for my $found (@found_dirs) {
         $extra_dir = 1 if not grep(/^$found$/, @categories);
         last if $extra_dir;
