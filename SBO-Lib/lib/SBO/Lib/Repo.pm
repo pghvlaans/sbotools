@@ -454,15 +454,15 @@ sub rsync_sbo_tree {
 
 C<slackbuilds_or_fetch()> is called from C<sbocheck(1)>, C<sbofind(1)>, C<sboinstall(1)>
 and C<sboupdate(1)>. It checks for the file C<SLACKBUILDS.TXT> in
-C<$repo_path>. If not, it offers to fetch the tree.
+C<$repo_path>. If not, it offers to check the local repository and fetch the tree.
 
 =cut
 
-# if the SLACKBUILDS.TXT is not in $repo_path, we assume the tree has
-# not been populated there; prompt the user to automagickally pull the tree.
+# if SLACKBUILDS.TXT is not in $repo_path, the tree may not have been
+# populated; prompt the user to check $repo_path and fetch.
 sub slackbuilds_or_fetch {
   unless (-s $slackbuilds_txt) {
-    if (prompt("Fetch the repository to $repo_path now?", default => 'yes')) {
+    if (prompt("$slackbuilds_txt is empty or missing.\nCheck $repo_path and fetch the repository now?", default => 'yes')) {
       update_tree();
     } elsif (-d $repo_path) {
       say "Please check the contents of $repo_path, and then run \"sbocheck\"";
