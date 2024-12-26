@@ -72,7 +72,7 @@ find -L . \
 	make install DESTDIR=$PKG
 )
 
-SCRIPTS="check clean config find install remove snap upgrade"
+SCRIPTS="check clean config find install remove upgrade"
 MANS="man1 man3 man5"
 
 mkdir -p $PKG/usr/sbin \
@@ -88,6 +88,14 @@ for i in $MANS; do
   mkdir -p $PKG/usr/man/$i
   install -m 0644 $i/* $PKG/usr/man/$i
 done
+
+# Make the sbosnap compatibility symlinks
+(
+cd $PKG/usr/sbin
+ln -s sbocheck sbosnap
+cd $PKG/usr/man/man1
+ln -s sbocheck.1 sbosnap.1
+)
 
 mkdir -p $PKG/etc/sbotools
 cp etc/sbotools.conf $PKG/etc/sbotools/sbotools.conf.new

@@ -21,7 +21,6 @@ our @EXPORT_OK = qw/
   sbofind
   sboinstall
   sboremove
-  sbosnap
   sboupgrade
   set_noclean
   set_distclean
@@ -45,7 +44,6 @@ sub sboconfig { script('sboconfig', @_); }
 sub sbofind { script('sbofind', @_); }
 sub sboinstall { script('sboinstall', @_); }
 sub sboremove { script('sboremove', @_); }
-sub sbosnap { script('sbosnap', @_); }
 sub sboupgrade { script('sboupgrade', @_); }
 
 sub set_noclean { _set_config('NOCLEAN', @_); }

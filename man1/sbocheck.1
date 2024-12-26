@@ -16,13 +16,10 @@ sbocheck [-g|-n]
 .P
 .B
 sbocheck
-first updates a previously-fetched copy of the
+first updates or fetches a copy of the
 .B
 slackbuilds.org
-tree (see
-.B
-sbosnap(1)\fR\
-\&), checks for available upgrades, and reports what it finds.
+tree, checks for available upgrades, and reports what it finds.
 SlackBuilds with differing build numbers are reported separately,
 as are any SlackBuilds marked
 .I
@@ -95,6 +92,17 @@ and
 verifies the repo in-place without fetching.
 Only rsync repositories can be verified on Slackware 14.0 and Slackware 14.1.
 .P
+Please note that
+.B
+sbosnap\fR\
+\&, which was removed as an independent script in
+.B
+sbotools-3.3\fR\
+\&, is a compatibility symlink to
+.B
+sbocheck\fR\
+\&.
+.P
 If an invalid configuration is detected in
 .I
 /etc/sbotools/sbotools.conf\fR\
@@ -146,7 +154,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sbosnap(1), sboupgrade(1), sbotools.conf(5), sbotools.hints(5)
+sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.conf(5), sbotools.hints(5)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>

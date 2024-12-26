@@ -68,18 +68,6 @@ Interactively remove installed SlackBuilds along with any unused dependencies.
 .RE
 .P
 .B
-sbosnap(1)
-.RS
-Fetch or update the upstream SlackBuilds repository with
-.B
-fetch
-and
-.B
-update\fR\
-\&.
-.RE
-.P
-.B
 sboupgrade(1)
 .RS
 Upgrade previously-installed SlackBuilds.
@@ -106,11 +94,11 @@ sbotools
 for the first time, a copy of the SlackBuilds repository
 must be fetched with
 .B
-sbosnap(1)\fR\
+sbocheck(1)\fR\
 \&:
 .RS
 
-sbosnap fetch
+sbocheck
 
 
 .RE
@@ -188,7 +176,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sbosnap(1), sboupgrade(1), sbotools.conf(5), sbotools.hints(5)
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.conf(5), sbotools.hints(5)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>

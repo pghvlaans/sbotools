@@ -8,7 +8,7 @@ cd $(dirname $0) || exit
 cp ../man1/* ../man-md
 cp ../man5/* ../man-md
 cd ../man-md || exit
-for man in tools check clean config find install remove snap upgrade ; do
+for man in tools check clean config find install remove upgrade ; do
   cat sbo$man.1 | groff -mandoc -Thtml > sbo$man.1.html
 done
 cat sbotools.conf.5 | groff -mandoc -Thtml > sbotools.conf.5.html
@@ -22,7 +22,7 @@ sed -i 's|xocel@iquidus.org|xocel (at) iquidus (dot) org|g' *html
 sed -i 's|andreas.guldstrand@gmail.com|andreas (dot) guldstrand (at) gmail (dot) com|g' *html
 sed -i 's|kvngncrlsn@gmail.com|kvngncrlsn (at) gmail (dot) com|g' *html
 
-for man in tools check clean config find install remove snap upgrade ; do
+for man in tools check clean config find install remove upgrade ; do
   pandoc --from=html --to=markdown sbo$man.1.html > sbo$man.1.md
 done
 
@@ -56,14 +56,14 @@ sed -i "s/^## EXIT CODES.*/## EXIT CODES/g" *
 sed -i "s/^## AUTHORS.*/## AUTHORS/g" *
 sed -i "s/^## MAINTAINER.*/## MAINTAINER/g" *
 
-for item in check clean config find install remove snap tools.conf tools.hints upgrade ; do
+for item in check clean config find install remove tools.conf tools.hints upgrade ; do
   sed -i "s/^# sbo$item.*/# sbo$item/g" *
 done
 
 sed -i "s/^# sbotools.*/# sbotools/g" sbotools.1.md
 
 # Want man page links, but not bold ones.
-for item in check clean config find install remove snap upgrade ; do
+for item in check clean config find install remove upgrade ; do
   sed -i "s/sbo$item(1)/[sbo$item(1)](sbo$item.1.md)/g" *
   sed -i "s/[*]\+\[sbo$item(1)\](sbo$item.1.md)[*]\+/[sbo$item(1)](sbo$item.1.md)/g" *
 done
@@ -78,7 +78,7 @@ sed -i "s/[*]\+\[sbotools.hints(5)\](sbotools.hints.5.md)[*]\+/[sbotools.hints(5
 sed -i 's|<rsync://slackbuilds.org/slackbuilds>|rsync://slackbuilds.org/slackbuilds|g' *
 
 # Right, time to work out code blocks.
-for item in check clean config find install remove snap upgrade tools tools.hints ; do
+for item in check clean config find install remove upgrade tools tools.hints ; do
   sed -i "s/^sbo$item/    sbo$item/g" *
   NUMCHAR=$(($(echo $item | wc -m)+7))
   SPACES=""

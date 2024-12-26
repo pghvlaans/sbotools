@@ -20,8 +20,6 @@ use Exporter 'import';
 our @EXPORT_OK = qw{
   check_git_remote
   check_repo
-  chk_slackbuilds_txt
-  fetch_tree
   generate_slackbuilds_txt
   git_sbo_tree
   pull_sbo_tree
@@ -49,41 +47,36 @@ SBO::Lib::Repo - Routines for downloading and updating the SBo repository.
 
 =head1 SYNOPSIS
 
-  use SBO::Lib::Repo qw/ fetch_tree /;
+  use SBO::Lib::Repo qw/ update_tree /;
 
-  fetch_tree();
+  update_tree();
 
 =head1 VARIABLES
+
+The location of all variables depends on the C<SBO_HOME> config setting.
 
 =head2 $distfiles
 
 C<$distfiles> defaults to C</usr/sbo/distfiles>, and it is where all
 downloaded sources are kept.
 
-The location depends on the C<SBO_HOME> config setting.
-
 =head2 $gpg_log
 
 C<$gpg_log> defaults to C</usr/sbo/gpg.log>, and it is where the output
 of the most recent C<gnupg> verification is kept.
-
-The location depends on the C<SBO_HOME> config setting.
 
 =head2 $repo_path
 
 C<$repo_path> defaults to C</usr/sbo/repo>, and it is where the
 SlackBuilds.org tree is kept.
 
-The location depends on the C<SBO_HOME> config setting.
-
 =head2 $slackbuilds_txt
 
 C<$slackbuilds_txt> defaults to C</usr/sbo/repo/SLACKBUILDS.TXT>. It is
-included in the official rsync repos, but not the git mirrors. Currently,
-this file is used to indicate that C<$repo_path> is a local mirror of the
-upstream repo. This is likely to change in an upcoming version.
-
-The location depends on the C<SBO_HOME> config setting.
+included in the official rsync repos, but not the git mirrors.
+If this file exists, is non-empty and C<$repo_path> has an identical top-level
+directory structure to the SlackBuilds.org tree, pulling into an existent
+C<$repo_path> proceeds without prompting.
 
 =cut
 
@@ -131,39 +124,125 @@ sub check_git_remote {
 
   my $bool = check_repo();
 
-C<check_repo()> is used when SLACKBUILDS.txt cannot be found.
+C<check_repo()> is used when the tree is to be fetched or updated.
 It checks if the path in C<$repo_path> exists and is an empty
 directory, and returns a true value if so.
 
-If C<$repo_path> exists and is non-empty, it may be malformed. The user
-is prompted to regenerate SLACKBUILDS.TXT to proceed. If the directory
-C<$repo_path/.git> exists, all contents of the directory would be deleted
-in case of an rsync mirror. Otherwise, the contents would be deleted
-regardless of fetch method.
+If C<$repo_path> exists and is non-empty, it is checked for
+its resemblance to a complete SBo repository. The user receives
+warning prompts varying in severity depending on whether
+top-level directories not belonging to the repository exist, repository
+top-level directories are missing or, in the worst case, both. Warnings are less
+severe for C<git fetch>, which will not delete 'extra' files and
+directories.
+
+If C<$repo_path> contains all expected category directories and
+no unexpected directories, C<check_repo()> returns a true value
+if C<$slackbuilds_txt> is non-empty, and prompts the user if not.
 
 If C<$repo_path> does not exist, creation will be attempted, returning a true
 value on success. Creation failure results in a usage error.
 
-B<Note>: This is a prime candidate for changes in an upcoming version.
-In principle, it would be better to check that the contents of C<$repo_path>
-are sufficiently similar to an SBo mirror to continue safely. (KEC)
-
 =cut
 
 sub check_repo {
+  my @categories = qw{
+    academic
+    accessibility
+    audio
+    business
+    desktop
+    development
+    games
+    gis
+    graphics
+    ham
+    haskell
+    libraries
+    misc
+    multimedia
+    network
+    office
+    perl
+    python
+    ruby
+    system
+  };
   if (-d $repo_path) {
     _race::cond '$repo_path could be deleted after -d check.';
     opendir(my $repo_handle, $repo_path);
-    FIRST: while (my $dir = readdir $repo_handle) {
-      next FIRST if in($dir => qw/ . .. /);
-      if (-d "$repo_path/.git") {
-        if (prompt("\n$slackbuilds_txt is missing and the fetch cannot proceed.\n\nRegenerate and continue?\nThe contents of $repo_path will be deleted if using an rsync mirror.", default=>"no")) {
+    my $extra_dir;
+    my $incomplete;
+    my $is_empty;
+    my $is_git_fetch;
+    while (my $dir = readdir $repo_handle) {
+      last unless in($dir => qw/ . .. /);
+      $is_empty = 1;
+    }
+    close($repo_handle);
+    # A git fetch will preserve untracked files; a git clone will not.
+    if (-d "$repo_path/.git") {
+      my $url = $config{REPO} unless $config{REPO} eq 'FALSE';
+      $url = get_slack_version_url() unless defined $url;
+      $is_git_fetch = check_git_remote($repo_path, $url);
+    }
+    unless ($is_empty) {
+      opendir($repo_handle, $repo_path);
+      my @found_dirs =
+        grep { -d "$repo_path/$_" }
+        grep { $_ !~ /^\./ }
+        readdir($repo_handle);
+      close($repo_handle);
+      for my $found (@found_dirs) {
+        $extra_dir = 1 if not grep(/^$found$/, @categories);
+        last if $extra_dir;
+      }
+      for my $cat (@categories) {
+        # The gis category was added in 14.1.
+        next if $cat eq "gis";
+        $incomplete = 1 if not grep(/^$cat$/, @found_dirs);
+        last if $incomplete;
+      }
+      # Give different warning levels depending on how the repo
+      # differs from expected and the fetch method.
+      if ($extra_dir and $incomplete and not $is_git_fetch) {
+        if (prompt("\nWARNING! $repo_path exists and is non-empty.\n\nIt has different top-level directories from an SBo repository.\n\nData loss is certain if you continue.\nContinue anyway?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.\n");
         }
-      } else {
-        if (prompt("\n$slackbuilds_txt is missing and the fetch cannot proceed.\n\nRegenerate and continue?\nThe contents of $repo_path will be deleted.", default=>"no")) {
+      } elsif ($extra_dir and $incomplete and $is_git_fetch) {
+        if (prompt("\n$repo_path exists and is non-empty.\n\nIt has different top-level directories from an SBo repository.\n\nUntracked files will not be touched, but other files may be overwritten if you\ncontinue.\nContinue anyway?", default=>"no")) {
+          return 1 if generate_slackbuilds_txt();
+        } else {
+          usage_error("$repo_path exists and is not empty. Exiting.\n");
+        }
+      } elsif ($incomplete and not $is_git_fetch) {
+        if (prompt("\nWarning! $repo_path exists and is non-empty.\n\nIt may be an incomplete SBo repository.\n\nData loss is possible if you continue.\nContinue anyway?", default=>"no")) {
+          return 1 if generate_slackbuilds_txt();
+        } else {
+          usage_error("$repo_path exists and is not empty. Exiting.\n");
+        }
+      } elsif ($incomplete and $is_git_fetch) {
+        if (prompt("\n$repo_path exists and is non-empty.\n\nIt may be an incomplete SBo repository.\nContinue?", default=>"no")) {
+          return 1 if generate_slackbuilds_txt();
+        } else {
+          usage_error("$repo_path exists and is not empty. Exiting.\n");
+        }
+      } elsif ($extra_dir and not $is_git_fetch) {
+        if (prompt("\nWARNING! $repo_path exists and is non-empty.\n\nIt contains at least one top-level directory that does not belong to the repository.\n\nData loss is certain if you continue.\nContinue anyway?", default=>"no")) {
+          return 1 if generate_slackbuilds_txt();
+        } else {
+          usage_error("$repo_path exists and is not empty. Exiting.\n");
+        }
+      } elsif ($extra_dir and $is_git_fetch) {
+        if (prompt("\n$repo_path exists and is non-empty.\n\nIt contains at least one top-level directory that does not belong to the repository.\n\nUntracked files will not be touched, but other files may be overwritten if you\ncontinue.\nContinue?", default=>"no")) {
+          return 1 if generate_slackbuilds_txt();
+        } else {
+          usage_error("$repo_path exists and is not empty. Exiting.\n");
+        }
+      } elsif (not -s $slackbuilds_txt and not $is_git_fetch) {
+        if (prompt("\n$repo_path is non-empty, but has an identical\ntop-level directory structure to an SBo repository.\n\nRegenerate $slackbuilds_txt and proceed?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.\n");
@@ -175,42 +254,6 @@ sub check_repo {
       or usage_error("Unable to create $repo_path.\n");
   }
   return 1;
-}
-
-=head2 chk_slackbuilds_txt
-
-  my $bool = chk_slackbuilds_txt();
-
-C<chk_slackbuilds_txt()> checks if the file C<SLACKBUILDS.TXT> exists in the
-correct location, and returns a true value if it does, and a false value
-otherwise.
-
-B<Note>: It is possible that some code related to repository detection
-independent of C<SLACKBUILDS.TXT> will be placed here. (KEC)
-
-=cut
-
-# does the SLACKBUILDS.TXT file exist in the sbo tree?
-sub chk_slackbuilds_txt {
-  return -f $slackbuilds_txt ? 1 : undef;
-}
-
-=head2 fetch_tree
-
-  fetch_tree();
-
-C<fetch_tree()> checks that C<$repo_path> exists and is empty, and then fetches
-the SlackBuilds.org repository.
-
-If the C<$repo_path> exists and is non-empty, the user will see a series of prompts
-from C<check_repo()> before the fetch proceeds.
-
-=cut
-
-sub fetch_tree {
-  check_repo();
-  say 'Pulling SlackBuilds tree...';
-  pull_sbo_tree(), return 1;
 }
 
 =head2 generate_slackbuilds_txt
@@ -362,7 +405,7 @@ sub pull_sbo_tree {
     $res = git_sbo_tree($url);
     if ($res == 0) {
       if (prompt("Sync from $url failed. Retry?", default => 'no')) {
-        generate_slackbuilds_txt() if not chk_slackbuilds_txt();
+        generate_slackbuilds_txt() if not -s $slackbuilds_txt;
         return pull_sbo_tree();
       }
     }
@@ -372,7 +415,7 @@ sub pull_sbo_tree {
 
   my $wanted = sub { chown 0, 0, $File::Find::name; };
   find($wanted, $repo_path) if -d $repo_path;
-  if ($res and not chk_slackbuilds_txt()) {
+  if ($res and not -s $slackbuilds_txt) {
     generate_slackbuilds_txt();
   }
 }
@@ -409,26 +452,23 @@ sub rsync_sbo_tree {
 
   slackbuilds_or_fetch();
 
-C<slackbuilds_or_fetch()> checks for the file C<SLACKBUILDS.TXT> in
-C<$repo_path>. If not, it offers to fetch the tree.
-
-B<Note>: Changes are likely once C<SLACKBUILDS.TXT> is no longer needed
-for checking that a local copy of the repository exists. (KEC)
+C<slackbuilds_or_fetch()> is called from C<sbocheck(1)>, C<sbofind(1)>, C<sboinstall(1)>
+and C<sboupdate(1)>. It checks for the file C<SLACKBUILDS.TXT> in
+C<$repo_path>. If not, it offers to check the local repository and fetch the tree.
 
 =cut
 
-# if the SLACKBUILDS.TXT is not in $repo_path, we assume the tree has
-# not been populated there; prompt the user to automagickally pull the tree.
+# if SLACKBUILDS.TXT is not in $repo_path, the tree may not have been
+# populated; prompt the user to check $repo_path and fetch.
 sub slackbuilds_or_fetch {
-  unless (chk_slackbuilds_txt()) {
-    say "\"sbosnap fetch\" may not have been run yet.";
-    if (prompt("Fetch the repository to $repo_path now?", default => 'yes')) {
-      fetch_tree();
+  unless (-s $slackbuilds_txt) {
+    if (prompt("$slackbuilds_txt is empty or missing.\nCheck $repo_path and fetch the repository now?", default => 'yes')) {
+      update_tree();
     } elsif (-d $repo_path) {
-      say "Please check the contents of $repo_path, and then run \"sbosnap fetch\"";
+      say "Please check the contents of $repo_path, and then run \"sbocheck\"";
       exit 0;
     } else {
-      say "Please run \"sbosnap fetch\"";
+      say "Please run \"sbocheck\"";
       exit 0;
     }
   }
@@ -439,14 +479,21 @@ sub slackbuilds_or_fetch {
 
   update_tree();
 
-C<update_tree()> checks for C<SLACKBUILDS.TXT> in C<$repo_path>. If not, it runs
-C<fetch_tree()>. Otherwise, it updates the SlackBuilds.org tree.
+C<update_tree()> checks for C<SLACKBUILDS.TXT> in C<$repo_path> to determine an
+appropriate onscreen message. It then updates the SlackBuilds.org tree.
+
+The local repository is checked for existence and similarity to the SBo repository
+before any update proceeds.
 
 =cut
 
 sub update_tree {
-  fetch_tree(), return() unless chk_slackbuilds_txt();
-  say 'Updating SlackBuilds tree...';
+  if (-s $slackbuilds_txt) {
+    say 'Updating SlackBuilds tree...';
+  } else {
+    say 'Pulling SlackBuilds tree...';
+  }
+  check_repo();
   pull_sbo_tree(), return 1;
 }
 

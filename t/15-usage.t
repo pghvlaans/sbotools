@@ -7,7 +7,7 @@ use Test::More;
 use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
-use Test::Sbotools qw/ make_slackbuilds_txt sbocheck sboclean sboconfig sbofind sboinstall sboremove sbosnap sboupgrade /;
+use Test::Sbotools qw/ make_slackbuilds_txt sbocheck sboclean sboconfig sbofind sboinstall sboremove sboupgrade /;
 
 plan tests => 14;
 
@@ -159,25 +159,6 @@ Note: optional dependencies need to be removed separately.
 SBOREMOVE
 sboremove '-h', { expected => $sboremove };
 sboremove { expected => $sboremove, exit => 1 };
-
-## sbosnap
-my $sbosnap = <<'SBOSNAP';
-Usage: sbosnap [options|command]
-
-Options:
-  -h|--help:
-    this screen.
-  -v|--version:
-    version information.
-
-Commands:
-  fetch: initialize a local copy of the slackbuilds.org tree.
-  update: update an existing local copy of the slackbuilds.org tree.
-          (generally, you may prefer "sbocheck" over "sbosnap update")
-
-SBOSNAP
-sbosnap '-h', { expected => $sbosnap };
-sbosnap { expected => $sbosnap, exit => 1 };
 
 ## sboupgrade
 my $sboupgrade = <<'SBOUPGRADE';

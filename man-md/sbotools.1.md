@@ -52,11 +52,6 @@ and create or build from templates.
 Interactively remove installed SlackBuilds along with any unused
 dependencies.
 
-[sbosnap(1)](sbosnap.1.md)
-
-Fetch or update the upstream SlackBuilds repository with **fetch** and
-**update**.
-
 [sboupgrade(1)](sboupgrade.1.md)
 
 Upgrade previously-installed SlackBuilds.
@@ -69,9 +64,9 @@ scripts and request optional dependencies.
 ## STARTUP
 
 When using **sbotools** for the first time, a copy of the SlackBuilds
-repository must be fetched with [sbosnap(1)](sbosnap.1.md):
+repository must be fetched with [sbocheck(1)](sbocheck.1.md):
 
-    sbosnap fetch
+    sbocheck
 
 The local repository will be saved to */usr/sbo/repo*. To use an
 alternative location, give an absolute file path to the **SBO_HOME**
@@ -109,8 +104,7 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md),
-[sbotools.hints(5)](sbotools.hints.5.md)
+[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 

@@ -8,7 +8,7 @@ use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
 use lib "$RealBin/../SBO-Lib/lib";
-use Test::Sbotools qw/ make_slackbuilds_txt sbocheck sboclean sboconfig sbofind sboinstall sboremove sbosnap sboupgrade /;
+use Test::Sbotools qw/ make_slackbuilds_txt sbocheck sboclean sboconfig sbofind sboinstall sboremove sboupgrade /;
 use SBO::Lib;
 
 plan tests => 8;
@@ -28,6 +28,5 @@ sboconfig '-v', { expected => $ver_text };
 sbofind '-v', { expected => $ver_text };
 sboinstall '-v', { expected => $ver_text };
 sboremove '-v', { expected => $ver_text };
-sbosnap '-v', { expected => $ver_text };
 sboupgrade '-v', { expected => $ver_text };
 

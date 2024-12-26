@@ -8,7 +8,7 @@ use Capture::Tiny qw/ capture_merged /;
 use FindBin '$RealBin';
 use lib $RealBin;
 use lib "$RealBin/../SBO-Lib/lib";
-use Test::Sbotools qw/ sboconfig sbosnap sbofind sboinstall sboremove sbocheck sboupgrade /;
+use Test::Sbotools qw/ sboconfig sbofind sboinstall sboremove sbocheck sboupgrade /;
 
 if (defined $ENV{TRAVIS} and $ENV{TRAVIS} eq 'true') {
 	plan tests => 26;
@@ -25,7 +25,7 @@ sboconfig qw/ -V 14.1 /, { expected => "Setting SLACKWARE_VERSION to 14.1...\n" 
 SKIP: {
 	skip 'Not doing online tests without TEST_ONLINE=1', 2 if $ENV{TEST_ONLINE} ne '1';
 
-	sbosnap 'fetch', { expected => qr/\APulling SlackBuilds tree\.\.\.\n/ };
+	sbocheck, { expected => qr/\APulling SlackBuilds tree\.\.\.\n/ };
 	sbofind 'sbotools', { expected => qr"SBo:    sbotools \d[.]\d\nPath:   /usr/sbo/repo/system/sbotools\n\n" };
 }
 
@@ -36,7 +36,7 @@ sboconfig qw! -r https://github.com/Ponce/slackbuilds.git !, { expected => "Sett
 SKIP: {
 	skip 'Not doing online tests without TEST_ONLINE=1', 4 if $ENV{TEST_ONLINE} ne '1';
 
-	sbosnap 'fetch', { expected => qr!Pulling SlackBuilds tree.*Cloning into '/usr/sbo/repo'!s };
+	sbocheck, { expected => qr!Pulling SlackBuilds tree.*Cloning into '/usr/sbo/repo'!s };
 	ok (-e "/usr/sbo/repo/SLACKBUILDS.TXT", "SLACKBUILDS.TXT exists (REPO)");
 	ok (! -e "/usr/sbo/repo/SLACKBUILDS.TXT.gz", "SLACKBUILDS.TXT.gz doesn't exist (REPO)");
 	sbofind 'sbotools', { expected => qr"SBo:    sbotools .*\nPath:   /usr/sbo/repo/system/sbotools\n\n" };

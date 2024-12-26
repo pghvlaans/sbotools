@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree fetch_tree get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config %config /;
+use SBO::Lib qw/ update_tree get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config %config /;
 use Getopt::Long;
 use File::Basename;
 use List::Util 'max';
@@ -57,9 +57,7 @@ if ($gpg and $nopull) { verify_gpg(); }
 elsif ($gpg) { $config{GPG_VERIFY} = "TRUE"; }
 
 update_tree() unless $nopull;
-if ($nopull and not -f $slackbuilds_txt) {
-	slackbuilds_or_fetch();
-} elsif ($nopull) {
+if ($nopull and slackbuilds_or_fetch()) {
 	print "Not updating the SlackBuilds tree...\n";
 }
 
