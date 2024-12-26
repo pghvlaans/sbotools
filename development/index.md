@@ -13,7 +13,6 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 These features may be added in the future:
 
 * Rebuild a reverse dependency queue
-* Detect an existing local repository more correctly
 
 The above list is non-exhaustive and nothing on it is guaranteed to appear in `sbotools`.
 
@@ -22,3 +21,4 @@ The above list is non-exhaustive and nothing on it is guaranteed to appear in `s
 To arrive in the next version:
 
 * More extensive pre-run configuration linting (currently, this is only done for `SBO_HOME`)
+* Detect an existing local repository more correctly
