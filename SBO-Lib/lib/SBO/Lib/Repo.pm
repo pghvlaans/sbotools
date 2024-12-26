@@ -489,9 +489,9 @@ before any update proceeds.
 
 sub update_tree {
   if (-s $slackbuilds_txt) {
-    say 'Pulling SlackBuilds tree...';
-  } else {
     say 'Updating SlackBuilds tree...';
+  } else {
+    say 'Pulling SlackBuilds tree...';
   }
   check_repo();
   pull_sbo_tree(), return 1;
