@@ -131,8 +131,10 @@ directory, and returns a true value if so.
 If C<$repo_path> exists and is non-empty, it is checked for
 its resemblance to a complete SBo repository. The user receives
 warning prompts varying in severity depending on whether
-directories not belonging to the repository exist, repository
-directories are missing or, in the worst case, both.
+top-level directories not belonging to the repository exist, repository
+top-level directories are missing or, in the worst case, both. Warnings are less
+severe for C<git fetch>, which will not delete 'extra' files and
+directories.
 
 If C<$repo_path> contains all expected category directories and
 no unexpected directories, C<check_repo()> returns a true value
@@ -172,11 +174,18 @@ sub check_repo {
     my $extra_dir;
     my $incomplete;
     my $is_empty;
+    my $is_git_fetch;
     while (my $dir = readdir $repo_handle) {
       last unless in($dir => qw/ . .. /);
       $is_empty = 1;
     }
     close($repo_handle);
+    # A git fetch will preserve untracked files; a git clone will not.
+    if (-d "$repo_path/.git") {
+      my $url = $config{REPO} unless $config{REPO} eq 'FALSE';
+      $url = get_slack_version_url() unless defined $url;
+      $is_git_fetch = check_git_remote($repo_path, $url);
+    }
     unless ($is_empty) {
       opendir($repo_handle, $repo_path);
       my @found_dirs =
@@ -194,26 +203,46 @@ sub check_repo {
         $incomplete = 1 if not grep(/^$cat$/, @found_dirs);
         last if $incomplete;
       }
-      if ($extra_dir and $incomplete) {
-        if (prompt("\nWARNING! $repo_path exists and is non-empty.\n\nIt does not resemble an SBo repository.\n\nData loss is certain if you continue.\nContinue anyway?", default=>"no")) {
+      # Give different warning levels depending on how the repo
+      # differs from expected and the fetch method.
+      if ($extra_dir and $incomplete and not $is_git_fetch) {
+        if (prompt("\nWARNING! $repo_path exists and is non-empty.\n\nIt has different top-level directories from an SBo repository.\n\nData loss is certain if you continue.\nContinue anyway?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.\n");
         }
-      } elsif ($incomplete) {
+      } elsif ($extra_dir and $incomplete and $is_git_fetch) {
+        if (prompt("\n$repo_path exists and is non-empty.\n\nIt has different top-level directories from an SBo repository.\n\nUntracked files will not be touched, but other files may be overwritten if you\ncontinue.\nContinue anyway?", default=>"no")) {
+          return 1 if generate_slackbuilds_txt();
+        } else {
+          usage_error("$repo_path exists and is not empty. Exiting.\n");
+        }
+      } elsif ($incomplete and not $is_git_fetch) {
         if (prompt("\nWarning! $repo_path exists and is non-empty.\n\nIt may be an incomplete SBo repository.\n\nData loss is possible if you continue.\nContinue anyway?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.\n");
         }
-      } elsif ($extra_dir) {
-        if (prompt("\nWARNING! $repo_path exists and is non-empty.\n\nIt contains at least one directory that does not belong to the repository.\n\nData loss is likely if you continue.\nContinue anyway?", default=>"no")) {
+      } elsif ($incomplete and $is_git_fetch) {
+        if (prompt("\n$repo_path exists and is non-empty.\n\nIt may be an incomplete SBo repository.\nContinue?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.\n");
         }
-      } elsif (not -s $slackbuilds_txt) {
-        if (prompt("$repo_path is non-empty, but has an identical\ntop-level directory structure to an SBo repository.\n\nRegenerate $slackbuilds_txt and proceed?", default=>"no")) {
+      } elsif ($extra_dir and not $is_git_fetch) {
+        if (prompt("\nWARNING! $repo_path exists and is non-empty.\n\nIt contains at least one top-level directory that does not belong to the repository.\n\nData loss is certain if you continue.\nContinue anyway?", default=>"no")) {
+          return 1 if generate_slackbuilds_txt();
+        } else {
+          usage_error("$repo_path exists and is not empty. Exiting.\n");
+        }
+      } elsif ($extra_dir and $is_git_fetch) {
+        if (prompt("\n$repo_path exists and is non-empty.\n\nIt contains at least one top-level directory that does not belong to the repository.\n\nUntracked files will not be touched, but other files may be overwritten if you\ncontinue.\nContinue?", default=>"no")) {
+          return 1 if generate_slackbuilds_txt();
+        } else {
+          usage_error("$repo_path exists and is not empty. Exiting.\n");
+        }
+      } elsif (not -s $slackbuilds_txt and not $is_git_fetch) {
+        if (prompt("\n$repo_path is non-empty, but has an identical\ntop-level directory structure to an SBo repository.\n\nRegenerate $slackbuilds_txt and proceed?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.\n");

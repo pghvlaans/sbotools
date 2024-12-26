@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Repo 3"
-.TH SBO::Lib::Repo 3 "Prickle-Prickle, The Aftermath 67, 3190 YOLD" "" "sbotools 3.2.1"
+.TH SBO::Lib::Repo 3 "Setting Orange, The Aftermath 68, 3190 YOLD" "" "sbotools 3.2.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -119,8 +119,10 @@ directory, and returns a true value if so.
 If \f(CW$repo_path\fR exists and is non-empty, it is checked for
 its resemblance to a complete SBo repository. The user receives
 warning prompts varying in severity depending on whether
-directories not belonging to the repository exist, repository
-directories are missing or, in the worst case, both.
+top-level directories not belonging to the repository exist, repository
+top-level directories are missing or, in the worst case, both. Warnings are less
+severe for \f(CW\*(C`git fetch\*(C'\fR, which will not delete 'extra' files and
+directories.
 .PP
 If \f(CW$repo_path\fR contains all expected category directories and
 no unexpected directories, \f(CWcheck_repo()\fR returns a true value
