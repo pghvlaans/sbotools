@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Prickle-Prickle, The Aftermath 67, 3190 YOLD" "" "sbotools 3.2.1"
+.TH SBO::Lib::Util 3 "Sweetmorn, The Aftermath 69, 3190 YOLD" "" "sbotools 3.2.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -261,6 +261,8 @@ There is no useful return value.
 .PP
 If the default has been specified, it returns a true value for 'yes' and a false
 one for 'no'. Otherwise, it returns the content of the user's answer.
+.PP
+Output is wrapped at 80 characters.
 .SS read_config
 .IX Subsection "read_config"
 .Vb 1
@@ -346,7 +348,8 @@ list in the same order.
 \&  usage_error($msg);
 .Ve
 .PP
-\&\f(CWusage_error()\fR warns and exits, printing \f(CW$msg\fR to STDERR.
+\&\f(CWusage_error()\fR warns and exits, printing \f(CW$msg\fR to STDERR. Error messages
+wrap at 80 characters.
 .PP
 There is no useful return value.
 .SS version_cmp
@@ -358,6 +361,20 @@ There is no useful return value.
 \&\f(CWversion_cmp()\fR compares \f(CW$ver1\fR with \f(CW$ver2\fR. It returns 1 if \f(CW$ver1\fR is higher,
 \&\-1 if \f(CW$ver2\fR is higher and 0 if they are equal. It strips the running kernel version,
 as well as any locale information that may have been appended to the version strings.
+.SS wrapsay
+.IX Subsection "wrapsay"
+.Vb 1
+\&  wrapsay($msg, $trail);
+.Ve
+.PP
+\&\f(CWwrapsay()\fR outputs a message with the lines wrapped at 80 characters and
+a trailing newline. There is no useful return value. Optional \f(CW$trail\fR will
+output an extra newline if present.
+.PP
+Use this subroutine whenever it is either obvious that the output will exceed
+80 characters or the output includes a variable. \f(CW\*(C`say\*(C'\fR can be used in
+other cases. \f(CWwrapsay()\fR should not be used on output that can be piped
+for use in scripts (e.g., queue reports from \f(CWsbofind(1)\fR).
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

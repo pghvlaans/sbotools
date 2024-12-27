@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '3.2.1';
 
-use SBO::Lib::Util qw/ %config prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp _ERR_DOWNLOAD /;
+use SBO::Lib::Util qw/ %config prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp wrapsay _ERR_DOWNLOAD /;
 
 use Cwd;
 use File::Copy;
@@ -209,49 +209,49 @@ sub check_repo {
         if (prompt("\nWARNING! $repo_path exists and is non-empty.\n\nIt has different top-level directories from an SBo repository.\n\nData loss is certain if you continue.\nContinue anyway?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
-          usage_error("$repo_path exists and is not empty. Exiting.\n");
+          usage_error("$repo_path exists and is not empty. Exiting.");
         }
       } elsif ($extra_dir and $incomplete and $is_git_fetch) {
-        if (prompt("\n$repo_path exists and is non-empty.\n\nIt has different top-level directories from an SBo repository.\n\nUntracked files will not be touched, but other files may be overwritten if you\ncontinue.\nContinue anyway?", default=>"no")) {
+        if (prompt("\n$repo_path exists and is non-empty.\n\nIt has different top-level directories from an SBo repository.\n\nUntracked files will not be touched, but other files may be overwritten if you continue.\nContinue anyway?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
-          usage_error("$repo_path exists and is not empty. Exiting.\n");
+          usage_error("$repo_path exists and is not empty. Exiting.");
         }
       } elsif ($incomplete and not $is_git_fetch) {
         if (prompt("\nWarning! $repo_path exists and is non-empty.\n\nIt may be an incomplete SBo repository.\n\nData loss is possible if you continue.\nContinue anyway?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
-          usage_error("$repo_path exists and is not empty. Exiting.\n");
+          usage_error("$repo_path exists and is not empty. Exiting.");
         }
       } elsif ($incomplete and $is_git_fetch) {
         if (prompt("\n$repo_path exists and is non-empty.\n\nIt may be an incomplete SBo repository.\nContinue?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
-          usage_error("$repo_path exists and is not empty. Exiting.\n");
+          usage_error("$repo_path exists and is not empty. Exiting.");
         }
       } elsif ($extra_dir and not $is_git_fetch) {
         if (prompt("\nWARNING! $repo_path exists and is non-empty.\n\nIt contains at least one top-level directory that does not belong to the repository.\n\nData loss is certain if you continue.\nContinue anyway?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
-          usage_error("$repo_path exists and is not empty. Exiting.\n");
+          usage_error("$repo_path exists and is not empty. Exiting.");
         }
       } elsif ($extra_dir and $is_git_fetch) {
-        if (prompt("\n$repo_path exists and is non-empty.\n\nIt contains at least one top-level directory that does not belong to the repository.\n\nUntracked files will not be touched, but other files may be overwritten if you\ncontinue.\nContinue?", default=>"no")) {
+        if (prompt("\n$repo_path exists and is non-empty.\n\nIt contains at least one top-level directory that does not belong to the repository.\n\nUntracked files will not be touched, but other files may be overwritten if you continue.\nContinue?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
-          usage_error("$repo_path exists and is not empty. Exiting.\n");
+          usage_error("$repo_path exists and is not empty. Exiting.");
         }
       } elsif (not -s $slackbuilds_txt and not $is_git_fetch) {
-        if (prompt("\n$repo_path is non-empty, but has an identical\ntop-level directory structure to an SBo repository.\n\nRegenerate $slackbuilds_txt and proceed?", default=>"no")) {
+        if (prompt("\n$repo_path is non-empty, but has an identical top-level directory structure to an SBo repository.\n\nRegenerate $slackbuilds_txt and proceed?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
-          usage_error("$repo_path exists and is not empty. Exiting.\n");
+          usage_error("$repo_path exists and is not empty. Exiting.");
         }
       }
     }
   } else {
     eval { make_path($repo_path) }
-      or usage_error("Unable to create $repo_path.\n");
+      or usage_error("Unable to create $repo_path.");
   }
   return 1;
 }
@@ -465,7 +465,7 @@ sub slackbuilds_or_fetch {
     if (prompt("$slackbuilds_txt is empty or missing.\nCheck $repo_path and fetch the repository now?", default => 'yes')) {
       update_tree();
     } elsif (-d $repo_path) {
-      say "Please check the contents of $repo_path, and then run \"sbocheck\"";
+      wrapsay "Please check the contents of $repo_path, and then run \"sbocheck\".";
       exit 0;
     } else {
       say "Please run \"sbocheck\"";
@@ -528,7 +528,7 @@ sub verify_git_commit {
     $res = system(qw/ git verify-commit /, $branch) == 0;
     close STDERR;
     open STDERR, '>&', \*OLDERR;
-    say "Commit signature verified. See $gpg_log." if $res;
+    wrapsay "Commit signature verified. See $gpg_log." if $res;
   }
   return $res if $res;
   # send stderr from --raw to file to determine reason for failure
@@ -537,7 +537,7 @@ sub verify_git_commit {
   `git verify-commit --raw $branch 2> $tempfile`;
   if (not -s $tempfile) {
     unlink $tempfile if -f $tempfile;
-    usage_error("The most recent commit on this git branch is unsigned.\n\nExiting. To use this branch, set GPG_VERIFY to FALSE.\n");
+    usage_error("The most recent commit on this git branch is unsigned.\n\nExiting. To use this branch, set GPG_VERIFY to FALSE.");
   }
   my @raw = split(" ", slurp($tempfile));
   close $fh;
@@ -559,15 +559,15 @@ sub verify_git_commit {
   # EXPSIG/EXPKEYSIG: warning and exit
   # Note: EXPSIG was unimplemented in gnupg as of December 2024.
   if (grep(/EXPKEYSIG|EXPSIG/, @raw)) {
-    usage_error("The most recent commit on this git branch was signed with an expired key.\n\nExiting.\n");
+    usage_error("The most recent commit on this git branch was signed with an expired key.\n\nExiting.");
   }
   # BADSIG: big warning and exit
   if (grep(/BADSIG/, @raw)) {
-    usage_error("WARNING! The most recent commit on this git branch was signed with a bad key.\n\nUsing this repository is strongly discouraged. Exiting.\n");
+    usage_error("WARNING! The most recent commit on this git branch was signed with a bad key.\n\nUsing this repository is strongly discouraged. Exiting.");
   }
   # REVKEYSIG: warning and exit
   if (grep(/REVKEYSIG/, @raw)) {
-    usage_error("WARNING! The most recent commit on this git branch was signed with a revoked key.\n\nUsing this repository is probably a bad idea. Exiting.\n");
+    usage_error("WARNING! The most recent commit on this git branch was signed with a revoked key.\n\nUsing this repository is probably a bad idea. Exiting.");
   }
 }
 
@@ -590,7 +590,7 @@ sub verify_rsync {
   my $fullcheck = shift;
   my $rsync_lock = "$config{SBO_HOME}/.rsync.lock";
   if (-f $rsync_lock and not $fullcheck) {
-    usage_error("\nThe previous rsync verification failed. Please run sbocheck.\n\nExiting.\n");
+    usage_error("\nThe previous rsync verification failed. Please run sbocheck.\n\nExiting.");
   }
   unlink $gpg_log if -f $gpg_log;
   # This file indicates that a full verification on fetch failed, or that
@@ -604,7 +604,7 @@ sub verify_rsync {
     open STDERR, '>', $gpg_log;
     if (versioncmp(get_slack_version(), '14.0') == 1) {
       $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw/ --verify CHECKSUMS.md5.asc /) == 0;
-      say "CHECKSUMS.md5.asc verified. See $gpg_log." if $checksum_asc_ok;
+      wrapsay "CHECKSUMS.md5.asc verified. See $gpg_log." if $checksum_asc_ok;
     } else {
       # CHECKSUMS.md5.asc is unsigned in the 14.0 repository; check all .asc files
       say "\nChecking .asc files...";
@@ -619,7 +619,7 @@ sub verify_rsync {
           }
         }
       }
-      say ".asc files verified. See $gpg_log." if $checksum_asc_ok;
+      wrapsay ".asc files verified. See $gpg_log." if $checksum_asc_ok;
     }
     close STDERR;
     open STDERR, '>&', \*OLDERR;
@@ -644,13 +644,13 @@ sub verify_rsync {
     # REVKEYSIG: warning and exit
     if (grep(/REVKEYSIG/, @raw)) {
       system(qw/ touch /, $rsync_lock);
-      usage_error("\nWARNING! CHECKSUMS.md5 was signed with a revoked key.\n\nUsing this repository is probably a bad idea. Exiting.\n");
+      usage_error("\nWARNING! CHECKSUMS.md5 was signed with a revoked key.\n\nUsing this repository is probably a bad idea. Exiting.");
     }
     # EXPKEYSIG/EXPSIG: warning and exit
     # Note: EXPSIG was unimplemented in gnupg as of December 2024.
     if (grep(/EXPKEYSIG|EXPSIG/, @raw)) {
       system(qw/ touch /, $rsync_lock);
-      usage_error("\nCHECKSUMS.md5 was signed with an expired key.\n\nExiting.\n");
+      usage_error("\nCHECKSUMS.md5 was signed with an expired key.\n\nExiting.");
     }
   }
   if ($fullcheck) {
@@ -658,7 +658,7 @@ sub verify_rsync {
       system(qw/ touch /, $rsync_lock);
       # BADSIG: big warning and exit
       if (grep(/BADSIG/, @raw)) {
-        usage_error("\nWARNING! CHECKSUMS.md5 was signed with a bad key.\n\nUsing this repository is strongly discouraged. Exiting.\n");
+        usage_error("\nWARNING! CHECKSUMS.md5 has a bad signature.\n\nUsing this repository is strongly discouraged. Exiting.");
       }
     }
     chdir $repo_path or return 0;
@@ -691,12 +691,12 @@ sub verify_rsync {
       return $res;
     } else {
       system(qw/ touch /, $rsync_lock);
-      usage_error("\nOne or more md5 errors was detected after sync.\n\nRemove $rsync_lock or turn off GPG verification with caution.\n\nExiting.\n");
+      usage_error("\nOne or more md5 errors was detected after sync.\n\nRemove $rsync_lock or turn off GPG verification with caution.\n\nExiting.");
     }
   }
   if (not $checksum_asc_ok) {
     system(qw/ touch /, $rsync_lock);
-    usage_error("\nThe contents of CHECKSUMS.md5 have been altered. Please run sbocheck.\n\nExiting.\n") unless $checksum_asc_ok;
+    usage_error("\nThe contents of CHECKSUMS.md5 have been altered. Please run sbocheck.\n\nExiting.") unless $checksum_asc_ok;
   }
   return 1;
 }

@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '3.2.1';
 
-use SBO::Lib::Util qw/ prompt script_error slurp open_read open_fh _ERR_OPENFH usage_error %config /;
+use SBO::Lib::Util qw/ prompt script_error slurp open_read open_fh _ERR_OPENFH usage_error wrapsay %config /;
 use SBO::Lib::Tree qw/ is_local /;
 
 use Exporter 'import';
@@ -132,8 +132,7 @@ sub ask_user_group {
   script_error('ask_user_group requires two arguments') unless @_ == 2;
   my ($cmds, $readme) = @_;
   say "\n". $readme;
-  print "\nIt looks like this slackbuild requires the following";
-  say ' command(s) to be run first:';
+  wrapsay "\nIt looks like this slackbuild requires the following command(s) to be run first:";
   say "    # $_" for @$cmds;
   return prompt('Run the commands prior to building?', default => 'yes') ? $cmds : undef;
 }
@@ -214,7 +213,7 @@ have yet to look into the question closely.
 sub user_prompt {
   script_error('user_prompt requires two arguments.') unless @_ == 2;
   my ($sbo, $location) = @_;
-  if (not defined $location) { usage_error("Unable to locate $sbo in the slackbuilds.org tree."); }
+  if (not defined $location) { usage_error("Unable to locate $sbo in the SlackBuilds.org tree."); }
   my $readme = get_readme_contents($location);
   return "Could not open README for $sbo.", undef, _ERR_OPENFH if not defined $readme;
   if (is_local($sbo)) { print "\nFound $sbo in local overrides.\n"; }

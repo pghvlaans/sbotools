@@ -11,7 +11,7 @@ package SBO::App::Remove;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_build_queue get_full_queue merge_queues get_required_by get_requires get_readme_contents get_reverse_reqs prompt show_version in lint_sbo_config %config /;
+use SBO::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_build_queue get_full_queue merge_queues get_required_by get_requires get_readme_contents get_reverse_reqs prompt show_version in lint_sbo_config wrapsay %config /;
 use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO::App';
@@ -111,12 +111,12 @@ sub check_sbo {
   my ($sbo, $installed) = @_;
 
   if (not get_sbo_location($sbo)) {
-    say "Unable to locate $sbo in the slackbuilds.org tree.";
+    wrapsay "Unable to locate $sbo in the SlackBuilds.org tree.";
     return 0;
   }
 
   if (not exists $installed->{$sbo}) {
-    say "$sbo is not installed from slackbuilds.org.";
+    wrapsay "$sbo is not installed from SlackBuilds.org.";
     return 0;
   }
 
@@ -127,7 +127,7 @@ sub confirm {
   my ($remove, @required_by) = @_;
 
   if (@required_by) {
-    say sprintf "%s : required by %s", $remove->{name}, join ' ', @required_by;
+    wrapsay sprintf "%s : required by %s", $remove->{name}, join ' ', @required_by;
   } else {
     say $remove->{name};
   }
@@ -157,7 +157,7 @@ sub remove {
   my @confirmed = @_;
 
   say sprintf "Removing %d package(s).", scalar @confirmed;
-  say join " ", map { $_->{name} } @confirmed;
+  wrapsay join " ", map { $_->{name} } @confirmed;
 
   if (!prompt("\nAre you sure you want to continue?", default => 'no')) {
     return say 'Exiting.';

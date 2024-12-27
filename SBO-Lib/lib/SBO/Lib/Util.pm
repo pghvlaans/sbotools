@@ -9,6 +9,7 @@ our $VERSION = '3.2.1';
 use Exporter 'import';
 use File::Copy;
 use Sort::Versions;
+use Text::Wrap qw/ wrap $columns /;
 
 my $consts;
 use constant $consts = {
@@ -61,6 +62,7 @@ our @EXPORT_OK = (
     uniq
     usage_error
     version_cmp
+    wrapsay
   },
   @EXPORT_CONSTS,
   @EXPORT_CONFIG,
@@ -308,8 +310,7 @@ sub get_slack_version {
     $version = ($line =~ /\s+(\d+[^\s]+)$/)[0];
   }
   usage_error("\nThe running or configured Slackware version is unsupported: $version\n" .
-    "Consider running \"sboconfig -r $supported{current}\" to\n" .
-    "use a repository for -current.\n")
+    "Consider running \"sboconfig -r $supported{current}\" to use a repository for -current.")
     unless $supported{$version};
   return $version;
 }
@@ -496,7 +497,7 @@ sub lint_sbo_config {
 
   my $invalid_string = join("\n", @invalid);
   if ($invalid_string) {
-    say "The configuration in $conf_file contains one or more\ninvalid parameters.\n" if $running ne 'sboconfig';
+    wrapsay("The configuration in $conf_file contains one or more invalid parameters.", 1) if $running ne 'sboconfig';
     usage_error("$invalid_string");
   }
 }
@@ -596,6 +597,8 @@ C<yes> or C<no>.
 If the default has been specified, it returns a true value for 'yes' and a false
 one for 'no'. Otherwise, it returns the content of the user's answer.
 
+Output is wrapped at 80 characters.
+
 =cut
 
 sub prompt {
@@ -603,7 +606,8 @@ sub prompt {
   my $def = $opts{default};
   $q = sprintf '%s [%s] ', $q, $def eq 'yes' ? 'y' : 'n' if defined $def;
 
-  print $q;
+  $columns = 81;
+  print wrap('', '', $q);
 
   my $res = readline STDIN;
 
@@ -664,7 +668,7 @@ populate global array C<@listings>, and should only be called once.
 sub read_hints{
   if(-f "/etc/sbotools/sbotools.hints") {
     my $contents = slurp("/etc/sbotools/sbotools.hints");
-    usage_error("read_hints: could not read existing /etc/sbotools/sbotools.hints") unless
+    usage_error("read_hints: could not read existing /etc/sbotools/sbotools.hints.") unless
       defined $contents;
     my @contents = split("\n", $contents);
     for my $entry (@contents) {
@@ -703,7 +707,7 @@ sub save_options {
     close $args_fh;
     if (-f "$logfile.bk") { unlink("$logfile.bk"); }
     if ($config{CLASSIC} ne "TRUE") {
-      say "\nA copy of the build options has been saved to $logfile.";
+      wrapsay("A copy of the build options has been saved to $logfile.", 1);
     }
   }
   return 1;
@@ -790,7 +794,8 @@ sub uniq {
 
   usage_error($msg);
 
-C<usage_error()> warns and exits, printing C<$msg> to STDERR.
+C<usage_error()> warns and exits, printing C<$msg> to STDERR. Error messages
+wrap at 80 characters.
 
 There is no useful return value.
 
@@ -798,7 +803,8 @@ There is no useful return value.
 
 # subroutine for usage errors
 sub usage_error {
-  warn shift ."\n";
+  $columns = 81;
+  warn wrap('', '', shift). "\n";
   exit _ERR_USAGE;
 }
 
@@ -834,6 +840,30 @@ sub version_cmp {
   }
 
   versioncmp($v1, $v2);
+}
+
+=head2 wrapsay
+
+  wrapsay($msg, $trail);
+
+C<wrapsay()> outputs a message with the lines wrapped at 80 characters and
+a trailing newline. There is no useful return value. Optional C<$trail> will
+output an extra newline if present.
+
+Use this subroutine whenever it is either obvious that the output will exceed
+80 characters or the output includes a variable. C<say> can be used in
+other cases. C<wrapsay()> should not be used on output that can be piped
+for use in scripts (e.g., queue reports from C<sbofind(1)>).
+
+=cut
+
+sub wrapsay {
+  script_error("wrapsay requires an argument.") unless @_ >= 1;
+  my ($msg, $trail) = @_;
+  $columns = 81;
+  print wrap('', '', "$msg\n");
+  print "\n" if $trail;
+  return 1;
 }
 
 # _race::cond will allow both documenting and testing race conditions

@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '3.2.1';
 
-use SBO::Lib::Util qw/ :const prompt script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh uniq save_options %config in /;
+use SBO::Lib::Util qw/ :const prompt script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh uniq save_options wrapsay %config in /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
@@ -336,7 +336,7 @@ sub make_clean {
     script_error('make_clean requires three arguments.');
   }
   my $src = $args{SRC};
-  say "Cleaning for $args{SBO}-$args{VERSION}...";
+  wrapsay "Cleaning for $args{SBO}-$args{VERSION}...";
   for my $dir (@$src) {
     remove_tree("$tmpd/$dir") if -d "$tmpd/$dir";
   }
@@ -380,7 +380,7 @@ sub make_distclean {
   }
   my $sbo = get_sbo_from_loc($args{LOCATION});
   make_clean(SBO => $sbo, SRC => $args{SRC}, VERSION => $args{VERSION});
-  say "Distcleaning for $sbo-$args{VERSION}...";
+  wrapsay "Distcleaning for $sbo-$args{VERSION}...";
   # remove any distfiles for this particular SBo.
   my $downloads = get_sbo_downloads(LOCATION => $args{LOCATION});
   for my $key (keys %$downloads) {
@@ -575,7 +575,7 @@ sub process_sbos {
       push @failures, {$sbo => $fail};
       # return now if we're not interactive
       return \@failures, $exit if $args{NON_INT};
-      say "Unable to download/verify source file(s) for $sbo:";
+      wrapsay "Unable to download/verify source file(s) for $sbo:";
       say "  $fail";
       if (prompt('Do you want to proceed?' , default => 'no')) {
         next FIRST;
@@ -625,7 +625,7 @@ sub process_sbos {
       return \@failures, $exit if $args{NON_INT};
       # or if this is the last $sbo
       return \@failures, $exit if $count == @$todo;
-      say "A failure occurred while building $sbo:";
+      wrapsay "A failure occurred while building $sbo:";
       say "  $fail";
       if (prompt('Do you want to proceed?', default => 'no')) {
         next FIRST;
@@ -655,7 +655,7 @@ sub process_sbos {
         mkdir($dir) or warn "Unable to create $dir.\n";
       }
       if (-d $dir) {
-        move($pkg, $dir), say "$pkg stored in $dir.";
+        move($pkg, $dir), wrapsay "$pkg stored in $dir.";
       } else {
         warn "$pkg left in $tmpd.\n";
       }
