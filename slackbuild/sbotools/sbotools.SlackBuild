@@ -84,6 +84,10 @@ for i in $SCRIPTS; do
   install -m 0644 completions/bash/sbo$i $PKG/usr/share/bash-completion/completions/sbo$i
 done
 
+# sbosnap compatibility completions
+install -m 0644 completions/zsh/_sbosnap $PKG/usr/share/zsh/site-functions
+install -m 0644 completions/bash/sbosnap $PKG/usr/share/bash-completion/completions/sbosnap
+
 for i in $MANS; do
   mkdir -p $PKG/usr/man/$i
   install -m 0644 $i/* $PKG/usr/man/$i
