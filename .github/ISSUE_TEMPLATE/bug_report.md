@@ -7,6 +7,8 @@ assignees: pghvlaans
 
 ---
 
+* Command entered:
+
 * Running version of `sbotools`:
 
 * Output of `cat /etc/slackware-version`:
