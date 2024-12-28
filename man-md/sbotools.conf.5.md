@@ -20,6 +20,10 @@ parameters, and is read by all **sbotools** commands.
 If an invalid configuration is detected (or requested with
 [sboconfig(1)](sboconfig.1.md)), the script will exit with a diagnostic message.
 
+To quickly restore all default settings, run
+
+    sboconfig --reset
+
 The current configuration keys are as follows:
 
 **CLASSIC=(FALSE\|TRUE)**
