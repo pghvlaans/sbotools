@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slurp usage_error script_error lint_sbo_config $tempdir open_fh %config $conf_dir $conf_file show_version /;
+use SBO::Lib qw/ slurp usage_error script_error lint_sbo_config $tempdir open_fh prompt %config $conf_dir $conf_file show_version /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always);
 use File::Copy;
@@ -122,6 +122,15 @@ if (not %options) {
 	exit 0;
 }
 
+if (exists $options{reset}) {
+	if (prompt("Reset all options to the default setting?", default => 'no')) {
+		say "Restoring default configuration...";
+	} else {
+		say "Exiting without changes.";
+		exit 0;
+	}
+}
+
 # setup what's being changed, sanity check.
 my %changes;
 for my $key (keys %valid_confs) {
@@ -135,7 +144,6 @@ for my $key (keys %valid_confs) {
 $changes{'SBO_HOME'} = '/usr/sbo' if exists $options{reset};
 
 lint_sbo_config($self, %changes);
-say "Restoring default configuration..." if exists $options{reset};
 
 sub config_write {
 	script_error('config_write requires at least two arguments.') unless @_ >= 2;
