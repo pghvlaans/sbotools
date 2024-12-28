@@ -597,7 +597,7 @@ C<yes> or C<no>.
 If the default has been specified, it returns a true value for 'yes' and a false
 one for 'no'. Otherwise, it returns the content of the user's answer.
 
-Output is wrapped at 80 characters.
+Output is wrapped at 72 characters.
 
 =cut
 
@@ -606,7 +606,7 @@ sub prompt {
   my $def = $opts{default};
   $q = sprintf '%s [%s] ', $q, $def eq 'yes' ? 'y' : 'n' if defined $def;
 
-  $columns = 81;
+  $columns = 73;
   print wrap('', '', $q);
 
   my $res = readline STDIN;
@@ -795,7 +795,7 @@ sub uniq {
   usage_error($msg);
 
 C<usage_error()> warns and exits, printing C<$msg> to STDERR. Error messages
-wrap at 80 characters.
+wrap at 72 characters.
 
 There is no useful return value.
 
@@ -803,7 +803,7 @@ There is no useful return value.
 
 # subroutine for usage errors
 sub usage_error {
-  $columns = 81;
+  $columns = 73;
   warn wrap('', '', shift). "\n";
   exit _ERR_USAGE;
 }
@@ -846,7 +846,7 @@ sub version_cmp {
 
   wrapsay($msg, $trail);
 
-C<wrapsay()> outputs a message with the lines wrapped at 80 characters and
+C<wrapsay()> outputs a message with the lines wrapped at 72 characters and
 a trailing newline. There is no useful return value. Optional C<$trail> will
 output an extra newline if present.
 
@@ -860,7 +860,7 @@ for use in scripts (e.g., queue reports from C<sbofind(1)>).
 sub wrapsay {
   script_error("wrapsay requires an argument.") unless @_ >= 1;
   my ($msg, $trail) = @_;
-  $columns = 81;
+  $columns = 73;
   print wrap('', '', "$msg\n");
   print "\n" if $trail;
   return 1;

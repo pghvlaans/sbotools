@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Sweetmorn, The Aftermath 69, 3190 YOLD" "" "sbotools 3.2.1"
+.TH SBO::Lib::Util 3 "Boomtime, The Aftermath 70, 3190 YOLD" "" "sbotools 3.2.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -262,7 +262,7 @@ There is no useful return value.
 If the default has been specified, it returns a true value for 'yes' and a false
 one for 'no'. Otherwise, it returns the content of the user's answer.
 .PP
-Output is wrapped at 80 characters.
+Output is wrapped at 72 characters.
 .SS read_config
 .IX Subsection "read_config"
 .Vb 1
@@ -349,7 +349,7 @@ list in the same order.
 .Ve
 .PP
 \&\f(CWusage_error()\fR warns and exits, printing \f(CW$msg\fR to STDERR. Error messages
-wrap at 80 characters.
+wrap at 72 characters.
 .PP
 There is no useful return value.
 .SS version_cmp
@@ -367,7 +367,7 @@ as well as any locale information that may have been appended to the version str
 \&  wrapsay($msg, $trail);
 .Ve
 .PP
-\&\f(CWwrapsay()\fR outputs a message with the lines wrapped at 80 characters and
+\&\f(CWwrapsay()\fR outputs a message with the lines wrapped at 72 characters and
 a trailing newline. There is no useful return value. Optional \f(CW$trail\fR will
 output an extra newline if present.
 .PP

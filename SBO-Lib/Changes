@@ -5,7 +5,7 @@ sbotools
   * sbocheck: Before fetch, offer to exit if the git branch does not exist
   * Repo.pm: Check for local repo similarity to SBo rather than relying on SLACKBUILDS.TXT
   * sbosnap: Redundant; replace with a compatibility symlink
-  * Wrap variable-length onscreen messaging (that can't be piped), prompts and error messages at 80 characters
+  * Wrap variable-length onscreen messaging (that can't be piped), prompts and error messages at 72 characters
 
 * 3.2.1 - 2024-12-20
   * Bugfix: sboinstall, sboupgrade GPG check for custom repositories (removed unneeded conditional)
