@@ -156,7 +156,9 @@ number from this directory varies.
 8: unable to unset the exec-on-close bit on a temporary file.\
 9: multilib has not been set up (where required).\
 10: **convertpkg-compat32** exited non-zero.\
-11: the **convertpkg-compat32** script cannot be found (where required).
+11: the **convertpkg-compat32** script cannot be found (where
+required).\
+12: interrupt signal received.
 
 ## BUGS
 
