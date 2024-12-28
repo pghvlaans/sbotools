@@ -34,6 +34,8 @@ Options:
     version information.
   -l|--list:
     show current options.
+  --reset:
+    restore the default configuration
 
 Config options (defaults shown):
   -B|--branch FALSE:
@@ -69,7 +71,7 @@ EOF
 
 my %options;
 
-GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'classic|C=s', 'noclean|c=s',
+GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'classic|C=s', 'noclean|c=s',
 	'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 	'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
     'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s');
@@ -124,10 +126,16 @@ if (not %options) {
 my %changes;
 for my $key (keys %valid_confs) {
 	my $value = $valid_confs{$key};
-	$changes{$value} = $options{$key} if exists $options{$key};
+	if (exists $options{reset}) {
+		$changes{$value} = "FALSE";
+	} else {
+		$changes{$value} = $options{$key} if exists $options{$key};
+	}
 }
+$changes{'SBO_HOME'} = '/usr/sbo' if exists $options{reset};
 
 lint_sbo_config($self, %changes);
+say "Restoring default configuration..." if exists $options{reset};
 
 sub config_write {
 	script_error('config_write requires at least two arguments.') unless @_ >= 2;
@@ -142,14 +150,24 @@ sub config_write {
 	while (@_ >= 2) {
 		my $key = shift;
 		my $val = shift;
-		say "Setting $key to $val...";
+		say "Setting $key to $val..." unless exists $options{reset};
 
-		if ($conf =~ /^#(\s*)\Q$key\E=/m) {
-			$conf =~ s/^#(\s*)\Q$key\E=.*$/$key=$val/m;
-		} elsif ($conf =~ /^\Q$key\E=/m) {
-			$conf =~ s/^\Q$key\E=.*$/$key=$val/m;
+		unless (exists $options{reset}) {
+			if ($conf =~ /^#(\s*)\Q$key\E=/m) {
+				$conf =~ s/^#(\s*)\Q$key\E=.*$/$key=$val/m;
+			} elsif ($conf =~ /^\Q$key\E=/m) {
+				$conf =~ s/^\Q$key\E=.*$/$key=$val/m;
+			} else {
+				$conf .= "$key=$val\n";
+			}
 		} else {
-			$conf .= "$key=$val\n";
+			if ($conf =~ /^#(\s*)\Q$key\E=/m) {
+				$conf =~ s/^#(\s*)\Q$key\E=.*$/#$key=$val/m;
+			} elsif ($conf =~ /^\Q$key\E=/m) {
+				$conf =~ s/^\Q$key\E=.*$/#$key=$val/m;
+			} else {
+				$conf .= "#$key=$val\n";
+			}
 		}
 	}
 

@@ -13,6 +13,8 @@ sboconfig [-h|-v]
 .P
 sboconfig [-l]
 .P
+sboconfig [--reset]
+.P
 sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \\
           [-g TRUE|FALSE ] [-j #|FALSE] [-p /path|FALSE] \\
           [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] \\
@@ -59,6 +61,15 @@ also shows the
 .B
 sboconfig
 flag used to set each option for reference.
+.RE
+.P
+.B
+--reset
+.RS
+Restore the default configuration to
+.I
+/etc/sbotools/sbotools.conf\fR\
+\&.
 .RE
 .P
 .B

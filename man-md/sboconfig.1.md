@@ -22,6 +22,8 @@
 
     sboconfig [-l]
 
+    sboconfig [--reset]
+
     sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \
               [-g TRUE|FALSE ] [-j #|FALSE] [-p /path|FALSE] \
               [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] \
@@ -49,6 +51,10 @@ Show version information.
 List the current configuration options, including unmodified defaults.
 **\--list** also shows the **sboconfig** flag used to set each option
 for reference.
+
+**\--reset**
+
+Restore the default configuration to */etc/sbotools/sbotools.conf*.
 
 **-B\|\--branch (FALSE\|branch_name)**
 
