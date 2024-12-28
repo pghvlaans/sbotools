@@ -832,7 +832,7 @@ Copyright (C) 2024, K. Eugene Carlson.
 sub _build_terminated {
   remove_tree("$tempdir") if -d "$tempdir";
   exit _ERR_INST_SIGNAL;
-}  
+}
 
 sub _build_queue {
   my ($sbos, $warnings) = @_;
