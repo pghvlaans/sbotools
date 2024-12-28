@@ -152,22 +152,20 @@ sub config_write {
 		my $val = shift;
 		say "Setting $key to $val..." unless exists $options{reset};
 
-		unless (exists $options{reset}) {
-			if ($conf =~ /^#(\s*)\Q$key\E=/m) {
-				$conf =~ s/^#(\s*)\Q$key\E=.*$/$key=$val/m;
-			} elsif ($conf =~ /^\Q$key\E=/m) {
-				$conf =~ s/^\Q$key\E=.*$/$key=$val/m;
-			} else {
-				$conf .= "$key=$val\n";
-			}
+		# Comment default values when written in
+		my $comment = '';
+		if ($val eq 'FALSE') {
+			$comment = '#';
+		} elsif ($key eq 'SBO_HOME' and $val eq '/usr/sbo') {
+			$comment = '#';
+		}
+
+		if ($conf =~ /^#(\s*)\Q$key\E=/m) {
+			$conf =~ s/^#(\s*)\Q$key\E=.*$/$comment$key=$val/m;
+		} elsif ($conf =~ /^\Q$key\E=/m) {
+			$conf =~ s/^\Q$key\E=.*$/$comment$key=$val/m;
 		} else {
-			if ($conf =~ /^#(\s*)\Q$key\E=/m) {
-				$conf =~ s/^#(\s*)\Q$key\E=.*$/#$key=$val/m;
-			} elsif ($conf =~ /^\Q$key\E=/m) {
-				$conf =~ s/^\Q$key\E=.*$/#$key=$val/m;
-			} else {
-				$conf .= "#$key=$val\n";
-			}
+			$conf .= "$comment$key=$val\n";
 		}
 	}
 
