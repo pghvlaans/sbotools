@@ -24,6 +24,7 @@ use constant $consts = {
   _ERR_NOMULTILIB    => 9,   # lacking multilib where required
   _ERR_CONVERTPKG    => 10,  # errors while running convertpkg-compat32
   _ERR_NOCONVERTPKG  => 11,  # lacking convertpkg-compat32 where required
+  _ERR_INST_SIGNAL   => 12,  # sboinstall or sboupgrade was interrupted
 };
 
 my @EXPORT_CONSTS = keys %$consts;

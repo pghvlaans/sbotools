@@ -19,6 +19,8 @@ use File::Temp qw/ tempdir tempfile /;
 use Tie::File;
 use Cwd;
 
+use sigtrap qw/ handler _build_terminated ABRT INT QUIT TERM /;
+
 our @EXPORT_OK = qw{
   do_convertpkg
   do_slackbuild
@@ -826,6 +828,11 @@ Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
 Copyright (C) 2024, K. Eugene Carlson.
 
 =cut
+
+sub _build_terminated {
+  remove_tree("$tempdir");
+  exit _ERR_INST_SIGNAL;
+}  
 
 sub _build_queue {
   my ($sbos, $warnings) = @_;
