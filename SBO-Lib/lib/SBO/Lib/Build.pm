@@ -830,7 +830,7 @@ Copyright (C) 2024, K. Eugene Carlson.
 =cut
 
 sub _build_terminated {
-  remove_tree("$tempdir");
+  remove_tree("$tempdir") if -d "$tempdir";
   exit _ERR_INST_SIGNAL;
 }  
 
