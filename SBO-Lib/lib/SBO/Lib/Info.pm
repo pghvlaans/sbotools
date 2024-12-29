@@ -299,19 +299,22 @@ sub get_sbo_build_number {
   my %parse = parse_info($str);
 
 C<parse_info()> parses the contents of an info file from C<$str> and returns
-a key-value list of all values present. It attempts to repair missing quotation
-marks.
+a key-value list of all values present. It attempts to repair blank lines and
+missing quotation marks and backslashes.
 
 =cut
 
 sub parse_info {
     script_error('parse_info requires an argument.') unless @_ == 1;
     my $info_str = shift;
+    # Fix blank lines
+    $info_str =~ s/\n\n/\n/g;
     # Fix missing EOF quotation marks
-    $info_str = "$info_str\"" if not $info_str =~ /"$/;
+    $info_str =~ s/(?<=[^\"])\n+$/\"\n/g;
+    # Fix missing backslashes
+    $info_str =~ s/(?<=[^\\\"])\n(?=\s)/\\\n/g;
     # Fix missing terminal quotation marks
-    $info_str =~ s/(?<=[^\\])\n{1}(?=\s)/\\\n/g;
-    $info_str =~ s/(?<=[^\"])\n{1}(?=[A-Z])/\"\n/g;
+    $info_str =~ s/(?<=[^\\\"])\n(?=[A-Z])/\"\n/g;
     # Fix missing initial quotation marks
     my @fields = qw{
         PRGNAM
