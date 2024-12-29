@@ -299,8 +299,8 @@ sub get_sbo_build_number {
   my %parse = parse_info($str);
 
 C<parse_info()> parses the contents of an info file from C<$str> and returns
-a key-value list of all values present. It attempts to repair blank lines and
-missing quotation marks and backslashes.
+a key-value list of all values present. It attempts to repair trailing whitespace,
+blank lines, garbage lines and missing quotation marks and backslashes.
 
 =cut
 
@@ -309,7 +309,9 @@ sub parse_info {
     my $info_str = shift;
     # Fix blank lines
     $info_str =~ s/\n\n/\n/g;
-    # Fix missing EOF quotation marks
+    # Fix trailing whitespace
+    $info_str =~ s/\s\n/\n/g;
+    # Fix EOF quotation marks
     $info_str =~ s/(?<=[^\"])\n+$/\"\n/g;
     # Fix missing backslashes
     $info_str =~ s/(?<=[^\\\"])\n(?=\s)/\\\n/g;
@@ -329,6 +331,10 @@ sub parse_info {
         EMAIL
     };
     for my $field (@fields) { $info_str =~ s/(?<=$field)=(?=[^\"])/=\"/g; }
+    # Anything that follows a terminal quote and doesn't start KEY="VALUE" is unwanted
+    $info_str =~ s/\"\n[^=\"]+(\\|\")\n/\"\n/g;
+    # And the start of the file
+    $info_str =~ s/^[^=\"]+(\\|\")\n//g;
 
     my $pos = 0;
     my %ret;
