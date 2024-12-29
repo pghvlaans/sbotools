@@ -8,6 +8,7 @@
   * Wrap variable-length onscreen messaging (that can't be piped), prompts and error messages at 72 characters
   * *sboconfig*: Use **\--reset** to restore all default configuration values
   * *Build.pm*: Remove temporary directory in case of signal
+  * Bugfix: When parsing *info* files, fix whitespace, unwanted lines, quotation and backslashes
 
 * 3.2.1 - 2024-12-20
   * Bugfix: *sboinstall*, *sboupgrade* GPG check for custom repositories (removed unneeded conditional)
