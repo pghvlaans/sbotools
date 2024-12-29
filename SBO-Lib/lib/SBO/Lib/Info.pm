@@ -311,7 +311,7 @@ sub parse_info {
     $info_str = "$info_str\"" if not $info_str =~ /"$/;
     # Fix missing terminal quotation marks
     $info_str =~ s/(?<=[^\\])\n{1}(?=\s)/\\\n/g;
-    $info_str =~ s/(?<=[^\"])\n{1}(?=[A-Za-z0-9_])/\"\n/g;
+    $info_str =~ s/(?<=[^\"])\n{1}(?=[A-Z])/\"\n/g;
     # Fix missing initial quotation marks
     my @fields = qw{
         PRGNAM
