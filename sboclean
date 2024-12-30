@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ prompt usage_error script_error in show_version lint_sbo_config %config /;
+use SBO::Lib qw/ prompt usage_error script_error in show_version lint_sbo_config wrapsay %config /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 use File::Path qw(remove_tree);
@@ -104,8 +104,7 @@ if ($work) {
 	my $env_tmp = $SBO::Lib::env_tmp;
 	my $tsbo = $SBO::Lib::tmpd;
 	if ($env_tmp && !$interactive) {
-		warn "This will remove the entire contents of $env_tmp\n";
-		remove_stuff($tsbo) if prompt("Proceed?", default => 'yes');
+		remove_stuff($tsbo) if prompt("This will remove the entire contents of $env_tmp.\nProceed?", default => 'yes');
 	} else {
 		remove_stuff($tsbo);
 	}
@@ -118,14 +117,11 @@ if ($options) {
 		remove_stuff($opt_dir)
 	} else {
 		if (-f "$opt_dir/$options" && $interactive) {
-			warn "This will clear the saved options for $options.\n";
-			unlink("$opt_dir/$options") if prompt("Proceed?", default => 'no');
-		}
-		elsif (-f "$opt_dir/$options") {
+			unlink("$opt_dir/$options") if prompt("This will clear the saved options for $options.\nProceed?", default => 'no');
+		} elsif (-f "$opt_dir/$options") {
 			unlink("$opt_dir/$options");
-		}
-		else {
-			warn "No options are saved for $options.\n";
+		} else {
+			wrapsay "No options are saved for $options.";
 		}
 	}
 }
