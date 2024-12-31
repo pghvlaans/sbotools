@@ -166,7 +166,7 @@ sub get_from_info {
   my $build = get_orig_build_number($sbo);
 
 C<get_orig_build_number()> returns the build number in the SlackBuilds.org tree for the
-given C<$sbo>.
+given C<$sbo>, calling C<get_sbo_build_number()>.
 
 =cut
 
@@ -186,7 +186,7 @@ sub get_orig_build_number {
   my $ver = get_orig_version($sbo);
 
 C<get_orig_version()> returns the version in the SlackBuilds.org tree for the
-given C<$sbo>.
+given C<$sbo>, calling C<get_sbo_version()>.
 
 =cut
 
@@ -262,21 +262,14 @@ sub get_reverse_reqs {
   return \%required_by;
 }
 
-=head2 get_sbo_version
+=head2 get_sbo_build_number
 
-  my $ver = get_sbo_version($location);
+  my $build = get_sbo_build_number($location);
 
-C<get_sbo_version()> returns the version found in the info file in
+C<get_sbo_build_number()> returns the build number found in the SlackBuild in
 C<$location>.
 
 =cut
-
-# find the version in the tree for a given sbo (provided a location)
-sub get_sbo_version {
-  script_error('get_sbo_version requires an argument.') unless @_ == 1;
-  my $version = get_from_info(LOCATION => shift, GET => 'VERSION');
-  return $version->[0];
-}
 
 # find the build number in the tree for a given sbo (provided a location)
 sub get_sbo_build_number {
@@ -298,6 +291,22 @@ sub get_sbo_build_number {
   $build =~ s/\D//g;
 
   return $build;
+}
+
+=head2 get_sbo_version
+
+  my $ver = get_sbo_version($location);
+
+C<get_sbo_version()> returns the version found in the info file in
+C<$location>.
+
+=cut
+
+# find the version in the tree for a given sbo (provided a location)
+sub get_sbo_version {
+  script_error('get_sbo_version requires an argument.') unless @_ == 1;
+  my $version = get_from_info(LOCATION => shift, GET => 'VERSION');
+  return $version->[0];
 }
 
 =head2 parse_info

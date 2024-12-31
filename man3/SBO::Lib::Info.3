@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Info 3"
-.TH SBO::Lib::Info 3 "Pungenday, The Aftermath 71, 3190 YOLD" "" "sbotools 3.2.1"
+.TH SBO::Lib::Info 3 "Setting Orange, The Aftermath 73, 3190 YOLD" "" "sbotools 3.2.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -107,7 +107,7 @@ in \f(CW$location\fR.
 .Ve
 .PP
 \&\f(CWget_orig_build_number()\fR returns the build number in the SlackBuilds.org tree for the
-given \f(CW$sbo\fR.
+given \f(CW$sbo\fR, calling \f(CWget_sbo_build_number()\fR.
 .SS get_orig_version
 .IX Subsection "get_orig_version"
 .Vb 1
@@ -115,7 +115,7 @@ given \f(CW$sbo\fR.
 .Ve
 .PP
 \&\f(CWget_orig_version()\fR returns the version in the SlackBuilds.org tree for the
-given \f(CW$sbo\fR.
+given \f(CW$sbo\fR, calling \f(CWget_sbo_version()\fR.
 .SS get_required_by
 .IX Subsection "get_required_by"
 .Vb 1
@@ -141,6 +141,14 @@ depending on the SlackBuild in the first argument.
 .PP
 \&\f(CWget_reverse_reqs()\fR takes a list of SlackBuilds and returns a hashref with
 other SlackBuilds requiring them.
+.SS get_sbo_build_number
+.IX Subsection "get_sbo_build_number"
+.Vb 1
+\&  my $build = get_sbo_build_number($location);
+.Ve
+.PP
+\&\f(CWget_sbo_build_number()\fR returns the build number found in the SlackBuild in
+\&\f(CW$location\fR.
 .SS get_sbo_version
 .IX Subsection "get_sbo_version"
 .Vb 1
