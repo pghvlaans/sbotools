@@ -59,6 +59,10 @@ from <ftp://slackware.uk/sbosrcarch/> as a fallback measure.
 **GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
 Slackware 14.0 and Slackware 14.1.
 
+If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, the script will exit with a diagnostic
+message.
+
 ## OPTIONS
 
 **-h\|\--help**
@@ -163,7 +167,9 @@ failed when **\--mass-rebuild** is used again.
 8: unable to unset the exec-on-close bit on a temporary file.\
 9: multilib has not been set up (where required).\
 10: **convertpkg-compat32** exited non-zero.\
-11: the **convertpkg-compat32** script cannot be found (where required).
+11: the **convertpkg-compat32** script cannot be found (where
+required).\
+12: interrupt signal received.
 
 ## BUGS
 
@@ -173,7 +179,7 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboremove(1)](sboremove.1.md),
-[sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 

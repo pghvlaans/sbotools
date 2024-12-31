@@ -17,6 +17,13 @@
 */etc/sbotools/sbotools.conf* contains *KEY=VALUE* configuration
 parameters, and is read by all **sbotools** commands.
 
+If an invalid configuration is detected (or requested with
+[sboconfig(1)](sboconfig.1.md)), the script will exit with a diagnostic message.
+
+To quickly restore all default settings, run
+
+    sboconfig --reset
+
 The current configuration keys are as follows:
 
 **CLASSIC=(FALSE\|TRUE)**
@@ -34,10 +41,11 @@ Source archives are otherwise retained in */usr/sbo/distfiles* (with
 *SBO_HOME=/usr/sbo*) by default. If **PKG_DIR** is set, package archives
 will be saved there regardless of **DISTCLEAN**.
 
-**GPG_VERIFY**: If **TRUE**, use **gpg** to verify the contents of the
-local repository when running [sbosnap(1)](sbosnap.1.md), [sbocheck(1)](sbocheck.1.md),
-[sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md). Missing public keys are
-detected, and a download from
+**GPG_VERIFY=(FALSE\|TRUE)**
+
+If **TRUE**, use **gpg** to verify the contents of the local repository
+when running [sbocheck(1)](sbocheck.1.md), [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md).
+Missing public keys are detected, and a download from
 [keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 will be offered
 if available. Only rsync repositories can be verified on Slackware 14.0
 and Slackware 14.1.
@@ -56,8 +64,7 @@ the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
 
 If **FALSE**, use the default git branch for the Slackware version, if
 any. If **branch_name**, attempt to change branches to **branch_name**
-when using [sbosnap(1)](sbosnap.1.md) or [sbocheck(1)](sbocheck.1.md) with an upstream git
-repository.
+when using [sbocheck(1)](sbocheck.1.md) with an upstream git repository.
 
 **BUILD_IGNORE=(FALSE\|TRUE)**
 
@@ -73,8 +80,7 @@ This overrides the **DISTCLEAN** setting for saved packages.
 
 If set to a **path**, this is where the **slackbuilds.org** tree will be
 stored. The default setting is */usr/sbo*. The tree must be
-re-downloaded with **sbosnap fetch** if the **SBO_HOME** setting
-changes.
+re-downloaded with [sbocheck(1)](sbocheck.1.md) if the **SBO_HOME** setting changes.
 
 **LOCAL_OVERRIDES=(FALSE\|/path)**
 
@@ -92,7 +98,7 @@ If set to a **version number**, use the **slackbuilds.org** repository
 for that version of Slackware rather than the one specified in
 */etc/slackware-version*.
 
-**REPO=(FALSE\|url)**
+**REPO=(FALSE\|url\|/path)**
 
 If set to a git or rsync **URL**, use that repository instead of the
 **sbotools** default for your **SLACKWARE_VERSION**. The default
@@ -111,7 +117,7 @@ If set to **TRUE**, use rsync default mirrors except for Slackware
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 

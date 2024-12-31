@@ -17,10 +17,3 @@ These features may be added in the future:
 * Interactive mode for sboconfig
 
 The above list is non-exhaustive and nothing on it is guaranteed to appear in `sbotools`.
-
-## Incoming Features
-
-To arrive in the next version:
-
-* More extensive pre-run configuration linting (currently, this is only done for `SBO_HOME`)
-* Detect an existing local repository more correctly

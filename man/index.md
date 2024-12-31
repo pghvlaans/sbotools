@@ -1,4 +1,4 @@
-The pages here are current as of version 3.2.1 (2024-12-20). For pages from the master branch, see [post-release](post-release/).
+The pages here are current as of version 3.3 (2024-12-31). For pages from the master branch, see [post-release](post-release/).
 
 * [sbocheck(1)](sbocheck.1.md)
     * Fetch the latest version of the upstream SlackBuilds repository; check for version updates, build number changes and out-of-tree installed SlackBuilds.
@@ -12,8 +12,6 @@ The pages here are current as of version 3.2.1 (2024-12-20). For pages from the 
     * Install SlackBuilds with their dependencies; handle compat32 packages and build from templates.
 * [sboremove(1)](sboremove.1.md)
     * Interactively remove installed SlackBuilds along with any unused dependencies.
-* [sbosnap(1)](sbosnap.1.md)
-    * Fetch or update the upstream SlackBuilds repository with *fetch* and *update*.
 * [sboupgrade(1)](sboupgrade.1.md)
     * Upgrade previously-installed SlackBuilds.
 * [sbotools(1)](sbotools.1.md)

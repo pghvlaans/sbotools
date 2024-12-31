@@ -22,6 +22,8 @@
 
     sboconfig [-l]
 
+    sboconfig [--reset]
+
     sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \
               [-g TRUE|FALSE ] [-j #|FALSE] [-p /path|FALSE] \
               [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] \
@@ -50,12 +52,16 @@ List the current configuration options, including unmodified defaults.
 **\--list** also shows the **sboconfig** flag used to set each option
 for reference.
 
+**\--reset**
+
+Restore the default configuration to */etc/sbotools/sbotools.conf*.
+
 **-B\|\--branch (FALSE\|branch_name)**
 
 **GIT_BRANCH**: If **FALSE**, use the default git branch for the
 Slackware version, if any. If **branch_name**, attempt to change
-branches to **branch_name** when using [sbosnap(1)](sbosnap.1.md) or [sbocheck(1)](sbocheck.1.md)
-with an upstream git repository.
+branches to **branch_name** when using [sbocheck(1)](sbocheck.1.md) with an upstream
+git repository.
 
 **-b\|\--build-ignore (FALSE\|TRUE)**
 
@@ -88,9 +94,8 @@ package archives will be saved there regardless of **DISTCLEAN**.
 **-g\|\--gpg-verify (FALSE\|TRUE)**
 
 **GPG_VERIFY**: If **TRUE**, use **gpg** to verify the contents of the
-local repository when running [sbosnap(1)](sbosnap.1.md), [sbocheck(1)](sbocheck.1.md),
-[sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md). Missing public keys are
-detected, and a download from
+local repository when running [sbocheck(1)](sbocheck.1.md), [sboinstall(1)](sboinstall.1.md) and
+[sboupgrade(1)](sboupgrade.1.md). Missing public keys are detected, and a download from
 [keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 will be offered
 if available. Only rsync repositories can be verified on Slackware 14.0
 and Slackware 14.1.
@@ -110,8 +115,8 @@ packages.
 
 **SBO_HOME**: If set to a **path**, this is where the
 **slackbuilds.org** tree will be stored. The default setting is
-*/usr/sbo*. The tree must be re-downloaded with **sbosnap fetch** if the
-**SBO_HOME** setting changes.
+*/usr/sbo*. The tree must be re-downloaded if the **SBO_HOME** setting
+changes.
 
 **-o\|\--local-overrides (FALSE\|/path)**
 
@@ -161,7 +166,7 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md),
-[sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 

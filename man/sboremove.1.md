@@ -38,6 +38,10 @@ performing any removal operations. No option exists to enable
 **sboremove** to uninstall packages without confirmation prompts, and
 there are no plans to add that functionality in the future.
 
+If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, the script will exit with a diagnostic
+message.
+
 ## OPTIONS
 
 **-h\|\--help**
@@ -69,7 +73,7 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md),
-[sbosnap(1)](sbosnap.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 
