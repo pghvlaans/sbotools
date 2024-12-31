@@ -17,6 +17,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboconfig: Use --reset to restore all default configuration values
   * Build.pm: Remove temporary directory in case of signal
   * Bugfix: When parsing info files, fix whitespace, unwanted lines, quotation and backslashes
+  * Info.pm: Tweak build number detection for an sbocheck performance boost
 
 * 3.2.1 - 2024-12-20
   * Bugfix: sboinstall, sboupgrade GPG check for custom repositories (removed unneeded conditional)

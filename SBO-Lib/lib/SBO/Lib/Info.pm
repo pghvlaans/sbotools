@@ -284,10 +284,16 @@ sub get_sbo_build_number {
 
   my $location = shift;
   my $sbo = get_sbo_from_loc($location);
+  my $build;
 
-  my $build = `grep -hm 1 "^BUILD=" $location/$sbo.SlackBuild`;
-  usage_error("get_from_info: could not read $location/$sbo.SlackBuild.") unless
-    defined $build;
+  my ($fh, $exit) = open_read("$location/$sbo.SlackBuild");
+  usage_error("get_sbo_build_number: could not read $location/$sbo.SlackBuild.") if $exit;
+
+  while (my $line = <$fh>) {
+    $build = $line if $line =~ m/^BUILD=/;
+    last if $build;
+  }
+  close $fh;
 
   $build =~ s/\D//g;
 
