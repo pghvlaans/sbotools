@@ -7,7 +7,7 @@ A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maint
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at slackbuilds.org.
 
 ## Changes
-* Post-Release
+* 3.3 - 2024-12-31
   * sboconfig: Allow versions "X.Y+" and "current"; more informative error messages
   * Exit with invalid sbotools.conf parameters
   * sbocheck: Before fetch, offer to exit if the git branch does not exist
