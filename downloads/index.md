@@ -12,7 +12,7 @@ Use the key from the homepage (updated 2024-12-15) to verify downloads with gpg.
 
 ## Version 3.3
 
-Because `sbotools-3.3` addresses a bug that is liable to cause `sbocheck` failure when malformed `info` files are parsed, an archive with the SlackBuild files will be listed here for the time being. The resulting package is marked with the `_pghv` flag.
+Because `sbotools-3.3` addresses a bug that is liable to cause `sbocheck` failure when malformed `info` files are parsed, an archive with the SlackBuild files will be listed here for the time being. The resulting package is marked with the `_pghv` tag.
 
 * [sbotools.tar](sbotools.tar) ([sbotools.tar.asc](sbotools.tar.asc))
     * md5sum: `97c2717786b8aa56352ac74967c8ca78`
