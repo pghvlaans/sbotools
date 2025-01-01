@@ -173,7 +173,7 @@ The sbotools are licensed under the MIT License.
 
 Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
 
-Copyright (C) 2024, K. Eugene Carlson.
+Copyright (C) 2024-2025, K. Eugene Carlson.
 
 =cut
 
