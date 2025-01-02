@@ -202,7 +202,6 @@ sub interactive_menu {
 
 	CLASSIC: $cand = config_prompt("CLASSIC", "If TRUE, enable BUILD_IGNORE and RSYNC_DEFAULT; disable build increment and out-of-tree output for sbocheck; disable displaying saved build options. This is a more traditional look-and-feel.", "TRUE or FALSE.");
 	if ($cand) {
-		say "$cand";
 		unless (validate_choice("CLASSIC", $cand, "TF")) {
 			undef $cand;
 			goto CLASSIC;
