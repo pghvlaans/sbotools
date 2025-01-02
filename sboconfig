@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slurp usage_error script_error lint_sbo_config $tempdir open_fh prompt %config $conf_dir $conf_file show_version /;
+use SBO::Lib qw/ slurp usage_error script_error lint_sbo_config $tempdir open_fh prompt wrapsay %config $conf_dir $conf_file show_version /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always);
 use File::Copy;
@@ -65,6 +65,7 @@ Config options (defaults shown):
   -R|--rsync FALSE:
       RSYNC_DEFAULT: default mirrors (other than for -current) are rsync.
 
+Use $self without options for an interactive menu.
 EOF
 	return 1;
 }
@@ -117,11 +118,6 @@ if (exists $options{list}) {
 	exit 0;
 }
 
-if (not %options) {
-	show_usage();
-	exit 0;
-}
-
 if (exists $options{reset}) {
 	if (prompt("Reset all options to the default setting?", default => 'no')) {
 		say "Restoring default configuration...";
@@ -143,7 +139,220 @@ for my $key (keys %valid_confs) {
 }
 $changes{'SBO_HOME'} = '/usr/sbo' if exists $options{reset};
 
+if (not %options) {
+	interactive_menu();
+}
+
 lint_sbo_config($self, %changes);
+
+# subroutine for prompting the user; takes configuration name,
+# description and valid setting description. Returns user input.
+sub config_prompt {
+	my ($config_name, $description, $validity_description) = @_;
+	my $user_input;
+	wrapsay "\n$config_name\n\n$description\n\n$validity_description";
+	chomp($user_input = prompt("\tCurrent value is $config{$config_name}: "));
+	return $user_input;
+}
+
+# subroutine for validating the user's choice
+sub validate_choice {
+	my ($config_name, $requested_change, $condition) = @_;
+	$changes{$config_name} = $requested_change;
+	my $failed;
+	if ($condition eq "TF") {
+		unless ($changes{$config_name} =~ /^(TRUE|FALSE)$/) {
+			say "\nUse TRUE or FALSE for $config_name.";
+			$failed = 1;
+		}
+	} elsif ($condition eq "PATH") {
+		unless ($changes{$config_name} =~ qr#^(/|FALSE$)#) {
+			say "\nUse an absolute path or FALSE for $config_name.";
+			$failed = 1;
+		}
+	} elsif ($condition eq "NUM") {
+		unless ($changes{$config_name} =~ /^(\d+|FALSE)$/) {
+			say "\nUse a number or FALSE for $config_name.";
+			$failed = 1;
+		}
+	} elsif ($condition eq "SWVER") {
+		unless ($changes{$config_name} =~ m/^(\d+\.\d+(|\+)|FALSE|current)$/) {
+			wrapsay "\nUse #.#, #.#+ or current for $config_name.";
+			$failed = 1;
+		}
+	}
+	if ($failed) {
+		undef $changes{$config_name};
+		return 0;
+	}
+	return 1;
+}
+
+# use an interactive settings menu if sboconfig is passed without
+# options; might be educational for new users
+sub interactive_menu {
+	if (not prompt("$self\n\nThis is the $self interactive menu. Use prompts to set configuration values?", default => 'yes')) {
+		say "Exiting without changes.";
+		exit 0;
+	}
+	wrapsay "All settings are case-sensitive. Enter an empty value to skip any setting. You will have a chance to confirm your settings at the end.";
+
+	my $change_requested;
+	my $cand;
+
+	CLASSIC: $cand = config_prompt("CLASSIC", "If TRUE, enable BUILD_IGNORE and RSYNC_DEFAULT; disable build increment and out-of-tree output for sbocheck; disable displaying saved build options. This is a more traditional look-and-feel.", "TRUE or FALSE.");
+	if ($cand) {
+		say "$cand";
+		unless (validate_choice("CLASSIC", $cand, "TF")) {
+			undef $cand;
+			goto CLASSIC;
+		}
+		undef $cand;
+		$change_requested = 1;
+	}
+
+	DISTCLEAN: $cand = config_prompt("DISTCLEAN", "If TRUE, remove the source code and compiled package after building.", "TRUE or FALSE.");
+	if ($cand) {
+		unless (validate_choice("DISTCLEAN", $cand, "TF")) {
+			undef $cand;
+			goto DISTCLEAN;
+		}
+		undef $cand;
+		$change_requested = 1;
+	}
+
+	JOBS: $cand = config_prompt("JOBS", "If a number, use with -j in MAKEOPTS.", "A number or FALSE.");
+	if ($cand) {
+		unless (validate_choice("JOBS", $cand, "NUM")) {
+			undef $cand;
+			goto JOBS;
+		}
+		undef $cand;
+		$change_requested = 1;
+	}
+
+	NOCLEAN: $cand = config_prompt("NOCLEAN", "If TRUE, do not clean working directories after building.", "TRUE or FALSE.");
+	if ($cand) {
+		unless (validate_choice("NOCLEAN", $cand, "TF")) {
+			undef $cand;
+			goto NOCLEAN;
+		}
+		undef $cand;
+		$change_requested = 1;
+	}
+
+	$cand = config_prompt("GIT_BRANCH", "If set to a branch name, use a custom git branch for the SBo repository. Has no effect on rsync mirrors.", "Branch name or FALSE.");
+	if ($cand) {
+		$changes{GIT_BRANCH} = $cand;
+		undef $cand;
+		$change_requested = 1;
+	}
+
+	GPG_VERIFY: $cand = config_prompt("GPG_VERIFY", "If TRUE, perform gpg verification.", "TRUE or FALSE.");
+	if ($cand) {
+		unless (validate_choice("GPG_VERIFY", $cand, "TF")) {
+			undef $cand;
+			goto GPG_VERIFY;
+		}
+		undef $cand;
+		$change_requested = 1;
+	}
+
+	BUILD_IGNORE: if (not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') {
+		$cand = config_prompt("BUILD_IGNORE", "If TRUE, do upgrades only if the version number differs.", "TRUE or FALSE.");
+		if ($cand) {
+			unless (validate_choice("BUILD_IGNORE", $cand, "TF")) {
+				undef $cand;
+				goto BUILD_IGNORE;
+			}
+			undef $cand;
+			$change_requested = 1;
+		}
+	}
+
+	PKG_DIR: $cand = config_prompt("PKG_DIR", "If set to an absolute path, store newly-built packages there regardless of DISTCLEAN.", "An absolute path or FALSE.");
+	if ($cand) {
+		unless (validate_choice("PKG_DIR", $cand, "PATH")) {
+			undef $cand;
+			goto PKG_DIR;
+		}
+		undef $cand;
+		$change_requested = 1;
+	}
+
+	SBO_HOME: $cand = config_prompt("SBO_HOME", "If set to an absolute path, this is where the slackbuilds.org tree will live.", "An absolute path or FALSE.");
+	if ($cand) {
+		unless (validate_choice("SBO_HOME", $cand, "PATH")) {
+			undef $cand;
+			goto SBO_HOME;
+		}
+		undef $cand;
+		$change_requested = 1;
+	}
+
+	LOCAL_OVERRIDES: $cand = config_prompt("LOCAL_OVERRIDES", "If set to an absolute path, any directory name in the top level under that path matching a SlackBuild name will be used in preference to the main repository. Personalized builds can be stored here.", "An absolute path or FALSE.");
+	if ($cand) {
+		unless (validate_choice("LOCAL_OVERRIDES", $cand, "PATH")) {
+			undef $cand;
+			goto LOCAL_OVERRIDES;
+		}
+		undef $cand;
+		$change_requested = 1;
+	}
+
+	SLACKWARE_VERSION: $cand = config_prompt("SLACKWARE_VERSION", "If set to a version specification (e.g. 14.2, 15.0+ or current), force the use of the SBo repository for that version.", "Use #.#, #.#+, current or FALSE.");
+	if ($cand) {
+		unless (validate_choice("SLACKWARE_VERSION", $cand, "SWVER")) {
+			undef $cand;
+			goto SLACKWARE_VERSION;
+		}
+		undef $cand;
+		$change_requested = 1;
+	}
+
+	$cand = config_prompt("REPO", "If set to a URL, use this as the upstream SBo repository. Git and rsync repositories only.", "A URL or FALSE.");
+	if ($cand) {
+		$changes{REPO} = $cand;
+		undef $cand;
+		$change_requested = 1;
+	}
+
+	RSYNC_DEFAULT: if (not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') {
+		$cand = config_prompt("RSYNC_DEFAULT", "If TRUE, If TRUE, the default mirror will be rsync except for Slackware -current. Please note that REPO overrides this setting.", "TRUE or FALSE.");
+		if ($cand) {
+			unless (validate_choice("RSYNC_DEFAULT", $cand, "TF")) {
+				undef $cand;
+				goto RSYNC_DEFAULT;
+			}
+			undef $cand;
+			$change_requested = 1;
+		}
+	}
+
+	if ($change_requested) {
+		wrapsay "\nDone. The following settings have been specified:", 1;
+		for my $item (keys %valid_confs) {
+			my $title = $valid_confs{$item};
+			my $spacer = "\t\t";
+			$spacer = "\t\t\t" if $title eq "JOBS";
+			$spacer = "\t" if $title eq "SLACKWARE_VERSION" or $title eq "LOCAL_OVERRIDES";
+			say "\t$title:$spacer$changes{$title}" if defined $changes{$title};
+		}
+
+		unless (prompt("\nWrite these settings to /etc/sbotools/sbotools.conf?", default => 'yes')) {
+			if (prompt("Start this menu over?", default => 'no')) {
+				undef %changes;
+				interactive_menu();
+			} else {
+				say "Exiting without changes.";
+				exit 0;
+			}
+		}
+	} else {
+		say "\nNo settings were specified. Exiting.";
+		exit 0;
+	}
+}
 
 sub config_write {
 	script_error('config_write requires at least two arguments.') unless @_ >= 2;

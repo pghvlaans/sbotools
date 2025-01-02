@@ -96,6 +96,11 @@ The simplest way to upgrade all eligible SlackBuilds is to run
 Build number increments will be ignored if **BUILD_IGNORE** is set to
 **TRUE**.
 
+Using [sboconfig(1)](sboconfig.1.md) without flags enters an interactive settings
+menu. Each option is explained and no changes are made without
+verification. Using flags is faster, but new users may find this a
+helpful resource.
+
 ## BUGS
 
 None known. If found, Issues and Pull Requests to

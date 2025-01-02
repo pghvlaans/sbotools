@@ -31,12 +31,14 @@ Unless an important bug comes to light, the next version of sbotools,
   configuration values; it will be reachable by running sboconfig
   without flags or options.
 
+  STATUS: Added
+
 * Rebuild reverse dependencies.
 
   This will be similar to sboupgrade --force-reqs, except for reverse
   dependencies. A sticking point is that e.g. google-go-lang includes a
   version-specific profile.d script, and subsequent reverse dependency
-  builds invariably until it has been sourced. Script-specific
+  builds invariably fail until it has been sourced. Script-specific
   workarounds will not be used (maintenance nightmare), and sbotools
   will not automatically source every executable script in
   /etc/profile.d (potentially interferes with user-sourced scripts).
