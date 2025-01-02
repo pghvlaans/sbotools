@@ -33,8 +33,12 @@
 ## DESCRIPTION
 
 **sboconfig** is a front-end for managing **sbotools** configuration
-options. The [sbotools.conf(5)](sbotools.conf.5.md) file can also be manually edited; any
-fields not relevant to **sbotools** configuration will be ignored.
+options. Using **sboconfig** without any flags will start an interactive
+menu to specify settings; all options are accompanied by an explanatory
+message, and no changes are applied without user confirmation.
+
+The [sbotools.conf(5)](sbotools.conf.5.md) file can also be manually edited; any fields
+not relevant to **sbotools** configuration will be ignored.
 
 ## OPTIONS
 

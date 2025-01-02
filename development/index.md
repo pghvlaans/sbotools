@@ -14,7 +14,10 @@ These features may be added in the future:
 
 * Rebuild a reverse dependency queue
 * New tool for working with `sbotools.hints`
-* Interactive mode for `sboconfig`
 * Optionally, only upgrade on version increment (not difference)
 
 Nothing on the above list is guaranteed to appear in `sbotools`.
+
+## Arriving in Version 3.4
+
+* Interactive mode for `sboconfig` (use without flags or options to access)

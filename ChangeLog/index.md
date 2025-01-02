@@ -1,5 +1,8 @@
 # ChangeLog
-* 3.3 -2024-12-31
+* Post-Release
+  * *sboconfig*: Run without flags or options to use an interactive menu
+
+* 3.3 - 2024-12-31
   * *sboconfig*: Allow versions "X.Y+" and "current"; more informative error messages
   * Exit with invalid *sbotools.conf* parameters
   * *sbocheck*: Before fetch, offer to exit if the git branch does not exist
