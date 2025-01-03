@@ -21,7 +21,8 @@
     sboupgrade [-h|-v]
 
     sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \
-               [-b TRUE|FALSE] [-fiprz] --all|sbo_name (sbo_name)
+               [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiprz] \
+\--all\|sbo_name (sbo_name)
 
 ## DESCRIPTION
 
@@ -127,6 +128,12 @@ Bypass all user prompts and all dependency resolution for the requested
 SlackBuilds. Unless it is obvious that dependency resolution and build
 options are not required, this option should not be used with
 **sboupgrade**.
+
+**-S\|\--strict-versions**
+
+If **TRUE**, only perform upgrades if the incoming version or build
+number is higher. This has no effect scripts in the local overrides
+directory. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-z\|\--force-reqs**
 

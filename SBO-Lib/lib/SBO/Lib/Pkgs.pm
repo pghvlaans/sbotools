@@ -71,19 +71,28 @@ sub get_available_updates {
         next unless $location;
 
         my $version = get_sbo_version($location);
-	next unless $version;
-	my $bump = get_sbo_build_number($location);
-	next unless $bump;
-	if ($filter eq 'VERS') {
-            if (version_cmp($version, $pkg->{version}) != 0) {
+        next unless $version;
+        my $bump = get_sbo_build_number($location);
+        next unless $bump;
+        my $version_needed;
+        my $build_needed;
+        if ($config{STRICT_VERSIONS} eq 'TRUE' and not is_local($pkg->{name})) {
+            $version_needed = version_cmp($version, $pkg->{version}) > 0;
+            $build_needed = build_cmp($bump, $pkg->{numbuild}, $version, $pkg->{version}) > 0;
+        } else {
+            $version_needed = version_cmp($version, $pkg->{version}) != 0;
+            $build_needed = build_cmp($bump, $pkg->{numbuild}, $version, $pkg->{version}) != 0;
+        }
+        if ($filter eq 'VERS') {
+            if ($version_needed) {
                 push @updates, { name => $pkg->{name}, installed => $pkg->{version}, build => $pkg->{numbuild}, update => $version };
             }
         } elsif ($filter eq 'BUILD') {
-	    if (build_cmp($bump, $pkg->{numbuild}, $version, $pkg->{version})) {
+	    if ($build_needed) {
                 push @updates, { name => $pkg->{name}, installed => $pkg->{version}, build => $pkg->{numbuild}, update => $version, bump => $bump };
             }
         } else {
-            if (version_cmp($version, $pkg->{version}) != 0 || build_cmp($bump, $pkg->{numbuild}, $version, $pkg->{version})) {
+            if ($version_needed or $build_needed) {
                 push @updates, { name => $pkg->{name}, installed => $pkg->{version}, build => $pkg->{numbuild}, update => $version, bump => $bump };
 	    }
         }

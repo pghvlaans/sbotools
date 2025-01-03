@@ -15,6 +15,8 @@ Unless an important bug comes to light, the next version of sbotools,
   making the upgrade behavior configurable seems like a reasonable
   compromise.
 
+  STATUS: Added
+
 * A tool to interface with sbotools.hints.
 
   sboconfig is a convenient way to modify sbotools.conf without worrying
@@ -38,7 +40,6 @@ Unless an important bug comes to light, the next version of sbotools,
   This will be similar to sboupgrade --force-reqs, except for reverse
   dependencies. A sticking point is that e.g. google-go-lang includes a
   version-specific profile.d script, and subsequent reverse dependency
-  builds invariably fail until it has been sourced. Script-specific
-  workarounds will not be used (maintenance nightmare), and sbotools
-  will not automatically source every executable script in
-  /etc/profile.d (potentially interferes with user-sourced scripts).
+  builds invariably fail until it has been sourced. To keep this kind
+  of situation from happening, it'll be run from sbointall after the
+  target script has been upgraded.

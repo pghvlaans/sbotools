@@ -19,7 +19,7 @@ sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \\
           [-g TRUE|FALSE ] [-j #|FALSE] [-p /path|FALSE] \\
           [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] \\
           [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE] \\
-          [-R TRUE|FALSE]
+          [-R TRUE|FALSE] [-S TRUE|FALSE]
 .SH DESCRIPTION
 .P
 .B
@@ -359,6 +359,19 @@ RSYNC_DEFAULT\fR\
 .B
 TRUE\fR\
 \&, use rsync default mirrors except for Slackware -current.
+.RE
+.P
+.B
+-S|--strict-versions (FALSE|TRUE)
+.RS
+.B
+STRICT_VERSIONS\fR\
+\&: If set to
+.B
+TRUE\fR\
+\&, upgrades will only be attempted if the incoming
+version or build number is greater. This has no
+effect on scripts in the local overrides directory.
 .RE
 .SH EXIT CODES
 .P

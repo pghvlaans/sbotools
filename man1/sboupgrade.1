@@ -9,7 +9,8 @@ sboupgrade
 sboupgrade [-h|-v]
 .P
 sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \\
-           [-b TRUE|FALSE] [-fiprz] --all|sbo_name (sbo_name)
+           [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiprz] \\
+           --all|sbo_name (sbo_name)
 .SH DESCRIPTION
 .P
 .B
@@ -289,6 +290,21 @@ resolution and build options are not required, this option should
 not be used with
 .B
 sboupgrade\fR\
+\&.
+.RE
+.P
+.B
+-S|--strict-versions
+.RS
+If
+.B
+TRUE\fR\
+\&, only perform upgrades if the incoming version or build number is higher. This
+has no effect scripts in the local overrides directory. See
+.B
+sboconfig(1)
+or
+sbotools.conf(5)\fR\
 \&.
 .RE
 .P

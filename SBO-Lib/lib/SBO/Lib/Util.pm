@@ -108,7 +108,7 @@ C</usr/sbo> if still C<"FALSE">.
 
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
-C<GPG_VERIFY> and C<RSYNC_DEFAULT>.
+C<GPG_VERIFY>, C<RSYNC_DEFAULT> and C<STRICT_VERSIONS>.
 
 =head2 @listings
 
@@ -134,6 +134,7 @@ our %config = (
   GIT_BRANCH => 'FALSE',
   RSYNC_DEFAULT => 'FALSE',
   GPG_VERIFY => 'FALSE',
+  STRICT_VERSIONS => 'FALSE',
 );
 
 read_config();
@@ -158,7 +159,8 @@ numbers are, upgrading for a script bump may be in order.
 sub build_cmp {
   my ($b1, $b2, $v1, $v2) = @_;
   if (versioncmp($v1, $v2)) { return 0; }
-  if ($b1 != $b2) { return 1; }
+  if ($b1 > $b2) { return 1; }
+  if ($b1 < $b2) { return -1; }
 
   return 0;
 }
@@ -487,6 +489,12 @@ sub lint_sbo_config {
     unless ($configs{SBO_HOME} =~ qr#^(/|FALSE$)#) {
       push @invalid, "SBO_HOME:" if $running ne 'sboconfig';
       push @invalid, "$warn -s (absolute path or FALSE)";
+    }
+  }
+  if (exists $configs{STRICT_VERSIONS}) {
+    unless ($configs{STRICT_VERSIONS} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "STRICT_VERSIONS:" if $running ne 'sboconfig';
+      push @invalid, "$warn -S (TRUE or FALSE)";
     }
   }
   if (exists $configs{SLACKWARE_VERSION}) {

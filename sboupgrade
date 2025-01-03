@@ -48,6 +48,8 @@ Options (defaults shown first where applicable):
     install a -compat32 package (multilib systems only).
   -r|--nointeractive:
     non-interactive; skips README and all prompts.
+  -S|--strict-versions (FALSE|TRUE):
+    if TRUE, SBo upgrades only when the version or build number is higher.
   -z|--force-reqs:
     rebuild dependencies as well.
 
@@ -60,6 +62,7 @@ my $distclean = $config{DISTCLEAN};
 my $jobs = $config{JOBS};
 my $build_ignore = $config{BUILD_IGNORE};
 my $gpg = $config{GPG_VERIFY};
+my $strict_versions = $config{STRICT_VERSIONS};
 my ($help, $vers, $force, $no_install, $non_int, $force_reqs, $all);
 
 GetOptions(
@@ -74,6 +77,7 @@ GetOptions(
 	'force-reqs|z'      => \$force_reqs,
 	'build-ignore|b=s'	=> \$build_ignore,
 	'all'               => \$all,
+	'strict-versions|S=s' => \$strict_versions,
 );
 
 if ($help) { show_usage(); exit 0 }
@@ -97,6 +101,11 @@ if ($build_ignore) {
 		unless ($build_ignore =~ /^(TRUE|FALSE)$/);
 }
 
+if ($strict_versions) {
+	usage_error("You have provided an invalid value for -S|--strict-versions")
+		unless ($strict_versions =~ /^(TRUE|FALSE)$/);
+}
+
 if ($jobs) {
 	usage_error("You have provided an invalid value for -j|--jobs")
 		unless ($jobs =~ /^\d+$/ || $jobs eq 'FALSE');
@@ -106,6 +115,8 @@ $noclean = $noclean eq 'TRUE' ? 1 : 0;
 $distclean = $distclean eq 'TRUE' ? 1 : 0;
 $build_ignore = $build_ignore eq 'TRUE' ? 1 : 0;
 $gpg = $gpg eq 'TRUE' ? 1 : 0;
+# from here, only Pkgs.pm uses STRICT_VERSIONS
+$config{STRICT_VERSIONS} = $strict_versions if $strict_versions;
 
 if ($gpg) { verify_gpg(); }
 
@@ -127,7 +138,7 @@ if (!@ARGV) { show_usage(); exit 1 }
 usage_error("-r|--nointeractive and -z|--force-reqs can not be used together.")
 	if $non_int && $force_reqs;
 
-# if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
+# if we can't find SLACKBUILDS.TXT in $config{SBO_HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
 
 my @sbos = uniq @ARGV;
@@ -187,6 +198,9 @@ if ($non_int) {
 		my $name = $sbo;
 		$name =~ s/-compat32$//;
 		next if not $name;
+		unless ($force_reqs or $force) {
+			next unless $updates{$name};
+		}
 		my $queue = get_build_queue([$name], \%warnings);
 		if (not $force_reqs) {
 			@$queue = grep { !$inst_names{$_} or $updates{$_} } @$queue;

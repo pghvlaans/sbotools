@@ -292,6 +292,17 @@ If set to
 TRUE\fR\
 \&, use rsync default mirrors except for Slackware -current.
 .RE
+.P
+.B
+STRICT_VERSIONS=(FALSE|TRUE)
+.RS
+If set to
+.B
+TRUE\fR\
+\&, upgrades will only be attempted if the incoming
+version or build number is greater. This has no
+effect on scripts in the local overrides directory.
+.RE
 .SH SEE ALSO
 .P
 sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.hints(5)

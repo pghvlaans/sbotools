@@ -64,6 +64,8 @@ Config options (defaults shown):
       REPO: use a repository other than SBo.
   -R|--rsync FALSE:
       RSYNC_DEFAULT: default mirrors (other than for -current) are rsync.
+  -S|--strict-versions FALSE:
+      STRICT_VERSIONS: only upgrade when the version or build number is higher.
 
 Use $self without options for an interactive menu.
 EOF
@@ -75,7 +77,7 @@ my %options;
 GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'classic|C=s', 'noclean|c=s',
 	'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 	'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
-    'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s');
+    'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-versions|S=s');
 
 if ($options{help}) { show_usage(); exit 0 }
 if ($options{version}) { show_version(); exit 0 }
@@ -94,6 +96,7 @@ my %valid_confs = (
 	'branch'            => 'GIT_BRANCH',
 	'build-ignore'      => 'BUILD_IGNORE',
 	'gpg-verify'        => 'GPG_VERIFY',
+	'strict-versions'   => 'STRICT_VERSIONS',
 );
 
 my %params = (
@@ -110,6 +113,7 @@ my %params = (
 	RSYNC_DEFAULT     => 'R|--rsync',
 	GIT_BRANCH        => 'B|--branch',
 	BUILD_IGNORE      => 'b|--build-ignore',
+	STRICT_VERSIONS   => 'S|--strict-versions',
 );
 
 if (exists $options{list}) {
@@ -240,6 +244,8 @@ sub interactive_menu {
 
 	LOCAL_OVERRIDES: config_prompt("LOCAL_OVERRIDES", "If set to an absolute path, any directory name in the top level under that path matching a SlackBuild name will be used in preference to the main repository. Personalized builds can be stored here.", "An absolute path or FALSE.", "PATH");
 
+	STRICT_VERSIONS: config_prompt("STRICT_VERSIONS", "If TRUE, only perform upgrades when the incoming version or build number is higher. This has no effect on scripts in the local overrides directory.", "TRUE or FALSE.", "TF");
+
 	SLACKWARE_VERSION: config_prompt("SLACKWARE_VERSION", "If set to a version specification (e.g. 14.2, 15.0+ or current), force the use of the SBo repository for that version.", "Use #.#, #.#+, current or FALSE.", "SWVER");
 
 	REPO: config_prompt("REPO", "If set to a URL, use this as the upstream SBo repository. Git and rsync repositories only.", "A URL or FALSE.", 0);
@@ -255,7 +261,7 @@ sub interactive_menu {
 			my $title = $valid_confs{$item};
 			my $spacer = "\t\t";
 			$spacer = "\t\t\t" if $title eq "JOBS" or $title eq "REPO";
-			$spacer = "\t" if $title eq "SLACKWARE_VERSION" or $title eq "LOCAL_OVERRIDES";
+			$spacer = "\t" if $title eq "SLACKWARE_VERSION" or $title eq "LOCAL_OVERRIDES" or $title eq "STRICT_VERSIONS";
 			say "\t$title:$spacer$changes{$title}" if defined $changes{$title};
 		}
 
