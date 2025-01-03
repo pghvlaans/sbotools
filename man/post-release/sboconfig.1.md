@@ -28,7 +28,7 @@
               [-g TRUE|FALSE ] [-j #|FALSE] [-p /path|FALSE] \
               [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] \
               [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE] \
-              [-R TRUE|FALSE]
+              [-R TRUE|FALSE] [-S TRUE|FALSE]
 
 ## DESCRIPTION
 
@@ -153,6 +153,12 @@ directories are under the category directories.
 
 **RSYNC_DEFAULT**: If set to **TRUE**, use rsync default mirrors except
 for Slackware -current.
+
+**-S\|\--strict-upgrades (FALSE\|TRUE)**
+
+**STRICT_UPGRADES**: If set to **TRUE**, upgrades will only be attempted
+if the incoming version or build number is greater. This has no effect
+on scripts in the local overrides directory.
 
 ## EXIT CODES
 

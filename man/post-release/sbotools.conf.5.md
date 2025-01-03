@@ -114,6 +114,12 @@ directories are under the category directories.
 If set to **TRUE**, use rsync default mirrors except for Slackware
 -current.
 
+**STRICT_UPGRADES=(FALSE\|TRUE)**
+
+If set to **TRUE**, upgrades will only be attempted if the incoming
+version or build number is greater. This has no effect on scripts in the
+local overrides directory.
+
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md),
