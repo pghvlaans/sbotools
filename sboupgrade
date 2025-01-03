@@ -48,7 +48,7 @@ Options (defaults shown first where applicable):
     install a -compat32 package (multilib systems only).
   -r|--nointeractive:
     non-interactive; skips README and all prompts.
-  -S|--strict-versions (FALSE|TRUE):
+  -S|--strict-upgrades (FALSE|TRUE):
     if TRUE, SBo upgrades only when the version or build number is higher.
   -z|--force-reqs:
     rebuild dependencies as well.
@@ -62,7 +62,7 @@ my $distclean = $config{DISTCLEAN};
 my $jobs = $config{JOBS};
 my $build_ignore = $config{BUILD_IGNORE};
 my $gpg = $config{GPG_VERIFY};
-my $strict_versions = $config{STRICT_VERSIONS};
+my $strict_upgrades = $config{STRICT_UPGRADES};
 my ($help, $vers, $force, $no_install, $non_int, $force_reqs, $all);
 
 GetOptions(
@@ -77,7 +77,7 @@ GetOptions(
 	'force-reqs|z'      => \$force_reqs,
 	'build-ignore|b=s'	=> \$build_ignore,
 	'all'               => \$all,
-	'strict-versions|S=s' => \$strict_versions,
+	'strict-upgrades|S=s' => \$strict_upgrades,
 );
 
 if ($help) { show_usage(); exit 0 }
@@ -101,9 +101,9 @@ if ($build_ignore) {
 		unless ($build_ignore =~ /^(TRUE|FALSE)$/);
 }
 
-if ($strict_versions) {
-	usage_error("You have provided an invalid value for -S|--strict-versions")
-		unless ($strict_versions =~ /^(TRUE|FALSE)$/);
+if ($strict_upgrades) {
+	usage_error("You have provided an invalid value for -S|--strict-upgrades")
+		unless ($strict_upgrades =~ /^(TRUE|FALSE)$/);
 }
 
 if ($jobs) {
@@ -115,8 +115,8 @@ $noclean = $noclean eq 'TRUE' ? 1 : 0;
 $distclean = $distclean eq 'TRUE' ? 1 : 0;
 $build_ignore = $build_ignore eq 'TRUE' ? 1 : 0;
 $gpg = $gpg eq 'TRUE' ? 1 : 0;
-# from here, only Pkgs.pm uses STRICT_VERSIONS
-$config{STRICT_VERSIONS} = $strict_versions if $strict_versions;
+# from here, only Pkgs.pm uses STRICT_UPGRADES
+$config{STRICT_UPGRADES} = $strict_upgrades if $strict_upgrades;
 
 if ($gpg) { verify_gpg(); }
 

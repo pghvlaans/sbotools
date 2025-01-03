@@ -92,11 +92,11 @@ sub get_update_list {
 	}
 	if ($filter eq 'BUILD') { print "Checking for bumped SlackBuilds..."; }
 	my @updates;
-	# if STRICT_VERSIONS is true, apparent downgrades must still be reported, just with different formatting
-	if ($config{STRICT_VERSIONS} eq 'TRUE') {
-		$config{STRICT_VERSIONS} = 'FALSE';
+	# if STRICT_UPGRADES is true, apparent downgrades must still be reported, just with different formatting
+	if ($config{STRICT_UPGRADES} eq 'TRUE') {
+		$config{STRICT_UPGRADES} = 'FALSE';
 		@updates = @{ get_available_updates($filter) };
-		$config{STRICT_VERSIONS} = 'TRUE';
+		$config{STRICT_UPGRADES} = 'TRUE';
 	} else {
 		@updates = @{ get_available_updates($filter) };
 	}
@@ -112,8 +112,8 @@ sub get_update_list {
 		};
 		if ($filter eq 'BUILD') { $updates{$update->{name}}{available} = $update->{bump}; }
 		if ($filter eq 'BUILD') { $updates{$update->{name}}{build} = $update->{build}; }
-		if ($filter eq 'VERS' and $config{STRICT_VERSIONS} eq 'TRUE') { $updates{$update->{name}}{differs_only} = 1 unless version_cmp($updates{$update->{name}}{available}, $updates{$update->{name}}{installed}) > 0; }
-		if ($filter eq 'BUILD' and $config{STRICT_VERSIONS} eq 'TRUE') { $updates{$update->{name}}{differs_only} = 1 unless build_cmp($updates{$update->{name}}{available}, $update->{build}, 1, 1) > 0; }
+		if ($filter eq 'VERS' and $config{STRICT_UPGRADES} eq 'TRUE') { $updates{$update->{name}}{differs_only} = 1 unless version_cmp($updates{$update->{name}}{available}, $updates{$update->{name}}{installed}) > 0; }
+		if ($filter eq 'BUILD' and $config{STRICT_UPGRADES} eq 'TRUE') { $updates{$update->{name}}{differs_only} = 1 unless build_cmp($updates{$update->{name}}{available}, $update->{build}, 1, 1) > 0; }
 	}
 	for my $update (@outdated) {
 		my $name = $update->{name};
@@ -133,8 +133,8 @@ sub get_update_list {
 # sboname 1.0  <  needs updating (1.1 from overrides, 1.2 from SBo)
 # sboname 1.0 (1)  <  was bumped (build 2 from overrides)
 # sboname 1.0 (1)  <  was bumped (build 2 from SBo)
-# sboname 1.0 (2)  <  differs (build 1 from SBo) # (note: for STRICT_VERSIONS)
-# sboname 1.1  <  version differs (1.0 from SBo) # (note: for STRICT_VERSIONS)
+# sboname 1.0 (2)  <  differs (build 1 from SBo) # (note: for STRICT_UPGRADES)
+# sboname 1.1  <  version differs (1.0 from SBo) # (note: for STRICT_UPGRADES)
 # sboname 1.0  <  override differs (1.1 from SBo)
 
 	my $max = 0;

@@ -129,7 +129,7 @@ SlackBuilds. Unless it is obvious that dependency resolution and build
 options are not required, this option should not be used with
 **sboupgrade**.
 
-**-S\|\--strict-versions**
+**-S\|\--strict-upgrades**
 
 If **TRUE**, only perform upgrades if the incoming version or build
 number is higher. This has no effect scripts in the local overrides

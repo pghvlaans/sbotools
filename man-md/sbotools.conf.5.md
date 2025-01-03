@@ -114,7 +114,7 @@ directories are under the category directories.
 If set to **TRUE**, use rsync default mirrors except for Slackware
 -current.
 
-**STRICT_VERSIONS=(FALSE\|TRUE)**
+**STRICT_UPGRADES=(FALSE\|TRUE)**
 
 If set to **TRUE**, upgrades will only be attempted if the incoming
 version or build number is greater. This has no effect on scripts in the

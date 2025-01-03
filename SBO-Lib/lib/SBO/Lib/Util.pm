@@ -108,7 +108,7 @@ C</usr/sbo> if still C<"FALSE">.
 
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
-C<GPG_VERIFY>, C<RSYNC_DEFAULT> and C<STRICT_VERSIONS>.
+C<GPG_VERIFY>, C<RSYNC_DEFAULT> and C<STRICT_UPGRADES>.
 
 =head2 @listings
 
@@ -134,7 +134,7 @@ our %config = (
   GIT_BRANCH => 'FALSE',
   RSYNC_DEFAULT => 'FALSE',
   GPG_VERIFY => 'FALSE',
-  STRICT_VERSIONS => 'FALSE',
+  STRICT_UPGRADES => 'FALSE',
 );
 
 read_config();
@@ -491,9 +491,9 @@ sub lint_sbo_config {
       push @invalid, "$warn -s (absolute path or FALSE)";
     }
   }
-  if (exists $configs{STRICT_VERSIONS}) {
-    unless ($configs{STRICT_VERSIONS} =~ /^(TRUE|FALSE)$/) {
-      push @invalid, "STRICT_VERSIONS:" if $running ne 'sboconfig';
+  if (exists $configs{STRICT_UPGRADES}) {
+    unless ($configs{STRICT_UPGRADES} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "STRICT_UPGRADES:" if $running ne 'sboconfig';
       push @invalid, "$warn -S (TRUE or FALSE)";
     }
   }

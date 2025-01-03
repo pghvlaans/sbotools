@@ -11,7 +11,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboconfig: Run without flags or options to use an interactive menu
   * sboupgrade: Do not attempt to upgrade the build queue if the requested script does not need an upgrade
   * sbocheck: Display the installed build number for the build number check
-  * Add setting STRICT_VERSIONS: Except for build number upgrades and override packages, only upgrade when the version is higher
+  * Add setting STRICT_UPGRADES: Except for build number upgrades and override packages, only upgrade when the version is higher
 
 * 3.3 - 2024-12-31
   * sboconfig: Allow versions "X.Y+" and "current"; more informative error messages

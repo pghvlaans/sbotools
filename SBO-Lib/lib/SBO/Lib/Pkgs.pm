@@ -76,7 +76,7 @@ sub get_available_updates {
         next unless $bump;
         my $version_needed;
         my $build_needed;
-        if ($config{STRICT_VERSIONS} eq 'TRUE' and not is_local($pkg->{name})) {
+        if ($config{STRICT_UPGRADES} eq 'TRUE' and not is_local($pkg->{name})) {
             $version_needed = version_cmp($version, $pkg->{version}) > 0;
             $build_needed = build_cmp($bump, $pkg->{numbuild}, $version, $pkg->{version}) > 0;
         } else {
