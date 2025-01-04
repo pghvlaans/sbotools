@@ -203,7 +203,7 @@ if (length $utemp) {
 			}
 			$build_queue = merge_queues($build_queue, $interim_queue) if $interim_queue;
 		}
-		exit 0 unless $build_queue
+		exit 0 unless $build_queue;
 	} else {
 		for my $sbo (@ARGV) {
 			my $queue = get_build_queue([$sbo], \%warnings);
