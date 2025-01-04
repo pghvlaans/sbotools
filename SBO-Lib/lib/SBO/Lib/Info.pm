@@ -15,9 +15,9 @@ our @EXPORT_OK = qw{
   check_x32
   get_download_info
   get_from_info
+  get_full_reverse
   get_orig_build_number
   get_orig_version
-  get_required_by
   get_requires
   get_reverse_reqs
   get_sbo_build_number
@@ -161,6 +161,37 @@ sub get_from_info {
   return $store->{$args{GET}};
 }
 
+=head2 get_full_reverse
+
+  my @get_full_reverse = get_full_reverse($sbo, %installed, %fulldeps, @list)
+
+C<get_full_reverse()> takes a SlackBuild, a hash of installed packages, a hash
+of reverse dependency relationships (from C<get_reverse_reqs>) and an array.
+The array should be empty when called from outside of the subroutine. It
+returns an array with installed reverse dependencies.
+
+=cut
+
+sub get_full_reverse {
+  script_error("full_reverse requires arguments.") unless @_;
+  my ($sbo, $installed, $fulldeps, @list) = @_;
+  my @sublist;
+  for my $cand (keys %$installed) {
+    push @sublist, $cand if $fulldeps->{$sbo}->{$cand};
+  }
+  push @list, @sublist if @sublist;
+
+  if (@sublist) {
+    for my $revdep (@sublist) {
+      my @newlist = get_full_reverse($revdep, $installed, $fulldeps, @list);
+      push @list, @newlist if @newlist;
+    }
+    my @full_reverse = uniq @list;
+    return @full_reverse;
+  }
+  return;
+}
+
 =head2 get_orig_build_number
 
   my $build = get_orig_build_number($sbo);
@@ -201,29 +232,6 @@ sub get_orig_version {
   return get_sbo_version($location);
 }
 
-=head2 get_required_by
-
-  my @dep_of = get_required_by($sbo, $confirmed, $required_by);
-
-C<get_required_by()> takes a SlackBuild, an array with already-confirmed
-requirements and a hash with requirements for a group of SlackBuilds (all
-installed SlackBuilds, for example). It returns an array with SlackBuilds
-depending on the SlackBuild in the first argument.
-
-=cut
-
-sub get_required_by {
-  my ($sbo, $confirmed, $required_by) = @_;
-  my @dep_of;
-
-  if ( $required_by->{$sbo} ) {
-    for my $req_by (keys %{$required_by->{$sbo}}) {
-      push @dep_of, $req_by unless in($req_by => @$confirmed);
-    }
-  }
-  return @dep_of;
-}
-
 =head2 get_requires
 
   my $reqs = get_requires($sbo);
@@ -245,7 +253,8 @@ sub get_requires {
   my %required_by = get_reverse_reqs($slackbuilds);
 
 C<get_reverse_reqs()> takes a list of SlackBuilds and returns a hashref with
-other SlackBuilds requiring them.
+reverse dependencies among them. C<$slackbuilds> should ordinarily
+be a list of all installed scripts.
 
 =cut
 

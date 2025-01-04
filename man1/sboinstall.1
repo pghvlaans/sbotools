@@ -15,7 +15,7 @@ sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
            [-i] --use-template FILE
 .P
 sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
-           [-ir] [--create-template FILE] --mass-rebuild
+           [-iqr] [--create-template FILE] --mass-rebuild
 .SH DESCRIPTION
 .P
 .B
@@ -252,6 +252,29 @@ GitHub Issues are welcome in case of unexpected failure.
 .RE
 .P
 .B
+-q|--reverse-rebuild
+.RS
+Rebuild the reverse dependencies for the requested SlackBuilds.
+The build queue will also include any missing dependencies for
+those scripts. If run with
+.B
+--nointeractive\fR\
+\&, any saved build options will be used again. Incompatible with
+.B
+--compat32\fR\
+\&,
+.B
+--norequirements\fR\
+\&,
+.B
+--use-template
+and
+.B
+--mass-rebuild\fR\
+\&.
+.RE
+.P
+.B
 -r|--nointeractive
 .RS
 Bypass all user prompts and all dependency resolution for
@@ -311,6 +334,9 @@ added. In combination with
 .B
 --nointeractive\fR\
 \&, saved build options are reused automatically. Incompatible with
+.B
+--reverse-rebuild\fR\
+\&,
 .B
 --compat32\fR\
 \&,

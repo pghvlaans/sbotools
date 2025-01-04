@@ -26,6 +26,7 @@ _arguments -s \
 	   '(-p --compat32)'{-p,--compat32}'[Create a -compat32 package on x86_64 systems (experimental).]' \
 	   '(-r --nointeractive)'{-r,--nointeractive}'[Skip README.]' \
 	   '(-R --norequirements)'{-R,--norequirements}'[Skip requirement handling.]' \
+	   '(-q --reverse-rebuild)'{-q,--reverse-rebuild}'[Rebuild installed reverse dependencies.]' \
 	   '--reinstall[Asks for reinstall from the requirements.]' \
 	   '--mass-rebuild[Rebuild all installed SlackBuilds.]' \
 	   '(--use-template)''--create-template[Create a template for the SlackBuilds.]:Template file:()' \

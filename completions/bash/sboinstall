@@ -20,7 +20,7 @@ _sboinstall() {
 
   case "${cmd}" in
     sboinstall)
-      opts="-h -v -c -d -i -j -p -r -R -V --help --version --noclean --distclean --noinstall --jobs --compat32 --nointeractive --norequirements --reinstall --create-template --use-template --mass-rebuild $REPOLIST"
+      opts="-h -v -c -d -i -j -p -r -R -V -q --help --version --noclean --distclean --noinstall --jobs --compat32 --nointeractive --norequirements --reinstall --create-template --use-template --reverse-rebuild --mass-rebuild $REPOLIST"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
@@ -42,7 +42,7 @@ _sboinstall() {
           COMPREPLY=( $(compgen -f -- "${cur}") )
           return 0
           ;;
-        -i|--noinstall|-p|--compat32|-r|--nointeractive|-R|--norequirements|--reinstall)
+        -i|--noinstall|-p|--compat32|-r|--nointeractive|-R|--norequirements|--reinstall|-q|--reverse-rebuild)
           COMPREPLY=( $(compgen -W "$REPOLIST" -- "${cur}") )
           return 0
           ;;

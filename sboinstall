@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ %config _ERR_OPENFH get_arch get_build_queue get_installed_cpans get_installed_packages get_sbo_location get_sbo_locations in merge_queues open_fh print_failures process_sbos prompt show_version slackbuilds_or_fetch slurp usage_error user_prompt verify_gpg lint_sbo_config wrapsay /;
+use SBO::Lib qw/ %config _ERR_OPENFH get_arch get_build_queue get_full_reverse get_installed_cpans get_installed_packages get_reverse_reqs get_sbo_location get_sbo_locations in merge_queues open_fh print_failures process_sbos prompt show_version slackbuilds_or_fetch slurp uniq usage_error user_prompt verify_gpg lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -42,6 +42,8 @@ Options (defaults shown first where applicable):
     specify the number of parallel jobs (make).
   -p|--compat32:
     install a -compat32 package (multilib systems only).
+  -q|--reverse-rebuild:
+    rebuild a script's reverse dependencies.
   -r|--nointeractive:
     non-interactive; skips README and all prompts.
   -R|--norequirements:
@@ -64,7 +66,7 @@ my $noclean = $config{NOCLEAN};
 my $distclean = $config{DISTCLEAN};
 my $jobs = $config{JOBS};
 my $gpg = $config{GPG_VERIFY};
-my ($help, $vers, $no_install, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild);
+my ($help, $vers, $no_install, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild);
 
 GetOptions(
 	'help|h'            => \$help,
@@ -80,6 +82,7 @@ GetOptions(
 	'mass-rebuild'      => \$mass_rebuild,
 	'create-template=s' => \$ctemp,
 	'use-template=s'    => \$utemp,
+	'reverse-rebuild|q' => \$reverse_rebuild,
 );
 
 if ($help) { show_usage(); exit 0 }
@@ -116,6 +119,7 @@ if ($gpg) { verify_gpg(); }
 if ($compat32) {
 	usage_error("compat32 only works on x86_64.") unless get_arch eq 'x86_64';
 	usage_error("compat32 is incompatible with mass-rebuild.") unless not $mass_rebuild;
+	usage_error("compat32 is incompatible with reverse-rebuild.") unless not $reverse_rebuild;
 }
 
 if ($utemp and $mass_rebuild) {
@@ -124,6 +128,18 @@ if ($utemp and $mass_rebuild) {
 
 if ($no_reqs and $mass_rebuild) {
 	usage_error("mass-rebuild is incompatible with norequirements.");
+}
+
+if ($reverse_rebuild and $mass_rebuild) {
+	usage_error("mass-rebuild is incompatible with reverse_rebuild.");
+}
+
+if ($utemp and $reverse_rebuild) {
+	usage_error("reverse-rebuild is incompatible with use-template.");
+}
+
+if ($no_reqs and $reverse_rebuild) {
+	usage_error("reverse-rebuild is incompatible with norequirements.");
 }
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
@@ -139,7 +155,7 @@ if ($mass_rebuild and -f $mtemp_resume) {
 	$resume_mass_rebuild = 1;
 	$utemp = $mtemp_resume;
 }
-$reinstall = 1 if $mass_rebuild;
+$reinstall = 1 if $mass_rebuild or $reverse_rebuild;
 
 if (length $utemp) {
 	my $json = JSON::PP->new->latin1;
@@ -153,8 +169,41 @@ if (length $utemp) {
 
 	$build_queue = $template->{build_queue};
 } elsif (not $mass_rebuild) {
-	if ($no_reqs or $non_int) {
+	if (not $reverse_rebuild and ($no_reqs or $non_int)) {
 		$build_queue = \@ARGV;
+	} elsif ($reverse_rebuild) {
+		my @all_installed = @{ get_installed_packages('ALL') };
+		my $all_installed = +{ map {; $_->{name} } @all_installed };
+		my @namelist;
+		for my $item (@all_installed) { push @namelist, $item->{name}; }
+
+		my @installed = @{ get_installed_packages('SBO') };
+		my $installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
+		my $fulldeps = get_reverse_reqs($installed);
+		my @list;
+		REVERSE: for my $sbo (@ARGV) {
+			# ensure that targeted scripts do not depend on each other
+			my $check_queue = get_build_queue([$sbo], \%warnings);
+			@$check_queue = grep { !/^$sbo$/ } @$check_queue;
+			for my $sbo2 (@ARGV) { next REVERSE if grep { /^$sbo2$/ } @$check_queue; }
+
+			my $interim_queue;
+			my @full_reverse = get_full_reverse($sbo, $installed, $fulldeps, @list);
+			if (@full_reverse) {
+				for my $revdep (@full_reverse) {
+					my $queue = get_build_queue([$revdep], \%warnings);
+					# for items not in the reverse queue, install only if missing
+					for my $cand (@$queue) {
+						if (grep { /^$cand$/ } @full_reverse or not grep { /^$cand$/ } @namelist) {
+							push @$interim_queue, $cand;
+						}
+					}
+				}
+				@$interim_queue = grep { !/^$sbo$/ } @$interim_queue;
+			}
+			$build_queue = merge_queues($build_queue, $interim_queue) if $interim_queue;
+		}
+		exit 0 unless $build_queue
 	} else {
 		for my $sbo (@ARGV) {
 			my $queue = get_build_queue([$sbo], \%warnings);
@@ -219,7 +268,7 @@ FIRST: for my $sbo (@$build_queue) {
 	if ($inst_names{$name}) {
 		my $inst_msg = sprintf "%s (%s) is already installed.", $name, $inst_names{$name}{pkg};
 		if ($reinstall and not $non_int) {
-			if ($mass_rebuild) {
+			if ($mass_rebuild or $reverse_rebuild) {
 				next FIRST unless prompt("$inst_msg Do you want to reinstall from SBo?", default => 'yes');
 			} else {
 				next FIRST unless prompt("$inst_msg Do you want to reinstall from SBo?", default => 'no');
@@ -285,7 +334,7 @@ FIRST: for my $sbo (@$build_queue) {
 		$options{$sbo} = $opts;
 		say "$name$added";
 	} else {
-		if ($mass_rebuild and not $resume_mass_rebuild) {
+		if ($reverse_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 			my $opts_log = "/var/log/sbotools/$sbo";
 			if (-f $opts_log) {
 				my ($prev_fh, $exit) = open_fh($opts_log, '<');

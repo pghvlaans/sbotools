@@ -15,7 +15,7 @@ Unless an important bug comes to light, the next version of sbotools,
   making the upgrade behavior configurable seems like a reasonable
   compromise.
 
-  STATUS: Added
+  STATUS: Added (set STRICT_UPGRADES to TRUE)
 
 * A tool to interface with sbotools.hints.
 
@@ -43,3 +43,5 @@ Unless an important bug comes to light, the next version of sbotools,
   builds invariably fail until it has been sourced. To keep this kind
   of situation from happening, it'll be run from sbointall after the
   target script has been upgraded.
+
+  STATUS: Added (sboinstall -q)

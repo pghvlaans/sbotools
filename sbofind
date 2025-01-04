@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue get_installed_packages get_reverse_reqs %config $slackbuilds_txt $repo_path show_version in indent get_from_info uniq lint_sbo_config /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue get_installed_packages get_full_reverse get_reverse_reqs %config $slackbuilds_txt $repo_path show_version in indent get_from_info uniq lint_sbo_config /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 
@@ -180,21 +180,9 @@ sub show_reverse_dependencies {
 	script_error('show_reverse_dependencies requires an argument.') unless @_ == 1;
 	my $found = shift;
 	my @list;
-	for my $sbo (keys %$installed) {
-		push @list, $sbo if $fulldeps->{$found}->{$sbo};
-	}
-
-	if (@list) {
-		for my $revdep (@list) {
-			my $newlist = show_reverse_dependencies($revdep);
-			if ($newlist ne "None") { push @list, split(" ", $newlist); }
-		}
-		my @result = uniq @list;
-		my @return = sort(@result);
-		return join(" ", @return);
-	} else {
-		return "None";
-	}
+	my @full_reverse = get_full_reverse($found, $installed, $fulldeps, @list);
+	return join(" ", sort(@full_reverse)) if @full_reverse;
+	return "None";
 }
 
 my $notfound = 0;
