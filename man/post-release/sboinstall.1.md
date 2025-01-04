@@ -27,7 +27,7 @@
                [-i] --use-template FILE
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-ir] [--create-template FILE] --mass-rebuild
+               [-iqr] [--create-template FILE] --mass-rebuild
 
 ## DESCRIPTION
 
@@ -112,6 +112,14 @@ prior to installation. If the base package and compat32 package are to
 be built at the same time, ensure that the **DISTCLEAN** option is set
 to **FALSE.** GitHub Issues are welcome in case of unexpected failure.
 
+**-q\|\--reverse-rebuild**
+
+Rebuild the reverse dependencies for the requested SlackBuilds. The
+build queue will also include any missing dependencies for those
+scripts. If run with **\--nointeractive**, any saved build options will
+be used again. Incompatible with **\--compat32**, **\--norequirements**,
+**\--use-template** and **\--mass-rebuild**.
+
 **-r\|\--nointeractive**
 
 Bypass all user prompts and all dependency resolution for the requested
@@ -144,8 +152,9 @@ SlackBuilds except for *compat32* builds. This is generally only useful
 when the Slackware version has been upgraded or (occasionally) on
 -current. Additional SlackBuilds may be installed when dependencies have
 been added. In combination with **\--nointeractive**, saved build
-options are reused automatically. Incompatible with **\--compat32**,
-**\--use-template** and **\--norequirements**.
+options are reused automatically. Incompatible with
+**\--reverse-rebuild**, **\--compat32**, **\--use-template** and
+**\--norequirements**.
 
 If the mass rebuild process is interrupted after downloading has been
 completed, whether by signal or by build failure, a template named

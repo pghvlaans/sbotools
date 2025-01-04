@@ -12,7 +12,6 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 These features may be added in the future:
 
-* Rebuild a reverse dependency queue
 * New tool for working with `sbotools.hints`
 
 Nothing on the above list is guaranteed to appear in `sbotools`.
@@ -21,3 +20,4 @@ Nothing on the above list is guaranteed to appear in `sbotools`.
 
 * Interactive mode for `sboconfig` (use without flags or options to access)
 * Optionally, only upgrade on version and build increment (not difference)
+* Rebuild a reverse dependency queue (use `sboinstall --reverse-rebuild`)
