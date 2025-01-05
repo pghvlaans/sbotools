@@ -1,0 +1,35 @@
+#compdef sbohints
+
+# sbotools: https://pghvlaans.github.io/sbotools/
+
+# work out where the SBo repo is (default to /usr/sbo/repo)
+# but also check for SBO_HOME setting in /etc/sbotools/sbotools.conf
+grep 'SBO_HOME' /etc/sbotools/sbotools.conf &> /dev/null
+if [ $? -eq 0 ]; then
+    repo="$(grep 'SBO_HOME' /etc/sbotools/sbotools.conf | cut -d= -f2)/repo"
+else
+    repo='/usr/sbo/repo'
+fi
+
+# grab a listing of all slackbuilds
+slackbuilds=( ${(uf)"$(grep 'SLACKBUILD NAME: ' $repo/SLACKBUILDS.TXT | cut -b 18-)"} )
+
+_arguments -s \
+	   - info \
+	   '(-)'{-h,--help}'[Show help]:' \
+	   '(-)'{-v,--version}'[Show version information.]:' \
+	   - commands \
+	   '(-q --query)'{-q,--query}'[Get blacklist and optional dependency status of one or more scripts.]:' \
+	   '(-l --list)'{-l,--list}'[Display the blacklist and all optional dependency requests.]:' \
+	   '(-b --blacklist)'{-b,--blacklist}'[Add (or remove with -r) scripts to the blacklist.]:' \
+	   '(-o --optional)'{-o,--optional}'[Add (or remove with -r) optional dependency requests for one or more scripts.]:' \
+	   '(-O --replace-optional)'{-O,--replace-optional}'[Replace (or remove with -r) all optional dependency requests for one or more scripts.]:' \
+	   '(-r --remove)'{-R,--remove}'[Together with -b, -o or -O, remove items instead of adding or replacing.]:'\
+	   '(-)*:SlackBuild:(${slackbuilds:|words})' \
+    && return 0
+
+return 1
+
+# Local Variables:
+# mode: sh
+# End:
