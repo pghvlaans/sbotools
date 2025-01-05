@@ -14,11 +14,10 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_optional lint_sbo_config on_blacklist open_fh prompt script_error show_version uniq usage_error wrapsay %config $conf_dir @listings $tempdir /;
+use SBO::Lib qw/ get_optional lint_sbo_config on_blacklist open_fh open_read prompt script_error show_version uniq usage_error wrapsay %config $conf_dir @listings $tempdir /;
 use File::Basename;
-use Getopt::Long qw(:config no_ignore_case_always);
+use Getopt::Long qw(:config no_ignore_case_always bundling);
 use File::Copy;
-use File::Path qw(make_path);
 use File::Temp qw(tempfile);
 
 my $self = basename($0);
@@ -53,27 +52,42 @@ Options:
   $self -rb vifm
   $self -q qemu
 
+This is a work in progress. Optional dependency request modification
+is not yet functional.
 EOF
 }
 
-my %options;
+unless (@ARGV) { show_usage(); exit 0; }
+
 my $hintfile = "$conf_dir/sbotools.hints";
 
 my ($help, $version, $list, $reset, $optional, $replace_optional, $blacklist, $remove, $query);
 
-GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'optional|o',
-	'replace-optional|O', 'blacklist|b', 'remove|r', 'query|q');
+GetOptions(
+	'help|h'              => \$help,
+	'version|v'           => \$version,
+	'list|l'              => \$list,
+	'reset'               => \$reset,
+	'optional|o'          => \$optional,
+	'replace_optional|O'  => \$replace_optional,
+	'remove|r'            => \$remove,
+	'query|q'             => \$query,
+	'blacklist|b'         => \$blacklist,
+);
 
-unless (%options) { show_usage(); exit 0; }
-if ($options{help}) { show_usage(); exit 0; }
-if ($options{version}) { show_version(); exit 0; }
+if ($help) { show_usage(); exit 0; }
+if ($version) { show_version(); exit 0; }
 
 lint_sbo_config($self, %config);
 
-if ($options{list}) { show_list(); exit 0; }
-if ($options{query}) { make_query(); exit 0; }
+if (($blacklist and ($optional or $replace_optional)) or ($optional and $replace_optional)) {
+	usage_error("optional, replace_optional and blacklist cannot be used together.");
+}
 
-if ($options{reset}) {
+if ($list) { show_list(); exit 0; }
+if ($query) { make_query(); exit 0; }
+
+if ($reset) {
 	if (prompt("Are you sure you want to remove all scripts from the blacklist and all optional dependency requests?", default => 'no')) {
 		wrapsay "Removing the blacklist and all optional depedency requests...";
 		reset_all();
@@ -82,17 +96,61 @@ if ($options{reset}) {
 	}
 }
 
-if ($options{replace_optional} or $options{optional}) {
+if ($replace_optional or $optional) {
 	unless (@ARGV) { show_usage(); exit 0; }
 	for my $target (@ARGV) { prompt_queue($target); }
 }
 
-sub alter_blacklist {
-	# The regex should be pretty straightforward for this;
-	# read in and modify as appropriate.
+if ($blacklist) {
+	unless (@ARGV) { show_usage(); exit 0; }
+	for my $target (@ARGV) { alter_blacklist($target); }
 }
 
-sub make_query { 
+sub alter_blacklist {
+	script_error("alter_blacklist requires an argument.") unless @_;
+	my $sbo = shift;
+	if ($remove and not on_blacklist($sbo)) {
+		wrapsay "$sbo is not on the blacklist.";
+		return;
+	}
+	if (on_blacklist($sbo) and not $remove) {
+		wrapsay "$sbo is already on the blacklist.";
+		return;
+	}
+	if ($remove) {
+		my @incoming;
+		# It is not possible to reach this point unless
+		# /etc/sbotools/sbotools.hints exists.
+		my ($rfh, $rexit) = open_read($hintfile);
+		if ($rexit) {
+			warn $rfh;
+			exit $rexit;
+		}
+		wrapsay "Removing $sbo from the blacklist...";
+		for my $line (<$rfh>) { push @incoming, $line unless $line =~ m/^\!$sbo$/; }
+		close $rfh;
+		my ($fh, $exit) = open_fh($hintfile, ">");
+		if ($exit) {
+			warn $fh;
+			exit $exit;
+		}
+		print {$fh} @incoming;
+		close $fh;
+	} else {
+		mkdir $conf_dir unless -d $conf_dir;
+		system(qw/ touch /, $hintfile) unless -f $hintfile;
+		my ($fh, $exit) = open_fh($hintfile, ">>");
+		if ($exit) {
+			warn $fh;
+			exit $exit;
+		}
+		wrapsay "Blacklisting $sbo...";
+		print {$fh} "!$sbo\n";
+		close $fh;
+	}
+}
+
+sub make_query {
 	unless (@ARGV) { show_usage(); exit 0; }
 	my $made_output;
 	for my $sbo (@ARGV) {
@@ -109,16 +167,61 @@ sub make_query {
 	}
 }
 
-sub prompt_queue { 
-	# Show the current optional dependency request for a script,
-	# and then prompt the user to add to, remove from or replace
-	# it.
+sub prompt_queue {
+	script_error("prompt_queue requires an argument.") unless @_;
+	my $sbo = shift;
+	my (@incoming, $message);
+	my @current = get_optional($sbo);
+	$message = "Select one or more scripts to add, or leave blank to skip: ";
+	$message = "Select one or more scripts to remove, or leave blank to skip: " if $remove;
+	$message = "Enter the new optional dependency list, or leave blank to skip: " if $replace_optional;
+	$message = "Proceed with clearing the optional dependency list for $sbo?" if $replace_optional and $remove;
+
+	if (@current) {
+		wrapsay "Current optional dependencies for $sbo:";
+		wrapsay(join(" ", @current), 1);
+		unless ($replace_optional and $remove) {
+			if (@incoming = split(" ", prompt($message))) {
+				write_hints($sbo, @incoming);
+			} else {
+				say "Skipping.";
+				return;
+			}
+		} elsif (prompt($message, default => 'no')) {
+			write_hints($sbo);
+		}
+	} elsif ($remove) {
+		wrapsay "No optional dependency requests to remove for $sbo.";
+		return;
+	} elsif (@incoming = split(" ", prompt($message))) {
+		write_hints($sbo, @incoming);
+	}
 }
 
-sub reset_all { 
-	exit 0 unless -f $hintfile;
-	# Here, probably copy @listings and remove matching lines
-	# from /etc/sbotools/sbotools.hints.
+sub reset_all {
+	my @loclistings = @listings;
+	my @remaining;
+	unless (@loclistings) {
+		wrapsay "No blacklist or optional dependency requests found.";
+		exit 0;
+	}
+	my ($rfh, $rexit) = open_read($hintfile);
+	if ($rexit) {
+		warn $rfh;
+		exit $rexit;
+	}
+	for my $line (<$rfh>) {
+		chomp(my $search = $line);
+		push @remaining, $line unless grep { /$search/ } @loclistings;
+	}
+	close $rfh;
+	my ($fh, $exit) = open_fh($hintfile, '>');
+	if ($exit) {
+		warn $fh;
+		exit $exit;
+	}
+	print {$fh} @remaining;
+	close $fh;
 }
 
 sub show_list {
@@ -169,7 +272,9 @@ sub show_list {
 }
 
 sub write_hints {
+	# for debugging
+	say join(" ", @_);
 	# Hint-writing routine. Can reference sbofind, but will probably
 	# need to be fairly different. Blacklist modification and reset
-	# will most likely be handled separately.
+	# are handled separately.
 }
