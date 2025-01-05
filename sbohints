@@ -1,0 +1,175 @@
+#!/usr/bin/perl
+#
+# vim: ts=4:noet
+#
+# sboconfig
+# script to modify the blacklist and optional dependencies
+#
+# authors: Jacob Pipkin <j@dawnrazor.net>
+#          Luke Williams <xocel@iquidus.org>
+#          Andreas Guldstrand <andreas.guldstrand@gmail.com>
+# maintainer: K. Eugene Carlson <kvngncrlsn@gmail.com>
+# license: MIT License
+
+use 5.16.0;
+use strict;
+use warnings FATAL => 'all';
+use SBO::Lib qw/ get_optional lint_sbo_config on_blacklist open_fh prompt script_error show_version uniq usage_error wrapsay %config $conf_dir @listings $tempdir /;
+use File::Basename;
+use Getopt::Long qw(:config no_ignore_case_always);
+use File::Copy;
+use File::Path qw(make_path);
+use File::Temp qw(tempfile);
+
+my $self = basename($0);
+
+sub show_usage {
+	print <<"EOF";
+Usage: $self [options] [arguments]
+
+Options:
+  -h|--help:
+    this screen.
+  -v|--version:
+    version information.
+  -l|--list:
+    show current blacklist and optional dependencies.
+  -q|--query:
+    show the hint status of one or more scripts
+  -b|--blacklist:
+    add scripts to the blacklist (remove with r).
+  -o|--optional:
+    add optional dependencies to scripts (remove with r).
+  -O|--replace-optional:
+    replace all optional dependencies for scripts (remove with r).
+  --reset:
+    empty the blacklist and optional dependencies.
+
+  -r|--remove:
+    remove instead of add.
+
+  Examples:
+  $self -b libsystemd sbotools
+  $self -rb vifm
+  $self -q qemu
+
+EOF
+}
+
+my %options;
+my $hintfile = "$conf_dir/sbotools.hints";
+
+my ($help, $version, $list, $reset, $optional, $replace_optional, $blacklist, $remove, $query);
+
+GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'optional|o',
+	'replace-optional|O', 'blacklist|b', 'remove|r', 'query|q');
+
+unless (%options) { show_usage(); exit 0; }
+if ($options{help}) { show_usage(); exit 0; }
+if ($options{version}) { show_version(); exit 0; }
+
+lint_sbo_config();
+
+if ($options{list}) { show_list(); exit 0; }
+if ($options{query}) { make_query(); exit 0; }
+
+if ($options{reset}) {
+	if (prompt("Are you sure you want to remove all scripts from the blacklist and all optional dependency requests?", default => 'no')) {
+		wrapsay "Removing the blacklist and all optional depedency requests...";
+		reset_all();
+	} else {
+		exit 0;
+	}
+}
+
+if ($options{replace_optional} or $options{optional}) {
+	unless (@ARGV) { show_usage(); exit 0; }
+	for my $target (@ARGV) { prompt_queue($target); }
+}
+
+sub alter_blacklist {
+	# The regex should be pretty straightforward for this;
+	# read in and modify as appropriate.
+}
+
+sub make_query { 
+	unless (@ARGV) { show_usage(); exit 0; }
+	my $made_output;
+	for my $sbo (@ARGV) {
+		print "\n" if $made_output;
+		if (on_blacklist($sbo)) {
+			say "$sbo is blacklisted.";
+			$made_output = 1;
+		}
+		if (my @optionals = get_optional($sbo)) {
+			say "Optional dependency requests for $sbo:";
+			wrapsay(join(" ", @optionals));
+			$made_output = 1;
+		}
+	}
+}
+
+sub prompt_queue { 
+	# Show the current optional dependency request for a script,
+	# and then prompt the user to add to, remove from or replace
+	# it.
+}
+
+sub reset_all { 
+	exit 0 unless -f $hintfile;
+	# Here, probably copy @listings and remove matching lines
+	# from /etc/sbotools/sbotools.hints.
+}
+
+sub show_list {
+	my @loclistings = @listings;
+	my $message = "The blacklist is empty and no optional dependency requests could be identified.";
+	unless (@loclistings) {
+		wrapsay $message;
+		exit 0;
+	}
+	my (@candlist, @ineffectuals);
+	for my $listing (@loclistings) {
+		$listing =~ s/^\!//;
+		my @members = split(" ", $listing);
+		next if not @members;
+		for my $cand (@members) { push @candlist, $cand; }
+	}
+	unless (@candlist) {
+		wrapsay $message;
+		exit 0;
+	}
+	@candlist = uniq @candlist;
+	@candlist = sort @candlist;
+	my ($wrote_blacklist, $wrote_optional);
+	for my $sbo (@candlist) {
+		if (on_blacklist($sbo)) {
+			wrapsay "The following scripts are blacklisted:" if not $wrote_blacklist;
+			say "$sbo";
+			$wrote_blacklist = 1;
+		}
+	}
+	for my $sbo (@candlist) {
+		if (my @optionals = get_optional($sbo)) {
+			say " ";
+			say "Optional dependency requests for $sbo:";
+			wrapsay(join(" ", @optionals));
+			push @ineffectuals, $sbo if on_blacklist($sbo);
+			$wrote_optional = 1;
+		}
+	}
+	if (@ineffectuals) {
+		@ineffectuals = sort @ineffectuals;
+		say " ";
+		wrapsay "The following scripts have optional dependency requests, but are blacklisted:";
+		wrapsay(join("\n", @ineffectuals));
+	}
+	wrapsay $message unless $wrote_blacklist or $wrote_optional;
+	exit 0;
+}
+
+sub write_hints {
+	# Hint-writing routine. Can reference sbofind, but will probably
+	# need to be fairly different. Blacklist modification and reset
+	# will most likely be handled separately.
+}

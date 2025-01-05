@@ -72,7 +72,7 @@ find -L . \
 	make install DESTDIR=$PKG
 )
 
-SCRIPTS="check clean config find install remove upgrade"
+SCRIPTS="check clean config find hints install remove upgrade"
 MANS="man1 man3 man5"
 
 mkdir -p $PKG/usr/sbin \

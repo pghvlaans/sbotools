@@ -1,0 +1,152 @@
+.TH sbohints 1 "Setting Orange, Chaos 5, 3191 YOLD" "sbotools 3.3" sbotools
+.SH NAME
+.P
+.B
+sbohints
+- interact with sbotools.hints
+.SH SYNOPSIS
+.P
+sbohints [-h | -v]
+.P
+sbohints [-l | --reset]
+.P
+sbohints [-r] [-b | -o | -O] sbo ...
+.P
+sbohints [-q] sbo ...
+.SH DESCRIPTION
+.P
+.B
+sbohints
+is a script for querying and editing the blacklist
+and optional dependency requests made in
+.B
+sbotools.hints(5)\fR\
+\&. The modification flags are
+.B
+--blacklist\fR\
+\&,
+.B
+--optional
+and
+.B
+--replace-optional\fR\
+\&. These may be used in conjunction with
+.B
+--remove\fR\
+\&, but not with each other.
+.P
+If an invalid configuration is detected in
+.I
+/etc/sbotools/sbotools.conf\fR\
+\&, the script will exit with a diagnostic message.
+.SH OPTIONS
+.P
+.B
+-b|--blacklist
+.RS
+Add (or remove with
+.B
+--remove\fR\
+\&) one or more scripts to the blacklist.
+.RE
+.P
+.B
+-o|--optional
+.RS
+Add (or remove with
+.B
+--remove\fR\
+\&) optional dependency requests for one or more
+scripts. The current optional dependencies will be displayed
+together with a prompt for adding or removing.
+.RE
+.P
+.B
+-O|--replace-optional
+.RS
+Replace all existing optional dependency requests for
+one or more scripts. The current optional dependencies
+will be displayed together with a prompt for the new request
+list. If used with
+.B
+--remove\fR\
+\&, a confirmation prompt for clearing the optional
+dependencies will appear.
+.RE
+.P
+.B
+-r|--remove
+.RS
+This flag is used together with one (and only one) of
+.B
+--blacklist\fR\
+\&,
+.B
+--optional
+or
+.B
+--replace-optional\fR\
+\&. For
+.B
+--blacklist
+and
+--optional\fR\
+\&, remove entries instead of adding them. For
+.B
+--replace-optional\fR\
+\&, clear all existing optional dependency requests.
+.RE
+.P
+.B
+-l|--list
+.RS
+List the current blacklist and all optional dependency
+requests. If a blacklisted script has optional dependency
+requests, the user is notified.
+.RE
+.P
+.B
+-q|--query
+.RS
+Return the current blacklist and optional dependency request
+status for one or more scripts.
+.RE
+.P
+.B
+--reset
+.RS
+Clear the blacklist and all optional dependency requests upon
+confirmation.
+.RE
+.P
+.B
+-h|--help
+.RS
+Show help information.
+.RE
+.P
+.B
+-v|--version
+.RS
+Show version information.
+.RE
+.SH BUGS
+.P
+None known. If found, Issues and Pull Requests to
+.UR https://github.com/pghvlaans/sbotools/
+.UE
+are always welcome.
+.SH SEE ALSO
+.P
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.conf(5), sbotools.hints(5)
+.SH AUTHORS
+.P
+Jacob Pipkin <j@dawnrazor.net>
+.P
+Luke Williams <xocel@iquidus.org>
+.P
+Andreas Guldstrand <andreas.guldstrand@gmail.com>
+.SH MAINTAINER
+.P
+K. Eugene Carlson <kvngncrlsn@gmail.com>
+

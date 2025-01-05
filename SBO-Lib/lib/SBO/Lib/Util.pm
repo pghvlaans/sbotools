@@ -34,6 +34,7 @@ my @EXPORT_CONFIG = qw{
   $conf_dir
   $conf_file
   %config
+  @listings
 };
 
 our @EXPORT_OK = (
@@ -113,7 +114,7 @@ C<GPG_VERIFY>, C<RSYNC_DEFAULT> and C<STRICT_UPGRADES>.
 =head2 @listings
 
 An array with blacklisted packages and optional dependency requests read in
-from C</etc/sbotools/sbotools.hints>. Non-exportable.
+from C</etc/sbotools/sbotools.hints>.
 
 =cut
 
@@ -235,9 +236,8 @@ sub get_optional {
     $entry =~ s/\s$sbo$//;
     push @optional, split(" ", $entry);
   }
-  push @optional, "NULL" unless @optional;
-
-  return @optional;
+  return @optional if @optional;
+  return;
 }
 
 =head2 get_sbo_from_loc
