@@ -225,16 +225,24 @@ sub prompt_queue {
 			return;
 		}
 	} elsif ($clear) {
+		# flags -co and -cO, no existing entry
 		wrapsay "No optional dependency requests to clear for $sbo.";
 		return;
-	} elsif (@incoming = split(" ", prompt($message))) {
+	} else {
 		# flags -o and -O, no existing entry
-		if (grep { /\!/ } @incoming) {
-			wrapsay("! cannot be used in optional dependency requests.", 1);
-			prompt_queue($sbo);
+		wrapsay("$sbo has no optional dependency requests.", 1);
+		if (@incoming = split(" ", prompt($message))) {
+			if (grep { /\!/ } @incoming) {
+				wrapsay("! cannot be used in optional dependency requests.", 1);
+				prompt_queue($sbo);
+				return;
+			}
+			write_optional($sbo, @incoming);
+			return;
+		} else {
+			say "Skipping.";
+			return;
 		}
-		write_optional($sbo, @incoming);
-		return;
 	}
 }
 
@@ -362,11 +370,11 @@ sub write_optional {
 			}
 		} elsif ($replace_optional) {
 			# skip any line that specifies optional dependencies for
-			# $sbo (flag: -rO)
+			# $sbo (flag: -cO)
 			push @outgoing, $line unless $found and $target;
 		} else {
 			# clear the requested scripts from any specification for
-			# $sbo (flag: -ro)
+			# $sbo (flag: -co)
 			if ($target) {
 				for my $to_clear (@operation) { $line =~ s/(?<=^)$to_clear\s//g; }
 				for my $to_clear (@operation) { $line =~ s/(?<=\s)$to_clear\s//g; }
