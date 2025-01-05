@@ -4,6 +4,7 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
@@ -87,6 +88,14 @@ Show help information.
 **-v\|\--version**
 
 Show version information.
+
+## EXIT CODES
+
+**sbohints** can exit with the following codes:
+
+0: all operations were successful.\
+1: a usage error occurred.\
+6: **sbohints** was unable to obtain a required file handle.
 
 ## BUGS
 

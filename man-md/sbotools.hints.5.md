@@ -36,6 +36,8 @@ of the script at the end:
 Commented lines are ignored. There should not be whitespace to the left
 of any entry.
 
+[sbohints(1)](sbohints.1.md) can also be used to interface with this file.
+
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
