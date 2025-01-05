@@ -212,7 +212,7 @@ sub reset_all {
 	}
 	for my $line (<$rfh>) {
 		chomp(my $search = $line);
-		push @remaining, $line unless grep { /$search/ } @loclistings;
+		push @remaining, $line unless grep { /^$search$/ } @loclistings;
 	}
 	close $rfh;
 	my ($fh, $exit) = open_fh($hintfile, '>');
