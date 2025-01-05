@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue get_installed_packages get_full_reverse get_reverse_reqs %config $slackbuilds_txt $repo_path show_version in indent get_from_info uniq lint_sbo_config /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue get_installed_packages get_full_reverse get_reverse_reqs on_blacklist %config $slackbuilds_txt $repo_path show_version in indent get_from_info uniq lint_sbo_config /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 
@@ -197,7 +197,11 @@ for my $search (@ARGV) {
 			my $location = $hash->{location};
 			my $version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
 			my $sbo = "SBo:   "; $sbo = "Local: " if $hash->{local};
-			say "$sbo $name $version";
+			unless (on_blacklist($name)) {
+				say "$sbo $name $version";
+			} else {
+				say "$sbo $name $version\n        blacklisted";
+			}
 			say "Path:   $location";
 			say "info:   ". get_file_contents("$location/$name.info") if $show_info;
 			say "README: ". get_file_contents("$location/README") if $show_readme;
