@@ -15,6 +15,4 @@ assignees: pghvlaans
 
 * Output of `sboconfig --list`:
 
-* Output of `sbohints --list`:
-
 * Description:

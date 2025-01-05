@@ -10,7 +10,7 @@ sbohints [-h | -v]
 .P
 sbohints [-l | --reset]
 .P
-sbohints [-r] [-b | -o | -O] sbo ...
+sbohints [-c] [-b | -o | -O] sbo ...
 .P
 sbohints [-q] sbo ...
 .SH DESCRIPTION
@@ -32,7 +32,7 @@ and
 --replace-optional\fR\
 \&. These may be used in conjunction with
 .B
---remove\fR\
+--clear\fR\
 \&, but not with each other.
 .P
 If an invalid configuration is detected in
@@ -44,18 +44,18 @@ If an invalid configuration is detected in
 .B
 -b|--blacklist
 .RS
-Add (or remove with
+Add (or clear with
 .B
---remove\fR\
+--clear\fR\
 \&) one or more scripts to the blacklist.
 .RE
 .P
 .B
 -o|--optional
 .RS
-Add (or remove with
+Add (or clear with
 .B
---remove\fR\
+--clear\fR\
 \&) optional dependency requests for one or more
 scripts. The current optional dependencies will be displayed
 together with a prompt for adding or removing.
@@ -69,13 +69,13 @@ one or more scripts. The current optional dependencies
 will be displayed together with a prompt for the new request
 list. If used with
 .B
---remove\fR\
+--clear\fR\
 \&, a confirmation prompt for clearing the optional
 dependencies will appear.
 .RE
 .P
 .B
--r|--remove
+-c|--clear
 .RS
 This flag is used together with one (and only one) of
 .B
@@ -91,7 +91,7 @@ or
 --blacklist
 and
 --optional\fR\
-\&, remove entries instead of adding them. For
+\&, clear entries instead of adding them. For
 .B
 --replace-optional\fR\
 \&, clear all existing optional dependency requests.

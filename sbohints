@@ -14,11 +14,9 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_optional lint_sbo_config on_blacklist open_fh open_read prompt script_error show_version uniq usage_error wrapsay %config $conf_dir @listings $tempdir /;
+use SBO::Lib qw/ get_optional lint_sbo_config on_blacklist open_fh open_read prompt script_error show_version uniq usage_error wrapsay %config $conf_dir @listings /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
-use File::Copy;
-use File::Temp qw(tempfile);
 
 my $self = basename($0);
 
@@ -36,24 +34,22 @@ Options:
   -q|--query:
     show the hint status of one or more scripts
   -b|--blacklist:
-    add scripts to the blacklist (remove with r).
+    add scripts to the blacklist (clear with c).
   -o|--optional:
-    add optional dependencies to scripts (remove with r).
+    add optional dependencies to scripts (clear with c).
   -O|--replace-optional:
-    replace all optional dependencies for scripts (remove with r).
+    replace all optional dependencies for scripts (clear with c).
   --reset:
     empty the blacklist and optional dependencies.
 
-  -r|--remove:
-    remove instead of add.
+  -c|--clear:
+    clear instead of add.
 
   Examples:
   $self -b libsystemd sbotools
-  $self -rb vifm
+  $self -cb vifm
   $self -q qemu
 
-This is a work in progress. Optional dependency request modification
-is not yet functional.
 EOF
 }
 
@@ -61,7 +57,7 @@ unless (@ARGV) { show_usage(); exit 0; }
 
 my $hintfile = "$conf_dir/sbotools.hints";
 
-my ($help, $version, $list, $reset, $optional, $replace_optional, $blacklist, $remove, $query);
+my ($help, $version, $list, $reset, $optional, $replace_optional, $blacklist, $clear, $query);
 
 GetOptions(
 	'help|h'              => \$help,
@@ -70,7 +66,7 @@ GetOptions(
 	'reset'               => \$reset,
 	'optional|o'          => \$optional,
 	'replace_optional|O'  => \$replace_optional,
-	'remove|r'            => \$remove,
+	'clear|c'             => \$clear,
 	'query|q'             => \$query,
 	'blacklist|b'         => \$blacklist,
 );
@@ -87,9 +83,13 @@ if (($blacklist and ($optional or $replace_optional)) or ($optional and $replace
 if ($list) { show_list(); exit 0; }
 if ($query) { make_query(); exit 0; }
 
+if ($reset and ($optional or $clear or $replace_optional or $blacklist or $clear)) {
+	usage_error("reset cannot be used with other flags.");
+}
+
 if ($reset) {
-	if (prompt("Are you sure you want to remove all scripts from the blacklist and all optional dependency requests?", default => 'no')) {
-		wrapsay "Removing the blacklist and all optional depedency requests...";
+	if (prompt("Are you sure you want to clear all scripts from the blacklist and all optional dependency requests?", default => 'no')) {
+		wrapsay "Clearing the blacklist and all optional depedency requests...";
 		reset_all();
 	} else {
 		exit 0;
@@ -98,35 +98,44 @@ if ($reset) {
 
 if ($replace_optional or $optional) {
 	unless (@ARGV) { show_usage(); exit 0; }
-	for my $target (@ARGV) { prompt_queue($target); }
+	my $made_output;
+	for my $target (uniq @ARGV){
+		print "\n" if $made_output;
+		$made_output = 1;
+		prompt_queue($target);
+	}
 }
 
 if ($blacklist) {
 	unless (@ARGV) { show_usage(); exit 0; }
-	for my $target (@ARGV) { alter_blacklist($target); }
+	for my $target (uniq @ARGV) { alter_blacklist($target); }
 }
 
+# Takes one script to be added or cleared from the blacklist
+# at a time.
 sub alter_blacklist {
 	script_error("alter_blacklist requires an argument.") unless @_;
 	my $sbo = shift;
-	if ($remove and not on_blacklist($sbo)) {
+	if ($clear and not on_blacklist($sbo)) {
 		wrapsay "$sbo is not on the blacklist.";
 		return;
 	}
-	if (on_blacklist($sbo) and not $remove) {
+	if (on_blacklist($sbo) and not $clear) {
 		wrapsay "$sbo is already on the blacklist.";
 		return;
 	}
-	if ($remove) {
+	if ($clear) {
 		my @incoming;
-		# It is not possible to reach this point unless
-		# /etc/sbotools/sbotools.hints exists.
+		# it is not possible to reach this point unless
+		# /etc/sbotools/sbotools.hints exists
 		my ($rfh, $rexit) = open_read($hintfile);
 		if ($rexit) {
 			warn $rfh;
 			exit $rexit;
 		}
-		wrapsay "Removing $sbo from the blacklist...";
+		wrapsay "Clearing $sbo from the blacklist...";
+		# flag -cb; only write back lines that don't blacklist
+		# $sbo
 		for my $line (<$rfh>) { push @incoming, $line unless $line =~ m/^\!$sbo$/; }
 		close $rfh;
 		my ($fh, $exit) = open_fh($hintfile, ">");
@@ -145,6 +154,7 @@ sub alter_blacklist {
 			exit $exit;
 		}
 		wrapsay "Blacklisting $sbo...";
+		# flag -b; print a new line blacklisting $sbo
 		print {$fh} "!$sbo\n";
 		close $fh;
 	}
@@ -153,7 +163,7 @@ sub alter_blacklist {
 sub make_query {
 	unless (@ARGV) { show_usage(); exit 0; }
 	my $made_output;
-	for my $sbo (@ARGV) {
+	for my $sbo (uniq @ARGV) {
 		print "\n" if $made_output;
 		if (on_blacklist($sbo)) {
 			say "$sbo is blacklisted.";
@@ -167,37 +177,69 @@ sub make_query {
 	}
 }
 
+# Get user input for optional dependency modifications.
 sub prompt_queue {
 	script_error("prompt_queue requires an argument.") unless @_;
 	my $sbo = shift;
 	my (@incoming, $message);
-	my @current = get_optional($sbo);
 	$message = "Select one or more scripts to add, or leave blank to skip: ";
-	$message = "Select one or more scripts to remove, or leave blank to skip: " if $remove;
+	$message = "Select one or more scripts to clear, or leave blank to skip: " if $clear;
 	$message = "Enter the new optional dependency list, or leave blank to skip: " if $replace_optional;
-	$message = "Proceed with clearing the optional dependency list for $sbo?" if $replace_optional and $remove;
+	$message = "Proceed with clearing the optional dependency list for $sbo?" if $replace_optional and $clear;
 
+	my @current = get_optional($sbo);
 	if (@current) {
 		wrapsay "Current optional dependencies for $sbo:";
 		wrapsay(join(" ", @current), 1);
-		unless ($replace_optional and $remove) {
+		# flags -co, -o, -O
+		unless ($replace_optional and $clear) {
 			if (@incoming = split(" ", prompt($message))) {
-				write_hints($sbo, @incoming);
+				if (grep { /\!/ } @incoming) {
+					wrapsay("! cannot be used in optional dependency requests.", 1);
+					prompt_queue($sbo);
+					return;
+				}
+				my $is_needed;
+				# for -o and -co, don't attempt changes if unneeded
+				if ($clear) {
+					for my $item (@incoming) { $is_needed = 1 if grep { /^$item$/ } @current; }
+				} elsif ($optional) {
+					for my $item (@incoming) { $is_needed = 1 unless grep { /^$item$/ } @current; }
+				} else { $is_needed = 1; }
+				if ($is_needed) {
+					write_optional($sbo, @incoming) if $is_needed;
+				} else {
+					wrapsay "No changes to be made to $sbo; skipping.";
+				}
+				return;
 			} else {
 				say "Skipping.";
 				return;
 			}
 		} elsif (prompt($message, default => 'no')) {
-			write_hints($sbo);
+			# flag -cO
+			write_optional($sbo);
+			return;
+		} else {
+			say "Skipping.";
+			return;
 		}
-	} elsif ($remove) {
-		wrapsay "No optional dependency requests to remove for $sbo.";
+	} elsif ($clear) {
+		wrapsay "No optional dependency requests to clear for $sbo.";
 		return;
 	} elsif (@incoming = split(" ", prompt($message))) {
-		write_hints($sbo, @incoming);
+		# flags -o and -O, no existing entry
+		if (grep { /\!/ } @incoming) {
+			wrapsay("! cannot be used in optional dependency requests.", 1);
+			prompt_queue($sbo);
+		}
+		write_optional($sbo, @incoming);
+		return;
 	}
 }
 
+# Remove any line from sbotools.hints that isn't commented or whitespace-
+# initial.
 sub reset_all {
 	my @loclistings = @listings;
 	my @remaining;
@@ -224,6 +266,9 @@ sub reset_all {
 	close $fh;
 }
 
+# Write out the blacklist, followed by optional dependency requests
+# per script. If anything on the blacklist has requests, note that
+# fact.
 sub show_list {
 	my @loclistings = @listings;
 	my $message = "The blacklist is empty and no optional dependency requests could be identified.";
@@ -271,10 +316,72 @@ sub show_list {
 	exit 0;
 }
 
-sub write_hints {
-	# for debugging
-	say join(" ", @_);
-	# Hint-writing routine. Can reference sbofind, but will probably
-	# need to be fairly different. Blacklist modification and reset
-	# are handled separately.
+# Takes the name of a SlackBuild and an array with scripts to add or
+# clear (except for -cO).
+sub write_optional {
+	script_error("write_optional requires at least one argument.") unless @_;
+	my ($sbo, @operation) = @_;
+	script_error("write_optional needs two arguments except for clear operations.") unless @operation or $clear;
+	mkdir $conf_dir unless -d $conf_dir;
+	system(qw/ touch /, $hintfile) unless -f $hintfile;
+	@operation = uniq @operation if @operation;
+	my @loclistings = @listings;
+	my ($rfh, $rexit) = open_read($hintfile);
+	if ($rexit) {
+		warn $rfh;
+		exit $rexit;
+	}
+	my (@outgoing, $replaced);
+	push @operation, $sbo if $replace_optional and not $clear;
+	if ($optional and not $clear) {
+		if (my @current = get_optional($sbo)) {
+			for my $to_add (@operation) { push @current, $to_add; }
+			@operation = @current;
+		}
+		@operation = uniq @operation;
+		push @operation, $sbo;
+	}
+	wrapsay "Making changes for $sbo...";
+	# read the hints file one line at a time; whether (and how) the
+	# line is written back in to the file depends on the flags
+	FIRST: for my $line (<$rfh>) {
+		chomp(my $search = $line);
+		my $found = grep { /^$search$/ } @loclistings;
+		my $target = $search =~ m/\s$sbo$/;
+		unless ($clear) {
+			# replace the first specification for $sbo, and then
+			# skip further instances (flags: -O, -o)
+			if ($found and $target and not $replaced) {
+				push @outgoing, join(" ", @operation);
+				push @outgoing, "\n";
+				$replaced = 1;
+			} elsif ($found and $target) {
+				next FIRST;
+			} else {
+				push @outgoing, $line;
+			}
+		} elsif ($replace_optional) {
+			# skip any line that specifies optional dependencies for
+			# $sbo (flag: -rO)
+			push @outgoing, $line unless $found and $target;
+		} else {
+			# clear the requested scripts from any specification for
+			# $sbo (flag: -ro)
+			if ($target) {
+				for my $to_clear (@operation) { $line =~ s/(?<=^)$to_clear\s//g; }
+				for my $to_clear (@operation) { $line =~ s/(?<=\s)$to_clear\s//g; }
+			}
+			push @outgoing, $line;
+		}
+	}
+	# The simplest case of all is adding a completely new request.
+	unless ($clear or $replaced) { push @outgoing, join(" ", @operation); }
+	close $rfh;
+	my ($fh, $exit) = open_fh($hintfile, '>');
+	if ($exit) {
+		warn $fh;
+		exit $exit;
+	}
+	print {$fh} @outgoing;
+	close $fh;
 }

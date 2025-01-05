@@ -24,7 +24,7 @@ _arguments -s \
 	   '(-b --blacklist)'{-b,--blacklist}'[Add (or remove with -r) scripts to the blacklist.]:' \
 	   '(-o --optional)'{-o,--optional}'[Add (or remove with -r) optional dependency requests for one or more scripts.]:' \
 	   '(-O --replace-optional)'{-O,--replace-optional}'[Replace (or remove with -r) all optional dependency requests for one or more scripts.]:' \
-	   '(-r --remove)'{-R,--remove}'[Together with -b, -o or -O, remove items instead of adding or replacing.]:'\
+	   '(-c --clear)'{-c,--clear}'[Together with -b, -o or -O, clear items instead of adding or replacing.]:'\
 	   '(-)*:SlackBuild:(${slackbuilds:|words})' \
     && return 0
 

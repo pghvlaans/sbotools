@@ -21,7 +21,7 @@
 
     sbohints [-l | --reset]
 
-    sbohints [-r] [-b | -o | -O] sbo \...
+    sbohints [-c] [-b | -o | -O] sbo \...
 
     sbohints [-q] sbo \...
 
@@ -31,7 +31,7 @@
 optional dependency requests made in [sbotools.hints(5)](sbotools.hints.5.md). The
 modification flags are **\--blacklist**, **\--optional** and
 **\--replace-optional**. These may be used in conjunction with
-**\--remove**, but not with each other.
+**\--clear**, but not with each other.
 
 If an invalid configuration is detected in
 */etc/sbotools/sbotools.conf*, the script will exit with a diagnostic
@@ -41,26 +41,26 @@ message.
 
 **-b\|\--blacklist**
 
-Add (or remove with **\--remove**) one or more scripts to the blacklist.
+Add (or clear with **\--clear**) one or more scripts to the blacklist.
 
 **-o\|\--optional**
 
-Add (or remove with **\--remove**) optional dependency requests for one
-or more scripts. The current optional dependencies will be displayed
+Add (or clear with **\--clear**) optional dependency requests for one or
+more scripts. The current optional dependencies will be displayed
 together with a prompt for adding or removing.
 
 **-O\|\--replace-optional**
 
 Replace all existing optional dependency requests for one or more
 scripts. The current optional dependencies will be displayed together
-with a prompt for the new request list. If used with **\--remove**, a
+with a prompt for the new request list. If used with **\--clear**, a
 confirmation prompt for clearing the optional dependencies will appear.
 
-**-r\|\--remove**
+**-c\|\--clear**
 
 This flag is used together with one (and only one) of **\--blacklist**,
 **\--optional** or **\--replace-optional**. For **\--blacklist** and
-\--optional, remove entries instead of adding them. For
+\--optional, clear entries instead of adding them. For
 **\--replace-optional**, clear all existing optional dependency
 requests.
 
