@@ -68,7 +68,7 @@ unless (%options) { show_usage(); exit 0; }
 if ($options{help}) { show_usage(); exit 0; }
 if ($options{version}) { show_version(); exit 0; }
 
-lint_sbo_config();
+lint_sbo_config($self, %config);
 
 if ($options{list}) { show_list(); exit 0; }
 if ($options{query}) { make_query(); exit 0; }
