@@ -113,8 +113,10 @@ C<GPG_VERIFY>, C<RSYNC_DEFAULT> and C<STRICT_UPGRADES>.
 
 =head2 @listings
 
-An array with blacklisted packages and optional dependency requests read in
-from C</etc/sbotools/sbotools.hints>.
+An array with blacklisted scripts and optional dependency requests read in
+from C</etc/sbotools/sbotools.hints>. Only C<read_hints()> should interact
+with C<@listings> directly; in other situations, make a copy (see e.g.
+C<@on_blacklist()>.)
 
 =cut
 
