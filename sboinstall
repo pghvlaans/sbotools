@@ -173,7 +173,7 @@ if (length $utemp) {
 		$build_queue = \@ARGV;
 	} elsif ($reverse_rebuild) {
 		my @all_installed = @{ get_installed_packages('ALL') };
-		my $all_installed = +{ map {; $_->{name} } @all_installed };
+		my $all_installed = +{ map {; $_->{name}, $_->{pkg} } @all_installed };
 		my @namelist;
 		for my $item (@all_installed) { push @namelist, $item->{name}; }
 
