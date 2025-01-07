@@ -8,6 +8,8 @@ The pages here reflect post-release development. For the version 3.3 pages (2024
     * A command line interface for changing */etc/sbotools/sbotools.conf*.
 * [sbofind(1)](sbofind.1.md)
     * Search the local copy of the repository for SlackBuilds.
+* [sbohints(1)](sbohints.1.md)
+    * Query and modify the blacklist and optional dependency requests.
 * [sboinstall(1)](sboinstall.1.md)
     * Install SlackBuilds with their dependencies; handle compat32 packages and build from templates.
 * [sboremove(1)](sboremove.1.md)

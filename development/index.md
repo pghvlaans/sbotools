@@ -10,14 +10,11 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 ## Prospective Features
 
-These features may be added in the future:
-
-* New tool for working with `sbotools.hints`
-
-Nothing on the above list is guaranteed to appear in `sbotools`.
+Nothing for now, but requests are welcome and will receive due consideration.
 
 ## Arriving in Version 3.4
 
 * Interactive mode for `sboconfig` (use without flags or options to access)
 * Optionally, only upgrade on version and build increment (not difference)
 * Rebuild a reverse dependency queue (use `sboinstall --reverse-rebuild`)
+* `sbohints`, a new tool for working with `sbotools.hints`
