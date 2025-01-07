@@ -12,8 +12,9 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboupgrade: Do not attempt to upgrade the build queue if the requested script does not need an upgrade
   * sbocheck: Display the installed build number for the build number check
   * Add setting STRICT_UPGRADES: Except for override packages, only upgrade when the version or build number is higher
-  * sboinstall: use --reverse-rebuild to rebuild all reverse dependencies of a script
+  * sboinstall: Use --reverse-rebuild to rebuild all reverse dependencies of a script
   + sbofind: Indicate if a script is blacklisted
+  * sbohints: A new tool for modifying and querying the blacklist and optional dependency requests
 
 * 3.3 - 2024-12-31
   * sboconfig: Allow versions "X.Y+" and "current"; more informative error messages
