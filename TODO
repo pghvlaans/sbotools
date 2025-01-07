@@ -1,7 +1,7 @@
 TODO: sbotools-3.4
 
 Unless an important bug comes to light, the next version of sbotools,
-3.4, will be a feature release. The following features are planned:
+3.4, will be a feature release. Expect an RC in the near future.
 
 * A new configuration to enforce strict verison upgrades.
 
@@ -33,7 +33,7 @@ Unless an important bug comes to light, the next version of sbotools,
   configuration values; it will be reachable by running sboconfig
   without flags or options.
 
-  STATUS: Added
+  STATUS: Added (sbohints)
 
 * Rebuild reverse dependencies.
 

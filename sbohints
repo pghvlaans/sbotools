@@ -275,8 +275,8 @@ sub reset_all {
 }
 
 # Write out the blacklist, followed by optional dependency requests
-# per script. If anything on the blacklist has requests, note that
-# fact.
+# per script. If anything on the blacklist has requests, or if a script
+# in a list of optional dependencies is blacklisted, note that fact.
 sub show_list {
 	my @loclistings = @listings;
 	my $message = "The blacklist is empty and no optional dependency requests could be identified.";
@@ -284,7 +284,7 @@ sub show_list {
 		wrapsay $message;
 		exit 0;
 	}
-	my (@candlist, @ineffectuals);
+	my (@candlist, @ineffectuals, @ineffectual_requests);
 	for my $listing (@loclistings) {
 		$listing =~ s/^\!//;
 		my @members = split(" ", $listing);
@@ -311,6 +311,9 @@ sub show_list {
 			say "Optional dependency requests for $sbo:";
 			wrapsay(join(" ", @optionals));
 			push @ineffectuals, $sbo if on_blacklist($sbo);
+			for my $request (@optionals) {
+				push @ineffectual_requests, $request if on_blacklist($request);
+			}
 			$wrote_optional = 1;
 		}
 	}
@@ -319,6 +322,12 @@ sub show_list {
 		say " ";
 		wrapsay "The following scripts have optional dependency requests, but are blacklisted:";
 		wrapsay(join("\n", @ineffectuals));
+	}
+	if (@ineffectual_requests) {
+		@ineffectual_requests = uniq sort(@ineffectual_requests);
+		say " ";
+		wrapsay "The following scripts are requested as optional dependencies, but are blacklisted:";
+		wrapsay(join("\n", @ineffectual_requests));
 	}
 	wrapsay $message unless $wrote_blacklist or $wrote_optional;
 	exit 0;

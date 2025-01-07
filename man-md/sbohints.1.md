@@ -68,8 +68,8 @@ requests.
 **-l\|\--list**
 
 List the current blacklist and all optional dependency requests. If a
-blacklisted script has optional dependency requests, the user is
-notified.
+blacklisted script has optional dependency requests or is requested as
+an optional depenedency, the user is notified.
 
 **-q\|\--query**
 
