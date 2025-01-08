@@ -214,10 +214,12 @@ if (length $utemp) {
 
 # get lists of installed packages and perl modules from CPAN
 my $inst_pkgs = get_installed_packages('ALL');
+my $std_pkgs = get_installed_packages('STD');
 my $pms = get_installed_cpans();
 s/::/-/g for @$pms;
-my %inst_names;
+my (%inst_names, %std_names);
 $inst_names{$_->{name}} = $_ for @$inst_pkgs;
+$std_names{$_->{name}} = $_ for @$std_pkgs;
 
 # prepare a queue in case of mass_rebuild
 if ($mass_rebuild and not $resume_mass_rebuild) {
@@ -267,7 +269,12 @@ FIRST: for my $sbo (@$build_queue) {
 
 	if ($inst_names{$name}) {
 		my $inst_msg = sprintf "%s (%s) is already installed.", $name, $inst_names{$name}{pkg};
-		if ($reinstall and not $non_int) {
+		# Regardless of nointeractive or anything else, always
+		# warn with default "no" if this isn't an SBo package
+		# and it exists in the tree.
+		if ($std_names{$name} and not (defined $warnings{$sbo} and $warnings{$sbo} eq 'nonexistent')) {
+			next FIRST unless prompt("$inst_msg\nWarning: $name is not an SBo package. Reinstall from SBo anyway?", default => 'no');
+		} elsif ($reinstall and not $non_int) {
 			if ($mass_rebuild or $reverse_rebuild) {
 				next FIRST unless prompt("$inst_msg Do you want to reinstall from SBo?", default => 'yes');
 			} else {

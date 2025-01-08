@@ -277,10 +277,26 @@ and
 .B
 -r|--nointeractive
 .RS
-Bypass all user prompts and all dependency resolution for
-the requested SlackBuilds. Unless it is obvious that dependency
+Bypass all user prompts for the requested
+SlackBuilds. Dependency resolution will be bypassed
+as well except for
+.B
+--mass-rebuild
+and
+.B
+--reverse-rebuild\fR\
+\&. Unless it is obvious that dependency
 resolution and build options are not required, consider using
 a template instead.
+
+If an operation with
+.B
+--nointeractive
+would install an in-tree
+.I
+_SBo
+package in place of a package without this tag, a warning message
+with a default \(lqno\(rq option will appear.
 .RE
 .P
 .B
@@ -328,9 +344,18 @@ SlackBuilds except for
 .I
 compat32
 builds. This is generally only useful when the Slackware version
-has been upgraded or (occasionally) on -current.  Additional
+has been upgraded or (occasionally) on -current. Additional
 SlackBuilds may be installed when dependencies have been
-added. In combination with
+added. If dependencies are installed with tags other than
+.I
+_SBo\fR\
+\&, or with no tag, a warning message (default \(lqno\(rq) will
+appear even with
+.B
+--nointeractive
+before they are added to the build queue.
+
+In combination with
 .B
 --nointeractive\fR\
 \&, saved build options are reused automatically. Incompatible with
