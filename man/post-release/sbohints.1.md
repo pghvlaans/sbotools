@@ -22,9 +22,9 @@
 
     sbohints [-l | --reset]
 
-    sbohints [-c] [-b | -o | -O] sbo \...
+    sbohints [-c] [-b | -o | -O] sbo_name (sbo_name)
 
-    sbohints [-q] sbo \...
+    sbohints [-q] sbo_name (sbo_name)
 
 ## DESCRIPTION
 
