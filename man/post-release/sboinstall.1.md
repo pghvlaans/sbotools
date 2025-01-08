@@ -122,9 +122,14 @@ be used again. Incompatible with **\--compat32**, **\--norequirements**,
 
 **-r\|\--nointeractive**
 
-Bypass all user prompts and all dependency resolution for the requested
-SlackBuilds. Unless it is obvious that dependency resolution and build
-options are not required, consider using a template instead.
+Bypass all user prompts for the requested SlackBuilds. Dependency
+resolution will be bypassed as well except for **\--mass-rebuild** and
+**\--reverse-rebuild**. Unless it is obvious that dependency resolution
+and build options are not required, consider using a template instead.
+
+If an operation with **\--nointeractive** would install an in-tree
+*\_SBo* package in place of a package without this tag, a warning
+message with a default "no" option will appear.
 
 **-R\|\--norequirements**
 
@@ -151,10 +156,13 @@ Generate build queues, rebuild and reinstall all in-tree *\_SBo*
 SlackBuilds except for *compat32* builds. This is generally only useful
 when the Slackware version has been upgraded or (occasionally) on
 -current. Additional SlackBuilds may be installed when dependencies have
-been added. In combination with **\--nointeractive**, saved build
-options are reused automatically. Incompatible with
-**\--reverse-rebuild**, **\--compat32**, **\--use-template** and
-**\--norequirements**.
+been added. If dependencies are installed with tags other than *\_SBo*,
+or with no tag, a warning message (default "no") will appear even with
+**\--nointeractive** before they are added to the build queue.
+
+In combination with **\--nointeractive**, saved build options are reused
+automatically. Incompatible with **\--reverse-rebuild**,
+**\--compat32**, **\--use-template** and **\--norequirements**.
 
 If the mass rebuild process is interrupted after downloading has been
 completed, whether by signal or by build failure, a template named
