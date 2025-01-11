@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_optional lint_sbo_config on_blacklist open_fh open_read prompt script_error show_version uniq usage_error wrapsay %config $conf_dir @listings /;
+use SBO::Lib qw/ get_optional lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay %config $conf_dir @listings /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 
@@ -325,7 +325,7 @@ sub show_list {
 	}
 	for my $sbo (@candlist) {
 		if (my @optionals = get_optional($sbo)) {
-			say " ";
+			say " " if $wrote_blacklist or $wrote_optional;
 			say "Optional dependency requests for $sbo:";
 			wrapsay(join(" ", @optionals));
 			push @ineffectuals, $sbo if on_blacklist($sbo);
@@ -358,6 +358,7 @@ sub write_optional {
 	my ($sbo, @operation) = @_;
 	script_error("write_optional needs two arguments except for clear operations.") unless @operation or $clear;
 	mkdir $conf_dir unless -d $conf_dir;
+	read_hints() if -f $hintfile;
 	system(qw/ touch /, $hintfile) unless -f $hintfile;
 	@operation = uniq @operation if @operation;
 	my @loclistings = @listings;
@@ -381,16 +382,15 @@ sub write_optional {
 	# line is written back in to the file depends on the flags
 	FIRST: for my $line (<$rfh>) {
 		chomp(my $search = $line);
-		my $found = grep { /^$search$/ } @loclistings;
-		my $target = $search =~ m/\s$sbo$/;
+		my $target = (grep { /^$search$/ } @loclistings and $search =~ m/\s$sbo$/);
 		unless ($clear) {
 			# replace the first specification for $sbo, and then
 			# skip further instances (flags: -O, -o)
-			if ($found and $target and not $replaced) {
+			if ($target and not $replaced) {
 				push @outgoing, join(" ", @operation);
 				push @outgoing, "\n";
 				$replaced = 1;
-			} elsif ($found and $target) {
+			} elsif ($target) {
 				next FIRST;
 			} else {
 				push @outgoing, $line;
@@ -398,7 +398,7 @@ sub write_optional {
 		} elsif ($replace_optional) {
 			# skip any line that specifies optional dependencies for
 			# $sbo (flag: -cO)
-			push @outgoing, $line unless $found and $target;
+			push @outgoing, $line unless $target;
 		} else {
 			# clear the requested scripts from any specification for
 			# $sbo (flag: -co)

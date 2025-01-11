@@ -57,6 +57,7 @@ our @EXPORT_OK = (
     open_read
     print_failures
     prompt
+    read_hints
     save_options
     script_error
     show_version
@@ -142,7 +143,8 @@ our %config = (
 
 read_config();
 
-# The hints file should be read in once and only once.
+# The hints file should be read in at the start, and
+# only if editing the hints file thereafter.
 our @listings = read_hints();
 
 =head1 SUBROUTINES
@@ -672,11 +674,13 @@ sub read_config {
 
 C<read_hints()> reads the contents of /etc/sbotools/sbotools.hints, returning an array
 of optional dependency requests and blacklisted scripts. C<read_hints()> is used to
-populate global array C<@listings>, and should only be called once.
+populate global array C<@listings>, and should only be called at the start and again
+when editing the hints file.
 
 =cut
 
 sub read_hints{
+  @listings = () if @listings;
   if(-f "/etc/sbotools/sbotools.hints") {
     my $contents = slurp("/etc/sbotools/sbotools.hints");
     usage_error("read_hints: could not read existing /etc/sbotools/sbotools.hints.") unless
