@@ -199,6 +199,15 @@ sub prompt_queue {
 					prompt_queue($sbo);
 					return;
 				}
+				if (grep { /^$sbo$/ } @incoming) {
+					if ($clear) {
+						wrapsay("Cannot clear $sbo from its own list.", 1);
+					} else {
+						wrapsay("$sbo cannot be its own optional dependency.", 1);
+					}
+					prompt_queue($sbo);
+					return;
+				}
 				my $is_needed;
 				# for -o and -co, don't attempt changes if unneeded
 				if ($clear) {
@@ -234,6 +243,15 @@ sub prompt_queue {
 		if (@incoming = split(" ", prompt($message))) {
 			if (grep { /\!/ } @incoming) {
 				wrapsay("! cannot be used in optional dependency requests.", 1);
+				prompt_queue($sbo);
+				return;
+			}
+			if (grep { /^$sbo$/ } @incoming) {
+				if ($clear) {
+					wrapsay("Cannot clear $sbo from its own list.", 1);
+				} else {
+					wrapsay("$sbo cannot be its own optional dependency.", 1);
+				}
 				prompt_queue($sbo);
 				return;
 			}
@@ -392,7 +410,11 @@ sub write_optional {
 		}
 	}
 	# The simplest case of all is adding a completely new request.
-	unless ($clear or $replaced) { push @outgoing, join(" ", @operation); }
+	unless ($clear or $replaced) {
+		my $new_line = join(" ",@operation);
+		$new_line = "$new_line\n";
+		push @outgoing, $new_line;
+	}
 	close $rfh;
 	my ($fh, $exit) = open_fh($hintfile, '>');
 	if ($exit) {
