@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ %config _ERR_OPENFH get_arch get_build_queue get_full_reverse get_installed_cpans get_installed_packages get_reverse_reqs get_sbo_location get_sbo_locations in merge_queues open_fh print_failures process_sbos prompt show_version slackbuilds_or_fetch slurp uniq usage_error user_prompt verify_gpg lint_sbo_config wrapsay /;
+use SBO::Lib qw/ %config _ERR_OPENFH get_arch get_build_queue get_full_reverse get_installed_cpans get_installed_packages get_reverse_reqs get_sbo_location get_sbo_locations in merge_queues on_blacklist open_fh print_failures process_sbos prompt show_version slackbuilds_or_fetch slurp uniq usage_error user_prompt verify_gpg lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -167,7 +167,13 @@ if (length $utemp) {
 	}
 	do { warn "Could not read template from $utemp.\n"; exit _ERR_OPENFH } if not defined $template;
 
-	$build_queue = $template->{build_queue};
+	for my $cand (@{ $template->{build_queue} }) {
+		unless (on_blacklist($cand)) {
+			push @$build_queue, $cand;
+		} else {
+			wrapsay "$cand is blacklisted. Skipping.";
+		}
+	}
 } elsif (not $mass_rebuild) {
 	if (not $reverse_rebuild and ($no_reqs or $non_int)) {
 		$build_queue = \@ARGV;

@@ -26,6 +26,8 @@ Unless an important bug comes to light, the next version of sbotools,
   removing scripts from the optional dependency lists and replacing
   optional dependency lists.
 
+  STATUS: Added (use sbohints)
+
 * An interactive mode for sboconfig.
 
   Work had begun before Issue 18 necessitated the release of version
@@ -33,7 +35,7 @@ Unless an important bug comes to light, the next version of sbotools,
   configuration values; it will be reachable by running sboconfig
   without flags or options.
 
-  STATUS: Added (sbohints)
+  STATUS: Added
 
 * Rebuild reverse dependencies.
 
