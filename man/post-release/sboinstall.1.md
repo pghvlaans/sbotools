@@ -37,7 +37,8 @@ specified, **sboinstall** will pull the list of requirements from the
 over all dependencies. **sboinstall** will offer to install any
 non-installed dependencies in the build queue, taking blacklisted
 scripts and optional dependency specifications in [sbotools.hints(5)](sbotools.hints.5.md)
-into account. This program will not handle circular dependencies.
+into account. If circular dependencies are detected, the script will
+exit with an error message.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
 **sboinstall** will offer to run them prior to building. If the *README*
@@ -186,7 +187,8 @@ failed when **\--mass-rebuild** is used again.
 10: **convertpkg-compat32** exited non-zero.\
 11: the **convertpkg-compat32** script cannot be found (where
 required).\
-12: interrupt signal received.
+12: interrupt signal received.\
+13: circular dependencies detected.
 
 ## BUGS
 

@@ -9,6 +9,7 @@
   * *sbohints*: A new tool for modifying and querying the blacklist and optional dependency requests
   * *sboinstall*: Always give a distinct warning prompt when a package without the *\_SBo* tag would be replaced by adding it to the queue
   * *sboinstall*: Honor the blacklist when installing from templates
+  * Handle circular dependency errors
 
 * 3.3 - 2024-12-31
   * *sboconfig*: Allow versions "X.Y+" and "current"; more informative error messages

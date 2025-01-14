@@ -63,7 +63,8 @@ packages installed to the system.
 
 0: all operations completed successfully.\
 1: a usage error occurred, such as running **sboremove** with nothing to
-remove.
+remove.\
+13: circular dependencies detected.
 
 ## BUGS
 
