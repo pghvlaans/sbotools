@@ -16,7 +16,7 @@ use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO::App';
 
-our $VERSION = '3.3';
+our $VERSION = '3.4_RC';
 
 sub _parse_opts {
   my $class = shift;
