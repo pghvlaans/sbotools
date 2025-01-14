@@ -179,8 +179,7 @@ sub show_build_queue {
 sub show_reverse_dependencies {
 	script_error('show_reverse_dependencies requires an argument.') unless @_ == 1;
 	my $found = shift;
-	my @list;
-	my @full_reverse = get_full_reverse($found, $installed, $fulldeps, @list);
+	my @full_reverse = get_full_reverse($found, $installed, $fulldeps);
 	return join(" ", sort(@full_reverse)) if @full_reverse;
 	return "None";
 }

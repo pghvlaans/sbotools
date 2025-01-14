@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Info 3"
-.TH SBO::Lib::Info 3 "Prickle-Prickle, Chaos 4, 3191 YOLD" "" "sbotools 3.3"
+.TH SBO::Lib::Info 3 "Prickle-Prickle, Chaos 14, 3191 YOLD" "" "sbotools 3.3"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -100,16 +100,6 @@ corresponding value is the expected md5sum.
 .PP
 \&\f(CWget_from_info()\fR retrieves the information under \f(CW$key\fR from the info file
 in \f(CW$location\fR.
-.SS get_full_reverse
-.IX Subsection "get_full_reverse"
-.Vb 1
-\&  my @get_full_reverse = get_full_reverse($sbo, %installed, %fulldeps, @list)
-.Ve
-.PP
-\&\f(CWget_full_reverse()\fR takes a SlackBuild, a hash of installed packages, a hash
-of reverse dependency relationships (from \f(CW\*(C`get_reverse_reqs\*(C'\fR) and an array.
-The array should be empty when called from outside of the subroutine. It
-returns an array with installed reverse dependencies.
 .SS get_orig_build_number
 .IX Subsection "get_orig_build_number"
 .Vb 1

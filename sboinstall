@@ -186,7 +186,6 @@ if (length $utemp) {
 		my @installed = @{ get_installed_packages('SBO') };
 		my $installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
 		my $fulldeps = get_reverse_reqs($installed);
-		my @list;
 		REVERSE: for my $sbo (@ARGV) {
 			# ensure that targeted scripts do not depend on each other
 			my $check_queue = get_build_queue([$sbo], \%warnings);
@@ -194,7 +193,7 @@ if (length $utemp) {
 			for my $sbo2 (@ARGV) { next REVERSE if grep { /^$sbo2$/ } @$check_queue; }
 
 			my $interim_queue;
-			my @full_reverse = get_full_reverse($sbo, $installed, $fulldeps, @list);
+			my @full_reverse = get_full_reverse($sbo, $installed, $fulldeps);
 			if (@full_reverse) {
 				for my $revdep (@full_reverse) {
 					my $queue = get_build_queue([$revdep], \%warnings);

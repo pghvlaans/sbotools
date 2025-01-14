@@ -25,6 +25,7 @@ use constant $consts = {
   _ERR_CONVERTPKG    => 10,  # errors while running convertpkg-compat32
   _ERR_NOCONVERTPKG  => 11,  # lacking convertpkg-compat32 where required
   _ERR_INST_SIGNAL   => 12,  # sboinstall or sboupgrade was interrupted
+  _ERR_CIRCULAR      => 13,  # attempted to calculate circular dependencies
 };
 
 my @EXPORT_CONSTS = keys %$consts;

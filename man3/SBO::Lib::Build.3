@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Prickle-Prickle, Chaos 4, 3191 YOLD" "" "sbotools 3.3"
+.TH SBO::Lib::Build 3 "Prickle-Prickle, Chaos 14, 3191 YOLD" "" "sbotools 3.3"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -71,18 +71,28 @@ SBO::Lib::Build \- Routines for building Slackware packages from SlackBuilds.org
 .Ve
 .SH VARIABLES
 .IX Header "VARIABLES"
+.ie n .SS @concluded
+.el .SS \f(CW@concluded\fP
+.IX Subsection "@concluded"
+This is a shared, non-exportable array that tracks scripts with verified
+completable build queues; it is used by \f(CWget_build_queue()\fR to check for
+circular dependencies.
 .ie n .SS $env_tmp
 .el .SS \f(CW$env_tmp\fP
 .IX Subsection "$env_tmp"
 This reflects \f(CW$TMP\fR from the environment, being \f(CW\*(C`undef\*(C'\fR if it is not
 set.
+.ie n .SS @reverse_concluded
+.el .SS \f(CW@reverse_concluded\fP
+.IX Subsection "@reverse_concluded"
+This is a shared, non-exportable array that tracks scripts with verified
+reverse dependency chains; it is used by \f(CWget_full_reverse()\fR to check for
+circular reverse dependencies.
 .ie n .SS $tmpd
 .el .SS \f(CW$tmpd\fP
 .IX Subsection "$tmpd"
-This is the same as \f(CW$TMP\fR if it is set. Otherwise, it is \f(CW\*(C`/tmp/SBo\*(C'\fR.
-.ie n .SS $tempdir
-.el .SS \f(CW$tempdir\fP
-.IX Subsection "$tempdir"
+This is the same as \f(CW$TMP\fR if it is set. Otherwise, it is \f(CW\*(C`/tmp/SBo\*(C'\fR.  =head2 \f(CW$tempdir\fR
+.PP
 This is a temporary directory created for sbotools' use. It should be
 removed when sbotools exits.
 .SH SUBROUTINES
@@ -121,12 +131,15 @@ There is no useful return value.
 .SS get_build_queue
 .IX Subsection "get_build_queue"
 .Vb 1
-\&  my @queue = @{ get_build_queue($sbo, my $warnings) };
+\&  my @queue = @{ get_build_queue($sbo, my $warnings, my @checked) };
 .Ve
 .PP
 \&\f(CWget_build_queue()\fR gets the prerequisites for \f(CW$sbo\fR, updating the
 \&\f(CW$warnings\fR hash reference with any \f(CW\*(C`%README%\*(C'\fR encountered. It returns the
 prerequisites and \f(CW$sbo\fR in the correct build order.
+.PP
+\&\f(CW@checked\fR and \f(CW\*(C`our @concluded\*(C'\fR are used to check for circular dependencies; the
+script exits with \f(CW\*(C`_ERR_CIRCULAR\*(C'\fR if any are present.
 .SS get_dc_regex
 .IX Subsection "get_dc_regex"
 .Vb 1
@@ -136,6 +149,26 @@ prerequisites and \f(CW$sbo\fR in the correct build order.
 \&\f(CWget_dc_regex()\fR creates a regular expression that should match the filename
 given a line with e.g. an untar command. This is returned together with the \f(CW$initial\fR
 character, which starts the filename match.
+.SS get_full_queue
+.IX Subsection "get_full_queue"
+.Vb 1
+\&  my @revdep_queue = ($installed, @sbos);
+.Ve
+.PP
+\&\f(CWget_full_queue()\fR takes a list of installed SlackBuilds and an array
+of SlackBuilds to check. It returns a list of reverse dependencies.
+.SS get_full_reverse
+.IX Subsection "get_full_reverse"
+.Vb 1
+\&  my @get_full_reverse = get_full_reverse($sbo, %installed, %fulldeps, my @checked, my @list)
+.Ve
+.PP
+\&\f(CWget_full_reverse()\fR takes a SlackBuild, a hash of installed packages, a hash
+of reverse dependency relationships (from \f(CW\*(C`get_reverse_reqs\*(C'\fR) and an array.
+This array should not be included when called from outside of the subroutine.
+\&\f(CWget_full_reverse()\fR returns an array with installed reverse dependencies.
+.PP
+If any circular reverse dependencies are found, the script exits with \f(CW\*(C`_ERR_CIRCULAR\*(C'\fR.
 .SS get_pkg_name
 .IX Subsection "get_pkg_name"
 .Vb 1
@@ -191,14 +224,6 @@ It has no useful return value.
 \&\f(CWmerge_queues()\fR takes two array references and merges them such that \f(CW@queue1\fR
 is in front, followed by any non-redundant items in \f(CW@queue2\fR. This is returned
 as an array reference.
-.SS get_full_queue
-.IX Subsection "get_full_queue"
-.Vb 1
-\&  my @revdep_queue = ($installed, @sbos);
-.Ve
-.PP
-\&\f(CWget_full_queue()\fR takes a list of installed SlackBuilds and an array
-of SlackBuilds to check. It returns a list of reverse dependencies.
 .SS perform_sbo
 .IX Subsection "perform_sbo"
 .Vb 1

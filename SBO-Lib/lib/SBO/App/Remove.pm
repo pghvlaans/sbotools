@@ -11,7 +11,7 @@ package SBO::App::Remove;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_build_queue get_full_queue merge_queues get_requires get_readme_contents get_reverse_reqs prompt show_version in lint_sbo_config wrapsay %config /;
+use SBO::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_full_queue merge_queues get_requires get_readme_contents get_reverse_reqs prompt show_version in lint_sbo_config wrapsay %config /;
 use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO::App';

@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '3.3';
 
-use SBO::Lib::Util qw/ in get_arch get_sbo_from_loc get_optional open_read script_error slurp usage_error uniq /;
+use SBO::Lib::Util qw/ :const in get_arch get_sbo_from_loc get_optional open_read script_error slurp usage_error uniq wrapsay /;
 use SBO::Lib::Tree qw/ get_orig_location get_sbo_location is_local /;
 
 use Exporter 'import';
@@ -15,7 +15,6 @@ our @EXPORT_OK = qw{
   check_x32
   get_download_info
   get_from_info
-  get_full_reverse
   get_orig_build_number
   get_orig_version
   get_requires
@@ -159,37 +158,6 @@ sub get_from_info {
     }
   }
   return $store->{$args{GET}};
-}
-
-=head2 get_full_reverse
-
-  my @get_full_reverse = get_full_reverse($sbo, %installed, %fulldeps, @list)
-
-C<get_full_reverse()> takes a SlackBuild, a hash of installed packages, a hash
-of reverse dependency relationships (from C<get_reverse_reqs>) and an array.
-The array should be empty when called from outside of the subroutine. It
-returns an array with installed reverse dependencies.
-
-=cut
-
-sub get_full_reverse {
-  script_error("full_reverse requires arguments.") unless @_;
-  my ($sbo, $installed, $fulldeps, @list) = @_;
-  my @sublist;
-  for my $cand (keys %$installed) {
-    push @sublist, $cand if $fulldeps->{$sbo}->{$cand};
-  }
-  push @list, @sublist if @sublist;
-
-  if (@sublist) {
-    for my $revdep (@sublist) {
-      my @newlist = get_full_reverse($revdep, $installed, $fulldeps, @list);
-      push @list, @newlist if @newlist;
-    }
-    my @full_reverse = uniq @list;
-    return @full_reverse;
-  }
-  return;
 }
 
 =head2 get_orig_build_number

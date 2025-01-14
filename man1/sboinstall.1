@@ -38,8 +38,8 @@ the build queue, taking blacklisted scripts and optional dependency
 specifications in
 .B
 sbotools.hints(5)
-into account. This program will not handle circular
-dependencies.
+into account. If circular dependencies are detected, the
+script will exit with an error message.
 .P
 .I
 README
@@ -435,6 +435,9 @@ script cannot be found (where required).
 .RE
 .RS
 12: interrupt signal received.
+.RE
+.RS
+13: circular dependencies detected.
 .RE
 .SH BUGS
 .P

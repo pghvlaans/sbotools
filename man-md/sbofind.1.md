@@ -81,7 +81,8 @@ Show the build queue for each SlackBuild found, given the contents of
 
 0: all operations were succesful.\
 1: a usage error occured (i.e. **sbofind** ran with nothing to find)\
-6: **sbofind** was unable to obtain a required file handle.
+6: **sbofind** was unable to obtain a required file handle.\
+13: circular dependencies detected.
 
 ## BUGS
 
