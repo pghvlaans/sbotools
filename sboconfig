@@ -72,6 +72,7 @@ EOF
 	return 1;
 }
 
+my $all_clear = 1 unless @ARGV;
 my %options;
 
 GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'classic|C=s', 'noclean|c=s',
@@ -143,8 +144,11 @@ for my $key (keys %valid_confs) {
 }
 $changes{'SBO_HOME'} = '/usr/sbo' if exists $options{reset};
 
-if (not %options) {
+if (not %options and $all_clear) {
 	interactive_menu();
+} elsif (not %options) {
+	show_usage();
+	exit 1;
 }
 
 lint_sbo_config($self, %changes);
