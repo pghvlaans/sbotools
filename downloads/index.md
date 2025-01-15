@@ -19,6 +19,8 @@ Because no urgent bugfixes are pending, a release candidate for version 3.4 will
 
 ## Release Tarballs
 
+* [sbotools-3.4_RC.tar.gz](sbotools-3.4_RC.tar.gz) ([sbotools-3.4_RC.tar.gz.asc](sbotools-3.4_RC.tar.gz.asc))
+    * md5sum: `e1cde313c86f0bfea8b08cb72c2ee773`
 * [sbotools-3.3.tar.gz](sbotools-3.3.tar.gz) ([sbotools-3.3.tar.gz.asc](sbotools-3.3.tar.gz.asc))
     * md5sum: `518a5a0965e60632705af42d39bba4f6`
 * [sbotools-3.2.1.tar.gz](sbotools-3.2.1.tar.gz) ([sbotools-3.2.1.tar.gz.asc](sbotools-3.2.1.tar.gz.asc))
