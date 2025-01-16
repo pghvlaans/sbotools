@@ -68,7 +68,7 @@ Show the contents of the *README* file for each SlackBuild found.
 
 Show any reverse dependencies installed on the system. Please note that
 optional dependencies must be specified in [sbotools.hints(5)](sbotools.hints.5.md) to be
-included. Packages with tags other than *\_SBo*are not included.
+included. Packages with tags other than *\_SBo* are not included.
 
 **-q\|\--queue**
 
@@ -80,7 +80,7 @@ Show the build queue for each SlackBuild found, given the contents of
 **sbofind** can exit with the following codes:
 
 0: all operations were succesful.\
-1: a usage error occured (i.e. **sbofind** ran with nothing to find)\
+1: a usage error occured (e.g., **sbofind** ran with nothing to find)\
 6: **sbofind** was unable to obtain a required file handle.\
 13: circular dependencies detected.
 

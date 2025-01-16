@@ -48,7 +48,17 @@ when
 CLASSIC
 is
 .B
-TRUE
+TRUE\fR\
+&\; if
+.B
+STRICT_UPGRADES
+is
+.B
+TRUE\fR\
+\&, apparent downgrades are reported with \(lqdiffers\(rq, but
+will not be acted on by
+.B
+sboupgrade(1)
 (see
 .B
 sboconfig(1)

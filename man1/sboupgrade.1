@@ -27,7 +27,7 @@ info
 file for any specified SlackBuild. This is a recursive
 operation over all dependencies.
 .B
-sboinstall
+sboupgrade
 will offer to install any non-installed dependencies in
 the build queue, taking blacklisted scripts and optional
 dependency specifications in
@@ -46,7 +46,7 @@ and
 useradd
 commands, and
 .B
-sboinstall
+sboupgrade
 will offer to run them prior to building. If the
 .I
 README
@@ -67,7 +67,14 @@ CLASSIC
 is set to
 .B
 TRUE\fR\
-\&. See
+\&; if
+.B
+STRICT_UPGRADES
+is
+.B
+TRUE\fR\
+\&, upgrades will only be performed for non-override packages
+if the version or build number is apparently higher. See
 .B
 sboconfig(1)
 or
@@ -294,18 +301,20 @@ sboupgrade\fR\
 .RE
 .P
 .B
--S|--strict-upgrades
+-S|--strict-upgrades (FALSE|TRUE)
 .RS
 If
 .B
 TRUE\fR\
 \&, only perform upgrades if the incoming version or build number is higher. This
-has no effect scripts in the local overrides directory. See
+has no effect scripts in the local overrides directory. This option can be set as
+default via
 .B
-sboconfig(1)
-or
+sboconfig(1)\fR\
+\&. See also
+.B
 sbotools.conf(5)\fR\
-\&.
+\&. This option overrides the default.
 .RE
 .P
 .B

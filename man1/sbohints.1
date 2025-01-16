@@ -44,10 +44,10 @@ If an invalid configuration is detected in
 .B
 -b|--blacklist
 .RS
-Add (or clear with
+Modify the blacklist by adding (or, with
 .B
 --clear\fR\
-\&) one or more scripts to the blacklist.
+\&, clearing) one or more scripts.
 .RE
 .P
 .B
@@ -58,7 +58,7 @@ Add (or clear with
 --clear\fR\
 \&) optional dependency requests for one or more
 scripts. The current optional dependencies will be displayed
-together with a prompt for adding or removing.
+together with a prompt for adding or clearing.
 .RE
 .P
 .B
@@ -90,6 +90,7 @@ or
 .B
 --blacklist
 and
+.B
 --optional\fR\
 \&, clear entries instead of adding them. For
 .B
