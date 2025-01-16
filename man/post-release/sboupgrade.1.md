@@ -29,21 +29,23 @@
 **sboupgrade** is used to upgrade SlackBuilds. If the **-r** flag is not
 specified, **sboupgrade** will pull the list of requirements from the
 *info* file for any specified SlackBuild. This is a recursive operation
-over all dependencies. **sboinstall** will offer to install any
+over all dependencies. **sboupgrade** will offer to install any
 non-installed dependencies in the build queue, taking blacklisted
 scripts and optional dependency specifications in [sbotools.hints(5)](sbotools.hints.5.md)
 into account. If circular dependencies are detected, the script will
 exit with an error message.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
-**sboinstall** will offer to run them prior to building. If the *README*
+**sboupgrade** will offer to run them prior to building. If the *README*
 is judged to document options in *KEY=VALUE* form, a prompt for setting
 options will appear. Any build options, whether passed interactively or
 in a template, will be saved to */var/log/sbotools* when the SlackBuild
 runs.
 
 Please note that saved build options will not be displayed when
-**CLASSIC** is set to **TRUE**. See [sboconfig(1)](sboconfig.1.md) or
+**CLASSIC** is set to **TRUE**; if **STRICT_UPGRADES** is **TRUE**,
+upgrades will only be performed for non-override packages if the version
+or build number is apparently higher. See [sboconfig(1)](sboconfig.1.md) or
 [sbotools.conf(5)](sbotools.conf.5.md).
 
 **sboupgrade** will attempt to download the sources from the *DOWNLOAD*
@@ -130,11 +132,12 @@ SlackBuilds. Unless it is obvious that dependency resolution and build
 options are not required, this option should not be used with
 **sboupgrade**.
 
-**-S\|\--strict-upgrades**
+**-S\|\--strict-upgrades (FALSE\|TRUE)**
 
 If **TRUE**, only perform upgrades if the incoming version or build
 number is higher. This has no effect scripts in the local overrides
-directory. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
+directory. This option can be set as default via [sboconfig(1)](sboconfig.1.md). See
+also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
 
 **-z\|\--force-reqs**
 

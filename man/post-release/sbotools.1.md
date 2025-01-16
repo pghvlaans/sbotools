@@ -61,7 +61,7 @@ dependencies.
 Upgrade previously-installed SlackBuilds.
 
 For details about all configuration options in *sbotools.conf*, see
-[sbotools.conf(5)](sbotools.conf.5.md). [sbotools.hints(5)](sbotools.hints.5.md)documents the
+[sbotools.conf(5)](sbotools.conf.5.md). [sbotools.hints(5)](sbotools.hints.5.md) documents the
 */etc/sbotools/sbotools.hints* file, which can be used to blacklist
 scripts and request optional dependencies.
 

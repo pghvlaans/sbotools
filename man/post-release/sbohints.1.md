@@ -42,13 +42,14 @@ message.
 
 **-b\|\--blacklist**
 
-Add (or clear with **\--clear**) one or more scripts to the blacklist.
+Modify the blacklist by adding (or, with **\--clear**, clearing) one or
+more scripts.
 
 **-o\|\--optional**
 
 Add (or clear with **\--clear**) optional dependency requests for one or
 more scripts. The current optional dependencies will be displayed
-together with a prompt for adding or removing.
+together with a prompt for adding or clearing.
 
 **-O\|\--replace-optional**
 
@@ -61,7 +62,7 @@ confirmation prompt for clearing the optional dependencies will appear.
 
 This flag is used together with one (and only one) of **\--blacklist**,
 **\--optional** or **\--replace-optional**. For **\--blacklist** and
-\--optional, clear entries instead of adding them. For
+**\--optional**, clear entries instead of adding them. For
 **\--replace-optional**, clear all existing optional dependency
 requests.
 
