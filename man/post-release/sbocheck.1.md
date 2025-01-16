@@ -4,6 +4,7 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
@@ -73,6 +74,15 @@ Show help information.
 **-v\|\--version**
 
 Show version information.
+
+## EXIT CODES
+
+**sbocheck** can exit with the following codes:
+
+0: all operations were successful.\
+5: failed to download the tree.\
+6: failed to open a required file handle.\
+12: interrupt signal received.
 
 ## BUGS
 
