@@ -83,12 +83,14 @@ This is a shared, non-exportable array that tracks scripts with verified
 reverse dependency chains; it is used by C<get_full_reverse()> to check for
 circular reverse dependencies.
 
-=head2 $tmpd
-
-This is the same as C<$TMP> if it is set. Otherwise, it is C</tmp/SBo>.  =head2 $tempdir
+=head2 $tempdir
 
 This is a temporary directory created for sbotools' use. It should be
 removed when sbotools exits.
+
+=head2 $tmpd
+
+This is the same as C<$TMP> if it is set. Otherwise, it is C</tmp/SBo>.
 
 =cut
 
@@ -276,7 +278,8 @@ sub get_dc_regex {
   my @revdep_queue = ($installed, @sbos);
 
 C<get_full_queue()> takes a list of installed SlackBuilds and an array
-of SlackBuilds to check. It returns a list of reverse dependencies.
+of SlackBuilds to check. It returns a list of the checked SlackBuilds and
+their dependencies in reverse build order.
 
 =cut
 
@@ -305,8 +308,8 @@ sub get_full_queue {
   my @get_full_reverse = get_full_reverse($sbo, %installed, %fulldeps, my @checked, my @list)
 
 C<get_full_reverse()> takes a SlackBuild, a hash of installed packages, a hash
-of reverse dependency relationships (from C<get_reverse_reqs>) and an array.
-This array should not be included when called from outside of the subroutine.
+of reverse dependency relationships (from C<get_reverse_reqs>) and two arrays.
+These arrays should not be included when called from outside of the subroutine.
 C<get_full_reverse()> returns an array with installed reverse dependencies.
 
 If any circular reverse dependencies are found, the script exits with C<_ERR_CIRCULAR>.

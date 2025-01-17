@@ -90,7 +90,7 @@ sub get_sbo_location {
 
   my %locations = get_sbo_locations(@sbos);
 
-C<get_sbo_locations> finds all SlackBuilds in C<@sbos>, returns a hash matching each
+C<get_sbo_locations> finds all SlackBuilds in C<@sbos> and returns a hash matching each
 package name to its location.
 
 =cut
@@ -146,8 +146,8 @@ sub get_sbo_locations {
 
   my $bool = is_local($sbo);
 
-C<is_local()> checks whether the given C<$sbo> is in the C<LOCAL_OVERRIDES> or
-not. The return value is true if it is, and false if it is not.
+C<is_local()> checks whether the given C<$sbo> is in the C<LOCAL_OVERRIDES> directory.
+The return value is true if it is, and false if it is not.
 
 =cut
 

@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Readme 3"
-.TH SBO::Lib::Readme 3 "Prickle-Prickle, Chaos 14, 3191 YOLD" "" "sbotools 3.4"
+.TH SBO::Lib::Readme 3 "Boomtime, Chaos 17, 3191 YOLD" "" "sbotools 3.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -103,8 +103,8 @@ returned; the return is otherwise \f(CW\*(C`undef\*(C'\fR.
 \&  my $bool = get_opts($readme);
 .Ve
 .PP
-\&\f(CWget_opts()\fR checks the \f(CW$readme\fR for defined options. It returns a true
-value if any are found, and a false value otherwise.
+\&\f(CWget_opts()\fR checks the \f(CW$readme\fR for defined options in the form KEY=VALUE.
+It returns a true value if any are found, and a false value otherwise.
 .SS get_readme_contents
 .IX Subsection "get_readme_contents"
 .Vb 1

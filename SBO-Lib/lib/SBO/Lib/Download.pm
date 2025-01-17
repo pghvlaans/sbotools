@@ -250,7 +250,7 @@ sub get_sbo_downloads {
 
   my $symlink = get_symlink_from_filename($path, $loc);
 
-C<get_symlink_from_filename()>, given a (source) file at C<$path> and a location C<$loc>,
+C<get_symlink_from_filename()>, given a source file at C<$path> and a location C<$loc>,
 returns the path of the generated symlink.
 
 =cut

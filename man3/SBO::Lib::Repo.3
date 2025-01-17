@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Repo 3"
-.TH SBO::Lib::Repo 3 "Prickle-Prickle, Chaos 14, 3191 YOLD" "" "sbotools 3.4"
+.TH SBO::Lib::Repo 3 "Boomtime, Chaos 17, 3191 YOLD" "" "sbotools 3.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -166,8 +166,7 @@ at the end of the subroutine.
 the default in \f(CW%supported\fR for the running Slackware version (accounting
 for \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR, \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR and \f(CW\*(C`REPO\*(C'\fR).
 .PP
-\&\f(CW$ver\fR is the running or configured version of Slackware, provided that it
-is supported. Version support verification occurs in \f(CWget_slack_version_url()\fR
+Version support verification occurs in \f(CWget_slack_version_url()\fR
 via \f(CWget_slack_version()\fR; see \f(CWSBO::Lib::Util(3)\fR.
 .SS rsync_sbo_tree
 .IX Subsection "rsync_sbo_tree"
@@ -188,7 +187,8 @@ at the end of the subroutine.
 .PP
 \&\f(CWslackbuilds_or_fetch()\fR is called from \f(CWsbocheck(1)\fR, \f(CWsbofind(1)\fR, \f(CWsboinstall(1)\fR
 and \f(CWsboupdate(1)\fR. It checks for the file \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR in
-\&\f(CW$repo_path\fR. If not, it offers to check the local repository and fetch the tree.
+\&\f(CW$repo_path\fR. If this file is empty or does not exist, it offers to check the local
+repository and fetch the tree.
 .SS update_tree
 .IX Subsection "update_tree"
 .Vb 1

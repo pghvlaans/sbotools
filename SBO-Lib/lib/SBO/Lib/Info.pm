@@ -51,7 +51,7 @@ SBO::Lib::Info - Utilities to get data from SBo info files.
   my $bool = check_x32($location);
 
 C<check_x32()> returns a true value if the SlackBuild in C<$location> considers
-64bit builds C<UNTESTED> or C<UNSUPPORTED>. Otherwise, it returns a false value.
+64-bit builds C<UNTESTED> or C<UNSUPPORTED>. Otherwise, it returns a false value.
 
 =cut
 

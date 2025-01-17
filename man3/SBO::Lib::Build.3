@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Prickle-Prickle, Chaos 14, 3191 YOLD" "" "sbotools 3.4"
+.TH SBO::Lib::Build 3 "Boomtime, Chaos 17, 3191 YOLD" "" "sbotools 3.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -88,13 +88,15 @@ set.
 This is a shared, non-exportable array that tracks scripts with verified
 reverse dependency chains; it is used by \f(CWget_full_reverse()\fR to check for
 circular reverse dependencies.
+.ie n .SS $tempdir
+.el .SS \f(CW$tempdir\fP
+.IX Subsection "$tempdir"
+This is a temporary directory created for sbotools' use. It should be
+removed when sbotools exits.
 .ie n .SS $tmpd
 .el .SS \f(CW$tmpd\fP
 .IX Subsection "$tmpd"
-This is the same as \f(CW$TMP\fR if it is set. Otherwise, it is \f(CW\*(C`/tmp/SBo\*(C'\fR.  =head2 \f(CW$tempdir\fR
-.PP
-This is a temporary directory created for sbotools' use. It should be
-removed when sbotools exits.
+This is the same as \f(CW$TMP\fR if it is set. Otherwise, it is \f(CW\*(C`/tmp/SBo\*(C'\fR.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS do_convertpkg
@@ -156,7 +158,8 @@ character, which starts the filename match.
 .Ve
 .PP
 \&\f(CWget_full_queue()\fR takes a list of installed SlackBuilds and an array
-of SlackBuilds to check. It returns a list of reverse dependencies.
+of SlackBuilds to check. It returns a list of the checked SlackBuilds and
+their dependencies in reverse build order.
 .SS get_full_reverse
 .IX Subsection "get_full_reverse"
 .Vb 1
@@ -164,8 +167,8 @@ of SlackBuilds to check. It returns a list of reverse dependencies.
 .Ve
 .PP
 \&\f(CWget_full_reverse()\fR takes a SlackBuild, a hash of installed packages, a hash
-of reverse dependency relationships (from \f(CW\*(C`get_reverse_reqs\*(C'\fR) and an array.
-This array should not be included when called from outside of the subroutine.
+of reverse dependency relationships (from \f(CW\*(C`get_reverse_reqs\*(C'\fR) and two arrays.
+These arrays should not be included when called from outside of the subroutine.
 \&\f(CWget_full_reverse()\fR returns an array with installed reverse dependencies.
 .PP
 If any circular reverse dependencies are found, the script exits with \f(CW\*(C`_ERR_CIRCULAR\*(C'\fR.

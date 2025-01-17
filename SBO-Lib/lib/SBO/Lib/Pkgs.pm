@@ -154,8 +154,8 @@ C<get_installed_packages()> returns an array reference to a list of installed pa
 matching the specified C<$type>. The available types are C<STD> for non-SBo packages,
 C<SBO> for in-tree _SBo packages, C<DIRTY> for out-of-tree _SBo packages and C<ALL> for all.
 
-The returned array reference will hold a list of hash references representing
-the names, versions, and full installed package names of the returned packages.
+The returned array reference holds a list of hash references representing
+the names, versions and full installed package names of the returned packages.
 
 =cut
 

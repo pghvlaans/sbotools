@@ -207,7 +207,7 @@ sub get_arch {
 
   my $kv = get_kernel_version();
 
-C<get_kernel_version()> checks the version of the running kernel, and returns
+C<get_kernel_version()> checks the version of the running kernel and returns
 it in a format suitable for appending to a Slackware package version.
 
 =cut
@@ -347,7 +347,7 @@ sub get_slack_version_url {
   my $url = get_slack_branch();
 
 C<get_slack_branch()> returns the default git branch for the given Slackware
-version, if any. If the pulled repository does not have this branch, an onscreen
+version, if any. If the upstream repository does not have this branch, an onscreen
 message will appear.
 
 =cut

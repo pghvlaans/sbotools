@@ -141,8 +141,8 @@ sub ask_user_group {
 
   my $bool = get_opts($readme);
 
-C<get_opts()> checks the C<$readme> for defined options. It returns a true
-value if any are found, and a false value otherwise.
+C<get_opts()> checks the C<$readme> for defined options in the form KEY=VALUE.
+It returns a true value if any are found, and a false value otherwise.
 
 =cut
 

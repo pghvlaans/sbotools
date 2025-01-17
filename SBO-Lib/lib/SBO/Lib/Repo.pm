@@ -385,8 +385,7 @@ C<pull_sbo_tree()> pulls the SlackBuilds.org repository tree from
 the default in C<%supported> for the running Slackware version (accounting
 for C<SLACKWARE_VERSION>, C<RSYNC_DEFAULT> and C<REPO>).
 
-C<$ver> is the running or configured version of Slackware, provided that it
-is supported. Version support verification occurs in C<get_slack_version_url()>
+Version support verification occurs in C<get_slack_version_url()>
 via C<get_slack_version()>; see C<SBO::Lib::Util(3)>.
 
 =cut
@@ -454,7 +453,8 @@ sub rsync_sbo_tree {
 
 C<slackbuilds_or_fetch()> is called from C<sbocheck(1)>, C<sbofind(1)>, C<sboinstall(1)>
 and C<sboupdate(1)>. It checks for the file C<SLACKBUILDS.TXT> in
-C<$repo_path>. If not, it offers to check the local repository and fetch the tree.
+C<$repo_path>. If this file is empty or does not exist, it offers to check the local
+repository and fetch the tree.
 
 =cut
 
