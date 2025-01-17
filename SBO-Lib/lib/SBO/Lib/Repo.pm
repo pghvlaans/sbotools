@@ -563,7 +563,7 @@ sub verify_git_commit {
   }
   # BADSIG: big warning and exit
   if (grep(/BADSIG/, @raw)) {
-    usage_error("WARNING! The most recent commit on this git branch was signed with a bad key.\n\nUsing this repository is strongly discouraged. Exiting.");
+    usage_error("WARNING! The most recent commit on this git branch has a bad signature.\n\nUsing this repository is strongly discouraged. Exiting.");
   }
   # REVKEYSIG: warning and exit
   if (grep(/REVKEYSIG/, @raw)) {
