@@ -1,8 +1,18 @@
 # sbotools
 
-**[sbotools](https://pghvlaans.github.io/sbotools/)** provides a ports-like interface to [slackbuilds.org](http://www.slackbuilds.org/).
+**[sbotools](https://pghvlaans.github.io/sbotools/)** is a set of Perl scripts providing a ports-like automation interface to [slackbuilds.org](https://www.slackbuilds.org/). The tools are:
 
-A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
+  * sbocheck: Fetch the latest version of SlackBuilds.org repository; check for version updates, build number changes and out-of-tree installed SlackBuilds.
+  * sboclean: Remove cruft by cleaning source archives, build directories and saved build options.
+  * sboconfig: A command line interface for changing settings.
+  * sbofind: Search the local copy of the repository.
+  * sbohints: Query and modify the blacklist and optional dependency requests.
+  * sboinstall: Install SlackBuilds with their dependencies; handle compat32 packages and build from templates.
+  * sboupgrade: Upgrade previously-installed SlackBuilds.
+
+Features include dependency handling, using a custom git branch for the upstream repository, reverse dependency search and rebuild, gpg verification and more. See **sbotools(1)** for a startup guide.
+
+This repository is for continuing **sbotools** development, and was forked from the [pink-mist repository](https://github.com/pink-mist/sbotools), which covered development from version 1.9 through version 2.7. A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at slackbuilds.org.
 
