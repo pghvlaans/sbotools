@@ -14,7 +14,7 @@
 
 ## NAME
 
-**sbofind** - search the local copy of the **slackbuilds.org** tree for
+**sbofind** - search the local copy of the **SlackBuilds.org** tree for
 a given name or names
 
 ## SYNOPSIS

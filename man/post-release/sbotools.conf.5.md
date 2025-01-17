@@ -78,7 +78,7 @@ overrides the **DISTCLEAN** setting for saved packages.
 
 **SBO_HOME=(/usr/sbo\|/path)**
 
-If set to a **path**, this is where the **slackbuilds.org** tree is
+If set to a **path**, this is where the **SlackBuilds.org** tree is
 stored. The default setting is */usr/sbo*. The tree must be
 re-downloaded with [sbocheck(1)](sbocheck.1.md) if the **SBO_HOME** setting changes.
 
@@ -94,7 +94,7 @@ present.
 
 **SLACKWARE_VERSION=(FALSE\|#.#)**
 
-If set to a **version number**, use the **slackbuilds.org** repository
+If set to a **version number**, use the **SlackBuilds.org** repository
 for that version of Slackware rather than the one specified in
 */etc/slackware-version*.
 

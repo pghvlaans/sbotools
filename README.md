@@ -1,6 +1,6 @@
 # sbotools
 
-**sbotools** is a set of Perl scripts providing a ports-like automation interface to [slackbuilds.org](https://slackbuilds.org). Features include dependency handling, using a custom git branch, generating 32-bit and compat32 builds on multilib systems, and more.
+**sbotools** is a set of Perl scripts providing a ports-like automation interface to [SlackBuilds.org](https://slackbuilds.org). Features include dependency handling, using a custom git branch, generating 32-bit and compat32 builds on multilib systems, and more.
 
 [This repository](https://github.com/pghvlaans/sbotools/) is for continuing **sbotools** development, and was forked from the [pink-mist repository](https://github.com/pghvlaans/pink-mist/sbotools/), which covered development from version 1.9 through version 2.7.
 

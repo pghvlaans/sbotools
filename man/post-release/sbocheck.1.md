@@ -14,7 +14,7 @@
 
 ## NAME
 
-**sbocheck** - update a local **slackbuilds.org** tree and check for
+**sbocheck** - update a local **SlackBuilds.org** tree and check for
 updates
 
 ## SYNOPSIS
@@ -25,7 +25,7 @@ updates
 
 ## DESCRIPTION
 
-**sbocheck** first updates or fetches a copy of the **slackbuilds.org**
+**sbocheck** first updates or fetches a copy of the **SlackBuilds.org**
 tree, checks for available upgrades, and reports what it finds.
 SlackBuilds with differing build numbers are reported separately, as are
 any SlackBuilds marked *\_SBo* that are not found in the repository or

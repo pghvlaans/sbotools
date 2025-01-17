@@ -118,7 +118,7 @@ packages.
 **-s\|\--sbo-home (/usr/sbo\|/path)**
 
 **SBO_HOME**: If set to a **path**, this is where the
-**slackbuilds.org** tree is stored. The default setting is */usr/sbo*.
+**SlackBuilds.org** tree is stored. The default setting is */usr/sbo*.
 The tree must be re-downloaded if the **SBO_HOME** setting changes.
 
 **-o\|\--local-overrides (FALSE\|/path)**
@@ -134,7 +134,7 @@ SlackBuild must all be present.
 **-V\|\--slackware-version (FALSE\|#.#)**
 
 **SLACKWARE_VERSION**: If set to a **version number**, use the
-**slackbuilds.org** repository for that version of Slackware rather than
+**SlackBuilds.org** repository for that version of Slackware rather than
 the one specified in */etc/slackware-version*.
 
 **-r\|\--repo (FALSE\|url)**

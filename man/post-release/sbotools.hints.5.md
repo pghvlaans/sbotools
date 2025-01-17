@@ -26,7 +26,7 @@ own line with no whitespace, prepending an exclamation mark:
 
 Blacklist entries supersede optional dependency requests.
 
-Many scripts on **slackbuilds.org** have optional dependencies. To make
+Many scripts on **SlackBuilds.org** have optional dependencies. To make
 **sbotools** recognize one or more optional dependencies for a script,
 make a space-delineated list of optional dependencies and place the name
 of the script at the end:
