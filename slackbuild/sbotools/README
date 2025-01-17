@@ -1,7 +1,7 @@
-sbotools (ports-like interface to slackbuilds.org)
+sbotools (ports-like interface to SlackBuilds.org)
 
 sbotools is a set of Perl scripts providing a ports-like automation
-interface to slackbuilds.org. Features include dependency handling,
+interface to SlackBuilds.org. Features include dependency handling,
 using a custom git branch, generating 32-bit and compat32 builds on
 multilib systems, reverse dependency search and rebuild, gpg
 verification and more.
@@ -12,7 +12,7 @@ SBO::Lib::* modules are documented in man 3.
 
 sbotools bundles the required Perl module Sort::Versions. This does
 not interfere with a copy installed from the CPAN or from
-slackbuilds.org.
+SlackBuilds.org.
 
 sbotools installs a default configuration file to
 /etc/sbotools/sbotools.conf.new. sbotools.conf files from version 2.7

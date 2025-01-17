@@ -13,12 +13,12 @@
 ## NAME
 
 **sbotools** - Perl scripts providing a ports-like interface to
-**slackbuilds.org**
+**SlackBuilds.org**
 
 ## DESCRIPTION
 
 **sbotools** is a set of Perl scripts that collectively provide a
-ports-like interface to **slackbuilds.org**. Each tool is documented in
+ports-like interface to **SlackBuilds.org**. Each tool is documented in
 its own man page.
 
 [sbocheck(1)](sbocheck.1.md)

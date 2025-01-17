@@ -244,7 +244,7 @@ sub interactive_menu {
 
 	PKG_DIR: config_prompt("PKG_DIR", "If set to an absolute path, store newly-built packages there regardless of DISTCLEAN.", "An absolute path or FALSE.", "PATH");
 
-	SBO_HOME: config_prompt("SBO_HOME", "If set to an absolute path, this is where the slackbuilds.org tree will live.", "An absolute path or FALSE.", "PATH");
+	SBO_HOME: config_prompt("SBO_HOME", "If set to an absolute path, this is where the SlackBuilds.org tree will live.", "An absolute path or FALSE.", "PATH");
 
 	LOCAL_OVERRIDES: config_prompt("LOCAL_OVERRIDES", "If set to an absolute path, any directory name in the top level under that path matching a SlackBuild name will be used in preference to the main repository. Personalized builds can be stored here.", "An absolute path or FALSE.", "PATH");
 

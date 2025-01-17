@@ -97,7 +97,7 @@ option overrides the default.
 **-f\|\--force**
 
 Force an upgrade, even if the installed version and build number are
-equal to the **slackbuilds.org** version.
+equal to the **SlackBuilds.org** version.
 
 **-i\|\--noinstall**
 
