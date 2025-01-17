@@ -198,7 +198,7 @@ In case of error, the first is the error message and the third is a true value.
 
 If the user refuses the prompt to build C<$sbo>, the first value is C<'N'>.
 
-If C<$sbo> is to be built, the first value is the commands that will be run
+If C<$sbo> is to be built, the first value is the commands that would run
 in advance, or C<$undef> if none. The second value contains build options.
 
 B<Note>: This should really be changed.

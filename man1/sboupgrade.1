@@ -21,20 +21,20 @@ is used to upgrade SlackBuilds. If the
 flag is not specified,
 .B
 sboupgrade
-will pull the list of requirements from the
+pulls the list of requirements from the
 .I
 info
 file for any specified SlackBuild. This is a recursive
 operation over all dependencies.
 .B
 sboupgrade
-will offer to install any non-installed dependencies in
+offers to install any non-installed dependencies in
 the build queue, taking blacklisted scripts and optional
 dependency specifications in
 .B
 sbotools.hints(5)
 into account. If circular dependencies are detected, the
-script will exit with an error message.
+script exits with an error message.
 .P
 .I
 README
@@ -47,20 +47,20 @@ useradd
 commands, and
 .B
 sboupgrade
-will offer to run them prior to building. If the
+offers to run them prior to building. If the
 .I
 README
 is judged to document options in
 .I
 KEY=VALUE
-form, a prompt for setting options will appear. Any
+form, a prompt for setting options appears. Any
 build options, whether passed interactively or in a
-template, will be saved to
+template, are saved to
 .I
 /var/log/sbotools
 when the SlackBuild runs.
 .P
-Please note that saved build options will not be displayed
+Please note that saved build options are not displayed
 when
 .B
 CLASSIC
@@ -73,7 +73,7 @@ STRICT_UPGRADES
 is
 .B
 TRUE\fR\
-\&, upgrades will only be performed for non-override packages
+\&, upgrades are only performed for non-override packages
 if the version or build number is apparently higher. See
 .B
 sboconfig(1)
@@ -84,7 +84,7 @@ sbotools.conf(5)\fR\
 .P
 .B
 sboupgrade
-will attempt to download the sources from the
+attempts to download the sources from the
 .I
 DOWNLOAD
 or
@@ -95,7 +95,7 @@ variables in the
 info
 file. If
 either the download or the md5sum check fails, a new
-download will be attempted from
+download is attempted from
 .UR ftp://slackware.uk/sbosrcarch/
 .UE
 as a fallback measure. The
@@ -106,7 +106,7 @@ simultaneously.
 .P
 .B
 sboupgrade
-will verify the local repository with
+verifies the local repository with
 .B
 gpg
 if
@@ -121,7 +121,7 @@ Only rsync repositories can be verified on Slackware 14.0 and Slackware 14.1.
 If an invalid configuration is detected in
 .I
 /etc/sbotools/sbotools.conf\fR\
-\&, the script will exit with a diagnostic message.
+\&, the script exits with a diagnostic message.
 .SH OPTIONS
 .P
 .B
@@ -151,7 +151,7 @@ This setting and
 are not the same;
 .B
 --force
-will initiate upgrades even if the
+initiates upgrades even if the
 build number is unchanged. This overrides the
 .B
 BUILD_IGNORE
@@ -200,7 +200,7 @@ SBO_HOME/distfiles
 by default. The package archive (in
 .I
 /tmp
-by default) will also be removed. This option can be set as default via the
+by default) is also removed. This option can be set as default via the
 .B
 sboconfig(1)
 command. See also
@@ -223,7 +223,7 @@ version.
 -i|--noinstall
 .RS
 Do not install the package at the end of the build process.
-It will be left in
+It is left in
 .I
 /tmp
 (or

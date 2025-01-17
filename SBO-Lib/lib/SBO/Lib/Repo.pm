@@ -133,14 +133,14 @@ its resemblance to a complete SBo repository. The user receives
 warning prompts varying in severity depending on whether
 top-level directories not belonging to the repository exist, repository
 top-level directories are missing or, in the worst case, both. Warnings are less
-severe for C<git fetch>, which will not delete 'extra' files and
+severe for C<git fetch>, which would not delete 'extra' files and
 directories.
 
 If C<$repo_path> contains all expected category directories and
 no unexpected directories, C<check_repo()> returns a true value
 if C<$slackbuilds_txt> is non-empty, and prompts the user if not.
 
-If C<$repo_path> does not exist, creation will be attempted, returning a true
+If C<$repo_path> does not exist, creation is attempted, returning a true
 value on success. Creation failure results in a usage error.
 
 =cut
@@ -295,7 +295,7 @@ sub generate_slackbuilds_txt {
 
   my $bool = git_sbo_tree($url);
 
-C<git_sbo_tree()> will C<git clone --no-local> the repository specified by C<$url> to the
+C<git_sbo_tree()> uses C<git clone --no-local> on the repository specified by C<$url> to the
 C<$repo_path> if the C<$url> repository is not present. If it is, it runs
 C<git fetch && git reset --hard origin>.
 

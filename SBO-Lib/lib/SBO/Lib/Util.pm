@@ -348,7 +348,7 @@ sub get_slack_version_url {
 
 C<get_slack_branch()> returns the default git branch for the given Slackware
 version, if any. If the upstream repository does not have this branch, an onscreen
-message will appear.
+message appears.
 
 =cut
 
@@ -539,11 +539,11 @@ sub on_blacklist {
 
   my ($ret, $exit) = open_fh($fn, $op);
 
-C<open_fh()> will open C<$fn> for reading and/or writing depending on
+C<open_fh()> opens C<$fn> for reading and/or writing depending on
 C<$op>.
 
 It returns two values: the file handle and the exit status. If the exit status
-is non-zero, it will return an error message rather than a file handle.
+is non-zero, it returns an error message rather than a file handle.
 
 =cut
 
@@ -571,7 +571,7 @@ sub open_fh {
 C<open_read()> opens C<$fn> for reading.
 
 It returns two values: the file handle and the exit status. If the exit status
-is non-zero, it will return an error message rather than a file handle.
+is non-zero, it returns an error message rather than a file handle.
 
 =cut
 
@@ -863,10 +863,10 @@ sub version_cmp {
   wrapsay($msg, $trail);
 
 C<wrapsay()> outputs a message with the lines wrapped at 72 characters and
-a trailing newline. There is no useful return value. Optional C<$trail> will
-output an extra newline if present.
+a trailing newline. There is no useful return value. Optional C<$trail>
+outputs an extra newline if present.
 
-Use this subroutine whenever it is either obvious that the output will exceed
+Use this subroutine whenever it is either obvious that the output exceeds
 80 characters or the output includes a variable. C<say> can be used in
 other cases. C<wrapsay()> should not be used on output that can be piped
 for use in scripts (e.g., queue reports from C<sbofind(1)>).

@@ -121,14 +121,14 @@ its resemblance to a complete SBo repository. The user receives
 warning prompts varying in severity depending on whether
 top-level directories not belonging to the repository exist, repository
 top-level directories are missing or, in the worst case, both. Warnings are less
-severe for \f(CW\*(C`git fetch\*(C'\fR, which will not delete 'extra' files and
+severe for \f(CW\*(C`git fetch\*(C'\fR, which would not delete 'extra' files and
 directories.
 .PP
 If \f(CW$repo_path\fR contains all expected category directories and
 no unexpected directories, \f(CWcheck_repo()\fR returns a true value
 if \f(CW$slackbuilds_txt\fR is non-empty, and prompts the user if not.
 .PP
-If \f(CW$repo_path\fR does not exist, creation will be attempted, returning a true
+If \f(CW$repo_path\fR does not exist, creation is attempted, returning a true
 value on success. Creation failure results in a usage error.
 .SS generate_slackbuilds_txt
 .IX Subsection "generate_slackbuilds_txt"
@@ -145,7 +145,7 @@ write, it returns a false value. Otherwise, it returns a true value.
 \&  my $bool = git_sbo_tree($url);
 .Ve
 .PP
-\&\f(CWgit_sbo_tree()\fR will \f(CW\*(C`git clone \-\-no\-local\*(C'\fR the repository specified by \f(CW$url\fR to the
+\&\f(CWgit_sbo_tree()\fR uses \f(CW\*(C`git clone \-\-no\-local\*(C'\fR on the repository specified by \f(CW$url\fR to the
 \&\f(CW$repo_path\fR if the \f(CW$url\fR repository is not present. If it is, it runs
 \&\f(CW\*(C`git fetch && git reset \-\-hard origin\*(C'\fR.
 .PP

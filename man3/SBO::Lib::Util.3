@@ -176,7 +176,7 @@ The program exits if the version is unsupported or if an error occurs.
 .PP
 \&\f(CWget_slack_branch()\fR returns the default git branch for the given Slackware
 version, if any. If the upstream repository does not have this branch, an onscreen
-message will appear.
+message appears.
 .SS idx
 .IX Subsection "idx"
 .Vb 1
@@ -227,11 +227,11 @@ global array \f(CW@listings\fR is copied.
 \&  my ($ret, $exit) = open_fh($fn, $op);
 .Ve
 .PP
-\&\f(CWopen_fh()\fR will open \f(CW$fn\fR for reading and/or writing depending on
+\&\f(CWopen_fh()\fR opens \f(CW$fn\fR for reading and/or writing depending on
 \&\f(CW$op\fR.
 .PP
 It returns two values: the file handle and the exit status. If the exit status
-is non-zero, it will return an error message rather than a file handle.
+is non-zero, it returns an error message rather than a file handle.
 .SS open_read
 .IX Subsection "open_read"
 .Vb 1
@@ -241,7 +241,7 @@ is non-zero, it will return an error message rather than a file handle.
 \&\f(CWopen_read()\fR opens \f(CW$fn\fR for reading.
 .PP
 It returns two values: the file handle and the exit status. If the exit status
-is non-zero, it will return an error message rather than a file handle.
+is non-zero, it returns an error message rather than a file handle.
 .SS print_failures
 .IX Subsection "print_failures"
 .Vb 1
@@ -371,10 +371,10 @@ as well as any locale information that may have been appended to the version str
 .Ve
 .PP
 \&\f(CWwrapsay()\fR outputs a message with the lines wrapped at 72 characters and
-a trailing newline. There is no useful return value. Optional \f(CW$trail\fR will
-output an extra newline if present.
+a trailing newline. There is no useful return value. Optional \f(CW$trail\fR
+outputs an extra newline if present.
 .PP
-Use this subroutine whenever it is either obvious that the output will exceed
+Use this subroutine whenever it is either obvious that the output exceeds
 80 characters or the output includes a variable. \f(CW\*(C`say\*(C'\fR can be used in
 other cases. \f(CWwrapsay()\fR should not be used on output that can be piped
 for use in scripts (e.g., queue reports from \f(CWsbofind(1)\fR).

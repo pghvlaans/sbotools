@@ -30,7 +30,7 @@ sbotools
 configuration options. Using
 .B
 sboconfig
-without any flags will start an interactive menu
+without any flags starts an interactive menu
 to specify settings; all options are accompanied by
 an explanatory message, and no changes are applied
 without user confirmation.
@@ -42,7 +42,7 @@ file can also be manually edited; any fields not
 relevant to
 .B
 sbotools
-configuration will be ignored.
+configuration are ignored.
 .SH OPTIONS
 .P
 .B
@@ -134,7 +134,7 @@ sbotools.conf(5)\fR\
 checks by
 .B
 sbocheck(1)
-are disabled, and previously-used build options will not be displayed.
+are disabled, and previously-used build options are not displayed.
 This provides a more traditional
 .B
 sbotools
@@ -180,7 +180,7 @@ SBO_HOME\fR\
 \&). If
 .B
 PKG_DIR
-is set, package archives will be saved there regardless of
+is set, package archives are saved there regardless of
 .B
 DISTCLEAN\fR\
 \&.
@@ -209,7 +209,7 @@ sboupgrade(1)\fR\
 \&. Missing public keys are detected, and a download from
 .UR keyserver.ubuntu.com
 .UE
-on port 80 will be offered if available.
+on port 80 is offered if available.
 Only rsync repositories can be verified on Slackware 14.0 and Slackware 14.1.
 .RE
 .P
@@ -238,7 +238,7 @@ PKG_DIR\fR\
 \&: If set to a
 .B
 path\fR\
-\&, packages will be stored there after installation. This
+\&, packages are stored there after installation. This
 overrides the
 .B
 DISTCLEAN
@@ -256,7 +256,7 @@ path\fR\
 \&, this is where the
 .B
 slackbuilds.org
-tree will be stored. The default setting is
+tree is stored. The default setting is
 .I
 /usr/sbo\fR\
 \&. The tree must be re-downloaded if the
@@ -274,16 +274,16 @@ LOCAL_OVERRIDES\fR\
 .B
 path\fR\
 \&, any directory name in the top level under that path matching a
-SlackBuild name will be used in preference to the
-in-tree version. This will work even if the SlackBuild
+SlackBuild name is used in preference to the
+in-tree version. This works even if the SlackBuild
 is out-of-tree. Scripts installing packages not marked
 with the
 .I
 _SBo
-tag will not be upgradeable with
+tag are neither upgradeable with
 .B
 sboupgrade(1)
-or removable with
+nor removable with
 .B
 sboremove(1)\fR\
 \&.
@@ -369,7 +369,7 @@ STRICT_UPGRADES\fR\
 \&: If set to
 .B
 TRUE\fR\
-\&, upgrades will only be attempted if the incoming
+\&, upgrades are only attempted if the incoming
 version or build number is greater. This has no
 effect on scripts in the local overrides directory.
 .RE

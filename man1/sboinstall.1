@@ -26,20 +26,20 @@ is used to install SlackBuilds. If the
 flag is not specified,
 .B
 sboinstall
-will pull the list of requirements from the
+pulls the list of requirements from the
 .I
 info
 file for any specified SlackBuild. This is a recursive
 operation over all dependencies.
 .B
 sboinstall
-will offer to install any non-installed dependencies in
+offers to install any non-installed dependencies in
 the build queue, taking blacklisted scripts and optional dependency
 specifications in
 .B
 sbotools.hints(5)
 into account. If circular dependencies are detected, the
-script will exit with an error message.
+script exits with an error message.
 .P
 .I
 README
@@ -52,20 +52,20 @@ useradd
 commands, and
 .B
 sboinstall
-will offer to run them prior to building. If the
+offers to run them prior to building. If the
 .I
 README
 is judged to document options in
 .I
 KEY=VALUE
-form, a prompt for setting options will appear. Any
+form, a prompt for setting options appears. Any
 build options, whether passed interactively or in a
-template, will be saved to
+template, are saved to
 .I
 /var/log/sbotools
 when the SlackBuild runs.
 .P
-Please note that saved build options will not be displayed
+Please note that saved build options are not displayed
 when
 .B
 CLASSIC
@@ -82,7 +82,7 @@ sbotools.conf(5)\fR\
 .P
 .B
 sboinstall
-will attempt to download the sources from the
+attempts to download the sources from the
 .I
 DOWNLOAD
 or
@@ -93,14 +93,14 @@ variables in the
 info
 file. If
 either the download or the md5sum check fails, a new
-download will be attempted from
+download is attempted from
 .UR ftp://slackware.uk/sbosrcarch/
 .UE
 as a fallback measure.
 .P
 .B
 sboinstall
-will verify the local repository with
+verifies the local repository with
 .B
 gpg
 if
@@ -115,7 +115,7 @@ Only rsync repositories can be verified on Slackware 14.0 and Slackware 14.1.
 If an invalid configuration is detected in
 .I
 /etc/sbotools/sbotools.conf\fR\
-\&, the script will exit with a diagnostic message.
+\&, the script exits with a diagnostic message.
 .SH OPTIONS
 .P
 .B
@@ -169,7 +169,7 @@ SBO_HOME/distfiles
 by default. The package archive (in
 .I
 /tmp
-by default) will also be removed. This option can be set
+by default) is also removed. This option can be set
 as default via the
 .B
 sboconfig(1)
@@ -183,7 +183,7 @@ sbotools.conf(5)\fR\
 -i|--noinstall
 .RS
 Do not install the package at the end of the build process.
-It will be left in
+It is left in
 .I
 /tmp
 (or
@@ -255,11 +255,11 @@ GitHub Issues are welcome in case of unexpected failure.
 -q|--reverse-rebuild
 .RS
 Rebuild the reverse dependencies for the requested SlackBuilds.
-The build queue will also include any missing dependencies for
+The build queue also includes any missing dependencies for
 those scripts. If run with
 .B
 --nointeractive\fR\
-\&, any saved build options will be used again. Incompatible with
+\&, any saved build options are used again. Incompatible with
 .B
 --compat32\fR\
 \&,
@@ -278,7 +278,7 @@ and
 -r|--nointeractive
 .RS
 Bypass all user prompts for the requested
-SlackBuilds. Dependency resolution will be bypassed
+SlackBuilds. Dependency resolution is bypassed
 as well except for
 .B
 --mass-rebuild
@@ -296,7 +296,7 @@ would install an in-tree
 .I
 _SBo
 package in place of a package without this tag, a warning message
-with a default \(lqno\(rq option will appear.
+with a default \(lqno\(rq option appears.
 .RE
 .P
 .B
@@ -349,8 +349,8 @@ SlackBuilds may be installed when dependencies have been
 added. If dependencies are installed with tags other than
 .I
 _SBo\fR\
-\&, or with no tag, a warning message (default \(lqno\(rq) will
-appear even with
+\&, or with no tag, a warning message (default \(lqno\(rq)
+appears even with
 .B
 --nointeractive
 before they are added to the build queue.
@@ -376,10 +376,10 @@ If the mass rebuild process is interrupted after downloading has
 been completed, whether by signal or by build failure, a template named
 .I
 resume.temp
-will be saved to
+is saved to
 .B
 SBO_HOME\fR\
-\&. If this file is present, the mass rebuild will restart from
+\&. If this file is present, the mass rebuild restarts from
 the script after the script that failed when
 .B
 --mass-rebuild
