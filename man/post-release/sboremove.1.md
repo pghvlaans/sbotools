@@ -27,11 +27,10 @@
 **sboremove** removes packages installed from SlackBuilds, along with
 any unneeded dependencies. Dependency information is pulled recursively
 from *info* files and honors the contents of [sbotools.hints(5)](sbotools.hints.5.md); any
-dependencies that are required by no other installed SlackBuilds will be
+dependencies that are required by no other installed SlackBuilds are
 eligible for removal as well. **sboremove** does not handle blacklisted
 scripts. If **sboremove** is called with the **\--alwaysask** flag, the
-dependency requirements of other installed SlackBuilds will not be
-checked.
+dependency requirements of other installed SlackBuilds are not checked.
 
 In all cases, this script prompts the user package-by-package before
 performing any removal operations. No option exists to enable
@@ -39,7 +38,7 @@ performing any removal operations. No option exists to enable
 there are no plans to add that functionality in the future.
 
 If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script will exit with a diagnostic
+*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
 message.
 
 ## OPTIONS

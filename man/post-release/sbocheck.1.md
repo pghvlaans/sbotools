@@ -36,11 +36,11 @@ The three output categories are logged separately to
 */var/log/sbocheck-out-of-tree.log*. The out-of-tree and build number
 increment checks are disabled when **CLASSIC** is **TRUE**&; if
 **STRICT_UPGRADES** is **TRUE**, apparent downgrades are reported with
-"differs", but will not be acted on by [sboupgrade(1)](sboupgrade.1.md) (see
+"differs", but are not acted on by [sboupgrade(1)](sboupgrade.1.md) (see
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
 To check for updated SlackBuilds without updating the SlackBuilds tree,
-pass the **\--nopull** option. **sbocheck** will perform **gpg**
+pass the **\--nopull** option. **sbocheck** performs **gpg**
 verification upon pulling the tree if **GPG_VERIFY** is **TRUE** (see
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). The **\--gpg-verify** option
 has the same effect. Passing both **\--gpg-verify** and **\--nopull**
@@ -51,7 +51,7 @@ Please note that **sbosnap**, which was removed as an independent script
 in **sbotools-3.4**, is a compatibility symlink to **sbocheck**.
 
 If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script will exit with a diagnostic
+*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
 message.
 
 ## OPTIONS

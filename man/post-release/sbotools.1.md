@@ -72,10 +72,9 @@ repository must be fetched with [sbocheck(1)](sbocheck.1.md):
 
     sbocheck
 
-The local repository will be saved to */usr/sbo/repo*. To use an
-alternative location, give an absolute file path to the **SBO_HOME**
-setting with [sboconfig(1)](sboconfig.1.md) or by editing
-*/etc/sbotools/sbotools.conf*.
+The local repository is saved to */usr/sbo/repo*. To use an alternative
+location, give an absolute file path to the **SBO_HOME** setting with
+[sboconfig(1)](sboconfig.1.md) or by editing */etc/sbotools/sbotools.conf*.
 
 The default mirror depends on the running version of Slackware. Stable
 releases beyond Slackware 14.1 use the appropriate branch on
@@ -88,8 +87,8 @@ as the default, set **RSYNC_DEFAULT** to **TRUE**. The **REPO** setting
 overrides the default mirror with a git or rsync URL, and **GIT_BRANCH**
 sets a custom git branch.
 
-To update the local repository, run [sbocheck(1)](sbocheck.1.md). This will generate
-a report with potential version upgrades, SlackBuilds with incremented
+To update the local repository, run [sbocheck(1)](sbocheck.1.md). This generates a
+report with potential version upgrades, SlackBuilds with incremented
 build numbers and out-of-tree SlackBuilds installed with the *\_SBo*
 tag.
 
@@ -97,7 +96,7 @@ The simplest way to upgrade all eligible SlackBuilds is to run
 
     sboupgrade --all
 
-Build number increments will be ignored if **BUILD_IGNORE** is set to
+Build number increments are ignored if **BUILD_IGNORE** is set to
 **TRUE**.
 
 Using [sboconfig(1)](sboconfig.1.md) without flags enters an interactive settings

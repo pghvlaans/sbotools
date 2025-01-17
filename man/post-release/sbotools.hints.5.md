@@ -18,7 +18,7 @@
 The */etc/sbotools/sbotools.hints* file is used to blacklist scripts and
 request optional dependencies.
 
-If a script is blacklisted, it will neither be included in build queues
+If a script is blacklisted, it can neither be included in build queues
 nor removed by [sboremove(1)](sboremove.1.md). To blacklist a script, place it on its
 own line with no whitespace, prepending an exclamation mark:
 
