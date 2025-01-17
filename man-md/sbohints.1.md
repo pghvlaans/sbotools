@@ -35,7 +35,7 @@ modification flags are **\--blacklist**, **\--optional** and
 **\--clear**, but not with each other.
 
 If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script will exit with a diagnostic
+*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
 message.
 
 ## OPTIONS
@@ -48,15 +48,15 @@ more scripts.
 **-o\|\--optional**
 
 Add (or clear with **\--clear**) optional dependency requests for one or
-more scripts. The current optional dependencies will be displayed
-together with a prompt for adding or clearing.
+more scripts. The current optional dependencies are displayed together
+with a prompt for adding or clearing.
 
 **-O\|\--replace-optional**
 
 Replace all existing optional dependency requests for one or more
-scripts. The current optional dependencies will be displayed together
-with a prompt for the new request list. If used with **\--clear**, a
-confirmation prompt for clearing the optional dependencies will appear.
+scripts. The current optional dependencies are displayed together with a
+prompt for the new request list. If used with **\--clear**, a
+confirmation prompt for clearing the optional dependencies appears.
 
 **-c\|\--clear**
 

@@ -27,40 +27,37 @@
 ## DESCRIPTION
 
 **sboupgrade** is used to upgrade SlackBuilds. If the **-r** flag is not
-specified, **sboupgrade** will pull the list of requirements from the
-*info* file for any specified SlackBuild. This is a recursive operation
-over all dependencies. **sboupgrade** will offer to install any
-non-installed dependencies in the build queue, taking blacklisted
-scripts and optional dependency specifications in [sbotools.hints(5)](sbotools.hints.5.md)
-into account. If circular dependencies are detected, the script will
-exit with an error message.
+specified, **sboupgrade** pulls the list of requirements from the *info*
+file for any specified SlackBuild. This is a recursive operation over
+all dependencies. **sboupgrade** offers to install any non-installed
+dependencies in the build queue, taking blacklisted scripts and optional
+dependency specifications in [sbotools.hints(5)](sbotools.hints.5.md) into account. If
+circular dependencies are detected, the script exits with an error
+message.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
-**sboupgrade** will offer to run them prior to building. If the *README*
-is judged to document options in *KEY=VALUE* form, a prompt for setting
-options will appear. Any build options, whether passed interactively or
-in a template, will be saved to */var/log/sbotools* when the SlackBuild
-runs.
+**sboupgrade** offers to run them prior to building. If the *README* is
+judged to document options in *KEY=VALUE* form, a prompt for setting
+options appears. Any build options, whether passed interactively or in a
+template, are saved to */var/log/sbotools* when the SlackBuild runs.
 
-Please note that saved build options will not be displayed when
-**CLASSIC** is set to **TRUE**; if **STRICT_UPGRADES** is **TRUE**,
-upgrades will only be performed for non-override packages if the version
-or build number is apparently higher. See [sboconfig(1)](sboconfig.1.md) or
-[sbotools.conf(5)](sbotools.conf.5.md).
+Please note that saved build options are not displayed when **CLASSIC**
+is set to **TRUE**; if **STRICT_UPGRADES** is **TRUE**, upgrades are
+only performed for non-override packages if the version or build number
+is apparently higher. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
 
-**sboupgrade** will attempt to download the sources from the *DOWNLOAD*
-or *DOWNLOAD_x86_64* variables in the *info* file. If either the
-download or the md5sum check fails, a new download will be attempted
-from <ftp://slackware.uk/sbosrcarch/> as a fallback measure. The
-**\--all** flag may be passed to upgrade all eligible SlackBuilds
-simultaneously.
+**sboupgrade** attempts to download the sources from the *DOWNLOAD* or
+*DOWNLOAD_x86_64* variables in the *info* file. If either the download
+or the md5sum check fails, a new download is attempted from
+<ftp://slackware.uk/sbosrcarch/> as a fallback measure. The **\--all**
+flag may be passed to upgrade all eligible SlackBuilds simultaneously.
 
-**sboupgrade** will verify the local repository with **gpg** if
+**sboupgrade** verifies the local repository with **gpg** if
 **GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
 Slackware 14.0 and Slackware 14.1.
 
 If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script will exit with a diagnostic
+*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
 message.
 
 ## OPTIONS
@@ -77,7 +74,7 @@ Show version information.
 
 If **TRUE**, do not perform upgrades unless the version number differs.
 By default, upgrades also occur when the build number differs. This
-setting and **\--force** are not the same; **\--force** will initiate
+setting and **\--force** are not the same; **\--force** initiates
 upgrades even if the build number is unchanged. This overrides the
 **BUILD_IGNORE** setting in [sbotools.conf(5)](sbotools.conf.5.md).
 
@@ -93,9 +90,9 @@ overrides the default.
 
 If **TRUE**, then remove the source archives after building. They are
 retained in *SBO_HOME/distfiles* by default. The package archive (in
-*/tmp* by default) will also be removed. This option can be set as
-default via the [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md).
-This option overrides the default.
+*/tmp* by default) is also removed. This option can be set as default
+via the [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This
+option overrides the default.
 
 **-f\|\--force**
 
@@ -104,10 +101,10 @@ equal to the **slackbuilds.org** version.
 
 **-i\|\--noinstall**
 
-Do not install the package at the end of the build process. It will be
-left in */tmp* (or *\$OUTPUT*) if **DISTCLEAN** is **FALSE**. Packages
-are retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**.
-See [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
+Do not install the package at the end of the build process. It is left
+in */tmp* (or *\$OUTPUT*) if **DISTCLEAN** is **FALSE**. Packages are
+retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
+[sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-j\|\--jobs (FALSE\|#)**
 

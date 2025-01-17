@@ -31,11 +31,11 @@ and version information. This is equivalent to running
 
     cd /usr/ports; make search name=$search_term display=name,path
 
-on a FreeBSD system. If the repository includes a *TAGS.txt* file, that
-will be used to find additional results.
+on a FreeBSD system. If the repository includes a *TAGS.txt* file, these
+tags are searched to generate additional results.
 
 If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script will exit with a diagnostic
+*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
 message.
 
 ## OPTIONS

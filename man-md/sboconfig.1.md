@@ -33,12 +33,12 @@
 ## DESCRIPTION
 
 **sboconfig** is a front-end for managing **sbotools** configuration
-options. Using **sboconfig** without any flags will start an interactive
+options. Using **sboconfig** without any flags starts an interactive
 menu to specify settings; all options are accompanied by an explanatory
 message, and no changes are applied without user confirmation.
 
 The [sbotools.conf(5)](sbotools.conf.5.md) file can also be manually edited; any fields
-not relevant to **sbotools** configuration will be ignored.
+not relevant to **sbotools** configuration are ignored.
 
 ## OPTIONS
 
@@ -78,7 +78,7 @@ number differs.
 **CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT** and
 **BUILD_IGNORE** (overriding the contents of [sbotools.conf(5)](sbotools.conf.5.md)).
 Build increment and out-of-tree SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are
-disabled, and previously-used build options will not be displayed. This
+disabled, and previously-used build options are not displayed. This
 provides a more traditional **sbotools** look and feel for those who
 want it.
 
@@ -93,16 +93,16 @@ building. These are the build and *package-(sbo)* directories under
 **DISTCLEAN**: If **TRUE**, then remove the package and source archives
 after building. Source archives are otherwise retained in
 */usr/sbo/distfiles* (with default **SBO_HOME**). If **PKG_DIR** is set,
-package archives will be saved there regardless of **DISTCLEAN**.
+package archives are saved there regardless of **DISTCLEAN**.
 
 **-g\|\--gpg-verify (FALSE\|TRUE)**
 
 **GPG_VERIFY**: If **TRUE**, use **gpg** to verify the contents of the
 local repository when running [sbocheck(1)](sbocheck.1.md), [sboinstall(1)](sboinstall.1.md) and
 [sboupgrade(1)](sboupgrade.1.md). Missing public keys are detected, and a download from
-[keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 will be offered
-if available. Only rsync repositories can be verified on Slackware 14.0
-and Slackware 14.1.
+[keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 is offered if
+available. Only rsync repositories can be verified on Slackware 14.0 and
+Slackware 14.1.
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -111,24 +111,23 @@ SlackBuild invoking **make** is run.
 
 **-p\|\--pkg-dir (FALSE\|/path)**
 
-**PKG_DIR**: If set to a **path**, packages will be stored there after
+**PKG_DIR**: If set to a **path**, packages are stored there after
 installation. This overrides the **DISTCLEAN** setting for saved
 packages.
 
 **-s\|\--sbo-home (/usr/sbo\|/path)**
 
 **SBO_HOME**: If set to a **path**, this is where the
-**slackbuilds.org** tree will be stored. The default setting is
-*/usr/sbo*. The tree must be re-downloaded if the **SBO_HOME** setting
-changes.
+**slackbuilds.org** tree is stored. The default setting is */usr/sbo*.
+The tree must be re-downloaded if the **SBO_HOME** setting changes.
 
 **-o\|\--local-overrides (FALSE\|/path)**
 
 **LOCAL_OVERRIDES**: If set to a **path**, any directory name in the top
-level under that path matching a SlackBuild name will be used in
-preference to the in-tree version. This will work even if the SlackBuild
-is out-of-tree. Scripts installing packages not marked with the *\_SBo*
-tag will not be upgradeable with [sboupgrade(1)](sboupgrade.1.md) or removable with
+level under that path matching a SlackBuild name is used in preference
+to the in-tree version. This works even if the SlackBuild is
+out-of-tree. Scripts installing packages not marked with the *\_SBo* tag
+are neither upgradeable with [sboupgrade(1)](sboupgrade.1.md) nor removable with
 [sboremove(1)](sboremove.1.md). *README*, *slack-desc*, an *info* file and a
 SlackBuild must all be present.
 
@@ -156,9 +155,9 @@ for Slackware -current.
 
 **-S\|\--strict-upgrades (FALSE\|TRUE)**
 
-**STRICT_UPGRADES**: If set to **TRUE**, upgrades will only be attempted
-if the incoming version or build number is greater. This has no effect
-on scripts in the local overrides directory.
+**STRICT_UPGRADES**: If set to **TRUE**, upgrades are only attempted if
+the incoming version or build number is greater. This has no effect on
+scripts in the local overrides directory.
 
 ## EXIT CODES
 
