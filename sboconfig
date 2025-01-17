@@ -144,7 +144,7 @@ for my $key (keys %valid_confs) {
 }
 $changes{'SBO_HOME'} = '/usr/sbo' if exists $options{reset};
 
-if (not %options and $all_clear) {
+if ($all_clear) {
 	interactive_menu();
 } elsif (not %options) {
 	show_usage();
@@ -158,7 +158,7 @@ my $change_requested;
 # subroutine for prompting the user; takes configuration name,
 # description, valid setting description and validation type.
 sub config_prompt {
-	script_error("config_prompt requires at least three arguments.") unless @_ >= 3;
+	script_error("config_prompt requires at least four arguments.") unless @_ >= 4;
 	my ($config_name, $description, $validity_description, $validator) = @_;
 	my $user_input;
 	wrapsay "\n$config_name\n\n$description\n\n$validity_description";
