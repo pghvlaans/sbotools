@@ -8,6 +8,7 @@
   * **sbofind**: Search the local copy of the repository.
   * **sbohints**: Query and modify the blacklist and optional dependency requests.
   * **sboinstall**: Install SlackBuilds with their dependencies; handle compat32 packages and build from templates.
+  * **sboremove**: Interactively remove installed SlackBuilds along with any unused dependencies.
   * **sboupgrade**: Upgrade previously-installed SlackBuilds.
 
 Features include dependency handling, using a custom git branch for the upstream repository, reverse dependency search and rebuild, gpg verification and more. See **sbotools(1)** for a startup guide.
