@@ -14,24 +14,24 @@ Use the key from the homepage (updated 2024-12-15) to verify downloads with gpg.
 
 Because no urgent bugfixes are pending, a release candidate for version 3.4 will be made available for at least one SlackBuilds.org public update. This archive contains the SlackBuild files, which will produce a package with a `_pghv` flag by default.
 
-* [sbotools-3.4_RC.tar](sbotools-3.4_RC.tar) ([sbotools-3.4_RC.tar.asc](sbotools-3.4_RC.tar.asc))
+* [sbotools-3.4_RC.tar](sbotools-3.4_RC.tar) ([asc](sbotools-3.4_RC.tar.asc))
     * md5sum: `f8e4d77bfdc2f4534f834fb489095709`
 
 ## Release Tarballs
 
-* [sbotools-3.4_RC.tar.gz](sbotools-3.4_RC.tar.gz) ([sbotools-3.4_RC.tar.gz.asc](sbotools-3.4_RC.tar.gz.asc))
+* [sbotools-3.4_RC.tar.gz](sbotools-3.4_RC.tar.gz) ([asc](sbotools-3.4_RC.tar.gz.asc))
     * md5sum: `e1cde313c86f0bfea8b08cb72c2ee773`
-* [sbotools-3.3.tar.gz](sbotools-3.3.tar.gz) ([sbotools-3.3.tar.gz.asc](sbotools-3.3.tar.gz.asc))
+* [sbotools-3.3.tar.gz](sbotools-3.3.tar.gz) ([asc](sbotools-3.3.tar.gz.asc))
     * md5sum: `518a5a0965e60632705af42d39bba4f6`
-* [sbotools-3.2.1.tar.gz](sbotools-3.2.1.tar.gz) ([sbotools-3.2.1.tar.gz.asc](sbotools-3.2.1.tar.gz.asc))
+* [sbotools-3.2.1.tar.gz](sbotools-3.2.1.tar.gz) ([asc](sbotools-3.2.1.tar.gz.asc))
     * md5sum: `f1063148b2a67dd9b4bffb363c01aea9`
-* [sbotools-3.2.tar.gz](sbotools-3.2.tar.gz) ([sbotools-3.2.tar.gz.asc](sbotools-3.2.tar.gz.asc))
+* [sbotools-3.2.tar.gz](sbotools-3.2.tar.gz) ([asc](sbotools-3.2.tar.gz.asc))
     * md5sum: `3c17527099b6cb27ce3640d610b5ca95`
-* [sbotools-3.1.tar.gz](sbotools-3.1.tar.gz) ([sbotools-3.1.tar.gz.asc](sbotools-3.1.tar.gz.asc))
+* [sbotools-3.1.tar.gz](sbotools-3.1.tar.gz) ([asc](sbotools-3.1.tar.gz.asc))
     * md5sum: `49222b05184c7e9e0a9d5c53e715e0bd`
-* [sbotools-3.0.tar.gz](sbotools-3.0.tar.gz) ([sbotools-3.0.tar.gz.asc](sbotools-3.0.tar.gz.asc))
+* [sbotools-3.0.tar.gz](sbotools-3.0.tar.gz) ([asc](sbotools-3.0.tar.gz.asc))
     * md5sum: `11a00ee87396bcd993c3cd1be8299f87`
-* [sbotools3-1.1.tar.gz](sbotools3-1.1.tar.gz) ([sbotools3-1.1.tar.gz.asc](sbotools3-1.1.tar.gz.asc))
+* [sbotools3-1.1.tar.gz](sbotools3-1.1.tar.gz) ([asc](sbotools3-1.1.tar.gz.asc))
     * md5sum: `f98cb7133ea399826f679c9caf8711d2`
-* [sbotools3-1.0.tar.gz](sbotools3-1.0.tar.gz) ([sbotools3-1.0.tar.gz.asc](sbotools3-1.0.tar.gz.asc))
+* [sbotools3-1.0.tar.gz](sbotools3-1.0.tar.gz) ([asc](sbotools3-1.0.tar.gz.asc))
     * md5sum: `18fbc61818d450877656861d03c5a63d`
