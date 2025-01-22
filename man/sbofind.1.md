@@ -14,7 +14,7 @@
 
 ## NAME
 
-**sbofind** - search the local copy of the **slackbuilds.org** tree for
+**sbofind** - search the local copy of the **SlackBuilds.org** tree for
 a given name or names
 
 ## SYNOPSIS
@@ -31,11 +31,11 @@ and version information. This is equivalent to running
 
     cd /usr/ports; make search name=$search_term display=name,path
 
-on a FreeBSD system. If the repository includes a *TAGS.txt* file, that
-will be used to find additional results.
+on a FreeBSD system. If the repository includes a *TAGS.txt* file, these
+tags are searched to generate additional results.
 
 If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script will exit with a diagnostic
+*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
 message.
 
 ## OPTIONS
@@ -68,7 +68,7 @@ Show the contents of the *README* file for each SlackBuild found.
 
 Show any reverse dependencies installed on the system. Please note that
 optional dependencies must be specified in [sbotools.hints(5)](sbotools.hints.5.md) to be
-included. Packages with tags other than *\_SBo*are not included.
+included. Packages with tags other than *\_SBo* are not included.
 
 **-q\|\--queue**
 
@@ -80,8 +80,9 @@ Show the build queue for each SlackBuild found, given the contents of
 **sbofind** can exit with the following codes:
 
 0: all operations were succesful.\
-1: a usage error occured (i.e. **sbofind** ran with nothing to find)\
-6: **sbofind** was unable to obtain a required file handle.
+1: a usage error occured (e.g., **sbofind** ran with nothing to find)\
+6: **sbofind** was unable to obtain a required file handle.\
+13: circular dependencies detected.
 
 ## BUGS
 
@@ -90,8 +91,8 @@ None known. If found, Issues and Pull Requests to
 
 ## SEE ALSO
 
-[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md),
-[sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md),
+[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 

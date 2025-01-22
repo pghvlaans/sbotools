@@ -18,7 +18,7 @@
 The */etc/sbotools/sbotools.hints* file is used to blacklist scripts and
 request optional dependencies.
 
-If a script is blacklisted, it will neither be included in build queues
+If a script is blacklisted, it can neither be included in build queues
 nor removed by [sboremove(1)](sboremove.1.md). To blacklist a script, place it on its
 own line with no whitespace, prepending an exclamation mark:
 
@@ -26,7 +26,7 @@ own line with no whitespace, prepending an exclamation mark:
 
 Blacklist entries supersede optional dependency requests.
 
-Many scripts on **slackbuilds.org** have optional dependencies. To make
+Many scripts on **SlackBuilds.org** have optional dependencies. To make
 **sbotools** recognize one or more optional dependencies for a script,
 make a space-delineated list of optional dependencies and place the name
 of the script at the end:
@@ -36,10 +36,12 @@ of the script at the end:
 Commented lines are ignored. There should not be whitespace to the left
 of any entry.
 
+[sbohints(1)](sbohints.1.md) can also be used to interface with this file.
+
 ## SEE ALSO
 
-[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md)
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
+[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md)
 
 ## AUTHORS
 

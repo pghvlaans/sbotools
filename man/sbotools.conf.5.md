@@ -18,7 +18,7 @@
 parameters, and is read by all **sbotools** commands.
 
 If an invalid configuration is detected (or requested with
-[sboconfig(1)](sboconfig.1.md)), the script will exit with a diagnostic message.
+[sboconfig(1)](sboconfig.1.md)), the script exits with a diagnostic message.
 
 To quickly restore all default settings, run
 
@@ -31,7 +31,7 @@ The current configuration keys are as follows:
 If **TRUE**, automatically enable **RSYNC_DEFAULT** and **BUILD_IGNORE**
 (overriding the contents of this file). Build increment and out-of-tree
 SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are disabled, and previously-used
-build options will not be displayed. This provides a more traditional
+build options are not displayed. This provides a more traditional
 **sbotools** look and feel for those who want it.
 
 **DISTCLEAN=(FALSE\|TRUE)**
@@ -39,16 +39,16 @@ build options will not be displayed. This provides a more traditional
 If **TRUE**, then remove the package and source archives after building.
 Source archives are otherwise retained in */usr/sbo/distfiles* (with
 *SBO_HOME=/usr/sbo*) by default. If **PKG_DIR** is set, package archives
-will be saved there regardless of **DISTCLEAN**.
+are saved there regardless of **DISTCLEAN**.
 
 **GPG_VERIFY=(FALSE\|TRUE)**
 
 If **TRUE**, use **gpg** to verify the contents of the local repository
 when running [sbocheck(1)](sbocheck.1.md), [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md).
 Missing public keys are detected, and a download from
-[keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 will be offered
-if available. Only rsync repositories can be verified on Slackware 14.0
-and Slackware 14.1.
+[keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 is offered if
+available. Only rsync repositories can be verified on Slackware 14.0 and
+Slackware 14.1.
 
 **JOBS=(FALSE\|#)**
 
@@ -73,28 +73,28 @@ By default, upgrades also occur when the build number differs.
 
 **PKG_DIR=(FALSE\|/path)**
 
-If set to a **path**, packages will be stored there after installation.
-This overrides the **DISTCLEAN** setting for saved packages.
+If set to a **path**, packages are stored there after installation. This
+overrides the **DISTCLEAN** setting for saved packages.
 
 **SBO_HOME=(/usr/sbo\|/path)**
 
-If set to a **path**, this is where the **slackbuilds.org** tree will be
+If set to a **path**, this is where the **SlackBuilds.org** tree is
 stored. The default setting is */usr/sbo*. The tree must be
 re-downloaded with [sbocheck(1)](sbocheck.1.md) if the **SBO_HOME** setting changes.
 
 **LOCAL_OVERRIDES=(FALSE\|/path)**
 
 If set to a **path**, any directory name in the top level under that
-path matching a SlackBuild name will be used in preference to the
-in-tree version. This will work even if the SlackBuild is out-of-tree.
-Scripts installing packages not marked with the *\_SBo* tag will not be
-upgradeable with [sboupgrade(1)](sboupgrade.1.md) or removable with [sboremove(1)](sboremove.1.md).
+path matching a SlackBuild name is used in preference to the in-tree
+version. This works even if the SlackBuild is out-of-tree. Scripts
+installing packages not marked with the *\_SBo* tag are neither
+upgradeable with [sboupgrade(1)](sboupgrade.1.md) nor removable with [sboremove(1)](sboremove.1.md).
 *README*, *slack-desc*, an *info* file and a SlackBuild must all be
 present.
 
 **SLACKWARE_VERSION=(FALSE\|#.#)**
 
-If set to a **version number**, use the **slackbuilds.org** repository
+If set to a **version number**, use the **SlackBuilds.org** repository
 for that version of Slackware rather than the one specified in
 */etc/slackware-version*.
 
@@ -114,10 +114,16 @@ directories are under the category directories.
 If set to **TRUE**, use rsync default mirrors except for Slackware
 -current.
 
+**STRICT_UPGRADES=(FALSE\|TRUE)**
+
+If set to **TRUE**, upgrades are only attempted if the incoming version
+or build number is greater. This has no effect on scripts in the local
+overrides directory.
+
 ## SEE ALSO
 
-[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
+[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 

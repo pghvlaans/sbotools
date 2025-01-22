@@ -10,17 +10,10 @@ This fork of `sbotools` was briefly available as `sbotools3` in late 2024. Any `
 
 Use the key from the homepage (updated 2024-12-15) to verify downloads with gpg.
 
-## Version 3.4_RC
-
-Because no urgent bugfixes are pending, a release candidate for version 3.4 will be made available for at least one SlackBuilds.org public update. This archive contains the SlackBuild files, which will produce a package with a `_pghv` flag by default.
-
-* [sbotools-3.4_RC.tar](sbotools-3.4_RC.tar) ([asc](sbotools-3.4_RC.tar.asc))
-    * md5sum: `f8e4d77bfdc2f4534f834fb489095709`
-
 ## Release Tarballs
 
-* [sbotools-3.4_RC.tar.gz](sbotools-3.4_RC.tar.gz) ([asc](sbotools-3.4_RC.tar.gz.asc))
-    * md5sum: `e1cde313c86f0bfea8b08cb72c2ee773`
+* [sbotools-3.4.tar.gz](sbotools-3.4.tar.gz) ([asc](sbotools-3.4.tar.gz.asc))
+    * md5sum: `ee094ecdee5f4f115e8ebff48b84b612`
 * [sbotools-3.3.tar.gz](sbotools-3.3.tar.gz) ([asc](sbotools-3.3.tar.gz.asc))
     * md5sum: `518a5a0965e60632705af42d39bba4f6`
 * [sbotools-3.2.1.tar.gz](sbotools-3.2.1.tar.gz) ([asc](sbotools-3.2.1.tar.gz.asc))

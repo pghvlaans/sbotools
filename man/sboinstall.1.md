@@ -27,40 +27,39 @@
                [-i] --use-template FILE
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-ir] [--create-template FILE] --mass-rebuild
+               [-iqr] [--create-template FILE] --mass-rebuild
 
 ## DESCRIPTION
 
 **sboinstall** is used to install SlackBuilds. If the **-r** flag is not
-specified, **sboinstall** will pull the list of requirements from the
-*info* file for any specified SlackBuild. This is a recursive operation
-over all dependencies. **sboinstall** will offer to install any
-non-installed dependencies in the build queue, taking blacklisted
-scripts and optional dependency specifications in [sbotools.hints(5)](sbotools.hints.5.md)
-into account. This program will not handle circular dependencies.
+specified, **sboinstall** pulls the list of requirements from the *info*
+file for any specified SlackBuild. This is a recursive operation over
+all dependencies. **sboinstall** offers to install any non-installed
+dependencies in the build queue, taking blacklisted scripts and optional
+dependency specifications in [sbotools.hints(5)](sbotools.hints.5.md) into account. If
+circular dependencies are detected, the script exits with an error
+message.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
-**sboinstall** will offer to run them prior to building. If the *README*
-is judged to document options in *KEY=VALUE* form, a prompt for setting
-options will appear. Any build options, whether passed interactively or
-in a template, will be saved to */var/log/sbotools* when the SlackBuild
-runs.
+**sboinstall** offers to run them prior to building. If the *README* is
+judged to document options in *KEY=VALUE* form, a prompt for setting
+options appears. Any build options, whether passed interactively or in a
+template, are saved to */var/log/sbotools* when the SlackBuild runs.
 
-Please note that saved build options will not be displayed when
-**CLASSIC** is set to **TRUE**. See [sboconfig(1)](sboconfig.1.md) or
-[sbotools.conf(5)](sbotools.conf.5.md).
+Please note that saved build options are not displayed when **CLASSIC**
+is set to **TRUE**. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
 
-**sboinstall** will attempt to download the sources from the *DOWNLOAD*
-or *DOWNLOAD_x86_64* variables in the *info* file. If either the
-download or the md5sum check fails, a new download will be attempted
-from <ftp://slackware.uk/sbosrcarch/> as a fallback measure.
+**sboinstall** attempts to download the sources from the *DOWNLOAD* or
+*DOWNLOAD_x86_64* variables in the *info* file. If either the download
+or the md5sum check fails, a new download is attempted from
+<ftp://slackware.uk/sbosrcarch/> as a fallback measure.
 
-**sboinstall** will verify the local repository with **gpg** if
+**sboinstall** verifies the local repository with **gpg** if
 **GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
 Slackware 14.0 and Slackware 14.1.
 
 If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script will exit with a diagnostic
+*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
 message.
 
 ## OPTIONS
@@ -85,16 +84,16 @@ overrides the default.
 
 If **TRUE**, then remove the source archives after building. They are
 retained in *SBO_HOME/distfiles* by default. The package archive (in
-*/tmp* by default) will also be removed. This option can be set as
-default via the [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md).
-This option overrides the default.
+*/tmp* by default) is also removed. This option can be set as default
+via the [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This
+option overrides the default.
 
 **-i\|\--noinstall**
 
-Do not install the package at the end of the build process. It will be
-left in */tmp* (or *\$OUTPUT*) if **DISTCLEAN** is **FALSE**. Packages
-are retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**.
-See [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
+Do not install the package at the end of the build process. It is left
+in */tmp* (or *\$OUTPUT*) if **DISTCLEAN** is **FALSE**. Packages are
+retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
+[sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -112,11 +111,24 @@ prior to installation. If the base package and compat32 package are to
 be built at the same time, ensure that the **DISTCLEAN** option is set
 to **FALSE.** GitHub Issues are welcome in case of unexpected failure.
 
+**-q\|\--reverse-rebuild**
+
+Rebuild the reverse dependencies for the requested SlackBuilds. The
+build queue also includes any missing dependencies for those scripts. If
+run with **\--nointeractive**, any saved build options are used again.
+Incompatible with **\--compat32**, **\--norequirements**,
+**\--use-template** and **\--mass-rebuild**.
+
 **-r\|\--nointeractive**
 
-Bypass all user prompts and all dependency resolution for the requested
-SlackBuilds. Unless it is obvious that dependency resolution and build
-options are not required, consider using a template instead.
+Bypass all user prompts for the requested SlackBuilds. Dependency
+resolution is bypassed as well except for **\--mass-rebuild** and
+**\--reverse-rebuild**. Unless it is obvious that dependency resolution
+and build options are not required, consider using a template instead.
+
+If an operation with **\--nointeractive** would install an in-tree
+*\_SBo* package in place of a package without this tag, a warning
+message with a default "no" option appears.
 
 **-R\|\--norequirements**
 
@@ -143,15 +155,19 @@ Generate build queues, rebuild and reinstall all in-tree *\_SBo*
 SlackBuilds except for *compat32* builds. This is generally only useful
 when the Slackware version has been upgraded or (occasionally) on
 -current. Additional SlackBuilds may be installed when dependencies have
-been added. In combination with **\--nointeractive**, saved build
-options are reused automatically. Incompatible with **\--compat32**,
-**\--use-template** and **\--norequirements**.
+been added. If dependencies are installed with tags other than *\_SBo*,
+or with no tag, a warning message (default "no") appears even with
+**\--nointeractive** before they are added to the build queue.
+
+In combination with **\--nointeractive**, saved build options are reused
+automatically. Incompatible with **\--reverse-rebuild**,
+**\--compat32**, **\--use-template** and **\--norequirements**.
 
 If the mass rebuild process is interrupted after downloading has been
 completed, whether by signal or by build failure, a template named
-*resume.temp* will be saved to **SBO_HOME**. If this file is present,
-the mass rebuild will restart from the script after the script that
-failed when **\--mass-rebuild** is used again.
+*resume.temp* is saved to **SBO_HOME**. If this file is present, the
+mass rebuild restarts from the script after the script that failed when
+**\--mass-rebuild** is used again.
 
 ## EXIT CODES
 
@@ -169,7 +185,8 @@ failed when **\--mass-rebuild** is used again.
 10: **convertpkg-compat32** exited non-zero.\
 11: the **convertpkg-compat32** script cannot be found (where
 required).\
-12: interrupt signal received.
+12: interrupt signal received.\
+13: circular dependencies detected.
 
 ## BUGS
 
@@ -178,8 +195,8 @@ None known. If found, Issues and Pull Requests to
 
 ## SEE ALSO
 
-[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboremove(1)](sboremove.1.md),
-[sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
+[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 

@@ -1,6 +1,6 @@
 # sbotools
 
-**sbotools** is a set of Perl scripts providing a ports-like automation interface to [SlackBuilds.org](https://slackbuilds.org). Features include dependency handling, using a custom git branch, generating 32-bit and compat32 builds on multilib systems, and more.
+**sbotools** is a set of Perl scripts providing a ports-like automation interface to [SlackBuilds.org](https://slackbuilds.org). Features include dependency handling, using a custom git branch, generating 32-bit and compat32 builds on multilib systems, reverse dependency search and rebuild, gpg verification and more.
 
 [This repository](https://github.com/pghvlaans/sbotools/) is for continuing **sbotools** development, and was forked from the [pink-mist repository](https://github.com/pghvlaans/pink-mist/sbotools/), which covered development from version 1.9 through version 2.7.
 
@@ -21,12 +21,12 @@ Nonetheless, this repository was originally a simple fork adding a feature: Savi
 ## What's New, Compared to Version 2.7?
 **sbotools-3.x** is Slackware 15.0-compatible. While [ChangeLog](/sbotools/ChangeLog/) has a more complete list of changes, here are some of the highlights:
 
-* Blacklist and request optional dependencies with `sbotools.hints`
+* Blacklist and request optional dependencies with `sbotools.hints` and/or `sbohints`
 * Use a customizable git branch to clone the local repository
 * New git-based default URLs, with the option to use default rsync URLs instead
 * Optionally upgrade on build increments and report out-of-tree SlackBuilds
 * Save build options and offer to re-use them
-* Search installed reverse dependencies
+* Search and rebuild installed reverse dependencies
 * Optionally use GPG to verify git commits and rsync clones
 
 Those who prefer a more traditional **sbotools** experience can use the **CLASSIC** metasetting to disable most new on-screen messaging and lock other settings to version 2.7 behavior. [sbotools2](https://git.server.ky/slackcoder/sbotools2/about/), a Slackware 15.0-compatible **sbotools-2.7** maintenance fork by Slack Coder, may also be of interest.

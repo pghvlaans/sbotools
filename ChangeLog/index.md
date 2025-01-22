@@ -1,5 +1,5 @@
 # ChangeLog
-* Post-Release
+* 3.4 - 2025-01-22
   * *sboconfig*: Run without flags or options to use an interactive menu
   * *sboupgrade*: Do not attempt to upgrade the build queue if the requested script does not need an upgrade
   * *sbocheck*: Display the installed build number for the build number check
