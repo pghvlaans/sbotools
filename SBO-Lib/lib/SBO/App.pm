@@ -13,7 +13,7 @@ use strict;
 use warnings FATAL => 'all';
 use File::Basename;
 
-our $VERSION = '3.4_RC';
+our $VERSION = '3.4';
 
 sub new {
   my $class = shift;
