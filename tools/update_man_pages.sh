@@ -18,16 +18,13 @@ if [[ "$1" == "-d" ]]; then
 	shift
 fi
 
-version=$(grep '^our $VERSION' SBO-Lib/lib/SBO/Lib.pm | grep -Eo '[0-9]+(\.[0-9RC@gita-f]+){0,2}')
+version=$(grep '^our $VERSION' SBO-Lib/lib/SBO/Lib.pm | grep -Eo '[0-9]+(\.[0-9RC@gita-f_]+){0,2}')
 
 if ! [[ -d "./man1" ]]; then
 	echo "you do not seem to be at the right place to run this."
 	echo "the man{1,5}/ directories should be under ."
 	exit 1
 fi
-
-old_version=$(head -1 man1/sbocheck.1 | rev | cut -d' ' -f2 | rev \
-	| sed 's/"//g')
 
 tmpfile=$(mktemp /tmp/XXXXXXXXX)
 
@@ -51,10 +48,12 @@ sed_file() {
 }
 
 for i in $(ls man1); do
+	old_version="$(awk -F\" 'NR==1 {print $4}' man1/$i | awk '{print $2}')"
 	sed_file man1/$i "s/$old_version/$version/g"
 done
 
 for i in $(ls man5); do
+	old_version="$(awk -F\" 'NR==1 {print $4}' man5/$i | awk '{print $2}')"
 	sed_file man5/$i "s/$old_version/$version/g"
 done
 
@@ -68,16 +67,15 @@ update_date() {
 		return 1
 	fi
 
-	old_date="$(head -1 man1/sbocheck.1 | cut -d' ' -f4- | rev \
-		| cut -d' ' -f4- | rev | sed 's/"//g')"
-
 	new_date="$(ddate +"%{%A, %B %d%}, %Y YOLD%N - %H")"
 
 	for i in man1/*; do
+		old_date="$(awk -F\" 'NR==1 {print $2}' $i)"
 		sed_file $i "s/$old_date/$new_date/g"
 	done
 
 	for i in man5/*; do
+		old_date="$(awk -F\" 'NR==1 {print $2}' $i)"
 		sed_file $i "s/$old_date/$new_date/g"
 	done
 

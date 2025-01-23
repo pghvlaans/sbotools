@@ -18,7 +18,7 @@ fi
 # Note that this will take today's ddate and the version
 # in Lib.pm.
 
-version=$(grep '^our $VERSION' SBO-Lib/lib/SBO/Lib.pm | grep -Eo '[0-9]+(\.[0-9RC@gita-f]+){0,2}')
+version=$(grep '^our $VERSION' SBO-Lib/lib/SBO/Lib.pm | grep -Eo '[0-9]+(\.[0-9RC@gita-f_]+){0,2}')
 datestring="$(ddate +"%{%A, %B %d%}, %Y YOLD%N - %H")"
 cd SBO-Lib/lib || exit
 if [[ $1 = '--all' ]]; then
