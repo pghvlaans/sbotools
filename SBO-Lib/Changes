@@ -1,4 +1,7 @@
 sbotools
+* Post-Release
+  * Bugfix: Use md5sum-specific subdirectories for distfiles to avoid improper overwriting
+
 * 3.4 - 2025-01-22
   * sboconfig: Run without flags or options to use an interactive menu
   * sboupgrade: Do not attempt to upgrade the build queue if the requested script does not need an upgrade

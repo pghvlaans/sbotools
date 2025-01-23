@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Download 3"
-.TH SBO::Lib::Download 3 "Boomtime, Chaos 22, 3191 YOLD" "" "sbotools 3.4"
+.TH SBO::Lib::Download 3 "Prickle-Prickle, Chaos 24, 3191 YOLD" "" "sbotools 3.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -118,11 +118,11 @@ array reference.
 .SS get_filename_from_link
 .IX Subsection "get_filename_from_link"
 .Vb 1
-\&  my $path = get_filename_from_link($link);
+\&  my $path = get_filename_from_link($link, $md5);
 .Ve
 .PP
 \&\f(CWget_filename_from_link()\fR returns the full path to the file downloaded from
-\&\f(CW$link\fR.
+\&\f(CW$link\fR, given its required md5sum, \f(CW$md5\fR.
 .SS get_sbo_downloads
 .IX Subsection "get_sbo_downloads"
 .Vb 1

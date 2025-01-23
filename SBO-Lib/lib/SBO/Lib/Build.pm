@@ -13,6 +13,7 @@ use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link c
 
 use Exporter 'import';
 use Fcntl qw(F_SETFD F_GETFD);
+use File::Basename;
 use File::Copy; # copy() and move()
 use File::Path qw/ make_path remove_tree /;
 use File::Temp qw/ tempdir tempfile /;
@@ -479,8 +480,12 @@ sub make_distclean {
   # remove any distfiles for this particular SBo.
   my $downloads = get_sbo_downloads(LOCATION => $args{LOCATION});
   for my $key (keys %$downloads) {
-    my $filename = get_filename_from_link($key);
-    unlink $filename if -f $filename;
+    my $md5 = $downloads->{$key};
+    my $filename = get_filename_from_link($key, $md5);
+    if (-f $filename) {
+      unlink $filename if -f $filename;
+      remove_tree dirname($filename) if -d dirname($filename);
+    }
   }
   return 1;
 }

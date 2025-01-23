@@ -128,7 +128,8 @@ sub create_symlinks {
   my ($location, $downloads) = @_;
   my @symlinks;
   for my $link (keys %$downloads) {
-    my $filename = get_filename_from_link($link);
+    my $md5 = $downloads->{$link};
+    my $filename = get_filename_from_link($link, $md5);
     my $symlink = get_symlink_from_filename($filename, $location);
     push @symlinks, $symlink;
     symlink $filename, $symlink;
@@ -151,9 +152,10 @@ failure, and 1 upon success.
 sub get_distfile {
   script_error('get_distfile requires two arguments.') unless @_ == 2;
   my ($link, $info_md5) = @_;
-  my $filename = get_filename_from_link($link);
+  my $filename = get_filename_from_link($link, $info_md5);
   mkdir $distfiles unless -d $distfiles;
-  chdir $distfiles;
+  mkdir "$distfiles/$info_md5" unless -d "$distfiles/$info_md5";
+  chdir "$distfiles/$info_md5";
   unlink $filename if -f $filename;
   my $fail = {};
 
@@ -202,16 +204,16 @@ sub get_dl_fns {
 
 =head2 get_filename_from_link
 
-  my $path = get_filename_from_link($link);
+  my $path = get_filename_from_link($link, $md5);
 
 C<get_filename_from_link()> returns the full path to the file downloaded from
-C<$link>.
+C<$link>, given its required md5sum, C<$md5>.
 
 =cut
 
 sub get_filename_from_link {
-  script_error('get_filename_from_link requires an argument.') unless @_ == 1;
-  my $filename = _get_fname(shift);
+  script_error('get_filename_from_link requires two arguments.') unless @_ == 2;
+  my $filename = _get_fname(@_);
   return undef unless defined $filename;
   return "$distfiles/$filename";
 }
@@ -277,9 +279,11 @@ md5sum equal to C<$md5>.
 sub verify_distfile {
   script_error('verify_distfile requires two arguments.') unless @_ == 2;
   my ($link, $info_md5) = @_;
-  my $filename = get_filename_from_link($link);
+  my $filename = get_filename_from_link($link, $info_md5);
+  return() unless chdir "$distfiles/$info_md5";
   return() unless -f $filename;
   my $md5sum = compute_md5sum($filename);
+  chdir $distfiles;
   return $info_md5 eq $md5sum ? 1 : 0;
 }
 
@@ -303,12 +307,11 @@ Copyright (C) 2024-2025, K. Eugene Carlson.
 
 # given a link, grab the filename from it and prepend $distfiles
 sub _get_fname {
-  my $fn = shift;
+  my ($fn, $md5) = @_;
   my $regex = qr#/([^/]+)$#;
   my ($filename) = $fn =~ $regex;
   $filename =~ s/%2B/+/g if $filename;
-  return $filename;
-
+  return "$md5/$filename";
 }
 
 1;
