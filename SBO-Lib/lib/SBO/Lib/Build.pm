@@ -483,8 +483,13 @@ sub make_distclean {
     my $md5 = $downloads->{$key};
     my $filename = get_filename_from_link($key, $md5);
     if (-f $filename) {
-      unlink $filename if -f $filename;
-      remove_tree dirname($filename) if -d dirname($filename);
+      unlink $filename;
+      # be careful with the directory
+      if (dirname(dirname($filename)) eq "$config{SBO_HOME}/distfiles") {
+        remove_tree dirname($filename) if -d dirname($filename);
+      } else {
+        warn "Distcleaning for $sbo-$args{VERSION} failed...";
+      }
     }
   }
   return 1;

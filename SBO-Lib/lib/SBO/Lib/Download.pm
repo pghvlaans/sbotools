@@ -10,6 +10,7 @@ use SBO::Lib::Util qw/ :const script_error get_sbo_from_loc open_read get_arch /
 use SBO::Lib::Repo qw/ $distfiles /;
 use SBO::Lib::Info qw/ get_download_info /;
 
+use Cwd;
 use Digest::MD5;
 use Exporter 'import';
 
@@ -152,6 +153,7 @@ failure, and 1 upon success.
 sub get_distfile {
   script_error('get_distfile requires two arguments.') unless @_ == 2;
   my ($link, $info_md5) = @_;
+  my $cwd = getcwd();
   my $filename = get_filename_from_link($link, $info_md5);
   mkdir $distfiles unless -d $distfiles;
   mkdir "$distfiles/$info_md5" unless -d "$distfiles/$info_md5";
@@ -165,7 +167,10 @@ sub get_distfile {
     $fail->{msg} = "Unable to wget $link.\n";
     $fail->{err} = _ERR_DOWNLOAD;
   }
-  return 1 if not %$fail and verify_distfile(@_);
+  if (not %$fail and verify_distfile(@_)) {
+    chdir $cwd;
+    return 1;
+  }
   if (not %$fail) {
     $fail->{msg} = "The md5sum could not be verified for $filename.\n";
     $fail->{err} = _ERR_MD5SUM;
@@ -178,10 +183,13 @@ sub get_distfile {
     "ftp://slackware.uk/sbosrcarch/by-md5/%s/%s/%s/%s",
     substr($info_md5, 0, 1), substr($info_md5, 1, 1), $info_md5, _get_fname($link));
 
-  return 1 if
-    system('wget', '--no-check-certificate', '--tries=5', $sbosrcarch) == 0 and
-    verify_distfile(@_);
+  if (system('wget', '--no-check-certificate', '--tries=5', $sbosrcarch) == 0 and
+    verify_distfile(@_)) {
+    chdir $cwd;
+    return 1;
+  }
 
+  chdir $cwd;
   return $fail->{msg}, $fail->{err};
 }
 
@@ -280,10 +288,8 @@ sub verify_distfile {
   script_error('verify_distfile requires two arguments.') unless @_ == 2;
   my ($link, $info_md5) = @_;
   my $filename = get_filename_from_link($link, $info_md5);
-  return() unless chdir "$distfiles/$info_md5";
   return() unless -f $filename;
   my $md5sum = compute_md5sum($filename);
-  chdir $distfiles;
   return $info_md5 eq $md5sum ? 1 : 0;
 }
 
