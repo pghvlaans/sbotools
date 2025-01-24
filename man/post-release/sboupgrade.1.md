@@ -89,10 +89,10 @@ overrides the default.
 **-d\|\--distclean (FALSE\|TRUE)**
 
 If **TRUE**, then remove the source archives after building. They are
-retained in *SBO_HOME/distfiles* by default. The package archive (in
-*/tmp* by default) is also removed. This option can be set as default
-via the [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This
-option overrides the default.
+retained in md5sum-designated directories under *SBO_HOME/distfiles* by
+default. The package archive (in */tmp* by default) is also removed.
+This option can be set as default via the [sboconfig(1)](sboconfig.1.md) command. See
+also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
 
 **-f\|\--force**
 
