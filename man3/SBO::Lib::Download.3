@@ -78,8 +78,9 @@ SBO::Lib::Download \- Routines for downloading SlackBuild sources.
 .Ve
 .PP
 \&\f(CWcheck_distfiles()\fR gets the list of downloads from \f(CW$loc\fR. Any previously-downloaded
-files have their checksums verified. Missing and unverifiable files are downloaded and
-verified. Finally, \f(CWcreate_symlinks()\fR is run on each download.
+files have their checksums verified. Missing and unverifiable files are downloaded to
+md5sum\-designated directories and verified. Finally, \f(CWcreate_symlinks()\fR is run on each
+download.
 .PP
 In case of success, an array of symlinks from \f(CWcreate_symlinks()\fR is returned. In case of
 failure, an error message and an exit code are returned.
@@ -105,8 +106,8 @@ failure, an error message and an exit code are returned.
 .Ve
 .PP
 \&\f(CWget_distfile()\fR downloads from the URL \f(CW$link\fR with \f(CWwget(1)\fR and compares
-the md5sum to \f(CW$md5\fR. It returns a message and an error code upon
-failure, and 1 upon success.
+the md5sum to \f(CW$md5\fR. The file is saved in an md5sum\-designated directory.
+The subroutine returns a message and an error code upon failure, and 1 upon success.
 .SS get_dl_fns
 .IX Subsection "get_dl_fns"
 .Vb 1

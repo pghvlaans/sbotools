@@ -48,7 +48,7 @@ verifies the repo in-place without fetching. Only rsync repositories can
 be verified on Slackware 14.0 and Slackware 14.1.
 
 Please note that **sbosnap**, which was removed as an independent script
-in **sbotools-3.4**, is a compatibility symlink to **sbocheck**.
+in **sbotools-3.3**, is a compatibility symlink to **sbocheck**.
 
 If an invalid configuration is detected in
 */etc/sbotools/sbotools.conf*, the script exits with a diagnostic

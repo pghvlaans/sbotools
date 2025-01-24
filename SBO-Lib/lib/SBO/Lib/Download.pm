@@ -53,8 +53,9 @@ SBO::Lib::Download - Routines for downloading SlackBuild sources.
   my ($ret, $exit) = check_distfiles(LOCATION => $loc);
 
 C<check_distfiles()> gets the list of downloads from C<$loc>. Any previously-downloaded
-files have their checksums verified. Missing and unverifiable files are downloaded and
-verified. Finally, C<create_symlinks()> is run on each download.
+files have their checksums verified. Missing and unverifiable files are downloaded to
+md5sum-designated directories and verified. Finally, C<create_symlinks()> is run on each
+download.
 
 In case of success, an array of symlinks from C<create_symlinks()> is returned. In case of
 failure, an error message and an exit code are returned.
@@ -143,8 +144,8 @@ sub create_symlinks {
   my ($msg, $err) = get_distfile($link, $md5);
 
 C<get_distfile()> downloads from the URL C<$link> with C<wget(1)> and compares
-the md5sum to C<$md5>. It returns a message and an error code upon
-failure, and 1 upon success.
+the md5sum to C<$md5>. The file is saved in an md5sum-designated directory.
+The subroutine returns a message and an error code upon failure, and 1 upon success.
 
 =cut
 

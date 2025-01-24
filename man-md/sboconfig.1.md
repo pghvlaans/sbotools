@@ -92,8 +92,9 @@ building. These are the build and *package-(sbo)* directories under
 
 **DISTCLEAN**: If **TRUE**, then remove the package and source archives
 after building. Source archives are otherwise retained in
-*/usr/sbo/distfiles* (with default **SBO_HOME**). If **PKG_DIR** is set,
-package archives are saved there regardless of **DISTCLEAN**.
+md5sum-designated directories under */usr/sbo/distfiles* (with default
+**SBO_HOME**). If **PKG_DIR** is set, package archives are saved there
+regardless of **DISTCLEAN**.
 
 **-g\|\--gpg-verify (FALSE\|TRUE)**
 
