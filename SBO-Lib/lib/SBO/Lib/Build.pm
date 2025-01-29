@@ -437,11 +437,10 @@ sub make_clean {
     remove_tree("$tmpd/$dir") if -d "$tmpd/$dir";
   }
 
-  my $output = $ENV{OUTPUT} // '/tmp';
-  remove_tree("$output/package-$args{SBO}") if
-    -d "$output/package-$args{SBO}";
-
-  if ($args{SBO} =~ /^(.+)-compat32$/) {
+  unless ($args{SBO} =~ /^(.+)-compat32$/) {
+    remove_tree("$tmpd/package-$args{SBO}") if
+      -d "$tmpd/package-$args{SBO}";
+  } else {
     my $pkg_name = $1;
     remove_tree("/tmp/package-$args{SBO}") if
       not defined $env_tmp and
