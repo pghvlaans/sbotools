@@ -117,10 +117,9 @@ Create a -compat32 package on multilib x86_64 systems. This requires the
 **compat32-tools** package by Eric Hameleers. Please note that this
 operation is not necessarily foolproof, and is unsupported by anyone in
 principle. As a best practice, **\--compat32** should be combined with
-**\--noinstall** so that the contents of the package can be inspected
-prior to installation. If the base package and compat32 package are to
-be built at the same time, ensure that the **DISTCLEAN** option is set
-to **FALSE.** GitHub Issues are welcome in case of unexpected failure.
+**\--noinstall** and **\--distclean FALSE** so that the contents of the
+package can be inspected prior to installation. GitHub Issues are
+welcome in case of unexpected failure.
 
 **-r\|\--nointeractive**
 

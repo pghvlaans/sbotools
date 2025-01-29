@@ -1,4 +1,7 @@
 # ChangeLog
+* Post-Release
+  * *Build.pm*: When distcleaning, do not delete files that are needed later in the queue
+
 * 3.4.1 - 2025-01-29
   * Bugfix: Use md5sum-specific subdirectories for distfiles to avoid improper overwriting
   * *sboclean*: Adjust distfile handling to reflect new directory structure
