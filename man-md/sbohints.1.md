@@ -75,7 +75,9 @@ an optional depenedency, the user is notified.
 **-q\|\--query**
 
 Return the current blacklist and optional dependency request status for
-one or more scripts.
+one or more scripts. There is no output unless the queried script is
+blacklisted, has optional dependency requests or is on an optional
+dependency request list.
 
 **\--reset**
 

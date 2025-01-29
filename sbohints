@@ -170,9 +170,37 @@ sub make_query {
 			$made_output = 1;
 		}
 		if (my @optionals = get_optional($sbo)) {
-			say "Optional dependency requests for $sbo:";
+			if (@optionals == 1) {
+				wrapsay "Optional dependency request for $sbo:";
+			} else {
+				wrapsay "Optional dependency requests for $sbo:";
+			}
 			wrapsay(join(" ", @optionals));
 			$made_output = 1;
+		} else {
+			my @loclistings = @listings;
+			my @optional_for;
+			if (grep { /(^|\s)$sbo\s/ } @loclistings) {
+				FIRST: for my $hinted (@loclistings) {
+					next FIRST if $hinted =~ m/^(!|\s|#)/;
+					next FIRST if $hinted =~ m/\s$/;
+					next FIRST unless $hinted =~ m/(^|\s)$sbo\s/;
+					my @items = split(' ', $hinted);
+					my $result = pop @items;
+					push @optional_for, $result unless grep { /^$result$/ } @optional_for;
+				}
+				if (@optional_for) {
+					$made_output = 1;
+					if (@optional_for == 1) {
+						my $requested = shift @optional_for;
+						wrapsay "$sbo is an optional dependency of $requested.";
+					} else {
+						wrapsay "The following scripts optionally depend on $sbo:";
+						@optional_for = sort @optional_for;
+						for my $result (@optional_for) { wrapsay "$result"; }
+					}
+				}
+			}
 		}
 	}
 }
@@ -315,18 +343,32 @@ sub show_list {
 	}
 	@candlist = uniq @candlist;
 	@candlist = sort @candlist;
-	my ($wrote_blacklist, $wrote_optional);
+	my ($wrote_blacklist, $wrote_optional, @blacklisted);
 	for my $sbo (@candlist) {
 		if (on_blacklist($sbo)) {
-			wrapsay "The following scripts are blacklisted:" if not $wrote_blacklist;
-			say "$sbo";
+			push @blacklisted, $sbo unless grep {/^$sbo$/} @blacklisted;
 			$wrote_blacklist = 1;
 		}
+	}
+	if (@blacklisted == 1) {
+		my $result = shift @blacklisted;
+		wrapsay "$result is blacklisted.";
+		$wrote_blacklist = 1;
+	} elsif (@blacklisted) {
+		wrapsay "The following scripts are blacklisted:";
+		for my $sbo (@blacklisted) {
+			say "$sbo";
+		}
+		$wrote_blacklist = 1;
 	}
 	for my $sbo (@candlist) {
 		if (my @optionals = get_optional($sbo)) {
 			say " " if $wrote_blacklist or $wrote_optional;
-			say "Optional dependency requests for $sbo:";
+			if (@optionals == 1) {
+				say "Optional dependency request for $sbo:";
+			} else {
+				say "Optional dependency requests for $sbo:";
+			}
 			wrapsay(join(" ", @optionals));
 			push @ineffectuals, $sbo if on_blacklist($sbo);
 			for my $request (@optionals) {
