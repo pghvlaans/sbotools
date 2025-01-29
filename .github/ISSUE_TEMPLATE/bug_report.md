@@ -15,6 +15,6 @@ assignees: pghvlaans
 
 * Output of `sboconfig --list`:
 
-* Output of `sbohints --list`, if you have it:
+* Output of `sbohints --list` (version 3.4 and later):
 
 * Description:
