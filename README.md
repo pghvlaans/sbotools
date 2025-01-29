@@ -13,12 +13,12 @@
 
 Features include dependency handling, using a custom git branch for the upstream repository, reverse dependency search and rebuild, gpg verification and more. See **sbotools(1)** for a startup guide.
 
-This repository is for continuing **sbotools** development, and was forked from the [pink-mist repository](https://github.com/pink-mist/sbotools), which covered development from version 1.9 through version 2.7. A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
+This repository is for continuing **sbotools** development, and was forked from the [pink-mist repository](https://github.com/pink-mist/sbotools), which covered development from version 0.1 through version 2.7. A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
 ## Changes
-* Post-Release
+* 3.4.1 - 2025-01-29
   * Bugfix: Use md5sum-specific subdirectories for distfiles to avoid improper overwriting
   * sboclean: Adjust distfile handling to reflect new directory structure
   * Bugfix: Actually remove the package-\* directory
