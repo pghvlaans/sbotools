@@ -89,15 +89,15 @@ circular reverse dependencies.
 This is a temporary directory created for sbotools' use. It should be
 removed when sbotools exits.
 
+=head2 $tmpd
+
+This is the same as C<$TMP> if it is set. Otherwise, it is C</tmp/SBo>.
+
 =head2 @upcoming
 
 This is a shared, non-exportable array that contains hashes with the source
 files needed by each script in the queue. Each hash drops out of the array
 when its corresponding script has been built.
-
-=head2 $tmpd
-
-This is the same as C<$TMP> if it is set. Otherwise, it is C</tmp/SBo>.
 
 =cut
 

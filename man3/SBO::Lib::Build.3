@@ -93,16 +93,16 @@ circular reverse dependencies.
 .IX Subsection "$tempdir"
 This is a temporary directory created for sbotools' use. It should be
 removed when sbotools exits.
+.ie n .SS $tmpd
+.el .SS \f(CW$tmpd\fP
+.IX Subsection "$tmpd"
+This is the same as \f(CW$TMP\fR if it is set. Otherwise, it is \f(CW\*(C`/tmp/SBo\*(C'\fR.
 .ie n .SS @upcoming
 .el .SS \f(CW@upcoming\fP
 .IX Subsection "@upcoming"
 This is a shared, non-exportable array that contains hashes with the source
 files needed by each script in the queue. Each hash drops out of the array
 when its corresponding script has been built.
-.ie n .SS $tmpd
-.el .SS \f(CW$tmpd\fP
-.IX Subsection "$tmpd"
-This is the same as \f(CW$TMP\fR if it is set. Otherwise, it is \f(CW\*(C`/tmp/SBo\*(C'\fR.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS do_convertpkg
