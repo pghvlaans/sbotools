@@ -1,6 +1,9 @@
 # ChangeLog
-* Post-Release
+* 3.4.1 - 2025-01-29
   * Bugfix: Use md5sum-specific subdirectories for distfiles to avoid improper overwriting
+  * *sboclean*: Adjust distfile handling to reflect new directory structure
+  * Bugfix: Actually remove the *package-\** directory
+  * Bugfix: **DISTCLEAN** should not override **NOCLEAN**
 
 * 3.4 - 2025-01-22
   * *sboconfig*: Run without flags or options to use an interactive menu

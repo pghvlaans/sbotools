@@ -37,9 +37,10 @@ build options are not displayed. This provides a more traditional
 **DISTCLEAN=(FALSE\|TRUE)**
 
 If **TRUE**, then remove the package and source archives after building.
-Source archives are otherwise retained in */usr/sbo/distfiles* (with
-*SBO_HOME=/usr/sbo*) by default. If **PKG_DIR** is set, package archives
-are saved there regardless of **DISTCLEAN**.
+Source archives are otherwise retained in md5sum-designated directories
+under */usr/sbo/distfiles* (with *SBO_HOME=/usr/sbo*) by default. If
+**PKG_DIR** is set, package archives are saved there regardless of
+**DISTCLEAN**.
 
 **GPG_VERIFY=(FALSE\|TRUE)**
 
