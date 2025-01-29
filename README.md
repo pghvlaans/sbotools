@@ -20,6 +20,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 ## Changes
 * Post-Release
   * Bugfix: Use md5sum-specific subdirectories for distfiles to avoid improper overwriting
+  * sboclean: Adjust distfile handling to reflect new directory structure
 
 * 3.4 - 2025-01-22
   * sboconfig: Run without flags or options to use an interactive menu

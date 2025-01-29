@@ -63,10 +63,17 @@ usage_error("You must specify at least one of -d, -w or -o.") unless
 	($dist || $work || $options);
 
 sub rm_full {
-	script_error('rm_full requires an argument.') unless @_ == 1;
-	my $full = shift;
+	script_error('rm_full requires at least one argument.') unless @_ >= 1;
+	my ($full, $dist) = @_;
+	my $message;
+	if ($dist) {
+		my $base = basename($full);
+		$message = "Remove $base from $config{SBO_HOME}/distfiles?";
+	} else {
+		$message = "Remove $full?";
+	}
 	if ($interactive) {
-		return() unless prompt("Remove $full?", default => 'no');
+		return() unless prompt("$message", default => 'no');
 	}
 	unlink $full if -f $full;
 	remove_tree($full) if -d $full;
@@ -98,7 +105,24 @@ sub clean_c32 {
 	return 1;
 }
 
-remove_stuff($config{SBO_HOME} .'/distfiles') if $dist;
+if ($dist) {
+	my $distfiles = "$config{SBO_HOME}/distfiles";
+	opendir(my $dh, $distfiles);
+	FIRST: while (my $ls = readdir $dh) {
+		next FIRST if in($ls => qw/ . .. /);
+		my $dir = "$distfiles/$ls";
+		if (-d $dir) {
+			opendir(my $dh2, $dir);
+			SECOND: while (my $ls2 = readdir $dh2) {
+				next SECOND if in($ls2 => qw/ . .. /);
+				rm_full("$dir/$ls2", 1);
+				remove_tree($dir) unless -f "$dir/$ls2";
+			}
+		} elsif (-f $dir) {
+			rm_full($dir, 1);
+		}
+	}
+}
 
 if ($work) {
 	my $env_tmp = $SBO::Lib::env_tmp;
