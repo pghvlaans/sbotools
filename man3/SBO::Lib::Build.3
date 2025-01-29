@@ -93,6 +93,12 @@ circular reverse dependencies.
 .IX Subsection "$tempdir"
 This is a temporary directory created for sbotools' use. It should be
 removed when sbotools exits.
+.ie n .SS @upcoming
+.el .SS \f(CW@upcoming\fP
+.IX Subsection "@upcoming"
+This is a shared, non-exportable array that contains hashes with the source
+files needed by each script in the queue. Each hash drops out of the array
+when its corresponding script has been built.
 .ie n .SS $tmpd
 .el .SS \f(CW$tmpd\fP
 .IX Subsection "$tmpd"
@@ -215,7 +221,8 @@ It has no useful return value.
 .Ve
 .PP
 \&\f(CWmake_distclean()\fR removes any downloaded source tarballs and the completed package
-archive.
+archive. These files are not removed if they are needed by a script later in the
+queue; this is mostly relevant for compat32 and some Rust-based scripts.
 .PP
 It has no useful return value.
 .SS merge_queues

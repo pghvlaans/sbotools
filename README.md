@@ -18,6 +18,9 @@ This repository is for continuing **sbotools** development, and was forked from 
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
 ## Changes
+* Post-Release
+  * Build.pm: When distcleaning, do not delete files that are needed later in the queue
+
 * 3.4.1 - 2025-01-29
   * Bugfix: Use md5sum-specific subdirectories for distfiles to avoid improper overwriting
   * sboclean: Adjust distfile handling to reflect new directory structure

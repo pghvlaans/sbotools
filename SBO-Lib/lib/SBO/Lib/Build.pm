@@ -89,6 +89,12 @@ circular reverse dependencies.
 This is a temporary directory created for sbotools' use. It should be
 removed when sbotools exits.
 
+=head2 @upcoming
+
+This is a shared, non-exportable array that contains hashes with the source
+files needed by each script in the queue. Each hash drops out of the array
+when its corresponding script has been built.
+
 =head2 $tmpd
 
 This is the same as C<$TMP> if it is set. Otherwise, it is C</tmp/SBo>.
@@ -108,6 +114,9 @@ our $tempdir = tempdir(CLEANUP => 1, DIR => $tmpd);
 # used to check for circular dependencies
 our @concluded;
 our @reverse_concluded;
+
+# this array keeps track of files needed by subsequent scripts
+our @upcoming;
 
 =head1 SUBROUTINES
 
@@ -456,7 +465,8 @@ sub make_clean {
   make_distclean(SRC => $src, VERSION => $ver, LOCATION => $loc);
 
 C<make_distclean()> removes any downloaded source tarballs and the completed package
-archive.
+archive. These files are not removed if they are needed by a script later in the
+queue; this is mostly relevant for compat32 and some Rust-based scripts.
 
 It has no useful return value.
 
@@ -475,12 +485,24 @@ sub make_distclean {
   }
   my $sbo = get_sbo_from_loc($args{LOCATION});
   wrapsay "Distcleaning for $sbo-$args{VERSION}...";
-  # remove any distfiles for this particular SBo.
-  my $downloads = get_sbo_downloads(LOCATION => $args{LOCATION});
+  # remove any distfiles for this particular SBo unless they
+  # will be needed later in the queue
+  my $downloads = shift @upcoming;
   for my $key (keys %$downloads) {
     my $md5 = $downloads->{$key};
     my $filename = get_filename_from_link($key, $md5);
-    if (-f $filename) {
+    my $is_upcoming;
+    for my $dl2 (@upcoming) {
+      for my $key2 (keys %$dl2) {
+        my $md52 = $dl2->{$key2};
+        my $filename2 = get_filename_from_link($key2, $md52);
+        if ($filename eq $filename2) {
+          $is_upcoming = 1;
+          next;
+        }
+      }
+    }
+    if (-f $filename and not $is_upcoming) {
       unlink $filename;
       # be careful with the directory
       if (dirname(dirname($filename)) eq "$config{SBO_HOME}/distfiles") {
@@ -639,6 +661,9 @@ sub process_sbos {
   my (@failures, @symlinks, $err);
   FIRST: for my $sbo (@$todo) {
     my $compat32 = $sbo =~ /-compat32$/ ? 1 : 0;
+    push @upcoming, get_sbo_downloads(
+      LOCATION => $$locs{$sbo}, COMPAT32 => $compat32
+    );
     my ($temp_syms, $exit) = check_distfiles(
       LOCATION => $$locs{$sbo}, COMPAT32 => $compat32
     );
