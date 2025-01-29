@@ -68,6 +68,7 @@ Config options (defaults shown):
       STRICT_UPGRADES: only upgrade when the version or build number is higher.
 
 Use $self without options for an interactive menu.
+
 EOF
 	return 1;
 }
