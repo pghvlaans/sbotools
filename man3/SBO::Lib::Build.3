@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Boomtime, Chaos 22, 3191 YOLD" "" "sbotools 3.4"
+.TH SBO::Lib::Build 3 "Prickle-Prickle, Chaos 29, 3191 YOLD" "" "sbotools 3.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -214,8 +214,8 @@ It has no useful return value.
 \&  make_distclean(SRC => $src, VERSION => $ver, LOCATION => $loc);
 .Ve
 .PP
-\&\f(CWmake_distclean()\fR removes the same directories as \f(CWmake_clean()\fR does,
-as well as distribution files, such as the downloaded source tarballs.
+\&\f(CWmake_distclean()\fR removes any downloaded source tarballs and the completed package
+archive.
 .PP
 It has no useful return value.
 .SS merge_queues

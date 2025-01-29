@@ -35,7 +35,7 @@ Options (defaults shown first where applicable):
   -c|--noclean (FALSE|TRUE):
     if TRUE, do not clean working directories after building.
   -d|--distclean (TRUE|FALSE):
-    if TRUE, delete downloaded source archives after building.
+    if TRUE, delete downloaded source archives and the completed package after building.
   -i|--noinstall:
     do not run installpkg after building.
   -j|--jobs (FALSE|#):

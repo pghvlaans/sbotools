@@ -13,7 +13,7 @@ _arguments -s -C \
 	   '(${sboupdates})--all[Upgrade all from sbocheck.]' \
 	   '(-b --build-ignore)'{-b,--build-ignore}'[If TRUE, then only do upgrades if the version number differs.]:ignore build number?:((TRUE\:"Version upgrades only" FALSE\:"Script bump upgrades"))' \
 	   '(-c --noclean)'{-c,--noclean}'[If TRUE, then do not clean working directories after build.]:clean work dirs?:((TRUE\:"Clean works directories" FALSE\:"Keep work directories"))' \
-	   '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code after building.]:clean source?:((TRUE\:"Remove source" FALSE\:"Keep source"))' \
+	   '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code and the package after building.]:clean source and package?:((TRUE\:"Remove source and package" FALSE\:"Keep source and package"))' \
 	   '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \
 	   '(-r --nointeractive)'{-r,--nointeractive}'[Skip README.]' \
 	   '(-f --force)'{-f,--force}'[Force an upgrade (ignore version).]' \

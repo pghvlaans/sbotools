@@ -455,8 +455,8 @@ sub make_clean {
 
   make_distclean(SRC => $src, VERSION => $ver, LOCATION => $loc);
 
-C<make_distclean()> removes the same directories as C<make_clean()> does,
-as well as distribution files, such as the downloaded source tarballs.
+C<make_distclean()> removes any downloaded source tarballs and the completed package
+archive.
 
 It has no useful return value.
 
@@ -474,7 +474,6 @@ sub make_distclean {
     script_error('make_distclean requires four arguments.');
   }
   my $sbo = get_sbo_from_loc($args{LOCATION});
-  make_clean(SBO => $sbo, SRC => $args{SRC}, VERSION => $args{VERSION});
   wrapsay "Distcleaning for $sbo-$args{VERSION}...";
   # remove any distfiles for this particular SBo.
   my $downloads = get_sbo_downloads(LOCATION => $args{LOCATION});
@@ -712,10 +711,10 @@ sub process_sbos {
 
     do_upgradepkg($pkg) unless $args{NOINSTALL};
 
-    unless ($args{DISTCLEAN}) {
-      make_clean(SBO => $sbo, SRC => $src, VERSION => $version)
-        unless $args{NOCLEAN};
-    } else {
+    unless ($args{NOCLEAN}) {
+      make_clean(SBO => $sbo, SRC => $src, VERSION => $version);
+    }
+    if ($args{DISTCLEAN}) {
       make_distclean(
         SBO       => $sbo,
         SRC       => $src,

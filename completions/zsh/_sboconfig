@@ -13,7 +13,7 @@ _arguments \
     '(-b --build-ignore)'{-b,--build-ignore}'[If TRUE, then only do upgrades if the version number differs.]:ignore build number?:((TRUE\:"Version upgrades only" FALSE\:"Script bump upgrades"))' \
     '(-C --classic)'{-C,--classic}'[If TRUE, a more traditional sbotools look and feel; see the man pages before turning this on.]:use Classic Mode?:((TRUE\:"Classic Mode" FALSE\:"No Classic Mode"))' \
     '(-c --noclean)'{-c,--noclean}'[If TRUE, then do not clean working directories after build.]:clean work dirs?:((TRUE\:"Clean works directories" FALSE\:"Keep work directories"))' \
-    '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code after building.]:clean source?:((TRUE\:"Remove source" FALSE\:"Keep source"))' \
+    '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code and the package after building.]:clean source and package?:((TRUE\:"Remove source and package" FALSE\:"Keep source and package"))' \
     '(-g --gpg-verify)'{-g,--gpg-verify}'[If TRUE, then verify with gpg.]:use gpg?:((TRUE\:"Verify with gpg" FALSE\:"Do not verify"))' \
     '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \
     '(-p --pkg-dir)'{-p,--pkg-dir}'[Directory to store built packages in.]:package directory:_files -/' \

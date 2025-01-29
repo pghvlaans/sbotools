@@ -37,7 +37,7 @@ Options (defaults shown first where applicable):
   -c|--noclean (FALSE|TRUE):
     if TRUE, do not clean working directories after building.
   -d|--distclean (TRUE|FALSE):
-    if TRUE, delete downloaded source archives after building.
+    if TRUE, delete downloaded source archives and the completed package after building.
   -f|--force:
     force an upgrade, even if the version and build number are the same.
   -i|--noinstall:

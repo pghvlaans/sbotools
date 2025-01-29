@@ -20,7 +20,7 @@ _arguments -s \
 	   '(-)'{-v,--version}'[Show version information.]:' \
 	   - commands \
 	   '(-c --noclean)'{-c,--noclean}'[If TRUE, then do not clean working directories after build.]:clean work dirs?:((TRUE\:"Clean works directories" FALSE\:"Keep work directories"))' \
-	   '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code after building.]:clean source?:((TRUE\:"Remove source" FALSE\:"Keep source"))' \
+	   '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code and the package after building.]:clean source and package?:((TRUE\:"Remove source and package" FALSE\:"Keep source and package"))' \
 	   '(-i --noinstall)'{-i,--noinstall}'[Do not install package after building.]' \
 	   '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \
 	   '(-p --compat32)'{-p,--compat32}'[Create a -compat32 package on x86_64 systems (experimental).]' \

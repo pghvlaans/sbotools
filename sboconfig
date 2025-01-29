@@ -44,10 +44,10 @@ Config options (defaults shown):
       BUILD_IGNORE: if TRUE, only attempt to upgrade if the version number is different.
   -C|--classic FALSE:
       CLASSIC: if TRUE, enable BUILD_IGNORE and RSYNC_DEFAULT and suppress extra sbotools output.
-  -c|--clean FALSE:
-      NOCLEAN: if TRUE, do NOT clean up after building by default.
+  -c|--noclean FALSE:
+      NOCLEAN: if TRUE, do not clean up working directories after building by default.
   -d|--distclean FALSE:
-      DISTCLEAN: if TRUE, DO clean distfiles by default after building.
+      DISTCLEAN: if TRUE, clean the source and package archives by default after building.
   -g|--gpg-verify FALSE:
       GPG_VERIFY: verify the repo with gnupg
   -j|--jobs FALSE:
