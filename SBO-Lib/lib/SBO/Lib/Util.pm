@@ -890,6 +890,28 @@ sub wrapsay {
 # by overriding its implementation for tests
 sub _race::cond { return }
 
+=head1 EXIT CODES
+
+The sbotools share the following exit codes:
+
+  _ERR_USAGE         1   usage errors
+  _ERR_SCRIPT        2   script or module bug
+  _ERR_BUILD         3   errors when executing a SlackBuild
+  _ERR_MD5SUM        4   download verification failure
+  _ERR_DOWNLOAD      5   download failure
+  _ERR_OPENFH        6   failure to open file handles
+  _ERR_NOINFO        7   missing download information
+  _ERR_F_SETD        8   fd-related temporary file failure
+  _ERR_NOMULTILIB    9   lacking multilib capabilities when needed
+  _ERR_CONVERTPKG    10  convertpkg-compat32 failure
+  _ERR_NOCONVERTPKG  11  lacking convertpkg-compat32 when needed
+  _ERR_INST_SIGNAL   12  the script was interrupted while building
+  _ERR_CIRCULAR      13  attempted to calculate a circular dependency
+
+=head1 SEE ALSO
+
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3)
+
 =head1 AUTHORS
 
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

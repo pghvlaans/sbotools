@@ -910,6 +910,23 @@ sub run_tee {
   return $out, $ret;
 }
 
+=head1 EXIT CODES
+
+Build.pm subroutines can return the following exit codes:
+
+  _ERR_SCRIPT        2   script or module bug
+  _ERR_BUILD         3   errors when executing a SlackBuild
+  _ERR_OPENFH        6   failure to open file handles
+  _ERR_NOMULTILIB    9   lacking multilib capabilities when needed
+  _ERR_CONVERTPKG    10  convertpkg-compat32 failure
+  _ERR_NOCONVERTPKG  11  lacking convertpkg-compat32 when needed
+  _ERR_INST_SIGNAL   12  the script was interrupted while building
+  _ERR_CIRCULAR      13  attempted to calculate a circular dependency
+
+=head1 SEE ALSO
+
+SBO::Lib(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
+
 =head1 AUTHORS
 
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

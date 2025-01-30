@@ -233,6 +233,18 @@ sub user_prompt {
   return $cmds, $opts;
 }
 
+=head1 EXIT CODES
+
+Readme.pm subroutines can return the following exit codes:
+
+  _ERR_USAGE         1   usage errors
+  _ERR_SCRIPT        2   script or module bug
+  _ERR_OPENFH        6   failure to open file handles
+
+=head1 SEE ALSO
+
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Pkgs(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
+
 =head1 AUTHORS
 
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

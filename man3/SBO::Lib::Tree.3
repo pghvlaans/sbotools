@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Tree 3"
-.TH SBO::Lib::Tree 3 "Prickle-Prickle, Chaos 29, 3191 YOLD" "" "sbotools 3.4.1"
+.TH SBO::Lib::Tree 3 "Setting Orange, Chaos 30, 3191 YOLD" "" "sbotools 3.4.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -108,6 +108,16 @@ package name to its location.
 .PP
 \&\f(CWis_local()\fR checks whether the given \f(CW$sbo\fR is in the \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR directory.
 The return value is true if it is, and false if it is not.
+.SH "EXIT CODES"
+.IX Header "EXIT CODES"
+Tree.pm subroutines can return the following exit code:
+.PP
+.Vb 1
+\&  _ERR_SCRIPT        2   script or module bug
+.Ve
+.SH "SEE ALSO"
+.IX Header "SEE ALSO"
+\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Util\fR\|(3)
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

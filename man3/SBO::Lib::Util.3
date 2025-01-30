@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Prickle-Prickle, Chaos 29, 3191 YOLD" "" "sbotools 3.4.1"
+.TH SBO::Lib::Util 3 "Setting Orange, Chaos 30, 3191 YOLD" "" "sbotools 3.4.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -378,6 +378,28 @@ Use this subroutine whenever it is either obvious that the output exceeds
 80 characters or the output includes a variable. \f(CW\*(C`say\*(C'\fR can be used in
 other cases. \f(CWwrapsay()\fR should not be used on output that can be piped
 for use in scripts (e.g., queue reports from \f(CWsbofind(1)\fR).
+.SH "EXIT CODES"
+.IX Header "EXIT CODES"
+The sbotools share the following exit codes:
+.PP
+.Vb 10
+\&  _ERR_USAGE         1   usage errors
+\&  _ERR_SCRIPT        2   script or module bug
+\&  _ERR_BUILD         3   errors when executing a SlackBuild
+\&  _ERR_MD5SUM        4   download verification failure
+\&  _ERR_DOWNLOAD      5   download failure
+\&  _ERR_OPENFH        6   failure to open file handles
+\&  _ERR_NOINFO        7   missing download information
+\&  _ERR_F_SETD        8   fd\-related temporary file failure
+\&  _ERR_NOMULTILIB    9   lacking multilib capabilities when needed
+\&  _ERR_CONVERTPKG    10  convertpkg\-compat32 failure
+\&  _ERR_NOCONVERTPKG  11  lacking convertpkg\-compat32 when needed
+\&  _ERR_INST_SIGNAL   12  the script was interrupted while building
+\&  _ERR_CIRCULAR      13  attempted to calculate a circular dependency
+.Ve
+.SH "SEE ALSO"
+.IX Header "SEE ALSO"
+\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Tree\fR\|(3)
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

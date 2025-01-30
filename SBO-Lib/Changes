@@ -3,13 +3,13 @@ sbotools
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue
   * sbohints: With --query, also report scripts that are optional dependencies; more grammatical output
   * Allow non-root users to call sbofind, non-destructive sboconfig and sbohints flags, --help and --version
+  * Install an SBO::Lib(3) summary man page; add exit code information to the other man 3 pages
 
 * 3.4.1 - 2025-01-29
   * Bugfix: Use md5sum-specific subdirectories for distfiles to avoid improper overwriting
   * sboclean: Adjust distfile handling to reflect new directory structure
   * Bugfix: Actually remove the package-* directory
   * Bugfix: DISTCLEAN should not override NOCLEAN
-  * Install a SBO::Lib(3) summary man page
 
 * 3.4 - 2025-01-22
   * sboconfig: Run without flags or options to use an interactive menu

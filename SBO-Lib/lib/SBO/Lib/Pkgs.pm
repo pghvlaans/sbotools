@@ -273,6 +273,16 @@ sub get_removed_builds {
     return \@removed;
 }
 
+=head1 EXIT CODES
+
+Pkgs.pm subroutines can return the following exit code:
+
+  _ERR_SCRIPT        2   script or module bug
+
+=head1 SEE ALSO
+
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
+
 =head1 AUTHORS
 
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

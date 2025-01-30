@@ -38,7 +38,7 @@ exports. Each module is documented in its own man page.
 =head2 SBO::Lib::Build
 
 C<Build.pm> has routines for building Slackware packages from SlackBuilds.org. It covers
-the build process from the point the queue is set through post-build cleaning.
+the build process from setting the queue through post-build cleaning.
 
 =head2 SBO::Lib::Download
 

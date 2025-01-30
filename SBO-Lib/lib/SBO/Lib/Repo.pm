@@ -778,6 +778,18 @@ sub retrieve_key {
   }
 }
 
+=head1 EXIT CODES
+
+Repo.pm subroutines can return the following exit codes:
+
+  _ERR_USAGE         1   usage errors
+  _ERR_SCRIPT        2   script or module bug
+  _ERR_DOWNLOAD      5   download failure
+
+=head1 SEE ALSO
+
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
+
 =head1 AUTHORS
 
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
