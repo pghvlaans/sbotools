@@ -54,8 +54,16 @@ GetOptions(
 	'interactive|i'     => \$interactive,
 );
 
-if ($help) { show_usage(); exit 0 }
+if ($help) {
+	show_usage();
+	usage_error "This is a root-only script." unless $< == 0;
+	exit 0;
+}
 if ($vers) { show_version(); exit 0 }
+unless ($< == 0) {
+	show_usage();
+	usage_error "This is a root-only script.";
+}
 
 lint_sbo_config($self, %config);
 

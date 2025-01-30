@@ -31,12 +31,13 @@
 **sbohints** is a script for querying and editing the blacklist and
 optional dependency requests made in [sbotools.hints(5)](sbotools.hints.5.md). The
 modification flags are **\--blacklist**, **\--optional** and
-**\--replace-optional**. These may be used in conjunction with
+**\--replace-optional**. These can be used in conjunction with
 **\--clear**, but not with each other.
 
-If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
-message.
+Non-root users can only call **sbohints** with the **\--list**,
+**\--query**, **\--help** and **\--version** flags. If an invalid
+configuration is detected in */etc/sbotools/sbotools.conf*, the script
+exits with a diagnostic message.
 
 ## OPTIONS
 
@@ -70,14 +71,16 @@ requests.
 
 List the current blacklist and all optional dependency requests. If a
 blacklisted script has optional dependency requests or is requested as
-an optional depenedency, the user is notified.
+an optional depenedency, the user is notified. The **\--list** flag can
+be used without root privileges.
 
 **-q\|\--query**
 
 Return the current blacklist and optional dependency request status for
 one or more scripts. There is no output unless the queried script is
 blacklisted, has optional dependency requests or is on an optional
-dependency request list.
+dependency request list. The **\--query** flag can be used without root
+privileges.
 
 **\--reset**
 

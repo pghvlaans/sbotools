@@ -32,8 +32,8 @@ SBO::Lib - Library for working with SlackBuilds.org.
 
 =head1 DESCRIPTION
 
-SBO::Lib is the entry point for all the related modules, and is simply re-
-exporting all of their exports.
+SBO::Lib is the entry point for all the related modules, and simply re-exports all
+exports.
 
 =head1 SEE ALSO
 
@@ -95,11 +95,6 @@ our %EXPORT_TAGS = (
 	config => $SBO::Lib::Util::EXPORT_TAGS{config},
 );
 
-unless ($< == 0) {
-	warn "This script requires root privileges.\n";
-	exit _ERR_USAGE;
-}
-
 =head1 AUTHORS
 
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
@@ -113,6 +108,7 @@ SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 The sbotools are licensed under the MIT License.
 
 Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
+
 Copyright (C) 2024-2025, K. Eugene Carlson.
 
 =cut

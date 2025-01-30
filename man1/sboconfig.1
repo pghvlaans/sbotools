@@ -43,6 +43,20 @@ relevant to
 .B
 sbotools
 configuration are ignored.
+.P
+Non-root users can only call
+.B
+sboconfig
+with the
+.B
+--list\fR\
+\&,
+.B
+--help
+and
+.B
+--version
+flags.
 .SH OPTIONS
 .P
 .B
@@ -67,7 +81,10 @@ unmodified defaults.
 also shows the
 .B
 sboconfig
-flag used to set each option for reference.
+flag used to set each option for reference. The
+.B
+--list
+flag can be used without root privileges.
 .RE
 .P
 .B

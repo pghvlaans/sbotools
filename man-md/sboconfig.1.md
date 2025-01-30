@@ -40,6 +40,9 @@ message, and no changes are applied without user confirmation.
 The [sbotools.conf(5)](sbotools.conf.5.md) file can also be manually edited; any fields
 not relevant to **sbotools** configuration are ignored.
 
+Non-root users can only call **sboconfig** with the **\--list**,
+**\--help** and **\--version** flags.
+
 ## OPTIONS
 
 **-h\|\--help**
@@ -54,7 +57,7 @@ Show version information.
 
 List the current configuration options, including unmodified defaults.
 **\--list** also shows the **sboconfig** flag used to set each option
-for reference.
+for reference. The **\--list** flag can be used without root privileges.
 
 **\--reset**
 

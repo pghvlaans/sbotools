@@ -32,7 +32,7 @@ Options:
   -l|--list:
     show current blacklist and optional dependencies.
   -q|--query:
-    show the hint status of one or more scripts
+    show the hint status of one or more scripts.
   -b|--blacklist:
     add scripts to the blacklist (clear with c).
   -o|--optional:
@@ -53,8 +53,6 @@ Options:
 EOF
 }
 
-unless (@ARGV) { show_usage(); exit 0; }
-
 my $hintfile = "$conf_dir/sbotools.hints";
 
 my ($help, $version, $list, $reset, $optional, $replace_optional, $blacklist, $clear, $query);
@@ -71,8 +69,17 @@ GetOptions(
 	'blacklist|b'         => \$blacklist,
 );
 
-if ($help) { show_usage(); exit 0; }
+if ($help) {
+	show_usage();
+	usage_error "Non-root users can only call sbohints with -l, -q, -h and -v." unless $< == 0;
+	exit 0;
+}
 if ($version) { show_version(); exit 0; }
+unless ($< == 0 or $list or $query) {
+	show_usage();
+	usage_error "Non-root users can only call sbohints with -l, -q, -h and -v.";
+}
+unless (@ARGV or $list) { show_usage(); exit 0; }
 
 lint_sbo_config($self, %config);
 

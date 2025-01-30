@@ -11,7 +11,7 @@ package SBO::App::Remove;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_full_queue merge_queues get_requires get_readme_contents get_reverse_reqs prompt show_version in lint_sbo_config wrapsay %config /;
+use SBO::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_full_queue merge_queues get_requires get_readme_contents get_reverse_reqs prompt show_version in lint_sbo_config usage_error wrapsay %config /;
 use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO::App';
@@ -37,9 +37,20 @@ sub _parse_opts {
 sub run {
   my $self = shift;
 
-  if ($self->{help}) { $self->show_usage(); return 0; }
+  if ($self->{help}) {
+    $self->show_usage();
+    usage_error "This is a root-only script." unless $< == 0;
+    return 0;
+  }
   if ($self->{vers}) { $self->show_version(); return 0; }
-  if (!@{ $self->{args} }) { $self->show_usage(); return 1; }
+  if (!@{ $self->{args} }) {
+    $self->show_usage();
+    usage_error "This is a root-only script." unless $< == 0;
+  }
+  unless ($< == 0) {
+    $self->show_usage();
+    usage_error "This is a root-only script.";
+  }
 
   lint_sbo_config($self, %config);
 

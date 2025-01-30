@@ -30,12 +30,27 @@ sbotools.hints(5)\fR\
 and
 .B
 --replace-optional\fR\
-\&. These may be used in conjunction with
+\&. These can be used in conjunction with
 .B
 --clear\fR\
 \&, but not with each other.
 .P
-If an invalid configuration is detected in
+Non-root users can only call
+.B
+sbohints
+with the
+.B
+--list\fR\
+\&,
+.B
+--query\fR\
+\&,
+.B
+--help
+and
+.B
+--version
+flags. If an invalid configuration is detected in
 .I
 /etc/sbotools/sbotools.conf\fR\
 \&, the script exits with a diagnostic message.
@@ -104,7 +119,10 @@ and
 List the current blacklist and all optional dependency
 requests. If a blacklisted script has optional dependency
 requests or is requested as an optional depenedency, the
-user is notified.
+user is notified. The
+.B
+--list
+flag can be used without root privileges.
 .RE
 .P
 .B
@@ -113,7 +131,10 @@ user is notified.
 Return the current blacklist and optional dependency request
 status for one or more scripts. There is no output unless the
 queried script is blacklisted, has optional dependency
-requests or is on an optional dependency request list.
+requests or is on an optional dependency request list. The
+.B
+--query
+flag can be used without root privileges.
 .RE
 .P
 .B

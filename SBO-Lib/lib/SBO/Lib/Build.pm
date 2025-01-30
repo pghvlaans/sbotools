@@ -108,7 +108,8 @@ our $env_tmp = $ENV{TMP};
 our $tmpd = $env_tmp ? $env_tmp : '/tmp/SBo';
 make_path($tmpd) unless -d $tmpd;
 
-our $tempdir = tempdir(CLEANUP => 1, DIR => $tmpd);
+our $tempdir;
+$tempdir = tempdir(CLEANUP => 1, DIR => $tmpd) if $< == 0;
 
 # this array tracks scripts that have verified completable build queues; it is
 # used to check for circular dependencies
@@ -883,6 +884,7 @@ the exit status holds a non-zero value.
 =cut
 
 sub run_tee {
+  return undef unless $< == 0;
   my $cmd = shift;
 
   my $out_fh = tempfile(DIR => $tempdir);
@@ -927,8 +929,10 @@ Copyright (C) 2024-2025, K. Eugene Carlson.
 =cut
 
 sub _build_terminated {
-  remove_tree("$tempdir") if -d "$tempdir";
-  exit _ERR_INST_SIGNAL;
+  if ($< == 0) {
+    remove_tree("$tempdir") if -d "$tempdir";
+    exit _ERR_INST_SIGNAL;
+  }
 }
 
 sub _build_queue {

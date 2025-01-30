@@ -34,9 +34,9 @@ and version information. This is equivalent to running
 on a FreeBSD system. If the repository includes a *TAGS.txt* file, these
 tags are searched to generate additional results.
 
-If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
-message.
+Non-root users can call **sbofind** with any flags. If an invalid
+configuration is detected in */etc/sbotools/sbotools.conf*, the script
+exits with a diagnostic message.
 
 ## OPTIONS
 

@@ -80,6 +80,7 @@ Show version information.
 **sbocheck** can exit with the following codes:
 
 0: all operations were successful.\
+1: a usage error occurred.\
 5: failed to download the tree.\
 6: failed to open a required file handle.\
 12: interrupt signal received.

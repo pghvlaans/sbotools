@@ -551,7 +551,11 @@ is non-zero, it returns an error message rather than a file handle.
 sub open_fh {
   script_error('open_fh requires two arguments') unless @_ == 2;
   unless ($_[1] eq '>') {
+    if ($< == 0) {
       -f $_[0] or script_error("open_fh, $_[0] is not a file");
+    } else {
+      -f $_[0] or usage_error("$_[0] is not a file or the running user lacks permissions.\n\nTry running as root.");
+    }
   }
   my ($file, $op) = @_;
   my $fh;

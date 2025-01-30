@@ -462,6 +462,9 @@ repository and fetch the tree.
 # populated; prompt the user to check $repo_path and fetch.
 sub slackbuilds_or_fetch {
   unless (-s $slackbuilds_txt) {
+    unless ($< == 0) {
+      usage_error("$slackbuilds_txt is empty, missing, or the running user does not have read permissions.\n\nTry running as root.");
+    }
     if (prompt("$slackbuilds_txt is empty or missing.\nCheck $repo_path and fetch the repository now?", default => 'yes')) {
       update_tree();
     } elsif (-d $repo_path) {
