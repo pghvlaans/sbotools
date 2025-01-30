@@ -16,7 +16,7 @@
 [EXIT CODES](#exit-codes)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
-[LICENSE](#license)\
+[LICENSE](#license)
 
 ------------------------------------------------------------------------
 
@@ -26,14 +26,14 @@ SBO::Lib::Info − Utilities to get data from SBo info files.
 
 ## SYNOPSIS
 
-use SBO::Lib::Info qw/ get_reqs /;\
-my \@reqs = \@{ get_requires(\$sbo) };
+    use SBO::Lib::Info qw/ get_reqs /;\
+    my \@reqs = \@{ get_requires($sbo) };
 
 ## SUBROUTINES
 
 ### check_x32
 
-my \$bool = check_x32(\$location);
+    my $bool = check_x32($location);
 
 check_x32() returns a true value if the SlackBuild in \$location
 considers 64−bit builds \"UNTESTED\" or \"UNSUPPORTED\". Otherwise, it
@@ -41,9 +41,9 @@ returns a false value.
 
 ### get_download_info
 
-my \$downloads = get_download_info(LOCATION =\> \$location, X64 =\>
+    my $downloads = get_download_info(LOCATION =\> $location, X64 =\>
 \$x64);\
-my \$downloads = get_download_info(LOCATION =\> \$location);
+    my $downloads = get_download_info(LOCATION =\> $location);
 
 get_download_info() reads in an info file from \$location. The flag
 \$x64 determines whether the 64−bit download files should be used or
@@ -54,34 +54,34 @@ corresponding value is the expected md5sum.
 
 ### get_from_info
 
-my \$data = get_from_info(LOCATION =\> \$location, GET =\> \$key);
+    my $data = get_from_info(LOCATION =\> $location, GET =\> $key);
 
 get_from_info() retrieves the information under \$key from the info file
 in \$location.
 
 ### get_orig_build_number
 
-my \$build = get_orig_build_number(\$sbo);
+    my $build = get_orig_build_number($sbo);
 
 get_orig_build_number() returns the build number in the SlackBuilds.org
 tree for the given \$sbo, calling get_sbo_build_number().
 
 ### get_orig_version
 
-my \$ver = get_orig_version(\$sbo);
+    my $ver = get_orig_version($sbo);
 
 get_orig_version() returns the version in the SlackBuilds.org tree for
 the given \$sbo, calling get_sbo_version().
 
 ### get_requires
 
-my \$reqs = get_requires(\$sbo);
+    my $reqs = get_requires($sbo);
 
 get_requires() returns the requirements for a given \$sbo.
 
 ### get_reverse_reqs
 
-my %required_by = get_reverse_reqs(\$slackbuilds);
+    my %required_by = get_reverse_reqs($slackbuilds);
 
 get_reverse_reqs() takes a list of SlackBuilds and returns a hashref
 with reverse dependencies among them. \$slackbuilds should ordinarily be
@@ -89,21 +89,21 @@ a list of all installed scripts.
 
 ### get_sbo_build_number
 
-my \$build = get_sbo_build_number(\$location);
+    my $build = get_sbo_build_number($location);
 
 get_sbo_build_number() returns the build number found in the SlackBuild
 in \$location.
 
 ### get_sbo_version
 
-my \$ver = get_sbo_version(\$location);
+    my $ver = get_sbo_version($location);
 
 get_sbo_version() returns the version found in the info file in
 \$location.
 
 ### parse_info
 
-my %parse = parse_info(\$str);
+    my %parse = parse_info($str);
 
 parse_info() parses the contents of an info file from \$str and returns
 a key-value list of all values present. It attempts to repair trailing

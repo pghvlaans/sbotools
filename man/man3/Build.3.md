@@ -31,7 +31,7 @@
 [EXIT CODES](#exit-codes)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
-[LICENSE](#license)\
+[LICENSE](#license)
 
 ------------------------------------------------------------------------
 
@@ -42,8 +42,8 @@ SlackBuilds.org.
 
 ## SYNOPSIS
 
-use SBO::Lib::Build qw/ perform_sbo /;\
-my (\$foo, \$bar, \$exit) = perform_sbo(LOCATION =\> \$location, ARCH
+    use SBO::Lib::Build qw/ perform_sbo /;\
+    my ($foo, $bar, $exit) = perform_sbo(LOCATION =\> $location, ARCH
 =\> \'x86_64\');
 
 ## VARIABLES
@@ -84,7 +84,7 @@ the array when its corresponding script has been built.
 
 ### do_convertpkg
 
-my (\$name32, \$exit) = do_convertpkg(\$name64);
+    my ($name32, $exit) = do_convertpkg($name64);
 
 do_convertpkg() runs \"convertpkg\" on the package in \$name64.
 
@@ -94,7 +94,7 @@ name.
 
 ### do_slackbuild
 
-my (\$ver, \$pkg, \$src, \$exit) = do_slackbuild(LOCATION =\>
+    my ($ver, $pkg, $src, $exit) = do_slackbuild(LOCATION =\>
 \$location);
 
 do_slackbuild() makes checks and sets up the perform_sbo() call, running
@@ -115,7 +115,7 @@ There is no useful return value.
 
 ### get_build_queue
 
-my \@queue = \@{ get_build_queue(\$sbo, my \$warnings, my \@checked) };
+    my \@queue = \@{ get_build_queue($sbo, my $warnings, my \@checked) };
 
 get_build_queue() gets the prerequisites for \$sbo, updating the
 \$warnings hash reference with any \"%README%\" encountered. It returns
@@ -127,7 +127,7 @@ present.
 
 ### get_dc_regex
 
-my (\$rx, \$initial) = get_dc_regex(\$line);
+    my ($rx, $initial) = get_dc_regex($line);
 
 get_dc_regex() creates a regular expression that should match the
 filename given a line with e.g. an untar command. This is returned
@@ -135,7 +135,7 @@ together with the \$initial character, which starts the filename match.
 
 ### get_full_queue
 
-my \@revdep_queue = (\$installed, \@sbos);
+    my \@revdep_queue = ($installed, \@sbos);
 
 get_full_queue() takes a list of installed SlackBuilds and an array of
 SlackBuilds to check. It returns a list of the checked SlackBuilds and
@@ -143,8 +143,8 @@ their dependencies in reverse build order.
 
 ### get_full_reverse
 
-my \@get_full_reverse = get_full_reverse(\$sbo, %installed, %fulldeps,
-my \@checked, my \@list)
+    my \@get_full_reverse = get_full_reverse($sbo, %installed, %fulldeps,
+    my \@checked, my \@list)
 
 get_full_reverse() takes a SlackBuild, a hash of installed packages, a
 hash of reverse dependency relationships (from \"get_reverse_reqs\") and
@@ -157,14 +157,14 @@ If any circular reverse dependencies are found, the script exits with
 
 ### get_pkg_name
 
-my \$name = get_pkg_name(\$str);
+    my $name = get_pkg_name($str);
 
 get_pkg_name() searches \$str for text matching the package name output
 from \"makepkg\". The package name is returned.
 
 ### get_src_dir
 
-my \@dirs = \@{ get_src_dir(@orig_dirs) };
+    my \@dirs = \@{ get_src_dir(@orig_dirs) };
 
 get_src_dir() returns a list of those directories under \"/tmp/SBo\" or
 \$TMP that are not in \@orig_dirs. That is, the source directories for
@@ -172,7 +172,7 @@ the script.
 
 ### get_tmp_extfn
 
-my (\$ret, \$exit) = get_tmp_extfn(\$fh);
+    my ($ret, $exit) = get_tmp_extfn($fh);
 
 get_tmp_extfn() gets the \"/dev/fd/X\" filename for the file handle \$fh
 passed in, setting flats to make it usable from other processes.
@@ -201,7 +201,7 @@ It has no useful return value.
 
 ### merge_queues
 
-my \@merged = \@{ merge_queues([@queue1], [@queue2]) };
+    my \@merged = \@{ merge_queues([@queue1], [@queue2]) };
 
 merge_queues() takes two array references and merges them such that
 \@queue1 is in front, followed by any non-redundant items in \@queue2.
@@ -209,7 +209,7 @@ This is returned as an array reference.
 
 ### perform_sbo
 
-my (\$pkg, \$src, \$exit) = perform_sbo(LOCATION =\> \$location, ARCH
+    my ($pkg, $src, $exit) = perform_sbo(LOCATION =\> $location, ARCH
 =\> \$arch);
 
 perform_sbo() prepares and runs a SlackBuild. It returns the package
@@ -218,7 +218,7 @@ If unsuccessful, the first value is instead an error message.
 
 ### process_sbos
 
-my (@failures, \$exit) = process_sbos(TODO =\> [@queue]);
+    my (@failures, $exit) = process_sbos(TODO =\> [@queue]);
 
 process_sbos() processes a \@queue of SlackBuilds and returns an array
 reference with failed builds and the exit status.
@@ -237,7 +237,7 @@ There is no useful return value.
 
 ### rewrite_slackbuild
 
-my (\$ret, \$exit) = rewrite_slackbuild(%args);
+    my ($ret, $exit) = rewrite_slackbuild(%args);
 
 rewrite_slackbuild(), when given an argument hash, copies the SlackBuild
 at \$path and rewrites it with the needed changes. The required
@@ -250,7 +250,7 @@ success, 1 and an exit status of 0 are returned.
 
 ### run_tee
 
-my (\$output, \$exit) = run_tee(\$cmd);
+    my ($output, $exit) = run_tee($cmd);
 
 run_tee() runs \$cmd under tee(1) to display STDOUT and return it as a
 string. The second return value is the exit status.

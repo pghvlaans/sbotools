@@ -13,7 +13,7 @@
 [EXIT CODES](#exit-codes)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
-[LICENSE](#license)\
+[LICENSE](#license)
 
 ------------------------------------------------------------------------
 
@@ -24,14 +24,14 @@ file.
 
 ## SYNOPSIS
 
-use SBO::Lib::Readme qw/ get_readme_contents /;\
+    use SBO::Lib::Readme qw/ get_readme_contents /;\
 print get_readme_contents(\$sbo);
 
 ## SUBROUTINES
 
 ### ask_opts
 
-my \$opts = ask_opts(\$sbo, \$readme);
+    my $opts = ask_opts($sbo, $readme);
 
 ask_opts() displays \$readme and asks if options should be set. If no
 options are set, it returns \"undef\". Saved options under
@@ -46,7 +46,7 @@ ask_other_readmes() checks for secondary README files for \$sbo in
 
 ### ask_user_group
 
-my \$bool = ask_user_group(\$cmds, \$readme);
+    my $bool = ask_user_group($cmds, $readme);
 
 ask_user_group() displays the \$readme and commands found in \$cmds, and
 prompts for running the \"useradd\" and \"groupadd\" commands found. If
@@ -54,7 +54,7 @@ so, the \$cmds are returned; the return is otherwise \"undef\".
 
 ### get_opts
 
-my \$bool = get_opts(\$readme);
+    my $bool = get_opts($readme);
 
 get_opts() checks the \$readme for defined options in the form
 KEY=VALUE. It returns a true value if any are found, and a false value
@@ -62,21 +62,21 @@ otherwise.
 
 ### get_readme_contents
 
-my \$contents = get_readme_contents(\$location);
+    my $contents = get_readme_contents($location);
 
 get_readme_contents() opens the README file in \$location and returns
 its contents. On error, it returns \"undef\".
 
 ### get_user_group
 
-my \@cmds = \@{ get_user_group(\$readme) };
+    my \@cmds = \@{ get_user_group($readme) };
 
 get_user_group() searches the \$readme for \"useradd\" and \"groupadd\"
 commands, and returns them in an array reference.
 
 ### user_prompt
 
-my (\$cmds, \$opts, \$exit) = user_prompt(\$sbo, \$location);
+    my ($cmds, $opts, $exit) = user_prompt($sbo, $location);
 
 user_prompt() is the main point of access to the other commands in
 \"Readme.pm\". It calls subroutines to find options and commands, and

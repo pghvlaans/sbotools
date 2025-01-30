@@ -14,7 +14,7 @@
 [EXIT CODES](#exit-codes)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
-[LICENSE](#license)\
+[LICENSE](#license)
 
 ------------------------------------------------------------------------
 
@@ -24,7 +24,7 @@ SBO::Lib − Library for working with SlackBuilds.org.
 
 ## SYNOPSIS
 
-use SBO::Lib qw/ :all /;
+    use SBO::Lib qw/ :all /;
 
 ## DESCRIPTION
 

@@ -15,7 +15,7 @@
 [EXIT CODES](#exit-codes)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
-[LICENSE](#license)\
+[LICENSE](#license)
 
 ------------------------------------------------------------------------
 
@@ -25,14 +25,14 @@ SBO::Lib::Download − Routines for downloading SlackBuild sources.
 
 ## SYNOPSIS
 
-use SBO::Lib::Download qw/ check_distfiles /;\
-my (\$ret, \$exit) = check_distfiles(LOCATION =\> \$loc);
+    use SBO::Lib::Download qw/ check_distfiles /;\
+    my ($ret, $exit) = check_distfiles(LOCATION =\> $loc);
 
 ## SUBROUTINES
 
 ### check_distfiles
 
-my (\$ret, \$exit) = check_distfiles(LOCATION =\> \$loc);
+    my ($ret, $exit) = check_distfiles(LOCATION =\> $loc);
 
 check_distfiles() gets the list of downloads from \$loc. Any
 previously-downloaded files have their checksums verified. Missing and
@@ -45,20 +45,20 @@ returned.
 
 ### compute_md5sum
 
-my \$md5sum = compute_md5sum(\$file);
+    my $md5sum = compute_md5sum($file);
 
 compute_md5sum() computes and returns the md5sum of the file in \$file.
 
 ### create_symlinks
 
-my \@symlinks = \@{ create_symlinks(\$location, {\%downloads}) };
+    my \@symlinks = \@{ create_symlinks($location, {\%downloads}) };
 
 create_symlinks() creates symlinks for the an array %downloads in
 \$location, returning an array reference of the symlinks created.
 
 ### get_distfile
 
-my (\$msg, \$err) = get_distfile(\$link, \$md5);
+    my ($msg, $err) = get_distfile($link, $md5);
 
 get_distfile() downloads from the URL \$link with wget(1) and compares
 the md5sum to \$md5. The file is saved in an md5sum−designated
@@ -67,35 +67,35 @@ failure, and 1 upon success.
 
 ### get_dl_fns
 
-my \@filenames = \@{ get_dl_fns([@links]) };
+    my \@filenames = \@{ get_dl_fns([@links]) };
 
 get_dl_fns() returns the filenames of the items in \@links in an array
 reference.
 
 ### get_filename_from_link
 
-my \$path = get_filename_from_link(\$link, \$md5);
+    my $path = get_filename_from_link($link, $md5);
 
 get_filename_from_link() returns the full path to the file downloaded
 from \$link, given its required md5sum, \$md5.
 
 ### get_sbo_downloads
 
-my %downloads = %{ get_sbo_downloads(LOCATION =\> \$loc) };
+    my %downloads = %{ get_sbo_downloads(LOCATION =\> $loc) };
 
 get_sbo_downloads() gets the download links and md5sums for the
 SlackBuild in location \$loc, returning them in a hash reference.
 
 ### get_symlink_from_filename
 
-my \$symlink = get_symlink_from_filename(\$path, \$loc);
+    my $symlink = get_symlink_from_filename($path, $loc);
 
 get_symlink_from_filename(), given a source file at \$path and a
 location \$loc, returns the path of the generated symlink.
 
 ### verify_distfile
 
-my \$bool = verify_distfile(\$link, \$md5);
+    my $bool = verify_distfile($link, $md5);
 
 verify_distfile() verifies that the file downloaded from \$link has an
 md5sum equal to \$md5.

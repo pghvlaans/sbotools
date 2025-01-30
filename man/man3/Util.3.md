@@ -39,7 +39,7 @@
 [EXIT CODES](#exit-codes)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
-[LICENSE](#license)\
+[LICENSE](#license)
 
 ------------------------------------------------------------------------
 
@@ -49,9 +49,9 @@ SBO::Lib::Util − Utility functions for SBO::Lib and the sbotools
 
 ## SYNOPSIS
 
-use SBO::Lib::Util qw/uniq/;\
+    use SBO::Lib::Util qw/uniq/;\
 \# (\'duplicate\');\
-my \@uniq = uniq(\'duplicate\', \'duplicate\');
+    my \@uniq = uniq(\'duplicate\', \'duplicate\');
 
 ## VARIABLES
 
@@ -85,7 +85,7 @@ e.g. \@on_blacklist().)
 
 ### build_cmp
 
-my \$cmp = build_cmp(\$build1, \$build2, \$ver1, \$ver2);
+    my $cmp = build_cmp($build1, $build2, $ver1, $ver2);
 
 build_cmp() compares \$build1 with \$build2 while checking that \$ver1
 and \$ver2 are different. If the build numbers are not the same and the
@@ -93,23 +93,23 @@ version numbers are, upgrading for a script bump may be in order.
 
 ### check_multilib
 
-my \$ml = check_multilib();
+    my $ml = check_multilib();
 
 check_multilib() for \"/etc/profile.d/32dev.sh\" existence. The sbotools
-use this file to build 32−bit packages on x64 architecture.
+    use this file to build 32−bit packages on x64 architecture.
 
 Returns 1 if so, and 0 otherwise.
 
 ### get_arch
 
-my \$arch = get_arch();
+    my $arch = get_arch();
 
 get_arch() returns the machine architechture as reported by \"uname
 −m\".
 
 ### get_kernel_version
 
-my \$kv = get_kernel_version();
+    my $kv = get_kernel_version();
 
 get_kernel_version() checks the version of the running kernel and
 returns it in a format suitable for appending to a Slackware package
@@ -117,21 +117,21 @@ version.
 
 ### get_optional
 
-my \$optional = get_optional(\$sbo)
+    my $optional = get_optional($sbo)
 
 get_optional() checks for user-requested optional dependencies for
 \$sbo. Note that global array \@listings is copied.
 
 ### get_sbo_from_loc
 
-my \$sbo = get_sbo_from_loc(\$location);
+    my $sbo = get_sbo_from_loc($location);
 
 get_sbo_from_loc() returns the package name from the \$location passed
 in.
 
 ### get_slack_version
 
-my \$version = get_slack_version();
+    my $version = get_slack_version();
 
 get_slack_version() returns the appropriate version of the SBo
 reposiotry.
@@ -140,7 +140,7 @@ The program exits if the version is unsupported or if an error occurs.
 
 ### get_slack_version_url
 
-my \$url = get_slack_version_url();
+    my $url = get_slack_version_url();
 
 get_slack_version_url() returns the default URL for the given Slackware
 version.
@@ -149,7 +149,7 @@ The program exits if the version is unsupported or if an error occurs.
 
 ### get_slack_branch
 
-my \$url = get_slack_branch();
+    my $url = get_slack_branch();
 
 get_slack_branch() returns the default git branch for the given
 Slackware version, if any. If the upstream repository does not have this
@@ -157,21 +157,21 @@ branch, an onscreen message appears.
 
 ### idx
 
-my \$idx = idx(\$needle, \@haystack);
+    my $idx = idx($needle, \@haystack);
 
 idx() looks for \$needle in \@haystack, and returns the index of where
 it was found, or \"undef\" if it was not found.
 
 ### in
 
-my \$found = in(\$needle, \@haystack);
+    my $found = in($needle, \@haystack);
 
 in() looks for \$needle in \@haystack, and returns a true value if it
 was found, and a false value otherwise.
 
 ### indent
 
-my \$str = indent(\$indent, \$text);
+    my $str = indent($indent, $text);
 
 indent() indents every non-empty line in \$text by \$indent spaces and
 returns the resulting string.
@@ -190,14 +190,14 @@ changes; all other scripts lint the full configuration at startup.
 
 ### on_blacklist
 
-my \$result = on_blacklist(\$sbo);
+    my $result = on_blacklist($sbo);
 
 on_blacklist() checks whether \$sbo has been blacklisted. Note that
 global array \@listings is copied.
 
 ### open_fh
 
-my (\$ret, \$exit) = open_fh(\$fn, \$op);
+    my ($ret, $exit) = open_fh($fn, $op);
 
 open_fh() opens \$fn for reading and/or writing depending on \$op.
 
@@ -207,7 +207,7 @@ handle.
 
 ### open_read
 
-my (\$ret, \$exit) = open_read(\$fn);
+    my ($ret, $exit) = open_read($fn);
 
 open_read() opens \$fn for reading.
 
@@ -251,7 +251,7 @@ There is no useful return value.
 
 ### read_hints
 
-our \@listings = read_hints()
+    our \@listings = read_hints()
 
 read_hints() reads the contents of /etc/sbotools/sbotools.hints,
 returning an array of optional dependency requests and blacklisted
@@ -295,14 +295,14 @@ There is no useful return value.
 
 ### slurp
 
-my \$data = slurp(\$fn);
+    my $data = slurp($fn);
 
 slurp() takes a filename in \$fn, opens it, and reads in the entire
 file. The contents are then returned. On error, it returns \"undef\".
 
 ### uniq
 
-my \@uniq = uniq(@duplicates);
+    my \@uniq = uniq(@duplicates);
 
 uniq() removes any duplicates from \@duplicates, otherwise returning the
 list in the same order.
@@ -318,7 +318,7 @@ There is no useful return value.
 
 ### version_cmp
 
-my \$cmp = version_cmp(\$ver1, \$ver2);
+    my $cmp = version_cmp($ver1, $ver2);
 
 version_cmp() compares \$ver1 with \$ver2. It returns 1 if \$ver1 is
 higher, −1 if \$ver2 is higher and 0 if they are equal. It strips the

@@ -10,7 +10,7 @@
 [EXIT CODES](#exit-codes)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
-[LICENSE](#license)\
+[LICENSE](#license)
 
 ------------------------------------------------------------------------
 
@@ -20,22 +20,22 @@ SBO::Lib::Tree − Routines for interacting with a SlackBuilds.org tree.
 
 ## SYNOPSIS
 
-use SBO::Lib::tree qw/ is_local /;\
-my \$bool = is_local(\$sbo);
+    use SBO::Lib::tree qw/ is_local /;\
+    my $bool = is_local($sbo);
 
 ## SUBROUTINES
 
 ### get_orig_location
 
-my \$loc = get_orig_location(\$sbo);
+    my $loc = get_orig_location($sbo);
 
 get_orig_location() returns the location in the SlackBuilds.org tree for
 the given \$sbo.
 
 ### get_sbo_location
 
-my \$loc = get_sbo_location(\$sbo, \...);\
-my \$loc = get_sbo_location([\$sbo, \...]);
+    my $loc = get_sbo_location($sbo, \...);\
+    my $loc = get_sbo_location([$sbo, \...]);
 
 get_sbo_location() returns the location in \"LOCAL_OVERRIDES\" or the
 SlackBuilds.org tree for the first \$sbo given.
@@ -46,14 +46,14 @@ does this currently.
 
 ### get_sbo_locations
 
-my %locations = get_sbo_locations(@sbos);
+    my %locations = get_sbo_locations(@sbos);
 
 \"get_sbo_locations\" finds all SlackBuilds in \@sbos and returns a hash
 matching each package name to its location.
 
 ### is_local
 
-my \$bool = is_local(\$sbo);
+    my $bool = is_local($sbo);
 
 is_local() checks whether the given \$sbo is in the \"LOCAL_OVERRIDES\"
 directory. The return value is true if it is, and false if it is not.

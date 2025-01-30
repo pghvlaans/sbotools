@@ -12,7 +12,7 @@
 [EXIT CODES](#exit-codes)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
-[LICENSE](#license)\
+[LICENSE](#license)
 
 ------------------------------------------------------------------------
 
@@ -23,14 +23,14 @@ database.
 
 ## SYNOPSIS
 
-use SBO::Lib::Pkgs qw/ get_installed_packages /;\
-my \@installed_sbos = get_installed_packages(\'SBO\');
+    use SBO::Lib::Pkgs qw/ get_installed_packages /;\
+    my \@installed_sbos = get_installed_packages(\'SBO\');
 
 ## SUBROUTINES
 
 ### get_available_updates
 
-my \@updates = \@{ get_available_updates() };
+    my \@updates = \@{ get_available_updates() };
 
 get_available_updates() compares version and build number information
 for packages installed with the \_SBo tag with the local repository. It
@@ -39,14 +39,14 @@ package names, installed versions and available versions.
 
 ### get_inst_names
 
-my \@names = get_inst_names(get_available_updates());
+    my \@names = get_inst_names(get_available_updates());
 
 get_inst_names() returns a list of package names from an array
 reference, such as one returned by get_available_updates().
 
 ### get_installed_cpans
 
-my \@cpans = \@{ get_installed_cpans() };
+    my \@cpans = \@{ get_installed_cpans() };
 
 get_installed_cpans() returns an array reference to a list of Perl
 modules installed from the CPAN. This is used in [sboinstall(1)](sboinstall.1.md) to
@@ -54,7 +54,7 @@ prevent conflicting installations from the CPAN and SlackBuilds.
 
 ### get_installed_packages
 
-my \@packages = \@{ get_installed_packages(\$type) };
+    my \@packages = \@{ get_installed_packages($type) };
 
 get_installed_packages() returns an array reference to a list of
 installed packages matching the specified \$type. The available types
@@ -67,7 +67,7 @@ returned packages.
 
 ### get_local_outdated_versions
 
-my \@outdated = get_local_outdated_versions(\$filter);
+    my \@outdated = get_local_outdated_versions($filter);
 
 get_local_outdated_versions() checks installed SBo packages from
 \"LOCAL_OVERRIDES\". It returns an array with information about those
@@ -79,7 +79,7 @@ currently unused. This subroutine is used only by [sbocheck(1)](sbocheck.1.md).
 
 ### get_removed_builds
 
-my \@removed = get_removed_builds();
+    my \@removed = get_removed_builds();
 
 get_removed_builds() returns an array of SlackBuild names and versions
 of all out-of-tree installed packages marked \"\_SBo\".

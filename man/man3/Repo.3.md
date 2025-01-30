@@ -23,7 +23,7 @@
 [EXIT CODES](#exit-codes)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
-[LICENSE](#license)\
+[LICENSE](#license)
 
 ------------------------------------------------------------------------
 
@@ -34,7 +34,7 @@ repository.
 
 ## SYNOPSIS
 
-use SBO::Lib::Repo qw/ update_tree /;\
+    use SBO::Lib::Repo qw/ update_tree /;\
 update_tree();
 
 ## VARIABLES
@@ -69,7 +69,7 @@ existent \$repo_path proceeds without prompting.
 
 ### check_git_remote
 
-my \$bool = check_git_remote(\$path, \$url);
+    my $bool = check_git_remote($path, $url);
 
 check_git_remote() checks if the repository at \$path is a git
 repository. If so, it checks for a defined \"origin\" remote matching
@@ -77,7 +77,7 @@ repository. If so, it checks for a defined \"origin\" remote matching
 
 ### check_repo
 
-my \$bool = check_repo();
+    my $bool = check_repo();
 
 check_repo() is used when the tree is to be fetched or updated. It
 checks if the path in \$repo_path exists and is an empty directory, and
@@ -99,7 +99,7 @@ value on success. Creation failure results in a usage error.
 
 ### generate_slackbuilds_txt
 
-my \$bool = generate_slackbuilds_txt();
+    my $bool = generate_slackbuilds_txt();
 
 generate_slackbuilds_txt() generates a minimal \"SLACKBUILDS.TXT\" for
 repositories that do not include this file. If the file cannot be opened
@@ -107,7 +107,7 @@ for write, it returns a false value. Otherwise, it returns a true value.
 
 ### git_sbo_tree
 
-my \$bool = git_sbo_tree(\$url);
+    my $bool = git_sbo_tree($url);
 
 git_sbo_tree() uses \"git clone −−no−local\" on the repository specified
 by \$url to the \$repo_path if the \$url repository is not present. If
@@ -135,7 +135,7 @@ get_slack_version(); see SBO::Lib::Util(3).
 
 ### rsync_sbo_tree
 
-my \$bool = rsync_sbo_tree(\$url);
+    my $bool = rsync_sbo_tree($url);
 
 rsync_sbo_tree() syncs the SlackBuilds.org repository to \$repo_path
 from the \$url provided.
