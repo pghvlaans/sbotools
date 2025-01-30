@@ -72,7 +72,7 @@ C<Tree.pm> determines the location of scripts in the repository and local overri
 
 =head2 SBO::Lib::Util
 
-C<Util.pm> contains utiliy functions for C<SBO::Lib> and the sbotools. Configuration-related
+C<Util.pm> contains utility functions for C<SBO::Lib> and the sbotools. Configuration-related
 shared variables and the shared exit codes can be found here.
 
 =head1 EXIT CODES
@@ -95,7 +95,7 @@ The sbotools share the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
+SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
 
 =cut
 
@@ -140,6 +140,8 @@ our %EXPORT_TAGS = (
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
 contributions from Luke Williams <xocel@iquidus.org> and Andreas
 Guldstrand <andreas.guldstrand@gmail.com>.
+
+=head1 MAINTAINER
 
 SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 

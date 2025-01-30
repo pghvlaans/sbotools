@@ -203,7 +203,7 @@ in advance, or C<$undef> if none. The second value contains build options.
 
 B<Note>: This should really be changed.
 
-B<Note>: The previous note is old. I (KEC) agree that this module is asked to do
+B<Note>: The previous note is old. I (KEC) agree that this subroutine is asked to do
 quite a lot. Keeping it in place might be the most parsimonious thing to do, but I
 have yet to look into the question closely.
 
@@ -243,13 +243,15 @@ Readme.pm subroutines can return the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Pkgs(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
 
 =head1 AUTHORS
 
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
 contributions from Luke Williams <xocel@iquidus.org> and Andreas
 Guldstrand <andreas.guldstrand@gmail.com>.
+
+=head1 MAINTAINER
 
 SBO::Lib is maintained by K. Eugene Carlson <kvngncrlsn@gmail.com>.
 
