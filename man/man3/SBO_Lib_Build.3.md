@@ -1,4 +1,4 @@
-# SBO::Lib::Build
+# Build
 
 [NAME](#name)\
 [SYNOPSIS](#synopsis)\

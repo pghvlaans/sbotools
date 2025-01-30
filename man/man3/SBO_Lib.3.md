@@ -1,4 +1,4 @@
-# SBO::Lib
+# Lib
 
 [NAME](#name)\
 [SYNOPSIS](#synopsis)\

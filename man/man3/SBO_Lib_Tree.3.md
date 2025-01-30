@@ -1,4 +1,4 @@
-# SBO::Lib::Tree
+# Tree
 
 [NAME](#name)\
 [SYNOPSIS](#synopsis)\

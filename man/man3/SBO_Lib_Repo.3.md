@@ -1,4 +1,4 @@
-# SBO::Lib::Repo
+# Repo
 
 [NAME](#name)\
 [SYNOPSIS](#synopsis)\

@@ -1,4 +1,4 @@
-# SBO::Lib::Download
+# Download
 
 [NAME](#name)\
 [SYNOPSIS](#synopsis)\

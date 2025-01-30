@@ -1,4 +1,4 @@
-# SBO::Lib::Readme
+# Readme
 
 [NAME](#name)\
 [SYNOPSIS](#synopsis)\

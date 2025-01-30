@@ -1,4 +1,4 @@
-# SBO::Lib::Pkgs
+# Pkgs
 
 [NAME](#name)\
 [SYNOPSIS](#synopsis)\
