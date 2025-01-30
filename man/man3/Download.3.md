@@ -51,7 +51,7 @@ compute_md5sum() computes and returns the md5sum of the file in \$file.
 
 ### create_symlinks
 
-my \@symlinks = \@{ create_symlinks(\$location, {%downloads}) };
+my \@symlinks = \@{ create_symlinks(\$location, {\%downloads}) };
 
 create_symlinks() creates symlinks for the an array %downloads in
 \$location, returning an array reference of the symlinks created.
