@@ -1,0 +1,47 @@
+                               **********
+                               * THANKS *
+                               **********
+
+Jacob Pipkin is the original author of all of the sbotools except for
+sbohints and sboremove. For all the changes that have been made, the
+look-and-feel of sbotools is still remarkably similar to his initial
+commit in 2012.
+
+Luke Williams made important contributions to early sbotools, most
+notably writing the original sboremove.
+
+Andreas Guldstrand maintained sbotools from late 2015 through 2019. He
+made a number of important changes, including spinning off sboremove as
+a module and the now-familiar /usr/sbo/repo directory structure. Reverse
+dependency search, non- default git branch use and reporting out-of-tree
+packages in sbocheck were planned feature additions of his originally.
+
+drgibbon wrote the original zsh completions, without which the bash
+completions would surely never have been added. He has been active on
+the Issue page with advice for users and helpful feedback.
+
+Other pre-fork code contributors include 9m9 (better wget behavior) and
+pedrormjunior (Perl compatibility fix).
+
+Slack Coder, the maintainer of sbotools2, has been a friendly and
+helpful correspondent. Although they are implemented differently here,
+GPG verification and non-root permission for the less-destructive
+parts of sbotools were his ideas. He also suggested changing to the
+MIT License and provided other useful feedback.
+
+Finally, a good number of users have made valuable reports and feature
+requests over the years, both before and after this sbotools repository
+was forked:
+
+Charadon (requested --mass-rebuild and development man pages)
+dchmelik (reported diligently on sbocheck problems)
+dcjud (requested an installable sbotools.conf)
+drbeco (requested a blacklist and strict version-up)
+Geremias (originally reported the info parse bug before version 3.3)
+januscan (requested strict version-up)
+qunying (requested build number upgrade notification)
+tuxuser1 (reported the overwritten source file bug)
+
+This file is incomplete; more research about early sbotools needs to be
+done. Please let me know if you should be in this file (or README.md)
+and you are not!

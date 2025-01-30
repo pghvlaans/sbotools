@@ -22,11 +22,13 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue
   * sbohints: With --query, also report scripts that are optional dependencies; more grammatical output
   * Allow non-root users to call sbofind, non-destructive sbocheck, sboconfig and sbohints flags, -h and -v
+    * Thanks to Slack Coder for the idea.
   * Install an SBO::Lib(3) summary man page; add exit code information to the other man 3 pages
   * sbocheck: Accept bundled flags (e.g. -gn)
 
 * 3.4.1 - 2025-01-29
   * Bugfix: Use md5sum-specific subdirectories for distfiles to avoid improper overwriting
+    * Thanks to tuxuser1 for the report.
   * sboclean: Adjust distfile handling to reflect new directory structure
   * Bugfix: Actually remove the package-\* directory
   * Bugfix: DISTCLEAN should not override NOCLEAN
@@ -36,6 +38,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboupgrade: Do not attempt to upgrade the build queue if the requested script does not need an upgrade
   * sbocheck: Display the installed build number for the build number check
   * Add setting STRICT_UPGRADES: Except for override packages, only upgrade when the version or build number is higher
+    * Thanks to jansucan and drbeco for the request.
   * sboinstall: Use --reverse-rebuild to rebuild all reverse dependencies of a script
   + sbofind: Indicate if a script is blacklisted
   * sbohints: A new tool for modifying and querying the blacklist and optional dependency requests
@@ -46,6 +49,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 
 * 3.3 - 2024-12-31
   * sboconfig: Allow versions "X.Y+" and "current"; more informative error messages
+    * Thanks to dchmelik for the report.
   * Exit with invalid sbotools.conf parameters
   * sbocheck: Before fetch, offer to exit if the git branch does not exist
   * Repo.pm: Check for local repo similarity to SBo rather than relying on SLACKBUILDS.TXT
@@ -54,6 +58,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboconfig: Use --reset to restore all default configuration values
   * Build.pm: Remove temporary directory in case of signal
   * Bugfix: When parsing info files, fix whitespace, unwanted lines, quotation and backslashes
+    * Thanks to Geremias for the original report.
   * Info.pm: Tweak build number detection for an sbocheck performance boost
 
 * 3.2.1 - 2024-12-20
@@ -63,32 +68,41 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbocheck: Do not use compact format for CLASSIC mode
   * Repo.pm: Prompt for regeneration if SLACKBUILDS.TXT is missing instead of erroring out
   * Set GPG_VERIFY to TRUE to verify with gpg in case of repo fetch, sboinstall or sboupgrade
+    * Thanks to Slack Coder for the idea.
   * Bugfix: do not crash if sbotools.conf provides an improper value of SLACKWARE_VERSION
+    * Thanks to dchmelik for the report.
   * Repo.pm: Offer to retry failed git fetch
   * Bugfix: sbocheck reports version differences between LOCAL_OVERRIDES and the repository
   * Util.pm: Read the hints file only once; allow multiple optional dependency specs for the same script
   * Lint the value of SBO_HOME before running anything other than sboconfig
+    * Thanks to dchmelik for the report.
   * Repo.pm: Remove antiquated subroutine migrate_repo()
   * Install development man pages on SBO::Lib to man 3
+    * Thanks to Charadon for the request.
 
 * 3.1 - 2024-12-05
   * sbofind: Allow multiple search terms
   * Add a summary sbotools(1) man page with executive summaries and a startup guide
   * sboinstall: Use --mass-rebuild to rebuild all non-compat32 SlackBuilds
+    * Thanks to Charadon for the request.
   * sboconfig: Fix incorrect misconfiguration warnings
   * sbocheck: More compact output.
+    * Thanks to dchmelik for the feedback.
   * sbotools.hints: User-specified blacklist and optional dependency requests
   * Bugfix: Prevent undefined build number checks with a local override directory
   * Bugfix: Add a missing `git pull` for custom git branches
   * sboinstall: Use a resume file for --mass-rebuild
   * Clarify LOCAL_OVERRIDES documentation
   * Detect and handle next version (currently 15.1) more effectively
+    * Thanks to Slack Coder for the feedback.
   * Adopt MIT License
+    * Thanks to Slack Coder for the suggestion.
 
 * 3.0 - 2024-11-22
   * sbocheck: Use --nopull to check for updated SlackBuilds without updating the tree
   * sboremove: Remove undocumented and dangerous nointeractive option
   * sbofind: Use --reverse to check for installed reverse dependencies
+    * This feature was originally planned by Andreas Guldstrand.
   * Add setting CLASSIC; turn on BUILD_IGNORE and RSYNC_DEFAULT, and disable output added post-sbotools
   * Fix some --help verbiage
 
@@ -100,21 +114,27 @@ This repository was renamed from sbotools3 to sbotools prior to the release of s
 
 * sbotools3 1.0 - 2024-11-01
   * Change the git branch to match the Slackware version, or to a user-configured branch
+    * The ability to specify a git branch was originally planned by Andreas Guldstrom.
   * Change the default URLs to support Slackware 15.0 and use git repositories
   * Use rsync default mirrors with RSYNC_DEFAULT (except for -current)
+    * Thanks to Slack Coder for the feedback.
   * Detect build number changes and optionally upgrade
-  * Detect and report out-of-tree _SBo SlackBuilds with sbocheck
+    * Thanks to qunying for the request.
+  * Detect and report out-of-tree \_SBo SlackBuilds with sbocheck
+    * This feature was originally planned by Andreas Guldstrand.
   * Save any build options when running a SlackBuild
   * Install bash completions; zsh completions have been updated
   * Install a default configuration file; tweak sboconfig to play somewhat nicely with it
+    * Thanks to dcjud for the request.
   * Fix making -compat32 packages for non-i486 SlackBuilds
   * Fix building -compat32 packages from templates
 
 ## Historical Changes
-Development from version 1.9 through 2.7 took place at [pink-mist/sbotools](https://github.com/pink-mist/sbotools/).
+Development from version 0.1 through 2.7 took place at [pink-mist/sbotools](https://github.com/pink-mist/sbotools/). Unless indicated otherwise, the changes below are thanks to Andreas Guldstrand.
 
 * Post-2.7 - 2019
   * Add and install zsh completions
+    * Thanks to contributor drgibbon.
 
 * 2.7 - 2019-04-28
   * Actually fix the sbofind -e bug #71
@@ -122,8 +142,10 @@ Development from version 1.9 through 2.7 took place at [pink-mist/sbotools](http
 * 2.6 - 2019-04-27
   * Compatibility with new perl versions where you need to escape { in regexp
     #75 #77 #78
+    * Thanks to contributor pedrormjunior.
   * Add a --tries 5 option when downloading from sbosrcarch, which is a
     saner limit than the default of 20. #79
+    * Thanks to contributor 9m9.
   * Change sboclean options --clean-dist and --clean-work to shorter forms #52
   * Add limited -current support using ponce's SBo repo for -current #73
   * Fix bug with sboinstall --reinstall -r #72
