@@ -23,46 +23,46 @@ use SBO::Lib qw/ :all /;
 SBO::Lib is the entry point for all the related modules, and simply
 re-exports all exports. Each module is documented in its own man page.
 
-### SBO::Lib::Build
+### Build
 
 \"Build.pm\" has routines for building Slackware packages from
 SlackBuilds.org. It covers the build process from setting the queue
 through post-build cleaning.
 
-### SBO::Lib::Download
+### Download
 
 \"Download.pm\" downloads, verifies and symlinks any needed source files
 before building the queue begins.
 
-### SBO::Lib::Info
+### Info
 
 \"Info.pm\" sanitizes and parses \"info\" files; the information
 returned is used in version comparions, dependency calculation and the
 source downloading process.
 
-### SBO::Lib::Pkgs
+### Pkgs
 
 \"Pkgs.pm\" interacts with the Slackware package database to provide,
 tag and version information for all installed packages.
 
-### SBO::Lib::Readme
+### Readme
 
 \"Readme.pm\" parses and displays \"README\" files. It detects options
 and commands for adding users and groups. Pre-installation user prompts
 and build option recall are handled here.
 
-### SBO::Lib::Repo
+### Repo
 
 \"Repo.pm\" is responsible for fetching, updating and linting the local
 copy of the SlackBuilds.org repository, as well as GPG verification and
 key addition.
 
-### SBO::Lib::Tree
+### Tree
 
 \"Tree.pm\" determines the location of scripts in the repository and
 local overrides directory.
 
-### SBO::Lib::Util
+### Util
 
 \"Util.pm\" contains utiliy functions for \"SBO::Lib\" and the sbotools.
 Configuration-related shared variables and the shared exit codes can be
