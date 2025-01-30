@@ -73,7 +73,7 @@ find -L . \
 )
 
 SCRIPTS="check clean config find hints install remove upgrade"
-ANYONE="config find hints"
+ANYONE="check config find hints"
 MANS="man1 man3 man5"
 
 mkdir -p $PKG/usr/sbin \
@@ -84,7 +84,7 @@ for i in $SCRIPTS; do
   install -m 0644 completions/zsh/_sbo$i $PKG/usr/share/zsh/site-functions
   install -m 0644 completions/bash/sbo$i $PKG/usr/share/bash-completion/completions/sbo$i
 done
-# sbofind and some of sboconfig and sbohints can be used without root
+# sbofind and parts of some other scripts can be used without root
 mkdir -p $PKG/usr/bin
 (
 cd $PKG/usr/bin

@@ -113,7 +113,19 @@ sbotools-3.3\fR\
 sbocheck\fR\
 \&.
 .P
-If an invalid configuration is detected in
+Non-root users can only call
+.B
+sbocheck
+with the
+.B
+--nopull\fR\
+\&,
+.B
+--help
+and
+.B
+--version
+flags. If an invalid configuration is detected in
 .I
 /etc/sbotools/sbotools.conf\fR\
 \&, the script exits with a diagnostic message.
@@ -142,7 +154,10 @@ Only rsync repositories can be verified on Slackware 14.0 and Slackware 14.1.
 -n|--nopull
 .RS
 Check for updated SlackBuilds without updating the SlackBuilds
-tree.
+tree. The
+.B
+--nopull
+flag can be used without root privileges, but no log is kept.
 .RE
 .P
 .B

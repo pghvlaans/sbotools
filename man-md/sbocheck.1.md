@@ -50,9 +50,10 @@ be verified on Slackware 14.0 and Slackware 14.1.
 Please note that **sbosnap**, which was removed as an independent script
 in **sbotools-3.3**, is a compatibility symlink to **sbocheck**.
 
-If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
-message.
+Non-root users can only call **sbocheck** with the **\--nopull**,
+**\--help** and **\--version** flags. If an invalid configuration is
+detected in */etc/sbotools/sbotools.conf*, the script exits with a
+diagnostic message.
 
 ## OPTIONS
 
@@ -65,7 +66,9 @@ Slackware 14.1.
 
 **-n\|\--nopull**
 
-Check for updated SlackBuilds without updating the SlackBuilds tree.
+Check for updated SlackBuilds without updating the SlackBuilds tree. The
+**\--nopull** flag can be used without root privileges, but no log is
+kept.
 
 **-h\|\--help**
 
