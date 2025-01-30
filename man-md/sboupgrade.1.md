@@ -56,9 +56,9 @@ flag may be passed to upgrade all eligible SlackBuilds simultaneously.
 **GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
 Slackware 14.0 and Slackware 14.1.
 
-If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
-message.
+Root privileges are required to run **sboupgrade**. If an invalid
+configuration is detected in */etc/sbotools/sbotools.conf*, the script
+exits with a diagnostic message.
 
 ## OPTIONS
 
