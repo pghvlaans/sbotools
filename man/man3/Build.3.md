@@ -262,14 +262,14 @@ If the bash interpreter cannot be run, the first return value is
 
 Build.pm subroutines can return the following exit codes:
 
-\_ERR_SCRIPT 2 script or module bug\
-\_ERR_BUILD 3 errors when executing a SlackBuild\
-\_ERR_OPENFH 6 failure to open file handles\
-\_ERR_NOMULTILIB 9 lacking multilib capabilities when needed\
-\_ERR_CONVERTPKG 10 convertpkg−compat32 failure\
-\_ERR_NOCONVERTPKG 11 lacking convertpkg−compat32 when needed\
-\_ERR_INST_SIGNAL 12 the script was interrupted while building\
-\_ERR_CIRCULAR 13 attempted to calculate a circular dependency
+    \_ERR_SCRIPT 2 script or module bug\
+    \_ERR_BUILD 3 errors when executing a SlackBuild\
+    \_ERR_OPENFH 6 failure to open file handles\
+    \_ERR_NOMULTILIB 9 lacking multilib capabilities when needed\
+    \_ERR_CONVERTPKG 10 convertpkg−compat32 failure\
+    \_ERR_NOCONVERTPKG 11 lacking convertpkg−compat32 when needed\
+    \_ERR_INST_SIGNAL 12 the script was interrupted while building\
+    \_ERR_CIRCULAR 13 attempted to calculate a circular dependency
 
 ## SEE ALSO
 

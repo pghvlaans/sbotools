@@ -102,9 +102,9 @@ closely.
 
 Readme.pm subroutines can return the following exit codes:
 
-\_ERR_USAGE 1 usage errors\
-\_ERR_SCRIPT 2 script or module bug\
-\_ERR_OPENFH 6 failure to open file handles
+    \_ERR_USAGE 1 usage errors\
+    \_ERR_SCRIPT 2 script or module bug\
+    \_ERR_OPENFH 6 failure to open file handles
 
 ## SEE ALSO
 

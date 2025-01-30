@@ -88,7 +88,7 @@ of all out-of-tree installed packages marked \"\_SBo\".
 
 Pkgs.pm subroutines can return the following exit code:
 
-\_ERR_SCRIPT 2 script or module bug
+    \_ERR_SCRIPT 2 script or module bug
 
 ## SEE ALSO
 

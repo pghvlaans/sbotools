@@ -211,9 +211,9 @@ user can trust the key.
 
 Repo.pm subroutines can return the following exit codes:
 
-\_ERR_USAGE 1 usage errors\
-\_ERR_SCRIPT 2 script or module bug\
-\_ERR_DOWNLOAD 5 download failure
+    \_ERR_USAGE 1 usage errors\
+    \_ERR_SCRIPT 2 script or module bug\
+    \_ERR_DOWNLOAD 5 download failure
 
 ## SEE ALSO
 

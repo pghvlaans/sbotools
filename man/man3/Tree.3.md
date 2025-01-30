@@ -62,7 +62,7 @@ directory. The return value is true if it is, and false if it is not.
 
 Tree.pm subroutines can return the following exit code:
 
-\_ERR_SCRIPT 2 script or module bug
+    \_ERR_SCRIPT 2 script or module bug
 
 ## SEE ALSO
 

@@ -104,10 +104,10 @@ md5sum equal to \$md5.
 
 Download.pm subroutines can return the following exit codes:
 
-\_ERR_SCRIPT 2 script or module bug\
-\_ERR_MD5SUM 4 download verification failure\
-\_ERR_DOWNLOAD 5 download failure\
-\_ERR_NOINFO 7 missing download information
+    \_ERR_SCRIPT 2 script or module bug\
+    \_ERR_MD5SUM 4 download verification failure\
+    \_ERR_DOWNLOAD 5 download failure\
+    \_ERR_NOINFO 7 missing download information
 
 ## SEE ALSO
 
