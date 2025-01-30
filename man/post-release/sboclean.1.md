@@ -34,9 +34,9 @@ and/or */tmp/SBo* (or *\$TMP*) directories and any
 with extreme prejudice. One of **\--dist**, **\--work** or **\--option**
 must be specified for this script to do anything.
 
-If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
-message.
+Root privileges are required to run **sboclean**. If an invalid
+configuration is detected in */etc/sbotools/sbotools.conf*, the script
+exits with a diagnostic message.
 
 ## OPTIONS
 
