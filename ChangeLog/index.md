@@ -3,6 +3,7 @@
   * *Build.pm*: When distcleaning, do not delete files that are needed later in the queue
   * *sbohints*: With **\--query**, also report scripts that are optional dependencies; more grammatical output
   * Allow non-root users to call *sbofind*, non-destructive *sboconfig* and *sbohints* flags, **\--help** and **\--version**
+  * Install an *SBO::Lib(3)* summary man page
 
 * 3.4.1 - 2025-01-29
   * Bugfix: Use md5sum-specific subdirectories for distfiles to avoid improper overwriting
