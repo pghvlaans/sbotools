@@ -3,14 +3,6 @@
 [NAME](#name)\
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
-[SBO::Lib::Build](#SBO::Lib::Build)\
-[SBO::Lib::Download](#SBO::Lib::Download)\
-[SBO::Lib::Info](#SBO::Lib::Info)\
-[SBO::Lib::Pkgs](#SBO::Lib::Pkgs)\
-[SBO::Lib::Readme](#SBO::Lib::Readme)\
-[SBO::Lib::Repo](#SBO::Lib::Repo)\
-[SBO::Lib::Tree](#SBO::Lib::Tree)\
-[SBO::Lib::Util](#SBO::Lib::Util)\
 [EXIT CODES](#exit-codes)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
