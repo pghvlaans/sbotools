@@ -9,6 +9,7 @@ sbotools
   * sboclean: Adjust distfile handling to reflect new directory structure
   * Bugfix: Actually remove the package-* directory
   * Bugfix: DISTCLEAN should not override NOCLEAN
+  * Install a SBO::Lib(3) summary man page
 
 * 3.4 - 2025-01-22
   * sboconfig: Run without flags or options to use an interactive menu

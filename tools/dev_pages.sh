@@ -25,12 +25,15 @@ if [[ $1 = '--all' ]]; then
   for item in Build Download Info Pkgs Readme Repo Tree Util ; do
     pod2man -r "" -c "sbotools $version" -d "$datestring" SBO/Lib/$item.pm ../../man3/SBO::Lib::$item.3
   done
+  pod2man -r "" -c "sbotools $version" -d "$datestring" SBO/Lib.pm ../../man3/SBO::Lib.3
   exit
 fi
 
 while [[ -n $@ ]]; do
   if [[ -f SBO/Lib/$1.pm ]]; then
     pod2man -r "" -c "sbotools $version" -d "$datestring" SBO/Lib/$1.pm ../../man3/SBO::Lib::$1.3
+  elif [[ $1 -eq "Lib" && -f SBO/Lib.pm ]]; then
+    pod2man -r "" -c "sbotools $version" -d "$datestring" SBO/Lib.pm ../../man3/SBO::Lib.3
   else
     echo "The file $1.pm does not exist. Skipping."
   fi
