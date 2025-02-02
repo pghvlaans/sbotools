@@ -110,7 +110,7 @@ sbotools3 1.0 - 2024-11-01
   * Fix building -compat32 packages from templates
 
 Historical Changes
-Development from version 1.9 through 2.7 took place at the pink-mist/sbotools repository. Unless indicated otherwise, the changes below are thanks to Andreas Guldstrand.
+Development from version 0.1 through 2.7 took place at the pink-mist/sbotools repository. Unless indicated otherwise, the changes below are thanks to Andreas Guldstrand.
 
 Post-2.7 - 2019
   * Add and install zsh completions
@@ -132,35 +132,44 @@ Post-2.7 - 2019
     * Thanks to contributor 9m9.
   * Change sboclean options --clean-dist and --clean-work to shorter forms
     (https://github.com/pink-mist/sbotools/pull/52)
+    * Thanks to contributor sighook
   * Add limited -current support using ponce's SBo repo for -current
     (https://github.com/pink-mist/sbotools/issues/73)
+    * Thanks to penduin for the report
   * Fix bug with sboinstall --reinstall -r
     (https://github.com/pink-mist/sbotools/issues/72)
+    * Thanks to montagdude for the report
   * Fix bug with sbofind -e
     (https://github.com/pink-mist/sbotools/issues/71)
+    * Thanks to drgibbon for the report
 
 2.5 - 2018-02-14
   * Document download behaviour
     (https://github.com/pink-mist/sbotools/issues/66)
+    * Thanks to jonasdemoor for the request
   * Remake sbosnap and sboremove to have OO semantics
   * Strip -compat32 from slackbuild names when looking them up
     (https://github.com/pink-mist/sbotools/issues/65)
+    * Thanks to na3i09 for the report
   * Optimise searching in sbofind
 
 2.4 - 2017-05-18
   * Rewrite sboremove from the ground up so it relies less on global state
   * Fix for parsing README with useradd/groupadd commands which span lines
     (https://github.com/pink-mist/sbotools/issues/57)
+    * Thanks to montagdude for the report
   * Add --reinstall option to sboinstall
     (https://github.com/pink-mist/sbotools/issues/58)
   * Exit with error when sbosnap fails to sync with a repo
     (https://github.com/pink-mist/sbotools/issues/61)
+    * Thanks to montagdude for the report
   * Add version information to sbofind output
     (https://github.com/pink-mist/sbotools/issues/60)
 
 2.3 - 2017-01-21
   * Bugfix for parsing .info files with \ among the separators
     (https://github.com/pink-mist/sbotools/issues/55)
+    * Thanks to iluvatar1 for the report
 
 2.2 - 2017-01-17
   * Bugfix for parsing .info files with trailing whitespace after a value
@@ -173,6 +182,7 @@ Post-2.7 - 2019
   * New features:
     - Support for templates for installing things with specified options
       (https://github.com/pink-mist/sbotools/issues/38)
+      - Thanks to hackedhead for the request
     - Display other README files if the slackbuild comes with them
       (https://github.com/pink-mist/sbotools/issues/49)
   * Bugfixes
@@ -180,10 +190,13 @@ Post-2.7 - 2019
       (https://github.com/pink-mist/sbotools/issues/44)
     - sbocheck and sboupgrade misinterpreting version strings
       (https://github.com/pink-mist/sbotools/issues/45)
+      - Thanks to STDOUBT for the report
     - parsing .info files without leading space on second line
       (https://github.com/pink-mist/sbotools/issues/46)
+      - Thanks to chrish4cks for the report
     - local git repo gets partially chowned to root
       (https://github.com/pink-mist/sbotools/issues/47)
+      - Thanks to wgreenhouse for the report
     - stop excluding .tar.gz files when rsyncing
       (https://github.com/pink-mist/sbotools/issues/53)
 
@@ -211,6 +224,7 @@ Post-2.7 - 2019
        - https://github.com/pink-mist/sbotools/issues/6
        - https://github.com/pink-mist/sbotools/issues/19
        - https://github.com/pink-mist/sbotools/issues/27
+      - Thanks to hackedhead for the request
     * Use sbosrcarch source archive if download fails
        - https://github.com/pink-mist/sbotools/issues/7
        - https://github.com/pink-mist/sbotools/issues/19
@@ -218,6 +232,7 @@ Post-2.7 - 2019
     * sboupgrade --all option to upgrade everything listed by sbocheck
        - https://github.com/pink-mist/sbotools/issues/9
        - https://github.com/pink-mist/sbotools/issues/19
+       - Thanks to hackedhead for the request
     * Travis CI integration
       Every push will now cause the test-suite to be run
        - https://github.com/pink-mist/sbotools/issues/18
@@ -237,6 +252,7 @@ Post-2.7 - 2019
        - https://github.com/pink-mist/sbotools/issues/43
     * sbofind will now also use tags if they're available
        - https://github.com/pink-mist/sbotools/issues/37
+       - Thanks to contributor sighook
   * Minor/bugfixes/documentation fixes
     * Use system perl when running and installing sbotools
     * sbocheck output changed
@@ -256,9 +272,12 @@ Post-2.7 - 2019
        - https://github.com/pink-mist/sbotools/issues/35
        - https://github.com/pink-mist/sbotools/issues/41
        - https://github.com/pink-mist/sbotools/issues/43
+       - Thanks to contributor tom-crane for the parallel builds fix
+       - Thanks to Sammyboy for the kernel version report
     * sbosnap: display download progress, update git trees better
        - https://github.com/pink-mist/sbotools/issues/26
        - https://github.com/pink-mist/sbotools/issues/27
+       - Thanks to travis-82 for the request
 
 1.9 - 2015-11-27
   * Make it compatible with perls newer than 5.18

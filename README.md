@@ -147,25 +147,34 @@ Development from version 0.1 through 2.7 took place at [pink-mist/sbotools](http
     saner limit than the default of 20. #79
     * Thanks to contributor 9m9.
   * Change sboclean options --clean-dist and --clean-work to shorter forms #52
+    * Thanks to contributor sighook
   * Add limited -current support using ponce's SBo repo for -current #73
+    * Thanks to penduin for the report
   * Fix bug with sboinstall --reinstall -r #72
+    * Thanks to montagdude for the report
   * Fix bug with sbofind -e #71
+    * Thanks to drgibbon for the report
 
 * 2.5 - 2018-02-14
   * Document download behaviour #66
+    * Thanks to jonasdemoor for the request
   * Remake sbosnap and sboremove to have OO semantics
   * Strip -compat32 from slackbuild names when looking them up #65
+    * Thanks to na3i09 for the report
   * Optimise searching in sbofind
 
 * 2.4 - 2017-05-18
   * Rewrite sboremove from the ground up so it relies less on global state
   * Fix for parsing README with useradd/groupadd commands which span lines #57
+    * Thanks to montagdude for the report
   * Add --reinstall option to sboinstall #58
   * Exit with error when sbosnap fails to sync with a repo #61
+    * Thanks to montagdude for the report
   * Add version information to sbofind output #60
 
 * 2.3 - 2017-01-21
   * Bugfix for parsing .info files with \ among the separators #55
+    * Thanks to iluvatar1 for the report
 
 * 2.2 - 2017-01-17
   * Bugfix for parsing .info files with trailing whitespace after a value #54
@@ -176,12 +185,16 @@ Development from version 0.1 through 2.7 took place at [pink-mist/sbotools](http
     - Extract code to submodules for easier separation of concerns
   * New features:
     - Support for templates for installing things with specified options #38
+      - Thanks to hackedhead for the request
     - Display other README files if the slackbuild comes with them #49
   * Bugfixes
     - sboinstall/sboremove disagreeing about a package being installed #44
     - sbocheck and sboupgrade misinterpreting version strings #45
+      - Thanks to STDOUBT for the report
     - parsing .info files without leading space on second line #46
+      - Thanks to chrish4cks for the report
     - local git repo gets partially chowned to root #47
+      - Thanks to wgreenhouse for the report
     - stop excluding .tar.gz files when rsyncing #53
 
 * 2.0 - 2016-07-02
@@ -203,11 +216,13 @@ Development from version 0.1 through 2.7 took place at [pink-mist/sbotools](http
       absolute URL for the SBo repository you want to sync with. #6 #19 #27
     * Use sbosrcarch source archive if download fails #7 #19 #24
     * sboupgrade --all option to upgrade everything listed by sbocheck. #9 #19
+      - Thanks to hackedhead for the request
     * Travis CI integration
 
       Every push will now cause the test-suite to be run. #18
     * Hundreds of new unit-tests. #18 #19 #23 #24 #25 #27 #28 #31 #32 #33 #35 #41 #43
     * sbofind will now also use tags if they're available #37
+      - Thanks to contributor sighook
   * Minor/bugfixes/documentation fixes
     * Use system perl when running and installing sbotools.
     * sbocheck output changed. #10 #13 #20
@@ -216,7 +231,10 @@ Development from version 0.1 through 2.7 took place at [pink-mist/sbotools](http
     * sboupgrade handles dependencies better. #12 #28
     * Update bundled Sort::Versions to 1.62.
     * sboinstall/upgrade/sbocheck: small bugfixes. #21 #35 #41 #43
+      - Thanks to contributor tom-crane for the parallel builds fix
+      - Thanks to Sammyboy for the kernel version report
     * sbosnap: display download progress, update git trees better. #26 #27
+      - Thanks to travis-82 for the request
 
 * 1.9 - 2015-11-27
   * Make it compatible with perls newer than 5.18

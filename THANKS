@@ -3,25 +3,30 @@
                                **********
 
 Jacob Pipkin is the original author of all of the sbotools except for
-sbohints and sboremove. For all the changes that have been made, the
+sboremove and sbohints. For all the changes that have been made, the
 look-and-feel of sbotools is still remarkably similar to his initial
 commit in 2012.
 
 Luke Williams made important contributions to early sbotools, most
-notably writing the original sboremove.
+notably writing the original sboremove. He also wrote code allowing
+sbotools to recognize non-SBo packages, added the --queue option to
+sbofind and overhauled sboupgrade.
 
-Andreas Guldstrand maintained sbotools from late 2015 through 2019. He
-made a number of important changes, including spinning off sboremove as
-a module and the now-familiar /usr/sbo/repo directory structure. Reverse
-dependency search, non- default git branch use and reporting out-of-tree
-packages in sbocheck were planned feature additions of his originally.
+Andreas Guldstrand maintained sbotools from 2015 through 2019. He made
+many important changes, including but not limited to spinning off
+sboremove as a module, the now-familiar /usr/sbo/repo directory
+structure, using a local overrides directory and setting a custom
+Slackware version and upstream repository. Reverse dependency search,
+non-default git branch use and reporting out-of-tree scripts in sbocheck
+were planned feature additions of his originally.
 
 drgibbon wrote the original zsh completions, without which the bash
 completions would surely never have been added. He has been active on
 the Issue page with advice for users and helpful feedback.
 
 Other pre-fork code contributors include 9m9 (better wget behavior) and
-pedrormjunior (Perl compatibility fix).
+pedrormjunior (Perl compatibility fix). sighook added tag and exact
+search to sbofind. tom-crane made the JOBS setting effectual.
 
 Slack Coder, the maintainer of sbotools2, has been a friendly and
 helpful correspondent. Although they are implemented differently here,
@@ -34,14 +39,24 @@ requests over the years, both before and after this sbotools repository
 was forked:
 
 Charadon (requested --mass-rebuild and development man pages)
-dchmelik (reported diligently on sbocheck problems)
+chrish4cks (reported an .info parse bug)
+dchmelik (reported diligently on sbocheck problems, provided feedback)
 dcjud (requested an installable sbotools.conf)
 drbeco (requested a blacklist and strict version-up)
 Geremias (originally reported the info parse bug before version 3.3)
+hackedhead (requested installation templates and sboupgrade --all)
+iluvatar1 (reported an .info parse bug)
 januscan (requested strict version-up)
+jonasdemoor (requested download beavior documentation)
+montagdude (reported sboinstall and sbosnap bugs)
+na3i09 (reported a compat32 sboremove bug)
+penduin (reported a Slackware -current version bug)
 qunying (requested build number upgrade notification)
+Sammyboy (reported a kernel version number bug)
+STDOUBT (reported a version parse bug)
+travis-82 (requested tree download progress output)
 tuxuser1 (reported the overwritten source file bug)
 
-This file is incomplete; more research about early sbotools needs to be
-done, and oversights do happen. Please contact the maintainer if you
-should be in this file (or README.md) and you are not!
+This file is almost certainly incomplete; information about pre-1.9
+sbotools is limited, and oversights do happen. Please contact the
+maintainer if you should be in this file (or README.md) and you are not!
