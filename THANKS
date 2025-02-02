@@ -56,6 +56,7 @@ Sammyboy (reported a kernel version number bug)
 STDOUBT (reported a version parse bug)
 travis-82 (requested tree download progress output)
 tuxuser1 (reported the overwritten source file bug)
+wgreenhouse (reported the local git repo chown bug)
 
 This file is almost certainly incomplete; information about pre-1.9
 sbotools is limited, and oversights do happen. Please contact the
