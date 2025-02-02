@@ -94,7 +94,7 @@ sbotools3 1.1 - 2024-11-03
 
 sbotools3 1.0 - 2024-11-01
   * Change the git branch to match the Slackware version, or to a user-configured branch
-    * The ability to specify a git branch was originally planned by Andreas Guldstrom.
+    * The ability to specify a git branch was originally planned by Andreas Guldstrand.
   * Change the default URLs to support Slackware 15.0 and use git repositories
   * Use rsync default mirrors with RSYNC_DEFAULT (except for -current)
     * Thanks to Slack Coder for the feedback.
