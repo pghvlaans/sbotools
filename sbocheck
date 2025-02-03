@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree build_cmp get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay %config /;
+use SBO::Lib qw/ update_tree build_cmp get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions on_blacklist $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay %config /;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 use File::Basename;
 use List::Util 'max';
@@ -146,6 +146,8 @@ sub get_update_list {
 # sboname 1.1  <  version differs (1.0 from SBo) # (note: for STRICT_UPGRADES)
 # sboname 1.0  <  override differs (1.1 from SBo)
 
+# Blacklisted scripts are preceded with "*" in the report.
+
 	my $max = 0;
 	foreach my $sbo (keys %updates) {
 		my $info = $updates{$sbo};
@@ -172,6 +174,7 @@ sub get_update_list {
 		else {
 			if ($filter eq 'VERS') { $available = sprintf "override differs (%s from SBo)", $info->{sbo}; }
 		}
+		$current = "*$current" if on_blacklist $sbo;
 		$info->{name_str} = $current;
 		$info->{upd_str} = $available;
 
