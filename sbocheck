@@ -142,14 +142,17 @@ sub get_update_list {
 # sboname 1.0  <  needs updating (1.1 from overrides, 1.2 from SBo)
 # sboname 1.0 (1)  <  was bumped (build 2 from overrides)
 # sboname 1.0 (1)  <  was bumped (build 2 from SBo)
-# sboname 1.0 (2)  <  differs (build 1 from SBo) # (note: for STRICT_UPGRADES)
-# sboname 1.1  <  version differs (1.0 from SBo) # (note: for STRICT_UPGRADES)
-# sboname 1.0  <  override differs (1.1 from SBo)
+# sboname 1.0 (2)  =  differs (build 1 from SBo) # (note: for STRICT_UPGRADES)
+# sboname 1.1  =  version differs (1.0 from SBo) # (note: for STRICT_UPGRADES)
+# sboname 1.0  =  override differs (1.1 from SBo)
 
-# Blacklisted scripts are preceded with "*" in the report.
+# The left carat is replaced by an equals sign if the script would not be upgraded.
 
 	my $max = 0;
+	my @not_upgradable;
 	foreach my $sbo (keys %updates) {
+		my $use_equals;
+		$use_equals = 1 if on_blacklist($sbo);
 		my $info = $updates{$sbo};
 		my $current;
 		if ($filter eq 'BUILD') {
@@ -166,15 +169,17 @@ sub get_update_list {
 		} elsif ($info->{available}) {
 			if ($filter eq 'VERS' and $info->{local}) { $available = sprintf "needs updating (%s from overrides)", $info->{available}; }
 			elsif ($filter eq 'VERS' and not defined $info->{differs_only}) { $available = sprintf "needs updating (%s from SBo)", $info->{available}; }
-			elsif ($filter eq 'VERS' and not $info->{local} and defined $info->{differs_only}) { $available = sprintf "version differs (%s from SBo)", $info->{available}; }
-			if ($filter eq 'BUILD' and not defined $info->{differs_only}) { $available = sprintf "was bumped (build %s from %s)", $info->{available}, $info->{local} ? "overrides" : "SBo"; }
-			if ($filter eq 'BUILD' and defined $info->{differs_only} and not $info->{local}) { $available = sprintf "differs (build %s from SBo)", $info->{available}; }
-			if ($filter eq 'BUILD' and defined $info->{differs_only} and $info->{local}) { $available = sprintf "was bumped (build %s from overrides)", $info->{available}; }
+			elsif ($filter eq 'VERS' and not $info->{local} and defined $info->{differs_only}) { $available = sprintf "version differs (%s from SBo)", $info->{available}; $use_equals = 1; }
+			if ($filter eq 'BUILD' and not defined $info->{differs_only}) { $available = sprintf "was bumped (build %s from %s)", $info->{available}, $info->{local} ? "overrides" : "SBo"; $use_equals = 1 if $config{BUILD_IGNORE} eq 'TRUE'; }
+			if ($filter eq 'BUILD' and defined $info->{differs_only} and not $info->{local}) { $available = sprintf "differs (build %s from SBo)", $info->{available}; $use_equals = 1; }
+			if ($filter eq 'BUILD' and defined $info->{differs_only} and $info->{local}) { $available = sprintf "was bumped (build %s from overrides)", $info->{available}; $use_equals = 1 if $config{BUILD_IGNORE} eq 'TRUE'; }
 		}
 		else {
-			if ($filter eq 'VERS') { $available = sprintf "override differs (%s from SBo)", $info->{sbo}; }
+			if ($filter eq 'VERS') { $available = sprintf "override differs (%s from SBo)", $info->{sbo}; $use_equals = 1; }
 		}
-		$current = "*$current" if on_blacklist $sbo;
+		if (defined $use_equals) {
+			push @not_upgradable, $sbo;
+		}
 		$info->{name_str} = $current;
 		$info->{upd_str} = $available;
 
@@ -188,12 +193,14 @@ sub get_update_list {
 	foreach my $sbo (sort keys %updates) {
 		my $info = $updates{$sbo};
 
-		my $str = sprintf "%s  <  %s", $info->{name_str}, $info->{upd_str};
+		my $sign = "<";
+		$sign = "=" if grep { /^$sbo$/ } @not_upgradable and $config{CLASSIC} ne 'TRUE';
+		my $str = sprintf "%s  $sign  %s", $info->{name_str}, $info->{upd_str};
 		if (length($str) <= 80) {
-			$str = sprintf "%-*s  <  %s", $max, $info->{name_str}, $info->{upd_str};
+			$str = sprintf "%-*s  $sign  %s", $max, $info->{name_str}, $info->{upd_str};
 			my $adjust = 1;
 			while (length($str) > 80) {
-				$str = sprintf "%-*s  <  %s", $max-$adjust++, $info->{name_str}, $info->{upd_str};
+				$str = sprintf "%-*s  $sign  %s", $max-$adjust++, $info->{name_str}, $info->{upd_str};
 			}
 		}
 		push @listing, $str;

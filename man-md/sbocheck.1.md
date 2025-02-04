@@ -29,8 +29,9 @@ updates
 tree, checks for available upgrades, and reports what it finds.
 SlackBuilds with differing build numbers are reported separately, as are
 any SlackBuilds marked *\_SBo* that are not found in the repository or
-local overrides (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
-Blacklisted SlackBuilds are preceded with an asterisk.
+local overrides (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). Except
+in **CLASSIC** mode, scripts in the report that would not be upgraded by
+[sboupgrade(1)](sboupgrade.1.md) are marked with an equals sign. **=** (equals sign).
 
 The three output categories are logged separately to
 */var/log/sbocheck.log*, */var/log/sbocheck-bumps.log* and
