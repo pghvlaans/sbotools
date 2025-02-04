@@ -6,7 +6,7 @@
     * Thanks to Slack Coder for the idea.
   * Install an *SBO::Lib(3)* summary man page; add exit code information to the other man 3 pages
   * *sbocheck*: Accept bundled flags (e.g. **\-gn**)
-  * *sbocheck*: Mark blacklisted scripts with an asterisk
+  * *sbocheck*: Mark scripts that would not be upgraded with *sboupgrade* with an equals sign
 
 * 3.4.1 - 2025-01-29
   * Bugfix: Use md5sum-specific subdirectories for distfiles to avoid improper overwriting
