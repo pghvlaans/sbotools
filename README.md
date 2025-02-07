@@ -18,7 +18,7 @@ This repository is for continuing **sbotools** development, and was forked from 
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
 ## Changes
-* Post-Release
+* 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue
   * sbohints: With --query, also report scripts that are optional dependencies; more grammatical output
   * Allow non-root users to call sbofind, non-destructive sbocheck, sboconfig and sbohints flags, -h and -v
