@@ -11,7 +11,7 @@ tree for a given name or names
 .P
 sbofind [-h|-v]
 .P
-sbofind [-etiRrq] search_term (search_term)
+sbofind [-EetiRrq] search_term (search_term)
 .SH DESCRIPTION
 .P
 .B
@@ -53,9 +53,15 @@ Show version information.
 .RE
 .P
 .B
+-E|--exact-case
+.RS
+Exact matching only (case-sensitive).
+.RE
+.P
+.B
 -e|--exact
 .RS
-Exact matching only.
+Exact matching only (case-insensitive).
 .RE
 .P
 .B

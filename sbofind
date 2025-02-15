@@ -29,8 +29,10 @@ Options:
     this screen.
   -v|--verison:
     version information.
+  -E|--exact-case:
+    only exact matching (case-sensitive).
   -e|--exact:
-    only exact matching.
+    only exact matching (case-insensitive).
   -t|--no-tags:
     exclude tags from search.
   -i|--info:
@@ -49,12 +51,13 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $search_exact, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue);
+my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue);
 
 GetOptions(
 	'help|h'    => \$help,
 	'version|v' => \$vers,
 	'exact|e'   => \$search_exact,
+	'exact-case|E' => \$search_case,
 	'no-tags|t' => \$exclude_tags,
 	'info|i'    => \$show_info,
 	'readme|r'  => \$show_readme,
@@ -85,8 +88,14 @@ if ($show_reverse) {
 sub perform_search {
 	script_error 'perform_search requires an argument.' unless @_ == 1;
 	my $search_arg = shift;
-	my $search_tag_re  = $search_exact ? qr/^(\S+).*(:\s|,)\b\Q$search_arg\E\b(,|$)/i : qr/^(\S+):\s.*\Q$search_arg\E/i;
-	my $search_name_re = $search_exact ? qr/^\Q$search_arg\E$/i : qr/.*\Q$search_arg\E.*/i;
+	my ($search_tag_re, $search_name_re);
+	unless ($search_case) {
+		$search_tag_re  = $search_exact ? qr/^(\S+).*(:\s|,)\b\Q$search_arg\E\b(,|$)/i : qr/^(\S+):\s.*\Q$search_arg\E/i;
+		$search_name_re = $search_exact ? qr/^\Q$search_arg\E$/i : qr/.*\Q$search_arg\E.*/i;
+	} else {
+		$search_tag_re  = qr/^(\S+).*(:\s|,)\b\Q$search_arg\E\b(,|$)/;
+		$search_name_re = qr/^\Q$search_arg\E$/;
+	}
 
 	# first get a bunch of names from the TAGS.txt if it's available
 	my $tags_file = "$config{SBO_HOME}/repo/TAGS.txt";
