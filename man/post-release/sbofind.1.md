@@ -21,7 +21,7 @@ a given name or names
 
     sbofind [-h|-v]
 
-    sbofind [-etiRrq] search_term (search_term)
+    sbofind [-EetiRrq] search_term (search_term)
 
 ## DESCRIPTION
 
@@ -48,9 +48,13 @@ Show help information.
 
 Show version information.
 
+**-E\|\--exact-case**
+
+Exact matching only (case-sensitive).
+
 **-e\|\--exact**
 
-Exact matching only.
+Exact matching only (case-insensitive).
 
 **-t\|\--no-tags**
 
