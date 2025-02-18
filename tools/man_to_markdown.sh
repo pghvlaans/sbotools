@@ -41,6 +41,7 @@ sed -i "s/#STARTUP/#startup/g" *
 sed -i "s/#BUGS/#bugs/g" *
 sed -i "s/#SEE\%20ALSO/#see-also/g" *
 sed -i "s/#EXIT\%20CODES/#exit-codes/g" *
+sed -i "s/#VARIABLES/#variables/g" *
 sed -i "s/#AUTHORS/#authors/g" *
 sed -i 's|#MAINTAINER)\\|#maintainer)|g' *
 
@@ -53,6 +54,7 @@ sed -i "s/^## STARTUP.*/## STARTUP/g" *
 sed -i "s/^## BUGS.*/## BUGS/g" *
 sed -i "s/^## SEE ALSO.*/## SEE ALSO/g" *
 sed -i "s/^## EXIT CODES.*/## EXIT CODES/g" *
+sed -i "s/^## VARIABLES.*/## VARIABLES/g" *
 sed -i "s/^## AUTHORS.*/## AUTHORS/g" *
 sed -i "s/^## MAINTAINER.*/## MAINTAINER/g" *
 

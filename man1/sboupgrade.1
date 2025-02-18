@@ -348,6 +348,175 @@ LOCAL_OVERRIDES
 directory are upgraded only if the version or build number
 from this directory varies.
 .RE
+.SH VARIABLES
+.P
+Beyond the options contained in
+.I
+README
+files, certain variables are relevant to nearly all SlackBuilds,
+and can be used when running
+.B
+sboupgrade\fR\
+\&.
+.P
+.B
+ARCH
+.RS
+.B
+ARCH
+passes a CPU architecture to the build process, and is mostly used
+to build
+.B
+i?86
+packages on
+.B
+x86_64
+machines and
+.B
+compat32
+packages.
+.B
+sboupgrade
+attempts to pass the correct architecture automatically for such builds based
+on the contents of the SlackBuild. This process is not necessarily bug-free;
+please do not hesitate to report
+.B
+compat32
+issues.
+.RE
+.P
+.B
+BUILD
+.RS
+.B
+BUILD
+sets the build number. Although it can be supplied at the command line
+without compromising the build, please note that unless
+.B
+CLASSIC
+or
+.B
+BUILD_IGNORE
+are set,
+.B
+sbocheck(1)
+and
+.B
+sboupgrade
+will report the installed package as upgradable.
+.RE
+.P
+.B
+OUTPUT
+.RS
+.B
+OUTPUT
+is the directory where the package, source and working directories
+are created,
+.I
+/tmp
+by default.
+.B
+sboupgrade
+recognizes user-supplied values. Please note that packages are saved in the directory
+specified by
+.B
+PKG_DIR
+if set.
+.RE
+.P
+.B
+PKGTYPE
+.RS
+The
+.B
+PKGTYPE
+variable sets the compression method for the resulting package.
+.B
+makepkg(1)
+supports a number of values, including
+.B
+tgz
+(the
+.B
+SlackBuilds.org
+default),
+.B
+tar.gz\fR\
+\&,
+.B
+txz\fR\
+\&,
+.B
+tar.xz\fR\
+\&,
+.B
+tbz\fR\
+\&,
+.B
+tar.bz2\fR\
+\&,
+.B
+tlz\fR\
+\&,
+.B
+tar.lz
+and
+.B
+tar.lzma\fR\
+\&. Any of these can be used without issue.
+.RE
+.P
+.B
+TAG
+.RS
+.B
+TAG
+sets the tag at the end of the package name,
+.B
+_SBo
+by default. Its use is not advisable with
+.B
+sboupgrade\fR\
+\&. If a different tag is supplied,
+.B
+sbocheck(1)
+and
+.B
+sboupgrade
+will fail to report upgrades for the installed package.
+.RE
+.P
+.B
+TMP
+.RS
+.B
+TMP
+is
+.B
+/tmp/SBo\fR\
+\&, the directory where the source and working directories are created.
+.B
+sboupgrade
+recognizes user-supplied values. Please note that packages are saved in the directory
+specified by
+.B
+PKG_DIR
+if set.
+.RE
+.P
+.B
+VERSION
+.RS
+.B
+VERSION
+sets the version number. If changed at the command line, the SlackBuild is highly
+unlikely to build successfully. To build a different version, consider using the
+directory specified in
+.B
+LOCAL_OVERRIDES\fR\
+\&.
+.RE
 .SH EXIT CODES
 .P
 .B

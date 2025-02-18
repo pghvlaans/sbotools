@@ -20,6 +20,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 ## Changes
 * Post-Release
   * sbofind: Use --exact-case to search for an exact match with case sensitivity (thanks to leoctrl for the report)
+  * man1: Add a variables section to the sboinstall and sboupgrade pages (thanks to leoctrl for the suggestion)
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue
