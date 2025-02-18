@@ -4,6 +4,7 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[VARIABLES](#variables)\
 [EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
@@ -167,6 +168,64 @@ completed, whether by signal or by build failure, a template named
 *resume.temp* is saved to **SBO_HOME**. If this file is present, the
 mass rebuild restarts from the script after the script that failed when
 **\--mass-rebuild** is used again.
+
+## VARIABLES
+
+Beyond the options contained in *README* files, certain variables are
+relevant to nearly all SlackBuilds, and can be used when running
+**sboinstall**.
+
+**ARCH**
+
+**ARCH** passes a CPU architecture to the build process, and is mostly
+used to build **i?86** packages on **x86_64** machines and **compat32**
+packages. **sboinstall** attempts to pass the correct architecture
+automatically for such builds based on the contents of the SlackBuild.
+This process is not necessarily bug-free; please do not hesitate to
+report **compat32** issues.
+
+**BUILD**
+
+**BUILD** sets the build number. Although it can be supplied at the
+command line without compromising the build, please note that unless
+**CLASSIC** or **BUILD_IGNORE** are set, [sbocheck(1)](sbocheck.1.md) and
+[sboupgrade(1)](sboupgrade.1.md) will report the installed package as upgradable.
+
+**OUTPUT**
+
+**OUTPUT** is the directory where the package, source and working
+directories are created, */tmp* by default. **sboinstall** recognizes
+user-supplied values. Please note that packages are saved in the
+directory specified by **PKG_DIR** if set.
+
+**PKGTYPE**
+
+The **PKGTYPE** variable sets the compression method for the resulting
+package. **makepkg(1)** supports a number of values, including **tgz**
+(the **SlackBuilds.org** default), **tar.gz**, **txz**, **tar.xz**,
+**tbz**, **tar.bz2**, **tlz**, **tar.lz** and **tar.lzma**. Any of these
+can be used without issue.
+
+**TAG**
+
+**TAG** sets the tag at the end of the package name, **\_SBo** by
+default. Its use is not advisable with **sboinstall**. If a different
+tag is supplied, [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md) will fail to
+report upgrades for the installed package.
+
+**TMP**
+
+**TMP** is **/tmp/SBo**, the directory where the source and working
+directories are created. **sboinstall** recognizes user-supplied values.
+Please note that packages are saved in the directory specified by
+**PKG_DIR** if set.
+
+**VERSION**
+
+**VERSION** sets the version number. If changed at the command line, the
+SlackBuild is highly unlikely to build successfully. To build a
+different version, consider using the directory specified in
+**LOCAL_OVERRIDES**.
 
 ## EXIT CODES
 
