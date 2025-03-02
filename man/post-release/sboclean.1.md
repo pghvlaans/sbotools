@@ -35,8 +35,9 @@ with extreme prejudice. One of **\--dist**, **\--work** or **\--option**
 must be specified for this script to do anything.
 
 Root privileges are required to run **sboclean**. If an invalid
-configuration is detected in */etc/sbotools/sbotools.conf*, the script
-exits with a diagnostic message.
+configuration is detected in */etc/sbotools/sbotools.conf*, or if
+invalid options are specified, the script exits with a diagnostic
+message.
 
 ## OPTIONS
 

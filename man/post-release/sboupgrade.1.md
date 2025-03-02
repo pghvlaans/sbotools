@@ -58,8 +58,9 @@ flag may be passed to upgrade all eligible SlackBuilds simultaneously.
 Slackware 14.0 and Slackware 14.1.
 
 Root privileges are required to run **sboupgrade**. If an invalid
-configuration is detected in */etc/sbotools/sbotools.conf*, the script
-exits with a diagnostic message.
+configuration is detected in */etc/sbotools/sbotools.conf*, or if
+invalid options are specified, the script exits with a diagnostic
+message.
 
 ## OPTIONS
 
