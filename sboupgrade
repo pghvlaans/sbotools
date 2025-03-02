@@ -65,7 +65,7 @@ my $gpg = $config{GPG_VERIFY};
 my $strict_upgrades = $config{STRICT_UPGRADES};
 my ($help, $vers, $force, $no_install, $non_int, $force_reqs, $all);
 
-GetOptions(
+my $options_ok = GetOptions(
 	'help|h'            => \$help,
 	'version|v'         => \$vers,
 	'noclean|c=s'       => \$noclean,
@@ -89,6 +89,10 @@ if ($vers) { show_version(); exit 0 }
 unless ($< == 0) {
 	show_usage();
 	usage_error "This is a root-only script.";
+}
+unless ($options_ok) {
+	show_usage();
+	usage_error "One or more invalid options detected.";
 }
 
 lint_sbo_config($self, %config);

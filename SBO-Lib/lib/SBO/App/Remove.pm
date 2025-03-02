@@ -17,6 +17,7 @@ use Getopt::Long qw(GetOptionsFromArray :config bundling);
 use parent 'SBO::App';
 
 our $VERSION = '3.4.2';
+our $options_ok;
 
 sub _parse_opts {
   my $class = shift;
@@ -24,7 +25,7 @@ sub _parse_opts {
 
   my ($help, $vers, $alwaysask);
 
-  GetOptionsFromArray(
+  $options_ok = GetOptionsFromArray(
     \@ARGS,
     'help|h'        => \$help,
     'version|v'     => \$vers,
@@ -50,6 +51,11 @@ sub run {
   unless ($< == 0) {
     $self->show_usage();
     usage_error "This is a root-only script.";
+  }
+  unless ($options_ok) {
+    $self->show_usage();
+    usage_error "One or more invalid options detected.";
+    exit 1;
   }
 
   lint_sbo_config($self, %config);
