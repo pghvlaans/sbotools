@@ -55,7 +55,6 @@ sub run {
   unless ($options_ok) {
     $self->show_usage();
     usage_error "One or more invalid options detected.";
-    exit 1;
   }
 
   lint_sbo_config($self, %config);
