@@ -1,8 +1,11 @@
 # ChangeLog
 * Post-Release
-  * *sbofind*: Use **\--exact-case** to search for an exact match with case sensitivity (thanks to leoctrl for the report)
-  * *man1*: Add a variables section to the *sboinstall* and *sboupgrade* pages (thanks to leoctrl for the suggestion)
-  * *sboclean*, *sboremove*, *sboinstall*, *sboupgrade*: Exit with unknown options (thanks to Slack Coder for the suggestion)
+  * *sbofind*: Use **\--exact-case** to search for an exact match with case sensitivity
+    * Thanks to leoctrl for the report.
+  * *man1*: Add a variables section to the *sboinstall* and *sboupgrade* pages
+    * Thanks to leoctrl for the suggestion.
+  * *sboclean*, *sboremove*, *sboinstall*, *sboupgrade*: Exit with unknown options
+    * Thanks to Slack Coder for the suggestion.
   * *sbohints*: Via *Util.pm*, only show optional dependencies once per script when listing
 
 * 3.4.2 - 2025-02-07
