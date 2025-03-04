@@ -3,6 +3,7 @@
   * *sbofind*: Use **\--exact-case** to search for an exact match with case sensitivity (thanks to leoctrl for the report)
   * *man1*: Add a variables section to the *sboinstall* and *sboupgrade* pages (thanks to leoctrl for the suggestion)
   * *sboclean*, *sboremove*, *sboinstall*, *sboupgrade*: Exit with unknown options (thanks to Slack Coder for the suggestion)
+  * *sbohints*: Via *Util.pm*, only show optional dependencies once per script when listing
 
 * 3.4.2 - 2025-02-07
   * *Build.pm*: When distcleaning, do not delete files that are needed later in the queue
