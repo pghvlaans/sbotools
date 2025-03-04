@@ -241,7 +241,10 @@ sub get_optional {
     $entry =~ s/\s$sbo$//;
     push @optional, split(" ", $entry);
   }
-  return @optional if @optional;
+  if (@optional) {
+    @optional = uniq(@optional);
+    return @optional;
+  }
   return;
 }
 
