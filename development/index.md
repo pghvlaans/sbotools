@@ -11,3 +11,13 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 ## Prospective Features
 
 Nothing for now, but requests are welcome and will receive due consideration.
+
+## Incoming
+
+The following feature changes will be included in version 3.5:
+
+* `sbofind`: Use **\--exact-case** for case-sensitive exact matching
+* Make reverse dependency handling more convenient
+  * `sboupgrade`: Add **\--reverse-rebuild**
+  * `sbotools.hints`: Request automatic reverse dependency rebuilds on a per-script basis
+  * `sbohints`: Use **\--reverse** to add and clear reverse dependency rebuild requests
