@@ -52,7 +52,7 @@ comparions, dependency calculation and the source downloading process.
 
 =head2 SBO::Lib::Pkgs
 
-C<Pkgs.pm> interacts with the Slackware package database to provide, tag and version information
+C<Pkgs.pm> interacts with the Slackware package database to provide tag and version information
 for all installed packages.
 
 =head2 SBO::Lib::Readme
