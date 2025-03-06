@@ -93,10 +93,10 @@ The supported keys are: \f(CW\*(C`NOCLEAN\*(C'\fR, \f(CW\*(C`DISTCLEAN\*(C'\fR, 
 .ie n .SS @listings
 .el .SS \f(CW@listings\fP
 .IX Subsection "@listings"
-An array with blacklisted scripts and optional dependency requests read in
-from \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR. Only \f(CWread_hints()\fR should interact
-with \f(CW@listings\fR directly; in other situations, make a copy (see e.g.
-\&\f(CW@on_blacklist()\fR.)
+An array with blacklisted scripts and requests for optional dependencies and
+automatic reverse dependency rebuilds read in from \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR.
+Only \f(CWread_hints()\fR should interact with \f(CW@listings\fR directly; in other
+situations, make a copy (see e.g. \f(CW@on_blacklist()\fR.)
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS auto_reverse
@@ -105,7 +105,7 @@ with \f(CW@listings\fR directly; in other situations, make a copy (see e.g.
 \&  my $result = auto_reverse($sbo)
 .Ve
 .PP
-\&\f(CWauto_reverse()\fR checks whether automatic reverse queue rebuilding for \f(CW$sbo\fR has
+\&\f(CWauto_reverse()\fR checks whether automatic reverse dependency rebuilding for \f(CW$sbo\fR has
 been requested. Note that global array \f(CW@listings\fR is copied.
 .SS build_cmp
 .IX Subsection "build_cmp"

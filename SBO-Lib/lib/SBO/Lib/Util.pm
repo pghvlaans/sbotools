@@ -116,10 +116,10 @@ C<GPG_VERIFY>, C<RSYNC_DEFAULT> and C<STRICT_UPGRADES>.
 
 =head2 @listings
 
-An array with blacklisted scripts and optional dependency requests read in
-from C</etc/sbotools/sbotools.hints>. Only C<read_hints()> should interact
-with C<@listings> directly; in other situations, make a copy (see e.g.
-C<@on_blacklist()>.)
+An array with blacklisted scripts and requests for optional dependencies and
+automatic reverse dependency rebuilds read in from C</etc/sbotools/sbotools.hints>.
+Only C<read_hints()> should interact with C<@listings> directly; in other
+situations, make a copy (see e.g. C<@on_blacklist()>.)
 
 =cut
 
@@ -157,7 +157,7 @@ our @listings = read_hints();
 
   my $result = auto_reverse($sbo)
 
-C<auto_reverse()> checks whether automatic reverse queue rebuilding for C<$sbo> has
+C<auto_reverse()> checks whether automatic reverse dependency rebuilding for C<$sbo> has
 been requested. Note that global array C<@listings> is copied.
 
 =cut
