@@ -106,7 +106,8 @@ equal to the **SlackBuilds.org** version.
 Do not install the package at the end of the build process. It is left
 in */tmp* (or *\$OUTPUT*) if **DISTCLEAN** is **FALSE**. Packages are
 retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
-[sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
+[sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md). Incompatible with
+**\--reverse-rebuild**.
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -128,7 +129,8 @@ welcome in case of unexpected failure.
 Rebuild the reverse dependency queue after upgrading. Please note that
 building against some packages, including **google-go-lang**, does not
 work without first sourcing a version-specific profile script.
-**\--reverse-rebuild** fails in such cases.
+**\--reverse-rebuild** fails in such cases. Incompatible with
+**\--noinstall**.
 
 **-r\|\--nointeractive**
 

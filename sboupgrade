@@ -150,8 +150,10 @@ if ($all) {
 
 if (!@ARGV) { show_usage(); exit 1 }
 
-usage_error("-r|--nointeractive and -z|--force-reqs can not be used together.")
+usage_error("nointeractive is incompatible with force-reqs.")
 	if $non_int && $force_reqs;
+usage_error("reverse-rebuild is incompatible with noinstall.")
+	if $reverse && $no_install;
 
 # if we can't find SLACKBUILDS.TXT in $config{SBO_HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
@@ -203,12 +205,12 @@ if ($non_int and not $reverse) {
 	if ($force) {
 		for my $sbo (@sbos) {
 			push @$upgrade_queue, $sbo if $inst_names{$sbo};
-			push @need_reverse, $sbo if auto_reverse($sbo);
+			push @need_reverse, $sbo if auto_reverse($sbo) and not $no_install;
 		}
 	} else {
 		for my $sbo (@sbos) {
 			push @$upgrade_queue, $sbo if $updates{$sbo};
-			push @need_reverse, $sbo if auto_reverse($sbo);
+			push @need_reverse, $sbo if auto_reverse($sbo) and not $no_install;
 		}
 	}
 	if (@need_reverse) {
