@@ -15,6 +15,7 @@ _arguments -s -C \
 	   '(-c --noclean)'{-c,--noclean}'[If TRUE, then do not clean working directories after build.]:clean work dirs?:((TRUE\:"Clean works directories" FALSE\:"Keep work directories"))' \
 	   '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code and the package after building.]:clean source and package?:((TRUE\:"Remove source and package" FALSE\:"Keep source and package"))' \
 	   '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \
+	   '(-R --reverse-rebuild)'{-R,--reverse-rebuild}'[Rebuild the reverse dependency queue after upgrading.]' \
 	   '(-r --nointeractive)'{-r,--nointeractive}'[Skip README.]' \
 	   '(-f --force)'{-f,--force}'[Force an upgrade (ignore version).]' \
 	   '(-z --force-reqs)'{-z,--force-reqs}'[Force update of requirements.]' \

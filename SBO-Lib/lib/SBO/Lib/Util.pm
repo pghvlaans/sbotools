@@ -40,6 +40,7 @@ my @EXPORT_CONFIG = qw{
 
 our @EXPORT_OK = (
   qw{
+    auto_reverse
     build_cmp
     check_multilib
     get_arch
@@ -152,6 +153,25 @@ our @listings = read_hints();
 
 =cut
 
+=head2 auto_reverse
+
+  my $result = auto_reverse($sbo)
+
+C<auto_reverse()> checks whether automatic reverse queue rebuilding for C<$sbo> has
+been requested. Note that global array C<@listings> is copied.
+
+=cut
+
+sub auto_reverse {
+  script_error("auto_reverse requires an argument.") unless @_ == 1;
+  my $sbo = shift;
+  my @loclistings = @listings;
+  for my $entry (@loclistings) {
+    next if grep { /\s/ } $entry;
+    return 1 if $entry eq "~$sbo"; }
+  return 0;
+}
+
 =head2 build_cmp
 
   my $cmp = build_cmp($build1, $build2, $ver1, $ver2);
@@ -236,7 +256,7 @@ sub get_optional {
   my @optional;
   my @loclistings = @listings;
   for my $entry (@loclistings) {
-    next if grep { /^#|^!/ } $entry;
+    next if grep { /^#|^!|^~/ } $entry;
     next if not grep { /\s$sbo$/ } $entry;
     $entry =~ s/\s$sbo$//;
     push @optional, split(" ", $entry);

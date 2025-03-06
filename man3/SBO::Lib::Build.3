@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Pungenday, Chaos 38, 3191 YOLD" "" "sbotools 3.4.2"
+.TH SBO::Lib::Build 3 "Setting Orange, Chaos 65, 3191 YOLD" "" "sbotools 3.4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -178,6 +178,14 @@ These arrays should not be included when called from outside of the subroutine.
 \&\f(CWget_full_reverse()\fR returns an array with installed reverse dependencies.
 .PP
 If any circular reverse dependencies are found, the script exits with \f(CW\*(C`_ERR_CIRCULAR\*(C'\fR.
+.SS get_full_reverse_queue
+.IX Subsection "get_full_reverse_queue"
+.Vb 1
+\&  my (@full_reverse_queue, %warnings) = get_full_reverse_queue($sbo ...)
+.Ve
+.PP
+\&\f(CWget_full_reverse_queue()\fR takes any number of SlackBuilds and returns a queue for a
+reverse rebuild and a warnings hash.
 .SS get_pkg_name
 .IX Subsection "get_pkg_name"
 .Vb 1

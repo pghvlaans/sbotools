@@ -22,7 +22,7 @@
     sboupgrade [-h|-v]
 
     sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \
-               [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiprz] \
+               [-b TRUE|FALSE] [-S TRUE|FALSE] [-fipRrz] \
 \--all\|sbo_name (sbo_name)
 
 ## DESCRIPTION
@@ -123,12 +123,21 @@ principle. As a best practice, **\--compat32** should be combined with
 package can be inspected prior to installation. GitHub Issues are
 welcome in case of unexpected failure.
 
+**-R\|\--reverse-rebuild**
+
+Rebuild the reverse dependency queue after upgrading. Please note that
+building against some packages, including **google-go-lang**, does not
+work without first sourcing a version-specific profile script.
+**\--reverse-rebuild** fails in such cases.
+
 **-r\|\--nointeractive**
 
 Bypass all user prompts and all dependency resolution for the requested
 SlackBuilds. Unless it is obvious that dependency resolution and build
 options are not required, this option should not be used with
-**sboupgrade**.
+**sboupgrade**. In case of reverse rebuilds with **\--reverse-rebuild**,
+and for scripts being rebuilt due to automatic reverse dependency
+rebuilding, any saved build options are used again.
 
 **-S\|\--strict-upgrades (FALSE\|TRUE)**
 

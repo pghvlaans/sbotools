@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Pungenday, Chaos 38, 3191 YOLD" "" "sbotools 3.4.2"
+.TH SBO::Lib::Util 3 "Setting Orange, Chaos 65, 3191 YOLD" "" "sbotools 3.4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -99,6 +99,14 @@ with \f(CW@listings\fR directly; in other situations, make a copy (see e.g.
 \&\f(CW@on_blacklist()\fR.)
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
+.SS auto_reverse
+.IX Subsection "auto_reverse"
+.Vb 1
+\&  my $result = auto_reverse($sbo)
+.Ve
+.PP
+\&\f(CWauto_reverse()\fR checks whether automatic reverse queue rebuilding for \f(CW$sbo\fR has
+been requested. Note that global array \f(CW@listings\fR is copied.
 .SS build_cmp
 .IX Subsection "build_cmp"
 .Vb 1

@@ -1,7 +1,8 @@
 # sbotools.hints
 
 # Use this file to blacklist scripts and request optional dependencies
-# on a per-script basis. See also sbohints(1).
+# or automatic reverse dependency rebuilds on a per-script basis. See
+# also sbohints(1).
 #
 # Commented lines are ignored. There should be no whitespace to the left
 # of any entry.
@@ -20,3 +21,10 @@
 # libcacard libnfs libiscsi qemu
 #
 # There may not be trailing whitespace.
+
+# To rebuild the reverse dependency queue of a script automatically
+# upon upgrade, prepend a tilde:
+#
+# ~libmodplug
+#
+# There may not be any whitespace in auto-reverse entries.

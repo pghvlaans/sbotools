@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_optional lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay %config $conf_dir @listings /;
+use SBO::Lib qw/ auto_reverse get_optional lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay %config $conf_dir @listings /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 
@@ -39,6 +39,8 @@ Options:
     add optional dependencies to scripts (clear with c).
   -O|--replace-optional:
     replace all optional dependencies for scripts (clear with c).
+  -r|--reverse:
+    add reverse dependency rebuild requests for scripts (clear with c).
   --reset:
     empty the blacklist and optional dependencies.
 
@@ -55,13 +57,14 @@ EOF
 
 my $hintfile = "$conf_dir/sbotools.hints";
 
-my ($help, $version, $list, $reset, $optional, $replace_optional, $blacklist, $clear, $query);
+my ($help, $version, $list, $reset, $reverse, $optional, $replace_optional, $blacklist, $clear, $query);
 
 GetOptions(
 	'help|h'              => \$help,
 	'version|v'           => \$version,
 	'list|l'              => \$list,
 	'reset'               => \$reset,
+	'reverse|r'           => \$reverse,
 	'optional|o'          => \$optional,
 	'replace_optional|O'  => \$replace_optional,
 	'clear|c'             => \$clear,
@@ -83,14 +86,14 @@ unless (@ARGV or $list) { show_usage(); exit 0; }
 
 lint_sbo_config($self, %config);
 
-if (($blacklist and ($optional or $replace_optional)) or ($optional and $replace_optional)) {
-	usage_error("optional, replace_optional and blacklist cannot be used together.");
+if (($blacklist and ($optional or $replace_optional or $reverse)) or ($optional and $replace_optional) or ($optional and $reverse) or ($replace_optional and $reverse)) {
+	usage_error("optional, replace_optional, reverse and blacklist cannot be used together.");
 }
 
 if ($list) { show_list(); exit 0; }
 if ($query) { make_query(); exit 0; }
 
-if ($reset and ($optional or $clear or $replace_optional or $blacklist or $clear)) {
+if ($reset and ($optional or $clear or $replace_optional or $blacklist or $clear or $reverse)) {
 	usage_error("reset cannot be used with other flags.");
 }
 
@@ -113,22 +116,31 @@ if ($replace_optional or $optional) {
 	}
 }
 
-if ($blacklist) {
+if ($blacklist or $reverse) {
 	unless (@ARGV) { show_usage(); exit 0; }
-	for my $target (uniq @ARGV) { alter_blacklist($target); }
+	for my $target (uniq @ARGV) { alter_designation($target); }
 }
 
-# Takes one script to be added or cleared from the blacklist
-# at a time.
-sub alter_blacklist {
-	script_error("alter_blacklist requires an argument.") unless @_;
+# Takes one script to be added or cleared at a time. If flag
+# -b or -cb, alter the blacklist. If flag -r or -cr, add or clear
+# reverse dependency rebuild requests.
+sub alter_designation {
+	script_error("alter_designation requires an argument.") unless @_;
 	my $sbo = shift;
-	if ($clear and not on_blacklist($sbo)) {
+	if ($clear and $blacklist and not on_blacklist($sbo)) {
 		wrapsay "$sbo is not on the blacklist.";
 		return;
 	}
-	if (on_blacklist($sbo) and not $clear) {
+	if ($blacklist and on_blacklist($sbo) and not $clear) {
 		wrapsay "$sbo is already on the blacklist.";
+		return;
+	}
+	if ($clear and $reverse and not auto_reverse($sbo)) {
+		wrapsay "$sbo does not have a reverse dependency rebuild request.";
+		return;
+	}
+	if ($reverse and auto_reverse($sbo) and not $clear) {
+		wrapsay "$sbo already has a reverse dependency rebuild request.";
 		return;
 	}
 	if ($clear) {
@@ -140,10 +152,15 @@ sub alter_blacklist {
 			warn $rfh;
 			exit $rexit;
 		}
-		wrapsay "Clearing $sbo from the blacklist...";
-		# flag -cb; only write back lines that don't blacklist
-		# $sbo
-		for my $line (<$rfh>) { push @incoming, $line unless $line =~ m/^\!$sbo$/; }
+		# flag -cb/-cr; only write back lines that don't alter the
+		# designation for $sbo
+		if ($blacklist) {
+			wrapsay "Clearing $sbo from the blacklist...";
+			for my $line (<$rfh>) { push @incoming, $line unless $line =~ m/^\!$sbo$/; }
+		} else {
+			wrapsay "Clearing reverse dependency rebuild request for $sbo...";
+			for my $line (<$rfh>) { push @incoming, $line unless $line =~ m/^\~$sbo$/; }
+		}
 		close $rfh;
 		my ($fh, $exit) = open_fh($hintfile, ">");
 		if ($exit) {
@@ -160,9 +177,15 @@ sub alter_blacklist {
 			warn $fh;
 			exit $exit;
 		}
-		wrapsay "Blacklisting $sbo...";
-		# flag -b; print a new line blacklisting $sbo
-		print {$fh} "!$sbo\n";
+		# flag -b/-r; print a new line blacklisting/requesting reverse
+		# rebuilds for $sbo
+		if ($blacklist) {
+			wrapsay "Blacklisting $sbo...";
+			print {$fh} "!$sbo\n";
+		} else {
+			wrapsay "Requesting reverse dependency rebuilds for $sbo...";
+			print {$fh} "~$sbo\n";
+		}
 		close $fh;
 	}
 }
@@ -174,6 +197,10 @@ sub make_query {
 		print "\n" if $made_output;
 		if (on_blacklist($sbo)) {
 			say "$sbo is blacklisted.";
+			$made_output = 1;
+		}
+		if (auto_reverse($sbo)) {
+			wrapsay "$sbo has automatic reverse dependency rebuilding.";
 			$made_output = 1;
 		}
 		if (my @optionals = get_optional($sbo)) {
@@ -332,14 +359,14 @@ sub reset_all {
 # in a list of optional dependencies is blacklisted, note that fact.
 sub show_list {
 	my @loclistings = @listings;
-	my $message = "The blacklist is empty and no optional dependency requests could be identified.";
+	my $message = "The blacklist is empty and no optional dependency or reverse dependency rebuild requests could be identified.";
 	unless (@loclistings) {
 		wrapsay $message;
 		exit 0;
 	}
 	my (@candlist, @ineffectuals, @ineffectual_requests);
 	for my $listing (@loclistings) {
-		$listing =~ s/^\!//;
+		$listing =~ s/^(\!|~)//;
 		my @members = split(" ", $listing);
 		next if not @members;
 		for my $cand (@members) { push @candlist, $cand; }
@@ -350,11 +377,15 @@ sub show_list {
 	}
 	@candlist = uniq @candlist;
 	@candlist = sort @candlist;
-	my ($wrote_blacklist, $wrote_optional, @blacklisted);
+	my ($wrote_blacklist, $wrote_auto_reverse, $wrote_optional, @blacklisted, @has_auto_reverse);
 	for my $sbo (@candlist) {
 		if (on_blacklist($sbo)) {
 			push @blacklisted, $sbo unless grep {/^$sbo$/} @blacklisted;
 			$wrote_blacklist = 1;
+		}
+		if (auto_reverse($sbo)) {
+			push @has_auto_reverse, $sbo unless grep {/^$sbo$/} @has_auto_reverse;
+			$wrote_auto_reverse = 1;
 		}
 	}
 	if (@blacklisted == 1) {
@@ -368,9 +399,22 @@ sub show_list {
 		}
 		$wrote_blacklist = 1;
 	}
+	if (@has_auto_reverse == 1) {
+		say " " if $wrote_blacklist;
+		my $result = shift @has_auto_reverse;
+		wrapsay "$result has reverse dependency rebuilding.";
+		$wrote_auto_reverse = 1;
+	} elsif (@has_auto_reverse) {
+		say " " if $wrote_blacklist;
+		wrapsay "The following scripts have reverse dependency rebuilding:";
+		for my $sbo (@has_auto_reverse) {
+			say "$sbo";
+		}
+		$wrote_auto_reverse= 1;
+	}
 	for my $sbo (@candlist) {
 		if (my @optionals = get_optional($sbo)) {
-			say " " if $wrote_blacklist or $wrote_optional;
+			say " " if $wrote_blacklist or $wrote_optional or $wrote_auto_reverse;
 			if (@optionals == 1) {
 				say "Optional dependency request for $sbo:";
 			} else {

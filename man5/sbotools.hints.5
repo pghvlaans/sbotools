@@ -3,7 +3,7 @@
 .P
 .B
 sbotools.hints
-- blacklist and optional dependency requests for
+- blacklist, reverse dependency rebuild and optional dependency requests for
 .B
 sbotools
 .SH DESCRIPTION
@@ -26,6 +26,18 @@ an exclamation mark:
 
 .RE
 Blacklist entries supersede optional dependency requests.
+.P
+To ask
+.B
+sboupgrade(1)
+to rebuild a script's reverse dependencies upon upgrade, place the name of the
+script on its own line with no whitespace, prepending a tilde:
+.RS
+
+~libmodplug
+
+
+.RE
 .P
 Many scripts on
 .B

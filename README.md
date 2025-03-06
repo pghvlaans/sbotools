@@ -6,7 +6,8 @@
   * **sboclean**: Remove cruft by cleaning source archives, build directories and saved build options.
   * **sboconfig**: A command line interface for changing settings.
   * **sbofind**: Search the local copy of the repository.
-  * **sbohints**: Query and modify the blacklist and optional dependency requests.
+  * **sbohints**: Query and modify the blacklist and requests for optional dependencies and reverse
+dependency rebuilds.
   * **sboinstall**: Install SlackBuilds with their dependencies; handle compat32 packages and build from templates.
   * **sboremove**: Interactively remove installed SlackBuilds along with any unused dependencies.
   * **sboupgrade**: Upgrade previously-installed SlackBuilds.
@@ -26,6 +27,9 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboclean, sboremove, sboinstall, sboupgrade: Exit with unknown options
     * Thanks to Slack Coder for the suggestion.
   * sbohints: Via Util.pm, only show optional dependencies once per script when listing
+  * sboupgrade: Add --reverse-rebuild to rebuild a reverse dependency queue upon upgrade
+  * sbotools.hints: Prepend a tilde to a script to request automatic reverse dependency rebuilds upon upgrade
+  * sbohints: Add and clear reverse dependency rebuild requests with -r and -cr
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue

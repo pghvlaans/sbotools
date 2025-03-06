@@ -10,7 +10,7 @@ sbohints [-h | -v]
 .P
 sbohints [-l | --reset]
 .P
-sbohints [-c] [-b | -o | -O] sbo_name (sbo_name)
+sbohints [-c] [-b | -o | -O | -r] sbo_name (sbo_name)
 .P
 sbohints [-q] sbo_name (sbo_name)
 .SH DESCRIPTION
@@ -18,7 +18,8 @@ sbohints [-q] sbo_name (sbo_name)
 .B
 sbohints
 is a script for querying and editing the blacklist
-and optional dependency requests made in
+and requests for optional dependencies and automatic
+reverse dependency rebuilds made in
 .B
 sbotools.hints(5)\fR\
 \&. The modification flags are
@@ -90,6 +91,21 @@ dependencies appears.
 .RE
 .P
 .B
+-r|--reverse
+.RS
+Add (or, with
+.B
+--clear\fR\
+\&, clear) automatic reverse dependency rebuild requests
+for one or more scripts. Please note that building against
+some packages, such as
+.B
+google-go-lang\fR\
+\&, fails unless a version-specific profile script has been
+sourced. Requesting reverse dependency rebuilds for such
+packages is not advised.
+.P
+.B
 -c|--clear
 .RS
 This flag is used together with one (and only one) of
@@ -97,10 +113,13 @@ This flag is used together with one (and only one) of
 --blacklist\fR\
 \&,
 .B
---optional
+--optional\fR\
+\&,
+.B
+--replace-optional
 or
 .B
---replace-optional\fR\
+--reverse\fR\
 \&. For
 .B
 --blacklist
@@ -111,6 +130,11 @@ and
 .B
 --replace-optional\fR\
 \&, clear all existing optional dependency requests.
+For
+.B
+--reverse\fR\
+\&, clear automatic reverse dependency rebuild requests
+instead of adding them.
 .RE
 .P
 .B

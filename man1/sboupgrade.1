@@ -9,7 +9,7 @@ sboupgrade
 sboupgrade [-h|-v]
 .P
 sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \\
-           [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiprz] \\
+           [-b TRUE|FALSE] [-S TRUE|FALSE] [-fipRrz] \\
            --all|sbo_name (sbo_name)
 .SH DESCRIPTION
 .P
@@ -289,6 +289,19 @@ to installation. GitHub Issues are welcome in case of unexpected failure.
 .RE
 .P
 .B
+-R|--reverse-rebuild
+.RS
+Rebuild the reverse dependency queue after upgrading. Please note that building
+against some packages, including
+.B
+google-go-lang\fR\
+\&, does not work without first sourcing a version-specific profile script.
+.B
+--reverse-rebuild
+fails in such cases.
+.RE
+.P
+.B
 -r|--nointeractive
 .RS
 Bypass all user prompts and all dependency resolution for
@@ -297,7 +310,11 @@ resolution and build options are not required, this option should
 not be used with
 .B
 sboupgrade\fR\
-\&.
+\&. In case of reverse rebuilds with
+.B
+--reverse-rebuild\fR\
+\&, and for scripts being rebuilt due to automatic reverse dependency rebuilding,
+any saved build options are used again.
 .RE
 .P
 .B

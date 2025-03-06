@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_sbo_location get_inst_names get_installed_packages get_build_queue get_sbo_locations in merge_queues user_prompt process_sbos print_failures verify_gpg %config show_version lint_sbo_config wrapsay /;
+use SBO::Lib qw/ auto_reverse get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_packages get_build_queue get_sbo_locations in merge_queues user_prompt process_sbos print_failures verify_gpg %config show_version lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -46,6 +46,8 @@ Options (defaults shown first where applicable):
     specify the number of parallel jobs (make).
   -p|--compat32:
     install a -compat32 package (multilib systems only).
+  -R|--reverse-rebuild:
+    rebuild the reverse dependency queue after upgrading.
   -r|--nointeractive:
     non-interactive; skips README and all prompts.
   -S|--strict-upgrades (FALSE|TRUE):
@@ -63,7 +65,7 @@ my $jobs = $config{JOBS};
 my $build_ignore = $config{BUILD_IGNORE};
 my $gpg = $config{GPG_VERIFY};
 my $strict_upgrades = $config{STRICT_UPGRADES};
-my ($help, $vers, $force, $no_install, $non_int, $force_reqs, $all);
+my ($help, $vers, $force, $no_install, $non_int, $force_reqs, $reverse, $all);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -73,6 +75,7 @@ my $options_ok = GetOptions(
 	'force|f'           => \$force,
 	'noinstall|i'       => \$no_install,
 	'jobs|j=s'          => \$jobs,
+	'reverse-rebuild|R' => \$reverse,
 	'nointeractive|r'   => \$non_int,
 	'force-reqs|z'      => \$force_reqs,
 	'build-ignore|b=s'	=> \$build_ignore,
@@ -191,18 +194,30 @@ if (not $non_int or not $force) {
 }
 
 my $upgrade_queue = [];
-my %warnings;
+my (%warnings, @reverse_rebuilds);
 
 # doesn't matter what's updatable and what's not if force is specified,
 # but without force, we only want to update what there are updates for
-if ($non_int) {
+if ($non_int and not $reverse) {
+	my (@need_reverse, $extra_queue);
 	if ($force) {
 		for my $sbo (@sbos) {
 			push @$upgrade_queue, $sbo if $inst_names{$sbo};
+			push @need_reverse, $sbo if auto_reverse($sbo);
 		}
 	} else {
 		for my $sbo (@sbos) {
 			push @$upgrade_queue, $sbo if $updates{$sbo};
+			push @need_reverse, $sbo if auto_reverse($sbo);
+		}
+	}
+	if (@need_reverse) {
+		($extra_queue, %warnings) = get_full_reverse_queue(\@need_reverse);
+		if ($extra_queue) {
+			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
+			for my $rebuild (@$upgrade_queue) {
+				push @reverse_rebuilds, $rebuild;
+			}
 		}
 	}
 } else {
@@ -210,6 +225,7 @@ if ($non_int) {
 		my $name = $sbo;
 		$name =~ s/-compat32$//;
 		next if not $name;
+		my ($extra_queue, %extra_warnings);
 		unless ($force_reqs or $force) {
 			next unless $updates{$name};
 		}
@@ -218,26 +234,39 @@ if ($non_int) {
 			@$queue = grep { !$inst_names{$_} or $updates{$_} } @$queue;
 		}
 		push @$queue, $name if $force;
-		my $cqueue;
-		# get locations for all the things
-		my %locs = get_sbo_locations($queue);
-		my %clocs;
-		# -compat32-ify the queue and locations if appropriate
-		if ($sbo =~ /-compat32$/) {
-			$cqueue = $queue;
-			s/$/-compat32/g for @$cqueue;
-			$queue = $cqueue;
-			for my $key (keys %locs) {
-				my $val = $locs{$key};
-				$key =~ s/$/-compat32/;
-				$clocs{$key} = $val;
-			}
-			%locs = %clocs;
+		# reverse rebuild requested or designated for auto reverse rebuild
+		if ($reverse) {
+			($extra_queue, %extra_warnings) = get_full_reverse_queue(\@$queue);
+		} else {
+			my @need_reverse;
+			for my $sbo (@$queue) { push @need_reverse, $sbo if auto_reverse($sbo); }
+			($extra_queue, %extra_warnings) = get_full_reverse_queue(\@need_reverse);
 		}
-		@locations{keys %locs} = values %locs;
+		%warnings = (%warnings, %extra_warnings);
+		$queue = merge_queues($queue, $extra_queue) if $extra_queue;
 		$upgrade_queue = merge_queues($upgrade_queue, $queue);
 	}
 }
+
+my $cqueue;
+# get locations for all the things
+my %locs = get_sbo_locations($upgrade_queue);
+my %clocs;
+# -compat32-ify the queue and locations if appropriate
+for my $item (@$upgrade_queue) {
+	if ($item =~ /-compat32$/) {
+		$cqueue = $upgrade_queue;
+		s/$/-compat32/g for @$cqueue;
+		$upgrade_queue = $cqueue;
+		for my $key (keys %locs) {
+			my $val = $locs{$key};
+			$key =~ s/$/-compat32/;
+			$clocs{$key} = $val;
+		}
+		%locs = %clocs;
+	}
+}
+@locations{keys %locs} = values %locs;
 
 # Get user input regarding upgrades
 my (@temp_queue, %commands, %options);
@@ -266,6 +295,20 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		$options{$sbo} = $opts;
 		say "$sbo added to upgrade queue.";
 	} else {
+		# reuse build options automatically in case of reverse
+		# rebuild
+		if ($reverse or grep {/^$sbo$/} @reverse_rebuilds) {
+			my $opts_log = "/var/log/sbotools/$sbo";
+			if (-f $opts_log) {
+				my ($prev_fh, $exit) = open_fh($opts_log, '<');
+				if ($exit) {
+					warn $prev_fh;
+				} else {
+					my $opts = <$prev_fh>;
+					$options{$sbo} = $opts;
+				}
+			}
+		}
 		push(@temp_queue, $sbo);
 		say "\n$sbo added to upgrade queue.";
 	}

@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ %config _ERR_OPENFH get_arch get_build_queue get_full_reverse get_installed_cpans get_installed_packages get_reverse_reqs get_sbo_location get_sbo_locations in merge_queues on_blacklist open_fh print_failures process_sbos prompt show_version slackbuilds_or_fetch slurp uniq usage_error user_prompt verify_gpg lint_sbo_config wrapsay /;
+use SBO::Lib qw/ %config _ERR_OPENFH get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_reverse_reqs get_sbo_location get_sbo_locations in merge_queues on_blacklist open_fh print_failures process_sbos prompt show_version slackbuilds_or_fetch slurp uniq usage_error user_prompt verify_gpg lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -190,36 +190,7 @@ if (length $utemp) {
 	if (not $reverse_rebuild and ($no_reqs or $non_int)) {
 		$build_queue = \@ARGV;
 	} elsif ($reverse_rebuild) {
-		my @all_installed = @{ get_installed_packages('ALL') };
-		my $all_installed = +{ map {; $_->{name}, $_->{pkg} } @all_installed };
-		my @namelist;
-		for my $item (@all_installed) { push @namelist, $item->{name}; }
-
-		my @installed = @{ get_installed_packages('SBO') };
-		my $installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
-		my $fulldeps = get_reverse_reqs($installed);
-		REVERSE: for my $sbo (@ARGV) {
-			# ensure that targeted scripts do not depend on each other
-			my $check_queue = get_build_queue([$sbo], \%warnings);
-			@$check_queue = grep { !/^$sbo$/ } @$check_queue;
-			for my $sbo2 (@ARGV) { next REVERSE if grep { /^$sbo2$/ } @$check_queue; }
-
-			my $interim_queue;
-			my @full_reverse = get_full_reverse($sbo, $installed, $fulldeps);
-			if (@full_reverse) {
-				for my $revdep (@full_reverse) {
-					my $queue = get_build_queue([$revdep], \%warnings);
-					# for items not in the reverse queue, install only if missing
-					for my $cand (@$queue) {
-						if (grep { /^$cand$/ } @full_reverse or not grep { /^$cand$/ } @namelist) {
-							push @$interim_queue, $cand;
-						}
-					}
-				}
-				@$interim_queue = grep { !/^$sbo$/ } @$interim_queue;
-			}
-			$build_queue = merge_queues($build_queue, $interim_queue) if $interim_queue;
-		}
+		($build_queue, %warnings) = get_full_reverse_queue(\@ARGV);
 		exit 0 unless $build_queue;
 	} else {
 		for my $sbo (@ARGV) {

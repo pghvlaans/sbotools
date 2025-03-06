@@ -8,8 +8,9 @@ our $VERSION = '3.4.2';
 
 use SBO::Lib::Util qw/ :const prompt script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh uniq save_options wrapsay %config in /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
-use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires /;
+use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires get_reverse_reqs /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
+use SBO::Lib::Pkgs qw/ get_installed_packages /;
 
 use Exporter 'import';
 use Fcntl qw(F_SETFD F_GETFD);
@@ -30,6 +31,7 @@ our @EXPORT_OK = qw{
   get_dc_regex
   get_full_queue
   get_full_reverse
+  get_full_reverse_queue
   get_pkg_name
   get_src_dir
   get_tmp_extfn
@@ -355,6 +357,52 @@ sub get_full_reverse {
     push @reverse_concluded, $sbo;
   }
   return;
+}
+
+=head2 get_full_reverse_queue
+
+  my (@full_reverse_queue, %warnings) = get_full_reverse_queue($sbo ...)
+
+C<get_full_reverse_queue()> takes any number of SlackBuilds and returns a queue for a
+reverse rebuild and a warnings hash.
+
+=cut
+
+sub get_full_reverse_queue {
+  script_error("get_full_reverse_queue requires at least one argument.") unless @ARGV;
+  my @all_installed = @{ get_installed_packages('ALL') };
+  my $all_installed = +{ map {; $_->{name}, $_->{pkg} } @all_installed };
+  my @namelist;
+  for my $item (@all_installed) { push @namelist, $item->{name}; }
+
+  my @installed = @{ get_installed_packages('SBO') };
+  my $installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
+  my $fulldeps = get_reverse_reqs($installed);
+  my ($return_queue, %warnings);
+  REVERSE: for my $sbo (@ARGV) {
+    # ensure that targeted scripts do not depend on each other
+    my $check_queue = get_build_queue([$sbo], \%warnings);
+    @$check_queue = grep { !/^$sbo$/ } @$check_queue;
+    for my $sbo2 (@ARGV) { next REVERSE if grep { /^$sbo2$/ } @$check_queue; }
+
+    my $interim_queue;
+    my @full_reverse = get_full_reverse($sbo, $installed, $fulldeps);
+    if (@full_reverse) {
+      for my $revdep (@full_reverse) {
+        my $queue = get_build_queue([$revdep], \%warnings);
+        # for items not in the reverse queue, install only if missing
+        for my $cand (@$queue) {
+          if (grep { /^$cand$/ } @full_reverse or not grep { /^$cand$/ } @namelist) {
+            push @$interim_queue, $cand;
+          }
+        }
+      }
+      @$interim_queue = grep { !/^$sbo$/ } @$interim_queue;
+    }
+    $return_queue = merge_queues($return_queue, $interim_queue) if $interim_queue;
+  }
+  return ($return_queue, %warnings) if $return_queue;
+  return 0;
 }
 
 =head2 get_pkg_name
