@@ -10,8 +10,8 @@
 
 ## NAME
 
-**sbotools.hints** - blacklist and optional dependency requests for
-**sbotools**
+**sbotools.hints** - blacklist, reverse dependency rebuild and optional
+dependency requests for **sbotools**
 
 ## DESCRIPTION
 
@@ -25,6 +25,12 @@ own line with no whitespace, prepending an exclamation mark:
     !javacc 
 
 Blacklist entries supersede optional dependency requests.
+
+To ask [sboupgrade(1)](sboupgrade.1.md) to rebuild a script's reverse dependencies upon
+upgrade, place the name of the script on its own line with no
+whitespace, prepending a tilde:
+
+˜libmodplug
 
 Many scripts on **SlackBuilds.org** have optional dependencies. To make
 **sbotools** recognize one or more optional dependencies for a script,

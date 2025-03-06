@@ -11,7 +11,7 @@ The pages here reflect post-release development. For the version 3.4.1 pages (20
 * [sbofind(1)](sbofind.1.md)
     * Search the local copy of the repository for SlackBuilds.
 * [sbohints(1)](sbohints.1.md)
-    * Query and modify the blacklist and optional dependency requests.
+    * Query and modify the blacklist and requests for optional dependencies and reverse dependency rebuilds
 * [sboinstall(1)](sboinstall.1.md)
     * Install SlackBuilds with their dependencies; handle compat32 packages and build from templates.
 * [sboremove(1)](sboremove.1.md)

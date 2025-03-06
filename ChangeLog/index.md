@@ -7,6 +7,9 @@
   * *sboclean*, *sboremove*, *sboinstall*, *sboupgrade*: Exit with unknown options
     * Thanks to Slack Coder for the suggestion.
   * *sbohints*: Via *Util.pm*, only show optional dependencies once per script when listing
+  * *sboupgrade*: Add **\--reverse-rebuild** to rebuild a reverse dependency queue upon upgrade
+  * *sbotools.hints*: Prepend a tilde to a script to request automatic reverse dependency rebuilds upon upgrade
+  * *sbohints*: Add and clear reverse dependency rebuild requests with **\-r** and **\-cr**
 
 * 3.4.2 - 2025-02-07
   * *Build.pm*: When distcleaning, do not delete files that are needed later in the queue

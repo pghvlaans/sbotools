@@ -22,17 +22,17 @@
 
     sbohints [-l | --reset]
 
-    sbohints [-c] [-b | -o | -O] sbo_name (sbo_name)
+    sbohints [-c] [-b | -o | -O | -r] sbo_name (sbo_name)
 
     sbohints [-q] sbo_name (sbo_name)
 
 ## DESCRIPTION
 
 **sbohints** is a script for querying and editing the blacklist and
-optional dependency requests made in [sbotools.hints(5)](sbotools.hints.5.md). The
-modification flags are **\--blacklist**, **\--optional** and
-**\--replace-optional**. These can be used in conjunction with
-**\--clear**, but not with each other.
+requests for optional dependencies and automatic reverse dependency
+rebuilds made in [sbotools.hints(5)](sbotools.hints.5.md). The modification flags are
+**\--blacklist**, **\--optional** and **\--replace-optional**. These can
+be used in conjunction with **\--clear**, but not with each other.
 
 Non-root users can only call **sbohints** with the **\--list**,
 **\--query**, **\--help** and **\--version** flags. If an invalid
@@ -59,13 +59,22 @@ scripts. The current optional dependencies are displayed together with a
 prompt for the new request list. If used with **\--clear**, a
 confirmation prompt for clearing the optional dependencies appears.
 
+**-r\|\--reverse**
+
+Add (or, with **\--clear**, clear) automatic reverse dependency rebuild
+requests for one or more scripts. Please note that building against some
+packages, such as **google-go-lang**, fails unless a version-specific
+profile script has been sourced. Requesting reverse dependency rebuilds
+for such packages is not advised.
+
 **-c\|\--clear**
 
 This flag is used together with one (and only one) of **\--blacklist**,
-**\--optional** or **\--replace-optional**. For **\--blacklist** and
-**\--optional**, clear entries instead of adding them. For
-**\--replace-optional**, clear all existing optional dependency
-requests.
+**\--optional**, **\--replace-optional** or **\--reverse**. For
+**\--blacklist** and **\--optional**, clear entries instead of adding
+them. For **\--replace-optional**, clear all existing optional
+dependency requests. For **\--reverse**, clear automatic reverse
+dependency rebuild requests instead of adding them.
 
 **-l\|\--list**
 
