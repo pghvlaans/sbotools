@@ -27,10 +27,13 @@ sbotools.hints(5)\fR\
 --blacklist\fR\
 \&,
 .B
---optional
+--optional\fR\
+\&,
+.B
+--replace-optional
 and
 .B
---replace-optional\fR\
+--reverse\fR\
 \&. These can be used in conjunction with
 .B
 --clear\fR\
@@ -104,6 +107,7 @@ google-go-lang\fR\
 \&, fails unless a version-specific profile script has been
 sourced. Requesting reverse dependency rebuilds for such
 packages is not advised.
+.RE
 .P
 .B
 -c|--clear
@@ -122,26 +126,25 @@ or
 --reverse\fR\
 \&. For
 .B
---blacklist
+--blacklist\fR\
+\&,
+.B
+--optional
 and
 .B
---optional\fR\
+--reverse\fR\
 \&, clear entries instead of adding them. For
 .B
 --replace-optional\fR\
 \&, clear all existing optional dependency requests.
-For
-.B
---reverse\fR\
-\&, clear automatic reverse dependency rebuild requests
-instead of adding them.
 .RE
 .P
 .B
 -l|--list
 .RS
-List the current blacklist and all optional dependency
-requests. If a blacklisted script has optional dependency
+List the current blacklist and all requests for optional
+dependencies and automatic reverse dependency rebuilds.
+If a blacklisted script has optional dependency
 requests or is requested as an optional depenedency, the
 user is notified. The
 .B
@@ -152,10 +155,11 @@ flag can be used without root privileges.
 .B
 -q|--query
 .RS
-Return the current blacklist and optional dependency request
-status for one or more scripts. There is no output unless the
-queried script is blacklisted, has optional dependency
-requests or is on an optional dependency request list. The
+Return the current blacklist, optional dependency and automatic
+reverse dependency rebuild status for one or more scripts. There
+is no output unless the queried script is blacklisted, has optional
+dependency requests, is on an optional dependency request list, or
+has automatic reverse dependency rebuilds. The
 .B
 --query
 flag can be used without root privileges.
@@ -164,8 +168,8 @@ flag can be used without root privileges.
 .B
 --reset
 .RS
-Clear the blacklist and all optional dependency requests upon
-confirmation.
+Clear the blacklist and all requests for optional dependencies and
+automatic reverse dependency rebuilds upon confirmation.
 .RE
 .P
 .B
@@ -216,4 +220,3 @@ Andreas Guldstrand <andreas.guldstrand@gmail.com>
 .SH MAINTAINER
 .P
 K. Eugene Carlson <kvngncrlsn@gmail.com>
-
