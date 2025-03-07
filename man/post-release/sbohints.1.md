@@ -31,8 +31,9 @@
 **sbohints** is a script for querying and editing the blacklist and
 requests for optional dependencies and automatic reverse dependency
 rebuilds made in [sbotools.hints(5)](sbotools.hints.5.md). The modification flags are
-**\--blacklist**, **\--optional** and **\--replace-optional**. These can
-be used in conjunction with **\--clear**, but not with each other.
+**\--blacklist**, **\--optional**, **\--replace-optional** and
+**\--reverse**. These can be used in conjunction with **\--clear**, but
+not with each other.
 
 Non-root users can only call **sbohints** with the **\--list**,
 **\--query**, **\--help** and **\--version** flags. If an invalid
@@ -71,30 +72,31 @@ for such packages is not advised.
 
 This flag is used together with one (and only one) of **\--blacklist**,
 **\--optional**, **\--replace-optional** or **\--reverse**. For
-**\--blacklist** and **\--optional**, clear entries instead of adding
-them. For **\--replace-optional**, clear all existing optional
-dependency requests. For **\--reverse**, clear automatic reverse
-dependency rebuild requests instead of adding them.
+**\--blacklist**, **\--optional** and **\--reverse**, clear entries
+instead of adding them. For **\--replace-optional**, clear all existing
+optional dependency requests.
 
 **-l\|\--list**
 
-List the current blacklist and all optional dependency requests. If a
-blacklisted script has optional dependency requests or is requested as
-an optional depenedency, the user is notified. The **\--list** flag can
-be used without root privileges.
+List the current blacklist and all requests for optional dependencies
+and automatic reverse dependency rebuilds. If a blacklisted script has
+optional dependency requests or is requested as an optional depenedency,
+the user is notified. The **\--list** flag can be used without root
+privileges.
 
 **-q\|\--query**
 
-Return the current blacklist and optional dependency request status for
-one or more scripts. There is no output unless the queried script is
-blacklisted, has optional dependency requests or is on an optional
-dependency request list. The **\--query** flag can be used without root
-privileges.
+Return the current blacklist, optional dependency and automatic reverse
+dependency rebuild status for one or more scripts. There is no output
+unless the queried script is blacklisted, has optional dependency
+requests, is on an optional dependency request list, or has automatic
+reverse dependency rebuilds. The **\--query** flag can be used without
+root privileges.
 
 **\--reset**
 
-Clear the blacklist and all optional dependency requests upon
-confirmation.
+Clear the blacklist and all requests for optional dependencies and
+automatic reverse dependency rebuilds upon confirmation.
 
 **-h\|\--help**
 
