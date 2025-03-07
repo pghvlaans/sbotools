@@ -126,8 +126,7 @@ if ($dist) {
 		if (-d $dir) {
 			opendir(my $dh2, $dir);
 			SECOND: while (my $ls2 = readdir $dh2) {
-				next SECOND if in($ls2 => qw/ . .. /);
-				rm_full("$dir/$ls2", 1);
+				rm_full("$dir/$ls2", 1) unless in($ls2 => qw/ . .. /);
 				remove_tree($dir) unless -f "$dir/$ls2";
 			}
 		} elsif (-f $dir) {

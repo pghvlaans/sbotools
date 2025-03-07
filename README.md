@@ -30,6 +30,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboupgrade: Add --reverse-rebuild to rebuild a reverse dependency queue upon upgrade
   * sbotools.hints: Prepend a tilde to a script to request automatic reverse dependency rebuilds upon upgrade
   * sbohints: Add and clear reverse dependency rebuild requests with -r and -cr
+  * sboclean: Properly remove empty directories from distfiles
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue
