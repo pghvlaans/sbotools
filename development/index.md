@@ -10,7 +10,9 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 ## Prospective Features
 
-Nothing for now, but requests are welcome and will receive due consideration.
+* Add **\--compat32** back to `sboupgrade`
+
+Nothing else for now, but requests are welcome and will receive due consideration.
 
 ## Incoming
 
@@ -21,3 +23,7 @@ The following feature changes will be included in version 3.5:
   * `sboupgrade`: Add **\--reverse-rebuild**
   * `sbotools.hints`: Request automatic reverse dependency rebuilds on a per-script basis
   * `sbohints`: Use **\--reverse** to add and clear reverse dependency rebuild requests
+  * `sboinstall`: Honor automatic reverse dependency rebuild requests
+* `sboupgrade`, `sboinstall`: Favor saved build options
+  * With `--nointeractive`, automatically reuse saved options unless `--norecall` is passed or when building from a template
+  * The default answer for the prompt to reuse saved options is now "yes".
