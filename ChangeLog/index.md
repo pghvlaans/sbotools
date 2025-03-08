@@ -8,7 +8,7 @@
     * Thanks to Slack Coder for the suggestion.
   * *sbohints*: Via *Util.pm*, only show optional dependencies once per script when listing
   * *sboupgrade*: Add **\--reverse-rebuild** to rebuild a reverse dependency queue upon upgrade
-  * *sbotools.hints*: Prepend a tilde to a script to request automatic reverse dependency rebuilds upon upgrade
+  * *sbotools.hints*: Prepend a tilde to a script to request automatic reverse dependency rebuilds upon upgrade or reinstall
   * *sbohints*: Add and clear reverse dependency rebuild requests with **\-r** and **\-cr**
   * *sboclean*: Properly remove empty directories from distfiles
   * *sboinstall*: Honor automatic reverse dependency rebuilds with **\--reinstall**
