@@ -9,13 +9,13 @@ sboinstall
 sboinstall [-h|-v]
 .P
 sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
-           [-ipRr] [--create-template FILE] sbo_name (sbo_name)
+           [-iopRr] [--create-template FILE] sbo_name (sbo_name)
 .P
 sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
            [-i] --use-template FILE
 .P
 sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
-           [-iqr] [--create-template FILE] --mass-rebuild
+           [-ioqr] [--create-template FILE] --mass-rebuild
 .SH DESCRIPTION
 .P
 .B
@@ -82,7 +82,16 @@ sboconfig(1)
 or
 .B
 sbotools.conf(5)\fR\
-\&.
+\&. When running with
+.B
+--nointeractive\fR\
+\&, saved build options are used automatically unless
+.B
+--norecall
+or
+.B
+--use-template
+are passed as well.
 .P
 .B
 sboinstall
@@ -234,6 +243,15 @@ is run.
 .RE
 .P
 .B
+-o|--norecall
+.RS
+Do not reuse saved build options if running with
+.B
+--nointeractive\fR\
+\&.
+.RE
+.P
+.B
 -p|--compat32
 .RS
 Create a compat32 package on multilib x86_64 systems.
@@ -260,10 +278,7 @@ to installation. GitHub Issues are welcome in case of unexpected failure.
 .RS
 Rebuild the reverse dependencies for the requested SlackBuilds.
 The build queue also includes any missing dependencies for
-those scripts. If run with
-.B
---nointeractive\fR\
-\&, any saved build options are used again. Incompatible with
+those scripts. Incompatible with
 .B
 --compat32\fR\
 \&,
@@ -289,8 +304,14 @@ as well except for
 and
 .B
 --reverse-rebuild\fR\
-\&. Unless it is obvious that dependency
-resolution and build options are not required, consider using
+\&. Saved build options will be reused automatically unless
+.B
+--norecall
+or
+.B
+--use-template
+are passed as well. Unless it is obvious that dependency
+resolution and new build options are not required, consider using
 a template instead.
 
 If an operation with

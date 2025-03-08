@@ -40,6 +40,8 @@ Options (defaults shown first where applicable):
     do not run installpkg after building.
   -j|--jobs (FALSE|#):
     specify the number of parallel jobs (make).
+  -o|--norecall:
+    do not use saved build options with nointeractive.
   -p|--compat32:
     install a -compat32 package (multilib systems only).
   -q|--reverse-rebuild:
@@ -66,7 +68,7 @@ my $noclean = $config{NOCLEAN};
 my $distclean = $config{DISTCLEAN};
 my $jobs = $config{JOBS};
 my $gpg = $config{GPG_VERIFY};
-my ($help, $vers, $no_install, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild);
+my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -75,6 +77,7 @@ my $options_ok = GetOptions(
 	'distclean|d=s'     => \$distclean,
 	'noinstall|i'       => \$no_install,
 	'jobs|j=s'          => \$jobs,
+	'norecall|o'        => \$no_recall,
 	'compat32|p'        => \$compat32,
 	'nointeractive|r'   => \$non_int,
 	'norequirements|R'  => \$no_reqs,
@@ -351,7 +354,9 @@ FIRST: for my $sbo (@$build_queue) {
 		$options{$sbo} = $opts;
 		say "$name$added";
 	} else {
-		if ($reverse_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
+		# if nointeractive, use saved build options unless reading a template
+		# or passing norecall
+		unless ($no_recall or $utemp) {
 			my $opts_log = "/var/log/sbotools/$sbo";
 			if (-f $opts_log) {
 				my ($prev_fh, $exit) = open_fh($opts_log, '<');

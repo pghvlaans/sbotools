@@ -32,6 +32,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbohints: Add and clear reverse dependency rebuild requests with -r and -cr
   * sboclean: Properly remove empty directories from distfiles
   * sboinstall: Honor automatic reverse dependency rebuilds with --reinstall
+  * sboinstall, sboupgrade: Automatically reuse saved build options with --nointeractive unless passing --norecall
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue

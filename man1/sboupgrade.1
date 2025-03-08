@@ -9,7 +9,7 @@ sboupgrade
 sboupgrade [-h|-v]
 .P
 sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \\
-           [-b TRUE|FALSE] [-S TRUE|FALSE] [-fipRrz] \\
+           [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiopRrz] \\
            --all|sbo_name (sbo_name)
 .SH DESCRIPTION
 .P
@@ -54,8 +54,7 @@ is judged to document options in
 .I
 KEY=VALUE
 form, a prompt for setting options appears. Any
-build options, whether passed interactively or in a
-template, are saved to
+build options used are saved to
 .I
 /var/log/sbotools
 when the SlackBuild runs.
@@ -67,7 +66,13 @@ CLASSIC
 is set to
 .B
 TRUE\fR\
-\&; if
+\&. When running with
+.B
+--nointeractive\fR\
+\&, saved build options are used automatically unless
+.B
+--norecall
+is passed as well. If
 .B
 STRICT_UPGRADES
 is
@@ -270,6 +275,15 @@ is run.
 .RE
 .P
 .B
+-o|--norecall
+.RS
+Do not reuse saved build options if running with
+.B
+--nointeractive\fR\
+\&.
+.RE
+.P
+.B
 -p|--compat32
 .RS
 Create a -compat32 package on multilib x86_64 systems.
@@ -311,16 +325,12 @@ fails in such cases. Incompatible with
 -r|--nointeractive
 .RS
 Bypass all user prompts and all dependency resolution for
-the requested SlackBuilds. Unless it is obvious that dependency
-resolution and build options are not required, this option should
-not be used with
+the requested SlackBuilds except in case of reverse dependency rebuilds.
+Saved build options will be reused automatically unless
 .B
-sboupgrade\fR\
-\&. In case of reverse rebuilds with
-.B
---reverse-rebuild\fR\
-\&, and for scripts being rebuilt due to automatic reverse dependency rebuilding,
-any saved build options are used again.
+--norecall
+is passed as well. Unless it is obvious that dependency resolution and
+new build options are not required, using this option is not recommended.
 .RE
 .P
 .B

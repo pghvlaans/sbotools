@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ auto_reverse get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_packages get_build_queue get_sbo_locations in merge_queues user_prompt process_sbos print_failures verify_gpg %config show_version lint_sbo_config wrapsay /;
+use SBO::Lib qw/ auto_reverse get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_packages get_build_queue get_sbo_locations in merge_queues open_fh user_prompt process_sbos print_failures verify_gpg %config show_version lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -44,6 +44,8 @@ Options (defaults shown first where applicable):
     do not run upgradepkg at the end of the build process.
   -j|--jobs (FALSE|#):
     specify the number of parallel jobs (make).
+  -o|--norecall:
+    do not use saved build options with nointeractive.
   -p|--compat32:
     install a -compat32 package (multilib systems only).
   -R|--reverse-rebuild:
@@ -65,7 +67,7 @@ my $jobs = $config{JOBS};
 my $build_ignore = $config{BUILD_IGNORE};
 my $gpg = $config{GPG_VERIFY};
 my $strict_upgrades = $config{STRICT_UPGRADES};
-my ($help, $vers, $force, $no_install, $non_int, $force_reqs, $reverse, $all);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $all);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -74,6 +76,7 @@ my $options_ok = GetOptions(
 	'distclean|d=s'     => \$distclean,
 	'force|f'           => \$force,
 	'noinstall|i'       => \$no_install,
+	'norecall|o'        => \$no_recall,
 	'jobs|j=s'          => \$jobs,
 	'reverse-rebuild|R' => \$reverse,
 	'nointeractive|r'   => \$non_int,
@@ -196,7 +199,7 @@ if (not $non_int or not $force) {
 }
 
 my $upgrade_queue = [];
-my (%warnings, @reverse_rebuilds);
+my %warnings;
 
 # doesn't matter what's updatable and what's not if force is specified,
 # but without force, we only want to update what there are updates for
@@ -215,12 +218,7 @@ if ($non_int and not $reverse) {
 	}
 	if (@need_reverse) {
 		($extra_queue, %warnings) = get_full_reverse_queue(\@need_reverse);
-		if ($extra_queue) {
-			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
-			for my $rebuild (@$upgrade_queue) {
-				push @reverse_rebuilds, $rebuild;
-			}
-		}
+		if ($extra_queue) { $upgrade_queue = merge_queues($upgrade_queue, $extra_queue); }
 	}
 } else {
 	for my $sbo (@sbos) {
@@ -297,9 +295,9 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		$options{$sbo} = $opts;
 		say "$sbo added to upgrade queue.";
 	} else {
-		# reuse build options automatically in case of reverse
-		# rebuild
-		if ($reverse or grep {/^$sbo$/} @reverse_rebuilds) {
+		# reuse build options automatically in nointeractive
+		# unless norecall is used
+		unless ($no_recall) {
 			my $opts_log = "/var/log/sbotools/$sbo";
 			if (-f $opts_log) {
 				my ($prev_fh, $exit) = open_fh($opts_log, '<');

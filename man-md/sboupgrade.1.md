@@ -22,7 +22,7 @@
     sboupgrade [-h|-v]
 
     sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \
-               [-b TRUE|FALSE] [-S TRUE|FALSE] [-fipRrz] \
+               [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiopRrz] \
 \--all\|sbo_name (sbo_name)
 
 ## DESCRIPTION
@@ -39,13 +39,15 @@ message.
 *README* files are parsed for **groupadd** and **useradd** commands, and
 **sboupgrade** offers to run them prior to building. If the *README* is
 judged to document options in *KEY=VALUE* form, a prompt for setting
-options appears. Any build options, whether passed interactively or in a
-template, are saved to */var/log/sbotools* when the SlackBuild runs.
+options appears. Any build options used are saved to */var/log/sbotools*
+when the SlackBuild runs.
 
 Please note that saved build options are not displayed when **CLASSIC**
-is set to **TRUE**; if **STRICT_UPGRADES** is **TRUE**, upgrades are
-only performed for non-override packages if the version or build number
-is apparently higher. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
+is set to **TRUE**. When running with **\--nointeractive**, saved build
+options are used automatically unless **\--norecall** is passed as well.
+If **STRICT_UPGRADES** is **TRUE**, upgrades are only performed for
+non-override packages if the version or build number is apparently
+higher. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
 
 **sboupgrade** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
@@ -114,6 +116,10 @@ retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
 If numerical, pass to the **-j** argument when a SlackBuild invoking
 **make** is run.
 
+**-o\|\--norecall**
+
+Do not reuse saved build options if running with **\--nointeractive**.
+
 **-p\|\--compat32**
 
 Create a -compat32 package on multilib x86_64 systems. This requires the
@@ -135,11 +141,11 @@ work without first sourcing a version-specific profile script.
 **-r\|\--nointeractive**
 
 Bypass all user prompts and all dependency resolution for the requested
-SlackBuilds. Unless it is obvious that dependency resolution and build
-options are not required, this option should not be used with
-**sboupgrade**. In case of reverse rebuilds with **\--reverse-rebuild**,
-and for scripts being rebuilt due to automatic reverse dependency
-rebuilding, any saved build options are used again.
+SlackBuilds except in case of reverse dependency rebuilds. Saved build
+options will be reused automatically unless **\--norecall** is passed as
+well. Unless it is obvious that dependency resolution and new build
+options are not required, or **\--reverse-rebuild** is passed as well,
+using this option is not recommended.
 
 **-S\|\--strict-upgrades (FALSE\|TRUE)**
 

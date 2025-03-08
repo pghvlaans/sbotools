@@ -22,13 +22,13 @@
     sboinstall [-h|-v]
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-ipRr] [--create-template FILE] sbo_name (sbo_name)
+               [-iopRr] [--create-template FILE] sbo_name (sbo_name)
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
                [-i] --use-template FILE
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-iqr] [--create-template FILE] --mass-rebuild
+               [-ioqr] [--create-template FILE] --mass-rebuild
 
 ## DESCRIPTION
 
@@ -49,7 +49,10 @@ options appears. Any build options, whether passed interactively or in a
 template, are saved to */var/log/sbotools* when the SlackBuild runs.
 
 Please note that saved build options are not displayed when **CLASSIC**
-is set to **TRUE**. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
+is set to **TRUE**. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md). When
+running with **\--nointeractive**, saved build options are used
+automatically unless **\--norecall** or **\--use-template** are passed
+as well.
 
 **sboinstall** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
@@ -103,6 +106,10 @@ retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
 If **numerical**, pass to the **-j** argument when a SlackBuild invoking
 **make** is run.
 
+**-o\|\--norecall**
+
+Do not reuse saved build options if running with **\--nointeractive**.
+
 **-p\|\--compat32**
 
 Create a compat32 package on multilib x86_64 systems. This requires the
@@ -116,8 +123,7 @@ welcome in case of unexpected failure.
 **-q\|\--reverse-rebuild**
 
 Rebuild the reverse dependencies for the requested SlackBuilds. The
-build queue also includes any missing dependencies for those scripts. If
-run with **\--nointeractive**, any saved build options are used again.
+build queue also includes any missing dependencies for those scripts.
 Incompatible with **\--compat32**, **\--norequirements**,
 **\--use-template** and **\--mass-rebuild**.
 
@@ -125,8 +131,10 @@ Incompatible with **\--compat32**, **\--norequirements**,
 
 Bypass all user prompts for the requested SlackBuilds. Dependency
 resolution is bypassed as well except for **\--mass-rebuild** and
-**\--reverse-rebuild**. Unless it is obvious that dependency resolution
-and build options are not required, consider using a template instead.
+**\--reverse-rebuild**. Saved build options will be reused automatically
+unless **\--norecall** or **\--use-template** are passed as well. Unless
+it is obvious that dependency resolution and new build options are not
+required, consider using a template instead.
 
 If an operation with **\--nointeractive** would install an in-tree
 *\_SBo* package in place of a package without this tag, a warning
