@@ -37,9 +37,10 @@ specified, **sboinstall** pulls the list of requirements from the *info*
 file for any specified SlackBuild. This is a recursive operation over
 all dependencies. **sboinstall** offers to install any non-installed
 dependencies in the build queue, taking blacklisted scripts and optional
-dependency specifications in [sbotools.hints(5)](sbotools.hints.5.md) into account. If
-circular dependencies are detected, the script exits with an error
-message.
+dependency specifications in [sbotools.hints(5)](sbotools.hints.5.md) into account. In case
+of **\--reinstall**, scripts with automatic reverse dependency rebuilds
+will have their reverse dependencies rebuilt as well. If circular
+dependencies are detected, the script exits with an error message.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
 **sboinstall** offers to run them prior to building. If the *README* is
@@ -138,7 +139,10 @@ prompts before proceeding with the build.
 
 **\--reinstall**
 
-Offer to reinstall all packages in the build queue.
+Offer to reinstall all packages in the build queue. If any of the
+packages have automatic reverse dependency rebuild requests, rebuild
+their reverese dependency queues as well. See [sbohints(1)](sbohints.1.md) or
+[sbotools.hints(5)](sbotools.hints.5.md).
 
 **\--create-template (FILE)**
 

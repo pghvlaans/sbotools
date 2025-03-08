@@ -38,8 +38,12 @@ the build queue, taking blacklisted scripts and optional dependency
 specifications in
 .B
 sbotools.hints(5)
-into account. If circular dependencies are detected, the
-script exits with an error message.
+into account. In case of
+.B
+--reinstall\fR\
+\&, scripts with automatic reverse dependency rebuilds will have
+their reverse dependencies rebuilt as well. If circular dependencies
+are detected, the script exits with an error message.
 .P
 .I
 README
@@ -312,7 +316,15 @@ user prompts before proceeding with the build.
 .B
 --reinstall
 .RS
-Offer to reinstall all packages in the build queue.
+Offer to reinstall all packages in the build queue. If any of the packages
+have automatic reverse dependency rebuild requests, rebuild their reverese
+dependency queues as well. See
+.B
+sbohints(1)
+or
+.B
+sbotools.hints(5)\fR\
+\&.
 .RE
 .P
 .B
