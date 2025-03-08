@@ -212,13 +212,9 @@ if (length $utemp) {
 	}
 }
 if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild) {
-	for my $script (@$build_queue) {
-		if (auto_reverse($script)) {
-			my ($script_extra, %script_warnings) = get_full_reverse_queue($script);
-			$extra_queue = merge_queues($extra_queue, $script_extra) if $script_extra;
-			%extra_warnings = (%extra_warnings, %script_warnings);
-		}
-	}
+	my @needs_rebuild;
+	for my $script (@$build_queue) { push @needs_rebuild, $script if auto_reverse($script); }
+	($extra_queue, %extra_warnings) = get_full_reverse_queue(\@needs_rebuild) if @needs_rebuild;
 	if ($extra_queue) {
 		$build_queue = merge_queues($build_queue, $extra_queue);
 		%warnings = (%warnings, %extra_warnings);

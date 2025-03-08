@@ -364,7 +364,8 @@ sub get_full_reverse {
   my (@full_reverse_queue, %warnings) = get_full_reverse_queue($sbo ...)
 
 C<get_full_reverse_queue()> takes any number of SlackBuilds and returns a queue for a
-reverse rebuild and a warnings hash.
+reverse rebuild and a warnings hash. Running this subroutine more than once is not
+advised for performance reasons.
 
 =cut
 
@@ -379,12 +380,7 @@ sub get_full_reverse_queue {
   my $installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
   my $fulldeps = get_reverse_reqs($installed);
   my ($return_queue, %warnings);
-  REVERSE: for my $sbo (@ARGV) {
-    # ensure that targeted scripts do not depend on each other
-    my $check_queue = get_build_queue([$sbo], \%warnings);
-    @$check_queue = grep { !/^$sbo$/ } @$check_queue;
-    for my $sbo2 (@ARGV) { next REVERSE if grep { /^$sbo2$/ } @$check_queue; }
-
+  for my $sbo (@ARGV) {
     my $interim_queue;
     my @full_reverse = get_full_reverse($sbo, $installed, $fulldeps);
     if (@full_reverse) {

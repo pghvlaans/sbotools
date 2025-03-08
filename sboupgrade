@@ -199,12 +199,11 @@ if (not $non_int or not $force) {
 }
 
 my $upgrade_queue = [];
-my %warnings;
+my (%warnings, @need_reverse, $extra_queue, %extra_warnings, @base_queue);
 
 # doesn't matter what's updatable and what's not if force is specified,
 # but without force, we only want to update what there are updates for
 if ($non_int and not $reverse) {
-	my (@need_reverse, $extra_queue);
 	if ($force) {
 		for my $sbo (@sbos) {
 			push @$upgrade_queue, $sbo if $inst_names{$sbo};
@@ -216,6 +215,7 @@ if ($non_int and not $reverse) {
 			push @need_reverse, $sbo if auto_reverse($sbo) and not $no_install;
 		}
 	}
+	# in case anything needs reverse dependency rebuilds
 	if (@need_reverse) {
 		($extra_queue, %warnings) = get_full_reverse_queue(\@need_reverse);
 		if ($extra_queue) { $upgrade_queue = merge_queues($upgrade_queue, $extra_queue); }
@@ -225,26 +225,28 @@ if ($non_int and not $reverse) {
 		my $name = $sbo;
 		$name =~ s/-compat32$//;
 		next if not $name;
-		my ($extra_queue, %extra_warnings);
 		unless ($force_reqs or $force) {
 			next unless $updates{$name};
 		}
+		push @base_queue, $name;
 		my $queue = get_build_queue([$name], \%warnings);
 		if (not $force_reqs) {
 			@$queue = grep { !$inst_names{$_} or $updates{$_} } @$queue;
 		}
 		push @$queue, $name if $force;
-		# reverse rebuild requested or designated for auto reverse rebuild
-		if ($reverse) {
-			($extra_queue, %extra_warnings) = get_full_reverse_queue(\@$queue);
-		} else {
-			my @need_reverse;
-			for my $sbo (@$queue) { push @need_reverse, $sbo if auto_reverse($sbo); }
-			($extra_queue, %extra_warnings) = get_full_reverse_queue(\@need_reverse);
-		}
-		%warnings = (%warnings, %extra_warnings);
-		$queue = merge_queues($queue, $extra_queue) if $extra_queue;
 		$upgrade_queue = merge_queues($upgrade_queue, $queue);
+	}
+	# reverse rebuild requested or something is designated for
+	# automatic reverse rebuild
+	if ($reverse) {
+		($extra_queue, %extra_warnings) = get_full_reverse_queue(\@base_queue);
+	} else {
+		for my $sbo (@$upgrade_queue) { push @need_reverse, $sbo if auto_reverse($sbo); }
+		($extra_queue, %extra_warnings) = get_full_reverse_queue(\@need_reverse);
+	}
+	if ($extra_queue) {
+		%warnings = (%warnings, %extra_warnings);
+		$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
 	}
 }
 
