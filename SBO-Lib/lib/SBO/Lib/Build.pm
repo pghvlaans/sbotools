@@ -370,7 +370,7 @@ advised for performance reasons.
 =cut
 
 sub get_full_reverse_queue {
-  script_error("get_full_reverse_queue requires at least one argument.") unless @ARGV;
+  script_error("get_full_reverse_queue requires at least one argument.") unless @_;
   my @all_installed = @{ get_installed_packages('ALL') };
   my $all_installed = +{ map {; $_->{name}, $_->{pkg} } @all_installed };
   my @namelist;
@@ -380,7 +380,7 @@ sub get_full_reverse_queue {
   my $installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
   my $fulldeps = get_reverse_reqs($installed);
   my ($return_queue, %warnings);
-  for my $sbo (@ARGV) {
+  for my $sbo (@_) {
     my $interim_queue;
     my @full_reverse = get_full_reverse($sbo, $installed, $fulldeps);
     if (@full_reverse) {

@@ -199,7 +199,7 @@ if (not $non_int or not $force) {
 }
 
 my $upgrade_queue = [];
-my (%warnings, @need_reverse, $extra_queue, %extra_warnings, @base_queue);
+my (%warnings, @needs_reverse, $extra_queue, %extra_warnings, @base_queue);
 
 # doesn't matter what's updatable and what's not if force is specified,
 # but without force, we only want to update what there are updates for
@@ -207,17 +207,17 @@ if ($non_int and not $reverse) {
 	if ($force) {
 		for my $sbo (@sbos) {
 			push @$upgrade_queue, $sbo if $inst_names{$sbo};
-			push @need_reverse, $sbo if auto_reverse($sbo) and not $no_install;
+			push @needs_reverse, $sbo if auto_reverse($sbo) and not $no_install;
 		}
 	} else {
 		for my $sbo (@sbos) {
 			push @$upgrade_queue, $sbo if $updates{$sbo};
-			push @need_reverse, $sbo if auto_reverse($sbo) and not $no_install;
+			push @needs_reverse, $sbo if auto_reverse($sbo) and not $no_install;
 		}
 	}
 	# in case anything needs reverse dependency rebuilds
-	if (@need_reverse) {
-		($extra_queue, %warnings) = get_full_reverse_queue(\@need_reverse);
+	if (@needs_reverse) {
+		($extra_queue, %warnings) = get_full_reverse_queue(@needs_reverse);
 		if ($extra_queue) { $upgrade_queue = merge_queues($upgrade_queue, $extra_queue); }
 	}
 } else {
@@ -239,10 +239,10 @@ if ($non_int and not $reverse) {
 	# reverse rebuild requested or something is designated for
 	# automatic reverse rebuild
 	if ($reverse) {
-		($extra_queue, %extra_warnings) = get_full_reverse_queue(\@base_queue);
+		($extra_queue, %extra_warnings) = get_full_reverse_queue(@base_queue);
 	} else {
-		for my $sbo (@$upgrade_queue) { push @need_reverse, $sbo if auto_reverse($sbo); }
-		($extra_queue, %extra_warnings) = get_full_reverse_queue(\@need_reverse);
+		for my $sbo (@base_queue) { push @needs_reverse, $sbo if auto_reverse($sbo); }
+		($extra_queue, %extra_warnings) = get_full_reverse_queue(@needs_reverse) if @needs_reverse;
 	}
 	if ($extra_queue) {
 		%warnings = (%warnings, %extra_warnings);
