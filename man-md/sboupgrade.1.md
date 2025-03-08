@@ -144,8 +144,7 @@ Bypass all user prompts and all dependency resolution for the requested
 SlackBuilds except in case of reverse dependency rebuilds. Saved build
 options will be reused automatically unless **\--norecall** is passed as
 well. Unless it is obvious that dependency resolution and new build
-options are not required, or **\--reverse-rebuild** is passed as well,
-using this option is not recommended.
+options are not required, using this option is not recommended.
 
 **-S\|\--strict-upgrades (FALSE\|TRUE)**
 
