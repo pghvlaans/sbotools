@@ -22,7 +22,7 @@
     sboupgrade [-h|-v]
 
     sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \
-               [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiopRrz] \
+               [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiopqrz] \
 \--all\|sbo_name (sbo_name)
 
 ## DESCRIPTION
@@ -130,7 +130,7 @@ principle. As a best practice, **\--compat32** should be combined with
 package can be inspected prior to installation. GitHub Issues are
 welcome in case of unexpected failure.
 
-**-R\|\--reverse-rebuild**
+**-q\|\--reverse-rebuild**
 
 Rebuild the reverse dependency queue after upgrading. Please note that
 building against some packages, including **google-go-lang**, does not

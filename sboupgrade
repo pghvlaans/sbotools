@@ -48,7 +48,7 @@ Options (defaults shown first where applicable):
     do not use saved build options with nointeractive.
   -p|--compat32:
     install a -compat32 package (multilib systems only).
-  -R|--reverse-rebuild:
+  -q|--reverse-rebuild:
     rebuild the reverse dependency queue after upgrading.
   -r|--nointeractive:
     non-interactive; skips README and all prompts.
@@ -78,7 +78,7 @@ my $options_ok = GetOptions(
 	'noinstall|i'       => \$no_install,
 	'norecall|o'        => \$no_recall,
 	'jobs|j=s'          => \$jobs,
-	'reverse-rebuild|R' => \$reverse,
+	'reverse-rebuild|q' => \$reverse,
 	'nointeractive|r'   => \$non_int,
 	'force-reqs|z'      => \$force_reqs,
 	'build-ignore|b=s'	=> \$build_ignore,

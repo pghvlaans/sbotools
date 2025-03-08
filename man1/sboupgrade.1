@@ -9,7 +9,7 @@ sboupgrade
 sboupgrade [-h|-v]
 .P
 sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \\
-           [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiopRrz] \\
+           [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiopqrz] \\
            --all|sbo_name (sbo_name)
 .SH DESCRIPTION
 .P
@@ -306,7 +306,7 @@ to installation. GitHub Issues are welcome in case of unexpected failure.
 .RE
 .P
 .B
--R|--reverse-rebuild
+-q|--reverse-rebuild
 .RS
 Rebuild the reverse dependency queue after upgrading. Please note that building
 against some packages, including
