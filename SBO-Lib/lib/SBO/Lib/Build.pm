@@ -361,12 +361,14 @@ sub get_full_reverse {
 
 =head2 get_full_reverse_queue
 
-  my (@full_reverse_queue, %warnings) = get_full_reverse_queue($from, [$updates, $self_include], $sbo ...)
+  my (@reverse_queue, %warnings) = get_full_reverse_queue($from, $updates, $sbo ...)
+  my (@reverse_queue, %warnings) = get_full_reverse_queue($from, $self_include, $sbo ...)
 
 C<get_full_reverse_queue()> takes the name of the script it is called from and any number
-of SlackBuilds. The second variable is the list of available upgrades (if called from sboupgrade),
-any true value if called from C<sboinstall --reinstall> and a false value otherwise. The
-subroutine returns a queue for a reverse dependency rebuild and a warnings hash.
+of SlackBuilds. The second variable is the list of available upgrades (if called from
+B<sboupgrade(1)>), any true value if called from B<sboinstall(1) --reinstall> and a
+false value otherwise. The subroutine returns a queue for a reverse dependency rebuild
+and a warnings hash.
 
 =cut
 

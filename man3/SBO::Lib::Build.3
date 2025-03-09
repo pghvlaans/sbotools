@@ -180,14 +180,16 @@ These arrays should not be included when called from outside of the subroutine.
 If any circular reverse dependencies are found, the script exits with \f(CW\*(C`_ERR_CIRCULAR\*(C'\fR.
 .SS get_full_reverse_queue
 .IX Subsection "get_full_reverse_queue"
-.Vb 1
-\&  my (@full_reverse_queue, %warnings) = get_full_reverse_queue($from, [$updates, $self_include], $sbo ...)
+.Vb 2
+\&  my (@reverse_queue, %warnings) = get_full_reverse_queue($from, $updates, $sbo ...)
+\&  my (@reverse_queue, %warnings) = get_full_reverse_queue($from, $self_include, $sbo ...)
 .Ve
 .PP
 \&\f(CWget_full_reverse_queue()\fR takes the name of the script it is called from and any number
-of SlackBuilds. The second variable is the list of available upgrades (if called from sboupgrade),
-any true value if called from \f(CW\*(C`sboinstall \-\-reinstall\*(C'\fR and a false value otherwise. The
-subroutine returns a queue for a reverse dependency rebuild and a warnings hash.
+of SlackBuilds. The second variable is the list of available upgrades (if called from
+\&\fBsboupgrade\|(1)\fR), any true value if called from \fBsboinstall\|(1) \-\-reinstall\fR and a
+false value otherwise. The subroutine returns a queue for a reverse dependency rebuild
+and a warnings hash.
 .SS get_pkg_name
 .IX Subsection "get_pkg_name"
 .Vb 1
