@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Boomtime, Chaos 67, 3191 YOLD" "" "sbotools 3.4.2"
+.TH SBO::Lib::Build 3 "Pungenday, Chaos 68, 3191 YOLD" "" "sbotools 3.4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -181,12 +181,12 @@ If any circular reverse dependencies are found, the script exits with \f(CW\*(C`
 .SS get_full_reverse_queue
 .IX Subsection "get_full_reverse_queue"
 .Vb 1
-\&  my (@full_reverse_queue, %warnings) = get_full_reverse_queue($sbo ...)
+\&  my (@full_reverse_queue, %warnings) = get_full_reverse_queue($from, [$updates], $sbo ...)
 .Ve
 .PP
-\&\f(CWget_full_reverse_queue()\fR takes any number of SlackBuilds and returns a queue for a
-reverse rebuild and a warnings hash. Running this subroutine more than once is not
-advised for performance reasons.
+\&\f(CWget_full_reverse_queue()\fR takes the name of the script it is called from, the list
+of available updates (if called from sboupgrade) and any number of SlackBuilds. It
+returns a queue for a reverse rebuild and a warnings hash.
 .SS get_pkg_name
 .IX Subsection "get_pkg_name"
 .Vb 1

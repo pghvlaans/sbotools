@@ -170,8 +170,7 @@ if ($mass_rebuild and -f $mtemp_resume) {
 	$resume_mass_rebuild = 1;
 	$utemp = $mtemp_resume;
 }
-my ($requested_reinstall, $extra_queue, %extra_warnings);
-$requested_reinstall = 1 if $reinstall;
+my $requested_reinstall = 1 if $reinstall;
 $reinstall = 1 if $mass_rebuild or $reverse_rebuild;
 
 if (length $utemp) {
@@ -191,33 +190,73 @@ if (length $utemp) {
 			wrapsay "$cand is blacklisted. Skipping.";
 		}
 	}
-} elsif (not $mass_rebuild) {
-	if (not $reverse_rebuild and ($no_reqs or $non_int)) {
-		$build_queue = \@ARGV;
-	} elsif ($reverse_rebuild and not $requested_reinstall) {
-		($build_queue, %warnings) = get_full_reverse_queue(@ARGV);
-		exit 0 unless $build_queue;
-	} else {
-		for my $sbo (@ARGV) {
-			my $queue = get_build_queue([$sbo], \%warnings);
-			$build_queue = merge_queues($build_queue, $queue);
-		}
-		if ($reverse_rebuild) {
-			($extra_queue, %extra_warnings) = get_full_reverse_queue(@ARGV);
+	unless ($mass_rebuild or $no_install) {
+		if ($requested_reinstall) {
+			my ($extra_queue, %extra_warnings, @needs_reverse);
+			for my $cand (@$build_queue) {
+				if (auto_reverse($cand)) {
+					push @needs_reverse, $cand;
+					wrapsay "Reverse dependency rebuild for $cand.";
+				}
+			}
+			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 0, @needs_reverse) if @needs_reverse;
 			if ($extra_queue) {
 				$build_queue = merge_queues($build_queue, $extra_queue);
 				%warnings = (%warnings, %extra_warnings);
 			}
-		}		
+		}
 	}
-}
-if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild) {
-	my @needs_reverse;
-	for my $script (@$build_queue) { push @needs_reverse, $script if auto_reverse($script); }
-	($extra_queue, %extra_warnings) = get_full_reverse_queue(@needs_reverse) if @needs_reverse;
-	if ($extra_queue) {
-		$build_queue = merge_queues($build_queue, $extra_queue);
-		%warnings = (%warnings, %extra_warnings);
+} elsif (not $mass_rebuild) {
+	if (not $reverse_rebuild and ($no_reqs or $non_int)) {
+		my $interim_queue = \@ARGV;
+		if ($requested_reinstall) {
+			my ($extra_queue, %extra_warnings, @needs_reverse);
+			for my $cand (@$interim_queue) {
+				unless (on_blacklist($cand)) {
+					push @$build_queue, $cand;
+				} else {
+					wrapsay "$cand is blacklisted. Skipping.";
+				}
+			} unless ($no_install) {
+				for my $cand (@$build_queue) {
+					if (auto_reverse($cand)) {
+						push @needs_reverse, $cand;
+						wrapsay "Reverse dependency rebuild for $cand.";
+					}
+				}
+			}
+			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, @needs_reverse) if @needs_reverse;
+			if ($extra_queue) {
+				$build_queue = merge_queues($build_queue, $extra_queue);
+				%warnings = (%warnings, %extra_warnings);
+			}
+		}
+	} elsif ($reverse_rebuild and not $requested_reinstall) {
+		($build_queue, %warnings) = get_full_reverse_queue($self, 0, @ARGV);
+		exit 0 unless $build_queue;
+	} else {
+		for my $sbo (@ARGV) {
+			my ($extra_queue, %extra_warnings);
+			my $queue = get_build_queue([$sbo], \%warnings);
+			$build_queue = merge_queues($build_queue, $queue);
+			if ($requested_reinstall and not $reverse_rebuild) {
+				if (auto_reverse($sbo)) {
+					($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
+					wrapsay "Reverse dependency rebuild for $sbo.";
+				}
+				if ($extra_queue) {
+					$build_queue = merge_queues($build_queue, $extra_queue);
+					%warnings = (%warnings, %extra_warnings);
+				}
+			}
+			if ($reverse_rebuild) {
+				($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
+				if ($extra_queue) {
+					$build_queue = merge_queues($build_queue, $extra_queue);
+					%warnings = (%warnings, %extra_warnings);
+				}
+			}
+		}
 	}
 }
 

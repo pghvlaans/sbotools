@@ -199,29 +199,38 @@ if (not $non_int or not $force) {
 }
 
 my $upgrade_queue = [];
-my (%warnings, @needs_reverse, $extra_queue, %extra_warnings, @base_queue);
+my (%warnings, @base_queue);
 
 # doesn't matter what's updatable and what's not if force is specified,
 # but without force, we only want to update what there are updates for
 if ($non_int and not $reverse) {
+	my ($extra_queue, %extra_warnings, @needs_reverse);
 	if ($force) {
 		for my $sbo (@sbos) {
 			push @$upgrade_queue, $sbo if $inst_names{$sbo};
-			push @needs_reverse, $sbo if auto_reverse($sbo) and not $no_install;
+			if (auto_reverse($sbo) and not $no_install) {
+				push @needs_reverse, $sbo;
+				wrapsay "Reverse dependency rebuild for $sbo.";
+			}
 		}
 	} else {
 		for my $sbo (@sbos) {
 			push @$upgrade_queue, $sbo if $updates{$sbo};
-			push @needs_reverse, $sbo if auto_reverse($sbo) and not $no_install;
+			if (auto_reverse($sbo) and not $no_install) {
+				push @needs_reverse, $sbo;
+				wrapsay "Reverse dependency rebuild for $sbo.";
+			}
 		}
 	}
 	# in case anything needs reverse dependency rebuilds
 	if (@needs_reverse) {
-		($extra_queue, %warnings) = get_full_reverse_queue(@needs_reverse);
+		($extra_queue, %warnings) = get_full_reverse_queue($self, $updates, @needs_reverse);
 		if ($extra_queue) { $upgrade_queue = merge_queues($upgrade_queue, $extra_queue); }
 	}
 } else {
+	my @notified;
 	for my $sbo (@sbos) {
+		my ($extra_queue, %extra_warnings, @needs_reverse);
 		my $name = $sbo;
 		$name =~ s/-compat32$//;
 		next if not $name;
@@ -235,18 +244,24 @@ if ($non_int and not $reverse) {
 		}
 		push @$queue, $name if $force;
 		$upgrade_queue = merge_queues($upgrade_queue, $queue);
-	}
-	# reverse rebuild requested or something is designated for
-	# automatic reverse rebuild
-	if ($reverse) {
-		($extra_queue, %extra_warnings) = get_full_reverse_queue(@base_queue);
-	} else {
-		for my $sbo (@base_queue) { push @needs_reverse, $sbo if auto_reverse($sbo); }
-		($extra_queue, %extra_warnings) = get_full_reverse_queue(@needs_reverse) if @needs_reverse;
-	}
-	if ($extra_queue) {
-		%warnings = (%warnings, %extra_warnings);
-		$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
+		# reverse rebuild requested or the script is designated for
+		# automatic reverse rebuild
+		if ($reverse) {
+			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @base_queue);
+		} else {
+			for my $sbo (@base_queue) {
+				if (auto_reverse($sbo)) {
+					push @needs_reverse, $sbo if auto_reverse($sbo);
+					wrapsay "Reverse dependency rebuild for $sbo." unless grep { /^$sbo$/ } @notified;
+					push @notified, $sbo;
+				}
+			}
+			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @needs_reverse) if @needs_reverse;
+		}
+		if ($extra_queue) {
+			%warnings = (%warnings, %extra_warnings);
+			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
+		}
 	}
 }
 

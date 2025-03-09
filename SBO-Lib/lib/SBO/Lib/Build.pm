@@ -361,35 +361,58 @@ sub get_full_reverse {
 
 =head2 get_full_reverse_queue
 
-  my (@full_reverse_queue, %warnings) = get_full_reverse_queue($sbo ...)
+  my (@full_reverse_queue, %warnings) = get_full_reverse_queue($from, [$updates, $self_include], $sbo ...)
 
-C<get_full_reverse_queue()> takes any number of SlackBuilds and returns a queue for a
-reverse rebuild and a warnings hash. Running this subroutine more than once is not
-advised for performance reasons.
+C<get_full_reverse_queue()> takes the name of the script it is called from and any number
+of SlackBuilds. The second variable is the list of available upgrades (if called from sboupgrade),
+any true value if called from C<sboinstall --reinstall> and a false value otherwise. The
+subroutine returns a queue for a reverse dependency rebuild and a warnings hash.
 
 =cut
 
 sub get_full_reverse_queue {
-  script_error("get_full_reverse_queue requires at least one argument.") unless @_;
+  my $from = shift;
+  my $updates = shift if $from eq 'sboupgrade';
+  my $self_include = shift if $from eq 'sboinstall';
+  script_error("get_full_reverse_queue requires arguments.") unless @_;
   my @all_installed = @{ get_installed_packages('ALL') };
-  my $all_installed = +{ map {; $_->{name}, $_->{pkg} } @all_installed };
   my @namelist;
   for my $item (@all_installed) { push @namelist, $item->{name}; }
 
   my @installed = @{ get_installed_packages('SBO') };
   my $installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
   my $fulldeps = get_reverse_reqs($installed);
+
   my ($return_queue, %warnings);
-  for my $sbo (@_) {
+  REVERSE: for my $sbo (@_) {
+    # if called from sboinstall --reverse-rebuild without --reinstall,
+    # need to skip dependees of other requested scripts
+    if ($from eq "sboinstall" and not $self_include) {
+      my $check_queue = get_build_queue([$sbo], \%warnings);
+      @$check_queue = grep { !/^$sbo$/ } @$check_queue;
+      for my $sbo2 (@_) { next REVERSE if grep { /^$sbo2$/ } @$check_queue; }
+    }
     my $interim_queue;
     my @full_reverse = get_full_reverse($sbo, $installed, $fulldeps);
     if (@full_reverse) {
       for my $revdep (@full_reverse) {
         my $queue = get_build_queue([$revdep], \%warnings);
-        # for items not in the reverse queue, install only if missing
+        # for sboinstall, install items not in the reverse queue only
+        # if missing; for sboupgrade, upgrade items not in the reverse
+        # queue if upgradable.
         for my $cand (@$queue) {
-          if (grep { /^$cand$/ } @full_reverse or not grep { /^$cand$/ } @namelist) {
-            push @$interim_queue, $cand;
+          if ($from eq "sboinstall" and $self_include) {
+            if (grep { /^$cand$/ } @full_reverse or not grep { /^$cand$/ } @namelist or grep { /^$cand$/ } @ARGV) {
+              push @$interim_queue, $cand unless $cand eq $sbo;
+            }
+          } elsif ($from eq "sboinstall" and not $self_include) {
+            if (grep { /^$cand$/ } @full_reverse or not grep { /^$cand$/ } @namelist) {
+              push @$interim_queue, $cand unless $cand eq $sbo;
+            }
+          } else {
+            if (grep { /^$cand$/ } @full_reverse or not grep { /^$cand$/ } @namelist or grep { /^$cand$/ } @$updates) {
+              push @$interim_queue, $cand unless $cand eq $sbo;
+            }
           }
         }
       }
