@@ -206,7 +206,9 @@ if (length $utemp) {
 			}
 		}
 	}
+# the --mass-rebuild queue is handled later
 } elsif (not $mass_rebuild) {
+	# noninteractive and no requirements; trigger automatic rebuilds
 	if (not $reverse_rebuild and ($no_reqs or $non_int)) {
 		my $interim_queue = \@ARGV;
 		if ($requested_reinstall) {
@@ -231,6 +233,7 @@ if (length $utemp) {
 				%warnings = (%warnings, %extra_warnings);
 			}
 		}
+	# --reverse-rebuild, no --reinstall
 	} elsif ($reverse_rebuild and not $requested_reinstall) {
 		($build_queue, %warnings) = get_full_reverse_queue($self, 0, @ARGV);
 		exit 0 unless $build_queue;
@@ -239,6 +242,7 @@ if (length $utemp) {
 			my ($extra_queue, %extra_warnings);
 			my $queue = get_build_queue([$sbo], \%warnings);
 			$build_queue = merge_queues($build_queue, $queue);
+			# --reinstall, no --reverse-rebuild; trigger automatic rebuilds
 			if ($requested_reinstall and not $reverse_rebuild) {
 				if (auto_reverse($sbo)) {
 					($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
@@ -249,6 +253,7 @@ if (length $utemp) {
 					%warnings = (%warnings, %extra_warnings);
 				}
 			}
+			# --reverse-rebuild with --reinstall; include the items in @ARGV
 			if ($reverse_rebuild) {
 				($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
 				if ($extra_queue) {

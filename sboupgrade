@@ -205,6 +205,7 @@ my (%warnings, @base_queue);
 # but without force, we only want to update what there are updates for
 if ($non_int and not $reverse) {
 	my ($extra_queue, %extra_warnings, @needs_reverse);
+	# --force, non-interactive
 	if ($force) {
 		for my $sbo (@sbos) {
 			push @$upgrade_queue, $sbo if $inst_names{$sbo};
@@ -213,6 +214,7 @@ if ($non_int and not $reverse) {
 				wrapsay "Reverse dependency rebuild for $sbo.";
 			}
 		}
+	# non-interactive, no --force
 	} else {
 		for my $sbo (@sbos) {
 			push @$upgrade_queue, $sbo if $updates{$sbo};
@@ -237,6 +239,7 @@ if ($non_int and not $reverse) {
 		unless ($force_reqs or $force) {
 			next unless $updates{$name};
 		}
+		# @base_queue is relevant in case of --reverse-rebuild
 		push @base_queue, $name;
 		my $queue = get_build_queue([$name], \%warnings);
 		if (not $force_reqs) {
@@ -244,11 +247,11 @@ if ($non_int and not $reverse) {
 		}
 		push @$queue, $name if $force;
 		$upgrade_queue = merge_queues($upgrade_queue, $queue);
-		# reverse rebuild requested or the script is designated for
-		# automatic reverse rebuild
+		# with --reverse-rebuild
 		if ($reverse) {
 			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @base_queue);
-		} else {
+		# no --reverse-rebuild; trigger automatic rebuilds unless --no-install
+		} elsif (not $no_install) {
 			for my $sbo (@base_queue) {
 				if (auto_reverse($sbo)) {
 					push @needs_reverse, $sbo if auto_reverse($sbo);
