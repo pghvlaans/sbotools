@@ -13,6 +13,8 @@ sbotools
   * sboinstall: Honor automatic reverse dependency rebuilds with --reinstall
   * sboinstall, sboupgrade: Automatically reuse saved build options with --nointeractive unless passing --norecall
   * Readme.pm: Default "yes" when saved build options are offered
+  * Download.pm: Do not ignore certificates with wget
+    * Thanks to Slack Coder for the suggestion.
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue
