@@ -15,8 +15,9 @@ dependency requests for **sbotools**
 
 ## DESCRIPTION
 
-The */etc/sbotools/sbotools.hints* file is used to blacklist scripts and
-request optional dependencies.
+The */etc/sbotools/sbotools.hints* file is used to blacklist scripts,
+request optional dependencies and request automatic reverse dependency
+rebuilds.
 
 If a script is blacklisted, it can neither be included in build queues
 nor removed by [sboremove(1)](sboremove.1.md). To blacklist a script, place it on its
@@ -27,10 +28,10 @@ own line with no whitespace, prepending an exclamation mark:
 Blacklist entries supersede optional dependency requests.
 
 To ask [sboupgrade(1)](sboupgrade.1.md) to rebuild a script's reverse dependencies upon
-upgrade, place the name of the script on its own line with no
-whitespace, prepending a tilde:
+upgrade or reinstall, place the name of the script on its own line with
+no whitespace, prepending a tilde:
 
-˜libmodplug
+    ~libmodplug 
 
 Many scripts on **SlackBuilds.org** have optional dependencies. To make
 **sbotools** recognize one or more optional dependencies for a script,
