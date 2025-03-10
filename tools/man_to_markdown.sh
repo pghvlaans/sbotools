@@ -98,6 +98,7 @@ sed -i "s/\\\\\[/[/g" *
 sed -i "s/\\\\\]/]/g" *
 sed -i "s/^cd /    cd /g" *
 sed -i "s/^!javacc/    !javacc /g" *
+sed -i "s/^˜libmodplug/    ~libmodplug /g" *
 sed -i "s/^libcacard /    libcacard /g" *
 sed -i 's|\\\\\\$|\\|g' *
 sed -i "/^    /s/\\\|/|/g" *

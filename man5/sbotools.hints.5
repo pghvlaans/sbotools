@@ -11,7 +11,8 @@ sbotools
 The
 .I
 /etc/sbotools/sbotools.hints
-file is used to blacklist scripts and request optional dependencies.
+file is used to blacklist scripts, request optional dependencies and request
+automatic reverse dependency rebuilds.
 .P
 If a script is blacklisted, it can neither be included in build queues nor
 removed by
@@ -30,8 +31,8 @@ Blacklist entries supersede optional dependency requests.
 To ask
 .B
 sboupgrade(1)
-to rebuild a script's reverse dependencies upon upgrade, place the name of the
-script on its own line with no whitespace, prepending a tilde:
+to rebuild a script's reverse dependencies upon upgrade or reinstall, place the name
+of the script on its own line with no whitespace, prepending a tilde:
 .RS
 
 ~libmodplug
