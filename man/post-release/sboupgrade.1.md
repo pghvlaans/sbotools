@@ -177,10 +177,9 @@ relevant to nearly all SlackBuilds, and can be used when running
 
 **ARCH** passes a CPU architecture to the build process, and is mostly
 used to build **i?86** packages on **x86_64** machines and **compat32**
-packages. **sboupgrade** attempts to pass the correct architecture
-automatically for such builds based on the contents of the SlackBuild.
-This process is not necessarily bug-free; please do not hesitate to
-report **compat32** issues.
+packages. **sboupgrade** does not require **ARCH** to build compat32
+packages. This process is not necessarily bug-free; please do not
+hesitate to report **compat32** issues.
 
 **BUILD**
 
