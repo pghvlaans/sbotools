@@ -304,10 +304,6 @@ for my $sbo (@$build_queue) {
 	if (not $locations{$sbo} and in(@ARGV, $sbo)) {
 		usage_error("Unable to locate $sbo in the SlackBuilds.org tree.")
 	}
-	if ($compat32) {
-		usage_error("-p|--compat32 is not supported with Perl SBos.")
-			if $locations{$sbo} =~ qr|/perl/[^/]+$|;
-	}
 }
 
 # check for already-installeds and prompt for the rest
@@ -362,6 +358,10 @@ FIRST: for my $sbo (@$build_queue) {
 	}
 
 	$locations{$name} = get_sbo_location($sbo) if $compat32;
+	# do not attempt compat32 builds if NOARCH
+	if ($compat32 and $locations{$name}) {
+		if (system("grep", "-q", "ARCH=noarch", "$locations{$name}/$sbo.SlackBuild") == 0) { next FIRST; }
+	}
 	unless ($non_int) {
 		# if compat32 is TRUE, we need to see if the non-compat version exists.
 		if ($compat32) {

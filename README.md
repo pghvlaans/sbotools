@@ -36,6 +36,8 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Readme.pm: Default "yes" when saved build options are offered
   * Download.pm: Do not ignore certificates with wget
     * Thanks to Slack Coder for the suggestion.
+  * sboinstall: Do not attempt compat32 builds for noarch
+  * Build.pm: Remove unnecessary ARCH modification
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue

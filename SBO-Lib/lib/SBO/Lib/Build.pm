@@ -646,11 +646,6 @@ sub perform_sbo {
   if ($args{ARCH} eq 'x86_64' and ($args{C32} || $args{X32})) {
     if ($args{C32}) {
       $changes{libdirsuffix} = '';
-    } elsif ($args{X32}) {
-      if (`grep -q "ARCH=i686" $location/$sbo.SlackBuild` == 0) { $changes{arch_out} = 'i686'; }
-      elsif (`grep -q "ARCH=i586" $location/$sbo.SlackBuild` == 0) { $changes{arch_out} = 'i586'; }
-      elsif (`grep -q "ARCH=i486" $location/$sbo.SlackBuild` == 0) { $changes{arch_out} = 'i486'; }
-      elsif (`grep -q "ARCH=x86" $location/$sbo.SlackBuild` == 0) { $changes{arch_out} = 'x86'; }
     }
     $cmd .= '. /etc/profile.d/32dev.sh &&';
   }
@@ -900,7 +895,6 @@ sub rewrite_slackbuild {
   }
 
   my $libdir_regex = qr/^\s*LIBDIRSUFFIX="64"\s*$/;
-  my $arch_regex = qr/\$VERSION-\$ARCH-\$BUILD/;
   my $dc_regex = qr/(?<![a-z])(tar|p7zip|unzip|ar|rpm2cpio|sh)\s+/;
   my $make_regex = qr/^\s*make\s*$/;
   # tie the slackbuild, because this is the easiest way to handle this.
@@ -928,9 +922,6 @@ sub rewrite_slackbuild {
     # then check for and apply any other %$changes
     if (exists $$changes{libdirsuffix}) {
       $line =~ s/64/$$changes{libdirsuffix}/ if $line =~ $libdir_regex;
-    }
-    if (exists $$changes{arch_out}) {
-      $line =~ s/\$ARCH/$$changes{arch_out}/ if $line =~ $arch_regex;
     }
     if (exists $changes->{jobs}) {
       $line =~ s/make/make \$MAKEOPTS/ if $line =~ $make_regex;
