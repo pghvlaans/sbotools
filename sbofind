@@ -222,9 +222,6 @@ for my $search (@ARGV) {
 			my $location = $hash->{location};
 			my $version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
 			my $sbo = "SBo:   "; $sbo = "Local: " if $hash->{local};
-			my $blacklist_msg = "        blacklisted";
-			my $cpan_msg = "        CPAN";
-			my $defective_cpan_msg = "        CPAN, file(s) missing";
 			say "$sbo $name $version";
 			say "        blacklisted" if on_blacklist($name);
 			say "        CPAN" if grep { /^$name$/ } @cpans;
