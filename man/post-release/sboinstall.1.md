@@ -112,19 +112,20 @@ Do not reuse saved build options if running with **\--nointeractive**.
 
 **-p\|\--compat32**
 
-Create a compat32 package on multilib x86_64 systems. This requires the
-**compat32-tools** package by Eric Hameleers. Please note that this
+Create a *compat32* package on multilib x86_64 systems. This requires
+the **compat32-tools** package by Eric Hameleers. Please note that this
 operation is not necessarily foolproof, and is unsupported by anyone in
-principle. As a best practice, **\--compat32** should be combined with
-**\--noinstall** and **\--distclean FALSE** so that the contents of the
-package can be inspected prior to installation. GitHub Issues are
-welcome in case of unexpected failure.
+principle. **\--compat32** can be combined with **\--noinstall** and
+**\--distclean FALSE** so that the contents of the package can be
+inspected prior to installation. GitHub Issues are welcome in case of
+unexpected failure.
 
 **-q\|\--reverse-rebuild**
 
 Rebuild the reverse dependencies for the requested SlackBuilds. The
 build queue also includes any missing dependencies for those scripts.
-Incompatible with **\--compat32**, **\--norequirements**,
+With **\--compat32**, rebuild only installed *compat32* reverse
+dependencies. Incompatible with **\--norequirements**,
 **\--use-template** and **\--mass-rebuild**.
 
 **-r\|\--nointeractive**
@@ -162,6 +163,10 @@ commands and build options and save to the specified **FILE**.
 Build using the template saved to **FILE.** This disables all user
 prompts.
 
+Incompatible with **\--compat32**, **\--mass-rebuild** and
+**\--reverse-rebuild**. To make *compat32* packages from a template,
+consider using **\--create-template** with **\--compat32** first.
+
 **\--mass-rebuild**
 
 Generate build queues, rebuild and reinstall all in-tree *\_SBo*
@@ -173,8 +178,9 @@ or with no tag, a warning message (default "no") appears even with
 **\--nointeractive** before they are added to the build queue.
 
 In combination with **\--nointeractive**, saved build options are reused
-automatically. Incompatible with **\--reverse-rebuild**,
-**\--compat32**, **\--use-template** and **\--norequirements**.
+automatically. Incompatible with **\--reverse-rebuild**, **\--compat32**
+(likely to change in a future version), **\--use-template** and
+**\--norequirements**.
 
 If the mass rebuild process is interrupted after downloading has been
 completed, whether by signal or by build failure, a template named
@@ -191,10 +197,10 @@ relevant to nearly all SlackBuilds, and can be used when running
 **ARCH**
 
 **ARCH** passes a CPU architecture to the build process, and is mostly
-used to build **i?86** packages on **x86_64** machines and **compat32**
-packages. **sboinstall** does not require **ARCH** to build compat32
+used to build **i?86** packages on **x86_64** machines and *compat32*
+packages. **sboinstall** does not require **ARCH** to build *compat32*
 packages. This process is not necessarily bug-free; please do not
-hesitate to report **compat32** issues.
+hesitate to report *compat32* issues.
 
 **BUILD**
 
