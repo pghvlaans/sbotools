@@ -47,9 +47,8 @@ SBO::Lib::Readme - Routines for interacting with a typical SBo README file.
 
   my $opts = ask_opts($sbo, $readme);
 
-C<ask_opts()> displays  C<$readme> and asks if options should be set. If no options
-are set, it returns C<undef>. Saved options under C</var/log/sbotools/$sbo> are retrieved
-and can be used again.
+C<ask_opts()> asks if options should be set. If no options are set, it returns C<undef>.
+Saved options under C</var/log/sbotools/$sbo> are retrieved and can be used again.
 
 =cut
 
@@ -58,7 +57,6 @@ sub ask_opts {
   # TODO: check number of args
   script_error('ask_opts requires an argument.') unless @_;
   my ($sbo, $readme) = @_;
-  say "\n". $readme;
   my ($opts_log) = "/var/log/sbotools/$sbo";
   my ($opts_bk) = "$opts_log.bk";
   if (-f $opts_log) {
@@ -121,9 +119,9 @@ sub ask_other_readmes {
 
   my $bool = ask_user_group($cmds, $readme);
 
-C<ask_user_group()> displays the C<$readme> and commands found in C<$cmds>, and
-prompts for running the C<useradd> and C<groupadd> commands found. If so, the C<$cmds> are
-returned; the return is otherwise C<undef>.
+C<ask_user_group()> the commands found in C<$cmds>, and prompts for running the
+C<useradd> and C<groupadd> commands found. If so, the C<$cmds> are returned; the
+return is otherwise C<undef>.
 
 =cut
 
@@ -131,7 +129,6 @@ returned; the return is otherwise C<undef>.
 sub ask_user_group {
   script_error('ask_user_group requires two arguments') unless @_ == 2;
   my ($cmds, $readme) = @_;
-  say "\n". $readme;
   wrapsay "\nIt looks like this slackbuild requires the following command(s) to be run first:";
   say "    # $_" for @$cmds;
   return prompt('Run the commands prior to building?', default => 'yes') ? $cmds : undef;
@@ -217,6 +214,7 @@ sub user_prompt {
   my $readme = get_readme_contents($location);
   return "Could not open README for $sbo.", undef, _ERR_OPENFH if not defined $readme;
   if (is_local($sbo)) { print "\nFound $sbo in local overrides.\n"; }
+  print "\n". $readme;
   # check for user/group add commands, offer to run any found
   my $user_group = get_user_group($readme);
   my $cmds;
@@ -224,7 +222,6 @@ sub user_prompt {
   # check for options mentioned in the README
   my $opts = 0;
   $opts = ask_opts($sbo, $readme) if get_opts($readme);
-  print "\n". $readme unless $opts;
   ask_other_readmes($sbo, $location);
   # we have to return something substantial if the user says no so that we
   # can check the value of $cmds on the calling side. we should be able to

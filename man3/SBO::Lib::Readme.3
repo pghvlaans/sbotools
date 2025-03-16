@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Readme 3"
-.TH SBO::Lib::Readme 3 "Pungenday, Chaos 38, 3191 YOLD" "" "sbotools 3.4.2"
+.TH SBO::Lib::Readme 3 "Setting Orange, Discord 2, 3191 YOLD" "" "sbotools 3.4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -77,9 +77,8 @@ SBO::Lib::Readme \- Routines for interacting with a typical SBo README file.
 \&  my $opts = ask_opts($sbo, $readme);
 .Ve
 .PP
-\&\f(CWask_opts()\fR displays  \f(CW$readme\fR and asks if options should be set. If no options
-are set, it returns \f(CW\*(C`undef\*(C'\fR. Saved options under \f(CW\*(C`/var/log/sbotools/$sbo\*(C'\fR are retrieved
-and can be used again.
+\&\f(CWask_opts()\fR asks if options should be set. If no options are set, it returns \f(CW\*(C`undef\*(C'\fR.
+Saved options under \f(CW\*(C`/var/log/sbotools/$sbo\*(C'\fR are retrieved and can be used again.
 .SS ask_other_readmes
 .IX Subsection "ask_other_readmes"
 .Vb 1
@@ -94,9 +93,9 @@ It displays the files one by one upon prompt.
 \&  my $bool = ask_user_group($cmds, $readme);
 .Ve
 .PP
-\&\f(CWask_user_group()\fR displays the \f(CW$readme\fR and commands found in \f(CW$cmds\fR, and
-prompts for running the \f(CW\*(C`useradd\*(C'\fR and \f(CW\*(C`groupadd\*(C'\fR commands found. If so, the \f(CW$cmds\fR are
-returned; the return is otherwise \f(CW\*(C`undef\*(C'\fR.
+\&\f(CWask_user_group()\fR the commands found in \f(CW$cmds\fR, and prompts for running the
+\&\f(CW\*(C`useradd\*(C'\fR and \f(CW\*(C`groupadd\*(C'\fR commands found. If so, the \f(CW$cmds\fR are returned; the
+return is otherwise \f(CW\*(C`undef\*(C'\fR.
 .SS get_opts
 .IX Subsection "get_opts"
 .Vb 1

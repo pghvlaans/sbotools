@@ -39,6 +39,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboinstall: Do not attempt compat32 builds for noarch
   * Build.pm: Remove unnecessary ARCH modification
   * Util.pm: Add rationalize_queue for automatic reverse dependency rebuilds
+  + Readme.pm: Only display README once
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue
