@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ auto_reverse get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_packages get_build_queue get_sbo_locations in merge_queues open_fh user_prompt process_sbos print_failures verify_gpg %config show_version lint_sbo_config wrapsay /;
+use SBO::Lib qw/ auto_reverse get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_packages get_build_queue get_sbo_locations in merge_queues open_fh user_prompt process_sbos print_failures rationalize_queue verify_gpg %config show_version lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -250,20 +250,28 @@ if ($non_int and not $reverse) {
 		# with --reverse-rebuild
 		if ($reverse) {
 			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @base_queue);
-		# no --reverse-rebuild; trigger automatic rebuilds unless --no-install
-		} elsif (not $no_install) {
-			for my $sbo (@base_queue) {
-				if (auto_reverse($sbo)) {
-					push @needs_reverse, $sbo if auto_reverse($sbo);
-					wrapsay "Reverse dependency rebuild for $sbo." unless grep { /^$sbo$/ } @notified;
-					push @notified, $sbo;
-				}
-			}
-			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @needs_reverse) if @needs_reverse;
 		}
 		if ($extra_queue) {
 			%warnings = (%warnings, %extra_warnings);
 			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
+		}
+	}
+	# no --reverse-rebuild; trigger automatic rebuilds unless --no-install
+	# and put everything in the right order
+	unless ($no_install or $reverse) {
+		my ($extra_queue, %extra_warnings, @needs_reverse);
+		for my $sbo (@$upgrade_queue) {
+			if (auto_reverse($sbo)) {
+				push @needs_reverse, $sbo if auto_reverse($sbo);
+				wrapsay "Reverse dependency rebuild for $sbo." unless grep { /^$sbo$/ } @notified;
+				push @notified, $sbo;
+			}
+		}
+		($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @needs_reverse) if @needs_reverse;
+		if ($extra_queue) {
+			%warnings = (%warnings, %extra_warnings);
+			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
+			$upgrade_queue = rationalize_queue($upgrade_queue);
 		}
 	}
 }

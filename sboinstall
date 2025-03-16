@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ %config _ERR_OPENFH auto_reverse get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_reverse_reqs get_sbo_location get_sbo_locations in merge_queues on_blacklist open_fh print_failures process_sbos prompt show_version slackbuilds_or_fetch slurp uniq usage_error user_prompt verify_gpg lint_sbo_config wrapsay /;
+use SBO::Lib qw/ %config _ERR_OPENFH auto_reverse get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_reverse_reqs get_sbo_location get_sbo_locations in merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_prompt verify_gpg lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -242,17 +242,6 @@ if (length $utemp) {
 			my ($extra_queue, %extra_warnings);
 			my $queue = get_build_queue([$sbo], \%warnings);
 			$build_queue = merge_queues($build_queue, $queue);
-			# --reinstall, no --reverse-rebuild; trigger automatic rebuilds
-			if ($requested_reinstall and not $reverse_rebuild) {
-				if (auto_reverse($sbo)) {
-					($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
-					wrapsay "Reverse dependency rebuild for $sbo.";
-				}
-				if ($extra_queue) {
-					$build_queue = merge_queues($build_queue, $extra_queue);
-					%warnings = (%warnings, %extra_warnings);
-				}
-			}
 			# --reverse-rebuild with --reinstall; include the items in @ARGV
 			if ($reverse_rebuild) {
 				($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
@@ -263,6 +252,25 @@ if (length $utemp) {
 			}
 		}
 	}
+}
+
+# --reinstall, no --reverse-rebuild: trigger automatic rebuilds
+# and put everything in the right order.
+if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not $utemp) {
+	my $need_rationalize;
+	for my $sbo (@$build_queue) {
+		my ($extra_queue, %extra_warnings);
+		if (auto_reverse($sbo)) {
+			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
+			wrapsay "Reverse dependency rebuild for $sbo.";
+		}
+		if ($extra_queue) {
+			$need_rationalize = 1;
+			$build_queue = merge_queues($build_queue, $extra_queue);
+			%warnings = (%warnings, %extra_warnings);
+		}
+	}
+	$build_queue = rationalize_queue($build_queue) if $need_rationalize;
 }
 
 # get lists of installed packages and perl modules from CPAN
@@ -314,6 +322,7 @@ if (defined $template) {
 }
 my $added = ' added to install queue.';
 FIRST: for my $sbo (@$build_queue) {
+	next FIRST if $sbo =~ /-compat32$/;
 	my $name = $compat32 ? "$sbo-compat32" : $sbo;
 
 	if ($inst_names{$name}) {

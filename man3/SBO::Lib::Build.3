@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Pungenday, Chaos 68, 3191 YOLD" "" "sbotools 3.4.2"
+.TH SBO::Lib::Build 3 "Setting Orange, Discord 2, 3191 YOLD" "" "sbotools 3.4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -266,6 +266,16 @@ with failed builds and the exit status.
 .PP
 In case of a mass rebuild, \f(CW\*(C`process_sbos\*(C'\fR updates the resume file \f(CW\*(C`resume.temp\*(C'\fR
 when a build fails.
+.SS rationalize_queue
+.IX Subsection "rationalize_queue"
+.Vb 1
+\&  my $queue = rationalize_queue($queue)
+.Ve
+.PP
+\&\f(CWrationalize_queue()\fR takes a build queue and rearranges it such that
+no script appears before any of its dependencies. Currently, this is only
+useful when an automatic reverse dependency rebuild has been triggered. It
+returns the rearranged queue.
 .SS revert_slackbuild
 .IX Subsection "revert_slackbuild"
 .Vb 1

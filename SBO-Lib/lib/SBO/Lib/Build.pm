@@ -40,6 +40,7 @@ our @EXPORT_OK = qw{
   merge_queues
   perform_sbo
   process_sbos
+  rationalize_queue
   revert_slackbuild
   rewrite_slackbuild
   run_tee
@@ -830,6 +831,43 @@ sub process_sbos {
   unlink $mtemp_resume if $mass and -f $mtemp_resume;
   unlink for @symlinks;
   return \@failures, $err;
+}
+
+=head2 rationalize_queue
+
+  my $queue = rationalize_queue($queue)
+
+C<rationalize_queue()> takes a build queue and rearranges it such that
+no script appears before any of its dependencies. Currently, this is only
+useful when an automatic reverse dependency rebuild has been triggered.
+The rearranged queue is returned.
+
+=cut
+
+sub rationalize_queue {
+  script_error('rationalize_queue requires an argument.') unless @_ == 1;
+  my $queue = shift;
+  my @queue = @{ $queue };
+  my @result_queue;
+
+  FIRST: while (my $sbo = shift @queue) {
+    my $reqs = get_requires($sbo);
+    unless ($reqs) {
+      push @result_queue, $sbo;
+      next FIRST;
+    } else {
+      my @reqs = @{ $reqs };
+      for my $check (@queue) {
+        if (grep { /^$check$/ } @reqs) {
+          push @queue, $sbo;
+          next FIRST;
+        }
+      }
+    }
+    push @result_queue, $sbo;
+  }
+
+  return [ @result_queue ];
 }
 
 =head2 revert_slackbuild
