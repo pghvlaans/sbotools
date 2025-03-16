@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Pkgs 3"
-.TH SBO::Lib::Pkgs 3 "Pungenday, Chaos 38, 3191 YOLD" "" "sbotools 3.4.2"
+.TH SBO::Lib::Pkgs 3 "Setting Orange, Discord 2, 3191 YOLD" "" "sbotools 3.4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -96,8 +96,10 @@ as one returned by \f(CWget_available_updates()\fR.
 .Ve
 .PP
 \&\f(CWget_installed_cpans()\fR returns an array reference to a list of Perl
-modules installed from the CPAN. This is used in \f(CWsboinstall(1)\fR to
-prevent conflicting installations from the CPAN and SlackBuilds.
+modules installed from the CPAN. Modules are only recognized as installed
+if all files in \f(CW\*(C`.packlist\*(C'\fR exist. This is used in \f(CWsboinstall(1)\fR and
+\&\f(CWsboupgrade(1)\fR to prevent conflicting installations from the CPAN and
+SlackBuilds.
 .SS get_installed_packages
 .IX Subsection "get_installed_packages"
 .Vb 1

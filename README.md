@@ -40,6 +40,9 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Build.pm: Remove unnecessary ARCH modification
   * Util.pm: Add rationalize_queue for automatic reverse dependency rebuilds
   + Readme.pm: Only display README once
+  * Add setting CPAN_IGNORE: Install scripts even if they are already installed from the CPAN
+    * Thanks to 1-1sam for the request.
+  * Pkgs.pm: Properly ignore uninstalled CPAN modules
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue

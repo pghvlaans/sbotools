@@ -52,6 +52,8 @@ Config options (defaults shown):
       GPG_VERIFY: verify the repo with gnupg
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
+  -P|--cpan-ignore FALSE:
+      CPAN_IGNORE: install scripts even if they have been installed from the CPAN
   -p|--pkg-dir FALSE:
       PKG_DIR: set a directory to store packages in.
   -s|--sbo-home /usr/sbo:
@@ -79,7 +81,8 @@ my %options;
 GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'classic|C=s', 'noclean|c=s',
 	'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 	'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
-    'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s');
+    'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
+    'cpan-ignore|P=s');
 
 if ($options{help}) {
 	show_usage();
@@ -107,6 +110,7 @@ my %valid_confs = (
 	'build-ignore'      => 'BUILD_IGNORE',
 	'gpg-verify'        => 'GPG_VERIFY',
 	'strict-upgrades'   => 'STRICT_UPGRADES',
+	'cpan-ignore'       => 'CPAN_IGNORE',
 );
 
 my %params = (
@@ -124,6 +128,7 @@ my %params = (
 	GIT_BRANCH        => 'B|--branch',
 	BUILD_IGNORE      => 'b|--build-ignore',
 	STRICT_UPGRADES   => 'S|--strict-upgrades',
+	CPAN_IGNORE       => 'P|--cpan-ignore',
 );
 
 if (exists $options{list}) {
@@ -250,6 +255,8 @@ sub interactive_menu {
 	BUILD_IGNORE: if (not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') {
 		config_prompt("BUILD_IGNORE", "If TRUE, do upgrades only if the version number differs.", "TRUE or FALSE.", "TF");
 	}
+
+	CPAN_IGNORE: config_prompt("CPAN_IGNORE", "If TRUE, install scripts even if they are installed from the CPAN.", "TRUE or FALSE.", "TF");
 
 	PKG_DIR: config_prompt("PKG_DIR", "If set to an absolute path, store newly-built packages there regardless of DISTCLEAN.", "An absolute path or FALSE.", "PATH");
 

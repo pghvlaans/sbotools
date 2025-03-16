@@ -276,8 +276,11 @@ if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not 
 # get lists of installed packages and perl modules from CPAN
 my $inst_pkgs = get_installed_packages('ALL');
 my $std_pkgs = get_installed_packages('STD');
-my $pms = get_installed_cpans();
-s/::/-/g for @$pms;
+my $pms;
+unless ($config{CPAN_IGNORE} eq "TRUE") {
+	$pms = get_installed_cpans();
+	s/::/-/g for @$pms;
+}
 my (%inst_names, %std_names);
 $inst_names{$_->{name}} = $_ for @$inst_pkgs;
 $std_names{$_->{name}} = $_ for @$std_pkgs;
@@ -345,12 +348,12 @@ FIRST: for my $sbo (@$build_queue) {
 			next FIRST;
 		}
 	} else {
-		if ($sbo =~ /^perl-/) {
+		if ($sbo =~ /^perl-/ and $config{CPAN_IGNORE} ne "TRUE") {
 			my $pm_name = $sbo;
 			$pm_name =~ s/^perl-//;
 			for my $pm (@$pms) {
 				if ($pm =~ /^$pm_name$/i) {
-					say "$sbo installed via the cpan.";
+					say "$sbo installed via the CPAN.";
 					next FIRST;
 				}
 			}

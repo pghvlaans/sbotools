@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '3.4.2';
 
-use SBO::Lib::Util qw/ %config build_cmp script_error open_read version_cmp /;
+use SBO::Lib::Util qw/ %config build_cmp get_arch script_error open_read version_cmp /;
 use SBO::Lib::Tree qw/ get_sbo_location get_sbo_locations is_local /;
 use SBO::Lib::Info qw/ get_orig_build_number get_orig_version get_sbo_build_number get_sbo_version /;
 
@@ -124,13 +124,18 @@ sub get_inst_names {
   my @cpans = @{ get_installed_cpans() };
 
 C<get_installed_cpans()> returns an array reference to a list of Perl
-modules installed from the CPAN. This is used in C<sboinstall(1)> to
-prevent conflicting installations from the CPAN and SlackBuilds.
+modules installed from the CPAN. Modules are only recognized as installed
+if all files in C<.packlist> exist. This is used in C<sboinstall(1)> and
+C<sboupgrade(1)> to prevent conflicting installations from the CPAN and
+SlackBuilds.
 
 =cut
 
 # return a list of perl modules installed via the CPAN
 sub get_installed_cpans {
+  my $libdirsuffix;
+  $libdirsuffix = "64" if get_arch() =~ m/64$/;
+  my $auto_location = "/usr/local/lib$libdirsuffix/perl5/auto";
   my @contents;
   for my $file (grep { -f $_ } map { "$_/perllocal.pod" } @INC) {
     my ($fh, $exit) = open_read($file);
@@ -140,8 +145,23 @@ sub get_installed_cpans {
   }
   my $mod_regex = qr/C<Module>\s+L<([^\|]+)/;
   my (@mods, @vers);
-  for my $line (@contents) {
-    push @mods, ($line =~ $mod_regex)[0];
+  FIRST: for my $line (@contents) {
+    my $modname = ($line =~ $mod_regex)[0];
+    my $dirname = $modname;
+    $dirname =~ s/::/\//g;
+    my $packlist = "$auto_location/$dirname/.packlist";
+    if (-f $packlist) {
+      my ($pfh, $pfexit) = open_read($packlist);
+      next FIRST if $pfexit;
+      for my $pfline (<$pfh>) {
+	$pfline =~ s/\n//;
+        unless (-f $pfline or -l $pfline) {
+          close $pfh;
+          next FIRST;
+        }
+      }
+      push @mods, $modname;
+    }
   }
   return \@mods;
 }

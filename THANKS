@@ -38,6 +38,7 @@ Finally, a good number of users have made valuable reports and feature
 requests over the years, both before and after this sbotools repository
 was forked:
 
+1-1sam (requested the CPAN_IGNORE setting)
 Charadon (requested --mass-rebuild and development man pages)
 chrish4cks (reported an .info parse bug)
 dchmelik (reported diligently on sbocheck problems, provided feedback)

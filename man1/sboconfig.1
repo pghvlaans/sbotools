@@ -16,10 +16,10 @@ sboconfig [-l]
 sboconfig [--reset]
 .P
 sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \\
-          [-g TRUE|FALSE ] [-j #|FALSE] [-p /path|FALSE] \\
-          [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] \\
-          [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE] \\
-          [-R TRUE|FALSE] [-S TRUE|FALSE]
+          [-g TRUE|FALSE ] [-j #|FALSE] [-P TRUE|FALSE] \\
+          [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \\
+          [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] \\
+          [-r url|FALSE] [-R TRUE|FALSE] [-S TRUE|FALSE]
 .SH DESCRIPTION
 .P
 .B
@@ -245,6 +245,17 @@ argument when a SlackBuild invoking
 .B
 make
 is run.
+.RE
+.P
+.B
+-P|--cpan-ignore (FALSE|TRUE)
+.RS
+.B
+CPAN_IGNORE\fR\
+\&: if
+.B
+TRUE\fR\
+\&, install scripts even if they are already installed from the CPAN.
 .RE
 .P
 .B

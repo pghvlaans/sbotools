@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ auto_reverse get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_packages get_build_queue get_sbo_locations in merge_queues open_fh user_prompt process_sbos print_failures rationalize_queue verify_gpg %config show_version lint_sbo_config wrapsay /;
+use SBO::Lib qw/ auto_reverse get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_sbo_locations in merge_queues open_fh user_prompt process_sbos print_failures rationalize_queue verify_gpg %config show_version lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -184,7 +184,8 @@ for my $sbo (@sbos) {
 	}
 }
 
-# get a list of installed SBos to check upgradability against
+# get a list of installed SBos to check upgradability against,
+# and perl modules from CPAN
 my $inst_names = get_inst_names(get_installed_packages('SBO'));
 my %inst_names;
 $inst_names{$_} = 1 for @$inst_names;
@@ -196,6 +197,11 @@ if (not $non_int or not $force) {
 		$updates = get_available_updates('BOTH') if not defined $updates;
 	}
 	$updates{$$_{name}} = 1 for @$updates;
+}
+my $pms;
+unless ($config{CPAN_IGNORE} eq "TRUE") {
+	$pms = get_installed_cpans();
+	s/::/-/g for @$pms;
 }
 
 my $upgrade_queue = [];
@@ -307,6 +313,17 @@ FIRST: for my $sbo (@$upgrade_queue) {
 			exit 0 unless prompt("Do you want to ignore it and continue?", default => 'yes');
 		}
 		next FIRST;
+	}
+
+	if ($sbo =~ /^perl-/ and $config{CPAN_IGNORE} ne "TRUE" and not $inst_names{$sbo}) {
+		my $pm_name = $sbo;
+		$pm_name =~ s/^perl-//;
+		for my $pm (@$pms) {
+			if ($pm =~ /^$pm_name$/i) {
+				say "sbo installed via the CPAN.";
+				next FIRST;
+			}
+		}
 	}
 
 	unless ($non_int) {

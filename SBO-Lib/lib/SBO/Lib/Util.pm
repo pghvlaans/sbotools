@@ -112,7 +112,8 @@ C</usr/sbo> if still C<"FALSE">.
 
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
-C<GPG_VERIFY>, C<RSYNC_DEFAULT> and C<STRICT_UPGRADES>.
+C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>
+and C<CPAN_IGNORE>.
 
 =head2 @listings
 
@@ -141,6 +142,7 @@ our %config = (
   RSYNC_DEFAULT => 'FALSE',
   GPG_VERIFY => 'FALSE',
   STRICT_UPGRADES => 'FALSE',
+  CPAN_IGNORE => 'FALSE',
 );
 
 read_config();
@@ -469,6 +471,12 @@ sub lint_sbo_config {
     unless ($configs{CLASSIC} =~ /^(TRUE|FALSE)$/) {
       push @invalid, "CLASSIC:" if $running ne 'sboconfig';
       push @invalid, "$warn -C (TRUE or FALSE)";
+    }
+  }
+  if (exists $configs{CPAN_IGNORE}) {
+    unless ($configs{CPAN_IGNORE} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "CPAN_IGNORE" if $running ne 'sboconfig';
+      push @invalid, "$warn -P (TRUE or FALSE)";
     }
   }
   if (exists $configs{DISTCLEAN}) {
