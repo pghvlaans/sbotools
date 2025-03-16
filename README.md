@@ -44,6 +44,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
     * Thanks to 1-1sam for the request.
   * Pkgs.pm: Properly ignore uninstalled CPAN modules
   * sbofind: Report on scripts installed from the CPAN, in whole or in part
+  * sboinstall: Make --reverse-rebuild usable with --compat32; --use-template is incompatible
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue

@@ -254,16 +254,19 @@ Do not reuse saved build options if running with
 .B
 -p|--compat32
 .RS
-Create a compat32 package on multilib x86_64 systems.
+Create a
+.I
+compat32
+package on multilib x86_64 systems.
 This requires the
 .B
 compat32-tools
 package by Eric Hameleers. Please note that this operation
 is not necessarily foolproof, and is unsupported by anyone
-in principle. As a best practice,
+in principle.
 .B
 --compat32
-should be combined with
+can be combined with
 .B
 --noinstall
 and
@@ -278,10 +281,13 @@ to installation. GitHub Issues are welcome in case of unexpected failure.
 .RS
 Rebuild the reverse dependencies for the requested SlackBuilds.
 The build queue also includes any missing dependencies for
-those scripts. Incompatible with
+those scripts. With
 .B
 --compat32\fR\
-\&,
+\&, rebuild only installed
+.I
+compat32
+reverse dependencies. Incompatible with
 .B
 --norequirements\fR\
 \&,
@@ -365,6 +371,26 @@ Build using the template saved to
 .B
 FILE.
 This disables all user prompts.
+
+Incompatible with
+.B
+--compat32\fR\
+\&,
+.B
+--mass-rebuild
+and
+.B
+--reverse-rebuild\fR\
+\&. To make
+.I
+compat32
+packages from a template, consider using
+.B
+--create-template
+with
+.B
+--compat32
+first.
 .RE
 .P
 .B
@@ -396,8 +422,8 @@ In combination with
 --reverse-rebuild\fR\
 \&,
 .B
---compat32\fR\
-\&,
+--compat32
+(likely to change in a future version),
 .B
 --use-template
 and
@@ -442,7 +468,7 @@ packages on
 .B
 x86_64
 machines and
-.B
+.I
 compat32
 packages.
 .B
@@ -450,9 +476,12 @@ sboinstall
 does not require
 .B
 ARCH
-to build compat32 packages. This process is not necessarily bug-free;
+to build
+.I
+compat32
+packages. This process is not necessarily bug-free;
 please do not hesitate to report
-.B
+.I
 compat32
 issues.
 .RE

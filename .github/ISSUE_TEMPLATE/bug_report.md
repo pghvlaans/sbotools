@@ -17,4 +17,6 @@ assignees: pghvlaans
 
 * Output of `sbohints --list` (version 3.4 and later):
 
+* For `--compat32` failures, please copy and paste the last several lines of build output:
+
 * Description:

@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ %config _ERR_OPENFH auto_reverse get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_reverse_reqs get_sbo_location get_sbo_locations in merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_prompt verify_gpg lint_sbo_config wrapsay /;
+use SBO::Lib qw/ %config _ERR_OPENFH auto_reverse get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_reverse_reqs get_requires get_sbo_location get_sbo_locations in merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_prompt verify_gpg lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -134,7 +134,7 @@ if ($gpg) { verify_gpg(); }
 if ($compat32) {
 	usage_error("compat32 only works on x86_64.") unless get_arch eq 'x86_64';
 	usage_error("compat32 is incompatible with mass-rebuild.") unless not $mass_rebuild;
-	usage_error("compat32 is incompatible with reverse-rebuild.") unless not $reverse_rebuild;
+	usage_error("compat32 is incompatible with use-template.") unless not $utemp;
 }
 
 if ($utemp and $mass_rebuild) {
@@ -160,7 +160,7 @@ if ($no_reqs and $reverse_rebuild) {
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
 
-my (%warnings, $build_queue, $template);
+my (%warnings, $build_queue, $save_queue, $template);
 
 # if SBO_HOME/resume.temp exists, resume the mass rebuild
 my $mtemp = "$config{SBO_HOME}/mass_rebuild.temp";
@@ -200,6 +200,7 @@ if (length $utemp) {
 				}
 			}
 			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 0, @needs_reverse) if @needs_reverse;
+			$save_queue = $build_queue;
 			if ($extra_queue) {
 				$build_queue = merge_queues($build_queue, $extra_queue);
 				%warnings = (%warnings, %extra_warnings);
@@ -219,7 +220,9 @@ if (length $utemp) {
 				} else {
 					wrapsay "$cand is blacklisted. Skipping.";
 				}
-			} unless ($no_install) {
+			}
+			$save_queue = $build_queue;
+			unless ($no_install) {
 				for my $cand (@$build_queue) {
 					if (auto_reverse($cand)) {
 						push @needs_reverse, $cand;
@@ -242,6 +245,7 @@ if (length $utemp) {
 			my ($extra_queue, %extra_warnings);
 			my $queue = get_build_queue([$sbo], \%warnings);
 			$build_queue = merge_queues($build_queue, $queue);
+			$save_queue = merge_queues($save_queue, $build_queue);
 			# --reverse-rebuild with --reinstall; include the items in @ARGV
 			if ($reverse_rebuild) {
 				($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
@@ -258,6 +262,7 @@ if (length $utemp) {
 # and put everything in the right order.
 if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not $utemp) {
 	my $need_rationalize;
+	$save_queue = $build_queue;
 	for my $sbo (@$build_queue) {
 		my ($extra_queue, %extra_warnings);
 		if (auto_reverse($sbo)) {
@@ -318,6 +323,14 @@ for my $sbo (@$build_queue) {
 	}
 }
 
+# see what has been installed as part of a reverse
+# dependency queue
+my @reverses;
+for my $sbo (@$build_queue) {
+	next if $sbo =~ /-compat32$/;
+	push @reverses, $sbo unless grep { /^$sbo$/ } @$save_queue;
+}
+
 # check for already-installeds and prompt for the rest
 my (@temp_queue, %commands, %options);
 if (defined $template) {
@@ -326,8 +339,39 @@ if (defined $template) {
 }
 my $added = ' added to install queue.';
 FIRST: for my $sbo (@$build_queue) {
-	next FIRST if $sbo =~ /-compat32$/;
-	my $name = $compat32 ? "$sbo-compat32" : $sbo;
+	my $name;
+	if ($sbo =~ /-compat32$/) {
+		# the use of $utemp here is future-proofing against (eventually)
+		# incoming --mass-rebuild compatibility
+		next FIRST unless $utemp;
+		$name = $sbo;
+		$sbo =~ s/-compat32$//;
+	} else {
+		$name = $compat32 ? "$sbo-compat32" : $sbo;
+	}
+	$locations{$name} = get_sbo_location($sbo) if $compat32;
+	# do not attempt compat32 builds if noarch
+	if ($name =~ /-compat32$/ and $locations{$name}) {
+		if (system("grep", "-q", "ARCH=noarch", "$locations{$name}/$sbo.SlackBuild") == 0) {
+			wrapsay "$sbo is a noarch script; skipping compat32.";
+			next FIRST;
+		}
+	}
+	# for items in a reverse dependency rebuild queue, do not add
+	# new compat32 packages unless they are a missing requirement
+	if ($name =~ /-compat32/ and grep { /^$sbo$/ } @reverses) {
+		my $needed_compat;
+		unless ($inst_names{$name}) {
+			for my $cand (@reverses) {
+				next if $cand eq $sbo;
+				my $cand_reqs = get_requires($cand);
+				my $cand_name = $cand;
+				$cand_name = "$cand_name-compat32" unless $cand_name =~ /-compat32$/;
+				$needed_compat = 1 if grep { /^$sbo$/ } @$cand_reqs and $inst_names{$cand_name};
+			}
+		}
+		next FIRST unless $inst_names{$name} or $needed_compat;
+	}
 
 	if ($inst_names{$name}) {
 		my $inst_msg = sprintf "%s (%s) is already installed.", $name, $inst_names{$name}{pkg};
@@ -375,11 +419,6 @@ FIRST: for my $sbo (@$build_queue) {
 		next FIRST;
 	}
 
-	$locations{$name} = get_sbo_location($sbo) if $compat32;
-	# do not attempt compat32 builds if NOARCH
-	if ($compat32 and $locations{$name}) {
-		if (system("grep", "-q", "ARCH=noarch", "$locations{$name}/$sbo.SlackBuild") == 0) { next FIRST; }
-	}
 	unless ($non_int) {
 		# if compat32 is TRUE, we need to see if the non-compat version exists.
 		if ($compat32) {
