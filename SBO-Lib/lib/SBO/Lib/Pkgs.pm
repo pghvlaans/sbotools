@@ -133,8 +133,7 @@ SlackBuilds.
 
 # return a list of perl modules installed via the CPAN
 sub get_installed_cpans {
-  my $libdirsuffix;
-  $libdirsuffix = "64" if get_arch() =~ m/64(-|$)/;
+  my $libdirsuffix = get_arch() =~ m/64(-|$)/ ? "64" : "";
   my $auto_location = "/usr/local/lib$libdirsuffix/perl5/auto";
   my @contents;
   for my $file (grep { -f $_ } map { "$_/perllocal.pod" } @INC) {
@@ -161,6 +160,7 @@ sub get_installed_cpans {
         }
       }
       push @mods, $modname;
+      close $pfh;
     }
   }
   return \@mods;
