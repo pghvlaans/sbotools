@@ -25,10 +25,10 @@
     sboconfig [--reset]
 
     sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \
-              [-g TRUE|FALSE ] [-j #|FALSE] [-p /path|FALSE] \
-              [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] \
-              [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE] \
-              [-R TRUE|FALSE] [-S TRUE|FALSE]
+              [-g TRUE|FALSE ] [-j #|FALSE] [-P TRUE|FALSE] \
+              [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \
+              [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] \
+              [-r url|FALSE] [-R TRUE|FALSE] [-S TRUE|FALSE]
 
 ## DESCRIPTION
 
@@ -112,6 +112,11 @@ Slackware 14.1.
 
 **JOBS**: If **numerical**, pass to the **-j** argument when a
 SlackBuild invoking **make** is run.
+
+**-P\|\--cpan-ignore (FALSE\|TRUE)**
+
+**CPAN_IGNORE**: if **TRUE**, install scripts even if they are already
+installed from the CPAN.
 
 **-p\|\--pkg-dir (FALSE\|/path)**
 
