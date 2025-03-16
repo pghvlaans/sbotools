@@ -92,12 +92,13 @@ as one returned by \f(CWget_available_updates()\fR.
 .SS get_installed_cpans
 .IX Subsection "get_installed_cpans"
 .Vb 1
-\&  my @cpans = @{ get_installed_cpans() };
+\&  my (@mods, @defective) = @{ get_installed_cpans() };
 .Ve
 .PP
 \&\f(CWget_installed_cpans()\fR returns an array reference to a list of Perl
-modules installed from the CPAN. Modules are only recognized as installed
-if all files in \f(CW\*(C`.packlist\*(C'\fR exist. This is used in \f(CWsboinstall(1)\fR and
+modules installed from the CPAN and a second array with installed modules
+that have missing files. Modules are only fully recognized as installed if all
+files in \f(CW\*(C`.packlist\*(C'\fR exist. This is used in \f(CWsboinstall(1)\fR and
 \&\f(CWsboupgrade(1)\fR to prevent conflicting installations from the CPAN and
 SlackBuilds.
 .SS get_installed_packages

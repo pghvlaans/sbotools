@@ -198,10 +198,11 @@ if (not $non_int or not $force) {
 	}
 	$updates{$$_{name}} = 1 for @$updates;
 }
-my $pms;
+my ($pms, $defective);
 unless ($config{CPAN_IGNORE} eq "TRUE") {
-	$pms = get_installed_cpans();
+	($pms, $defective) = get_installed_cpans();
 	s/::/-/g for @$pms;
+	s/::/-/g for @$defective;
 }
 
 my $upgrade_queue = [];
@@ -322,6 +323,11 @@ FIRST: for my $sbo (@$upgrade_queue) {
 			if ($pm =~ /^$pm_name$/i) {
 				say "sbo installed via the CPAN.";
 				next FIRST;
+			}
+			for my $pm (@$defective) {
+				if ($pm =~ /^$pm_name$/i) {
+					wrapsay "$sbo installed via the CPAN, but file(s) missing.";
+				}
 			}
 		}
 	}

@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue get_installed_packages get_full_reverse get_reverse_reqs on_blacklist %config $slackbuilds_txt $repo_path show_version in indent get_from_info uniq lint_sbo_config /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs on_blacklist %config $slackbuilds_txt $repo_path show_version in indent get_from_info uniq lint_sbo_config /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 
@@ -83,6 +83,12 @@ if ($show_reverse) {
 	$installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
 	$fulldeps = get_reverse_reqs($installed);
 }
+
+# get lists of installed and defective CPAN modules
+my (@cpans, @defective_cpans);
+my ($pms, $defective) = get_installed_cpans();
+s/::/-/g for @$pms;
+s/::/-/g for @$defective;
 
 # find anything with $search in its name
 sub perform_search {
@@ -202,14 +208,27 @@ for my $search (@ARGV) {
 		for my $hash (@$findings) {
 			if ($notfound) { say ''; }
 			my $name = $hash->{name};
+			if ($name =~ /^perl-/) {
+				my $pm_name = $name;
+				$pm_name =~ s/^perl-//;
+				for my $pm (@$pms) {
+					push @cpans, $name if $pm =~ /^$pm_name$/i;
+				}
+				for my $pm (@$defective) {
+					push @defective_cpans, $name if $pm =~ /^$pm_name$/i;
+				}
+			}
+
 			my $location = $hash->{location};
 			my $version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
 			my $sbo = "SBo:   "; $sbo = "Local: " if $hash->{local};
-			unless (on_blacklist($name)) {
-				say "$sbo $name $version";
-			} else {
-				say "$sbo $name $version\n        blacklisted";
-			}
+			my $blacklist_msg = "        blacklisted";
+			my $cpan_msg = "        CPAN";
+			my $defective_cpan_msg = "        CPAN, file(s) missing";
+			say "$sbo $name $version";
+			say "        blacklisted" if on_blacklist($name);
+			say "        CPAN" if grep { /^$name$/ } @cpans;
+			say "        CPAN, file(s) missing" if grep { /^$name$/ } @defective_cpans;
 			say "Path:   $location";
 			say "info:   ". get_file_contents("$location/$name.info") if $show_info;
 			say "README: ". get_file_contents("$location/README") if $show_readme;

@@ -22,6 +22,7 @@ sbotools
   * Add setting CPAN_IGNORE: Install scripts even if they are already installed from the CPAN
     * Thanks to 1-1sam for the request.
   * Pkgs.pm: Properly ignore uninstalled CPAN modules
+  * sbofind: Report on scripts installed from the CPAN, in whole or in part
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue

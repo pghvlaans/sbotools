@@ -121,11 +121,12 @@ sub get_inst_names {
 
 =head2 get_installed_cpans
 
-  my @cpans = @{ get_installed_cpans() };
+  my (@mods, @defective) = @{ get_installed_cpans() };
 
 C<get_installed_cpans()> returns an array reference to a list of Perl
-modules installed from the CPAN. Modules are only recognized as installed
-if all files in C<.packlist> exist. This is used in C<sboinstall(1)> and
+modules installed from the CPAN and a second array with installed modules
+that have missing files. Modules are only fully recognized as installed if all
+files in C<.packlist> exist. This is used in C<sboinstall(1)> and
 C<sboupgrade(1)> to prevent conflicting installations from the CPAN and
 SlackBuilds.
 
@@ -143,8 +144,9 @@ sub get_installed_cpans {
     close $fh;
   }
   my $mod_regex = qr/C<Module>\s+L<([^\|]+)/;
-  my (@mods, @vers);
+  my (@mods, @defective);
   FIRST: for my $line (@contents) {
+    my ($missing, $present);
     my $modname = ($line =~ $mod_regex)[0];
     my $dirname = $modname;
     $dirname =~ s/::/\//g;
@@ -155,15 +157,20 @@ sub get_installed_cpans {
       for my $pfline (<$pfh>) {
 	$pfline =~ s/\n//;
         unless (-f $pfline or -l $pfline) {
-          close $pfh;
-          next FIRST;
+          $missing = 1;
+        } else {
+          $present = 1;
         }
       }
-      push @mods, $modname;
+      unless ($missing) {
+        push @mods, $modname;
+      } elsif ($present) {
+        push @defective, $modname;
+      }
       close $pfh;
     }
   }
-  return \@mods;
+  return (\@mods, \@defective);
 }
 
 =head2 get_installed_packages
