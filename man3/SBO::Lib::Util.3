@@ -307,9 +307,9 @@ when editing the hints file.
 \&  save_options($sbo, $opts)
 .Ve
 .PP
-\&\f(CWsave_options()\fR saves build options to \f(CW\*(C`/var/log/sbotools/sbo\*(C'\fR. If the file
-already exists and the user supplies no build options, the existing file is
-retained.
+\&\f(CWsave_options()\fR saves build options to \f(CW\*(C`/var/log/sbotools/sbo\*(C'\fR. For \f(CW\*(C`compat32\*(C'\fR
+packages, the file forthe base script is used. If the file already exists and the
+user supplies no build options, the existing file is retained.
 .SS script_error
 .IX Subsection "script_error"
 .Vb 2

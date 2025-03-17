@@ -48,7 +48,8 @@ SBO::Lib::Readme - Routines for interacting with a typical SBo README file.
   my $opts = ask_opts($sbo, $readme);
 
 C<ask_opts()> asks if options should be set. If no options are set, it returns C<undef>.
-Saved options under C</var/log/sbotools/$sbo> are retrieved and can be used again.
+Saved options under C</var/log/sbotools/$sbo> are retrieved and can be used again. For
+C<compat32> packages, saved options are shared with the base script.
 
 =cut
 
@@ -57,7 +58,9 @@ sub ask_opts {
   # TODO: check number of args
   script_error('ask_opts requires an argument.') unless @_;
   my ($sbo, $readme) = @_;
-  my ($opts_log) = "/var/log/sbotools/$sbo";
+  my $real_name = $sbo;
+  $real_name =~ s/-compat32$//;
+  my ($opts_log) = "/var/log/sbotools/$real_name";
   my ($opts_bk) = "$opts_log.bk";
   if (-f $opts_log) {
     my ($prev_fh, $exit) = open_fh($opts_log, '<');
@@ -66,7 +69,7 @@ sub ask_opts {
     } else {
       my $prev_opts = <$prev_fh>;
       if ($config{CLASSIC} ne "TRUE") {
-        if (prompt("It looks like options were previously specified for $sbo:\n\n$prev_opts\n\nWould you like to use these options to build $sbo?", default => 'yes')) {
+        if (prompt("\nIt looks like options were previously specified for $sbo:\n\n$prev_opts\n\nWould you like to use these options to build $sbo?", default => 'yes')) {
           my $opts = $prev_opts;
 	  return $opts;
         }

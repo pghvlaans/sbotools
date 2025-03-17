@@ -748,14 +748,15 @@ sub read_hints{
 
   save_options($sbo, $opts)
 
-C<save_options()> saves build options to C</var/log/sbotools/sbo>. If the file
-already exists and the user supplies no build options, the existing file is
-retained.
+C<save_options()> saves build options to C</var/log/sbotools/sbo>. For C<compat32>
+packages, the file forthe base script is used. If the file already exists and the
+user supplies no build options, the existing file is retained.
 
 =cut
 
 sub save_options {
   my $sbo = shift;
+  $sbo =~ s/-compat32$//;
   my $args = shift;
   my $argdir = "/var/log/sbotools";
   my $logfile = "$argdir/$sbo";

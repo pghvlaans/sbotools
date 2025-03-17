@@ -48,11 +48,12 @@ judged to document options in *KEY=VALUE* form, a prompt for setting
 options appears. Any build options, whether passed interactively or in a
 template, are saved to */var/log/sbotools* when the SlackBuild runs.
 
-Please note that saved build options are not displayed when **CLASSIC**
-is set to **TRUE**. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md). When
-running with **\--nointeractive**, saved build options are used
-automatically unless **\--norecall** or **\--use-template** are passed
-as well.
+*compat32* packages share saved build options with the corresponding
+base script. Please note that saved build options are not displayed when
+**CLASSIC** is set to **TRUE**. See [sboconfig(1)](sboconfig.1.md) or
+[sbotools.conf(5)](sbotools.conf.5.md). When running with **\--nointeractive**, saved
+build options are used automatically unless **\--norecall** or
+**\--use-template** are passed as well.
 
 **sboinstall** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download

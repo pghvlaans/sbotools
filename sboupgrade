@@ -437,7 +437,7 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		# reuse build options automatically in nointeractive
 		# unless norecall is used
 		unless ($no_recall) {
-			my $opts_log = "/var/log/sbotools/$sbo";
+			my $opts_log = "/var/log/sbotools/$real_name";
 			if (-f $opts_log) {
 				my ($prev_fh, $exit) = open_fh($opts_log, '<');
 				if ($exit) {

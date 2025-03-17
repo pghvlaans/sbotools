@@ -42,12 +42,13 @@ judged to document options in *KEY=VALUE* form, a prompt for setting
 options appears. Any build options used are saved to */var/log/sbotools*
 when the SlackBuild runs.
 
-Please note that saved build options are not displayed when **CLASSIC**
-is set to **TRUE**. When running with **\--nointeractive**, saved build
-options are used automatically unless **\--norecall** is passed as well.
-If **STRICT_UPGRADES** is **TRUE**, upgrades are only performed for
-non-override packages if the version or build number is apparently
-higher. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
+*compat32* packages share saved build options with the corresponding
+base script. Please note that saved build options are not displayed when
+**CLASSIC** is set to **TRUE**. When running with **\--nointeractive**,
+saved build options are used automatically unless **\--norecall** is
+passed as well. If **STRICT_UPGRADES** is **TRUE**, upgrades are only
+performed for non-override packages if the version or build number is
+apparently higher. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
 
 **sboupgrade** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
