@@ -50,6 +50,7 @@ if ($help) {
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
+if ($< != 0) { $config{GPG_VERIFY} = "FALSE"; }
 unless ($< == 0 or ($nopull and not $gpg)) {
 	show_usage();
 	usage_error "Non-root users can only call sbohints with -n, -h and -v." unless $< == 0;
