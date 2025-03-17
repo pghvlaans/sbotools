@@ -17,7 +17,9 @@ dependency requests for **sbotools**
 
 The */etc/sbotools/sbotools.hints* file is used to blacklist scripts,
 request optional dependencies and request automatic reverse dependency
-rebuilds.
+rebuilds. Please note that all requests apply equally to the *compat32*
+versions of the scripts; specific requests for *compat32* scripts are
+unsupported.
 
 If a script is blacklisted, it can neither be included in build queues
 nor removed by [sboremove(1)](sboremove.1.md). To blacklist a script, place it on its

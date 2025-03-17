@@ -10,8 +10,7 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 ## Prospective Features
 
-* Add **\--compat32** back to `sboupgrade`
-* Allow `sboupgrade --all` and `sboinstall --mass-rebuild` to handle *compat32* packages (post-3.5)
+* Allow `sboinstall --mass-rebuild` to handle *compat32* packages (post-3.5)
 
 Nothing else for now, but requests are welcome and will receive due consideration.
 
@@ -33,3 +32,5 @@ The following feature changes will be included in version 3.5:
   * A new **CPAN_IGNORE** setting to skip the CPAN check altogether
   * `sbofind`: Report on installed CPAN modules, in whole or in part
   * `sboinstall`, `sboupgrade`: More informative CPAN-related output and more accurate installation blocking
+* Add **\--compat32** back to `sboupgrade`
+* Allow `sboupgrade --all` to handle *compat32* packages
