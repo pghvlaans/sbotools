@@ -28,6 +28,7 @@
   * *sboupgrade*: Restore **\--compat32**, which was deprecated in 2013 and partially removed in 2015
   * *sbohints*: **\--reset** was blocked by mistake; unblocked
   * *Tree.pm*: Properly report compat32 scripts in **LOCAL_OVERRIDES**
+  * *sbocheck*: Fix non-root **\--nopull** when **GPG_VERIFY** is on
 
 * 3.4.2 - 2025-02-07
   * *Build.pm*: When distcleaning, do not delete files that are needed later in the queue
