@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ auto_reverse get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_sbo_locations in merge_queues open_fh user_prompt process_sbos print_failures rationalize_queue verify_gpg %config show_version lint_sbo_config wrapsay /;
+use SBO::Lib qw/ auto_reverse get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_requires get_sbo_locations in merge_queues open_fh user_prompt process_sbos print_failures rationalize_queue verify_gpg %config show_version lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -67,7 +67,7 @@ my $jobs = $config{JOBS};
 my $build_ignore = $config{BUILD_IGNORE};
 my $gpg = $config{GPG_VERIFY};
 my $strict_upgrades = $config{STRICT_UPGRADES};
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $all);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -84,6 +84,7 @@ my $options_ok = GetOptions(
 	'build-ignore|b=s'	=> \$build_ignore,
 	'all'               => \$all,
 	'strict-upgrades|S=s' => \$strict_upgrades,
+	'compat32|p'        => \$compat32,
 );
 
 if ($help) {
@@ -136,6 +137,13 @@ $gpg = $gpg eq 'TRUE' ? 1 : 0;
 # from here, only Pkgs.pm uses STRICT_UPGRADES
 $config{STRICT_UPGRADES} = $strict_upgrades if $strict_upgrades;
 
+usage_error("nointeractive is incompatible with force-reqs.")
+	if $non_int && $force_reqs;
+usage_error("reverse-rebuild is incompatible with noinstall.")
+	if $reverse && $no_install;
+usage_error("all is incompatible with compat32.")
+	if $compat32 && $all;
+
 if ($gpg) { verify_gpg(); }
 
 my $updates;
@@ -152,11 +160,6 @@ if ($all) {
 }
 
 if (!@ARGV) { show_usage(); exit 1 }
-
-usage_error("nointeractive is incompatible with force-reqs.")
-	if $non_int && $force_reqs;
-usage_error("reverse-rebuild is incompatible with noinstall.")
-	if $reverse && $no_install;
 
 # if we can't find SLACKBUILDS.TXT in $config{SBO_HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
@@ -177,10 +180,6 @@ for my $sbo (@sbos) {
 	$locations{$sbo} = get_sbo_location($name);
 	if (not $locations{$sbo} and in(@ARGV, $sbo)) {
 		usage_error("Unable to locate $sbo in the SlackBuilds.org tree.");
-	}
-	if ($sbo =~ /-compat32$/) {
-		usage_error("compat32 Perl SBos are not supported.")
-			if $locations{$sbo} =~ qr|/perl/[^/]+$|;
 	}
 }
 
@@ -206,12 +205,18 @@ unless ($config{CPAN_IGNORE} eq "TRUE") {
 }
 
 my $upgrade_queue = [];
-my (%warnings, @base_queue);
+my @needs_reverse;
+my (%warnings, $save_queue);
+
+# ensure that compat32 is picked up on the upgrade list
+if ($compat32) {
+	for my $sbo (@sbos) { $sbo = "$sbo-compat32" unless $sbo =~ /-compat32$/; }
+}
 
 # doesn't matter what's updatable and what's not if force is specified,
 # but without force, we only want to update what there are updates for
 if ($non_int and not $reverse) {
-	my ($extra_queue, %extra_warnings, @needs_reverse);
+	my ($extra_queue, %extra_warnings);
 	# --force, non-interactive
 	if ($force) {
 		for my $sbo (@sbos) {
@@ -231,23 +236,17 @@ if ($non_int and not $reverse) {
 			}
 		}
 	}
-	# in case anything needs reverse dependency rebuilds
-	if (@needs_reverse) {
-		($extra_queue, %warnings) = get_full_reverse_queue($self, $updates, @needs_reverse);
-		if ($extra_queue) { $upgrade_queue = merge_queues($upgrade_queue, $extra_queue); }
-	}
+	$save_queue = $upgrade_queue;
 } else {
 	my @notified;
 	for my $sbo (@sbos) {
-		my ($extra_queue, %extra_warnings, @needs_reverse);
+		my ($extra_queue, %extra_warnings);
 		my $name = $sbo;
-		$name =~ s/-compat32$//;
+		$name =~ s/-compat32$// unless $compat32 or $all;
 		next if not $name;
 		unless ($force_reqs or $force) {
 			next unless $updates{$name};
 		}
-		# @base_queue is relevant in case of --reverse-rebuild
-		push @base_queue, $name;
 		my $queue = get_build_queue([$name], \%warnings);
 		if (not $force_reqs) {
 			@$queue = grep { !$inst_names{$_} or $updates{$_} } @$queue;
@@ -256,57 +255,128 @@ if ($non_int and not $reverse) {
 		$upgrade_queue = merge_queues($upgrade_queue, $queue);
 		# with --reverse-rebuild
 		if ($reverse) {
-			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @base_queue);
+			my $needs_compat;
+			if ($sbo =~ /-compat32$/) {
+				$needs_compat = 1;
+				$sbo =~ s/-compat32$//;
+			}
+			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, $sbo);
+			if ($needs_compat) {
+				$sbo = "$sbo-compat32";
+				for my $item (@$extra_queue) {
+					unless ($item =~ /-compat32$/) {
+						$extra_warnings{"$item-compat32"} = $extra_warnings{$item};
+						$item = "$item-compat32";
+					}
+				}
+			}
 		}
+		$save_queue = merge_queues($save_queue, $upgrade_queue);
 		if ($extra_queue) {
 			%warnings = (%warnings, %extra_warnings);
 			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
 		}
 	}
+	$upgrade_queue = rationalize_queue($upgrade_queue) if $reverse;
 	# no --reverse-rebuild; trigger automatic rebuilds unless --no-install
 	# and put everything in the right order
 	unless ($no_install or $reverse) {
-		my ($extra_queue, %extra_warnings, @needs_reverse);
+		$save_queue = $upgrade_queue;
+		my ($extra_queue, %extra_warnings);
 		for my $sbo (@$upgrade_queue) {
 			if (auto_reverse($sbo)) {
-				push @needs_reverse, $sbo if auto_reverse($sbo);
+				push @needs_reverse, $sbo;
 				wrapsay "Reverse dependency rebuild for $sbo." unless grep { /^$sbo$/ } @notified;
 				push @notified, $sbo;
 			}
 		}
-		($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @needs_reverse) if @needs_reverse;
+	}
+}
+
+# handle all automatic reverse dependency rebuilds here
+if (@needs_reverse and not $no_install and not $reverse) {
+	my ($extra_queue, %extra_warnings);
+	for my $sbo (@needs_reverse) {
+		my $needs_compat;
+		if ($sbo =~ /-compat32$/) {
+			$sbo =~ s/-compat32$//;
+			$needs_compat = 1;
+		}
+		($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, $sbo);
+		if ($needs_compat) {
+			for my $item (@$extra_queue) {
+				unless ($item =~ /-compat32$/) {
+					$extra_warnings{"$item-compat32"} = $extra_warnings{$item};
+					$item = "$item-compat32" unless $item =~ /-compat32$/;
+				}
+			}
+		}
 		if ($extra_queue) {
 			%warnings = (%warnings, %extra_warnings);
 			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
-			$upgrade_queue = rationalize_queue($upgrade_queue);
 		}
 	}
+	$upgrade_queue = rationalize_queue($upgrade_queue);
+}
+
+# remove -compat32 here; note that --all needs to retain
+if ($compat32) {
+	for my $sbo (@$upgrade_queue) { $sbo =~ s/-compat32$//; }
+	@$upgrade_queue = uniq @$upgrade_queue;
 }
 
 my $cqueue;
 # get locations for all the things
 my %locs = get_sbo_locations($upgrade_queue);
-my %clocs;
-# -compat32-ify the queue and locations if appropriate
+# compat32 and all fallback
 for my $item (@$upgrade_queue) {
-	if ($item =~ /-compat32$/) {
-		$cqueue = $upgrade_queue;
-		s/$/-compat32/g for @$cqueue;
-		$upgrade_queue = $cqueue;
-		for my $key (keys %locs) {
-			my $val = $locs{$key};
-			$key =~ s/$/-compat32/;
-			$clocs{$key} = $val;
-		}
-		%locs = %clocs;
+	if (($compat32 or $all) and not $locations{$item}) {
+		$locations{$item} = get_sbo_location($item);
+	}
+	next if $inst_names{$item};
+
+	if (not $locations{$item} and in(@ARGV, $item)) {
+		usage_error("Unable to locate $item in the SlackBuilds.org tree.");
 	}
 }
 @locations{keys %locs} = values %locs;
+
+# see what has been installed as part of a reverse
+# dependency queue
+my @reverses;
+for my $sbo (@$upgrade_queue) { push @reverses, $sbo unless grep { /^$sbo$/ } @$save_queue; }
 
 # Get user input regarding upgrades
 my (@temp_queue, %commands, %options);
 FIRST: for my $sbo (@$upgrade_queue) {
 	next FIRST if $std_names{$sbo};
+	next FIRST if $sbo =~ /-compat32$/ and not $all;
+	my $name = $compat32 ? "$sbo-compat32" : $sbo;
+	$locations{$name} = get_sbo_location($sbo) if $compat32 or $all;
+	my $real_name = $sbo;
+	$real_name =~ s/-compat32//;
+	# do not attempt compat32 builds if noarch
+	if ($name =~ /-compat32$/ and $locations{$name}) {
+		if (system("grep", "-q", "ARCH=noarch", "$locations{$name}/$real_name.SlackBuild") == 0) {
+			wrapsay "$sbo is a noarch script; skipping compat32.";
+			next FIRST;
+		}
+	}
+	# for items in a reverse dependency rebuild queue, do not add
+	# new compat32 packages unless they are a missing requirement
+	if ($name =~ /-compat32/ and grep { /^$sbo$/ } @reverses) {
+		my $needed_compat;
+		unless ($inst_names{$name}) {
+			for my $cand (@reverses) {
+				next if $cand eq $sbo;
+				my $cand_reqs = get_requires($cand);
+				my $cand_name = $cand;
+				$cand_name = "$cand_name-compat32" unless $cand_name =~ /-compat32$/;
+				$needed_compat = 1 if grep { /^$sbo$/ } @$cand_reqs and $inst_names{$cand_name};
+			}
+		}
+		next FIRST unless $inst_names{$name} or $needed_compat;
+	}
 
 	if (defined $warnings{$sbo} and $warnings{$sbo} eq 'nonexistent') {
 		wrapsay "Unable to locate $sbo in the SlackBuilds.org tree.";
@@ -333,7 +403,25 @@ FIRST: for my $sbo (@$upgrade_queue) {
 	}
 
 	unless ($non_int) {
-		my ($cmds, $opts, $exit) = user_prompt($sbo, $locations{$sbo});
+		# if compat32 is TRUE, we need to see if the non-compat version exists.
+		if ($compat32) {
+			unless ($inst_names{$sbo}) {
+				say "$name requires $sbo.";
+				my ($cmds, $opts, $exit) = user_prompt($sbo, $locations{$sbo});
+				if ($exit) {
+					warn "Unable to open README for $sbo.\n";
+					exit $exit;
+				}
+				if ($cmds) {
+					next FIRST if $cmds eq 'N';
+				}
+				push(@temp_queue, $sbo);
+				$commands{$sbo} = $cmds;
+				$options{$sbo} = $opts;
+				say "$sbo added to queue.";
+			}
+		}
+		my ($cmds, $opts, $exit) = user_prompt($name, $locations{$name});
 		if ($exit) {
 			warn "Unable to open README for $sbo.\n";
 			exit $exit;
@@ -341,10 +429,10 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		if ($cmds) {
 			next FIRST if $cmds eq 'N';
 		}
-		push(@temp_queue, $sbo);
-		$commands{$sbo} = $cmds;
-		$options{$sbo} = $opts;
-		say "$sbo added to upgrade queue.";
+		push(@temp_queue, $name);
+		$commands{$name} = $cmds;
+		$options{$name} = $opts;
+		say "$name added to upgrade queue.";
 	} else {
 		# reuse build options automatically in nointeractive
 		# unless norecall is used
@@ -360,8 +448,8 @@ FIRST: for my $sbo (@$upgrade_queue) {
 				}
 			}
 		}
-		push(@temp_queue, $sbo);
-		say "\n$sbo added to upgrade queue.";
+		push(@temp_queue, $name);
+		say "\n$name added to upgrade queue.";
 	}
 }
 @$upgrade_queue = @temp_queue;

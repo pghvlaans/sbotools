@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Tree 3"
-.TH SBO::Lib::Tree 3 "Pungenday, Chaos 38, 3191 YOLD" "" "sbotools 3.4.2"
+.TH SBO::Lib::Tree 3 "Sweetmorn, Discord 3, 3191 YOLD" "" "sbotools 3.4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -106,8 +106,9 @@ package name to its location.
 \&  my $bool = is_local($sbo);
 .Ve
 .PP
-\&\f(CWis_local()\fR checks whether the given \f(CW$sbo\fR is in the \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR directory.
-The return value is true if it is, and false if it is not.
+\&\f(CWis_local()\fR checks whether the given \f(CW$sbo\fR (or, for \f(CW\*(C`compat32\*(C'\fR, the base script)
+is in the \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR directory. The return value is true if it is, and false
+if it is not.
 .SH "EXIT CODES"
 .IX Header "EXIT CODES"
 Tree.pm subroutines can return the following exit code:

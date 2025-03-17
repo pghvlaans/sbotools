@@ -12,7 +12,14 @@ The
 .I
 /etc/sbotools/sbotools.hints
 file is used to blacklist scripts, request optional dependencies and request
-automatic reverse dependency rebuilds.
+automatic reverse dependency rebuilds. Please note that all requests apply equally
+to the
+.I
+compat32
+versions of the scripts; specific requests for
+.I
+compat32
+scripts are unsupported.
 .P
 If a script is blacklisted, it can neither be included in build queues nor
 removed by

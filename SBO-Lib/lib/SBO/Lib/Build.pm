@@ -852,13 +852,15 @@ sub rationalize_queue {
 
   FIRST: while (my $sbo = shift @queue) {
     my $reqs = get_requires($sbo);
+    my $real_name = $sbo;
+    $real_name =~ s/-compat32$//;
     unless ($reqs) {
       push @result_queue, $sbo;
       next FIRST;
     } else {
       my @reqs = @{ $reqs };
       for my $check (@queue) {
-        if (grep { /^$check$/ } @reqs) {
+        if (grep { /^$check$/ } @reqs or $check eq $real_name) {
           push @queue, $sbo;
           next FIRST;
         }

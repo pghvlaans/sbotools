@@ -128,7 +128,7 @@ operation is not necessarily foolproof, and is unsupported by anyone in
 principle. **\--compat32** can be combined with **\--noinstall** and
 **\--distclean FALSE** so that the contents of the package can be
 inspected prior to installation. GitHub Issues are welcome in case of
-unexpected failure.
+unexpected failure. Incompatible with **\--all**.
 
 **-q\|\--reverse-rebuild**
 
@@ -161,11 +161,12 @@ dependencies, even if upgrades are not required. Incompatible with
 
 **\--all**
 
-Upgrade all installed SlackBuilds that are eligible for upgrades. This
-takes the **BUILD_IGNORE** setting into account. See [sboconfig(1)](sboconfig.1.md)
-and [sbotools.conf(5)](sbotools.conf.5.md). Please note that SlackBuilds installed from a
-**LOCAL_OVERRIDES** directory are upgraded only if the version or build
-number from this directory varies.
+Upgrade all installed SlackBuilds that are eligible for upgrades,
+including *compat32* packages. This takes the **BUILD_IGNORE** setting
+into account. See [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
+Incompatible with **\--compat32**. Please note that SlackBuilds
+installed from a **LOCAL_OVERRIDES** directory are upgraded only if the
+version or build number from this directory varies.
 
 ## VARIABLES
 

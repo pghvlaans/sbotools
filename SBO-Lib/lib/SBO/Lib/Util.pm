@@ -160,13 +160,15 @@ our @listings = read_hints();
   my $result = auto_reverse($sbo)
 
 C<auto_reverse()> checks whether automatic reverse dependency rebuilding for C<$sbo> has
-been requested. Note that global array C<@listings> is copied.
+been requested. Results will be the same for the C<compat32> version of the script. Note
+that global array C<@listings> is copied.
 
 =cut
 
 sub auto_reverse {
   script_error("auto_reverse requires an argument.") unless @_ == 1;
   my $sbo = shift;
+  $sbo =~ s/-compat32//;
   my @loclistings = @listings;
   for my $entry (@loclistings) {
     next if grep { /\s/ } $entry;
@@ -247,14 +249,21 @@ sub get_kernel_version {
 
   my $optional = get_optional($sbo)
 
-C<get_optional()> checks for user-requested optional dependencies for C<$sbo>. Note that
-global array C<@listings> is copied.
+C<get_optional()> checks for user-requested optional dependencies for C<$sbo>.
+In all cases, results for C<compat32> scripts have the corresponding C<compat32>
+scripts to the results for the base script. Note that global array C<@listings> is
+copied.
 
 =cut
 
 sub get_optional {
   script_error("get_optional requires an argument.") unless @_ == 1;
   my $sbo = shift;
+  my $needs_compat;
+  if ($sbo =~ /-compat32$/) {
+    $needs_compat = 1;
+    $sbo =~ s/-compat32$//;
+  }
   my @optional;
   my @loclistings = @listings;
   for my $entry (@loclistings) {
@@ -265,6 +274,9 @@ sub get_optional {
   }
   if (@optional) {
     @optional = uniq(@optional);
+    if ($needs_compat) {
+      for my $item (@optional) { $item = "$item-compat32" unless $item =~ /-compat32$/; }
+    }
     return @optional;
   }
   return;
@@ -551,14 +563,16 @@ sub lint_sbo_config {
 
   my $result = on_blacklist($sbo);
 
-C<on_blacklist()> checks whether C<$sbo> has been blacklisted. Note that
-global array C<@listings> is copied.
+C<on_blacklist()> checks whether C<$sbo> has been blacklisted. Results will
+be the same for the C<compat32> version of the script. Note that global array
+C<@listings> is copied.
 
 =cut
 
 sub on_blacklist {
   script_error("on_blacklist requires an argument.") unless @_ == 1;
   my $sbo = shift;
+  $sbo =~ s/-compat32//;
   my @loclistings = @listings;
   for my $entry (@loclistings) {
     next if grep { /\s/ } $entry;

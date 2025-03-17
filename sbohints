@@ -82,7 +82,7 @@ unless ($< == 0 or $list or $query) {
 	show_usage();
 	usage_error "Non-root users can only call sbohints with -l, -q, -h and -v.";
 }
-unless (@ARGV or $list) { show_usage(); exit 0; }
+unless (@ARGV or $list or $reset) { show_usage(); exit 0; }
 
 lint_sbo_config($self, %config);
 
@@ -91,6 +91,11 @@ if (($blacklist and ($optional or $replace_optional or $reverse)) or ($optional 
 }
 
 if ($list) { show_list(); exit 0; }
+
+for my $item (@ARGV) {
+	usage_error "Separate compat32 requests are not needed." if $item =~ /-compat32$/;
+}
+
 if ($query) { make_query(); exit 0; }
 
 if ($reset and ($optional or $clear or $replace_optional or $blacklist or $clear or $reverse)) {
@@ -256,6 +261,11 @@ sub prompt_queue {
 		# flags -co, -o, -O
 		unless ($replace_optional and $clear) {
 			if (@incoming = split(" ", prompt($message))) {
+				if (grep { /-compat32$/ } @incoming) {
+					wrapsay("Separate -compat32 requests are not needed.", 1);
+					prompt_queue($sbo);
+					return;
+				}
 				if (grep { /\!/ } @incoming) {
 					wrapsay("! cannot be used in optional dependency requests.", 1);
 					prompt_queue($sbo);
@@ -303,6 +313,11 @@ sub prompt_queue {
 		# flags -o and -O, no existing entry
 		wrapsay("$sbo has no optional dependency requests.", 1);
 		if (@incoming = split(" ", prompt($message))) {
+			if (grep { /-compat32$/ } @incoming) {
+				wrapsay("Separate -compat32 requests are not needed.", 1);
+				prompt_queue($sbo);
+				return;
+			}
 			if (grep { /\!/ } @incoming) {
 				wrapsay("! cannot be used in optional dependency requests.", 1);
 				prompt_queue($sbo);

@@ -146,14 +146,16 @@ sub get_sbo_locations {
 
   my $bool = is_local($sbo);
 
-C<is_local()> checks whether the given C<$sbo> is in the C<LOCAL_OVERRIDES> directory.
-The return value is true if it is, and false if it is not.
+C<is_local()> checks whether the given C<$sbo> (or, for C<compat32>, the base script)
+is in the C<LOCAL_OVERRIDES> directory. The return value is true if it is, and false
+if it is not.
 
 =cut
 
 sub is_local {
   script_error('is_local requires an argument.') unless @_ == 1;
   my $sbo = shift;
+  $sbo =~ s/-compat32//;
   # Make sure we have checked for the slackbuild in question:
   get_sbo_location($sbo);
   return !!$local{$sbo};

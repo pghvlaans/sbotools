@@ -306,6 +306,10 @@ and
 --distclean FALSE
 so that the contents of the package can be inspected prior
 to installation. GitHub Issues are welcome in case of unexpected failure.
+Incompatible with
+.B
+--all\fR\
+\&.
 .RE
 .P
 .B
@@ -370,7 +374,10 @@ Incompatible with
 --all
 .RS
 Upgrade all installed SlackBuilds that are eligible for
-upgrades. This takes the
+upgrades, including
+.I
+compat32
+packages. This takes the
 .B
 BUILD_IGNORE
 setting into account. See
@@ -379,6 +386,9 @@ sboconfig(1)
 and
 .B
 sbotools.conf(5)\fR\
+\&. Incompatible with
+.B
+--compat32\fR\
 \&. Please note that SlackBuilds installed from a
 .B
 LOCAL_OVERRIDES

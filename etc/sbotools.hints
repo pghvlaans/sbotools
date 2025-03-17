@@ -1,8 +1,9 @@
 # sbotools.hints
 
 # Use this file to blacklist scripts and request optional dependencies
-# or automatic reverse dependency rebuilds on a per-script basis. See
-# also sbohints(1).
+# or automatic reverse dependency rebuilds on a per-script basis. Please
+# note that all requests apply equally to compat32 scripts; separate
+# entries for compat32 scripts are unsupported. See also sbohints(1).
 #
 # Commented lines are ignored. There should be no whitespace to the left
 # of any entry.
