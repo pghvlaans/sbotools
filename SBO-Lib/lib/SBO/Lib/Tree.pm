@@ -155,7 +155,7 @@ if it is not.
 sub is_local {
   script_error('is_local requires an argument.') unless @_ == 1;
   my $sbo = shift;
-  $sbo =~ s/-compat32//;
+  $sbo =~ s/-compat32$//;
   # Make sure we have checked for the slackbuild in question:
   get_sbo_location($sbo);
   return !!$local{$sbo};

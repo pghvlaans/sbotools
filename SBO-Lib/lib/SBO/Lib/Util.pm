@@ -168,7 +168,7 @@ that global array C<@listings> is copied.
 sub auto_reverse {
   script_error("auto_reverse requires an argument.") unless @_ == 1;
   my $sbo = shift;
-  $sbo =~ s/-compat32//;
+  $sbo =~ s/-compat32$//;
   my @loclistings = @listings;
   for my $entry (@loclistings) {
     next if grep { /\s/ } $entry;
@@ -572,7 +572,7 @@ C<@listings> is copied.
 sub on_blacklist {
   script_error("on_blacklist requires an argument.") unless @_ == 1;
   my $sbo = shift;
-  $sbo =~ s/-compat32//;
+  $sbo =~ s/-compat32$//;
   my @loclistings = @listings;
   for my $entry (@loclistings) {
     next if grep { /\s/ } $entry;
