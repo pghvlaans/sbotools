@@ -749,7 +749,7 @@ sub read_hints{
   save_options($sbo, $opts)
 
 C<save_options()> saves build options to C</var/log/sbotools/sbo>. For C<compat32>
-packages, the file forthe base script is used. If the file already exists and the
+packages, the file for the base script is used. If the file already exists and the
 user supplies no build options, the existing file is retained.
 
 =cut
