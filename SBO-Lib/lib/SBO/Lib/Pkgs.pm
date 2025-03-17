@@ -233,7 +233,6 @@ C<get_local_outdated_versions()> checks installed SBo packages from C<LOCAL_OVER
 It returns an array with information about those that have version or build numbers
 differing from the local repository or the SlackBuild in C<LOCAL_OVERRIDES>.
 
-Build number differences with the SBo repository are returned, but are currently unused.
 This subroutine is used only by C<sbocheck(1)>.
 
 =cut
@@ -285,6 +284,8 @@ sub get_local_outdated_versions {
 
 C<get_removed_builds()> returns an array of SlackBuild names and versions of all out-of-tree
 installed packages marked C<_SBo>.
+
+This subroutine is used only by C<sbocheck(1)>.
 
 =cut
 

@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Pkgs 3"
-.TH SBO::Lib::Pkgs 3 "Setting Orange, Discord 2, 3191 YOLD" "" "sbotools 3.4.2"
+.TH SBO::Lib::Pkgs 3 "Boomtime, Discord 4, 3191 YOLD" "" "sbotools 3.4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -123,7 +123,6 @@ the names, versions and full installed package names of the returned packages.
 It returns an array with information about those that have version or build numbers
 differing from the local repository or the SlackBuild in \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR.
 .PP
-Build number differences with the SBo repository are returned, but are currently unused.
 This subroutine is used only by \f(CWsbocheck(1)\fR.
 .SS get_removed_builds
 .IX Subsection "get_removed_builds"
@@ -133,6 +132,8 @@ This subroutine is used only by \f(CWsbocheck(1)\fR.
 .PP
 \&\f(CWget_removed_builds()\fR returns an array of SlackBuild names and versions of all out-of-tree
 installed packages marked \f(CW\*(C`_SBo\*(C'\fR.
+.PP
+This subroutine is used only by \f(CWsbocheck(1)\fR.
 .SH "EXIT CODES"
 .IX Header "EXIT CODES"
 Pkgs.pm subroutines can return the following exit code:

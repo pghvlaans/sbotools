@@ -132,7 +132,7 @@ sub get_update_list {
 		$updates{$name}{local} = 1;
 		if ($filter eq 'BUILD') {
 			$updates{$update->{name}}{available} = $update->{bump};
-			$updates{$name}{build} = $update->{build};
+			$updates{$name}{build} = $update->{numbuild};
 			$updates{$update->{name}}{sbo} = $update->{intree};
 		}
 	}

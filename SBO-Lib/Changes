@@ -28,6 +28,7 @@ sbotools
   * sbohints: --reset was blocked by mistake; unblocked
   * Tree.pm: Properly report compat32 scripts in LOCAL_OVERRIDES
   * sbocheck: Fix non-root --nopull when GPG_VERIFY is on
+  * sbocheck: Fix build number display for scripts bumped in LOCAL_OVERRIDES
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue

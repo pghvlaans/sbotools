@@ -187,6 +187,8 @@ sub get_orig_build_number {
 C<get_orig_version()> returns the version in the SlackBuilds.org tree for the
 given C<$sbo>, calling C<get_sbo_version()>.
 
+This subroutine is used only by C<sbocheck(1)>.
+
 =cut
 
 sub get_orig_version {
