@@ -48,11 +48,12 @@ judged to document options in *KEY=VALUE* form, a prompt for setting
 options appears. Any build options, whether passed interactively or in a
 template, are saved to */var/log/sbotools* when the SlackBuild runs.
 
-Please note that saved build options are not displayed when **CLASSIC**
-is set to **TRUE**. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md). When
-running with **\--nointeractive**, saved build options are used
-automatically unless **\--norecall** or **\--use-template** are passed
-as well.
+*compat32* packages share saved build options with the corresponding
+base script. Please note that saved build options are not displayed when
+**CLASSIC** is set to **TRUE**. See [sboconfig(1)](sboconfig.1.md) or
+[sbotools.conf(5)](sbotools.conf.5.md). When running with **\--nointeractive**, saved
+build options are used automatically unless **\--norecall** or
+**\--use-template** are passed as well.
 
 **sboinstall** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
@@ -170,17 +171,17 @@ consider using **\--create-template** with **\--compat32** first.
 **\--mass-rebuild**
 
 Generate build queues, rebuild and reinstall all in-tree *\_SBo*
-SlackBuilds except for *compat32* builds. This is generally only useful
-when the Slackware version has been upgraded or (occasionally) on
--current. Additional SlackBuilds may be installed when dependencies have
-been added. If dependencies are installed with tags other than *\_SBo*,
-or with no tag, a warning message (default "no") appears even with
-**\--nointeractive** before they are added to the build queue.
+SlackBuilds except for *compat32* builds (likely to change in a future
+version). This is generally only useful when the Slackware version has
+been upgraded or (occasionally) on -current. Additional SlackBuilds may
+be installed when dependencies have been added. If dependencies are
+installed with tags other than *\_SBo*, or with no tag, a warning
+message (default "no") appears even with **\--nointeractive** before
+they are added to the build queue.
 
 In combination with **\--nointeractive**, saved build options are reused
-automatically. Incompatible with **\--reverse-rebuild**, **\--compat32**
-(likely to change in a future version), **\--use-template** and
-**\--norequirements**.
+automatically. Incompatible with **\--reverse-rebuild**,
+**\--compat32**, **\--use-template** and **\--norequirements**.
 
 If the mass rebuild process is interrupted after downloading has been
 completed, whether by signal or by build failure, a template named
