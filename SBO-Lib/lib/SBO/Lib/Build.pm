@@ -839,8 +839,8 @@ sub process_sbos {
 
 C<rationalize_queue()> takes a build queue and rearranges it such that
 no script appears before any of its dependencies. Currently, this is only
-useful when an automatic reverse dependency rebuild has been triggered.
-The rearranged queue is returned.
+useful when an automatic reverse dependency rebuild has been triggered or
+in case of a mass rebuild. The rearranged queue is returned.
 
 =cut
 
@@ -851,16 +851,18 @@ sub rationalize_queue {
   my @result_queue;
 
   FIRST: while (my $sbo = shift @queue) {
-    my $reqs = get_requires($sbo);
     my $real_name = $sbo;
     $real_name =~ s/-compat32$//;
+    my $reqs = get_requires($real_name);
     unless ($reqs) {
       push @result_queue, $sbo;
       next FIRST;
     } else {
       my @reqs = @{ $reqs };
       for my $check (@queue) {
-        if (grep { /^$check$/ } @reqs or $check eq $real_name) {
+        my $real_check = $check;
+        $real_check =~ s/-compat32$//;
+        if (grep { /^($check|$real_check)$/ } @reqs or $check eq $real_name) {
           push @queue, $sbo;
           next FIRST;
         }

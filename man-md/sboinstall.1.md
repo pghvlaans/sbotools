@@ -139,8 +139,8 @@ it is obvious that dependency resolution and new build options are not
 required, consider using a template instead.
 
 If an operation with **\--nointeractive** would install an in-tree
-*\_SBo* package in place of a package without this tag, a warning
-message with a default "no" option appears.
+*\_SBo* package in place of a package without this tag, the build is
+automatically skipped.
 
 **-R\|\--norequirements**
 
@@ -171,10 +171,9 @@ consider using **\--create-template** with **\--compat32** first.
 **\--mass-rebuild**
 
 Generate build queues, rebuild and reinstall all in-tree *\_SBo*
-SlackBuilds except for *compat32* builds (likely to change in a future
-version). This is generally only useful when the Slackware version has
-been upgraded or (occasionally) on -current. Additional SlackBuilds may
-be installed when dependencies have been added. If dependencies are
+SlackBuilds. This is generally only useful when the Slackware version
+has been upgraded or (occasionally) on -current. Additional SlackBuilds
+may be installed when dependencies have been added. If dependencies are
 installed with tags other than *\_SBo*, or with no tag, a warning
 message (default "no") appears even with **\--nointeractive** before
 they are added to the build queue.

@@ -329,8 +329,8 @@ If an operation with
 would install an in-tree
 .I
 _SBo
-package in place of a package without this tag, a warning message
-with a default \(lqno\(rq option appears.
+package in place of a package without this tag, the build is automatically
+skipped.
 .RE
 .P
 .B
@@ -402,14 +402,10 @@ first.
 Generate build queues, rebuild and reinstall all in-tree
 .I
 _SBo
-SlackBuilds except for
-.I
-compat32
-builds (likely to change in a future version). This is generally
-only useful when the Slackware version has been upgraded or
-(occasionally) on -current. Additional SlackBuilds may be
-installed when dependencies have been added. If dependencies are
-installed with tags other than
+SlackBuilds. This is generally only useful when the Slackware
+version has been upgraded or (occasionally) on -current. Additional
+SlackBuilds may be installed when dependencies have been added.
+If dependencies are installed with tags other than
 .I
 _SBo\fR\
 \&, or with no tag, a warning message (default \(lqno\(rq)
