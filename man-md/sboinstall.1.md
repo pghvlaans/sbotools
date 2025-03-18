@@ -215,9 +215,11 @@ exits, to verify the upcoming operation.
 Incompatible with **\--norequirements** and overrides
 **\--nointeractive**.
 
-**\--dry-run** Non-interactively print the **\--batch** build queue with
-a selection of diagnostic messages and exit. This makes **\--batch**
-considerably safer for everyday use.
+**\--dry-run**
+
+Non-interactively print the **\--batch** build queue with a selection of
+diagnostic messages and exit. This makes **\--batch** considerably safer
+for everyday use.
 
 ## VARIABLES
 
