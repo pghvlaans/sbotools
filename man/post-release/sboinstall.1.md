@@ -22,7 +22,8 @@
     sboinstall [-h|-v]
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-iopRr] [--create-template FILE] sbo_name (sbo_name)
+               [-iopRr] [--batch] [--create-template FILE] \
+               sbo_name (sbo_name)
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
                [-i] --use-template FILE
@@ -43,17 +44,18 @@ will have their reverse dependencies rebuilt as well. If circular
 dependencies are detected, the script exits with an error message.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
-**sboinstall** offers to run them prior to building. If the *README* is
-judged to document options in *KEY=VALUE* form, a prompt for setting
-options appears. Any build options, whether passed interactively or in a
+**sboinstall** offers to run them prior to building if any of the
+required users or groups do not exist. If the *README* is judged to
+document options in *KEY=VALUE* form, a prompt for setting options
+appears. Any build options, whether passed interactively or in a
 template, are saved to */var/log/sbotools* when the SlackBuild runs.
 
 *compat32* packages share saved build options with the corresponding
 base script. Please note that saved build options are not displayed when
 **CLASSIC** is set to **TRUE**. See [sboconfig(1)](sboconfig.1.md) or
-[sbotools.conf(5)](sbotools.conf.5.md). When running with **\--nointeractive**, saved
-build options are used automatically unless **\--norecall** or
-**\--use-template** are passed as well.
+[sbotools.conf(5)](sbotools.conf.5.md). When running with **\--nointeractive** or
+**\--batch**, saved build options are used automatically unless
+**\--norecall** or **\--use-template** are passed as well.
 
 **sboinstall** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
@@ -126,26 +128,33 @@ unexpected failure.
 Rebuild the reverse dependencies for the requested SlackBuilds. The
 build queue also includes any missing dependencies for those scripts.
 With **\--compat32**, rebuild only installed *compat32* reverse
-dependencies. Incompatible with **\--norequirements**,
-**\--use-template** and **\--mass-rebuild**.
+dependencies.
+
+Incompatible with **\--norequirements**, **\--use-template** and
+**\--mass-rebuild**.
 
 **-r\|\--nointeractive**
 
 Bypass all user prompts for the requested SlackBuilds. Dependency
-resolution is bypassed as well except for **\--mass-rebuild** and
-**\--reverse-rebuild**. Saved build options will be reused automatically
-unless **\--norecall** or **\--use-template** are passed as well. Unless
-it is obvious that dependency resolution and new build options are not
-required, consider using a template instead.
+resolution is bypassed as well except for **\--mass-rebuild**,
+**\--reverse-rebuild** and (extraneously) **\--batch**. Saved build
+options will be reused automatically unless **\--norecall** or
+**\--use-template** are passed as well. Unless it is obvious that new
+build options and dependency resolution are not required, consider using
+a template instead.
 
 If an operation with **\--nointeractive** would install an in-tree
 *\_SBo* package in place of a package without this tag, the build is
 automatically skipped.
 
+Overriden by **\--batch**.
+
 **-R\|\--norequirements**
 
 Bypass dependency resolution, but still show *README* and the user
 prompts before proceeding with the build.
+
+Incompatible with **\--batch**.
 
 **\--reinstall**
 
@@ -172,21 +181,37 @@ consider using **\--create-template** with **\--compat32** first.
 
 Generate build queues, rebuild and reinstall all in-tree *\_SBo*
 SlackBuilds. This is generally only useful when the Slackware version
-has been upgraded or (occasionally) on -current. Additional SlackBuilds
-may be installed when dependencies have been added. If dependencies are
-installed with tags other than *\_SBo*, or with no tag, a warning
-message (default "no") appears even with **\--nointeractive** before
-they are added to the build queue.
+has been upgraded or (occasionally) on -current. New SlackBuilds may be
+installed when dependencies have been added.
 
-In combination with **\--nointeractive**, saved build options are reused
-automatically. Incompatible with **\--reverse-rebuild**,
-**\--compat32**, **\--use-template** and **\--norequirements**.
+In combination with **\--nointeractive** and **\--batch**, saved build
+options are reused automatically.
+
+Incompatible with **\--reverse-rebuild**, **\--compat32**,
+**\--use-template** and **\--norequirements**.
 
 If the mass rebuild process is interrupted after downloading has been
 completed, whether by signal or by build failure, a template named
 *resume.temp* is saved to **SBO_HOME**. If this file is present, the
 mass rebuild restarts from the script after the script that failed when
 **\--mass-rebuild** is used again.
+
+**\--batch**
+
+Bypass all user prompts for the requested SlackBuilds, but perform
+dependency resolution, even if neither **\--mass-rebuild** nor
+**\--reverse-rebuild** are passed. Any saved build options are used
+again unless **\--norecall** is passed as well. If a script calls for
+**useradd** or **groupadd**, **sboinstall** exits with an informative
+message if any specified user and group does not exist.
+
+This flag is not to be taken lightly, as it can cause new dependencies
+to be installed without prompting. Usage in a production environment
+without a well-maintained [sbotools.hints(5)](sbotools.hints.5.md) file or with unfamiliar
+scripts is not advised.
+
+Incompatible with **\--norequirements** and overrides
+**\--nointeractive**.
 
 ## VARIABLES
 

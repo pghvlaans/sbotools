@@ -23,7 +23,7 @@
 
     sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \
                [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiopqrz] \
-\--all\|sbo_name (sbo_name)
+               [--batch] --all|sbo_name (sbo_name)
 
 ## DESCRIPTION
 
@@ -37,18 +37,20 @@ circular dependencies are detected, the script exits with an error
 message.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
-**sboupgrade** offers to run them prior to building. If the *README* is
-judged to document options in *KEY=VALUE* form, a prompt for setting
-options appears. Any build options used are saved to */var/log/sbotools*
-when the SlackBuild runs.
+**sboupgrade** offers to run them prior to building if any of the
+required users or groups do not exist. If the *README* is judged to
+document options in *KEY=VALUE* form, a prompt for setting options
+appears. Any build options used are saved to */var/log/sbotools* when
+the SlackBuild runs.
 
 *compat32* packages share saved build options with the corresponding
 base script. Please note that saved build options are not displayed when
-**CLASSIC** is set to **TRUE**. When running with **\--nointeractive**,
-saved build options are used automatically unless **\--norecall** is
-passed as well. If **STRICT_UPGRADES** is **TRUE**, upgrades are only
-performed for non-override packages if the version or build number is
-apparently higher. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
+**CLASSIC** is set to **TRUE**. When running with **\--nointeractive**
+or **\--batch** , saved build options are used automatically unless
+**\--norecall** is passed as well. If **STRICT_UPGRADES** is **TRUE**,
+upgrades are only performed for non-override packages if the version or
+build number is apparently higher. See [sboconfig(1)](sboconfig.1.md) or
+[sbotools.conf(5)](sbotools.conf.5.md).
 
 **sboupgrade** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
@@ -119,7 +121,8 @@ If numerical, pass to the **-j** argument when a SlackBuild invoking
 
 **-o\|\--norecall**
 
-Do not reuse saved build options if running with **\--nointeractive**.
+Do not reuse saved build options if running with **\--nointeractive** or
+**\--batch**.
 
 **-p\|\--compat32**
 
@@ -142,10 +145,13 @@ work without first sourcing a version-specific profile script.
 **-r\|\--nointeractive**
 
 Bypass all user prompts and all dependency resolution for the requested
-SlackBuilds except in case of reverse dependency rebuilds. Saved build
+SlackBuilds except in case of reverse dependency rebuilds,
+**\--reverse-rebuild** or (extraneously) **\--batch**. Saved build
 options will be reused automatically unless **\--norecall** is passed as
 well. Unless it is obvious that dependency resolution and new build
 options are not required, using this option is not recommended.
+
+Overridden by **\--batch**.
 
 **-S\|\--strict-upgrades (FALSE\|TRUE)**
 
@@ -157,8 +163,9 @@ also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
 **-z\|\--force-reqs**
 
 In the same vein as **\--force**, upgrade the SlackBuild and its
-dependencies, even if upgrades are not required. Incompatible with
-**\--nointeractive**.
+dependencies, even if upgrades are not required.
+
+Incompatible with **\--nointeractive**.
 
 **\--all**
 
@@ -168,6 +175,22 @@ into account. See [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools
 Incompatible with **\--compat32**. Please note that SlackBuilds
 installed from a **LOCAL_OVERRIDES** directory are upgraded only if the
 version or build number from this directory varies.
+
+**\--batch**
+
+Bypass all user prompts for the requested SlackBuilds, but perform
+dependency resolution, even if **\--reverse-rebuild** is not passed. Any
+saved build options are used again unless **\--norecall** is passed as
+well. If a script calls for **useradd** or **groupadd**, **sboupgrade**
+exits with an informative message if any specified user or group does
+not exist.
+
+This flag is not to be taken lightly, as it can cause new dependencies
+to be installed without prompting. Usage in a production environment
+without a well-maintained [sbotools.hints(5)](sbotools.hints.5.md) file or with unfamiliar
+scripts is not advised.
+
+Overrides **\--nointeractive**.
 
 ## VARIABLES
 
