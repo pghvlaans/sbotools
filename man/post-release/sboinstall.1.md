@@ -22,7 +22,7 @@
     sboinstall [-h|-v]
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-iopRr] [--batch] [--create-template FILE] \
+               [-iopRr] [--batch|--dry-run] [--create-template FILE] \
                sbo_name (sbo_name)
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
@@ -208,10 +208,18 @@ message if any specified user and group does not exist.
 This flag is not to be taken lightly, as it can cause new dependencies
 to be installed without prompting. Usage in a production environment
 without a well-maintained [sbotools.hints(5)](sbotools.hints.5.md) file or with unfamiliar
-scripts is not advised.
+scripts is not advised. For safer usage, consider running **sboinstall**
+with **\--dry-run** first, which prints the **\--batch** build queue and
+exits, to verify the upcoming operation.
 
 Incompatible with **\--norequirements** and overrides
 **\--nointeractive**.
+
+**\--dry-run**
+
+Non-interactively print the **\--batch** build queue with a selection of
+diagnostic messages and exit. This makes **\--batch** considerably safer
+for everyday use.
 
 ## VARIABLES
 

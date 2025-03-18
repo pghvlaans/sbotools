@@ -34,4 +34,4 @@ The following feature changes will be included in version 3.5:
   * Add **\--compat32** back to `sboupgrade`
   * Allow `sboupgrade --all` to handle *compat32* packages
   * Allow `sboinstall --mass-rebuild` to handle *compat32* packages
-* Add `--batch` to `sboinstall` and `sboupgrade` (use dependency resolution without typing; please see the man page before running)
+* Add `--batch` and `--dry-run` to `sboinstall` and `sboupgrade` (use dependency resolution without typing; print the queue and exit)
