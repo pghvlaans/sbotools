@@ -31,6 +31,8 @@ sbotools
   * sbocheck: Fix build number display for scripts bumped in LOCAL_OVERRIDES
   * sboinstall: --mass-rebuild handles compat32 builds
   * sboinstall: packages without the _SBo tag are skipped automatically if not interactive
+  * sboinstall, sboupgrade: Pass --batch to run interactively with dependency resolution; use with caution
+  * Readme.pm: Do not nag the user about existent users and groups; account for other README files for useradd and groupadd
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue

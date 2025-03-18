@@ -3,7 +3,7 @@ sbotools (ports-like interface to SlackBuilds.org)
 sbotools is a set of Perl scripts providing a ports-like automation
 interface to SlackBuilds.org. Features include dependency handling,
 using a custom git branch, generating 32-bit and compat32 builds on
-multilib systems, reverse dependency search and rebuild, gpg
+multilib systems, reverse dependency search and rebuild, batch mode, gpg
 verification and more.
 
 There is a man page for each included command. For 'executive

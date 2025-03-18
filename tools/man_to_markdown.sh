@@ -90,6 +90,7 @@ for item in check clean config hints find install remove upgrade tools tools.hin
     X=$((X+1))
   done
   [ -f sbo$item.1.md ] && sed -i "s/^\\\\\[/$SPACES\\\\[/g" sbo$item.1.md
+  [ -f sbo$item.1.md ] && sed -i "s/^sbo_name/$SPACES\sbo_name/g" sbo$item.1.md
   [ -f sbo$item.5.md ] && sed -i "s/^\\\\\[/$SPACES\\\\[/g" sbo$item.5.md
 done
 

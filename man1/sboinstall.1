@@ -9,7 +9,8 @@ sboinstall
 sboinstall [-h|-v]
 .P
 sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
-           [-iopRr] [--create-template FILE] sbo_name (sbo_name)
+           [-iopRr] [--batch] [--create-template FILE] \\
+           sbo_name (sbo_name)
 .P
 sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
            [-i] --use-template FILE
@@ -56,7 +57,8 @@ useradd
 commands, and
 .B
 sboinstall
-offers to run them prior to building. If the
+offers to run them prior to building if any of the required users
+or groups do not exist. If the
 .I
 README
 is judged to document options in
@@ -87,7 +89,10 @@ or
 sbotools.conf(5)\fR\
 \&. When running with
 .B
---nointeractive\fR\
+--nointeractive
+or
+.B
+--batch\fR\
 \&, saved build options are used automatically unless
 .B
 --norecall
@@ -290,7 +295,9 @@ those scripts. With
 \&, rebuild only installed
 .I
 compat32
-reverse dependencies. Incompatible with
+reverse dependencies.
+
+Incompatible with
 .B
 --norequirements\fR\
 \&,
@@ -309,19 +316,21 @@ Bypass all user prompts for the requested
 SlackBuilds. Dependency resolution is bypassed
 as well except for
 .B
---mass-rebuild
-and
+--mass-rebuild\fR\
+\&,
 .B
---reverse-rebuild\fR\
+--reverse-rebuild
+and (extraneously)
+.B
+--batch\fR\
 \&. Saved build options will be reused automatically unless
 .B
 --norecall
 or
 .B
 --use-template
-are passed as well. Unless it is obvious that dependency
-resolution and new build options are not required, consider using
-a template instead.
+are passed as well. Unless it is obvious that new build options and
+dependency resolution are not required, consider using a template instead.
 
 If an operation with
 .B
@@ -331,6 +340,11 @@ would install an in-tree
 _SBo
 package in place of a package without this tag, the build is automatically
 skipped.
+
+Overriden by
+.B
+--batch\fR\
+\&.
 .RE
 .P
 .B
@@ -341,6 +355,11 @@ Bypass dependency resolution, but still show
 README
 and the
 user prompts before proceeding with the build.
+
+Incompatible with
+.B
+--batch\fR\
+\&.
 .RE
 .P
 .B
@@ -403,21 +422,18 @@ Generate build queues, rebuild and reinstall all in-tree
 .I
 _SBo
 SlackBuilds. This is generally only useful when the Slackware
-version has been upgraded or (occasionally) on -current. Additional
+version has been upgraded or (occasionally) on -current. New
 SlackBuilds may be installed when dependencies have been added.
-If dependencies are installed with tags other than
-.I
-_SBo\fR\
-\&, or with no tag, a warning message (default \(lqno\(rq)
-appears even with
-.B
---nointeractive
-before they are added to the build queue.
 
 In combination with
 .B
---nointeractive\fR\
-\&, saved build options are reused automatically. Incompatible with
+--nointeractive
+and
+.B
+--batch\fR\
+\&, saved build options are reused automatically.
+
+Incompatible with
 .B
 --reverse-rebuild\fR\
 \&,
@@ -443,6 +459,47 @@ the script after the script that failed when
 .B
 --mass-rebuild
 is used again.
+.RE
+.P
+.B
+--batch
+.RS
+Bypass all user prompts for the requested SlackBuilds, but perform dependency
+resolution, even if neither
+.B
+--mass-rebuild
+nor
+.B
+--reverse-rebuild
+are passed. Any saved build options are used again unless
+.B
+--norecall
+is passed as well. If a script calls for
+.B
+useradd
+or
+.B
+groupadd\fR\
+\&,
+.B
+sboinstall
+exits with an informative message if any specified user and group does not
+exist.
+
+This flag is not to be taken lightly, as it can cause new dependencies
+to be installed without prompting. Usage in a production environment
+without a well-maintained
+.B
+sbotools.hints(5)
+file or with unfamiliar scripts is not advised.
+
+Incompatible with
+.B
+--norequirements
+and overrides
+.B
+--nointeractive\fR\
+\&.
 .RE
 .SH VARIABLES
 .P

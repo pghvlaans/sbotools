@@ -30,8 +30,9 @@ _arguments -s \
 	   '(-q --reverse-rebuild)'{-q,--reverse-rebuild}'[Rebuild installed reverse dependencies.]' \
 	   '--reinstall[Asks for reinstall from the requirements.]' \
 	   '--mass-rebuild[Rebuild all installed SlackBuilds.]' \
-	   '(--use-template)''--create-template[Create a template for the SlackBuilds.]:Template file:()' \
-	   '(--create-template)''--use-template[Use a template file (also enables -r flag).]:Template file:_files' \
+	   '--batch[Be non-interactive and calculate dependencies; use with caution.]' \
+	   '(--create-template)''--create-template[Create a template for the SlackBuilds.]:Template file:()' \
+	   '(--use-template)''--use-template[Use a template file (also enables -r flag).]:Template file:_files' \
 	   '(-)*:SlackBuild:(${slackbuilds:|words})' \
     && return 0
 

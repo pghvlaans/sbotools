@@ -12,7 +12,7 @@ dependency rebuilds.
   * **sboremove**: Interactively remove installed SlackBuilds along with any unused dependencies.
   * **sboupgrade**: Upgrade previously-installed SlackBuilds.
 
-Features include dependency handling, using a custom git branch for the upstream repository, reverse dependency search and rebuild, gpg verification and more. See **sbotools(1)** for a startup guide.
+Features include dependency handling, using a custom git branch for the upstream repository, reverse dependency search and rebuild, batch mode, gpg verification and more. See **sbotools(1)** for a startup guide.
 
 This repository is for continuing **sbotools** development, and was forked from the [pink-mist repository](https://github.com/pink-mist/sbotools), which covered development from version 0.1 through version 2.7. A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
@@ -52,6 +52,8 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbocheck: Fix build number display for scripts bumped in LOCAL_OVERRIDES
   * sboinstall: --mass-rebuild handles compat32 builds
   * sboinstall: packages without the \_SBo tag are skipped automatically if not interactive
+  * sboinstall, sboupgrade: Pass --batch to run interactively with dependency resolution; use with caution
+  * Readme.pm: Do not nag the user about existent users and groups; account for other README files for useradd and groupadd
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue

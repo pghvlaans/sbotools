@@ -10,7 +10,7 @@ sboupgrade [-h|-v]
 .P
 sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \\
            [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiopqrz] \\
-           --all|sbo_name (sbo_name)
+           [--batch] --all|sbo_name (sbo_name)
 .SH DESCRIPTION
 .P
 .B
@@ -47,7 +47,8 @@ useradd
 commands, and
 .B
 sboupgrade
-offers to run them prior to building. If the
+offers to run them prior to building if any of the required users
+or groups do not exist. If the
 .I
 README
 is judged to document options in
@@ -71,7 +72,10 @@ is set to
 TRUE\fR\
 \&. When running with
 .B
---nointeractive\fR\
+--nointeractive
+or
+.B
+--batch
 \&, saved build options are used automatically unless
 .B
 --norecall
@@ -282,7 +286,10 @@ is run.
 .RS
 Do not reuse saved build options if running with
 .B
---nointeractive\fR\
+--nointeractive
+or
+.B
+--batch\fR\
 \&.
 .RE
 .P
@@ -335,12 +342,22 @@ fails in such cases. Incompatible with
 -r|--nointeractive
 .RS
 Bypass all user prompts and all dependency resolution for
-the requested SlackBuilds except in case of reverse dependency rebuilds.
-Saved build options will be reused automatically unless
+the requested SlackBuilds except in case of reverse dependency rebuilds,
+.B
+--reverse-rebuild
+or (extraneously)
+.B
+--batch\fR\
+\&. Saved build options will be reused automatically unless
 .B
 --norecall
 is passed as well. Unless it is obvious that dependency resolution and
 new build options are not required, using this option is not recommended.
+
+Overridden by
+.B
+--batch\fR\
+\&.
 .RE
 .P
 .B
@@ -367,6 +384,7 @@ In the same vein as
 .B
 --force\fR\
 \&, upgrade the SlackBuild and its dependencies, even if upgrades are not required.
+
 Incompatible with
 .B
 --nointeractive\fR\
@@ -397,6 +415,41 @@ sbotools.conf(5)\fR\
 LOCAL_OVERRIDES
 directory are upgraded only if the version or build number
 from this directory varies.
+.RE
+.P
+.B
+--batch
+.RS
+Bypass all user prompts for the requested SlackBuilds, but perform dependency
+resolution, even if
+.B
+--reverse-rebuild
+is not passed. Any saved build options are used again unless
+.B
+--norecall
+is passed as well. If a script calls for
+.B
+useradd
+or
+.B
+groupadd\fR\
+\&,
+.B
+sboupgrade
+exits with an informative message if any specified user or group does not
+exist.
+
+This flag is not to be taken lightly, as it can cause new dependencies
+to be installed without prompting. Usage in a production environment
+without a well-maintained
+.B
+sbotools.hints(5)
+file or with unfamiliar scripts is not advised.
+
+Overrides
+.B
+--nointeractive\fR\
+\&.
 .RE
 .SH VARIABLES
 .P

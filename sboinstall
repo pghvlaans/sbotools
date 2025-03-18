@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ %config _ERR_OPENFH auto_reverse get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_reverse_reqs get_requires get_sbo_location get_sbo_locations in merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_prompt verify_gpg lint_sbo_config wrapsay /;
+use SBO::Lib qw/ %config _ERR_OPENFH auto_reverse get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -50,6 +50,8 @@ Options (defaults shown first where applicable):
     non-interactive; skips README and all prompts.
   -R|--norequirements:
     view the README but do not parse requirements, commands, or options.
+  --batch:
+    like nointeractive, but calculates dependencies (use with caution)
   --reinstall:
     ask to reinstall any installed packages in the requirements list.
   --create-template (FILE):
@@ -68,7 +70,7 @@ my $noclean = $config{NOCLEAN};
 my $distclean = $config{DISTCLEAN};
 my $jobs = $config{JOBS};
 my $gpg = $config{GPG_VERIFY};
-my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild);
+my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -86,6 +88,7 @@ my $options_ok = GetOptions(
 	'create-template=s' => \$ctemp,
 	'use-template=s'    => \$utemp,
 	'reverse-rebuild|q' => \$reverse_rebuild,
+	'batch'             => \$yes_really
 );
 
 if ($help) {
@@ -157,6 +160,12 @@ if ($no_reqs and $reverse_rebuild) {
 	usage_error("reverse-rebuild is incompatible with norequirements.");
 }
 
+if ($no_reqs and $yes_really) {
+	usage_error("norequirements is incompatible with batch.");
+}
+
+$non_int = 1 if $yes_really;
+
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
 
@@ -210,7 +219,7 @@ if (length $utemp) {
 # the --mass-rebuild queue is handled later
 } elsif (not $mass_rebuild) {
 	# noninteractive and no requirements; trigger automatic rebuilds
-	if (not $reverse_rebuild and ($no_reqs or $non_int)) {
+	if (not $reverse_rebuild and not $yes_really and ($no_reqs or $non_int)) {
 		my $interim_queue = \@ARGV;
 		if ($requested_reinstall) {
 			my ($extra_queue, %extra_warnings, @needs_reverse);
@@ -428,7 +437,7 @@ FIRST: for my $sbo (@$build_queue) {
 	unless ($non_int) {
 		# if a compat32 build, we need to see if the non-compat version exists.
 		if ($name =~ /-compat32$/) {
-			unless ($inst_names{$sbo}) {
+			unless ($inst_names{$sbo} or grep { /^$sbo$/ } @temp_queue) {
 				say "$name requires $sbo.";
 				my ($cmds, $opts, $exit) = user_prompt($sbo, $locations{$sbo});
 				if ($exit) {
@@ -457,18 +466,52 @@ FIRST: for my $sbo (@$build_queue) {
 		$options{$name} = $opts;
 		say "$name$added";
 	} else {
-		# if nointeractive, use saved build options unless reading a template
-		# or passing norecall
-		unless ($no_recall or $utemp) {
-			my $opts_log = "/var/log/sbotools/$sbo";
-			if (-f $opts_log) {
-				my ($prev_fh, $exit) = open_fh($opts_log, '<');
-				if ($exit) {
-					warn $prev_fh;
-				} else {
-					my $opts = <$prev_fh>;
-					$options{$name} = $opts;
+		unless ($utemp) {
+			# for --batch, check for existing user and group, exiting
+			# with a message if not
+			if ($yes_really) {
+				my $readme = get_readme_contents($locations{$sbo});
+				unless (defined $readme) {
+					warn "Unable to open README for $sbo.\n";
+					exit _ERR_OPENFH;
 				}
+				my $cmds = get_user_group($readme, $locations{$sbo});
+				if ($$cmds[0]) {
+					unless (user_group_exist(@$cmds)) {
+						wrapsay "A required user or group is missing for $sbo:", 1;
+						for my $cmd (@$cmds) { say $cmd; }
+						say "";
+						usage_error "Run these commands to install $sbo with --batch.";
+					}
+				}
+			}
+			my $base_needed;
+			# add the required base script if --batch
+			if ($yes_really and $name =~ /-compat32$/) {
+				unless ($inst_names{$sbo} or grep { /^$sbo$/ } @temp_queue) {
+					say "$name requires $sbo.";
+					$base_needed = 1;
+				}
+			}
+			# if nointeractive or batch, use saved build options unless reading a template
+			# or passing norecall
+			unless ($no_recall) {
+				my $opts_log = "/var/log/sbotools/$sbo";
+				if (-f $opts_log) {
+					my ($prev_fh, $exit) = open_fh($opts_log, '<');
+					if ($exit) {
+						warn $prev_fh;
+					} else {
+						my $opts = <$prev_fh>;
+						$options{$name} = $opts;
+						$options{$sbo} = $opts if $base_needed;
+					}
+				}
+			}
+			# this can only happen if --batch
+			if ($base_needed) {
+				push(@temp_queue, $sbo);
+				say "\n$sbo$added";
 			}
 		}
 		push(@temp_queue, $name);
