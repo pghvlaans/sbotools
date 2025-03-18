@@ -23,7 +23,7 @@
 
     sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \
                [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiopqrz] \
-               [--batch] --all|sbo_name (sbo_name)
+               [--batch|--dry-run] --all|sbo_name (sbo_name)
 
 ## DESCRIPTION
 
@@ -188,9 +188,15 @@ not exist.
 This flag is not to be taken lightly, as it can cause new dependencies
 to be installed without prompting. Usage in a production environment
 without a well-maintained [sbotools.hints(5)](sbotools.hints.5.md) file or with unfamiliar
-scripts is not advised.
+scripts is not advised. For safer usage, consider running **sboupgrade**
+with **\--dry-run** first, which prints the **\--batch** build queue and
+exits, to verify the upcoming operation.
 
 Overrides **\--nointeractive**.
+
+**\--dry-run** Non-interactively print the **\--batch** build queue with
+a selection of diagnostic messages and exit. This makes **\--batch**
+considerably safer for everyday use.
 
 ## VARIABLES
 

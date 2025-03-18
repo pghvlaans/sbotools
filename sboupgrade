@@ -34,6 +34,8 @@ Options (defaults shown first where applicable):
     this flag will upgrade everything reported by sbocheck(1).
   --batch:
     like nointeractive, but calculates dependencies (use with caution)
+  --dry-run:
+    show the potential batch queue and exit
   -b|--build-ignore (FALSE|TRUE):
     if TRUE, only offer to upgrade on version changes (not build number changes).
   -c|--noclean (FALSE|TRUE):
@@ -69,7 +71,7 @@ my $jobs = $config{JOBS};
 my $build_ignore = $config{BUILD_IGNORE};
 my $gpg = $config{GPG_VERIFY};
 my $strict_upgrades = $config{STRICT_UPGRADES};
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -87,7 +89,8 @@ my $options_ok = GetOptions(
 	'all'               => \$all,
 	'strict-upgrades|S=s' => \$strict_upgrades,
 	'compat32|p'        => \$compat32,
-	'batch'        => \$yes_really,
+	'batch'             => \$yes_really,
+	'dry-run'           => \$dry_run,
 );
 
 if ($help) {
@@ -147,6 +150,7 @@ usage_error("reverse-rebuild is incompatible with noinstall.")
 usage_error("all is incompatible with compat32.")
 	if $compat32 && $all;
 
+$yes_really = 1 if $dry_run;
 $non_int = 1 if $yes_really;
 
 if ($gpg) { verify_gpg(); }
@@ -437,7 +441,7 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		push(@temp_queue, $name);
 		$commands{$name} = $cmds;
 		$options{$name} = $opts;
-		say "$name added to upgrade queue.";
+		say "$name added to upgrade queue." unless $dry_run;
 	} else {
 		# for --batch, check for existing user and group, exiting
 		# with a message if not
@@ -453,7 +457,11 @@ FIRST: for my $sbo (@$upgrade_queue) {
 					wrapsay "A required user or group is missing for $sbo:", 1;
 					for my $cmd (@$cmds) { say $cmd; }
 					say "";
-					usage_error "Run these commands to install $sbo with --batch.";
+					unless ($dry_run) {
+						usage_error "Run these commands to install $sbo with --batch.";
+					} else {
+						wrapsay "Run these commands to install $sbo with --batch.";
+					}
 				}
 			}
 		}
@@ -483,10 +491,10 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		# this can only happen if --batch
 		if ($base_needed) {
 			push(@temp_queue, $real_name);
-			say "\n$real_name added to upgrade queue.";
+			say "\n$real_name added to upgrade queue." unless $dry_run;
 		}
 		push(@temp_queue, $name);
-		say "\n$name added to upgrade queue.";
+		say "\n$name added to upgrade queue." unless $dry_run;
 	}
 }
 @$upgrade_queue = @temp_queue;
@@ -496,6 +504,7 @@ wrapsay "\nUpgrade queue: ". join(' ', @$upgrade_queue);
 unless ($non_int) {
     exit 0 unless prompt("\nAre you sure you wish to continue?", default => 'yes');
 }
+exit 0 if $dry_run;
 
 my ($failures, $exit) = process_sbos(
 	TODO      => $upgrade_queue,

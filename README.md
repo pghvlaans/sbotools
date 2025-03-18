@@ -52,7 +52,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbocheck: Fix build number display for scripts bumped in LOCAL_OVERRIDES
   * sboinstall: --mass-rebuild handles compat32 builds
   * sboinstall: packages without the \_SBo tag are skipped automatically if not interactive
-  * sboinstall, sboupgrade: Pass --batch to run interactively with dependency resolution; use with caution
+  * sboinstall, sboupgrade: --batch runs interactively with dependency resolution; --dry-run shows the --batch queue and exits
   * Readme.pm: Do not nag the user about existent users and groups; account for other README files for useradd and groupadd
 
 * 3.4.2 - 2025-02-07

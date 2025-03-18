@@ -9,7 +9,7 @@ sboinstall
 sboinstall [-h|-v]
 .P
 sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
-           [-iopRr] [--batch] [--create-template FILE] \\
+           [-iopRr] [--batch|--dry-run] [--create-template FILE] \\
            sbo_name (sbo_name)
 .P
 sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
@@ -491,7 +491,17 @@ to be installed without prompting. Usage in a production environment
 without a well-maintained
 .B
 sbotools.hints(5)
-file or with unfamiliar scripts is not advised.
+file or with unfamiliar scripts is not advised. For safer usage, consider
+running
+.B
+sboinstall
+with
+.B
+--dry-run
+first, which prints the
+.B
+--batch
+build queue and exits, to verify the upcoming operation.
 
 Incompatible with
 .B
@@ -500,6 +510,17 @@ and overrides
 .B
 --nointeractive\fR\
 \&.
+.RE
+.P
+.B
+--dry-run
+Non-interactively print the
+.B
+--batch
+build queue with a selection of diagnostic messages and exit. This makes
+.B
+--batch
+considerably safer for everyday use.
 .RE
 .SH VARIABLES
 .P

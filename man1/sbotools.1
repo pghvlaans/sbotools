@@ -80,6 +80,28 @@ sboupgrade(1)
 Upgrade previously-installed SlackBuilds.
 .RE
 
+By default,
+.B
+sboinstall(1)
+and
+.B
+sboupgrade(1)
+give prompts before adding items to the build queue. These scripts have a
+.B
+--batch
+flag available for non-interactive building with dependency resolution. Because
+.B
+--batch
+can install new dependencies without prompting, using it in a production environment
+without a well-maintained
+.I
+/etc/sbotools.hints
+file, or with unfamiliar scripts, can potentially lead to unwanted results. Consider
+passing
+.B
+--dry-run
+first, which prints the build queue and exits.
+
 For details about all configuration options in
 .I
 sbotools.conf\fR\

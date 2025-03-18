@@ -10,7 +10,7 @@ sboupgrade [-h|-v]
 .P
 sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \\
            [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiopqrz] \\
-           [--batch] --all|sbo_name (sbo_name)
+           [--batch|--dry-run] --all|sbo_name (sbo_name)
 .SH DESCRIPTION
 .P
 .B
@@ -444,12 +444,33 @@ to be installed without prompting. Usage in a production environment
 without a well-maintained
 .B
 sbotools.hints(5)
-file or with unfamiliar scripts is not advised.
+file or with unfamiliar scripts is not advised. For safer usage, consider
+running
+.B
+sboupgrade
+with
+.B
+--dry-run
+first, which prints the
+.B
+--batch
+build queue and exits, to verify the upcoming operation.
 
 Overrides
 .B
 --nointeractive\fR\
 \&.
+.RE
+.P
+.B
+--dry-run
+Non-interactively print the
+.B
+--batch
+build queue with a selection of diagnostic messages and exit. This makes
+.B
+--batch
+considerably safer for everyday use.
 .RE
 .SH VARIABLES
 .P

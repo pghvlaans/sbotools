@@ -52,6 +52,8 @@ Options (defaults shown first where applicable):
     view the README but do not parse requirements, commands, or options.
   --batch:
     like nointeractive, but calculates dependencies (use with caution)
+  --dry-run:
+    show the potential batch queue and exit
   --reinstall:
     ask to reinstall any installed packages in the requirements list.
   --create-template (FILE):
@@ -70,7 +72,7 @@ my $noclean = $config{NOCLEAN};
 my $distclean = $config{DISTCLEAN};
 my $jobs = $config{JOBS};
 my $gpg = $config{GPG_VERIFY};
-my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really);
+my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -88,7 +90,8 @@ my $options_ok = GetOptions(
 	'create-template=s' => \$ctemp,
 	'use-template=s'    => \$utemp,
 	'reverse-rebuild|q' => \$reverse_rebuild,
-	'batch'             => \$yes_really
+	'batch'             => \$yes_really,
+	'dry-run'           => \$dry_run,
 );
 
 if ($help) {
@@ -164,6 +167,7 @@ if ($no_reqs and $yes_really) {
 	usage_error("norequirements is incompatible with batch.");
 }
 
+$yes_really = 1 if $dry_run;
 $non_int = 1 if $yes_really;
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
@@ -402,7 +406,7 @@ FIRST: for my $sbo (@$build_queue) {
 				next FIRST unless prompt("$inst_msg Do you want to reinstall from SBo?", default => 'no');
 			}
 		} elsif ($reinstall) {
-			say "$inst_msg Reinstalling.";
+			say "$inst_msg Reinstalling." unless $dry_run;
 		} else {
 			say $inst_msg;
 			next FIRST;
@@ -450,7 +454,7 @@ FIRST: for my $sbo (@$build_queue) {
 				push(@temp_queue, $sbo);
 				$commands{$sbo} = $cmds;
 				$options{$sbo} = $opts;
-				say "$sbo$added";
+				say "$sbo$added" unless $dry_run;
 			}
 		}
 		my ($cmds, $opts, $exit) = user_prompt($name, $locations{$name});
@@ -464,7 +468,7 @@ FIRST: for my $sbo (@$build_queue) {
 		push(@temp_queue, $name);
 		$commands{$name} = $cmds;
 		$options{$name} = $opts;
-		say "$name$added";
+		say "$name$added" unless $dry_run;
 	} else {
 		unless ($utemp) {
 			# for --batch, check for existing user and group, exiting
@@ -481,7 +485,11 @@ FIRST: for my $sbo (@$build_queue) {
 						wrapsay "A required user or group is missing for $sbo:", 1;
 						for my $cmd (@$cmds) { say $cmd; }
 						say "";
-						usage_error "Run these commands to install $sbo with --batch.";
+						unless ($dry_run) {
+							usage_error "Run these commands to install $sbo with --batch.";
+						} else {
+							wrapsay "Run these commands to install $sbo with --batch.";
+						}
 					}
 				}
 			}
@@ -489,7 +497,7 @@ FIRST: for my $sbo (@$build_queue) {
 			# add the required base script if --batch
 			if ($yes_really and $name =~ /-compat32$/) {
 				unless ($inst_names{$sbo} or grep { /^$sbo$/ } @temp_queue) {
-					say "$name requires $sbo.";
+					say "$name requires $sbo." unless $dry_run;
 					$base_needed = 1;
 				}
 			}
@@ -511,11 +519,11 @@ FIRST: for my $sbo (@$build_queue) {
 			# this can only happen if --batch
 			if ($base_needed) {
 				push(@temp_queue, $sbo);
-				say "\n$sbo$added";
+				say "\n$sbo$added" unless $dry_run;
 			}
 		}
 		push(@temp_queue, $name);
-		say "\n$name$added";
+		say "\n$name$added" unless $dry_run;
 	}
 }
 @$build_queue = @temp_queue;
@@ -525,6 +533,7 @@ wrapsay "\nInstall queue: " . join(' ', @$build_queue);
 unless ($non_int) {
     exit 0 unless prompt("\nAre you sure you wish to continue?", default => 'yes');
 }
+exit 0 if $dry_run;
 
 if (defined $ctemp or $mass_rebuild) {
 	$ctemp = $mtemp unless defined $ctemp;
