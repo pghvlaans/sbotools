@@ -10,7 +10,7 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 ## Prospective Features
 
-* Allow `sboinstall --mass-rebuild` to handle *compat32* packages (post-3.5)
+* Add `--yes-really` to `sboinstall` and `sboupgrade` (use dependency calculation with `--nointeractive`)
 
 Nothing else for now, but requests are welcome and will receive due consideration.
 
@@ -34,3 +34,4 @@ The following feature changes will be included in version 3.5:
   * `sboinstall`, `sboupgrade`: More informative CPAN-related output and more accurate installation blocking
 * Add **\--compat32** back to `sboupgrade`
 * Allow `sboupgrade --all` to handle *compat32* packages
+* Allow `sboinstall --mass-rebuild` to handle *compat32* packages
