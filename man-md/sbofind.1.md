@@ -76,7 +76,7 @@ included. Packages with tags other than *\_SBo* are not included.
 
 **-q\|\--queue**
 
-Show the build queue for each SlackBuild found, given the contents of
+Show the build queue for each SlackBuild found given the contents of
 */etc/sbotools/sbotools.hints*.
 
 ## EXIT CODES
@@ -84,7 +84,8 @@ Show the build queue for each SlackBuild found, given the contents of
 **sbofind** can exit with the following codes:
 
 0: all operations were succesful.\
-1: a usage error occured (e.g., **sbofind** ran with nothing to find)\
+1: a usage error occured (e.g., incorrect options were passed to
+**sbofind** ).\
 6: **sbofind** was unable to obtain a required file handle.\
 13: circular dependencies detected.
 

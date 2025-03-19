@@ -23,8 +23,8 @@ sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
 sboinstall
 is used to install SlackBuilds. If the
 .B
--r
-flag is not specified,
+--nointeractive
+flag is not present,
 .B
 sboinstall
 pulls the list of requirements from the
@@ -187,7 +187,7 @@ sbotools.conf(5)\fR\
 If
 .B
 TRUE\fR\
-\&, then remove the source archives after building. They
+\&, remove the source archives after building. They
 are retained in md5sum-designated directories under
 .I
 SBO_HOME/distfiles
@@ -522,7 +522,7 @@ build queue and exit.
 --dry-run
 reports SlackBuilds in the queue with
 .I
-%%README%%
+%README%
 in
 .I
 REQUIRES\fR\

@@ -27,14 +27,14 @@
 
 ## DESCRIPTION
 
-**sboupgrade** is used to upgrade SlackBuilds. If the **-r** flag is not
-specified, **sboupgrade** pulls the list of requirements from the *info*
-file for any specified SlackBuild. This is a recursive operation over
-all dependencies. **sboupgrade** offers to install any non-installed
-dependencies in the build queue, taking blacklisted scripts and optional
-dependency specifications in [sbotools.hints(5)](sbotools.hints.5.md) into account. If
-circular dependencies are detected, the script exits with an error
-message.
+**sboupgrade** is used to upgrade SlackBuilds. If the
+**\--nointeractive** flag is not present, **sboupgrade** pulls the list
+of requirements from the *info* file for any specified SlackBuild. This
+is a recursive operation over all dependencies. **sboupgrade** offers to
+install any non-installed dependencies in the build queue, taking
+blacklisted scripts and optional dependency specifications in
+[sbotools.hints(5)](sbotools.hints.5.md) into account. If circular dependencies are
+detected, the script exits with an error message.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
 **sboupgrade** offers to run them prior to building if any of the
@@ -197,7 +197,7 @@ Overrides **\--nointeractive**.
 **\--dry-run**
 
 Non-interactively print the **\--batch** build queue and exit.
-**\--dry-run** reports SlackBuilds in the queue with *%%README%%* in
+**\--dry-run** reports SlackBuilds in the queue with *%README%* in
 *REQUIRES*, saved build options to be used and **useradd** or **groupadd
 commands to be run. This makes \--batch** considerably safer for
 everyday use.

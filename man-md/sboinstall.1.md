@@ -33,15 +33,16 @@
 
 ## DESCRIPTION
 
-**sboinstall** is used to install SlackBuilds. If the **-r** flag is not
-specified, **sboinstall** pulls the list of requirements from the *info*
-file for any specified SlackBuild. This is a recursive operation over
-all dependencies. **sboinstall** offers to install any non-installed
-dependencies in the build queue, taking blacklisted scripts and optional
-dependency specifications in [sbotools.hints(5)](sbotools.hints.5.md) into account. In case
-of **\--reinstall**, scripts with automatic reverse dependency rebuilds
-will have their reverse dependencies rebuilt as well. If circular
-dependencies are detected, the script exits with an error message.
+**sboinstall** is used to install SlackBuilds. If the
+**\--nointeractive** flag is not present, **sboinstall** pulls the list
+of requirements from the *info* file for any specified SlackBuild. This
+is a recursive operation over all dependencies. **sboinstall** offers to
+install any non-installed dependencies in the build queue, taking
+blacklisted scripts and optional dependency specifications in
+[sbotools.hints(5)](sbotools.hints.5.md) into account. In case of **\--reinstall**, scripts
+with automatic reverse dependency rebuilds will have their reverse
+dependencies rebuilt as well. If circular dependencies are detected, the
+script exits with an error message.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
 **sboinstall** offers to run them prior to building if any of the
@@ -91,7 +92,7 @@ overrides the default.
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
-If **TRUE**, then remove the source archives after building. They are
+If **TRUE**, remove the source archives after building. They are
 retained in md5sum-designated directories under *SBO_HOME/distfiles* by
 default. The package archive (in */tmp* by default) is also removed.
 This option can be set as default via the [sboconfig(1)](sboconfig.1.md) command. See
@@ -218,7 +219,7 @@ Incompatible with **\--norequirements** and overrides
 **\--dry-run**
 
 Non-interactively print the **\--batch** build queue and exit.
-**\--dry-run** reports SlackBuilds in the queue with *%%README%%* in
+**\--dry-run** reports SlackBuilds in the queue with *%README%* in
 *REQUIRES*, saved build options to be used and **useradd** or **groupadd
 commands to be run. This makes \--batch** considerably safer for
 everyday use.

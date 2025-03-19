@@ -90,10 +90,8 @@ privileges.
 
 Return the current blacklist, optional dependency and automatic reverse
 dependency rebuild status for one or more scripts. There is no output
-unless the queried script is blacklisted, has optional dependency
-requests, is on an optional dependency request list, or has automatic
-reverse dependency rebuilds. The **\--query** flag can be used without
-root privileges.
+unless the queried script is involved with one or more hints. The
+**\--query** flag can be used without root privileges.
 
 **\--reset**
 
