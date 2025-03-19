@@ -208,8 +208,8 @@ message if any specified user and group does not exist.
 This flag is not to be taken lightly, as it can cause new dependencies
 to be installed without prompting. Usage in a production environment
 without a well-maintained [sbotools.hints(5)](sbotools.hints.5.md) file or with unfamiliar
-scripts is not advised. For safer usage, consider running **sboinstall**
-with **\--dry-run** first, which prints the **\--batch** build queue and
+scripts is not advised. Consider running **sboinstall** with
+**\--dry-run** first, which prints the **\--batch** build queue and
 exits, to verify the upcoming operation.
 
 Incompatible with **\--norequirements** and overrides
@@ -217,9 +217,11 @@ Incompatible with **\--norequirements** and overrides
 
 **\--dry-run**
 
-Non-interactively print the **\--batch** build queue with a selection of
-diagnostic messages and exit. This makes **\--batch** considerably safer
-for everyday use.
+Non-interactively print the **\--batch** build queue and exit.
+**\--dry-run** reports SlackBuilds in the queue with *%%README%%* in
+*REQUIRES*, saved build options to be used and **useradd** or **groupadd
+commands to be run. This makes \--batch** considerably safer for
+everyday use.
 
 ## VARIABLES
 

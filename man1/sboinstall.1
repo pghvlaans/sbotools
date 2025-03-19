@@ -491,8 +491,7 @@ to be installed without prompting. Usage in a production environment
 without a well-maintained
 .B
 sbotools.hints(5)
-file or with unfamiliar scripts is not advised. For safer usage, consider
-running
+file or with unfamiliar scripts is not advised. Consider running
 .B
 sboinstall
 with
@@ -518,7 +517,21 @@ and overrides
 Non-interactively print the
 .B
 --batch
-build queue with a selection of diagnostic messages and exit. This makes
+build queue and exit.
+.B
+--dry-run
+reports SlackBuilds in the queue with
+.I
+%%README%%
+in
+.I
+REQUIRES\fR\
+\&, saved build options to be used and
+.B
+useradd
+or
+.B
+groupadd commands to be run. This makes
 .B
 --batch
 considerably safer for everyday use.

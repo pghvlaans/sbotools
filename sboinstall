@@ -163,11 +163,10 @@ if ($no_reqs and $reverse_rebuild) {
 	usage_error("reverse-rebuild is incompatible with norequirements.");
 }
 
-if ($no_reqs and $yes_really) {
-	usage_error("norequirements is incompatible with batch.");
-}
-
 $yes_really = 1 if $dry_run;
+if ($no_reqs and $yes_really) {
+	usage_error("norequirements is incompatible with batch and dry-run.");
+}
 $non_int = 1 if $yes_really;
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
@@ -350,12 +349,13 @@ for my $sbo (@$build_queue) {
 }
 
 # check for already-installeds and prompt for the rest
-my (@temp_queue, %commands, %options);
+my (@temp_queue, %commands, %options, %missing_user_group);
 if (defined $template) {
 	%commands = %{ $template->{commands} };
 	%options = %{ $template->{options} };
 }
 my $added = ' added to install queue.';
+my (@see_readme, %saved_options);
 FIRST: for my $sbo (@$build_queue) {
 	my $name;
 	if ($sbo =~ /-compat32$/) {
@@ -437,6 +437,8 @@ FIRST: for my $sbo (@$build_queue) {
 		}
 		next FIRST;
 	}
+	# will give %README% advisories later for --dry-run
+	push @see_readme, $sbo if defined $warnings{$sbo} and $warnings{$sbo} eq '%README%';
 
 	unless ($non_int) {
 		# if a compat32 build, we need to see if the non-compat version exists.
@@ -472,7 +474,7 @@ FIRST: for my $sbo (@$build_queue) {
 	} else {
 		unless ($utemp) {
 			# for --batch, check for existing user and group, exiting
-			# with a message if not
+			# with a message if not; notify with --dry-run
 			if ($yes_really) {
 				my $readme = get_readme_contents($locations{$sbo});
 				unless (defined $readme) {
@@ -482,13 +484,13 @@ FIRST: for my $sbo (@$build_queue) {
 				my $cmds = get_user_group($readme, $locations{$sbo});
 				if ($$cmds[0]) {
 					unless (user_group_exist(@$cmds)) {
-						wrapsay "A required user or group is missing for $sbo:", 1;
-						for my $cmd (@$cmds) { say $cmd; }
-						say "";
-						unless ($dry_run) {
-							usage_error "Run these commands to install $sbo with --batch.";
+						if ($dry_run) {
+							$missing_user_group{$sbo} = $cmds;
 						} else {
-							wrapsay "Run these commands to install $sbo with --batch.";
+							wrapsay "A required user or group is missing for $sbo:", 1;
+							for my $cmd (@$cmds) { say $cmd; }
+							say "";
+							usage_error "Run these commands to install $sbo with --batch.";
 						}
 					}
 				}
@@ -511,12 +513,13 @@ FIRST: for my $sbo (@$build_queue) {
 						warn $prev_fh;
 					} else {
 						my $opts = <$prev_fh>;
+						$saved_options{$name} = $opts if $dry_run;
 						$options{$name} = $opts;
 						$options{$sbo} = $opts if $base_needed;
 					}
 				}
 			}
-			# this can only happen if --batch
+			# this can only happen if --batch or --dry-run
 			if ($base_needed) {
 				push(@temp_queue, $sbo);
 				say "\n$sbo$added" unless $dry_run;
@@ -529,11 +532,33 @@ FIRST: for my $sbo (@$build_queue) {
 @$build_queue = @temp_queue;
 
 exit 0 if @{ $build_queue } == 0;
+if ($dry_run) {
+	if (@see_readme) {
+		wrapsay "\nSee README for:";
+		for my $item (@see_readme) { say "  $item"; }
+	}
+	if (%saved_options) {
+		say "\nSaved build options to be used:";
+		for my $item (keys %saved_options) {
+			say "  $item: $saved_options{$item}";
+		}
+	}
+}
 wrapsay "\nInstall queue: " . join(' ', @$build_queue);
 unless ($non_int) {
     exit 0 unless prompt("\nAre you sure you wish to continue?", default => 'yes');
 }
-exit 0 if $dry_run;
+if ($dry_run) {
+	if (%missing_user_group) {
+		for my $item (keys %missing_user_group) {
+			wrapsay "\nA required user or group is missing for $item:", 1;
+			for my $cmd (@{ $missing_user_group{$item} }) { say $cmd; }
+			say "";
+			wrapsay "Run these commands to install $item with --batch.";
+		}
+	}
+	exit 0;
+}
 
 if (defined $ctemp or $mass_rebuild) {
 	$ctemp = $mtemp unless defined $ctemp;

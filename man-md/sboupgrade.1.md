@@ -196,9 +196,11 @@ Overrides **\--nointeractive**.
 
 **\--dry-run**
 
-Non-interactively print the **\--batch** build queue with a selection of
-diagnostic messages and exit. This makes **\--batch** considerably safer
-for everyday use.
+Non-interactively print the **\--batch** build queue and exit.
+**\--dry-run** reports SlackBuilds in the queue with *%%README%%* in
+*REQUIRES*, saved build options to be used and **useradd** or **groupadd
+commands to be run. This makes \--batch** considerably safer for
+everyday use.
 
 ## VARIABLES
 

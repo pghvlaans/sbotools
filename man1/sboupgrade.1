@@ -468,7 +468,21 @@ Overrides
 Non-interactively print the
 .B
 --batch
-build queue with a selection of diagnostic messages and exit. This makes
+build queue and exit.
+.B
+--dry-run
+reports SlackBuilds in the queue with
+.I
+%%README%%
+in
+.I
+REQUIRES\fR\
+\&, saved build options to be used and
+.B
+useradd
+or
+.B
+groupadd commands to be run. This makes
 .B
 --batch
 considerably safer for everyday use.
