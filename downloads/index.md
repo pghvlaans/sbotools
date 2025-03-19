@@ -2,6 +2,15 @@
 
 A SlackBuild for `sbotools` is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) on SlackBuilds.org.
 
+## Version 3.5 Release Candidate
+
+With incoming feature changes and no emergency bugfixes, `sbotools-3.5` will be preceded by one or more release candidates. The `tar` archive below contains the SlackBuild files and can be GPG verified using the key at the homepage. Because this version is not yet available on SlackBuilds.org, the installation tag is `_pghv`; feel free to change this when building the package, of course.
+
+See the [release notes](https://github.com/pghvlaans/sbotools/releases/tag/3.5_RC) on GitHub for an overview of new features and fixed bugs.
+
+* [sbotools-3.5_RC.tar](sbotools-3.5_RC.tar) ([asc](sbotools-3.5_RC.tar.asc))
+    * md5sum: `d54e6d29b91cac02c35a6d4066d80687`
+
 ## Notes
 
 This fork of `sbotools` was briefly available as `sbotools3` in late 2024. Any `sbotools3` users are advised to uninstall `sbotools3` before installing `sbotools`.
@@ -12,6 +21,8 @@ Use the key from the homepage (updated 2024-12-15) to verify downloads with gpg.
 
 ## Release Tarballs
 
+* [sbotools-3.5_RC.tar.gz](sbotools-3.5_RC.tar.gz) ([asc](sbotools-3.5_RC.tar.gz.asc))
+    * md5sum: `840bec67c8a2816d5b81e3a897db8ce6`
 * [sbotools-3.4.2.tar.gz](sbotools-3.4.2.tar.gz) ([asc](sbotools-3.4.2.tar.gz.asc))
     * md5sum: `740ecb1b2a7ebef1bc2ce7cdf0f1c6ab`
 * [sbotools-3.4.1.tar.gz](sbotools-3.4.1.tar.gz) ([asc](sbotools-3.4.1.tar.gz.asc))

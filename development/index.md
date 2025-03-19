@@ -8,6 +8,8 @@ The `SBO::Lib::*` modules are documented in `man3`. These pages are not online, 
 
 A separate repository called [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild) can be used to download a zip archive of (in principle) the latest commit on the `master` branch and make a Slackware package.
 
+The `sbotools-3.5` release candidate is now available. See [Downloads](/sbotools/downloads/).
+
 ## Prospective Features
 
 Nothing else for now, but requests are welcome and will receive due consideration.
