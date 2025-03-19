@@ -33,15 +33,16 @@
 
 ## DESCRIPTION
 
-**sboinstall** is used to install SlackBuilds. If the **-r** flag is not
-specified, **sboinstall** pulls the list of requirements from the *info*
-file for any specified SlackBuild. This is a recursive operation over
-all dependencies. **sboinstall** offers to install any non-installed
-dependencies in the build queue, taking blacklisted scripts and optional
-dependency specifications in [sbotools.hints(5)](sbotools.hints.5.md) into account. In case
-of **\--reinstall**, scripts with automatic reverse dependency rebuilds
-will have their reverse dependencies rebuilt as well. If circular
-dependencies are detected, the script exits with an error message.
+**sboinstall** is used to install SlackBuilds. If the
+**\--nointeractive** flag is not present, **sboinstall** pulls the list
+of requirements from the *info* file for any specified SlackBuild. This
+is a recursive operation over all dependencies. **sboinstall** offers to
+install any non-installed dependencies in the build queue, taking
+blacklisted scripts and optional dependency specifications in
+[sbotools.hints(5)](sbotools.hints.5.md) into account. In case of **\--reinstall**, scripts
+with automatic reverse dependency rebuilds will have their reverse
+dependencies rebuilt as well. If circular dependencies are detected, the
+script exits with an error message.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
 **sboinstall** offers to run them prior to building if any of the
@@ -91,7 +92,7 @@ overrides the default.
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
-If **TRUE**, then remove the source archives after building. They are
+If **TRUE**, remove the source archives after building. They are
 retained in md5sum-designated directories under *SBO_HOME/distfiles* by
 default. The package archive (in */tmp* by default) is also removed.
 This option can be set as default via the [sboconfig(1)](sboconfig.1.md) command. See
@@ -208,8 +209,8 @@ message if any specified user and group does not exist.
 This flag is not to be taken lightly, as it can cause new dependencies
 to be installed without prompting. Usage in a production environment
 without a well-maintained [sbotools.hints(5)](sbotools.hints.5.md) file or with unfamiliar
-scripts is not advised. For safer usage, consider running **sboinstall**
-with **\--dry-run** first, which prints the **\--batch** build queue and
+scripts is not advised. Consider running **sboinstall** with
+**\--dry-run** first, which prints the **\--batch** build queue and
 exits, to verify the upcoming operation.
 
 Incompatible with **\--norequirements** and overrides
@@ -217,9 +218,11 @@ Incompatible with **\--norequirements** and overrides
 
 **\--dry-run**
 
-Non-interactively print the **\--batch** build queue with a selection of
-diagnostic messages and exit. This makes **\--batch** considerably safer
-for everyday use.
+Non-interactively print the **\--batch** build queue and exit.
+**\--dry-run** reports SlackBuilds in the queue with *%README%* in
+*REQUIRES*, saved build options to be used and **useradd** or **groupadd
+commands to be run. This makes \--batch** considerably safer for
+everyday use.
 
 ## VARIABLES
 

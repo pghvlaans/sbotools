@@ -68,7 +68,7 @@ Because **\--batch** can install new dependencies without prompting,
 using it in a production environment without a well-maintained
 */etc/sbotools.hints* file, or with unfamiliar scripts, can potentially
 lead to unwanted results. Consider passing **\--dry-run** first, which
-prints the build queue and exits.
+prints the build queue with other information and exits.
 
 For details about all configuration options in *sbotools.conf*, see
 [sbotools.conf(5)](sbotools.conf.5.md). [sbotools.hints(5)](sbotools.hints.5.md) documents the

@@ -41,7 +41,7 @@ CPAN.
 
 **DISTCLEAN=(FALSE\|TRUE)**
 
-If **TRUE**, then remove the package and source archives after building.
+If **TRUE**, remove the package and source archives after building.
 Source archives are otherwise retained in md5sum-designated directories
 under */usr/sbo/distfiles* (with *SBO_HOME=/usr/sbo*) by default. If
 **PKG_DIR** is set, package archives are saved there regardless of

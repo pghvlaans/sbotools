@@ -93,11 +93,11 @@ building. These are the build and *package-(sbo)* directories under
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
-**DISTCLEAN**: If **TRUE**, then remove the package and source archives
-after building. Source archives are otherwise retained in
-md5sum-designated directories under */usr/sbo/distfiles* (with default
-**SBO_HOME**). If **PKG_DIR** is set, package archives are saved there
-regardless of **DISTCLEAN**.
+**DISTCLEAN**: If **TRUE**, remove the package and source archives after
+building. Source archives are otherwise retained in md5sum-designated
+directories under */usr/sbo/distfiles* (with default **SBO_HOME**). If
+**PKG_DIR** is set, package archives are saved there regardless of
+**DISTCLEAN**.
 
 **-g\|\--gpg-verify (FALSE\|TRUE)**
 
@@ -115,7 +115,7 @@ SlackBuild invoking **make** is run.
 
 **-P\|\--cpan-ignore (FALSE\|TRUE)**
 
-**CPAN_IGNORE**: if **TRUE**, install scripts even if they are already
+**CPAN_IGNORE**: If **TRUE**, install scripts even if they are already
 installed from the CPAN.
 
 **-p\|\--pkg-dir (FALSE\|/path)**

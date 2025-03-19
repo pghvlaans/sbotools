@@ -27,7 +27,7 @@
 **sboclean** is used to clean files left by **sbotools**, such as saved
 options (in */var/log/sbotools*), downloaded source files ("distfiles"),
 or working directories under */tmp/SBo* (or *\$TMP*) and, for compat32
-installs, under */tmp* (or *\$TMP*). Note that if not run with the
+installs, under */tmp* (or *\$TMP*). Note that if run without the
 **\--interactive** flag, **sboclean** removes anything in the distfiles
 and/or */tmp/SBo* (or *\$TMP*) directories and any
 */tmp/package-\*-compat32* (or *\$TMP/package-\*-compat32*) directories
@@ -73,8 +73,8 @@ that could be removed.
 **sboclean** can exit with the following codes:
 
 0: all operations completed successfully.\
-1: a usage error occurred, such as running **sboclean** with nothing to
-clean.
+1: a usage error occurred, such as passing incorrect options to
+**sboclean**.
 
 ## BUGS
 
