@@ -4,7 +4,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '3.4.2';
+our $VERSION = '3.5_RC';
 
 use Exporter 'import';
 use File::Copy;
