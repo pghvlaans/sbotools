@@ -28,14 +28,20 @@
 
 ## DESCRIPTION
 
-**sbohints** is a script for querying and editing the blacklist and
-requests for optional dependencies and automatic reverse dependency
-rebuilds made in [sbotools.hints(5)](sbotools.hints.5.md). Please note that all hints apply
-equally to the *compat32* version of the target script or scripts;
-specific requests for *compat32* scripts are unsupported. The
-modification flags are **\--blacklist**, **\--optional**,
-**\--replace-optional** and **\--reverse**. These can be used in
-conjunction with **\--clear**, but not with each other.
+**sbohints** is a script for querying and editing script-specific hints
+in [sbotools.hints(5)](sbotools.hints.5.md). Three kinds of hints are recognized:
+
+• blacklist
+
+• optional dependencies
+
+• automatic reverse dependency rebuild
+
+Please note that all hints apply equally to the *compat32* version of
+the target script or scripts; specific requests for *compat32* scripts
+are unsupported. The modification flags are **\--blacklist**,
+**\--optional**, **\--replace-optional** and **\--reverse**. These can
+be used in conjunction with **\--clear**, but not with each other.
 
 Non-root users can only call **sbohints** with the **\--list**,
 **\--query**, **\--help** and **\--version** flags. If an invalid
@@ -80,23 +86,19 @@ optional dependency requests.
 
 **-l\|\--list**
 
-List the current blacklist and all requests for optional dependencies
-and automatic reverse dependency rebuilds. If a blacklisted script has
-optional dependency requests or is requested as an optional depenedency,
-the user is notified. The **\--list** flag can be used without root
-privileges.
+List all active hints. If a blacklisted script has optional dependency
+requests or is requested as an optional depenedency, the user is
+notified. The **\--list** flag can be used without root privileges.
 
 **-q\|\--query**
 
-Return the current blacklist, optional dependency and automatic reverse
-dependency rebuild status for one or more scripts. There is no output
+Return the hint status for one or more scripts. There is no output
 unless the queried script is involved with one or more hints. The
 **\--query** flag can be used without root privileges.
 
 **\--reset**
 
-Clear the blacklist and all requests for optional dependencies and
-automatic reverse dependency rebuilds upon confirmation.
+Clear all hints upon confirmation.
 
 **-h\|\--help**
 
