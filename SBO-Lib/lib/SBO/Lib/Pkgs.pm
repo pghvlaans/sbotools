@@ -243,7 +243,7 @@ sub get_local_outdated_versions {
   my @outdated;
 
   my $local = $config{LOCAL_OVERRIDES};
-  unless ( $local eq 'FALSE' ) {
+  unless ( $local eq 'FALSE' or not -d $local ) {
     my $pkglist = get_installed_packages('SBO');
     my @local = grep { is_local($_->{name}) } @$pkglist;
 

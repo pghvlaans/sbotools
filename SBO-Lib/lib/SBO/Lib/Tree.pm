@@ -128,7 +128,7 @@ sub get_sbo_locations {
   # after we've checked the regular sbo locations, we'll see if it needs to
   # be overridden by a local change
   my $local = $config{LOCAL_OVERRIDES};
-  unless ( $local eq 'FALSE' ) {
+  unless ( $local eq 'FALSE' or not -d $local ) {
     for my $sbo (@sbos, keys %locations) {
       my $loc = "$local/$sbo";
       next unless -d $loc;

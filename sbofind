@@ -161,7 +161,7 @@ sub perform_search {
 			}
 		}
 	}
-	if ($config{LOCAL_OVERRIDES} ne 'FALSE') {
+	if ($config{LOCAL_OVERRIDES} ne 'FALSE' and -d $config{LOCAL_OVERRIDES}) {
 		opendir(my $dh, $config{LOCAL_OVERRIDES});
 		while (my $dir = readdir($dh)) {
 			next if $local{$dir};
