@@ -10,15 +10,21 @@
 
 ## NAME
 
-**sbotools.hints** - blacklist, reverse dependency rebuild and optional
-dependency requests for **sbotools**
+**sbotools.hints** - script-specific hints for **sbotools**
 
 ## DESCRIPTION
 
-The */etc/sbotools/sbotools.hints* file is used to blacklist scripts,
-request optional dependencies and request automatic reverse dependency
-rebuilds. Please note that all requests apply equally to the *compat32*
-versions of the scripts; specific requests for *compat32* scripts are
+The */etc/sbotools/sbotools.hints* file is used to give sbotools hints
+about individual scripts. Three kinds of hints are recognized:
+
+• blacklist
+
+• optional reverse dependencies
+
+• automatic reverse dependency rebuilds
+
+Please note that all requests apply equally to the *compat32* versions
+of the scripts; specific requests for *compat32* scripts are
 unsupported.
 
 If a script is blacklisted, it can neither be included in build queues

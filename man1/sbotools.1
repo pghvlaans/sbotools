@@ -57,7 +57,7 @@ files and installed reverse dependencies.
 .B
 sbohints(1)
 .RS
-Query and modify the blacklist and requests for optional dependencies and reverse
+Query and modify script specific hints: blacklist, optional dependencies and reverse
 dependency rebuilds.
 .RE
 .P
@@ -114,8 +114,13 @@ sbotools.hints(5)
 documents the
 .I
 /etc/sbotools/sbotools.hints
-file, which can be used to blacklist scripts and request optional
-dependencies and automatic reverse dependency rebuilds.
+file, which passes hints to
+.B
+sboinstall(1)
+and
+.B
+sboupgrade(1)\fR\
+\&: blacklist, optional dependencies and automatic reverse dependency rebuilds.
 .SH STARTUP
 When using
 .B

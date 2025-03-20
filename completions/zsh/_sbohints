@@ -19,8 +19,8 @@ _arguments -s \
 	   '(-)'{-h,--help}'[Show help]:' \
 	   '(-)'{-v,--version}'[Show version information.]:' \
 	   - commands \
-	   '(-q --query)'{-q,--query}'[Get blacklist and optional dependency status of one or more scripts.]:' \
-	   '(-l --list)'{-l,--list}'[Display the blacklist and all optional dependency requests.]:' \
+	   '(-q --query)'{-q,--query}'[Get the hint status of one or more scripts.]:' \
+	   '(-l --list)'{-l,--list}'[Display all hints.]:' \
 	   '(-b --blacklist)'{-b,--blacklist}'[Add (or clear with -c) scripts to the blacklist.]:' \
 	   '(-o --optional)'{-o,--optional}'[Add (or clear with -c) optional dependency requests for one or more scripts.]:' \
 	   '(-r --reverse)'{-r,--reverse}'[Add (or clear with -c) reverse dependency rebuild requests for one or more scripts.]:' \

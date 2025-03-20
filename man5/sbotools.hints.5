@@ -3,7 +3,7 @@
 .P
 .B
 sbotools.hints
-- blacklist, reverse dependency rebuild and optional dependency requests for
+- script-specific hints for
 .B
 sbotools
 .SH DESCRIPTION
@@ -11,8 +11,18 @@ sbotools
 The
 .I
 /etc/sbotools/sbotools.hints
-file is used to blacklist scripts, request optional dependencies and request
-automatic reverse dependency rebuilds. Please note that all requests apply equally
+file is used to give sbotools hints about individual scripts. Three kinds of hints
+are recognized:
+.RS
+
+\[bu] blacklist
+
+\[bu] optional reverse dependencies
+
+\[bu] automatic reverse dependency rebuilds
+
+.RE
+Please note that all requests apply equally
 to the
 .I
 compat32

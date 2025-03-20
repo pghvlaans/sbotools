@@ -17,12 +17,21 @@ sbohints [-q] sbo_name (sbo_name)
 .P
 .B
 sbohints
-is a script for querying and editing the blacklist
-and requests for optional dependencies and automatic
-reverse dependency rebuilds made in
+is a script for querying and editing script-specific hints in
 .B
 sbotools.hints(5)\fR\
-\&. Please note that all hints apply equally to the
+\&. Three
+kinds of hints are recognized:
+.RS
+
+\[bu] blacklist
+
+\[bu] optional dependencies
+
+\[bu] automatic reverse dependency rebuild
+
+.RE
+Please note that all hints apply equally to the
 .I
 compat32
 version of the target script or scripts; specific requests for
@@ -149,11 +158,9 @@ and
 .B
 -l|--list
 .RS
-List the current blacklist and all requests for optional
-dependencies and automatic reverse dependency rebuilds.
-If a blacklisted script has optional dependency
-requests or is requested as an optional depenedency, the
-user is notified. The
+List all active hints. If a blacklisted script has optional
+dependency requests or is requested as an optional depenedency,
+the user is notified. The
 .B
 --list
 flag can be used without root privileges.
@@ -162,9 +169,8 @@ flag can be used without root privileges.
 .B
 -q|--query
 .RS
-Return the current blacklist, optional dependency and automatic
-reverse dependency rebuild status for one or more scripts. There
-is no output unless the queried script is involved with one or more
+Return the hint status for one or more scripts. There is no
+output unless the queried script is involved with one or more
 hints. The
 .B
 --query
@@ -174,8 +180,7 @@ flag can be used without root privileges.
 .B
 --reset
 .RS
-Clear the blacklist and all requests for optional dependencies and
-automatic reverse dependency rebuilds upon confirmation.
+Clear all hints upon confirmation.
 .RE
 .P
 .B
