@@ -1,5 +1,7 @@
 package SBO::Lib::Build;
 
+# vim: ts=2:et
+
 use 5.016;
 use strict;
 use warnings;
