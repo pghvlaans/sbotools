@@ -185,6 +185,40 @@ if ($mass_rebuild and -f $mtemp_resume) {
 my $requested_reinstall = 1 if $reinstall;
 $reinstall = 1 if $mass_rebuild or $reverse_rebuild;
 
+my @sbos;
+
+# if a requested compat32 script is ineligible anyway,
+# do not bother with its dependencies, etc.
+if (@ARGV and $compat32) {
+	for my $sbo (@ARGV) {
+		my ($perl_ineligible, $arch_ineligible);
+		my $sbo_location = get_sbo_location($sbo);
+		if ($sbo_location) {
+			my $check_location = $sbo_location;
+			my $orig_location = get_orig_location($sbo);
+			$check_location = $orig_location if $orig_location;
+			$perl_ineligible = 1 if $sbo =~ /^perl-/ or basename(dirname($check_location)) eq "perl";
+			unless ($perl_ineligible) {
+				my ($fh, $exit) = open_fh("$sbo_location/$sbo.SlackBuild", "<") if -f "$sbo_location/$sbo.SlackBuild";
+				unless ($exit) {
+					for my $line (<$fh>) {
+						$perl_ineligible = 1 if $line =~ /perl (Makefile|Build).PL/;
+						$arch_ineligible = 1 if $line =~ /ARCH=noarch/;
+					}
+					close $fh;
+				}
+			}
+		}
+		push @sbos, $sbo unless $perl_ineligible or $arch_ineligible;
+		wrapsay "$sbo is Perl-based; skipping compat32." if $perl_ineligible;
+		wrapsay "$sbo is a noarch script; skipping compat32." if $arch_ineligible and not $perl_ineligible;
+	}
+} elsif (@ARGV) {
+	@sbos = @ARGV;
+}
+exit 0 if (@ARGV and not @sbos);
+@sbos = uniq @sbos;
+
 if (length $utemp) {
 	my $json = JSON::PP->new->latin1;
 	$non_int = 1;
@@ -223,7 +257,7 @@ if (length $utemp) {
 } elsif (not $mass_rebuild) {
 	# noninteractive and no requirements; trigger automatic rebuilds
 	if (not $reverse_rebuild and not $yes_really and ($no_reqs or $non_int)) {
-		my $interim_queue = \@ARGV;
+		my $interim_queue = \@sbos;
 		if ($requested_reinstall) {
 			my ($extra_queue, %extra_warnings, @needs_reverse);
 			for my $cand (@$interim_queue) {
@@ -250,15 +284,15 @@ if (length $utemp) {
 		}
 	# --reverse-rebuild, no --reinstall
 	} elsif ($reverse_rebuild and not $requested_reinstall) {
-		($build_queue, %warnings) = get_full_reverse_queue($self, 0, @ARGV);
+		($build_queue, %warnings) = get_full_reverse_queue($self, 0, @sbos);
 		exit 0 unless $build_queue;
 	} else {
-		for my $sbo (@ARGV) {
+		for my $sbo (@sbos) {
 			my ($extra_queue, %extra_warnings);
 			my $queue = get_build_queue([$sbo], \%warnings);
 			$build_queue = merge_queues($build_queue, $queue);
 			$save_queue = merge_queues($save_queue, $build_queue);
-			# --reverse-rebuild with --reinstall; include the items in @ARGV
+			# --reverse-rebuild with --reinstall; include the items in @sbos
 			if ($reverse_rebuild) {
 				($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
 				if ($extra_queue) {
@@ -335,7 +369,7 @@ for my $sbo (@$build_queue) {
 	}
 	next if $inst_names{$sbo};
 
-	if (not $locations{$sbo} and in(@ARGV, $sbo)) {
+	if (not $locations{$sbo} and in(@sbos, $sbo)) {
 		usage_error("Unable to locate $sbo in the SlackBuilds.org tree.")
 	}
 }
@@ -349,7 +383,7 @@ for my $sbo (@$build_queue) {
 }
 
 # check for already-installeds and prompt for the rest
-my (@temp_queue, %commands, %options, %missing_user_group);
+my (@temp_queue, %commands, %options, %missing_user_group, @ignore_script);
 if (defined $template) {
 	%commands = %{ $template->{commands} };
 	%options = %{ $template->{options} };
@@ -357,6 +391,7 @@ if (defined $template) {
 my $added = ' added to install queue.';
 my (@see_readme, %saved_options);
 FIRST: for my $sbo (@$build_queue) {
+	my ($perl_ineligible, $arch_ineligible);
 	my $name;
 	if ($sbo =~ /-compat32$/) {
 		next FIRST unless $utemp or $mass_rebuild;
@@ -370,18 +405,22 @@ FIRST: for my $sbo (@$build_queue) {
 		next FIRST;
 	}
 	$locations{$name} = get_sbo_location($sbo) if $name =~ /-compat32$/;
-	# do not attempt compat32 builds if noarch or perl-based
+	# do not attempt compat32 builds if noarch or perl-based; catch
+	# ineligible scripts here, but skip them after checking for the base
+	# package
 	if ($name =~ /-compat32$/ and $locations{$name}) {
 		my $check_location = $locations{$name};
 		my $orig_location = get_orig_location($sbo);
 		$check_location = $orig_location if $orig_location;
-		if ($name =~ /^perl-/ or basename(dirname($check_location)) eq "perl") {
-			wrapsay "$sbo is Perl-based; skipping compat32.";
-			next FIRST;
-		}
-		if (system("grep", "-q", "ARCH=noarch", "$locations{$name}/$sbo.SlackBuild") == 0) {
-			wrapsay "$sbo is a noarch script; skipping compat32.";
-			next FIRST;
+		$perl_ineligible = 1 if $name =~ /^perl-/ or basename(dirname($check_location)) eq "perl";
+		unless ($perl_ineligible) {
+			my ($fh, $exit) = open_fh("$locations{$name}/$sbo.SlackBuild", "<") if -f "$locations{$name}/$sbo.SlackBuild";
+			next FIRST if $exit;
+			for my $line (<$fh>) {
+				$perl_ineligible = 1 if $line =~ /perl (Makefile|Build).PL/;
+				$arch_ineligible = 1 if $line =~ /ARCH=noarch/;
+			}
+			close $fh;
 		}
 	}
 	# for items in a reverse dependency rebuild queue, do not add
@@ -451,7 +490,7 @@ FIRST: for my $sbo (@$build_queue) {
 		# if a compat32 build, we need to see if the non-compat version exists.
 		if ($name =~ /-compat32$/) {
 			unless ($inst_names{$sbo} or grep { /^$sbo$/ } @temp_queue) {
-				say "$name requires $sbo.";
+				say "$name requires $sbo." unless $perl_ineligible or $arch_ineligible;
 				my ($cmds, $opts, $exit) = user_prompt($sbo, $locations{$sbo});
 				if ($exit) {
 					warn "Unable to open README for $sbo.\n";
@@ -463,8 +502,17 @@ FIRST: for my $sbo (@$build_queue) {
 				push(@temp_queue, $sbo);
 				$commands{$sbo} = $cmds;
 				$options{$sbo} = $opts;
-				say "$sbo$added" unless $dry_run;
+				say "$sbo$added";
 			}
+		}
+		# actually skip ineligible compat32 builds here (interactive)
+		if ($perl_ineligible) {
+			wrapsay "$sbo is Perl-based; skipping compat32.";
+			next FIRST;
+		}
+		if ($arch_ineligible) {
+			wrapsay "$sbo is a noarch script; skipping compat32.";
+			next FIRST;
 		}
 		my ($cmds, $opts, $exit) = user_prompt($name, $locations{$name});
 		if ($exit) {
@@ -477,7 +525,7 @@ FIRST: for my $sbo (@$build_queue) {
 		push(@temp_queue, $name);
 		$commands{$name} = $cmds;
 		$options{$name} = $opts;
-		say "$name$added" unless $dry_run;
+		say "$name$added";
 	} else {
 		unless ($utemp) {
 			# for --batch, check for existing user and group, exiting
@@ -506,7 +554,7 @@ FIRST: for my $sbo (@$build_queue) {
 			# add the required base script if --batch
 			if ($yes_really and $name =~ /-compat32$/) {
 				unless ($inst_names{$sbo} or grep { /^$sbo$/ } @temp_queue) {
-					say "$name requires $sbo." unless $dry_run;
+					say "$name requires $sbo." unless $dry_run or $perl_ineligible or $arch_ineligible;
 					$base_needed = 1;
 				}
 			}
@@ -529,8 +577,24 @@ FIRST: for my $sbo (@$build_queue) {
 			# this can only happen if --batch or --dry-run
 			if ($base_needed) {
 				push(@temp_queue, $sbo);
-				say "\n$sbo$added" unless $dry_run;
+				say "\n$sbo$added" unless $dry_run or $perl_ineligible or $arch_ineligible;
 			}
+			# for dry-run, do not want to notify the user of %README%, missing user/group
+			# or saved build options unless the script will actually be built
+			if ($dry_run and not $base_needed and ($perl_ineligible or $arch_ineligible)) {
+				@see_readme = grep { !/^$sbo$/ } @see_readme;
+				push @ignore_script, $name;
+				push @ignore_script, $sbo;
+			}
+		}
+		# actually skip ineligible compat32 builds here (non-interactive)
+		if ($perl_ineligible) {
+			wrapsay "$sbo is Perl-based; skipping compat32.";
+			next FIRST;
+		}
+		if ($arch_ineligible) {
+			wrapsay "$sbo is a noarch script; skipping compat32.";
+			next FIRST;
 		}
 		push(@temp_queue, $name);
 		say "\n$name$added" unless $dry_run;
@@ -547,7 +611,7 @@ if ($dry_run) {
 	if (%saved_options) {
 		say "\nSaved build options to be used:";
 		for my $item (keys %saved_options) {
-			say "  $item: $saved_options{$item}";
+			say "  $item: $saved_options{$item}" unless grep { /^$item$/ } @ignore_script;
 		}
 	}
 }
@@ -558,10 +622,12 @@ unless ($non_int) {
 if ($dry_run) {
 	if (%missing_user_group) {
 		for my $item (keys %missing_user_group) {
-			wrapsay "\nA required user or group is missing for $item:", 1;
-			for my $cmd (@{ $missing_user_group{$item} }) { say $cmd; }
-			say "";
-			wrapsay "Run these commands to install $item with --batch.";
+			unless (grep { /^$item$/ } @ignore_script) {
+				wrapsay "\nA required user or group is missing for $item:", 1;
+				for my $cmd (@{ $missing_user_group{$item} }) { say $cmd; }
+				say "";
+				wrapsay "Run these commands to install $item with --batch.";
+			}
 		}
 	}
 	exit 0;

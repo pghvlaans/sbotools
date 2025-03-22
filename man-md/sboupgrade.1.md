@@ -131,7 +131,10 @@ operation is not necessarily foolproof, and is unsupported by anyone in
 principle. **\--compat32** can be combined with **\--noinstall** and
 **\--distclean FALSE** so that the contents of the package can be
 inspected prior to installation. GitHub Issues are welcome in case of
-unexpected failure. Incompatible with **\--all**.
+unexpected failure.
+
+**sboinstall** will not attempt *compat32 builds for Perl-based or
+noarch* scripts. Incompatible with **\--all**.
 
 **-q\|\--reverse-rebuild**
 
