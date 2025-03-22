@@ -133,8 +133,8 @@ principle. **\--compat32** can be combined with **\--noinstall** and
 inspected prior to installation. GitHub Issues are welcome in case of
 unexpected failure.
 
-**sboinstall** will not attempt *compat32 builds for Perl-based or
-noarch* scripts. Incompatible with **\--all**.
+**sboinstall** will not attempt *compat32* builds for Perl-based or
+*noarch* scripts. Incompatible with **\--all**.
 
 **-q\|\--reverse-rebuild**
 
