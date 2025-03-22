@@ -370,8 +370,12 @@ FIRST: for my $sbo (@$build_queue) {
 		next FIRST;
 	}
 	$locations{$name} = get_sbo_location($sbo) if $name =~ /-compat32$/;
-	# do not attempt compat32 builds if noarch
+	# do not attempt compat32 builds if noarch or perl-based
 	if ($name =~ /-compat32$/ and $locations{$name}) {
+		if ($name =~ /^perl-/ or basename(dirname($locations{$name})) eq "perl") {
+			wrapsay "$sbo is Perl-based; skipping compat32.";
+			next FIRST;
+		}
 		if (system("grep", "-q", "ARCH=noarch", "$locations{$name}/$sbo.SlackBuild") == 0) {
 			wrapsay "$sbo is a noarch script; skipping compat32.";
 			next FIRST;

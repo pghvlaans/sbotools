@@ -367,6 +367,10 @@ FIRST: for my $sbo (@$upgrade_queue) {
 	$real_name =~ s/-compat32//;
 	# do not attempt compat32 builds if noarch
 	if ($name =~ /-compat32$/ and $locations{$name}) {
+		if ($name =~ /^perl-/ or basename(dirname($locations{$name})) eq "perl") {
+			wrapsay "$sbo is Perl-based; skipping compat32.";
+			next FIRST;
+		}
 		if (system("grep", "-q", "ARCH=noarch", "$locations{$name}/$real_name.SlackBuild") == 0) {
 			wrapsay "$sbo is a noarch script; skipping compat32.";
 			next FIRST;
