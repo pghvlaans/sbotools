@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ %config _ERR_OPENFH auto_reverse get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay /;
+use SBO::Lib qw/ %config _ERR_OPENFH auto_reverse get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -372,7 +372,10 @@ FIRST: for my $sbo (@$build_queue) {
 	$locations{$name} = get_sbo_location($sbo) if $name =~ /-compat32$/;
 	# do not attempt compat32 builds if noarch or perl-based
 	if ($name =~ /-compat32$/ and $locations{$name}) {
-		if ($name =~ /^perl-/ or basename(dirname($locations{$name})) eq "perl") {
+		my $check_location = $locations{$name};
+		my $orig_location = get_orig_location($sbo);
+		$check_location = $orig_location if $orig_location;
+		if ($name =~ /^perl-/ or basename(dirname($check_location)) eq "perl") {
 			wrapsay "$sbo is Perl-based; skipping compat32.";
 			next FIRST;
 		}

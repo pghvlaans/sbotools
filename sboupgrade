@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ _ERR_OPENFH auto_reverse get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_readme_contents get_requires get_sbo_locations get_user_group in merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue verify_gpg %config show_version lint_sbo_config wrapsay /;
+use SBO::Lib qw/ _ERR_OPENFH auto_reverse get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_sbo_locations get_user_group in merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue verify_gpg %config show_version lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -367,11 +367,14 @@ FIRST: for my $sbo (@$upgrade_queue) {
 	$real_name =~ s/-compat32//;
 	# do not attempt compat32 builds if noarch
 	if ($name =~ /-compat32$/ and $locations{$name}) {
-		if ($name =~ /^perl-/ or basename(dirname($locations{$name})) eq "perl") {
+		my $check_location = $locations{$name};
+		my $orig_location = get_orig_location($real_name);
+		$check_location = $orig_location if $orig_location;
+		if ($name =~ /^perl-/ or basename(dirname($check_location)) eq "perl") {
 			wrapsay "$sbo is Perl-based; skipping compat32.";
 			next FIRST;
 		}
-		if (system("grep", "-q", "ARCH=noarch", "$locations{$name}/$real_name.SlackBuild") == 0) {
+		if (system("grep", "-q", "ARCH=noarch", "$locations{$name}/$sbo.SlackBuild") == 0) {
 			wrapsay "$sbo is a noarch script; skipping compat32.";
 			next FIRST;
 		}
