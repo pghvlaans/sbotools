@@ -35,6 +35,7 @@
   * *sboinstall*, *sboupgrade*: **\--batch** runs interactively with dependency resolution; **\--dry-run** shows the **\--batch** queue and exits
   * *Readme.pm*: Do not nag the user about existent users and groups; account for other *README* files for **useradd** and **groupadd**
   * *sbofind*: Fix failure when **LOCAL_OVERRIDES** is specified but does not exist
+  * *sboinstall*: Check for existent scripts in `@ARGV` for **--use-template** and **--nointeractive** only; look beyond first item
 
 * 3.4.2 - 2025-02-07
   * *Build.pm*: When distcleaning, do not delete files that are needed later in the queue

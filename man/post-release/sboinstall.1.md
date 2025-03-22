@@ -123,6 +123,10 @@ principle. **\--compat32** can be combined with **\--noinstall** and
 inspected prior to installation. GitHub Issues are welcome in case of
 unexpected failure.
 
+**sboinstall** will not attempt *compat32 builds for Perl-based or
+noarch* scripts. Incompatible with **\--mass-rebuild** and
+**\--use-template**.
+
 **-q\|\--reverse-rebuild**
 
 Rebuild the reverse dependencies for the requested SlackBuilds. The
