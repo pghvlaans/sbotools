@@ -61,7 +61,6 @@ sub get_orig_location {
   my $sbo = shift;
   # Make sure we have checked for the slackbuild in question:
   get_sbo_location($sbo);
-  my $better_sbo = $sbo;
   return $orig{$sbo};
 }
 
