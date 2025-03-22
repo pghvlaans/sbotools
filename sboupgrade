@@ -219,8 +219,8 @@ for my $sbo (@sbos) {
 	my $name = $sbo;
 	$name =~ s/-compat32//;
 	$locations{$sbo} = get_sbo_location($name);
-	if (not $locations{$sbo} and in(@ARGV, $sbo)) {
-		usage_error("Unable to locate $sbo in the SlackBuilds.org tree.");
+	if (not $locations{$sbo} and in($sbo, @sbos) and $non_int and not $yes_really) {
+		usage_error("Unable to locate $sbo and using nointeractive.");
 	}
 }
 
@@ -369,17 +369,6 @@ if ($compat32) {
 my $cqueue;
 # get locations for all the things
 my %locs = get_sbo_locations($upgrade_queue);
-# compat32 and all fallback
-for my $item (@$upgrade_queue) {
-	if (($compat32 or $all) and not $locations{$item}) {
-		$locations{$item} = get_sbo_location($item);
-	}
-	next if $inst_names{$item};
-
-	if (not $locations{$item} and in(@ARGV, $item)) {
-		usage_error("Unable to locate $item in the SlackBuilds.org tree.");
-	}
-}
 @locations{keys %locs} = values %locs;
 
 # see what has been installed as part of a reverse

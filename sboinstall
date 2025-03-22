@@ -255,11 +255,10 @@ if (length $utemp) {
 	}
 # the --mass-rebuild queue is handled later
 } elsif (not $mass_rebuild) {
-	# noninteractive and no requirements; trigger automatic rebuilds
+	# noninteractive and no requirements
 	if (not $reverse_rebuild and not $yes_really and ($no_reqs or $non_int)) {
 		my $interim_queue = \@sbos;
 		if ($requested_reinstall) {
-			my ($extra_queue, %extra_warnings, @needs_reverse);
 			for my $cand (@$interim_queue) {
 				unless (on_blacklist($cand)) {
 					push @$build_queue, $cand;
@@ -267,21 +266,10 @@ if (length $utemp) {
 					wrapsay "$cand is blacklisted. Skipping.";
 				}
 			}
-			$save_queue = $build_queue;
-			unless ($no_install) {
-				for my $cand (@$build_queue) {
-					if (auto_reverse($cand)) {
-						push @needs_reverse, $cand;
-						wrapsay "Reverse dependency rebuild for $cand.";
-					}
-				}
-			}
-			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, @needs_reverse) if @needs_reverse;
-			if ($extra_queue) {
-				$build_queue = merge_queues($build_queue, $extra_queue);
-				%warnings = (%warnings, %extra_warnings);
-			}
+		} else {
+			$build_queue = $interim_queue;
 		}
+		$save_queue = $build_queue;
 	# --reverse-rebuild, no --reinstall
 	} elsif ($reverse_rebuild and not $requested_reinstall) {
 		($build_queue, %warnings) = get_full_reverse_queue($self, 0, @sbos);
@@ -359,18 +347,13 @@ if ($mass_rebuild and not $resume_mass_rebuild) {
 
 # populate %locations and sanity check
 my %locations = get_sbo_locations($build_queue);
-for my $sbo (@$build_queue) {
-	# Fall-backs for compat32 and templates.
-	if ($compat32 and not $locations{$sbo}) {
-		$locations{$sbo} = get_sbo_location($sbo);
-	}
-	if ($utemp and not $locations{$sbo}) {
-		$locations{$sbo} = get_sbo_location($sbo);
-	}
-	next if $inst_names{$sbo};
+SANITY: for my $sbo (@$build_queue) {
+	next SANITY if $inst_names{$sbo};
 
-	if (not $locations{$sbo} and in(@sbos, $sbo)) {
-		usage_error("Unable to locate $sbo in the SlackBuilds.org tree.")
+	if ($utemp and not $locations{$sbo}) {
+		usage_error("Unable to locate $sbo and using a template.");
+	} elsif ($non_int and not $yes_really and not $locations{$sbo} and in($sbo, @sbos)) {
+		usage_error("Unable to locate $sbo and using nointeractive.")
 	}
 }
 
