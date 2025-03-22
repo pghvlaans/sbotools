@@ -258,16 +258,12 @@ if (length $utemp) {
 	# noninteractive and no requirements
 	if (not $reverse_rebuild and not $yes_really and ($no_reqs or $non_int)) {
 		my $interim_queue = \@sbos;
-		if ($requested_reinstall) {
-			for my $cand (@$interim_queue) {
-				unless (on_blacklist($cand)) {
-					push @$build_queue, $cand;
-				} else {
-					wrapsay "$cand is blacklisted. Skipping.";
-				}
+		for my $cand (@$interim_queue) {
+			unless (on_blacklist($cand)) {
+				push @$build_queue, $cand;
+			} else {
+				wrapsay "$cand is blacklisted. Skipping.";
 			}
-		} else {
-			$build_queue = $interim_queue;
 		}
 		$save_queue = $build_queue;
 	# --reverse-rebuild, no --reinstall
