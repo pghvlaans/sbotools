@@ -131,7 +131,10 @@ Only rsync repositories can be verified on Slackware 14.0 and Slackware 14.1.
 .P
 Root privileges are required to run
 .B
-sboupgrade\fR\
+sboupgrade
+unless passing
+.B
+--dry-run\fR\
 \&. If an invalid configuration is detected in
 .I
 /etc/sbotools/sbotools.conf\fR\
@@ -200,6 +203,33 @@ command. See also
 .B
 sbotools.conf(5)\fR\
 \&. This option overrides the default.
+.RE
+.P
+.B
+-D|--dry-run
+.RS
+Non-interactively print the prospective build queue and exit.
+.B
+--dry-run
+reports SlackBuilds in the queue with
+.I
+%README%
+in
+.I
+REQUIRES\fR\
+\&, saved build options to be used and
+.B
+useradd
+or
+.B
+groupadd
+commands to be run. This makes
+.B
+--batch
+considerably safer for everyday use.
+.B
+--dry-run
+can be used without root privileges.
 .RE
 .P
 .B
@@ -468,32 +498,6 @@ Overrides
 .B
 --nointeractive\fR\
 \&.
-.RE
-.P
-.B
---dry-run
-.RS
-Non-interactively print the
-.B
---batch
-build queue and exit.
-.B
---dry-run
-reports SlackBuilds in the queue with
-.I
-%README%
-in
-.I
-REQUIRES\fR\
-\&, saved build options to be used and
-.B
-useradd
-or
-.B
-groupadd commands to be run. This makes
-.B
---batch
-considerably safer for everyday use.
 .RE
 .SH VARIABLES
 .P

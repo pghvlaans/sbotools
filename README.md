@@ -56,6 +56,8 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Readme.pm: Do not nag the user about existent users and groups; account for other README files for useradd and groupadd
   * sbofind: Fix failure when LOCAL_OVERRIDES is specified but does not exist
   * sboinstall: Check for existent scripts in @ARGV for --use-template and --nointeractive only; look beyond first item
+  * All scripts: Properly exit with code 0 with --help
+  * sboinstall, sboupgrade: Allow --dry-run without root privileges
 
 * 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue

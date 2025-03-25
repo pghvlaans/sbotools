@@ -61,10 +61,10 @@ flag may be passed to upgrade all eligible SlackBuilds simultaneously.
 **GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
 Slackware 14.0 and Slackware 14.1.
 
-Root privileges are required to run **sboupgrade**. If an invalid
-configuration is detected in */etc/sbotools/sbotools.conf*, or if
-invalid options are specified, the script exits with a diagnostic
-message.
+Root privileges are required to run **sboupgrade** unless passing
+**\--dry-run**. If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, or if invalid options are specified, the
+script exits with a diagnostic message.
 
 ## OPTIONS
 
@@ -91,6 +91,15 @@ the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
 Cleaning these directories can be set as default via the
 [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This option
 overrides the default.
+
+**-D\|\--dry-run**
+
+Non-interactively print the prospective build queue and exit.
+**\--dry-run** reports SlackBuilds in the queue with *%README%* in
+*REQUIRES*, saved build options to be used and **useradd** or
+**groupadd** commands to be run. This makes **\--batch** considerably
+safer for everyday use. **\--dry-run** can be used without root
+privileges.
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
@@ -195,14 +204,6 @@ with **\--dry-run** first, which prints the **\--batch** build queue and
 exits, to verify the upcoming operation.
 
 Overrides **\--nointeractive**.
-
-**\--dry-run**
-
-Non-interactively print the **\--batch** build queue and exit.
-**\--dry-run** reports SlackBuilds in the queue with *%README%* in
-*REQUIRES*, saved build options to be used and **useradd** or **groupadd
-commands to be run. This makes \--batch** considerably safer for
-everyday use.
 
 ## VARIABLES
 

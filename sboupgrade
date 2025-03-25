@@ -34,12 +34,12 @@ Options (defaults shown first where applicable):
     this flag will upgrade everything reported by sbocheck(1).
   --batch:
     like nointeractive, but calculates dependencies (use with caution)
-  --dry-run:
-    show the potential batch queue and exit
   -b|--build-ignore (FALSE|TRUE):
     if TRUE, only offer to upgrade on version changes (not build number changes).
   -c|--noclean (FALSE|TRUE):
     if TRUE, do not clean working directories after building.
+  -D|--dry-run:
+    show the potential queue and exit
   -d|--distclean (TRUE|FALSE):
     if TRUE, delete downloaded source archives and the completed package after building.
   -f|--force:
@@ -90,18 +90,18 @@ my $options_ok = GetOptions(
 	'strict-upgrades|S=s' => \$strict_upgrades,
 	'compat32|p'        => \$compat32,
 	'batch'             => \$yes_really,
-	'dry-run'           => \$dry_run,
+	'dry-run|D'         => \$dry_run,
 );
 
 if ($help) {
 	show_usage();
-	usage_error "This is a root-only script." unless $< == 0;
+	wrapsay "Non-root users can only use $self with -D, -v and -h." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
-unless ($< == 0) {
+unless ($< == 0 or $dry_run) {
 	show_usage();
-	usage_error "This is a root-only script.";
+	usage_error "Non-root users can only use $self with -D, -v and -h.";
 }
 unless ($options_ok) {
 	show_usage();

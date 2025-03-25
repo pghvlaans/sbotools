@@ -40,7 +40,7 @@ sub run {
 
   if ($self->{help}) {
     $self->show_usage();
-    usage_error "This is a root-only script." unless $< == 0;
+    wrapsay "This is a root-only script." unless $< == 0;
     return 0;
   }
   if ($self->{vers}) { $self->show_version(); return 0; }

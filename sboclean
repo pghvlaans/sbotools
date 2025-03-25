@@ -56,7 +56,7 @@ my $options_ok = GetOptions(
 
 if ($help) {
 	show_usage();
-	usage_error "This is a root-only script." unless $< == 0;
+	wrapsay "This is a root-only script." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }

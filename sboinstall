@@ -34,6 +34,8 @@ Options (defaults shown first where applicable):
     version information.
   -c|--noclean (FALSE|TRUE):
     if TRUE, do not clean working directories after building.
+  -D|--dry-run:
+    show the potential queue and exit
   -d|--distclean (TRUE|FALSE):
     if TRUE, delete downloaded source archives and the completed package after building.
   -i|--noinstall:
@@ -52,8 +54,6 @@ Options (defaults shown first where applicable):
     view the README but do not parse requirements, commands, or options.
   --batch:
     like nointeractive, but calculates dependencies (use with caution)
-  --dry-run:
-    show the potential batch queue and exit
   --reinstall:
     ask to reinstall any installed packages in the requirements list.
   --create-template (FILE):
@@ -91,18 +91,18 @@ my $options_ok = GetOptions(
 	'use-template=s'    => \$utemp,
 	'reverse-rebuild|q' => \$reverse_rebuild,
 	'batch'             => \$yes_really,
-	'dry-run'           => \$dry_run,
+	'dry-run|D'         => \$dry_run,
 );
 
 if ($help) {
 	show_usage();
-	usage_error "This is a root-only script." unless $< == 0;
+	wrapsay "Non-root users can only use $self with -D, -v and -h." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0; }
-unless ($< == 0) {
+unless ($< == 0 or $dry_run) {
 	show_usage();
-	usage_error "This is a root-only script.";
+	usage_error "Non-root users can only use $self with -D, -v and -h.";
 }
 unless ($options_ok) {
 	show_usage();

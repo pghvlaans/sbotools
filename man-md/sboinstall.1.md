@@ -22,14 +22,14 @@
     sboinstall [-h|-v]
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-iopRr] [--batch|--dry-run] [--create-template FILE] \
+               [-DiopRr] [--batch|--dry-run] [--create-template FILE] \
                sbo_name (sbo_name)
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-i] --use-template FILE
+               [-Di] --use-template FILE
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-ioqr] [--create-template FILE] --mass-rebuild
+               [-Dioqr] [--create-template FILE] --mass-rebuild
 
 ## DESCRIPTION
 
@@ -66,10 +66,10 @@ or the md5sum check fails, a new download is attempted from
 **GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
 Slackware 14.0 and Slackware 14.1.
 
-Root privileges are required to run **sboinstall**. If an invalid
-configuration is detected in */etc/sbotools/sbotools.conf*, or if
-invalid options are specified, the script exits with a diagnostic
-message.
+Root privileges are required to run **sboinstall** unless passing
+**\--dry-run**. If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, or if invalid options are specified, the
+script exits with a diagnostic message.
 
 ## OPTIONS
 
@@ -88,6 +88,15 @@ the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
 Cleaning these directories can be set as default via the
 [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This option
 overrides the default.
+
+**-D\|\--dry-run**
+
+Non-interactively print the prospective build queue and exit.
+**\--dry-run** reports SlackBuilds in the queue with *%README%* in
+*REQUIRES*, saved build options to be used and **useradd** or
+**groupadd** commands to be run. This makes **\--batch** considerably
+safer for everyday use. **\--dry-run** can be used without root
+privileges.
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
@@ -218,14 +227,6 @@ exits, to verify the upcoming operation.
 
 Incompatible with **\--norequirements** and overrides
 **\--nointeractive**.
-
-**\--dry-run**
-
-Non-interactively print the **\--batch** build queue and exit.
-**\--dry-run** reports SlackBuilds in the queue with *%README%* in
-*REQUIRES*, saved build options to be used and **useradd** or **groupadd
-commands to be run. This makes \--batch** considerably safer for
-everyday use.
 
 ## VARIABLES
 

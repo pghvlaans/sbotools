@@ -20,7 +20,7 @@ _sboupgrade() {
 
   case "${cmd}" in
     sboupgrade)
-      opts="-h -v -b -c -d -f -i -j -o -q -r -z -S --all --help --version --build-ignore --noclean --distclean --force --noinstall --jobs --norecall --nointeractive --force-reqs --reverse-rebuild --strict-upgrades --batch --dry-run $REPOLIST"
+      opts="-h -v -b -c -D -d -f -i -j -o -q -r -z -S --all --help --version --build-ignore --noclean --distclean --force --noinstall --jobs --norecall --nointeractive --force-reqs --reverse-rebuild --strict-upgrades --batch --dry-run $REPOLIST"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
@@ -38,7 +38,7 @@ _sboupgrade() {
           COMPREPLY=( $(compgen -W "FALSE TRUE" -- "${cur}") )
           return 0
           ;;
-        -f|--force|-i|--noinstall|-r|--nointeractive|-z|--force-reqs|-q|--reverse-rebuild|-o|--norecall|--batch|--dry-run)
+        -f|--force|-i|--noinstall|-r|--nointeractive|-z|--force-reqs|-q|--reverse-rebuild|-o|--norecall|--batch|-D|--dry-run)
           COMPREPLY=( $(compgen -W "$REPOLIST" -- "${cur}") )
           return 0
           ;;
