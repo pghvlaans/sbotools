@@ -19,7 +19,7 @@ This repository is for continuing **sbotools** development, and was forked from 
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
 ## Changes
-* Post-Release
+* 3.5 - 2025-03-26
   * sbofind: Use --exact-case to search for an exact match with case sensitivity
     * Thanks to leoctrl for the report.
   * man1: Add a variables section to the sboinstall and sboupgrade pages
@@ -41,7 +41,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Util.pm: Add rationalize_queue for automatic reverse dependency rebuilds
   + Readme.pm: Only display README once
   * Add setting CPAN_IGNORE: Install scripts even if they are already installed from the CPAN
-    * Thanks to 1-1sam for the request.
+    * Thanks to 1-1sam for the suggestion.
   * Pkgs.pm: Properly ignore uninstalled CPAN modules
   * sbofind: Report on scripts installed from the CPAN, in whole or in part
   * sboinstall: Make --reverse-rebuild usable with --compat32; --use-template is incompatible

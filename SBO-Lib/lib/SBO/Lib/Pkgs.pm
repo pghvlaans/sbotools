@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '3.5_RC';
+our $VERSION = '3.5';
 
 use SBO::Lib::Util qw/ %config build_cmp get_arch script_error open_read version_cmp /;
 use SBO::Lib::Tree qw/ get_sbo_location get_sbo_locations is_local /;

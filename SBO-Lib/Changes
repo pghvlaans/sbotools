@@ -1,5 +1,5 @@
 sbotools
-* Post-Release
+* 3.5 - 2025-03-26
   * sbofind: Use --exact-case to search for an exact match with case sensitivity
     * Thanks to leoctrl for the report.
   * man1: Add a variables section to the sboinstall and sboupgrade pages
@@ -20,7 +20,7 @@ sbotools
   * Util.pm: Add rationalize_queue for automatic reverse dependency rebuilds
   + Readme.pm: Only display README once
   * Add setting CPAN_IGNORE: Install scripts even if they are already installed from the CPAN
-    * Thanks to 1-1sam for the request.
+    * Thanks to 1-1sam for the suggestion.
   * Pkgs.pm: Properly ignore uninstalled CPAN modules
   * sbofind: Report on scripts installed from the CPAN, in whole or in part
   * sboinstall: Make --reverse-rebuild usable with --compat32; --use-template is incompatible
