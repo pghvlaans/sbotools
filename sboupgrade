@@ -23,7 +23,8 @@ my $self = basename($0);
 
 sub show_usage {
     print <<"EOF";
-Usage: $self (options) [package]
+Usage: $self (options) sbo ...
+Usage: $self --all
 
 Options (defaults shown first where applicable):
   -h|--help:
@@ -40,7 +41,7 @@ Options (defaults shown first where applicable):
     if TRUE, do not clean working directories after building.
   -D|--dry-run:
     show the potential queue and exit
-  -d|--distclean (TRUE|FALSE):
+  -d|--distclean (FALSE|TRUE):
     if TRUE, delete downloaded source archives and the completed package after building.
   -f|--force:
     force an upgrade, even if the version and build number are the same.
@@ -95,13 +96,13 @@ my $options_ok = GetOptions(
 
 if ($help) {
 	show_usage();
-	wrapsay "Non-root users can only use $self with -D, -v and -h." unless $< == 0;
+	wrapsay "Non-root users can call $self with -D, -v and -h." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
 unless ($< == 0 or $dry_run) {
 	show_usage();
-	usage_error "Non-root users can only use $self with -D, -v and -h.";
+	usage_error "Non-root users can call $self with -D, -v and -h.";
 }
 unless ($options_ok) {
 	show_usage();

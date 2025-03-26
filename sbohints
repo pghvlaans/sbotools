@@ -22,7 +22,8 @@ my $self = basename($0);
 
 sub show_usage {
 	print <<"EOF";
-Usage: $self [options] [arguments]
+Usage: $self [options] sbo ...
+       $self [-l|--reset]
 
 Options:
   -h|--help:
@@ -74,13 +75,13 @@ GetOptions(
 
 if ($help) {
 	show_usage();
-	wrapsay "Non-root users can only call $self with -l, -q, -h and -v." unless $< == 0;
+	wrapsay "Non-root users can call $self with -l, -q, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($version) { show_version(); exit 0; }
 unless ($< == 0 or $list or $query) {
 	show_usage();
-	usage_error "Non-root users can only call $self with -l, -q, -h and -v.";
+	usage_error "Non-root users can call $self with -l, -q, -h and -v.";
 }
 unless (@ARGV or $list or $reset) { show_usage(); exit 0; }
 

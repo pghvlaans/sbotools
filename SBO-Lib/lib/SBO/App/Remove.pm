@@ -107,7 +107,7 @@ sub show_usage {
   my $fname = $self->{fname};
 
 	print <<"EOF";
-Usage: $fname [options] sbo
+Usage: $fname (options) sbo
 
 Options (defaults shown first where applicable):
   -h|--help:

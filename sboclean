@@ -23,7 +23,8 @@ my $self = basename($0);
 
 sub show_usage {
 	print <<"EOF";
-Usage: $self (options) [package]
+Usage: $self [options]
+       $self -o ALL|sbo
 
 Options:
   -h|--help:

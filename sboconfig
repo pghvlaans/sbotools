@@ -25,7 +25,8 @@ my $self = basename($0);
 
 sub show_usage {
 	print <<"EOF";
-Usage: $self [options] [arguments]
+Usage: $self option argument ...
+       $self
 
 Options:
   -h|--help:
@@ -37,7 +38,7 @@ Options:
   --reset:
     restore the default configuration
 
-Config options (defaults shown):
+Configuration options (defaults shown):
   -B|--branch FALSE:
       GIT_BRANCH: the name of a git branch to use, or FALSE for the Slackware version default.
   -b|--build-ignore FALSE:
@@ -86,13 +87,13 @@ GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'classic|C=s', '
 
 if ($options{help}) {
 	show_usage();
-	wrapsay "Non-root users can only call $self with -l, -h and -v." unless $< == 0;
+	wrapsay "Non-root users can call $self with -l, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($options{version}) { show_version(); exit 0 }
 unless ($< == 0 or $options{list}) {
 	show_usage();
-	usage_error "Non-root users can only call $self with -l, -h and -v.";
+	usage_error "Non-root users can call $self with -l, -h and -v.";
 }
 
 my %valid_confs = (

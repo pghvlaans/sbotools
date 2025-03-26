@@ -22,7 +22,7 @@ my $self = basename($0);
 
 sub show_usage {
 	print <<"EOF";
-Usage: $self (search_term)
+Usage: $self (options) search_term ...
 
 Options:
   -h|--help:
@@ -44,8 +44,9 @@ Options:
   -q|--queue:
     show the build queue for each found item.
 
-Example:
+Examples:
   $self regedit
+  $self -qe libsystemd snapd
 
 EOF
 	return 1;

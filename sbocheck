@@ -24,7 +24,7 @@ my $self = basename($0);
 
 sub show_usage {
 	print <<"EOF";
-Usage: $self
+Usage: $self (options)
 
 Options:
   -h|--help:
@@ -46,14 +46,14 @@ GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, '
 
 if ($help) {
 	show_usage();
-	wrapsay "Non-root users can only call $self with -n, -h and -v." unless $< == 0;
+	wrapsay "Non-root users can call $self with -n, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
 if ($< != 0) { $config{GPG_VERIFY} = "FALSE"; }
 unless ($< == 0 or ($nopull and not $gpg)) {
 	show_usage();
-	usage_error "Non-root users can only call $self with -n, -h and -v." unless $< == 0;
+	usage_error "Non-root users can call $self with -n, -h and -v." unless $< == 0;
 }
 
 lint_sbo_config($self, %config);
