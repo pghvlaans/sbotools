@@ -41,7 +41,7 @@ sub run {
   if ($self->{help}) {
     $self->show_usage();
     wrapsay "This is a root-only script." unless $< == 0;
-    return 0;
+    exit 0;
   }
   if ($self->{vers}) { $self->show_version(); return 0; }
   if (!@{ $self->{args} }) {
