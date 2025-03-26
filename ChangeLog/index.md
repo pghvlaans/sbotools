@@ -1,5 +1,5 @@
 # ChangeLog
-* Post-Release
+* 3.5 - 2025-03-26
   * *sbofind*: Use **\--exact-case** to search for an exact match with case sensitivity
     * Thanks to leoctrl for the report.
   * *man1*: Add a variables section to the *sboinstall* and *sboupgrade* pages

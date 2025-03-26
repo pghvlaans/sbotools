@@ -25,10 +25,10 @@
     sboconfig [--reset]
 
     sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \
-              [-g TRUE|FALSE ] [-j #|FALSE] [-p /path|FALSE] \
-              [-s /path|/usr/sbo] [-B branch_name|FALSE] [-b TRUE|FALSE] \
-              [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE] \
-              [-R TRUE|FALSE] [-S TRUE|FALSE]
+              [-g TRUE|FALSE ] [-j #|FALSE] [-P TRUE|FALSE] \
+              [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \
+              [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] \
+              [-r url|FALSE] [-R TRUE|FALSE] [-S TRUE|FALSE]
 
 ## DESCRIPTION
 
@@ -39,6 +39,9 @@ message, and no changes are applied without user confirmation.
 
 The [sbotools.conf(5)](sbotools.conf.5.md) file can also be manually edited; any fields
 not relevant to **sbotools** configuration are ignored.
+
+Non-root users can only call **sboconfig** with the **\--list**,
+**\--help** and **\--version** flags.
 
 ## OPTIONS
 
@@ -54,7 +57,7 @@ Show version information.
 
 List the current configuration options, including unmodified defaults.
 **\--list** also shows the **sboconfig** flag used to set each option
-for reference.
+for reference. The **\--list** flag can be used without root privileges.
 
 **\--reset**
 
@@ -90,11 +93,11 @@ building. These are the build and *package-(sbo)* directories under
 
 **-d\|\--distclean (FALSE\|TRUE)**
 
-**DISTCLEAN**: If **TRUE**, then remove the package and source archives
-after building. Source archives are otherwise retained in
-md5sum-designated directories under */usr/sbo/distfiles* (with default
-**SBO_HOME**). If **PKG_DIR** is set, package archives are saved there
-regardless of **DISTCLEAN**.
+**DISTCLEAN**: If **TRUE**, remove the package and source archives after
+building. Source archives are otherwise retained in md5sum-designated
+directories under */usr/sbo/distfiles* (with default **SBO_HOME**). If
+**PKG_DIR** is set, package archives are saved there regardless of
+**DISTCLEAN**.
 
 **-g\|\--gpg-verify (FALSE\|TRUE)**
 
@@ -109,6 +112,11 @@ Slackware 14.1.
 
 **JOBS**: If **numerical**, pass to the **-j** argument when a
 SlackBuild invoking **make** is run.
+
+**-P\|\--cpan-ignore (FALSE\|TRUE)**
+
+**CPAN_IGNORE**: If **TRUE**, install scripts even if they are already
+installed from the CPAN.
 
 **-p\|\--pkg-dir (FALSE\|/path)**
 

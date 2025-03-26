@@ -1,6 +1,6 @@
 # sbotools
 
-**sbotools** is a set of Perl scripts providing a ports-like automation interface to [SlackBuilds.org](https://slackbuilds.org). Features include dependency handling, using a custom git branch, generating 32-bit and compat32 builds on multilib systems, reverse dependency search and rebuild, gpg verification and more.
+**sbotools** is a set of Perl scripts providing a ports-like automation interface to [SlackBuilds.org](https://slackbuilds.org). Features include dependency handling, using a custom git branch, generating 32-bit and compat32 builds on multilib systems, reverse dependency search and rebuild, batch mode, gpg verification and more.
 
 [This repository](https://github.com/pghvlaans/sbotools/) is for continuing **sbotools** development, and was forked from the [pink-mist repository](https://github.com/pghvlaans/pink-mist/sbotools/), which covered development from version 0.1 through version 2.7.
 
@@ -11,10 +11,6 @@ For online man pages and executive summaries of all commands, see [man](/sbotool
 A SlackBuild for **sbotools** is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) on SlackBuilds.org.
 
 To verify commits (excluding resolved PR, which are verified with GitHub's key), use [GPG_KEY](/sbotools/downloads/GPG_KEY). Key updated 2024-12-15.
-
-## Version 3.5 Release Candidate
-
-A release candidate for the upcoming **sbotools-3.5** is now available at [Downloads](/sbotools/downloads/).
 
 ## Why a Fork?
 
@@ -32,5 +28,6 @@ Nonetheless, this repository was originally a simple fork adding a feature: Savi
 * Save build options and offer to re-use them
 * Search and rebuild installed reverse dependencies
 * Optionally use GPG to verify git commits and rsync clones
+* Use `--dry-run` and `--batch` to test and install build queues non-interactively
 
 Those who prefer a more traditional **sbotools** experience can use the **CLASSIC** metasetting to disable most new on-screen messaging and lock other settings to version 2.7 behavior. [sbotools2](https://git.server.ky/slackcoder/sbotools2/about/), a Slackware 15.0-compatible **sbotools-2.7** maintenance fork by Slack Coder, may also be of interest.

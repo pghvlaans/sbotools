@@ -21,7 +21,7 @@ a given name or names
 
     sbofind [-h|-v]
 
-    sbofind [-etiRrq] search_term (search_term)
+    sbofind [-EetiRrq] search_term (search_term)
 
 ## DESCRIPTION
 
@@ -34,9 +34,9 @@ and version information. This is equivalent to running
 on a FreeBSD system. If the repository includes a *TAGS.txt* file, these
 tags are searched to generate additional results.
 
-If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
-message.
+Non-root users can call **sbofind** with any flags. If an invalid
+configuration is detected in */etc/sbotools/sbotools.conf*, the script
+exits with a diagnostic message.
 
 ## OPTIONS
 
@@ -48,9 +48,13 @@ Show help information.
 
 Show version information.
 
+**-E\|\--exact-case**
+
+Exact matching only (case-sensitive).
+
 **-e\|\--exact**
 
-Exact matching only.
+Exact matching only (case-insensitive).
 
 **-t\|\--no-tags**
 
@@ -72,7 +76,7 @@ included. Packages with tags other than *\_SBo* are not included.
 
 **-q\|\--queue**
 
-Show the build queue for each SlackBuild found, given the contents of
+Show the build queue for each SlackBuild found given the contents of
 */etc/sbotools/sbotools.hints*.
 
 ## EXIT CODES
@@ -80,7 +84,8 @@ Show the build queue for each SlackBuild found, given the contents of
 **sbofind** can exit with the following codes:
 
 0: all operations were succesful.\
-1: a usage error occured (e.g., **sbofind** ran with nothing to find)\
+1: a usage error occured (e.g., incorrect options were passed to
+**sbofind** ).\
 6: **sbofind** was unable to obtain a required file handle.\
 13: circular dependencies detected.
 

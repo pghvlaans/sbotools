@@ -25,11 +25,13 @@ updates
 
 ## DESCRIPTION
 
-**sbocheck** first updates or fetches a copy of the **SlackBuilds.org**
-tree, checks for available upgrades, and reports what it finds.
-SlackBuilds with differing build numbers are reported separately, as are
-any SlackBuilds marked *\_SBo* that are not found in the repository or
-local overrides (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
+**sbocheck** updates or fetches a copy of the **SlackBuilds.org** tree,
+checks for available upgrades, and reports what it finds. SlackBuilds
+with differing build numbers are reported separately, as are any
+SlackBuilds marked *\_SBo* that are not found in the repository or local
+overrides (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). Except in
+**CLASSIC** mode, scripts in the report that would not be upgraded by
+[sboupgrade(1)](sboupgrade.1.md) are marked with **=** (equals sign).
 
 The three output categories are logged separately to
 */var/log/sbocheck.log*, */var/log/sbocheck-bumps.log* and
@@ -50,9 +52,10 @@ be verified on Slackware 14.0 and Slackware 14.1.
 Please note that **sbosnap**, which was removed as an independent script
 in **sbotools-3.3**, is a compatibility symlink to **sbocheck**.
 
-If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
-message.
+Non-root users can only call **sbocheck** with the **\--nopull**,
+**\--help** and **\--version** flags. If an invalid configuration is
+detected in */etc/sbotools/sbotools.conf*, the script exits with a
+diagnostic message.
 
 ## OPTIONS
 
@@ -65,7 +68,9 @@ Slackware 14.1.
 
 **-n\|\--nopull**
 
-Check for updated SlackBuilds without updating the SlackBuilds tree.
+Check for updated SlackBuilds without updating the SlackBuilds tree. The
+**\--nopull** flag can be used without root privileges, but no log is
+kept.
 
 **-h\|\--help**
 
@@ -80,6 +85,7 @@ Show version information.
 **sbocheck** can exit with the following codes:
 
 0: all operations were successful.\
+1: a usage error occurred.\
 5: failed to download the tree.\
 6: failed to open a required file handle.\
 12: interrupt signal received.

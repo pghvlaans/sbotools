@@ -34,9 +34,14 @@ SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are disabled, and previously-u
 build options are not displayed. This provides a more traditional
 **sbotools** look and feel for those who want it.
 
+**CPAN_IGNORE=(FALSE\|TRUE)**
+
+If **TRUE**, install scripts even if they are already installed from the
+CPAN.
+
 **DISTCLEAN=(FALSE\|TRUE)**
 
-If **TRUE**, then remove the package and source archives after building.
+If **TRUE**, remove the package and source archives after building.
 Source archives are otherwise retained in md5sum-designated directories
 under */usr/sbo/distfiles* (with *SBO_HOME=/usr/sbo*) by default. If
 **PKG_DIR** is set, package archives are saved there regardless of

@@ -1,4 +1,4 @@
-The pages here are current as of version 3.4.1 (2025-01-29). For pages from the master branch, see [post-release](post-release/).
+The pages here are current as of version 3.5 (2025-03-26). For pages from the master branch, see [post-release](post-release/).
 
 * [sbotools(1)](sbotools.1.md)
     * A summary man page with brief descriptions of the tools.
@@ -11,7 +11,7 @@ The pages here are current as of version 3.4.1 (2025-01-29). For pages from the 
 * [sbofind(1)](sbofind.1.md)
     * Search the local copy of the repository for SlackBuilds.
 * [sbohints(1)](sbohints.1.md)
-    * Query and modify the blacklist and optional dependency requests.
+    * Query and modify the blacklist and requests for optional dependencies and reverse dependency rebuilds
 * [sboinstall(1)](sboinstall.1.md)
     * Install SlackBuilds with their dependencies; handle compat32 packages and build from templates.
 * [sboremove(1)](sboremove.1.md)

@@ -44,7 +44,8 @@ dependencies.
 
 [sbohints(1)](sbohints.1.md)
 
-Query and modify the blacklist and optional dependency requests.
+Query and modify script specific hints: blacklist, optional dependencies
+and reverse dependency rebuilds.
 
 [sboinstall(1)](sboinstall.1.md)
 
@@ -60,10 +61,20 @@ dependencies.
 
 Upgrade previously-installed SlackBuilds.
 
+By default, [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md) give prompts before
+adding items to the build queue. These scripts have a **\--batch** flag
+available for non-interactive building with dependency resolution.
+Because **\--batch** can install new dependencies without prompting,
+using it in a production environment without a well-maintained
+*/etc/sbotools.hints* file, or with unfamiliar scripts, can potentially
+lead to unwanted results. Consider passing **\--dry-run** first, which
+prints the build queue with other information and exits.
+
 For details about all configuration options in *sbotools.conf*, see
 [sbotools.conf(5)](sbotools.conf.5.md). [sbotools.hints(5)](sbotools.hints.5.md) documents the
-*/etc/sbotools/sbotools.hints* file, which can be used to blacklist
-scripts and request optional dependencies.
+*/etc/sbotools/sbotools.hints* file, which passes hints to
+[sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md): blacklist, optional
+dependencies and automatic reverse dependency rebuilds.
 
 ## STARTUP
 

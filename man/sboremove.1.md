@@ -37,8 +37,9 @@ performing any removal operations. No option exists to enable
 **sboremove** to uninstall packages without confirmation prompts, and
 there are no plans to add that functionality in the future.
 
-If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
+Root privileges are required to run **sboremove**. If an invalid
+configuration is detected in */etc/sbotools/sbotools.conf*, or if
+invalid options are specified, the script exits with a diagnostic
 message.
 
 ## OPTIONS

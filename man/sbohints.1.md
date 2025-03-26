@@ -22,21 +22,31 @@
 
     sbohints [-l | --reset]
 
-    sbohints [-c] [-b | -o | -O] sbo_name (sbo_name)
+    sbohints [-c] [-b | -o | -O | -r] sbo_name (sbo_name)
 
     sbohints [-q] sbo_name (sbo_name)
 
 ## DESCRIPTION
 
-**sbohints** is a script for querying and editing the blacklist and
-optional dependency requests made in [sbotools.hints(5)](sbotools.hints.5.md). The
-modification flags are **\--blacklist**, **\--optional** and
-**\--replace-optional**. These may be used in conjunction with
-**\--clear**, but not with each other.
+**sbohints** is a script for querying and editing script-specific hints
+in [sbotools.hints(5)](sbotools.hints.5.md). Three kinds of hints are recognized:
 
-If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
-message.
+• blacklist
+
+• optional dependencies
+
+• automatic reverse dependency rebuild
+
+Please note that all hints apply equally to the *compat32* version of
+the target script or scripts; specific requests for *compat32* scripts
+are unsupported. The modification flags are **\--blacklist**,
+**\--optional**, **\--replace-optional** and **\--reverse**. These can
+be used in conjunction with **\--clear**, but not with each other.
+
+Non-root users can only call **sbohints** with the **\--list**,
+**\--query**, **\--help** and **\--version** flags. If an invalid
+configuration is detected in */etc/sbotools/sbotools.conf*, the script
+exits with a diagnostic message.
 
 ## OPTIONS
 
@@ -58,29 +68,37 @@ scripts. The current optional dependencies are displayed together with a
 prompt for the new request list. If used with **\--clear**, a
 confirmation prompt for clearing the optional dependencies appears.
 
+**-r\|\--reverse**
+
+Add (or, with **\--clear**, clear) automatic reverse dependency rebuild
+requests for one or more scripts. Please note that building against some
+packages, such as **google-go-lang**, fails unless a version-specific
+profile script has been sourced. Requesting reverse dependency rebuilds
+for such packages is not advised.
+
 **-c\|\--clear**
 
 This flag is used together with one (and only one) of **\--blacklist**,
-**\--optional** or **\--replace-optional**. For **\--blacklist** and
-**\--optional**, clear entries instead of adding them. For
-**\--replace-optional**, clear all existing optional dependency
-requests.
+**\--optional**, **\--replace-optional** or **\--reverse**. For
+**\--blacklist**, **\--optional** and **\--reverse**, clear entries
+instead of adding them. For **\--replace-optional**, clear all existing
+optional dependency requests.
 
 **-l\|\--list**
 
-List the current blacklist and all optional dependency requests. If a
-blacklisted script has optional dependency requests or is requested as
-an optional depenedency, the user is notified.
+List all active hints. If a blacklisted script has optional dependency
+requests or is requested as an optional depenedency, the user is
+notified. The **\--list** flag can be used without root privileges.
 
 **-q\|\--query**
 
-Return the current blacklist and optional dependency request status for
-one or more scripts.
+Return the hint status for one or more scripts. There is no output
+unless the queried script is involved with one or more hints. The
+**\--query** flag can be used without root privileges.
 
 **\--reset**
 
-Clear the blacklist and all optional dependency requests upon
-confirmation.
+Clear all hints upon confirmation.
 
 **-h\|\--help**
 
