@@ -1,0 +1,34 @@
+* Add a message about a missing LOCAL_OVERRIDES directory
+
+  After the sbofind bugfix in d495332, Slack Coder suggested that users
+  be alerted to a missing overrides directory. In this repository, this
+  will probably take the form of a warning in sbocheck, sboinstall,
+  sboupgrade, sbofind and sboremove.
+
+* Add a hint category for specifying pre-build commands
+
+  Users may wish to run commands other than useradd and groupadd before
+  building certain scripts. One usecase that comes to mind is sourcing
+  profile scripts. This will be doable with either sbohints or direct
+  sbotools.hints editing.
+
+* Allow for separate compat32 hints
+
+  Currently, hints for any base package automatically apply to the
+  corresponding compat32 package. Keep this as the default behavior, but
+  also respect separate hints for the compat32 package, if present.
+
+* sbofind: Add a flag to list all reverse dependencies
+
+  This is potentially useful for maintenance-related testing.
+
+* Merge sboinstall and sboupgrade in a backward-compatible way
+
+  These two scripts have always been similar, and the changes between
+  version 3.4.2 and version 3.5 made them more similar still. Commit
+  3893bf0 is a good illustration: One change in how pointless compat32
+  builds are skipped in the queue required nearly identical adjustments.
+  The most likely solution is to turn sboinstall and sboupgrade into
+  frontends to a new module in SBO::App, along the lines of sboremove.
+  Current options will be retained. This will need to happen before
+  separate compat32 hints cna be implemented.
