@@ -1,4 +1,7 @@
 # ChangeLog
+* Post-Release
+  * *Download.pm*: Unlink existing symlinks with the same name as new ones
+
 * 3.5 - 2025-03-26
   * *sbofind*: Use **\--exact-case** to search for an exact match with case sensitivity
     * Thanks to leoctrl for the report.
