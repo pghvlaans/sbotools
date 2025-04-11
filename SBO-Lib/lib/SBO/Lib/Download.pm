@@ -135,6 +135,7 @@ sub create_symlinks {
     my $md5 = $downloads->{$link};
     my $filename = get_filename_from_link($link, $md5);
     my $symlink = get_symlink_from_filename($filename, $location);
+    unlink $symlink if -l $symlink;
     push @symlinks, $symlink;
     symlink $filename, $symlink;
   }

@@ -31,4 +31,4 @@
   The most likely solution is to turn sboinstall and sboupgrade into
   frontends to a new module in SBO::App, along the lines of sboremove.
   Current options will be retained. This will need to happen before
-  separate compat32 hints cna be implemented.
+  separate compat32 hints can be implemented.

@@ -19,6 +19,9 @@ This repository is for continuing **sbotools** development, and was forked from 
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
 ## Changes
+* Post-Release
+  * Download.pm: Unlink existing symlinks with the same name as new ones
+
 * 3.5 - 2025-03-26
   * sbofind: Use --exact-case to search for an exact match with case sensitivity
     * Thanks to leoctrl for the report.
