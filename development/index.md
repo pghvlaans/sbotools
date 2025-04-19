@@ -11,7 +11,7 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 ## Prospective Features
 
 * `sbofind`: Add a flag for listing all reverse dependencies
-* `sbohints`: Allow for separate compat32 hints and pre-build commands
+* `sbohints`: Allow for pre-build commands
 
 Nothing else for now, but requests are welcome and will receive due consideration.
 
