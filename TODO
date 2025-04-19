@@ -7,7 +7,7 @@
 
   Status: Post-ouput warning added for sbofind, sbocheck and
   "sboconfig --list". The other scripts listed above will be considered
-  after the sboinstall/upgrade merger.
+  in the near future.
 
 * Add a hint category for specifying pre-build commands
 
@@ -16,23 +16,15 @@
   profile scripts. This will be doable with either sbohints or direct
   sbotools.hints editing.
 
-* Allow for separate compat32 hints
-
-  Currently, hints for any base package automatically apply to the
-  corresponding compat32 package. Keep this as the default behavior, but
-  also respect separate hints for the compat32 package, if present.
-
 * sbofind: Add a flag to list all reverse dependencies
 
   This is potentially useful for maintenance-related testing.
 
-* Merge sboinstall and sboupgrade in a backward-compatible way
+* sboinstall, sboupgrade: Handle 'missing' scripts better on -current
 
-  These two scripts have always been similar, and the changes between
-  version 3.4.2 and version 3.5 made them more similar still. Commit
-  3893bf0 is a good illustration: One change in how pointless compat32
-  builds are skipped in the queue required nearly identical adjustments.
-  The most likely solution is to turn sboinstall and sboupgrade into
-  frontends to a new module in SBO::App, along the lines of sboremove.
-  Current options will be retained. This will need to happen before
-  separate compat32 hints can be implemented.
+  fourtysixandtwo helpfully pointed out that the "missing script" prompt
+  can be confusing. Specifically, scripts that have been added to
+  -current can be safely ignored without jeopardizing the build. Prompts
+  for such scripts should be skipped. At least some renames will be
+  accounted for; this appears to be mostly (exclusively?) an issue for
+  Python scripts (python3-* to python-*, e.g.).
