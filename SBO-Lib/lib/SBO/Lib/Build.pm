@@ -773,7 +773,6 @@ sub process_sbos {
     for my $cmd (@$cmds) {
       system($cmd) == 0 or warn "\"$cmd\" exited non-zero.\n";
     }
-    my $success_string = join(" ", @successes) if @successes;
     # switch compat32 on if upgrading/installing a -compat32
     # else make sure compat32 is off
     my $compat32 = $sbo =~ /-compat32$/ ? 1 : 0;
