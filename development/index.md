@@ -14,3 +14,7 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 * `sbohints`: Allow for separate compat32 hints and pre-build commands
 
 Nothing else for now, but requests are welcome and will receive due consideration.
+
+## Ready for the Next Version
+
+* `sboinstall`, `sboupgrade`: Add a summary with successful builds and time taken at the end

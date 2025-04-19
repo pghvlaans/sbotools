@@ -2,6 +2,8 @@
 * Post-Release
   * *Download.pm*: Unlink existing symlinks with the same name as new ones
   * *sboinstall*, *sboupgrade*: Unless **CLASSIC** is on, display time taken and successful builds at the end
+  * *sbofind*, *sbocheck*, *sboconfig -l*: Show a warning if the specified local overrides directory does not exist
+    * Thanks to Slack Coder for the suggestion.
 
 * 3.5 - 2025-03-26
   * *sbofind*: Use **\--exact-case** to search for an exact match with case sensitivity
