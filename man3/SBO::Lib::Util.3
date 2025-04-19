@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Setting Orange, Discord 12, 3191 YOLD" "" "sbotools 3.5"
+.TH SBO::Lib::Util 3 "Prickle-Prickle, Discord 36, 3191 YOLD" "" "sbotools 3.5"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -91,6 +91,21 @@ The supported keys are: \f(CW\*(C`NOCLEAN\*(C'\fR, \f(CW\*(C`DISTCLEAN\*(C'\fR, 
 \&\f(CW\*(C`SBO_HOME\*(C'\fR, \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR, \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR, \f(CW\*(C`REPO\*(C'\fR, \f(CW\*(C`BUILD_IGNORE\*(C'\fR,
 \&\f(CW\*(C`GPG_VERIFY\*(C'\fR, \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR, \f(CW\*(C`STRICT_UPGRADES\*(C'\fR, \f(CW\*(C`GIT_BRANCH\*(C'\fR, \f(CW\*(C`CLASSIC\*(C'\fR
 and \f(CW\*(C`CPAN_IGNORE\*(C'\fR.
+.ie n .SS $download_time
+.el .SS \f(CW$download_time\fP
+.IX Subsection "$download_time"
+The time spent downloading source files. Unless \f(CW\*(C`CLASSIC\*(C'\fR is \f(CW"TRUE"\fR, it is
+displayed when all builds are complete.
+.ie n .SS $total_build_time
+.el .SS \f(CW$total_build_time\fP
+.IX Subsection "$total_build_time"
+A running total of the time it took to build and package each script in the queue.
+Unless \f(CW\*(C`CLASSIC\*(C'\fR is \f(CW"TRUE"\fR, it is displayed when all builds are complete.
+.ie n .SS $total_install_time
+.el .SS \f(CW$total_install_time\fP
+.IX Subsection "$total_install_time"
+A running total of the time it took to install each script in the queue. Unless
+\&\f(CW\*(C`CLASSIC\*(C'\fR is \f(CW"TRUE"\fR, it is displayed when all builds are complete.
 .ie n .SS @listings
 .el .SS \f(CW@listings\fP
 .IX Subsection "@listings"
@@ -128,6 +143,15 @@ numbers are, upgrading for a script bump may be in order.
 The sbotools use this file to build 32\-bit packages on x64 architecture.
 .PP
 Returns 1 if so, and 0 otherwise.
+.SS display_times;
+.IX Subsection "display_times;"
+.Vb 1
+\&  display_times();
+.Ve
+.PP
+\&\f(CWdisplay_times()\fR shows the time spent downloading, packaging and installing
+the scripts in the build queue. It takes no arguments and has no useful return
+value.
 .SS get_arch
 .IX Subsection "get_arch"
 .Vb 1
@@ -350,6 +374,14 @@ There is no useful return value.
 .PP
 \&\f(CWslurp()\fR takes a filename in \f(CW$fn\fR, opens it, and reads in the entire file.
 The contents are then returned. On error, it returns \f(CW\*(C`undef\*(C'\fR.
+.SS time_format
+.IX Subsection "time_format"
+.Vb 1
+\&  my $time_string = time_format($time);
+.Ve
+.PP
+\&\f(CWtime_format()\fR takes a number of seconds (integer or otherwise) and returns
+a string H:MM:SS.
 .SS uniq
 .IX Subsection "uniq"
 .Vb 1

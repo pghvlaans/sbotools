@@ -21,6 +21,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 ## Changes
 * Post-Release
   * Download.pm: Unlink existing symlinks with the same name as new ones
+  * sboinstall, sboupgrade: Unless CLASSIC is on, display time taken and successful builds at the end
 
 * 3.5 - 2025-03-26
   * sbofind: Use --exact-case to search for an exact match with case sensitivity

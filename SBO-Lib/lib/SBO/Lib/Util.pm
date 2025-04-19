@@ -38,6 +38,9 @@ my @EXPORT_CONFIG = qw{
   $conf_file
   %config
   @listings
+  $download_time
+  $total_build_time
+  $total_install_time
 };
 
 our @EXPORT_OK = (
@@ -45,6 +48,7 @@ our @EXPORT_OK = (
     auto_reverse
     build_cmp
     check_multilib
+    display_times
     get_arch
     get_kernel_version
     get_optional
@@ -66,6 +70,7 @@ our @EXPORT_OK = (
     script_error
     show_version
     slurp
+    time_format
     uniq
     usage_error
     version_cmp
@@ -117,6 +122,21 @@ C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>
 and C<CPAN_IGNORE>.
 
+=head2 $download_time
+
+The time spent downloading source files. Unless C<CLASSIC> is C<"TRUE">, it is
+displayed when all builds are complete.
+
+=head2 $total_build_time
+
+A running total of the time it took to build and package each script in the queue.
+Unless C<CLASSIC> is C<"TRUE">, it is displayed when all builds are complete.
+
+=head2 $total_install_time
+
+A running total of the time it took to install each script in the queue. Unless
+C<CLASSIC> is C<"TRUE">, it is displayed when all builds are complete.
+
 =head2 @listings
 
 An array with blacklisted scripts and requests for optional dependencies and
@@ -152,6 +172,15 @@ read_config();
 # The hints file should be read in at the start, and
 # only if editing the hints file thereafter.
 our @listings = read_hints();
+
+# A running build/packaging time total.
+our $total_build_time;
+
+# A running installation time total.
+our $total_install_time;
+
+# Time spent downloading.
+our $download_time;
 
 =head1 SUBROUTINES
 
@@ -213,6 +242,28 @@ Returns 1 if so, and 0 otherwise.
 sub check_multilib {
   return 1 if -f '/etc/profile.d/32dev.sh';
   return();
+}
+
+=head2 display_times;
+
+  display_times();
+
+C<display_times()> shows the time spent downloading, packaging and installing
+the scripts in the build queue. It takes no arguments and has no useful return
+value.
+
+=cut
+
+sub display_times {
+  my ($build_time_string, $download_time_string, $install_time_string);
+  $build_time_string = time_format($total_build_time) if $total_build_time;
+  $download_time_string = time_format($download_time) if $download_time;
+  $install_time_string = time_format($total_install_time) if $total_install_time;
+  say "" if $build_time_string or $download_time_string or $install_time_string;
+  say "Download: $download_time_string" if $download_time_string;
+  say "Package:  $build_time_string" if $build_time_string;
+  say "Install:  $install_time_string" if $install_time_string;
+  return;
 }
 
 =head2 get_arch
@@ -645,7 +696,7 @@ There is no useful return value.
 sub print_failures {
   my $failures = shift;
   if (@$failures > 0) {
-    warn "Failures:\n";
+    warn "\nFailures:\n";
     for my $failure (@$failures) {
       warn "  $_: $$failure{$_}" for keys %$failure;
     }
@@ -842,6 +893,25 @@ sub slurp {
   return undef if $exit;
   local $/;
   return scalar readline($fh);
+}
+
+=head2 time_format
+
+  my $time_string = time_format($time);
+
+C<time_format()> takes a number of seconds (integer or otherwise) and returns
+a string H:MM:SS.
+
+=cut
+
+sub time_format {
+  script_error("time_format requres an argument.") unless @_;
+  my $input = shift;
+  my ($hours, $minutes, $seconds);
+  $hours = int($input / 360);
+  $minutes = sprintf("%02d", int($input / 60) % 60);
+  $seconds = sprintf("%02d", $input % 60);
+  return "$hours:$minutes:$seconds";
 }
 
 =head2 uniq

@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.5';
 
-use SBO::Lib::Util qw/ :const prompt script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh uniq save_options wrapsay %config in /;
+use SBO::Lib::Util qw/ :const prompt script_error display_times get_sbo_from_loc get_arch check_multilib on_blacklist open_fh uniq save_options wrapsay %config $total_install_time $total_build_time in /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires get_reverse_reqs /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
@@ -21,6 +21,7 @@ use File::Copy; # copy() and move()
 use File::Path qw/ make_path remove_tree /;
 use File::Temp qw/ tempdir tempfile /;
 use Tie::File;
+use Time::HiRes qw/ time /;
 use Cwd;
 
 use sigtrap qw/ handler _build_terminated ABRT INT QUIT TERM /;
@@ -234,7 +235,11 @@ There is no useful return value.
 # run upgradepkg for a created package
 sub do_upgradepkg {
   script_error('do_upgradepkg requires an argument.') unless @_ == 1;
+  my $install_start = time();
   system('/sbin/upgradepkg', '--reinstall', '--install-new', shift);
+  my $install_finish = time();
+  my $install_time = $install_finish - $install_start;
+  $total_install_time += $install_time;
   return 1;
 }
 
@@ -678,7 +683,11 @@ sub perform_sbo {
   # run the slackbuild, grab its exit status, revert our changes
   my $cwd = getcwd();
   chdir $location;
+  my $build_time = time();
   my ($out, $ret) = run_tee($cmd);
+  my $completed_time = time();
+  my $time_taken = $completed_time - $build_time;
+  $total_build_time += $time_taken;
   chdir $cwd;
 
   revert_slackbuild("$location/$sbo.SlackBuild");
@@ -726,7 +735,7 @@ sub process_sbos {
   @$todo >= 1 or script_error('process_sbos requires TODO.');
   my $mtemp_in = "$config{SBO_HOME}/mass_rebuild.temp";
   my $mtemp_resume = "$config{SBO_HOME}/resume.temp";
-  my (@failures, @symlinks, $err);
+  my (@failures, @successes, @symlinks, $err);
   FIRST: for my $sbo (@$todo) {
     my $compat32 = $sbo =~ /-compat32$/ ? 1 : 0;
     push @upcoming, get_sbo_downloads(
@@ -748,6 +757,8 @@ sub process_sbos {
         next FIRST;
       } else {
         unlink for @symlinks;
+        if (@successes and $config{CLASSIC} ne "TRUE") { say "\nBuilt:"; wrapsay join(" ", @successes); }
+        display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
       }
     } else {
@@ -762,6 +773,7 @@ sub process_sbos {
     for my $cmd (@$cmds) {
       system($cmd) == 0 or warn "\"$cmd\" exited non-zero.\n";
     }
+    my $success_string = join(" ", @successes) if @successes;
     # switch compat32 on if upgrading/installing a -compat32
     # else make sure compat32 is off
     my $compat32 = $sbo =~ /-compat32$/ ? 1 : 0;
@@ -789,7 +801,11 @@ sub process_sbos {
         close $out_fh;
       }
       # return now if we're not interactive
-      return \@failures, $exit if $args{NON_INT};
+      if ($args{NON_INT}) {
+        if (@successes and $config{CLASSIC} ne "TRUE") { say "\nBuilt:"; wrapsay join(" ", @successes); }
+        display_times() unless $config{CLASSIC} eq "TRUE";
+        return \@failures, $exit;
+      }
       # or if this is the last $sbo
       return \@failures, $exit if $count == @$todo;
       wrapsay "A failure occurred while building $sbo:";
@@ -798,8 +814,12 @@ sub process_sbos {
         next FIRST;
       } else {
         unlink for @symlinks;
+        if (@successes and $config{CLASSIC} ne "TRUE") { say "\nBuilt:"; wrapsay join(" ", @successes); }
+        display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
       }
+    } else {
+      push @successes, $sbo;
     }
 
     do_upgradepkg($pkg) unless $args{NOINSTALL};
@@ -832,6 +852,8 @@ sub process_sbos {
   }
   unlink $mtemp_resume if $mass and -f $mtemp_resume;
   unlink for @symlinks;
+  if (@successes and $config{CLASSIC} ne "TRUE") { say "\nBuilt:"; wrapsay join(" ", @successes); }
+  display_times() unless $config{CLASSIC} eq "TRUE";
   return \@failures, $err;
 }
 

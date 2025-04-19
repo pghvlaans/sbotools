@@ -8,13 +8,14 @@ use warnings;
 
 our $VERSION = '3.5';
 
-use SBO::Lib::Util qw/ :const script_error get_sbo_from_loc open_read get_arch /;
+use SBO::Lib::Util qw/ :const script_error get_sbo_from_loc open_read get_arch $download_time /;
 use SBO::Lib::Repo qw/ $distfiles /;
 use SBO::Lib::Info qw/ get_download_info /;
 
 use Cwd;
 use Digest::MD5;
 use Exporter 'import';
+use Time::HiRes qw/ time /;
 
 our @EXPORT_OK = qw{
   check_distfiles
@@ -165,6 +166,7 @@ sub get_distfile {
   unlink $filename if -f $filename;
   my $fail = {};
 
+  my $download_start = time();
   #  if wget $link && verify, return
   #  else wget sbosrcarch && verify
   if (system('wget', '--tries=5', $link) != 0) {
@@ -173,6 +175,9 @@ sub get_distfile {
   }
   if (not %$fail and verify_distfile(@_)) {
     chdir $cwd;
+    my $download_finish = time();
+    my $download_took = $download_finish - $download_start;
+    $download_time += $download_took if $download_took;
     return 1;
   }
   if (not %$fail) {
@@ -190,9 +195,15 @@ sub get_distfile {
   if (system('wget', '--tries=5', $sbosrcarch) == 0 and
     verify_distfile(@_)) {
     chdir $cwd;
+    my $download_finish = time();
+    my $download_took = $download_finish - $download_start;
+    $download_time += $download_took if $download_took;
     return 1;
   }
 
+  my $download_finish = time();
+  my $download_took = $download_finish - $download_start;
+  $download_time += $download_took if $download_took;
   chdir $cwd;
   return $fail->{msg}, $fail->{err};
 }
