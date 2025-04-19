@@ -34,7 +34,19 @@ file, these tags are searched to generate additional results.
 Non-root users can call
 .B
 sbofind
-with any flags. If an invalid configuration is detected in
+with any flags.
+.B
+sbofind
+issues a warning if the directory specified with
+.B
+LOCAL_OVERRIDES
+does not exist (see
+.B
+sboconfig(1)
+or
+.B
+sbotools.conf(5)\fR\
+). If an invalid configuration is detected in
 .I
 /etc/sbotools/sbotools.conf\fR\
 \&, the script exits with a diagnostic message.

@@ -134,7 +134,19 @@ with the
 and
 .B
 --version
-flags. If an invalid configuration is detected in
+flags.
+.B
+sbocheck
+issues a warning if the directory specified with
+.B
+LOCAL_OVERRIDES
+does not exist (see
+.B
+sboconfig(1)
+or
+.B
+sbotools.conf(5)\fR\
+). If an invalid configuration is detected in
 .I
 /etc/sbotools/sbotools.conf\fR\
 \&, the script exits with a diagnostic message.

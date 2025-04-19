@@ -252,5 +252,6 @@ if ($config{CLASSIC} ne "TRUE") {
 	my @removed = get_removed_list();
 	print_output('/var/log/sbocheck-out-of-tree.log', @removed);
 }
+wrapsay "\nWarning: Local overrides directory $config{LOCAL_OVERRIDES} does not exist." if $config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES};
 
 exit 0;

@@ -5,6 +5,10 @@
   will probably take the form of a warning in sbocheck, sboinstall,
   sboupgrade, sbofind and sboremove.
 
+  Status: Post-ouput warning added for sbofind, sbocheck and
+  "sboconfig --list". The other scripts listed above will be considered
+  after the sboinstall/upgrade merger.
+
 * Add a hint category for specifying pre-build commands
 
   Users may wish to run commands other than useradd and groupadd before
