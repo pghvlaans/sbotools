@@ -908,7 +908,7 @@ sub time_format {
   script_error("time_format requres an argument.") unless @_;
   my $input = shift;
   my ($hours, $minutes, $seconds);
-  $hours = int($input / 360);
+  $hours = int($input / 3600);
   $minutes = sprintf("%02d", int($input / 60) % 60);
   $seconds = sprintf("%02d", $input % 60);
   return "$hours:$minutes:$seconds";

@@ -750,7 +750,12 @@ sub process_sbos {
       my $fail = $temp_syms;
       push @failures, {$sbo => $fail};
       # return now if we're not interactive
-      return \@failures, $exit if $args{NON_INT};
+      if ($args{NON_INT}) {
+        unlink for @symlinks;
+        if (@successes and $config{CLASSIC} ne "TRUE") { say "\nBuilt:"; wrapsay join(" ", @successes); }
+        display_times() unless $config{CLASSIC} eq "TRUE";
+        return \@failures, $exit;
+      }
       wrapsay "Unable to download/verify source file(s) for $sbo:";
       say "  $fail";
       if (prompt('Do you want to proceed?' , default => 'no')) {
@@ -801,12 +806,18 @@ sub process_sbos {
       }
       # return now if we're not interactive
       if ($args{NON_INT}) {
+        unlink for @symlinks;
         if (@successes and $config{CLASSIC} ne "TRUE") { say "\nBuilt:"; wrapsay join(" ", @successes); }
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
       }
       # or if this is the last $sbo
-      return \@failures, $exit if $count == @$todo;
+      if ($count == @$todo) {
+        unlink for @symlinks;
+        if (@successes and $config{CLASSIC} ne "TRUE") { say "\nBuilt:"; wrapsay join(" ", @successes); }
+        display_times() unless $config{CLASSIC} eq "TRUE";
+        return \@failures, $exit;
+      }
       wrapsay "A failure occurred while building $sbo:";
       say "  $fail";
       if (prompt('Do you want to proceed?', default => 'no')) {
