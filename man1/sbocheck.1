@@ -11,7 +11,7 @@ tree and check for updates
 .P
 sbocheck [-h|-v]
 .P
-sbocheck [-g|-n]
+sbocheck [-g|-O|-n]
 .SH DESCRIPTION
 .P
 .B
@@ -20,6 +20,29 @@ updates or fetches a copy of the
 .B
 SlackBuilds.org
 tree, checks for available upgrades, and reports what it finds.
+If
+.B
+OBSOLETE_CHECK
+is
+.B
+TRUE\fR\
+\&, or if run with
+.B
+--obsolete-check\fR\
+\&, an updated copy of the script list at
+.B
+/etc/sbotools/obsolete
+is downloaded from
+.UR https://pghvlaans.github.io/sbotools
+.UE
+when running Slackware -current (see
+.B
+sboconfig(1)
+or
+.B
+sbotools.conf(5)\fR\
+).
+
 SlackBuilds with differing build numbers are reported separately,
 as are any SlackBuilds marked
 .I
@@ -169,6 +192,22 @@ FALSE\fR\
 --nopull\fR\
 \&, verify the repo without fetching.
 Only rsync repositories can be verified on Slackware 14.0 and Slackware 14.1.
+.RE
+.P
+.B
+-O|--obsolete-check
+.RS
+If running Slackware -current, download a copy of the obsolete script list
+from
+.UR https://pghvlaans.github.io/sbotools
+.UE
+regardless of the
+.B
+OBSOLETE_CHECK
+setting. Has no effect with
+.B
+--nopull\fR\
+\&.
 .RE
 .P
 .B

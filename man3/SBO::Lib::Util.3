@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Prickle-Prickle, Discord 36, 3191 YOLD" "" "sbotools 3.5"
+.TH SBO::Lib::Util 3 "Setting Orange, Discord 37, 3191 YOLD" "" "sbotools 3.5"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -113,6 +113,13 @@ An array with blacklisted scripts and requests for optional dependencies and
 automatic reverse dependency rebuilds read in from \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR.
 Only \f(CWread_hints()\fR should interact with \f(CW@listings\fR directly; in other
 situations, make a copy (see e.g. \f(CW@on_blacklist()\fR.)
+.ie n .SS @obsolete
+.el .SS \f(CW@obsolete\fP
+.IX Subsection "@obsolete"
+An array with scripts that have been renamed and added to Slackware \-current, or
+are known to be obsolete build dependencies. The array is based on the contents of
+\&\f(CW\*(C`/etc/sbotools/obsolete\*(C'\fR. Only \f(CWobsolete_array()\fR should interact with
+\&\f(CW@obsolete\fR directly; in other situations, make a copy.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS auto_reverse
@@ -237,6 +244,15 @@ was found, and a false value otherwise.
 .PP
 \&\f(CWindent()\fR indents every non-empty line in \f(CW$text\fR by \f(CW$indent\fR spaces and
 returns the resulting string.
+.SS is_obsolete
+.IX Subsection "is_obsolete"
+.Vb 1
+\&  my $is_obsolete = check_obsolete($sbo);
+.Ve
+.PP
+\&\f(CWis_obsolete()\fR takes the name of a SlackBuild and searches for it in
+the \f(CW@obsolete\fR array. It returns 1 if the SlackBuild is found and the
+Slackware version is \-current equivalent.
 .SS lint_sbo_config
 .IX Subsection "lint_sbo_config"
 .Vb 1
@@ -249,6 +265,14 @@ exiting with an error message in case of invalid options.
 .PP
 \&\f(CWsboconfig(1)\fR runs this subroutine to lint any requested parameter changes;
 all other scripts lint the full configuration at startup.
+.SS obsolete_array
+.IX Subsection "obsolete_array"
+.Vb 1
+\&  our @obsolete = obsolete_array();
+.Ve
+.PP
+\&\f(CWobsolete_array()\fR populates the shared \f(CW@obsolete\fR array based on the
+\&\f(CW\*(C`/etc/sbotools/obsolete\*(C'\fR file.
 .SS on_blacklist
 .IX Subsection "on_blacklist"
 .Vb 1

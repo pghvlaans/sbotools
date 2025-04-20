@@ -38,6 +38,7 @@ my @EXPORT_CONFIG = qw{
   $conf_file
   %config
   @listings
+  @obsolete
   $download_time
   $total_build_time
   $total_install_time
@@ -59,7 +60,9 @@ our @EXPORT_OK = (
     idx
     in
     indent
+    is_obsolete
     lint_sbo_config
+    obsolete_array
     on_blacklist
     open_fh
     open_read
@@ -146,6 +149,15 @@ situations, make a copy (see e.g. C<@on_blacklist()>.)
 
 =cut
 
+=head2 @obsolete
+
+An array with scripts that have been renamed and added to Slackware -current, or
+are known to be obsolete build dependencies. The array is based on the contents of
+C</etc/sbotools/obsolete>. Only C<obsolete_array()> should interact with
+C<@obsolete> directly; in other situations, make a copy.
+
+=cut
+
 # global config variables
 our $conf_dir = '/etc/sbotools';
 our $conf_file = "$conf_dir/sbotools.conf";
@@ -165,6 +177,7 @@ our %config = (
   GPG_VERIFY => 'FALSE',
   STRICT_UPGRADES => 'FALSE',
   CPAN_IGNORE => 'FALSE',
+  OBSOLETE_CHECK => 'FALSE',
 );
 
 read_config();
@@ -172,6 +185,9 @@ read_config();
 # The hints file should be read in at the start, and
 # only if editing the hints file thereafter.
 our @listings = read_hints();
+
+# A list of obsolete scripts for Slackware-current.
+our @obsolete = obsolete_array();
 
 # A running build/packaging time total.
 our $total_build_time;
@@ -502,6 +518,26 @@ sub indent {
   return join "\n", @lines;
 }
 
+=head2 is_obsolete
+
+  my $is_obsolete = check_obsolete($sbo);
+
+C<is_obsolete()> takes the name of a SlackBuild and searches for it in
+the C<@obsolete> array. It returns 1 if the SlackBuild is found and the
+Slackware version is -current equivalent.
+
+=cut
+
+sub is_obsolete {
+  script_error('is_obsolete requires an argument.') unless @_ == 1;
+  my $sbo = shift;
+  my $sw_version = get_slack_version();
+  return 0 unless $sw_version =~ /\+$|current/ or $sw_version eq "15.1";
+  my @local_obsolete = @obsolete;
+  for my $entry (@local_obsolete) { return 1 if $sbo eq $entry; }
+  return 0;
+}
+
 =head2 lint_sbo_config
 
   lint_sbo_config($running_script, %configs);
@@ -574,6 +610,12 @@ sub lint_sbo_config {
       push @invalid, "$warn -c (TRUE or FALSE)";
     }
   }
+  if (exists $configs{OBSOLETE_CHECK}) {
+    unless ($configs{OBSOLETE_CHECK} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "OBSOLETE_CHECK" if $running ne 'sboconfig';
+      push @invalid, "$warn -O (TRUE or FALSE)";
+    }
+  }
   if (exists $configs{PKG_DIR}) {
     unless ($configs{PKG_DIR} =~ qr#^(/|FALSE$)#) {
       push @invalid, "PKG_DIR:" if $running ne 'sboconfig';
@@ -610,6 +652,33 @@ sub lint_sbo_config {
     wrapsay("The configuration in $conf_file contains one or more invalid parameters.", 1) if $running ne 'sboconfig';
     usage_error("$invalid_string");
   }
+}
+
+=head2 obsolete_array
+
+  our @obsolete = obsolete_array();
+
+C<obsolete_array()> populates the shared C<@obsolete> array based on the
+C</etc/sbotools/obsolete> file.
+
+=cut
+
+sub obsolete_array {
+  my $obs_file = "$conf_dir/obsolete";
+  my @result;
+  return 0 unless -f $obs_file;
+  my ($fh, $exit) = open_fh($obs_file, "<");
+  if ($exit) {
+    warn($fh);
+    return 0;
+  }
+  FIRST: for my $line (<$fh>) {
+    next FIRST if $line =~ /^#/;
+    $line =~ s/\n//;
+    push @result, $line;
+  }
+  close($fh);
+  return @result;
 }
 
 =head2 on_blacklist

@@ -18,8 +18,9 @@ sboconfig [--reset]
 sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \\
           [-g TRUE|FALSE ] [-j #|FALSE] [-P TRUE|FALSE] \\
           [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \\
-          [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] \\
-          [-r url|FALSE] [-R TRUE|FALSE] [-S TRUE|FALSE]
+          [-b TRUE|FALSE] [-O TRUE|FALSE] [-o /path|FALSE] \\
+          [-V #.#|FALSE] [-r url|FALSE] [-R TRUE|FALSE] \\
+          [-S TRUE|FALSE]
 .SH DESCRIPTION
 .P
 .B
@@ -214,7 +215,10 @@ TRUE\fR\
 \&, use
 .B
 gpg
-to verify the contents of the local repository when running
+to verify the contents of the local repository (and, if applicable,
+.I
+/etc/sbotools/obsolete\fR\
+) when running
 .B
 sbocheck(1)\fR\
 \&,
@@ -256,6 +260,29 @@ CPAN_IGNORE\fR\
 .B
 TRUE\fR\
 \&, install scripts even if they are already installed from the CPAN.
+.RE
+.P
+.B
+-O|--obsolete-check (FALSE|TRUE)
+.RS
+.B
+OBSOLETE_CHECK\fR\
+\&: If
+.B
+TRUE\fR\
+\&, download an updated copy of the obsolete script list to
+.I
+/etc/sbotools/obsolete
+from the
+.B
+sbotools
+home page at
+.UR https://pghvlaans.github.io/sbotools
+.UE
+when running
+.B
+sbocheck(1)
+in Slackware -current.
 .RE
 .P
 .B

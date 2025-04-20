@@ -28,3 +28,10 @@
   for such scripts should be skipped. At least some renames will be
   accounted for; this appears to be mostly (exclusively?) an issue for
   Python scripts (python3-* to python-*, e.g.).
+
+  Status: Never notify the user about out-of-tree scripts that are
+  already installed. On -current, use a list of obsoleted scripts
+  (renamed and added to Slackware, or known to be an unnecessary build-
+  time dependency). There are about thirty of these at present. The
+  list is installed to /etc/sbotools and will be updated on the sbotools
+  home page as necessary.

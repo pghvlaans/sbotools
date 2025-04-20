@@ -23,6 +23,7 @@ our @EXPORT_OK = qw{
   check_git_remote
   check_repo
   generate_slackbuilds_txt
+  get_obsolete
   git_sbo_tree
   pull_sbo_tree
   rsync_sbo_tree
@@ -67,6 +68,11 @@ downloaded sources are kept.
 C<$gpg_log> defaults to C</usr/sbo/gpg.log>, and it is where the output
 of the most recent C<gnupg> verification is kept.
 
+=head2 $gpg_obsolete_log
+
+C<$gpg_obsolete_log> defaults to C</usr/sbo/gpg-obsolete.log>, and it is where the output
+of the most recent C<gnupg> verification for the obsolete script list is kept.
+
 =head2 $repo_path
 
 C<$repo_path> defaults to C</usr/sbo/repo>, and it is where the
@@ -86,6 +92,7 @@ C<$repo_path> proceeds without prompting.
 our $distfiles = "$config{SBO_HOME}/distfiles";
 our $repo_path = "$config{SBO_HOME}/repo";
 our $gpg_log = "$config{SBO_HOME}/gpg.log";
+our $gpg_obsolete_log = "$config{SBO_HOME}/gpg-obsolete.log";
 our $slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
 
 =head1 SUBROUTINES
@@ -293,6 +300,47 @@ sub generate_slackbuilds_txt {
   return 1;
 }
 
+=head2 get_obsolete
+
+  get_obsolete();
+
+C<get_obsolete()> downloads a file from the C<sbotools> home page listing scripts that are
+known to have been added to Slackware -current under different names, or to be obsolete
+out-of-tree build dependencies. It is saved to C</etc/sbotools/obsolete>. C<gnupg> verification
+is performed if C<GPG_VERIFY> is C<TRUE>. There is no useful return value.
+
+=cut
+
+sub get_obsolete {
+  return unless $config{OBSOLETE_CHECK} eq "TRUE";
+  my $cwd = getcwd();
+  my $link = "https://pghvlaans.github.io/sbotools/downloads/obsolete";
+  my $link_asc = "$link.asc";
+  my $obs_file = "/etc/sbotools/obsolete";
+  my $obs_asc = "$obs_file.asc";
+  if (-d "/etc/sbotools") {
+    chdir "/etc/sbotools";
+    move($obs_file, "$obs_file.bk") if -f $obs_file;
+    wrapsay "\nDownloading the obsolete script list from $link...\n";
+    unless (system('wget', '--tries=5', $link) == 0) {
+      move("$obs_file.bk", $obs_file) if -f "$obs_file.bk";
+    } else {
+      unlink "$obs_file.bk" if -f "$obs_file.bk";
+    }
+    if ($config{GPG_VERIFY} eq "TRUE") {
+      unlink $obs_asc if -f $obs_asc;
+      unless (system('wget', '--tries=5', $link_asc) == 0) {
+        chdir $cwd;
+        usage_error "$obs_asc could not be downloaded.";
+      }
+      chdir $cwd;
+      verify_obsolete();
+    }
+    chdir $cwd;
+  }
+  return;
+}
+
 =head2 git_sbo_tree
 
   my $bool = git_sbo_tree($url);
@@ -385,7 +433,9 @@ sub git_sbo_tree {
 
 C<pull_sbo_tree()> pulls the SlackBuilds.org repository tree from
 the default in C<%supported> for the running Slackware version (accounting
-for C<SLACKWARE_VERSION>, C<RSYNC_DEFAULT> and C<REPO>).
+for C<SLACKWARE_VERSION>, C<RSYNC_DEFAULT> and C<REPO>). Afterwards, it
+calls C<get_obsolete()> to download the list of obsolete scripts from the
+C<sbotools> home page if appropriate.
 
 Version support verification occurs in C<get_slack_version_url()>
 via C<get_slack_version()>; see C<SBO::Lib::Util(3)>.
@@ -394,6 +444,7 @@ via C<get_slack_version()>; see C<SBO::Lib::Util(3)>.
 
 sub pull_sbo_tree {
   my $url = $config{REPO};
+  my $sw_version = get_slack_version();
   if ($url eq 'FALSE') {
     $url = get_slack_version_url();
   } else {
@@ -419,6 +470,7 @@ sub pull_sbo_tree {
   if ($res and not -s $slackbuilds_txt) {
     generate_slackbuilds_txt();
   }
+  get_obsolete() if $sw_version =~ /\+$|current/ or $sw_version eq "15.1";
 }
 
 =head2 rsync_sbo_tree
@@ -733,6 +785,63 @@ sub verify_gpg {
     }
     return verify_git_commit($branch) if $branch;
     usage_error("$repo_path appears to be neither a git nor an rsync mirror.\n\nPlease check your REPO, VERSION and RSYNC_DEFAULT settings. Exiting.");
+  }
+}
+
+=head2 verify_obsolete
+
+  verify_obsolete();
+
+C<verify_obsolete()> runs C<gnupg> verification on a newly-downloaded
+C</etc/sbotools/obsolete> file. There is no useful return value.
+
+=cut
+
+sub verify_obsolete {
+  my $gpg_ok;
+  my $obs_asc = "/etc/sbotools/obsolete.asc";
+  my ($fh, $tempfile) = tempfile(DIR => "$config{SBO_HOME}");
+  unlink $gpg_obsolete_log if -f $gpg_obsolete_log;
+  open OLDERR, '>&', \*STDERR;
+  open STDERR, '>', $gpg_obsolete_log;
+  $gpg_ok = (system('gpg', '--status-file', $tempfile, '--verify', $obs_asc) == 0);
+  close STDERR;
+  open STDERR, '>&', \*OLDERR;
+  if ($gpg_ok) {
+    wrapsay "$obs_asc verified. See $gpg_obsolete_log.";
+    close $fh;
+    unlink $tempfile if -f $tempfile;
+    return;
+  }
+  my @raw = split(" ", slurp($tempfile));
+  close $fh;
+  unlink $tempfile if -f $tempfile;
+  # ERRSIG: signed, but public key is missing; attempt download
+  if (grep(/ERRSIG/, @raw)) {
+    my $fingerprint;
+    my $next = 0;
+    for my $word (@raw) {
+      if ($next) {
+        $fingerprint = $word if $next;
+        last;
+      }
+      $next = 1 if $word eq "ERRSIG";
+    }
+    my $newkey = retrieve_key($fingerprint);
+    return verify_obsolete() if $newkey;
+  }
+  # REVKEYSIG: warning and exit
+  if (grep(/REVKEYSIG/, @raw)) {
+    usage_error("\nWARNING! obsolete.asc was signed with a revoked key.\n\nUsing this file is probably a bad idea. Exiting.");
+  }
+  # EXPKEYSIG/EXPSIG: warning and exit
+  # Note: EXPSIG was unimplemented in gnupg as of December 2024.
+  if (grep(/EXPKEYSIG|EXPSIG/, @raw)) {
+    usage_error("\nobsolete.asc was signed with an expired key.\n\nExiting.");
+  }
+  # BADSIG: big warning and exit
+  if (grep(/BADSIG/, @raw)) {
+    usage_error("\nWARNING! obsolete.asc has a bad signature.\n\nUsing this file is strongly discouraged. Exiting.");
   }
 }
 

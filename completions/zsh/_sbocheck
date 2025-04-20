@@ -6,6 +6,7 @@ _arguments \
     '(-)'{-h,--help}'[Show help.]:' \
     '(-)'{-v,--version}'[Show version.]:' \
     '(-)'{-g,--gpg-verify}'[Verify with gpg.]:' \
+    '(-)'{-O,--obsolete-check}'[In -current, download the obsolete scripts list.]:' \
     '(-)'{-n,--nopull}'[Check for updates without updating the tree.]:' \
     && return 0
 

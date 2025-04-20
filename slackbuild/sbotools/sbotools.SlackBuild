@@ -111,6 +111,7 @@ ln -s sbocheck.1 sbosnap.1
 )
 
 mkdir -p $PKG/etc/sbotools
+cp etc/obsolete $PKG/etc/sbotools/obsolete
 cp etc/sbotools.conf $PKG/etc/sbotools/sbotools.conf.new
 cp etc/sbotools.hints $PKG/etc/sbotools/sbotools.hints.new
 

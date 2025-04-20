@@ -83,7 +83,7 @@ GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'classic|C=s', '
 	'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 	'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
     'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
-    'cpan-ignore|P=s');
+    'cpan-ignore|P=s', 'obsolete-check|O=s');
 
 if ($options{help}) {
 	show_usage();
@@ -112,6 +112,7 @@ my %valid_confs = (
 	'gpg-verify'        => 'GPG_VERIFY',
 	'strict-upgrades'   => 'STRICT_UPGRADES',
 	'cpan-ignore'       => 'CPAN_IGNORE',
+	'obsolete-check'    => 'OBSOLETE_CHECK',
 );
 
 my %params = (
@@ -130,6 +131,7 @@ my %params = (
 	BUILD_IGNORE      => 'b|--build-ignore',
 	STRICT_UPGRADES   => 'S|--strict-upgrades',
 	CPAN_IGNORE       => 'P|--cpan-ignore',
+	OBSOLETE_CHECK    => 'O|--obsolete-check',
 );
 
 if (exists $options{list}) {
@@ -260,6 +262,8 @@ sub interactive_menu {
 
 	CPAN_IGNORE: config_prompt("CPAN_IGNORE", "If TRUE, install scripts even if they are installed from the CPAN.", "TRUE or FALSE.", "TF");
 
+	OBSOLETE_CHECK: config_prompt("OBSOLETE_CHECK", "If TRUE, sbocheck updates the obsolete script list from the sbotools home page.", "TRUE or FALSE.", "TF");
+
 	PKG_DIR: config_prompt("PKG_DIR", "If set to an absolute path, store newly-built packages there regardless of DISTCLEAN.", "An absolute path or FALSE.", "PATH");
 
 	SBO_HOME: config_prompt("SBO_HOME", "If set to an absolute path, this is where the SlackBuilds.org tree will live.", "An absolute path or FALSE.", "PATH");
@@ -283,7 +287,7 @@ sub interactive_menu {
 			my $title = $valid_confs{$item};
 			my $spacer = "\t\t";
 			$spacer = "\t\t\t" if $title eq "JOBS" or $title eq "REPO";
-			$spacer = "\t" if $title eq "SLACKWARE_VERSION" or $title eq "LOCAL_OVERRIDES" or $title eq "STRICT_UPGRADES";
+			$spacer = "\t" if $title eq "SLACKWARE_VERSION" or $title eq "LOCAL_OVERRIDES" or $title eq "STRICT_UPGRADES" or $title eq "OBSOLETE_CHECK";
 			say "\t$title:$spacer$changes{$title}" if defined $changes{$title};
 		}
 

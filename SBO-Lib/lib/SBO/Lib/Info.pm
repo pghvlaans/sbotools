@@ -133,8 +133,13 @@ sub get_from_info {
 
   # if we're here, we haven't read in the .info file yet.
   my $contents = slurp("$args{LOCATION}/$sbo.info");
-  usage_error("get_from_info: could not read $args{LOCATION}/$sbo.info.") unless
-    defined $contents;
+  unless ($contents) {
+    unless (-s "$args{LOCATION}/$sbo.info") {
+      usage_error("$sbo.info is empty or does not exist. Run sbocheck.") unless is_local($sbo);
+      usage_error("$sbo.info is empty or does not exist. Check the local overrides directory.");
+    }
+    usage_error("$sbo.info is non-empty, but could not be read.");
+  }
 
   my %parse = parse_info($contents);
   script_error("Error when parsing file $sbo.info.") unless %parse;

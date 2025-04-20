@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Repo 3"
-.TH SBO::Lib::Repo 3 "Setting Orange, Discord 12, 3191 YOLD" "" "sbotools 3.5"
+.TH SBO::Lib::Repo 3 "Setting Orange, Discord 37, 3191 YOLD" "" "sbotools 3.5"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -82,6 +82,11 @@ downloaded sources are kept.
 .IX Subsection "$gpg_log"
 \&\f(CW$gpg_log\fR defaults to \f(CW\*(C`/usr/sbo/gpg.log\*(C'\fR, and it is where the output
 of the most recent \f(CW\*(C`gnupg\*(C'\fR verification is kept.
+.ie n .SS $gpg_obsolete_log
+.el .SS \f(CW$gpg_obsolete_log\fP
+.IX Subsection "$gpg_obsolete_log"
+\&\f(CW$gpg_obsolete_log\fR defaults to \f(CW\*(C`/usr/sbo/gpg\-obsolete.log\*(C'\fR, and it is where the output
+of the most recent \f(CW\*(C`gnupg\*(C'\fR verification for the obsolete script list is kept.
 .ie n .SS $repo_path
 .el .SS \f(CW$repo_path\fP
 .IX Subsection "$repo_path"
@@ -139,6 +144,16 @@ value on success. Creation failure results in a usage error.
 \&\f(CWgenerate_slackbuilds_txt()\fR generates a minimal \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR for
 repositories that do not include this file. If the file cannot be opened for
 write, it returns a false value. Otherwise, it returns a true value.
+.SS get_obsolete
+.IX Subsection "get_obsolete"
+.Vb 1
+\&  get_obsolete();
+.Ve
+.PP
+\&\f(CWget_obsolete()\fR downloads a file from the \f(CW\*(C`sbotools\*(C'\fR home page listing scripts that are
+known to have been added to Slackware \-current under different names, or to be obsolete
+out-of-tree build dependencies. It is saved to \f(CW\*(C`/etc/sbotools/obsolete\*(C'\fR. \f(CW\*(C`gnupg\*(C'\fR verification
+is performed if \f(CW\*(C`GPG_VERIFY\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR. There is no useful return value.
 .SS git_sbo_tree
 .IX Subsection "git_sbo_tree"
 .Vb 1
@@ -164,7 +179,9 @@ at the end of the subroutine.
 .PP
 \&\f(CWpull_sbo_tree()\fR pulls the SlackBuilds.org repository tree from
 the default in \f(CW%supported\fR for the running Slackware version (accounting
-for \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR, \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR and \f(CW\*(C`REPO\*(C'\fR).
+for \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR, \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR and \f(CW\*(C`REPO\*(C'\fR). Afterwards, it
+calls \f(CWget_obsolete()\fR to download the list of obsolete scripts from the
+\&\f(CW\*(C`sbotools\*(C'\fR home page if appropriate.
 .PP
 Version support verification occurs in \f(CWget_slack_version_url()\fR
 via \f(CWget_slack_version()\fR; see \f(CWSBO::Lib::Util(3)\fR.
@@ -233,6 +250,14 @@ script installation and upgrade until the issue has been resolved, \f(CW\*(C`GPG
 \&\f(CW\*(C`verify_gpg\*(C'\fR determines whether a git repo is in use, and then
 runs \f(CW\*(C`gnupg\*(C'\fR verification. It is exportable, and is currently used in
 \&\f(CWsboinstall(1)\fR, \f(CWsboupgrade(1)\fR and \f(CWsbocheck(1)\fR.
+.SS verify_obsolete
+.IX Subsection "verify_obsolete"
+.Vb 1
+\&  verify_obsolete();
+.Ve
+.PP
+\&\f(CWverify_obsolete()\fR runs \f(CW\*(C`gnupg\*(C'\fR verification on a newly-downloaded
+\&\f(CW\*(C`/etc/sbotools/obsolete\*(C'\fR file. There is no useful return value.
 .SS retrieve_key
 .IX Subsection "retrieve_key"
 .Vb 1

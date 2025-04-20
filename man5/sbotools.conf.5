@@ -98,7 +98,10 @@ TRUE\fR\
 \&, use
 .B
 gpg
-to verify the contents of the local repository when running
+to verify the contents of the local repository (and, if applicable,
+.I
+/etc/sbotools/obsolete\fR\
+) when running
 .B
 sbocheck(1)\fR\
 \&,
@@ -177,6 +180,27 @@ TRUE\fR\
 \&, do not perform upgrades unless the
 version number differs. By default, upgrades
 also occur when the build number differs.
+.RE
+.P
+.B
+OBSOLETE_CHECK=(FALSE|TRUE)
+.RS
+If
+.B
+TRUE\fR\
+\&, download an updated copy of the obsolete script list to
+.I
+/etc/sbotools/obsolete
+from the
+.B
+sbotools
+home page at
+.UR https://pghvlaans.github.io/sbotools
+.UE
+when running
+.B
+sbocheck(1)
+in Slackware -current.
 .RE
 .P
 .B

@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree build_cmp get_available_updates get_removed_builds script_error open_fh is_local show_version get_local_outdated_versions on_blacklist $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay %config /;
+use SBO::Lib qw/ update_tree build_cmp get_available_updates get_removed_builds get_obsolete script_error open_fh is_local show_version get_local_outdated_versions on_blacklist $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay %config /;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 use File::Basename;
 use List::Util 'max';
@@ -33,6 +33,8 @@ Options:
     version information.
   -g|--gpg-verify:
     perform gpg verification.
+  -O|--obsolete-check:
+    download an updated list of obsolete scripts.
   -n|--nopull:
     run without updating the tree.
 
@@ -40,9 +42,9 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $gpg, $nopull);
+my ($help, $vers, $gpg, $nopull, $obsolete_check);
 
-GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'nopull|n' => \$nopull);
+GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull);
 
 if ($help) {
 	show_usage();
@@ -57,6 +59,8 @@ unless ($< == 0 or ($nopull and not $gpg)) {
 }
 
 lint_sbo_config($self, %config);
+
+$config{OBSOLETE_CHECK} = "TRUE" if $obsolete_check;
 
 if (not $gpg) {
 	$gpg = $config{GPG_VERIFY};
