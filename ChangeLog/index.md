@@ -4,6 +4,10 @@
   * *sboinstall*, *sboupgrade*: Unless **CLASSIC** is on, display time taken and successful builds at the end
   * *sbofind*, *sbocheck*, *sboconfig -l*: Show a warning if the specified local overrides directory does not exist
     * Thanks to Slack Coder for the suggestion.
+  * *sboinstall*, *sboupgrade*: Do not notify the user about 'missing' scripts that are already installed, or, on -current, are known to have been renamed and added to -current or obsoleted
+    * Thanks to fourtysixandtwo for the feedback.
+  * Added setting **OBSOLETE_CHECK**: Update the list of scripts at */etc/sbotools/obsolete* from the **sbotools** home page when running *sbocheck* on -current
+    * Inspired by the renames list on **sbopkg**.
 
 * 3.5 - 2025-03-26
   * *sbofind*: Use **\--exact-case** to search for an exact match with case sensitivity

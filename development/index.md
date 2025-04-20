@@ -18,3 +18,5 @@ Nothing else for now, but requests are welcome and will receive due consideratio
 ## Ready for the Next Version
 
 * `sboinstall`, `sboupgrade`: Add a summary with successful builds and time taken at the end
+* `sboinstall`, `sboupgrade`: Don't warn the user about 'missing' scripts that are installed
+* Add `/etc/sbotools/obsolete`: For -current users. A list of scripts that have been added to Slackware under different names, or are unnecessary build dependencies in -current. `sbocheck -O` or plain `sbocheck` with `OBSOLETE_CHECK` will download an updated copy from this website. GPG verification if `GPG_VERIFY`.
