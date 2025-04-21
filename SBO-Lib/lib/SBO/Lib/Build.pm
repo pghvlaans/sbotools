@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.5';
 
-use SBO::Lib::Util qw/ :const prompt script_error display_times get_sbo_from_loc get_arch check_multilib on_blacklist open_fh uniq save_options wrapsay %config $total_install_time $total_build_time in /;
+use SBO::Lib::Util qw/ :const :times prompt script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh uniq save_options wrapsay %config in /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires get_reverse_reqs /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
@@ -25,6 +25,8 @@ use Time::HiRes qw/ time /;
 use Cwd;
 
 use sigtrap qw/ handler _build_terminated ABRT INT QUIT TERM /;
+use sigtrap qw/ handler _time_stop TSTP /;
+use sigtrap qw/ handler _time_restart CONT /;
 
 our @EXPORT_OK = qw{
   do_convertpkg
@@ -239,7 +241,8 @@ sub do_upgradepkg {
   system('/sbin/upgradepkg', '--reinstall', '--install-new', shift);
   my $install_finish = time();
   my $install_time = $install_finish - $install_start;
-  $total_install_time += $install_time;
+  $install_time = reconcile_time($install_time);
+  $total_install_time += $install_time if $install_time;
   return 1;
 }
 
@@ -687,7 +690,8 @@ sub perform_sbo {
   my ($out, $ret) = run_tee($cmd);
   my $completed_time = time();
   my $time_taken = $completed_time - $build_time;
-  $total_build_time += $time_taken;
+  $time_taken = reconcile_time($time_taken);
+  $total_build_time += $time_taken if $time_taken;
   chdir $cwd;
 
   revert_slackbuild("$location/$sbo.SlackBuild");
@@ -1088,6 +1092,19 @@ sub _build_terminated {
     remove_tree("$tempdir") if -d "$tempdir";
     exit _ERR_INST_SIGNAL;
   }
+}
+
+sub _time_stop {
+  $stop_time = time();
+  kill STOP => $$;
+}
+
+sub _time_restart {
+  $resume_time = time();
+  my $interval = $resume_time - $stop_time if $stop_time;
+  $paused_time += $interval if $interval;
+  $resume_time = 0;
+  $stop_time = 0;
 }
 
 sub _build_queue {

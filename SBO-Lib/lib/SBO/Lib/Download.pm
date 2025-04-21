@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.5';
 
-use SBO::Lib::Util qw/ :const script_error get_sbo_from_loc open_read get_arch $download_time /;
+use SBO::Lib::Util qw/ :const :times script_error get_sbo_from_loc open_read get_arch /;
 use SBO::Lib::Repo qw/ $distfiles /;
 use SBO::Lib::Info qw/ get_download_info /;
 
@@ -177,6 +177,7 @@ sub get_distfile {
     chdir $cwd;
     my $download_finish = time();
     my $download_took = $download_finish - $download_start;
+    $download_took = reconcile_time($download_took);
     $download_time += $download_took if $download_took;
     return 1;
   }
@@ -197,12 +198,14 @@ sub get_distfile {
     chdir $cwd;
     my $download_finish = time();
     my $download_took = $download_finish - $download_start;
+    $download_took = reconcile_time($download_took);
     $download_time += $download_took if $download_took;
     return 1;
   }
 
   my $download_finish = time();
   my $download_took = $download_finish - $download_start;
+  $download_took = reconcile_time($download_took);
   $download_time += $download_took if $download_took;
   chdir $cwd;
   return $fail->{msg}, $fail->{err};

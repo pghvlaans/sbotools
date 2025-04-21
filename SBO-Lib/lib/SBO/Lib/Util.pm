@@ -39,9 +39,18 @@ my @EXPORT_CONFIG = qw{
   %config
   @listings
   @obsolete
+};
+
+my @EXPORT_TIME = qw{
+  display_times
+  reconcile_time
+
   $download_time
+  $resume_time
+  $stop_time
   $total_build_time
   $total_install_time
+  $paused_time
 };
 
 our @EXPORT_OK = (
@@ -49,7 +58,6 @@ our @EXPORT_OK = (
     auto_reverse
     build_cmp
     check_multilib
-    display_times
     get_arch
     get_kernel_version
     get_optional
@@ -81,12 +89,14 @@ our @EXPORT_OK = (
   },
   @EXPORT_CONSTS,
   @EXPORT_CONFIG,
+  @EXPORT_TIME,
 );
 
 our %EXPORT_TAGS = (
   all => \@EXPORT_OK,
   const => \@EXPORT_CONSTS,
   config => \@EXPORT_CONFIG,
+  times => \@EXPORT_TIME,
 );
 
 =pod
@@ -139,6 +149,11 @@ Unless C<CLASSIC> is C<"TRUE">, it is displayed when all builds are complete.
 
 A running total of the time it took to install each script in the queue. Unless
 C<CLASSIC> is C<"TRUE">, it is displayed when all builds are complete.
+
+=head2 ($paused_time, $resume_time, $stop_time)
+
+These variables are used to track any time spent stopped by keyboard interrupt.
+Times are adjusted in the C<reconcile_time()> subroutine before reporting.
 
 =head2 @listings
 
@@ -194,6 +209,15 @@ our $total_build_time;
 
 # A running installation time total.
 our $total_install_time;
+
+# Total time paused
+our $paused_time;
+
+# Time TSTP signal received
+our $stop_time;
+
+# Time CONT signal received
+our $resume_time;
 
 # Time spent downloading.
 our $download_time;
@@ -842,7 +866,7 @@ sub read_config {
 
 =head2 read_hints
 
-  our @listings = read_hints()
+  our @listings = read_hints();
 
 C<read_hints()> reads the contents of /etc/sbotools/sbotools.hints, returning an array
 of optional dependency requests and blacklisted scripts. C<read_hints()> is used to
@@ -864,6 +888,24 @@ sub read_hints{
   }
   push @listings, "NULL" unless @listings;
   return @listings;
+}
+
+=head2 reconcile_time
+
+  my $corrected_seconds = reconcile_time($seconds);
+
+C<reconcile_time()> takes a duration in seconds (integer or otherwise) and subtracts
+any time spent stopped from keyboard signal. It returns the corrected number of seconds.
+
+=cut
+sub reconcile_time {
+  script_error("reconcile_time requires an argument.") unless @_ == 1;
+  my $duration = shift;
+  return $duration unless $paused_time;
+  my $corrected_duration = $duration - $paused_time;
+  $paused_time = 0;
+  return $corrected_duration if $corrected_duration gt 0;
+  return $duration;
 }
 
 =head2 save_options

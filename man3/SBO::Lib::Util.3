@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Setting Orange, Discord 37, 3191 YOLD" "" "sbotools 3.5"
+.TH SBO::Lib::Util 3 "Sweetmorn, Discord 38, 3191 YOLD" "" "sbotools 3.5"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -106,6 +106,11 @@ Unless \f(CW\*(C`CLASSIC\*(C'\fR is \f(CW"TRUE"\fR, it is displayed when all bui
 .IX Subsection "$total_install_time"
 A running total of the time it took to install each script in the queue. Unless
 \&\f(CW\*(C`CLASSIC\*(C'\fR is \f(CW"TRUE"\fR, it is displayed when all builds are complete.
+.ie n .SS "($paused_time, $resume_time, $stop_time)"
+.el .SS "($paused_time, \f(CW$resume_time\fP, \f(CW$stop_time\fP)"
+.IX Subsection "($paused_time, $resume_time, $stop_time)"
+These variables are used to track any time spent stopped by keyboard interrupt.
+Times are adjusted in the \f(CWreconcile_time()\fR subroutine before reporting.
 .ie n .SS @listings
 .el .SS \f(CW@listings\fP
 .IX Subsection "@listings"
@@ -342,13 +347,21 @@ There is no useful return value.
 .SS read_hints
 .IX Subsection "read_hints"
 .Vb 1
-\&  our @listings = read_hints()
+\&  our @listings = read_hints();
 .Ve
 .PP
 \&\f(CWread_hints()\fR reads the contents of /etc/sbotools/sbotools.hints, returning an array
 of optional dependency requests and blacklisted scripts. \f(CWread_hints()\fR is used to
 populate global array \f(CW@listings\fR, and should only be called at the start and again
 when editing the hints file.
+.SS reconcile_time
+.IX Subsection "reconcile_time"
+.Vb 1
+\&  my $corrected_seconds = reconcile_time($seconds);
+.Ve
+.PP
+\&\f(CWreconcile_time()\fR takes a duration in seconds (integer or otherwise) and subtracts
+any time spent stopped from keyboard signal. It returns the corrected number of seconds.
 .SS save_options
 .IX Subsection "save_options"
 .Vb 1
