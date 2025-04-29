@@ -8,12 +8,14 @@ use warnings;
 
 our $VERSION = '3.5';
 
-use SBO::Lib::Util qw/ script_error open_read idx %config /;
+use SBO::Lib::Util qw/ script_error open_read uniq idx %config /;
 use SBO::Lib::Repo qw/ $repo_path $slackbuilds_txt /;
 
 use Exporter 'import';
+use File::Basename;
 
 our @EXPORT_OK = qw{
+  get_all_available
   get_orig_location
   get_sbo_location
   get_sbo_locations
@@ -47,6 +49,46 @@ my $store;
 my %local;
 my %orig;
 
+=head2 get_all_available
+
+  my $available = get_all_available();
+
+C<get_all_available()> returns a hash of available scripts based on C<SLACKBUILDS.TXT>
+and the contents of the C<LOCAL_OVERRIDES> directory. Keys include C<name> and C<series>.
+C<series> is C<local> if the script can be found in C<LOCAL_OVERRIDES>.
+
+=cut
+
+sub get_all_available {
+  return 0 unless -s $slackbuilds_txt;
+  my @result;
+  my ($fh, $exit) = open_read($slackbuilds_txt);
+  if ($exit) {
+    warn $fh;
+    exit $exit;
+  }
+  FIRST: for my $line (<$fh>) {
+    next FIRST unless $line =~ /LOCATION/;
+    my @line = split(" ", $line);
+    my $candidate = pop @line;
+    my $location = $candidate;
+    $location =~ s/\./$config{SBO_HOME}\/repo/g;
+    my $script = basename($candidate);
+    my $series = basename(dirname($candidate));
+    push @result, { name => $script, series => $series, location => $location } unless $config{LOCAL_OVERRIDES} ne "FALSE" and -s "$config{LOCAL_OVERRIDES}/$script/$script.info";
+  }
+  close $fh;
+  if ($config{LOCAL_OVERRIDES} ne "FALSE" and -d $config{LOCAL_OVERRIDES}) {
+    opendir(my $dh, $config{LOCAL_OVERRIDES});
+    while (my $dir = readdir($dh)) {
+      next unless -d "$config{LOCAL_OVERRIDES}/$dir";
+      push @result, { name => $dir, series => "local", location => "$config{LOCAL_OVERRIDES}/$dir" } if -f "$config{LOCAL_OVERRIDES}/$dir/$dir.info";
+    }
+    closedir $dh;
+  }
+  return [ map { +{ name => $_->{name}, series => $_->{series}, location => $_->{location} } } @result ];
+}
+
 =head2 get_orig_location
 
   my $loc = get_orig_location($sbo);
@@ -74,7 +116,9 @@ SlackBuilds.org tree for the first C<$sbo> given.
 
 Specifying more than one C<$sbo> is useful only for accessing the
 filesystem once when searching or populating the internal cache. No
-code does this currently.
+code does this currently. If the subroutine is to be called sequentially
+on any substantial number of C<$sbo>, calling C<get_sbo_locations()> on
+them collectively first is advisable for performance reasons.
 
 =cut
 

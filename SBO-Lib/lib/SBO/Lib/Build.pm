@@ -53,6 +53,7 @@ our @EXPORT_OK = qw{
   $tempdir
   $tmpd
   $env_tmp
+  @last_level_reverse
 };
 
 our %EXPORT_TAGS = (
@@ -101,6 +102,12 @@ removed when sbotools exits.
 
 This is the same as C<$TMP> if it is set. Otherwise, it is C</tmp/SBo>.
 
+=head2 @last_level_reverse
+
+This is an array containing the last level of reverse dependencies generated
+by C<sbofind> with C<all-reverse> and C<top-reverse>. It is used only by
+C<sbofind>.
+
 =head2 @upcoming
 
 This is a shared, non-exportable array that contains hashes with the source
@@ -126,6 +133,9 @@ our @reverse_concluded;
 
 # this array keeps track of files needed by subsequent scripts
 our @upcoming;
+
+# this array retains last-level reverse dependencies found by get_full_reverse
+our @last_level_reverse;
 
 =head1 SUBROUTINES
 
@@ -336,6 +346,9 @@ of reverse dependency relationships (from C<get_reverse_reqs>) and two arrays.
 These arrays should not be included when called from outside of the subroutine.
 C<get_full_reverse()> returns an array with installed reverse dependencies.
 
+The final level of reverse dependencies is kept in the shared array C<@last_level_reverse>;
+these are displayed only by C<sbofind --top-reverse>.
+
 If any circular reverse dependencies are found, the script exits with C<_ERR_CIRCULAR>.
 
 =cut
@@ -352,7 +365,11 @@ sub get_full_reverse {
 
   if (@sublist) {
     for my $revdep (@sublist) {
-      if (grep { /^$revdep$/ } @checked and not grep { /^$revdep$/ } @reverse_concluded) {
+      my %warnings;
+      # The first two conditions are prone to false positives if a script
+      # and its dependency share a listed dependency; get_build_queue
+      # makes certain in these cases.
+      if (grep { /^$revdep$/ } @checked and not grep { /^$revdep$/ } @reverse_concluded and grep { /^$revdep$/ } get_build_queue([$sbo], \%warnings)) {
         wrapsay "Circular dependency for $revdep detected. Exiting.";
         exit _ERR_CIRCULAR;
       }
@@ -362,11 +379,12 @@ sub get_full_reverse {
       push @list, @newlist if @newlist;
     }
     push @reverse_concluded, $sbo;
-    my @full_reverse = uniq @list;
-    return @full_reverse;
+    my $full_reverse = rationalize_queue([ uniq @list ]);
+    return @$full_reverse;
   } else {
     push @reverse_concluded, $sbo;
   }
+  push @last_level_reverse, $sbo;
   return;
 }
 
@@ -885,7 +903,7 @@ in case of a mass rebuild. The rearranged queue is returned.
 sub rationalize_queue {
   script_error('rationalize_queue requires an argument.') unless @_ == 1;
   my $queue = shift;
-  my @queue = @{ $queue };
+  my @queue = sort @{ $queue };
   my @result_queue;
 
   FIRST: while (my $sbo = shift @queue) {

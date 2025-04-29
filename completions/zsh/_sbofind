@@ -19,6 +19,7 @@ _arguments -s \
 	   '(-)'{-h,--help}'[Show help information.]:' \
 	   '(-)'{-v,--version}'[Show version information.]:' \
 	   - commands \
+	   '(-A --all-reverse)'{-A,--all-reverse}'[Show all reverse dependencies in the repo.]' \
 	   '(-E --exact-case)'{-E,--exact-case}'[Only exact matching (case-sensitive).]' \
 	   '(-e --exact)'{-e,--exact}'[Only exact matching (case-insensitive).]' \
 	   '(-t --no-tags)'{-t,--no-tags}'[Exclude tags from search.]' \
@@ -26,6 +27,7 @@ _arguments -s \
 	   '(-R --reverse)'{-R,--reverse}'[Show any reverse dependencies installed on the system.]' \
 	   '(-r --readme)'{-r,--readme}'[Show the contents of the README file for each SlackBuild found.]' \
 	   '(-q --queue)'{-q,--queue}'[Show the build queue for each SlackBuild found.]' \
+	   '(-T --top-reverse)'{-T,--top-reverse}'[Show the last level of reverse dependencies.]' \
 	   '(-)*:SBo SlackBuild:(${slackbuilds:|words})' \
     && return 0
 

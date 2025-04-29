@@ -21,7 +21,7 @@ a given name or names
 
     sbofind [-h|-v]
 
-    sbofind [-EetiRrq] search_term (search_term)
+    sbofind [-AEetiqRrT] search_term (search_term)
 
 ## DESCRIPTION
 
@@ -50,6 +50,11 @@ Show help information.
 
 Show version information.
 
+**-A\|\--all-reverse**
+
+Show all reverse dependencies in the repository for each SlackBuild
+found.
+
 **-E\|\--exact-case**
 
 Exact matching only (case-sensitive).
@@ -66,9 +71,10 @@ Exclude tags from the search.
 
 Show the contents of the *info* file for each SlackBuild found.
 
-**-r\|\--readme**
+**-q\|\--queue**
 
-Show the contents of the *README* file for each SlackBuild found.
+Show the build queue for each SlackBuild found given the contents of
+*/etc/sbotools/sbotools.hints*.
 
 **-R\|\--reverse**
 
@@ -76,10 +82,14 @@ Show any reverse dependencies installed on the system. Please note that
 optional dependencies must be specified in [sbotools.hints(5)](sbotools.hints.5.md) to be
 included. Packages with tags other than *\_SBo* are not included.
 
-**-q\|\--queue**
+**-r\|\--readme**
 
-Show the build queue for each SlackBuild found given the contents of
-*/etc/sbotools/sbotools.hints*.
+Show the contents of the *README* file for each SlackBuild found.
+
+**-T\|\--top-reverse**
+
+Show the top-level reverse dependencies, installed or not, for one or
+more scripts.
 
 ## EXIT CODES
 

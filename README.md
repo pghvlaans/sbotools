@@ -28,6 +28,8 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
     * Thanks to fourtysixandtwo for the feedback.
   * Added setting OBSOLETE_CHECK: Update the list of scripts at /etc/sbotools/obsolete from the sbotools home page when running sbocheck on -current
     * Inspired by the renames list on sbopkg.
+  * sbofind: Use -A to show every reverse dependency in the repository; use -T to show the final level of reverse dependencies
+  * Bugfix: Verify suspected circular reverse dependencies by checking a build queue
 
 * 3.5 - 2025-03-26
   * sbofind: Use --exact-case to search for an exact match with case sensitivity

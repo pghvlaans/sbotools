@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Tree 3"
-.TH SBO::Lib::Tree 3 "Setting Orange, Discord 12, 3191 YOLD" "" "sbotools 3.5"
+.TH SBO::Lib::Tree 3 "Prickle-Prickle, Discord 46, 3191 YOLD" "" "sbotools 3.5"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -71,6 +71,15 @@ SBO::Lib::Tree \- Routines for interacting with a SlackBuilds.org tree.
 .Ve
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
+.SS get_all_available
+.IX Subsection "get_all_available"
+.Vb 1
+\&  my $available = get_all_available();
+.Ve
+.PP
+\&\f(CWget_all_available()\fR returns a hash of available scripts based on \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR
+and the contents of the \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR directory. Keys include \f(CW\*(C`name\*(C'\fR and \f(CW\*(C`series\*(C'\fR.
+\&\f(CW\*(C`series\*(C'\fR is \f(CW\*(C`local\*(C'\fR if the script can be found in \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR.
 .SS get_orig_location
 .IX Subsection "get_orig_location"
 .Vb 1
@@ -91,7 +100,9 @@ SlackBuilds.org tree for the first \f(CW$sbo\fR given.
 .PP
 Specifying more than one \f(CW$sbo\fR is useful only for accessing the
 filesystem once when searching or populating the internal cache. No
-code does this currently.
+code does this currently. If the subroutine is to be called sequentially
+on any substantial number of \f(CW$sbo\fR, calling \f(CWget_sbo_locations()\fR on
+them collectively first is advisable for performance reasons.
 .SS get_sbo_locations
 .IX Subsection "get_sbo_locations"
 .Vb 1

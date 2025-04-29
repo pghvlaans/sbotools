@@ -20,6 +20,11 @@
 
   This is potentially useful for maintenance-related testing.
 
+  Status: Use "sbofind -A" to show a list of all reverse dependencies
+  for one or more scripts. "sbofind -T" shows only the last level of
+  such reverse dependencies; this is probably more convenient for
+  testing, especially in combination with --batch.
+
 * sboinstall, sboupgrade: Handle 'missing' scripts better on -current
 
   fourtysixandtwo helpfully pointed out that the "missing script" prompt

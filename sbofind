@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs on_blacklist %config $slackbuilds_txt $repo_path show_version in indent get_from_info uniq lint_sbo_config wrapsay /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs on_blacklist %config $slackbuilds_txt $repo_path @last_level_reverse show_version in indent get_from_info uniq lint_sbo_config wrapsay /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 
@@ -29,6 +29,8 @@ Options:
     this screen.
   -v|--verison:
     version information.
+  -A|--all-reverse:
+    show all reverse dependencies in the repo.
   -E|--exact-case:
     only exact matching (case-sensitive).
   -e|--exact:
@@ -39,10 +41,12 @@ Options:
     show the .info for each found item.
   -r|--readme:
     show the README for each found item.
-  -R|--reverse:
-    show any installed reverse dependencies.
   -q|--queue:
     show the build queue for each found item.
+  -R|--reverse:
+    show any installed reverse dependencies.
+  -T|--top-reverse
+    show the last level of reverse dependencies.
 
 Examples:
   $self regedit
@@ -52,7 +56,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue);
+my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue, $all_reverse, $last_reverse);
 
 GetOptions(
 	'help|h'    => \$help,
@@ -64,6 +68,8 @@ GetOptions(
 	'readme|r'  => \$show_readme,
 	'reverse|R' => \$show_reverse,
 	'queue|q'   => \$show_queue,
+	'all-reverse|A' => \$all_reverse,
+	'top-reverse|T' => \$last_reverse,
 );
 
 if ($help) { show_usage(); exit 0 }
@@ -76,14 +82,8 @@ if (!@ARGV) { show_usage(); exit 1 }
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
 
-# get installed SlackBuilds and reverse dependency information if there is a
-# query, but only once
-my (@installed, $installed, $fulldeps);
-if ($show_reverse) {
-	@installed = @{ get_installed_packages('SBO') };
-	$installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
-	$fulldeps = get_reverse_reqs($installed);
-}
+# these will be used later in case of reverse dependency searches
+my (@available, $available, $all_fulldeps, @installed, $installed, $fulldeps);
 
 # get lists of installed and defective CPAN modules
 my (@cpans, @defective_cpans);
@@ -175,6 +175,21 @@ sub perform_search {
 	return \@findings;
 }
 
+# get installed SlackBuilds and reverse dependency information if there is a
+# query, but only once
+sub reverse_queries {
+	if ($all_reverse or $last_reverse) {
+		@available = @{ get_all_available() };
+		$available = +{ map {; $_->{name}, $_->{series} } @available };
+		$all_fulldeps = get_reverse_reqs($available);
+	}
+	if ($show_reverse) {
+		@installed = @{ get_installed_packages('SBO') };
+		$installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
+		$fulldeps = get_reverse_reqs($installed);
+	}
+}
+
 # pull the contents of a file into a variable and format it for output
 sub get_file_contents {
 	script_error 'get_file_contents requires an argument.' unless @_ == 1;
@@ -200,12 +215,32 @@ sub show_reverse_dependencies {
 	return "None";
 }
 
+# get all reverse dependencies and return them as a single line.
+sub show_available_reverse {
+	script_error('show_available_reverse requires an argument.') unless @_ == 1;
+	my $found = shift;
+	my @available_reverse = get_full_reverse($found, $available, $all_fulldeps);
+	return join(" ", @available_reverse) if @available_reverse;
+	return "None";
+}
+
+# show the last level of reverse dependencies
+sub last_level_reverse {
+	script_error('last_level_reverse requires an argument.') unless @_ == 1;
+	my $found = shift;
+	splice @last_level_reverse;
+	my @available_reverse = get_full_reverse($found, $available, $all_fulldeps);
+	return join(" ", uniq(sort(@last_level_reverse))) if @last_level_reverse;
+	return "None";
+}
+
 my $notfound = 0;
 for my $search (@ARGV) {
 	my $findings = perform_search($search);
 
 	# pretty formatting
 	if (exists $$findings[0]) {
+		reverse_queries();
 		for my $hash (@$findings) {
 			if ($notfound) { say ''; }
 			my $name = $hash->{name};
@@ -232,6 +267,8 @@ for my $search (@ARGV) {
 			say "README: ". get_file_contents("$location/README") if $show_readme;
 			say "Queue:  ". show_build_queue($name) if $show_queue;
 			say "RevDep: ". show_reverse_dependencies($name) if $show_reverse;
+			say "AllRev: ". show_available_reverse($name) if $all_reverse;
+			say "LstRev: ". last_level_reverse($name) if $last_reverse;
 			say '';
 			$notfound = 0;
 		}

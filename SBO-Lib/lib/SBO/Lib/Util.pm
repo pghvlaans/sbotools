@@ -360,8 +360,8 @@ sub get_optional {
   my @optional;
   my @loclistings = @listings;
   for my $entry (@loclistings) {
+    next unless grep { /\s$sbo$/ } $entry;
     next if grep { /^#|^!|^~/ } $entry;
-    next if not grep { /\s$sbo$/ } $entry;
     $entry =~ s/\s$sbo$//;
     push @optional, split(" ", $entry);
   }

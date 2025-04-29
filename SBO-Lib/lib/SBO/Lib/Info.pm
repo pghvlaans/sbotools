@@ -9,7 +9,7 @@ use warnings;
 our $VERSION = '3.5';
 
 use SBO::Lib::Util qw/ :const in get_arch get_sbo_from_loc get_optional open_read script_error slurp usage_error uniq wrapsay /;
-use SBO::Lib::Tree qw/ get_orig_location get_sbo_location is_local /;
+use SBO::Lib::Tree qw/ get_orig_location get_sbo_location get_sbo_locations is_local /;
 
 use Exporter 'import';
 
@@ -239,7 +239,18 @@ sub get_reverse_reqs {
   my $slackbuilds = shift;
   my %required_by;
 
-  for my $sbo (keys %$slackbuilds) {
+  my @packs = keys %$slackbuilds;
+  get_sbo_locations(@packs);
+  FIRST: for my ($sbo) (keys %$slackbuilds) {
+    my $location = get_sbo_location($sbo);
+    unless (get_optional($sbo) or not -f "$location/$sbo.info") {
+      my ($fh, $exit) = open_read("$location/$sbo.info");
+      next FIRST if $exit;
+      for my $line (<$fh>) {
+        if ($line eq "REQUIRES=\"\"\n") { close $fh; next FIRST; }
+      }
+      close $fh;
+    }
     for my $req (@{ get_requires($sbo) }) {
       $required_by{$req}{$sbo} = 1 if exists $slackbuilds->{$req};
     }
