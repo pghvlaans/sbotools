@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ %config _ERR_OPENFH auto_reverse get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay /;
+use SBO::Lib qw/ %config :const auto_reverse get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -529,7 +529,8 @@ FIRST: for my $sbo (@$build_queue) {
 							wrapsay "A required user or group is missing for $sbo:", 1;
 							for my $cmd (@$cmds) { say $cmd; }
 							say "";
-							usage_error "Run these commands to install $sbo with --batch.";
+							wrapsay "Run these commands to install $sbo with --batch.";
+							exit _ERR_USR_GRP;
 						}
 					}
 				}
@@ -604,6 +605,7 @@ unless ($non_int) {
     exit 0 unless prompt("\nAre you sure you wish to continue?", default => 'yes');
 }
 if ($dry_run) {
+	my $usr_grp_missing;
 	if (%missing_user_group) {
 		for my $item (keys %missing_user_group) {
 			unless (grep { /^$item$/ } @ignore_script) {
@@ -611,9 +613,11 @@ if ($dry_run) {
 				for my $cmd (@{ $missing_user_group{$item} }) { say $cmd; }
 				say "";
 				wrapsay "Run these commands to install $item with --batch.";
+				$usr_grp_missing = 1;
 			}
 		}
 	}
+	exit _ERR_USR_GRP if $usr_grp_missing;
 	exit 0;
 }
 

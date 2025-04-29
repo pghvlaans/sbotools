@@ -30,6 +30,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
     * Inspired by the renames list on sbopkg.
   * sbofind: Use -A to show every reverse dependency in the repository; use -T to show the final level of reverse dependencies
   * Bugfix: Verify suspected circular reverse dependencies by checking a build queue
+  * Add an error code for missing users and groups
 
 * 3.5 - 2025-03-26
   * sbofind: Use --exact-case to search for an exact match with case sensitivity

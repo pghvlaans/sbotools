@@ -28,6 +28,7 @@ use constant $consts = {
   _ERR_NOCONVERTPKG  => 11,  # lacking convertpkg-compat32 where required
   _ERR_INST_SIGNAL   => 12,  # sboinstall or sboupgrade was interrupted
   _ERR_CIRCULAR      => 13,  # attempted to calculate circular dependencies
+  _ERR_USR_GRP       => 14,  # a required user or group is missing
 };
 
 my @EXPORT_CONSTS = keys %$consts;
@@ -1136,6 +1137,7 @@ The sbotools share the following exit codes:
   _ERR_NOCONVERTPKG  11  lacking convertpkg-compat32 when needed
   _ERR_INST_SIGNAL   12  the script was interrupted while building
   _ERR_CIRCULAR      13  attempted to calculate a circular dependency
+  _ERR_USR_GRP       14  a required user or group is missing
 
 =head1 SEE ALSO
 

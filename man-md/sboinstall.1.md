@@ -302,7 +302,8 @@ different version, consider using the directory specified in
 11: the **convertpkg-compat32** script cannot be found (where
 required).\
 12: interrupt signal received.\
-13: circular dependencies detected.
+13: circular dependencies detected.\
+14: in **batch** or **dry-run**, required user or group missing.
 
 ## BUGS
 
