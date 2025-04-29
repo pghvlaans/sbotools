@@ -241,7 +241,7 @@ sub get_reverse_reqs {
 
   my @packs = keys %$slackbuilds;
   get_sbo_locations(@packs);
-  FIRST: for my ($sbo) (keys %$slackbuilds) {
+  FIRST: for my $sbo (keys %$slackbuilds) {
     my $location = get_sbo_location($sbo);
     unless (get_optional($sbo) or not -f "$location/$sbo.info") {
       my ($fh, $exit) = open_read("$location/$sbo.info");
