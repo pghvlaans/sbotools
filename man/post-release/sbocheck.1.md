@@ -99,9 +99,11 @@ Show version information.
 
 0: all operations were successful.\
 1: a usage error occurred.\
+2: a script or module error occurred.\
 5: failed to download the tree.\
 6: failed to open a required file handle.\
-12: interrupt signal received.
+12: interrupt signal received.\
+15: GPG verification failed.
 
 ## BUGS
 
