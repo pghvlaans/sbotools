@@ -29,6 +29,7 @@ use constant $consts = {
   _ERR_INST_SIGNAL   => 12,  # sboinstall or sboupgrade was interrupted
   _ERR_CIRCULAR      => 13,  # attempted to calculate circular dependencies
   _ERR_USR_GRP       => 14,  # a required user or group is missing
+  _ERR_GPG           => 15,  # GPG verification failed
 };
 
 my @EXPORT_CONSTS = keys %$consts;
@@ -59,6 +60,7 @@ our @EXPORT_OK = (
     auto_reverse
     build_cmp
     check_multilib
+    error_code
     get_arch
     get_kernel_version
     get_optional
@@ -285,7 +287,27 @@ sub check_multilib {
   return();
 }
 
-=head2 display_times;
+=head2 error_code
+
+  error_code($message, $code);
+
+C<error_code()> takes a message and an error code. The message is displayed
+wrapped at 72 characters and the script exits with the specified error code.
+There is no useful return value.
+
+For _ERR_USAGE and _ERR_SCRIPT, use C<usage_error()> and C<script_error()>,
+respectively.
+
+=cut
+
+sub error_code {
+  script_error("error_code requires two arguments.") unless @_ == 2;
+  $columns = 73;
+  warn wrap('', '', shift). "\n";
+  exit shift;
+}
+
+=head2 display_times
 
   display_times();
 
@@ -744,9 +766,9 @@ sub open_fh {
   script_error('open_fh requires two arguments') unless @_ == 2;
   unless ($_[1] eq '>') {
     if ($< == 0) {
-      -f $_[0] or script_error("open_fh, $_[0] is not a file");
+      -f $_[0] or error_code("open_fh, $_[0] is not a file", _ERR_OPENFH);
     } else {
-      -f $_[0] or usage_error("$_[0] is not a file or the running user lacks permissions.\n\nTry running as root.");
+      -f $_[0] or error_code("$_[0] is not a file or the running user lacks permissions.\n\nTry running as root.", _ERR_OPENFH);
     }
   }
   my ($file, $op) = @_;
@@ -949,7 +971,7 @@ sub save_options {
   script_error();
   script_error($msg);
 
-script_error() warns and exits, printing the following to STDERR:
+script_error() warns and exits with code _ERR_SCRIPT, printing the following to STDERR:
 
   A fatal script error has occurred. Exiting.
 
@@ -959,7 +981,8 @@ If a $msg was supplied, it instead prints:
   $msg.
   Exiting.
 
-There is no useful return value.
+There is no useful return value. For _ERR_USAGE, use C<usage_error()>. For other error
+codes, use C<error_code()>.
 
 =cut
 
@@ -1044,10 +1067,11 @@ sub uniq {
 
   usage_error($msg);
 
-C<usage_error()> warns and exits, printing C<$msg> to STDERR. Error messages
-wrap at 72 characters.
+C<usage_error()> warns and exits with code _ERR_USAGE, printing C<$msg> to STDERR.
+Error messages wrap at 72 characters.
 
-There is no useful return value.
+There is no useful return value. For _ERR_SCRIPT, use C<script_error()>; for other
+error codes, use C<error_code()>.
 
 =cut
 
@@ -1138,6 +1162,7 @@ The sbotools share the following exit codes:
   _ERR_INST_SIGNAL   12  the script was interrupted while building
   _ERR_CIRCULAR      13  attempted to calculate a circular dependency
   _ERR_USR_GRP       14  a required user or group is missing
+  _ERR_GPG           15  GPG verification failed
 
 =head1 SEE ALSO
 

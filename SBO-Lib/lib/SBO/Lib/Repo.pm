@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.5';
 
-use SBO::Lib::Util qw/ %config prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp wrapsay _ERR_DOWNLOAD /;
+use SBO::Lib::Util qw/ %config :const error_code prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp wrapsay /;
 
 use Cwd;
 use File::Copy;
@@ -331,7 +331,7 @@ sub get_obsolete {
       unlink $obs_asc if -f $obs_asc;
       unless (system('wget', '--tries=5', $link_asc) == 0) {
         chdir $cwd;
-        usage_error "$obs_asc could not be downloaded.";
+        error_code("$obs_asc could not be downloaded.", _ERR_DOWNLOAD);
       }
       chdir $cwd;
       verify_obsolete();
@@ -463,7 +463,7 @@ sub pull_sbo_tree {
     }
   }
 
-  if ($res == 0) { warn "Could not sync from $url.\n"; exit _ERR_DOWNLOAD; }
+  if ($res == 0) { error_code("Could not sync from $url.\n", _ERR_DOWNLOAD); }
 
   my $wanted = sub { chown 0, 0, $File::Find::name; };
   find($wanted, $repo_path) if -d $repo_path;
@@ -517,7 +517,7 @@ repository and fetch the tree.
 sub slackbuilds_or_fetch {
   unless (-s $slackbuilds_txt) {
     unless ($< == 0) {
-      usage_error("$slackbuilds_txt is empty, missing, or the running user does not have read permissions.\n\nTry running as root.");
+      error_code("$slackbuilds_txt is empty, missing, or the running user does not have read permissions.\n\nTry running as root.", _ERR_OPENFH);
     }
     if (prompt("$slackbuilds_txt is empty or missing.\nCheck $repo_path and fetch the repository now?", default => 'yes')) {
       update_tree();
@@ -594,7 +594,7 @@ sub verify_git_commit {
   `git verify-commit --raw $branch 2> $tempfile`;
   if (not -s $tempfile) {
     unlink $tempfile if -f $tempfile;
-    usage_error("The most recent commit on this git branch is unsigned.\n\nExiting. To use this branch, set GPG_VERIFY to FALSE.");
+    error_code("The most recent commit on this git branch is unsigned.\n\nExiting. To use this branch, set GPG_VERIFY to FALSE.", _ERR_GPG);
   }
   my @raw = split(" ", slurp($tempfile));
   close $fh;
@@ -616,15 +616,15 @@ sub verify_git_commit {
   # EXPSIG/EXPKEYSIG: warning and exit
   # Note: EXPSIG was unimplemented in gnupg as of December 2024.
   if (grep(/EXPKEYSIG|EXPSIG/, @raw)) {
-    usage_error("The most recent commit on this git branch was signed with an expired key.\n\nExiting.");
+    error_code("The most recent commit on this git branch was signed with an expired key.\n\nExiting.", _ERR_GPG);
   }
   # BADSIG: big warning and exit
   if (grep(/BADSIG/, @raw)) {
-    usage_error("WARNING! The most recent commit on this git branch has a bad signature.\n\nUsing this repository is strongly discouraged. Exiting.");
+    error_code("WARNING! The most recent commit on this git branch has a bad signature.\n\nUsing this repository is strongly discouraged. Exiting.", _ERR_GPG);
   }
   # REVKEYSIG: warning and exit
   if (grep(/REVKEYSIG/, @raw)) {
-    usage_error("WARNING! The most recent commit on this git branch was signed with a revoked key.\n\nUsing this repository is probably a bad idea. Exiting.");
+    error_code("WARNING! The most recent commit on this git branch was signed with a revoked key.\n\nUsing this repository is probably a bad idea. Exiting.", _ERR_GPG);
   }
 }
 
@@ -701,13 +701,13 @@ sub verify_rsync {
     # REVKEYSIG: warning and exit
     if (grep(/REVKEYSIG/, @raw)) {
       system(qw/ touch /, $rsync_lock);
-      usage_error("\nWARNING! CHECKSUMS.md5 was signed with a revoked key.\n\nUsing this repository is probably a bad idea. Exiting.");
+      error_code("\nWARNING! CHECKSUMS.md5 was signed with a revoked key.\n\nUsing this repository is probably a bad idea. Exiting.", _ERR_GPG);
     }
     # EXPKEYSIG/EXPSIG: warning and exit
     # Note: EXPSIG was unimplemented in gnupg as of December 2024.
     if (grep(/EXPKEYSIG|EXPSIG/, @raw)) {
       system(qw/ touch /, $rsync_lock);
-      usage_error("\nCHECKSUMS.md5 was signed with an expired key.\n\nExiting.");
+      error_code("\nCHECKSUMS.md5 was signed with an expired key.\n\nExiting.", _ERR_GPG);
     }
   }
   if ($fullcheck) {
@@ -715,7 +715,7 @@ sub verify_rsync {
       system(qw/ touch /, $rsync_lock);
       # BADSIG: big warning and exit
       if (grep(/BADSIG/, @raw)) {
-        usage_error("\nWARNING! CHECKSUMS.md5 has a bad signature.\n\nUsing this repository is strongly discouraged. Exiting.");
+        error_code("\nWARNING! CHECKSUMS.md5 has a bad signature.\n\nUsing this repository is strongly discouraged. Exiting.", _ERR_GPG);
       }
     }
     chdir $repo_path or return 0;
@@ -748,12 +748,12 @@ sub verify_rsync {
       return $res;
     } else {
       system(qw/ touch /, $rsync_lock);
-      usage_error("\nOne or more md5 errors was detected after sync.\n\nRemove $rsync_lock or turn off GPG verification with caution.\n\nExiting.");
+      error_code("\nOne or more md5 errors was detected after sync.\n\nRemove $rsync_lock or turn off GPG verification with caution.\n\nExiting.", _ERR_MD5SUM);
     }
   }
   if (not $checksum_asc_ok) {
     system(qw/ touch /, $rsync_lock);
-    usage_error("\nThe contents of CHECKSUMS.md5 have been altered. Please run sbocheck.\n\nExiting.") unless $checksum_asc_ok;
+    error_code("\nThe contents of CHECKSUMS.md5 have been altered. Please run sbocheck.\n\nExiting.", _ERR_MD5SUM) unless $checksum_asc_ok;
   }
   return 1;
 }
@@ -832,16 +832,16 @@ sub verify_obsolete {
   }
   # REVKEYSIG: warning and exit
   if (grep(/REVKEYSIG/, @raw)) {
-    usage_error("\nWARNING! obsolete.asc was signed with a revoked key.\n\nUsing this file is probably a bad idea. Exiting.");
+    error_code("\nWARNING! obsolete.asc was signed with a revoked key.\n\nUsing this file is probably a bad idea. Exiting.", _ERR_GPG);
   }
   # EXPKEYSIG/EXPSIG: warning and exit
   # Note: EXPSIG was unimplemented in gnupg as of December 2024.
   if (grep(/EXPKEYSIG|EXPSIG/, @raw)) {
-    usage_error("\nobsolete.asc was signed with an expired key.\n\nExiting.");
+    error_code("\nobsolete.asc was signed with an expired key.\n\nExiting.", _ERR_GPG);
   }
   # BADSIG: big warning and exit
   if (grep(/BADSIG/, @raw)) {
-    usage_error("\nWARNING! obsolete.asc has a bad signature.\n\nUsing this file is strongly discouraged. Exiting.");
+    error_code("\nWARNING! obsolete.asc has a bad signature.\n\nUsing this file is strongly discouraged. Exiting.", _ERR_GPG);
   }
 }
 
@@ -895,7 +895,9 @@ Repo.pm subroutines can return the following exit codes:
 
   _ERR_USAGE         1   usage errors
   _ERR_SCRIPT        2   script or module bug
+  _ERR_MD5SUM        4   md5sum verification failure
   _ERR_DOWNLOAD      5   download failure
+  _ERR_GPG           15  GPG verification failed
 
 =head1 SEE ALSO
 

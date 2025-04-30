@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.5';
 
-use SBO::Lib::Util qw/ prompt script_error slurp open_read open_fh _ERR_OPENFH usage_error wrapsay %config /;
+use SBO::Lib::Util qw/ error_code prompt script_error slurp open_read open_fh usage_error wrapsay %config  :const /;
 use SBO::Lib::Tree qw/ is_local /;
 
 use Exporter 'import';
@@ -229,8 +229,7 @@ sub user_group_exist {
     if ($exit) {
       # If this happens, the user has much more urgent problems
       # than installing a SlackBuild!
-      wrapsay "$file could not be opened for reading.";
-      exit _ERR_OPENFH;
+      error_code("$file could not be opened for reading.", _ERR_OPENFH);
     } else {
       for my $line (<$fh>) {
         my @words = split(':', $line);

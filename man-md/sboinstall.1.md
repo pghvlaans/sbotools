@@ -291,6 +291,7 @@ different version, consider using the directory specified in
 
 0: all operations were succesful.\
 1: a usage error occured, such as specifying invalid options.\
+2: a script or module error occurred.\
 3: a SlackBuild exited non-zero.\
 4: unable to md5sum verify the source file(s).\
 5: unable to download the source file(s).\
@@ -303,7 +304,9 @@ different version, consider using the directory specified in
 required).\
 12: interrupt signal received.\
 13: circular dependencies detected.\
-14: in **batch** or **dry-run**, required user or group missing.
+14: in **batch**, **nointeractive** or **dry-run**, required user or
+group missing.\
+15: GPG verification failed.
 
 ## BUGS
 

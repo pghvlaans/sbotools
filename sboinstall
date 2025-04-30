@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ %config :const auto_reverse get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay /;
+use SBO::Lib qw/ %config :const auto_reverse error_code get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -239,7 +239,7 @@ if (length $utemp) {
 	if (length $data) {
 		eval { $template = $json->decode($data); };
 	}
-	do { warn "Could not read template from $utemp.\n"; exit _ERR_OPENFH } if not defined $template;
+	do { error_code("Could not read template from $utemp.\n", _ERR_OPENFH); } if not defined $template;
 
 	for my $cand (@{ $template->{build_queue} }) {
 		unless (on_blacklist($cand)) {
@@ -528,8 +528,7 @@ FIRST: for my $sbo (@$build_queue) {
 			if ($yes_really) {
 				my $readme = get_readme_contents($locations{$sbo});
 				unless (defined $readme) {
-					warn "Unable to open README for $sbo.\n";
-					exit _ERR_OPENFH;
+					error_code("Unable to open README for $sbo.\n", _ERR_OPENFH);
 				}
 				my $cmds = get_user_group($readme, $locations{$sbo});
 				if ($$cmds[0]) {
@@ -540,8 +539,7 @@ FIRST: for my $sbo (@$build_queue) {
 							wrapsay "A required user or group is missing for $sbo:", 1;
 							for my $cmd (@$cmds) { say $cmd; }
 							say "";
-							wrapsay "Run these commands to install $sbo with --batch.";
-							exit _ERR_USR_GRP;
+							error_code("Run these commands to install $sbo with --batch.", _ERR_USR_GRP);
 						}
 					}
 				}

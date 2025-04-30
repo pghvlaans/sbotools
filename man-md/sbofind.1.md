@@ -98,6 +98,7 @@ more scripts.
 0: all operations were succesful.\
 1: a usage error occured (e.g., incorrect options were passed to
 **sbofind** ).\
+2: a script or module error occurred.\
 6: **sbofind** was unable to obtain a required file handle.\
 13: circular dependencies detected.
 

@@ -183,6 +183,7 @@ scripts in the local overrides directory.
 
 0: all operations were successful.\
 1: a usage error occurred (e.g. passing invalid option specifications)\
+2: a script or module error occurred.\
 6: **sboconfig** was unable to obtain a required file handle.
 
 ## BUGS

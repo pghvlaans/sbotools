@@ -93,6 +93,8 @@ The sbotools share the following exit codes:
   _ERR_INST_SIGNAL   12  the script was interrupted while building
   _ERR_CIRCULAR      13  attempted to calculate a circular dependency
   _ERR_USR_GRP       14  a required user or group is missing
+  _ERR_GPG           15  GPG verification failed
+
 
 =head1 SEE ALSO
 

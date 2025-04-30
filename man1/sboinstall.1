@@ -742,6 +742,9 @@ can exit with the following codes:
 1: a usage error occured, such as specifying invalid options.
 .RE
 .RS
+2: a script or module error occurred.
+.RE
+.RS
 3: a SlackBuild exited non-zero.
 .RE
 .RS
@@ -786,11 +789,17 @@ script cannot be found (where required).
 .RS
 14: in
 .B
-batch
+batch\fR\
+\&,
+.B
+nointeractive
 or
 .B
 dry-run\fR\
 \&, required user or group missing.
+.RE
+.RS
+15: GPG verification failed.
 .RE
 .SH BUGS
 .P

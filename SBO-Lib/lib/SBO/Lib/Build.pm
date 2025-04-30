@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.5';
 
-use SBO::Lib::Util qw/ :const :times prompt script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh uniq save_options wrapsay %config in /;
+use SBO::Lib::Util qw/ :const :times prompt error_code script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh uniq save_options wrapsay %config in /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires get_reverse_reqs /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
@@ -370,8 +370,7 @@ sub get_full_reverse {
       # and its dependency share a listed dependency; get_build_queue
       # makes certain in these cases.
       if (grep { /^$revdep$/ } @checked and not grep { /^$revdep$/ } @reverse_concluded and grep { /^$revdep$/ } get_build_queue([$sbo], \%warnings)) {
-        wrapsay "Circular dependency for $revdep detected. Exiting.";
-        exit _ERR_CIRCULAR;
+        error_code("Circular dependency for $revdep detected. Exiting.", _ERR_CIRCULAR);
       }
       push @checked, $revdep;
       my @newlist = get_full_reverse($revdep, $installed, $fulldeps, @checked, @list);
@@ -1134,8 +1133,7 @@ sub _build_queue {
   while (my $sbo = shift @queue) {
     next if $sbo eq "%README%";
     if (grep { /^$sbo$/ } @checked and not grep { /^$sbo$/ } @concluded) {
-      wrapsay "Circular dependencies for $sbo detected. Exiting.";
-      exit _ERR_CIRCULAR;
+      error_code("Circular dependencies for $sbo detected. Exiting.", _ERR_CIRCULAR);
     }
     push @checked, $sbo;
     my $reqs = get_requires($sbo);

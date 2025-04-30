@@ -114,6 +114,7 @@ Show version information.
 
 0: all operations were successful.\
 1: a usage error occurred.\
+2: a script or module error occurred.\
 6: **sbohints** was unable to obtain a required file handle.
 
 ## BUGS

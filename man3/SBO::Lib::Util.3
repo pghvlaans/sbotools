@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Prickle-Prickle, Discord 46, 3191 YOLD" "" "sbotools 3.5"
+.TH SBO::Lib::Util 3 "Setting Orange, Discord 47, 3191 YOLD" "" "sbotools 3.5"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -155,8 +155,20 @@ numbers are, upgrading for a script bump may be in order.
 The sbotools use this file to build 32\-bit packages on x64 architecture.
 .PP
 Returns 1 if so, and 0 otherwise.
-.SS display_times;
-.IX Subsection "display_times;"
+.SS error_code
+.IX Subsection "error_code"
+.Vb 1
+\&  error_code($message, $code);
+.Ve
+.PP
+\&\f(CWerror_code()\fR takes a message and an error code. The message is displayed
+wrapped at 72 characters and the script exits with the specified error code.
+There is no useful return value.
+.PP
+For _ERR_USAGE and _ERR_SCRIPT, use \f(CWusage_error()\fR and \f(CWscript_error()\fR,
+respectively.
+.SS display_times
+.IX Subsection "display_times"
 .Vb 1
 \&  display_times();
 .Ve
@@ -378,7 +390,7 @@ user supplies no build options, the existing file is retained.
 \&  script_error($msg);
 .Ve
 .PP
-\&\fBscript_error()\fR warns and exits, printing the following to STDERR:
+\&\fBscript_error()\fR warns and exits with code _ERR_SCRIPT, printing the following to STDERR:
 .PP
 .Vb 1
 \&  A fatal script error has occurred. Exiting.
@@ -392,7 +404,8 @@ If a \f(CW$msg\fR was supplied, it instead prints:
 \&  Exiting.
 .Ve
 .PP
-There is no useful return value.
+There is no useful return value. For _ERR_USAGE, use \f(CWusage_error()\fR. For other error
+codes, use \f(CWerror_code()\fR.
 .SS show_version
 .IX Subsection "show_version"
 .Vb 1
@@ -433,10 +446,11 @@ list in the same order.
 \&  usage_error($msg);
 .Ve
 .PP
-\&\f(CWusage_error()\fR warns and exits, printing \f(CW$msg\fR to STDERR. Error messages
-wrap at 72 characters.
+\&\f(CWusage_error()\fR warns and exits with code _ERR_USAGE, printing \f(CW$msg\fR to STDERR.
+Error messages wrap at 72 characters.
 .PP
-There is no useful return value.
+There is no useful return value. For _ERR_SCRIPT, use \f(CWscript_error()\fR; for other
+error codes, use \f(CWerror_code()\fR.
 .SS version_cmp
 .IX Subsection "version_cmp"
 .Vb 1
@@ -479,6 +493,7 @@ The sbotools share the following exit codes:
 \&  _ERR_INST_SIGNAL   12  the script was interrupted while building
 \&  _ERR_CIRCULAR      13  attempted to calculate a circular dependency
 \&  _ERR_USR_GRP       14  a required user or group is missing
+\&  _ERR_GPG           15  GPG verification failed
 .Ve
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
