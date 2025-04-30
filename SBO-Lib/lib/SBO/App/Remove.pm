@@ -59,6 +59,10 @@ sub run {
 
   lint_sbo_config($self, %config);
 
+  if ($config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES}) {
+    exit 1 unless prompt("$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.\nContinue anyway?", default => 'no');
+  }
+
   # current workflow:
   # * get names of all installed SBo packages
   # * compare commandline args to SBo packages as well as installed SBo packages

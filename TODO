@@ -6,8 +6,9 @@
   sboupgrade, sbofind and sboremove.
 
   Status: Post-ouput warning added for sbofind, sbocheck and
-  "sboconfig --list". The other scripts listed above will be considered
-  in the near future.
+  "sboconfig --list". Prompt to continue for sboinstall, sboupgrade,
+  sboremove. --batch will not run if the local overrides directory is
+  missing.
 
 * Add a hint category for specifying pre-build commands
 

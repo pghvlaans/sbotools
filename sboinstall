@@ -116,6 +116,16 @@ if (!@ARGV and not length $utemp and not $mass_rebuild) { show_usage(); exit 1 }
 if (defined $utemp and not length $utemp) { show_usage(); exit 1 }
 if (defined $ctemp and not length $ctemp) { show_usage(); exit 1 }
 
+# warn about missing local overrides directory (stop the show if --batch)
+if ($config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES}) {
+	usage_error "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist. Exiting." if $yes_really;
+	if ($dry_run) {
+		wrapsay "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.";
+	} else {
+		exit 1 unless prompt("$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.\nContinue anyway?", default => 'no');
+	}
+}
+
 # invalid parameters may have been passed from the command line
 if (defined $noclean) {
 	usage_error("You have provided an invalid value for -c|--noclean")

@@ -111,6 +111,16 @@ unless ($options_ok) {
 
 lint_sbo_config($self, %config);
 
+# warn about missing local overrides directory (stop the show if --batch)
+if ($config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES}) {
+	usage_error "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist. Exiting." if $yes_really;
+	if ($dry_run) {
+		wrapsay "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.";
+	} else {
+		exit 1 unless prompt("$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.\nContinue anyway?", default => 'no');
+	}
+}
+
 # invalid parameters may have been passed from the command line
 if ($noclean) {
 	usage_error("You have provided an invalid value for -c|--noclean")
