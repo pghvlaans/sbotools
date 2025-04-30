@@ -2,7 +2,7 @@ sbotools
 * Post-Release
   * Download.pm: Unlink existing symlinks with the same name as new ones
   * sboinstall, sboupgrade: Unless CLASSIC is on, display time taken and successful builds at the end
-  * sbofind, sbocheck, sboconfig -l, sboinstall, sboupgrade,sboremove: Show a warning if the specified local overrides directory does not exist; exit if --batch
+  * sbofind, sbocheck, sboconfig -l, sboinstall, sboupgrade, sboremove: Show a warning if the specified local overrides directory does not exist; exit if --batch or --nointeractive
     * Thanks to Slack Coder for the suggestion.
   * sboinstall, sboupgrade: Do not notify the user about 'missing' scripts that are already installed, or, on -current, are known to have been renamed and added to -current or obsoleted
     * Thanks to fourtysixandtwo for the feedback.

@@ -116,9 +116,10 @@ if (!@ARGV and not length $utemp and not $mass_rebuild) { show_usage(); exit 1 }
 if (defined $utemp and not length $utemp) { show_usage(); exit 1 }
 if (defined $ctemp and not length $ctemp) { show_usage(); exit 1 }
 
-# warn about missing local overrides directory (stop the show if --batch)
+# warn about missing local overrides directory (stop the show if --batch
+# or --nointeractive))
 if ($config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES}) {
-	usage_error "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist. Exiting." if $yes_really;
+	usage_error "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist. Exiting." if $yes_really or $non_int;
 	if ($dry_run) {
 		wrapsay "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.";
 	} else {
