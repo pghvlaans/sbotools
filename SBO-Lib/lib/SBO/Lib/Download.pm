@@ -16,6 +16,7 @@ use Cwd;
 use Digest::MD5;
 use Exporter 'import';
 use Time::HiRes qw/ time /;
+use URI::Escape qw/ uri_unescape /;
 
 our @EXPORT_OK = qw{
   check_distfiles
@@ -349,7 +350,7 @@ sub _get_fname {
   my ($fn, $md5) = @_;
   my $regex = qr#/([^/]+)$#;
   my ($filename) = $fn =~ $regex;
-  $filename =~ s/%2B/+/g if $filename;
+  $filename = uri_unescape $filename if $filename;
   return "$md5/$filename";
 }
 
