@@ -12,6 +12,8 @@
   * Bugfix: Verify suspected circular reverse dependencies by checking a build queue
   * Add error codes for failed GPG verification and missing users or groups
   * Bugfix: Corrected some error codes
+  * Bugfix: Fix all URI escapes in distfile names
+    * Thanks to fourtysixandtwo and lockywolf for the report
 
 * 3.5 - 2025-03-26
   * *sbofind*: Use **\--exact-case** to search for an exact match with case sensitivity
