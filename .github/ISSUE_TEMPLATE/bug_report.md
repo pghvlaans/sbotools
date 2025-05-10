@@ -17,6 +17,8 @@ assignees: pghvlaans
 
 * Output of `sbohints -l` (version 3.4 and later):
 
+* Output of `grep "# Updated" /etc/sbotools/obsolete` (version 3.6 and later):
+
 * For `--compat32` failures, please copy and paste the last several lines of build output:
 
 * Description:
