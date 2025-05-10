@@ -312,7 +312,6 @@ is performed if C<GPG_VERIFY> is C<TRUE>. There is no useful return value.
 =cut
 
 sub get_obsolete {
-  return unless $config{OBSOLETE_CHECK} eq "TRUE";
   my $cwd = getcwd();
   my $link = "https://pghvlaans.github.io/sbotools/downloads/obsolete";
   my $link_asc = "$link.asc";
@@ -470,7 +469,9 @@ sub pull_sbo_tree {
   if ($res and not -s $slackbuilds_txt) {
     generate_slackbuilds_txt();
   }
-  get_obsolete() if $sw_version =~ /\+$|current/ or $sw_version eq "15.1";
+  if ($config{GET_OBSOLETE} eq "TRUE") {
+    get_obsolete() if $sw_version =~ /\+$|current/ or $sw_version eq "15.1";
+  }
 }
 
 =head2 rsync_sbo_tree

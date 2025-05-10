@@ -26,9 +26,6 @@ OBSOLETE_CHECK
 is
 .B
 TRUE\fR\
-\&, or if run with
-.B
---obsolete-check\fR\
 \&, an updated copy of the script list at
 .B
 /etc/sbotools/obsolete
@@ -201,10 +198,17 @@ If running Slackware -current, download a copy of the obsolete script list
 from
 .UR https://pghvlaans.github.io/sbotools
 .UE
-regardless of the
+and verify with gpg if
 .B
-OBSOLETE_CHECK
-setting. Has no effect with
+GPG_VERIFY
+is
+.B
+TRUE
+or
+.B
+--gpg-verify
+is passed.
+Incompatible with
 .B
 --nopull\fR\
 \&.

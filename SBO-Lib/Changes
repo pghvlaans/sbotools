@@ -14,6 +14,7 @@ sbotools
   * Bugfix: Corrected some error codes
   * Bugfix: Fix all URI escapes in distfile names
     * Thanks to fourtysixandtwo and lockywolf for the report
+  * sbocheck: Use --obsolete-check to download the list of obsolete scripts only; GPG verify with -g
 
 * 3.5 - 2025-03-26
   * sbofind: Use --exact-case to search for an exact match with case sensitivity

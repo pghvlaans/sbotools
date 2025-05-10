@@ -58,9 +58,9 @@ unless ($< == 0 or ($nopull and not $gpg)) {
 	usage_error "Non-root users can call $self with -n, -h and -v." unless $< == 0;
 }
 
-lint_sbo_config($self, %config);
+usage_error "obsolete-check is incompatible with nopull." if $nopull and $obsolete_check;
 
-$config{OBSOLETE_CHECK} = "TRUE" if $obsolete_check;
+lint_sbo_config($self, %config);
 
 if (not $gpg) {
 	$gpg = $config{GPG_VERIFY};
@@ -68,6 +68,12 @@ if (not $gpg) {
 }
 if ($gpg and $nopull) { verify_gpg(); }
 elsif ($gpg) { $config{GPG_VERIFY} = "TRUE"; }
+
+if ($obsolete_check) {
+	print "Not updating the SlackBuilds tree...\n";
+	get_obsolete;
+	exit 0;
+}
 
 update_tree() unless $nopull;
 if ($nopull and slackbuilds_or_fetch()) {
