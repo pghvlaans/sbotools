@@ -50,8 +50,9 @@ under */usr/sbo/distfiles* (with *SBO_HOME=/usr/sbo*) by default. If
 **GPG_VERIFY=(FALSE\|TRUE)**
 
 If **TRUE**, use **gpg** to verify the contents of the local repository
-when running [sbocheck(1)](sbocheck.1.md), [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md).
-Missing public keys are detected, and a download from
+(and, if applicable, */etc/sbotools/obsolete*) when running
+[sbocheck(1)](sbocheck.1.md), [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md). Missing public
+keys are detected, and a download from
 [keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 is offered if
 available. Only rsync repositories can be verified on Slackware 14.0 and
 Slackware 14.1.
@@ -76,6 +77,13 @@ when using [sbocheck(1)](sbocheck.1.md) with an upstream git repository.
 
 If **TRUE**, do not perform upgrades unless the version number differs.
 By default, upgrades also occur when the build number differs.
+
+**OBSOLETE_CHECK=(FALSE\|TRUE)**
+
+If **TRUE**, download an updated copy of the obsolete script list to
+*/etc/sbotools/obsolete* from the **sbotools** home page at
+<https://pghvlaans.github.io/sbotools> when running [sbocheck(1)](sbocheck.1.md) in
+Slackware -current.
 
 **PKG_DIR=(FALSE\|/path)**
 

@@ -12,7 +12,7 @@ Use the key from the homepage (updated 2024-12-15) to verify downloads with gpg.
 
 ## Obsolete Builds List
 
-Starting with the version *after* `sbotools-3.5`, this file will be installed to `/etc/sbotools/obsolete`. It contains a list of scripts that have been added to Slackware -current under different names, or are unneeded build dependencies in Slackware -current. It will updated as needed.
+Starting with `sbotools-3.6`, this file will be installed to `/etc/sbotools/obsolete`. It contains a list of scripts that have been added to Slackware -current under different names, or are unneeded build dependencies in Slackware -current. It will updated as needed.
 
 * [obsolete](obsolete) ([asc](obsolete.asc))
     * md5sum: `10e3210ddab14936e00f57f39648dbb7`
@@ -20,6 +20,8 @@ Starting with the version *after* `sbotools-3.5`, this file will be installed to
 
 ## Release Tarballs
 
+* [sbotools-3.6.tar.gz](sbotools-3.6.tar.gz) ([asc](sbotools-3.6.tar.gz.asc))
+    * md5sum: `00d3bfcfa3dfa282c026e3e18d18062e`
 * [sbotools-3.5.tar.gz](sbotools-3.5.tar.gz) ([asc](sbotools-3.5.tar.gz.asc))
     * md5sum: `b0091302da3415fd2545987268f02c3f`
 * [sbotools-3.4.2.tar.gz](sbotools-3.4.2.tar.gz) ([asc](sbotools-3.4.2.tar.gz.asc))

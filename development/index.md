@@ -11,12 +11,7 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 ## Prospective Features
 
 * `sbohints`: Allow for pre-build commands
+* `sboinstall`: Rebuild all installed scripts in a series
+* Add a reverse dependency build tester for script maintainers
 
 Nothing else for now, but requests are welcome and will receive due consideration.
-
-## Ready for the Next Version
-
-* `sboinstall`, `sboupgrade`: Add a summary with successful builds and time taken at the end
-* `sboinstall`, `sboupgrade`: Don't warn the user about 'missing' scripts that are installed
-* Add `/etc/sbotools/obsolete`: For -current users. A list of scripts that have been added to Slackware under different names, or are unnecessary build dependencies in -current. `sbocheck -O` or plain `sbocheck` with `OBSOLETE_CHECK` will download an updated copy from this website. GPG verification if `GPG_VERIFY`.
-* `sbofind`: Add -A (all reverse dependencies) and -T (last-level reverse dependencies)

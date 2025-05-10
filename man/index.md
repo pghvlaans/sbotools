@@ -1,4 +1,4 @@
-The pages here are current as of version 3.5 (2025-03-26). For pages from the master branch, see [post-release](post-release/).
+The pages here are current as of version 3.6 (2025-05-10). For pages from the master branch, see [post-release](post-release/).
 
 * [sbotools(1)](sbotools.1.md)
     * A summary man page with brief descriptions of the tools.

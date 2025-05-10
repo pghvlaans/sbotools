@@ -21,16 +21,21 @@ updates
 
     sbocheck [-h|-v]
 
-    sbocheck [-g|-n]
+    sbocheck [-g|-O|-n]
 
 ## DESCRIPTION
 
 **sbocheck** updates or fetches a copy of the **SlackBuilds.org** tree,
-checks for available upgrades, and reports what it finds. SlackBuilds
-with differing build numbers are reported separately, as are any
-SlackBuilds marked *\_SBo* that are not found in the repository or local
-overrides (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). Except in
-**CLASSIC** mode, scripts in the report that would not be upgraded by
+checks for available upgrades, and reports what it finds. If
+**OBSOLETE_CHECK** is **TRUE**, an updated copy of the script list at
+**/etc/sbotools/obsolete** is downloaded from
+<https://pghvlaans.github.io/sbotools> when running Slackware -current
+(see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
+
+SlackBuilds with differing build numbers are reported separately, as are
+any SlackBuilds marked *\_SBo* that are not found in the repository or
+local overrides (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). Except
+in **CLASSIC** mode, scripts in the report that would not be upgraded by
 [sboupgrade(1)](sboupgrade.1.md) are marked with **=** (equals sign).
 
 The three output categories are logged separately to
@@ -53,8 +58,10 @@ Please note that **sbosnap**, which was removed as an independent script
 in **sbotools-3.3**, is a compatibility symlink to **sbocheck**.
 
 Non-root users can only call **sbocheck** with the **\--nopull**,
-**\--help** and **\--version** flags. If an invalid configuration is
-detected in */etc/sbotools/sbotools.conf*, the script exits with a
+**\--help** and **\--version** flags. **sbocheck** issues a warning if
+the directory specified with **LOCAL_OVERRIDES** does not exist (see
+[sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration
+is detected in */etc/sbotools/sbotools.conf*, the script exits with a
 diagnostic message.
 
 ## OPTIONS
@@ -65,6 +72,13 @@ Use **gpg** to verify the fetched repository, even if **GPG_VERIFY** is
 **FALSE**. When called with **\--nopull**, verify the repo without
 fetching. Only rsync repositories can be verified on Slackware 14.0 and
 Slackware 14.1.
+
+**-O\|\--obsolete-check**
+
+If running Slackware -current, download a copy of the obsolete script
+list from <https://pghvlaans.github.io/sbotools> and verify with gpg if
+**GPG_VERIFY** is **TRUE** or **\--gpg-verify** is passed. Incompatible
+with **\--nopull**.
 
 **-n\|\--nopull**
 
@@ -86,9 +100,11 @@ Show version information.
 
 0: all operations were successful.\
 1: a usage error occurred.\
+2: a script or module error occurred.\
 5: failed to download the tree.\
 6: failed to open a required file handle.\
-12: interrupt signal received.
+12: interrupt signal received.\
+15: GPG verification failed.
 
 ## BUGS
 

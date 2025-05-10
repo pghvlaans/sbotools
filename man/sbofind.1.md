@@ -21,7 +21,7 @@ a given name or names
 
     sbofind [-h|-v]
 
-    sbofind [-EetiRrq] search_term (search_term)
+    sbofind [-AEetiqRrT] search_term (search_term)
 
 ## DESCRIPTION
 
@@ -34,7 +34,9 @@ and version information. This is equivalent to running
 on a FreeBSD system. If the repository includes a *TAGS.txt* file, these
 tags are searched to generate additional results.
 
-Non-root users can call **sbofind** with any flags. If an invalid
+Non-root users can call **sbofind** with any flags. **sbofind** issues a
+warning if the directory specified with **LOCAL_OVERRIDES** does not
+exist (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). If an invalid
 configuration is detected in */etc/sbotools/sbotools.conf*, the script
 exits with a diagnostic message.
 
@@ -47,6 +49,11 @@ Show help information.
 **-v\|\--version**
 
 Show version information.
+
+**-A\|\--all-reverse**
+
+Show all reverse dependencies in the repository for each SlackBuild
+found.
 
 **-E\|\--exact-case**
 
@@ -64,9 +71,10 @@ Exclude tags from the search.
 
 Show the contents of the *info* file for each SlackBuild found.
 
-**-r\|\--readme**
+**-q\|\--queue**
 
-Show the contents of the *README* file for each SlackBuild found.
+Show the build queue for each SlackBuild found given the contents of
+*/etc/sbotools/sbotools.hints*.
 
 **-R\|\--reverse**
 
@@ -74,10 +82,14 @@ Show any reverse dependencies installed on the system. Please note that
 optional dependencies must be specified in [sbotools.hints(5)](sbotools.hints.5.md) to be
 included. Packages with tags other than *\_SBo* are not included.
 
-**-q\|\--queue**
+**-r\|\--readme**
 
-Show the build queue for each SlackBuild found given the contents of
-*/etc/sbotools/sbotools.hints*.
+Show the contents of the *README* file for each SlackBuild found.
+
+**-T\|\--top-reverse**
+
+Show the top-level reverse dependencies, installed or not, for one or
+more scripts.
 
 ## EXIT CODES
 
@@ -86,6 +98,7 @@ Show the build queue for each SlackBuild found given the contents of
 0: all operations were succesful.\
 1: a usage error occured (e.g., incorrect options were passed to
 **sbofind** ).\
+2: a script or module error occurred.\
 6: **sbofind** was unable to obtain a required file handle.\
 13: circular dependencies detected.
 

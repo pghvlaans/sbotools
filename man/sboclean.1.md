@@ -74,7 +74,8 @@ that could be removed.
 
 0: all operations completed successfully.\
 1: a usage error occurred, such as passing incorrect options to
-**sboclean**.
+**sboclean**.\
+2: a script or module error occurred.
 
 ## BUGS
 

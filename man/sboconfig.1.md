@@ -27,8 +27,9 @@
     sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \
               [-g TRUE|FALSE ] [-j #|FALSE] [-P TRUE|FALSE] \
               [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \
-              [-b TRUE|FALSE] [-o /path|FALSE] [-V #.#|FALSE] \
-              [-r url|FALSE] [-R TRUE|FALSE] [-S TRUE|FALSE]
+              [-b TRUE|FALSE] [-O TRUE|FALSE] [-o /path|FALSE] \
+              [-V #.#|FALSE] [-r url|FALSE] [-R TRUE|FALSE] \
+              [-S TRUE|FALSE]
 
 ## DESCRIPTION
 
@@ -102,8 +103,9 @@ directories under */usr/sbo/distfiles* (with default **SBO_HOME**). If
 **-g\|\--gpg-verify (FALSE\|TRUE)**
 
 **GPG_VERIFY**: If **TRUE**, use **gpg** to verify the contents of the
-local repository when running [sbocheck(1)](sbocheck.1.md), [sboinstall(1)](sboinstall.1.md) and
-[sboupgrade(1)](sboupgrade.1.md). Missing public keys are detected, and a download from
+local repository (and, if applicable, */etc/sbotools/obsolete*) when
+running [sbocheck(1)](sbocheck.1.md), [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md).
+Missing public keys are detected, and a download from
 [keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 is offered if
 available. Only rsync repositories can be verified on Slackware 14.0 and
 Slackware 14.1.
@@ -117,6 +119,13 @@ SlackBuild invoking **make** is run.
 
 **CPAN_IGNORE**: If **TRUE**, install scripts even if they are already
 installed from the CPAN.
+
+**-O\|\--obsolete-check (FALSE\|TRUE)**
+
+**OBSOLETE_CHECK**: If **TRUE**, download an updated copy of the
+obsolete script list to */etc/sbotools/obsolete* from the **sbotools**
+home page at <https://pghvlaans.github.io/sbotools> when running
+[sbocheck(1)](sbocheck.1.md) in Slackware -current.
 
 **-p\|\--pkg-dir (FALSE\|/path)**
 
@@ -174,6 +183,7 @@ scripts in the local overrides directory.
 
 0: all operations were successful.\
 1: a usage error occurred (e.g. passing invalid option specifications)\
+2: a script or module error occurred.\
 6: **sboconfig** was unable to obtain a required file handle.
 
 ## BUGS

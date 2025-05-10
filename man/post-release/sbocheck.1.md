@@ -27,10 +27,10 @@ updates
 
 **sbocheck** updates or fetches a copy of the **SlackBuilds.org** tree,
 checks for available upgrades, and reports what it finds. If
-**OBSOLETE_CHECK** is **TRUE**, or if run with **\--obsolete-check**, an
-updated copy of the script list at **/etc/sbotools/obsolete** is
-downloaded from <https://pghvlaans.github.io/sbotools> when running
-Slackware -current (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
+**OBSOLETE_CHECK** is **TRUE**, an updated copy of the script list at
+**/etc/sbotools/obsolete** is downloaded from
+<https://pghvlaans.github.io/sbotools> when running Slackware -current
+(see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
 SlackBuilds with differing build numbers are reported separately, as are
 any SlackBuilds marked *\_SBo* that are not found in the repository or
@@ -76,8 +76,9 @@ Slackware 14.1.
 **-O\|\--obsolete-check**
 
 If running Slackware -current, download a copy of the obsolete script
-list from <https://pghvlaans.github.io/sbotools> regardless of the
-**OBSOLETE_CHECK** setting. Has no effect with **\--nopull**.
+list from <https://pghvlaans.github.io/sbotools> and verify with gpg if
+**GPG_VERIFY** is **TRUE** or **\--gpg-verify** is passed. Incompatible
+with **\--nopull**.
 
 **-n\|\--nopull**
 

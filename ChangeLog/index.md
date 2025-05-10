@@ -1,6 +1,6 @@
 # ChangeLog
-* Post-Release
-  * *Download.pm*: Unlink existing symlinks with the same name as new ones
+* 3.6 - 2025-05-10
+  * Bugfix: *Download.pm*: Unlink existing symlinks with the same name as new ones
   * *sboinstall*, *sboupgrade*: Unless **CLASSIC** is on, display time taken and successful builds at the end
   * *sbofind*, *sbocheck*, *sboconfig -l*, *sboinstall*, *sboupgrade*, *sboremove*: Show a warning if the specified local overrides directory does not exist; exit if **\--batch** or **\--nointeractive**
     * Thanks to Slack Coder for the suggestion.
@@ -14,6 +14,7 @@
   * Bugfix: Corrected some error codes
   * Bugfix: Fix all URI escapes in distfile names
     * Thanks to fourtysixandtwo and lockywolf for the report
+  * *sbocheck*: Use **\--obsolete-check** to download the list of obsolete scripts only; GPG verify with **\-g**
 
 * 3.5 - 2025-03-26
   * *sbofind*: Use **\--exact-case** to search for an exact match with case sensitivity
