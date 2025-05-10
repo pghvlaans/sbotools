@@ -469,7 +469,7 @@ sub pull_sbo_tree {
   if ($res and not -s $slackbuilds_txt) {
     generate_slackbuilds_txt();
   }
-  if ($config{GET_OBSOLETE} eq "TRUE") {
+  if ($config{OBSOLETE_CHECK} eq "TRUE") {
     get_obsolete() if $sw_version =~ /\+$|current/ or $sw_version eq "15.1";
   }
 }
