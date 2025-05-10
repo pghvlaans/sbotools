@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '3.5';
+our $VERSION = '3.6';
 
 use SBO::Lib::Util qw/ script_error open_read uniq idx %config /;
 use SBO::Lib::Repo qw/ $repo_path $slackbuilds_txt /;

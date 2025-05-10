@@ -1,43 +1,6 @@
-* Add a message about a missing LOCAL_OVERRIDES directory
-
-  After the sbofind bugfix in d495332, Slack Coder suggested that users
-  be alerted to a missing overrides directory. In this repository, this
-  will probably take the form of a warning in sbocheck, sboinstall,
-  sboupgrade, sbofind and sboremove.
-
-  Status: Post-ouput warning added for sbofind, sbocheck and
-  "sboconfig --list". Prompt to continue for sboinstall, sboupgrade,
-  sboremove. --batch will not run if the local overrides directory is
-  missing.
-
 * Add a hint category for specifying pre-build commands
 
   Users may wish to run commands other than useradd and groupadd before
   building certain scripts. One usecase that comes to mind is sourcing
   profile scripts. This will be doable with either sbohints or direct
   sbotools.hints editing.
-
-* sbofind: Add a flag to list all reverse dependencies
-
-  This is potentially useful for maintenance-related testing.
-
-  Status: Use "sbofind -A" to show a list of all reverse dependencies
-  for one or more scripts. "sbofind -T" shows only the last level of
-  such reverse dependencies; this is probably more convenient for
-  testing, especially in combination with --batch.
-
-* sboinstall, sboupgrade: Handle 'missing' scripts better on -current
-
-  fourtysixandtwo helpfully pointed out that the "missing script" prompt
-  can be confusing. Specifically, scripts that have been added to
-  -current can be safely ignored without jeopardizing the build. Prompts
-  for such scripts should be skipped. At least some renames will be
-  accounted for; this appears to be mostly (exclusively?) an issue for
-  Python scripts (python3-* to python-*, e.g.).
-
-  Status: Never notify the user about out-of-tree scripts that are
-  already installed. On -current, use a list of obsoleted scripts
-  (renamed and added to Slackware, or known to be an unnecessary build-
-  time dependency). There are over forty of these at present. The list
-  is installed to /etc/sbotools and will be updated on the sbotools home
-  page as necessary.

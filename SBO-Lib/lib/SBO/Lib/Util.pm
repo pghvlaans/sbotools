@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '3.5';
+our $VERSION = '3.6';
 
 use Exporter 'import';
 use File::Copy;

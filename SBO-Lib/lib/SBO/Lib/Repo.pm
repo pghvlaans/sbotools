@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '3.5';
+our $VERSION = '3.6';
 
 use SBO::Lib::Util qw/ %config :const error_code prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp wrapsay /;
 
