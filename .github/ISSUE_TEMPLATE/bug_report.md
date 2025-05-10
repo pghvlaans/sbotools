@@ -11,11 +11,11 @@ assignees: pghvlaans
 
 * Output of `cat /etc/slackware-version`:
 
-* Output of `sboconfig --version`:
+* Output of `sboconfig -v`:
 
-* Output of `sboconfig --list`:
+* Output of `sboconfig -l | grep -ve sboconfig -e FALSE`:
 
-* Output of `sbohints --list` (version 3.4 and later):
+* Output of `sbohints -l` (version 3.4 and later):
 
 * For `--compat32` failures, please copy and paste the last several lines of build output:
 
