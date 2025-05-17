@@ -231,6 +231,8 @@ if (@ARGV and $compat32) {
 exit 0 if (@ARGV and not @sbos);
 @sbos = uniq @sbos;
 
+get_sbo_locations(@sbos) if @sbos;
+
 if (length $utemp) {
 	my $json = JSON::PP->new->latin1;
 	$non_int = 1;

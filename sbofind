@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs on_blacklist %config $slackbuilds_txt $repo_path @last_level_reverse show_version in indent get_from_info uniq lint_sbo_config wrapsay /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs on_blacklist %config @concluded @reverse_concluded $slackbuilds_txt $repo_path @last_level_reverse show_version in indent get_from_info uniq lint_sbo_config wrapsay /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 
@@ -242,6 +242,8 @@ for my $search (@ARGV) {
 	if (exists $$findings[0]) {
 		reverse_queries();
 		for my $hash (@$findings) {
+			splice @concluded;
+			splice @reverse_concluded;
 			if ($notfound) { say ''; }
 			my $name = $hash->{name};
 			if ($name =~ /^perl-/) {

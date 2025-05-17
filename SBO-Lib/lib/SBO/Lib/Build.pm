@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.6';
 
-use SBO::Lib::Util qw/ :const :times prompt error_code script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh uniq save_options wrapsay %config in /;
+use SBO::Lib::Util qw/ :const :times idx prompt error_code script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh uniq save_options wrapsay %config in /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires get_reverse_reqs /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
@@ -54,6 +54,8 @@ our @EXPORT_OK = qw{
   $tmpd
   $env_tmp
   @last_level_reverse
+  @concluded
+  @reverse_concluded
 };
 
 our %EXPORT_TAGS = (
@@ -78,9 +80,10 @@ SBO::Lib::Build - Routines for building Slackware packages from SlackBuilds.org.
 
 =head2 @concluded
 
-This is a shared, non-exportable array that tracks scripts with verified
+This is a shared array that tracks scripts with verified
 completable build queues; it is used by C<get_build_queue()> to check for
-circular dependencies.
+circular dependencies. Note that C<@concluded> is cleared
+by C<sbofind> between results.
 
 =head2 $env_tmp
 
@@ -89,9 +92,10 @@ set.
 
 =head2 @reverse_concluded
 
-This is a shared, non-exportable array that tracks scripts with verified
+This is a shared array that tracks scripts with verified
 reverse dependency chains; it is used by C<get_full_reverse()> to check for
-circular reverse dependencies.
+circular reverse dependencies. Note that C<@reverse_concluded> is cleared
+by C<sbofind> between results.
 
 =head2 $tempdir
 
@@ -365,11 +369,12 @@ sub get_full_reverse {
 
   if (@sublist) {
     for my $revdep (@sublist) {
+      next if grep { /^$revdep$/ } @reverse_concluded;
       my %warnings;
       # The first two conditions are prone to false positives if a script
       # and its dependency share a listed dependency; get_build_queue
       # makes certain in these cases.
-      if (grep { /^$revdep$/ } @checked and not grep { /^$revdep$/ } @reverse_concluded and grep { /^$revdep$/ } get_build_queue([$sbo], \%warnings)) {
+      if (grep { /^$revdep$/ } @checked and grep { /^$revdep$/ } get_build_queue([$sbo], \%warnings)) {
         error_code("Circular dependency for $revdep detected. Exiting.", _ERR_CIRCULAR);
       }
       push @checked, $revdep;
@@ -908,16 +913,24 @@ sub rationalize_queue {
   FIRST: while (my $sbo = shift @queue) {
     my $real_name = $sbo;
     $real_name =~ s/-compat32$//;
+    my @check_queue;
+    for my $item (@queue) {
+      my $real_item = $item;
+      $real_item =~ s/-compat32$//;
+      push @check_queue, $real_item;
+    }
     my $reqs = get_requires($real_name);
     unless ($reqs) {
       push @result_queue, $sbo;
       next FIRST;
     } else {
+      if (idx($real_name, @check_queue)) {
+        push @queue, $sbo;
+        next FIRST;
+      }
       my @reqs = @{ $reqs };
-      for my $check (@queue) {
-        my $real_check = $check;
-        $real_check =~ s/-compat32$//;
-        if (grep { /^($check|$real_check)$/ } @reqs or $check eq $real_name) {
+      for my $check (@reqs) {
+        if (idx($check, @check_queue)) {
           push @queue, $sbo;
           next FIRST;
         }
@@ -1132,7 +1145,8 @@ sub _build_queue {
 
   while (my $sbo = shift @queue) {
     next if $sbo eq "%README%";
-    if (grep { /^$sbo$/ } @checked and not grep { /^$sbo$/ } @concluded) {
+    next if grep { /^$sbo$/ } @concluded;
+    if (grep { /^$sbo$/ } @checked) {
       error_code("Circular dependencies for $sbo detected. Exiting.", _ERR_CIRCULAR);
     }
     push @checked, $sbo;

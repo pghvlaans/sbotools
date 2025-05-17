@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Setting Orange, Discord 57, 3191 YOLD" "" "sbotools 3.6"
+.TH SBO::Lib::Build 3 "Boomtime, Discord 64, 3191 YOLD" "" "sbotools 3.6"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -74,9 +74,10 @@ SBO::Lib::Build \- Routines for building Slackware packages from SlackBuilds.org
 .ie n .SS @concluded
 .el .SS \f(CW@concluded\fP
 .IX Subsection "@concluded"
-This is a shared, non-exportable array that tracks scripts with verified
+This is a shared array that tracks scripts with verified
 completable build queues; it is used by \f(CWget_build_queue()\fR to check for
-circular dependencies.
+circular dependencies. Note that \f(CW@concluded\fR is cleared
+by \f(CW\*(C`sbofind\*(C'\fR between results.
 .ie n .SS $env_tmp
 .el .SS \f(CW$env_tmp\fP
 .IX Subsection "$env_tmp"
@@ -85,9 +86,10 @@ set.
 .ie n .SS @reverse_concluded
 .el .SS \f(CW@reverse_concluded\fP
 .IX Subsection "@reverse_concluded"
-This is a shared, non-exportable array that tracks scripts with verified
+This is a shared array that tracks scripts with verified
 reverse dependency chains; it is used by \f(CWget_full_reverse()\fR to check for
-circular reverse dependencies.
+circular reverse dependencies. Note that \f(CW@reverse_concluded\fR is cleared
+by \f(CW\*(C`sbofind\*(C'\fR between results.
 .ie n .SS $tempdir
 .el .SS \f(CW$tempdir\fP
 .IX Subsection "$tempdir"
