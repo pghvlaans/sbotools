@@ -25,11 +25,11 @@
     sboconfig [--reset]
 
     sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \
-              [-g TRUE|FALSE ] [-j #|FALSE] [-P TRUE|FALSE] \
-              [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \
-              [-b TRUE|FALSE] [-O TRUE|FALSE] [-o /path|FALSE] \
-              [-V #.#|FALSE] [-r url|FALSE] [-R TRUE|FALSE] \
-              [-S TRUE|FALSE]
+              [-e TRUE|FALSE] [-g TRUE|FALSE ] [-j #|FALSE] \
+              [-P TRUE|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo] \
+              [-B branch_name|FALSE] [-b TRUE|FALSE] [-O TRUE|FALSE] \
+              [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE] \
+              [-R TRUE|FALSE] [-S TRUE|FALSE]
 
 ## DESCRIPTION
 
@@ -99,6 +99,12 @@ building. Source archives are otherwise retained in md5sum-designated
 directories under */usr/sbo/distfiles* (with default **SBO_HOME**). If
 **PKG_DIR** is set, package archives are saved there regardless of
 **DISTCLEAN**.
+
+**-e\|\--etc-profile (FALSE\|TRUE)**
+
+**ETC_PROFILE**: If **TRUE**, source any executable scripts in
+*/etc/profile.d* named *\*.sh* before running each SlackBuild in the
+build queue.
 
 **-g\|\--gpg-verify (FALSE\|TRUE)**
 

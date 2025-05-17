@@ -10,8 +10,11 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 ## Prospective Features
 
-* `sbohints`: Allow for pre-build commands
 * `sboinstall`: Rebuild all installed scripts in a series
 * Add a reverse dependency build tester for script maintainers
 
 Nothing else for now, but requests are welcome and will receive due consideration.
+
+## Incoming
+
+* A setting **ETC_PROFILE** to source profile.d scripts before building

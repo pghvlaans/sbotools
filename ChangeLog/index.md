@@ -1,6 +1,7 @@
 # ChangeLog
 * Post-Release
   * Optimize queue construction: Shared dependency handling and `rationalize_queue`
+  * Add setting **ETC_PROFILE**: Source executable `*.sh` scripts in `/etc/profile.d` before running every SlackBuild
 
 * 3.6 - 2025-05-10
   * Bugfix: *Download.pm*: Unlink existing symlinks with the same name as new ones
