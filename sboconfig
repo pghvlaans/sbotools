@@ -49,6 +49,8 @@ Configuration options (defaults shown):
       NOCLEAN: if TRUE, do not clean up working directories after building by default.
   -d|--distclean FALSE:
       DISTCLEAN: if TRUE, clean the source and package archives by default after building.
+  -e|--etc-profile FALSE:
+      ETC_PROFILE: if TRUE, source executable scripts in /etc/profile.d before building.
   -g|--gpg-verify FALSE:
       GPG_VERIFY: verify the repo with gnupg
   -j|--jobs FALSE:
@@ -83,7 +85,7 @@ GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'classic|C=s', '
 	'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 	'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
     'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
-    'cpan-ignore|P=s', 'obsolete-check|O=s');
+    'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s');
 
 if ($options{help}) {
 	show_usage();
@@ -113,6 +115,7 @@ my %valid_confs = (
 	'strict-upgrades'   => 'STRICT_UPGRADES',
 	'cpan-ignore'       => 'CPAN_IGNORE',
 	'obsolete-check'    => 'OBSOLETE_CHECK',
+	'etc-profile'         => 'ETC_PROFILE',
 );
 
 my %params = (
@@ -132,6 +135,7 @@ my %params = (
 	STRICT_UPGRADES   => 'S|--strict-upgrades',
 	CPAN_IGNORE       => 'P|--cpan-ignore',
 	OBSOLETE_CHECK    => 'O|--obsolete-check',
+	ETC_PROFILE       => 'e|--etc-profile',
 );
 
 if (exists $options{list}) {
@@ -265,6 +269,8 @@ sub interactive_menu {
 	OBSOLETE_CHECK: config_prompt("OBSOLETE_CHECK", "If TRUE, sbocheck updates the obsolete script list from the sbotools home page.", "TRUE or FALSE.", "TF");
 
 	PKG_DIR: config_prompt("PKG_DIR", "If set to an absolute path, store newly-built packages there regardless of DISTCLEAN.", "An absolute path or FALSE.", "PATH");
+
+	ETC_PROFILE: config_prompt("ETC_PROFILE", "If TRUE, source executable *.sh scripts in /etc/profile.d before building.", "TRUE or FALSE.", "TF");
 
 	SBO_HOME: config_prompt("SBO_HOME", "If set to an absolute path, this is where the SlackBuilds.org tree will live.", "An absolute path or FALSE.", "PATH");
 

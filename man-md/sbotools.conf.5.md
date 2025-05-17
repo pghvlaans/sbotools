@@ -78,6 +78,11 @@ when using [sbocheck(1)](sbocheck.1.md) with an upstream git repository.
 If **TRUE**, do not perform upgrades unless the version number differs.
 By default, upgrades also occur when the build number differs.
 
+**ETC_PROFILE=(FALSE\|TRUE)**
+
+**If TRUE**, source any executable scripts in */etc/profile.d* named
+*\*.sh* before running each SlackBuild in the build queue.
+
 **OBSOLETE_CHECK=(FALSE\|TRUE)**
 
 If **TRUE**, download an updated copy of the obsolete script list to

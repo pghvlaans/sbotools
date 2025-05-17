@@ -43,6 +43,8 @@ Options (defaults shown first where applicable):
     show the potential queue and exit
   -d|--distclean (FALSE|TRUE):
     if TRUE, delete downloaded source archives and the completed package after building.
+  -e|--etc-profile (FALSE|TRUE):
+    if TRUE, source all executable *.sh scripts in /etc/profile.d before building.
   -f|--force:
     force an upgrade, even if the version and build number are the same.
   -i|--noinstall:
@@ -72,6 +74,7 @@ my $jobs = $config{JOBS};
 my $build_ignore = $config{BUILD_IGNORE};
 my $gpg = $config{GPG_VERIFY};
 my $strict_upgrades = $config{STRICT_UPGRADES};
+my $etc_profile = $config{ETC_PROFILE};
 my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run);
 
 my $options_ok = GetOptions(
@@ -92,6 +95,7 @@ my $options_ok = GetOptions(
 	'compat32|p'        => \$compat32,
 	'batch'             => \$yes_really,
 	'dry-run|D'         => \$dry_run,
+	'etc-profile|e=s'   => \$etc_profile,
 );
 
 if ($help) {
@@ -133,6 +137,11 @@ if ($distclean) {
 		unless ($distclean =~ /^(TRUE|FALSE)$/);
 }
 
+if ($etc_profile) {
+	usage_error("You have provided an invalid value for -e|--etc-profile")
+		unless ($distclean =~ /^(TRUE|FALSE)$/);
+}
+
 if ($build_ignore) {
 	usage_error("You have provided an invalid value for -b|--build-ignore")
 		unless ($build_ignore =~ /^(TRUE|FALSE)$/);
@@ -154,6 +163,8 @@ $build_ignore = $build_ignore eq 'TRUE' ? 1 : 0;
 $gpg = $gpg eq 'TRUE' ? 1 : 0;
 # from here, only Pkgs.pm uses STRICT_UPGRADES
 $config{STRICT_UPGRADES} = $strict_upgrades if $strict_upgrades;
+# from here, only Build.pm uses ETC_PROFILE
+$config{ETC_PROFILE} = $etc_profile if $etc_profile;
 
 usage_error("force-reqs is incompatible with nointeractive.")
 	if $non_int && $force_reqs;

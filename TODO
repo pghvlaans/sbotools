@@ -4,3 +4,26 @@
   building certain scripts. One usecase that comes to mind is sourcing
   profile scripts. This will be doable with either sbohints or direct
   sbotools.hints editing.
+
+  Status: Change of plans; there is instead a new option ETC_PROFILE. If
+          TRUE, source any executable *.sh script in /etc/profile.d before
+          building each SlackBuild in the queue. This obviates the main
+          usecase for a pre-build command hint. Very convenient if a
+          dependency installs a new profile script, but the existing
+          default behavior will probably stay the way it is.
+
+* Add a reverse dependency build tester.
+
+  For script maintainers. This will likely take the form of a separate
+  out-of-PATH script that calls sboinstall one or more times, depending on
+  the target.
+
+* Rebuild all scripts in a series.
+
+  Potentially useful for the python, perl, ruby and haskell series.
+
+* sboremove: With --alwaysask, show all 'needed' reverse dependencies
+
+  "sboremove --alwaysask" currently only reports the first level of
+  installed reverse dependencies. Reporting all of them would be more
+  helpful.

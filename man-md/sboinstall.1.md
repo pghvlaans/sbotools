@@ -22,14 +22,15 @@
     sboinstall [-h|-v]
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-DiopRr] [--batch|--dry-run] [--create-template FILE] \
-               sbo_name (sbo_name)
+               [-e TRUE|FALSE] [-DiopRr] [--batch|--dry-run] \
+               [--create-template FILE] sbo_name (sbo_name)
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-Di] --use-template FILE
+               [-e TRUE|FALSE] [-Di] --use-template FILE
 
     sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-Dioqr] [--create-template FILE] --mass-rebuild
+               [-e TRUE|FALSE] [-Dioqr] [--create-template FILE] \
+\--mass-rebuild
 
 ## DESCRIPTION
 
@@ -105,6 +106,12 @@ retained in md5sum-designated directories under *SBO_HOME/distfiles* by
 default. The package archive (in */tmp* by default) is also removed.
 This option can be set as default via the [sboconfig(1)](sboconfig.1.md) command. See
 also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
+
+**-e\|\--etc-profile**
+
+If **TRUE**, source any executable scripts in */etc/profile.d* named
+*\*.sh* before running each SlackBuild in the build queue. This option
+overrides the default.
 
 **-i\|\--noinstall**
 

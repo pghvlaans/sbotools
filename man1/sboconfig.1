@@ -16,11 +16,11 @@ sboconfig [-l]
 sboconfig [--reset]
 .P
 sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \\
-          [-g TRUE|FALSE ] [-j #|FALSE] [-P TRUE|FALSE] \\
-          [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \\
-          [-b TRUE|FALSE] [-O TRUE|FALSE] [-o /path|FALSE] \\
-          [-V #.#|FALSE] [-r url|FALSE] [-R TRUE|FALSE] \\
-          [-S TRUE|FALSE]
+          [-e TRUE|FALSE] [-g TRUE|FALSE ] [-j #|FALSE] \\
+          [-P TRUE|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo] \\
+          [-B branch_name|FALSE] [-b TRUE|FALSE] [-O TRUE|FALSE] \\
+          [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE] \\
+          [-R TRUE|FALSE] [-S TRUE|FALSE]
 .SH DESCRIPTION
 .P
 .B
@@ -202,6 +202,23 @@ is set, package archives are saved there regardless of
 .B
 DISTCLEAN\fR\
 \&.
+.RE
+.P
+.B
+-e|--etc-profile (FALSE|TRUE)
+.RS
+.B
+ETC_PROFILE\fR\
+\&: If
+.B
+TRUE\fR\
+\&, source any executable scripts in
+.I
+/etc/profile.d
+named
+.I
+*.sh
+before running each SlackBuild in the build queue.
 .RE
 .P
 .B

@@ -9,14 +9,15 @@ sboinstall
 sboinstall [-h|-v]
 .P
 sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
-           [-DiopRr] [--batch|--dry-run] [--create-template FILE] \\
-           sbo_name (sbo_name)
+           [-e TRUE|FALSE] [-DiopRr] [--batch|--dry-run] \\
+           [--create-template FILE] sbo_name (sbo_name)
 .P
 sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
-           [-Di] --use-template FILE
+           [-e TRUE|FALSE] [-Di] --use-template FILE
 .P
 sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
-           [-Dioqr] [--create-template FILE] --mass-rebuild
+           [-e TRUE|FALSE] [-Dioqr] [--create-template FILE] \\
+           --mass-rebuild
 .SH DESCRIPTION
 .P
 .B
@@ -231,6 +232,22 @@ command. See also
 .B
 sbotools.conf(5)\fR\
 \&. This option overrides the default.
+.RE
+.P
+.B
+-e|--etc-profile
+.RS
+If
+.B
+TRUE\fR\
+\&, source any executable scripts in
+.I
+/etc/profile.d
+named
+.I
+*.sh
+before running each SlackBuild in the build queue.
+This option overrides the default.
 .RE
 .P
 .B

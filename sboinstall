@@ -39,6 +39,8 @@ Options (defaults shown first where applicable):
     show the potential queue and exit
   -d|--distclean (FALSE|TRUE):
     if TRUE, delete downloaded source archives and the completed package after building.
+  -e|--etc-profile (FALSE|TRUE):
+    if TRUE, source all executable *.sh scripts in /etc/profile.d before building.
   -i|--noinstall:
     do not run installpkg after building.
   -j|--jobs (FALSE|#):
@@ -73,6 +75,7 @@ my $noclean = $config{NOCLEAN};
 my $distclean = $config{DISTCLEAN};
 my $jobs = $config{JOBS};
 my $gpg = $config{GPG_VERIFY};
+my $etc_profile = $config{ETC_PROFILE};
 my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run);
 
 my $options_ok = GetOptions(
@@ -93,6 +96,7 @@ my $options_ok = GetOptions(
 	'reverse-rebuild|q' => \$reverse_rebuild,
 	'batch'             => \$yes_really,
 	'dry-run|D'         => \$dry_run,
+	'etc-profile|e=s'   => \$etc_profile,
 );
 
 if ($help) {
@@ -138,6 +142,11 @@ if (defined $distclean) {
 		unless ($distclean =~ /^(TRUE|FALSE)$/);
 }
 
+if (defined $etc_profile) {
+	usage_error("You have provided an invalid value for -e|--etc-profile")
+		unless ($distclean =~ /^(TRUE|FALSE)$/);
+}
+
 if ($jobs) {
 	usage_error("You have provided an invalid value for -j|--jobs")
 		unless ($jobs =~ /^\d+$/ || $jobs eq 'FALSE');
@@ -146,6 +155,8 @@ if ($jobs) {
 $noclean = $noclean eq 'TRUE' ? 1 : 0;
 $distclean = $distclean eq 'TRUE' ? 1 : 0;
 $gpg = $gpg eq 'TRUE' ? 1 : 0;
+# from here, only Build.pm uses ETC_PROFILE
+$config{ETC_PROFILE} = $etc_profile if $etc_profile;
 
 if ($gpg) { verify_gpg(); }
 

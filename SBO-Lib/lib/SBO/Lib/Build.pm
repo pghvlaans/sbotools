@@ -676,6 +676,16 @@ sub perform_sbo {
 
   $cmd = '';
 
+  if ($config{ETC_PROFILE} eq 'TRUE') {
+    if (opendir(my $prof_dh, "/etc/profile.d")) {
+      my @profile_d = grep { ! in( $_ => qw/ . .. /) } readdir $prof_dh;
+      if (@profile_d) {
+        for my $profile_script (@profile_d) {
+          $cmd .= ". /etc/profile.d/$profile_script &&" if -x "/etc/profile.d/$profile_script" and $profile_script =~ m/\.sh$/;
+        }
+      }
+    }
+  }
   if ($args{ARCH} eq 'x86_64' and ($args{C32} || $args{X32})) {
     if ($args{C32}) {
       $changes{libdirsuffix} = '';

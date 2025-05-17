@@ -9,8 +9,9 @@ sboupgrade
 sboupgrade [-h|-v]
 .P
 sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \\
-           [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiopqrz] \\
-           [--batch|--dry-run] --all|sbo_name (sbo_name)
+           [-b TRUE|FALSE] [-S TRUE|FALSE] [-e TRUE|FALSE] \\
+           [-fiopqrz] [--batch|--dry-run] --all|sbo_name \\
+           (sbo_name)
 .SH DESCRIPTION
 .P
 .B
@@ -252,6 +253,22 @@ command. See also
 .B
 sbotools.conf(5)\fR\
 \&. This option overrides the default.
+.RE
+.P
+.B
+-e|--etc-profile
+.RS
+If
+.B
+TRUE\fR\
+\&, source any executable scripts in
+.I
+/etc/profile.d
+named
+.I
+*.sh
+before running each SlackBuild in the build queue.
+This option overrides the default.
 .RE
 .P
 .B

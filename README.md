@@ -18,9 +18,10 @@ This repository is for continuing **sbotools** development, and was forked from 
 
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
-## Changes
+## Recent Changes
 * Post-Release
   * Optimize queue construction: Shared dependency handling and rationalize_queue
+  * Add setting ETC_PROFILE: Source executable \*.sh scripts in /etc/profile.d before running every SlackBuild
 
 * 3.6 - 2025-05-10
   * Bugfix: Download.pm: Unlink existing symlinks with the same name as new ones

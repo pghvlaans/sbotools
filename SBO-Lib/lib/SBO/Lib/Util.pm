@@ -135,8 +135,8 @@ C</usr/sbo> if still C<"FALSE">.
 
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
-C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>
-and C<CPAN_IGNORE>.
+C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
+C<CPAN_IGNORE> and C<ETC_PROFILE>.
 
 =head2 $download_time
 
@@ -196,6 +196,7 @@ our %config = (
   STRICT_UPGRADES => 'FALSE',
   CPAN_IGNORE => 'FALSE',
   OBSOLETE_CHECK => 'FALSE',
+  ETC_PROFILE => 'FALSE',
 );
 
 read_config();
@@ -631,6 +632,12 @@ sub lint_sbo_config {
     unless ($configs{DISTCLEAN} =~ /^(TRUE|FALSE)$/) {
       push @invalid, "DISTCLEAN:" if $running ne 'sboconfig';
       push @invalid, "$warn -d (TRUE or FALSE)";
+    }
+  }
+  if (exists $configs{ETC_PROFILE}) {
+    unless ($configs{ETC_PROFILE} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "ETC_PROFILE" if $running ne 'sboconfig';
+      push @invalid, "$warn -e (TRUE or FALSE)";
     }
   }
   if (exists $configs{GPG_VERIFY}) {

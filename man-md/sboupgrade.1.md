@@ -22,8 +22,9 @@
     sboupgrade [-h|-v]
 
     sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \
-               [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiopqrz] \
-               [--batch|--dry-run] --all|sbo_name (sbo_name)
+               [-b TRUE|FALSE] [-S TRUE|FALSE] [-e TRUE|FALSE] \
+               [-fiopqrz] [--batch|--dry-run] --all|sbo_name \
+(sbo_name)
 
 ## DESCRIPTION
 
@@ -108,6 +109,12 @@ retained in md5sum-designated directories under *SBO_HOME/distfiles* by
 default. The package archive (in */tmp* by default) is also removed.
 This option can be set as default via the [sboconfig(1)](sboconfig.1.md) command. See
 also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
+
+**-e\|\--etc-profile**
+
+If **TRUE**, source any executable scripts in */etc/profile.d* named
+*\*.sh* before running each SlackBuild in the build queue. This option
+overrides the default.
 
 **-f\|\--force**
 

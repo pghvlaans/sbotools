@@ -14,6 +14,7 @@ _arguments -s -C \
 	   '(-b --build-ignore)'{-b,--build-ignore}'[If TRUE, then only do upgrades if the version number differs.]:ignore build number?:((TRUE\:"Version upgrades only" FALSE\:"Script bump upgrades"))' \
 	   '(-c --noclean)'{-c,--noclean}'[If TRUE, then do not clean working directories after build.]:clean work dirs?:((TRUE\:"Clean works directories" FALSE\:"Keep work directories"))' \
 	   '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code and the package after building.]:clean source and package?:((TRUE\:"Remove source and package" FALSE\:"Keep source and package"))' \
+	   '(-e --etc-profile)'{-e,--etc-profile}'[If TRUE, then source executable *.sh scripts in /etc/profile.d before building.]:source /etc/profile.d before building?:((TRUE\:"Source /etc/profile.d before building" FALSE\:"Do not source /etc/profile.d before building"))' \
 	   '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \
 	   '(-o --norecall)'{-o,--norecall}'[Do not automatically reuse build options if nointeractive.]' \
 	   '(-q --reverse-rebuild)'{-q,--reverse-rebuild}'[Rebuild the reverse dependency queue after upgrading.]' \
