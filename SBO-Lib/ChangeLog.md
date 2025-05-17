@@ -1,10 +1,10 @@
 # sbotools
 
-* Post-Release
+#### Post-Release
   * Optimize queue construction: Shared dependency handling and rationalize_queue
   * Add setting ETC_PROFILE: Source executable \*.sh scripts in /etc/profile.d before running every SlackBuild
 
-* 3.6 - 2025-05-10
+#### 3.6 - 2025-05-10
   * Download.pm: Unlink existing symlinks with the same name as new ones
   * sboinstall, sboupgrade: Unless CLASSIC is on, display time taken and successful builds at the end
   * sbofind, sbocheck, sboconfig -l, sboinstall, sboupgrade, sboremove: Show a warning if the specified local overrides directory does not exist; exit if --batch or --nointeractive
@@ -21,7 +21,7 @@
     * Thanks to fourtysixandtwo and lockywolf for the report
   * sbocheck: Use --obsolete-check to download the list of obsolete scripts only; GPG verify with -g
 
-* 3.5 - 2025-03-26
+#### 3.5 - 2025-03-26
   * sbofind: Use --exact-case to search for an exact match with case sensitivity
     * Thanks to leoctrl for the report.
   * man1: Add a variables section to the sboinstall and sboupgrade pages
@@ -52,7 +52,7 @@
   * sbocheck: Fix non-root --nopull when GPG_VERIFY is on
   * sbocheck: Fix build number display for scripts bumped in LOCAL_OVERRIDES
   * sboinstall: --mass-rebuild handles compat32 builds
-  * sboinstall: packages without the _SBo tag are skipped automatically if not interactive
+  * sboinstall: packages without the \_SBo tag are skipped automatically if not interactive
   * sboinstall, sboupgrade: --batch runs interactively with dependency resolution; --dry-run shows the --batch queue and exits
   * Readme.pm: Do not nag the user about existent users and groups; account for other README files for useradd and groupadd
   * sbofind: Fix failure when LOCAL_OVERRIDES is specified but does not exist
@@ -60,7 +60,7 @@
   * All scripts: Properly exit with code 0 with --help
   * sboinstall, sboupgrade: Allow --dry-run without root privileges
 
-* 3.4.2 - 2025-02-07
+#### 3.4.2 - 2025-02-07
   * Build.pm: When distcleaning, do not delete files that are needed later in the queue
   * sbohints: With --query, also report scripts that are optional dependencies; more grammatical output
   * Allow non-root users to call sbofind, non-destructive sbocheck, sboconfig and sbohints flags, -h and -v
@@ -70,28 +70,28 @@
   * sbocheck: Mark scripts that would not be upgraded with sboupgrade with an equals sign
   * sboclean: Properly remove empty directories from distfiles
 
-* 3.4.1 - 2025-01-29
+#### 3.4.1 - 2025-01-29
   * Bugfix: Use md5sum-specific subdirectories for distfiles to avoid improper overwriting
     * Thanks to tuxuser1 for the report.
   * sboclean: Adjust distfile handling to reflect new directory structure
   * Bugfix: Actually remove the package-* directory
   * Bugfix: DISTCLEAN should not override NOCLEAN
 
-* 3.4 - 2025-01-22
+#### 3.4 - 2025-01-22
   * sboconfig: Run without flags or options to use an interactive menu
   * sboupgrade: Do not attempt to upgrade the build queue if the requested script does not need an upgrade
   * sbocheck: Display the installed build number for the build number check
   * Add setting STRICT_UPGRADES: Except for override packages, only upgrade when the version or build number is higher
     * Thanks to jansucan and drbeco for the request.
   * sboinstall: Use --reverse-rebuild to rebuild all reverse dependencies of a script
-  + sbofind: Indicate if a script is blacklisted
+  * sbofind: Indicate if a script is blacklisted
   * sbohints: A new tool for modifying and querying the blacklist and optional dependency requests
-  * sboinstall: Always give a distinct warning prompt when a package without the _SBo tag would be replaced by adding it to the queue
+  * sboinstall: Always give a distinct warning prompt when a package without the \_SBo tag would be replaced by adding it to the queue
   * sboinstall: Honor the blacklist when installing from templates
   * Handle circular dependency errors
   * Repo.pm: More accurate warning text in case of BADSIG
 
-* 3.3 - 2024-12-31
+#### 3.3 - 2024-12-31
   * sboconfig: Allow versions "X.Y+" and "current"; more informative error messages
     * Thanks to dchmelik for the report.
   * Exit with invalid sbotools.conf parameters
@@ -105,10 +105,10 @@
     * Thanks to Geremias for the original report.
   * Info.pm: Tweak build number detection for an sbocheck performance boost
 
-* 3.2.1 - 2024-12-20
+#### 3.2.1 - 2024-12-20
   * Bugfix: sboinstall, sboupgrade GPG check for custom repositories (removed unneeded conditional)
 
-* 3.2 - 2024-12-19
+#### 3.2 - 2024-12-19
   * sbocheck: Do not use compact format for CLASSIC mode
   * Repo.pm: Prompt for regeneration if SLACKBUILDS.TXT is missing instead of erroring out
   * Set GPG_VERIFY to TRUE to verify with gpg in case of repo fetch, sboinstall or sboupgrade
@@ -124,7 +124,7 @@
   * Install development man pages on SBO::Lib to man 3
     * Thanks to Charadon for the request.
 
-3.1 - 2024-12-05
+#### 3.1 - 2024-12-05
   * sbofind: Allow multiple search terms
   * Add a summary sbotools(1) man page with executive summaries and a startup guide
   * sboinstall: Use --mass-rebuild to rebuild all non-compat32 SlackBuilds
@@ -142,7 +142,7 @@
   * Adopt MIT License
     * Thanks to Slack Coder for the suggestion.
 
-3.0 - 2024-11-22
+#### 3.0 - 2024-11-22
   * sbocheck: Use --nopull to check for updated SlackBuilds without updating the tree
   * sboremove: Remove undocumented and dangerous nointeractive option
   * sbofind: Use --reverse to check for installed reverse dependencies
@@ -150,12 +150,13 @@
   * Add setting CLASSIC; turn on BUILD_IGNORE and RSYNC_DEFAULT, and disable output added post-sbotools
   * Fix some --help verbiage
 
+## sbotools3
 This repository was renamed from sbotools3 to sbotools prior to the release of sbotools-3.0.
 
-sbotools3 1.1 - 2024-11-03
+#### sbotools3 1.1 - 2024-11-03
   * Bugfix: incorrect variable name caused sboupgrade to rebuild when unneeded.
 
-sbotools3 1.0 - 2024-11-01
+#### sbotools3 1.0 - 2024-11-01
   * Change the git branch to match the Slackware version, or to a user-configured branch
     * The ability to specify a git branch was originally planned by Andreas Guldstrand.
   * Change the default URLs to support Slackware 15.0 and use git repositories
@@ -163,7 +164,7 @@ sbotools3 1.0 - 2024-11-01
     * Thanks to Slack Coder for the feedback.
   * Detect build number changes and optionally upgrade
     * Thanks to qunying for the request.
-  * Detect and report out-of-tree _SBo SlackBuilds with sbocheck
+  * Detect and report out-of-tree \_SBo SlackBuilds with sbocheck
     * This feature was originally planned by Andreas Guldstrand.
   * Save any build options when running a SlackBuild
   * Install bash completions; zsh completions have been updated
@@ -172,18 +173,18 @@ sbotools3 1.0 - 2024-11-01
   * Fix making -compat32 packages for non-i486 SlackBuilds
   * Fix building -compat32 packages from templates
 
-Historical Changes
+## Historical Changes
 Development from version 0.1 through 2.7 took place at the pink-mist/sbotools repository. Unless indicated otherwise, the changes below are thanks to Andreas Guldstrand.
 
-Post-2.7 - 2019
+#### Post-2.7 - 2019
   * Add and install zsh completions
     * Thanks to contributor drgibbon.
 
-2.7 - 2019-04-28
+#### 2.7 - 2019-04-28
   * Actually fix the sbofind -e bug
     (https://github.com/pink-mist/sbotools/issues/71)
 
-2.6 - 2019-04-27
+#### 2.6 - 2019-04-27
   * Fix change in new perl versions where you need to escape { in regexp
     (https://github.com/pink-mist/sbotools/issues/75)
     (https://github.com/pink-mist/sbotools/issues/77)
@@ -206,7 +207,7 @@ Post-2.7 - 2019
     (https://github.com/pink-mist/sbotools/issues/71)
     * Thanks to drgibbon for the report
 
-2.5 - 2018-02-14
+#### 2.5 - 2018-02-14
   * Document download behaviour
     (https://github.com/pink-mist/sbotools/issues/66)
     * Thanks to jonasdemoor for the request
@@ -216,7 +217,7 @@ Post-2.7 - 2019
     * Thanks to na3i09 for the report
   * Optimise searching in sbofind
 
-2.4 - 2017-05-18
+#### 2.4 - 2017-05-18
   * Rewrite sboremove from the ground up so it relies less on global state
   * Fix for parsing README with useradd/groupadd commands which span lines
     (https://github.com/pink-mist/sbotools/issues/57)
@@ -229,16 +230,16 @@ Post-2.7 - 2019
   * Add version information to sbofind output
     (https://github.com/pink-mist/sbotools/issues/60)
 
-2.3 - 2017-01-21
+#### 2.3 - 2017-01-21
   * Bugfix for parsing .info files with \ among the separators
     (https://github.com/pink-mist/sbotools/issues/55)
     * Thanks to iluvatar1 for the report
 
-2.2 - 2017-01-17
+#### 2.2 - 2017-01-17
   * Bugfix for parsing .info files with trailing whitespace after a value
     (https://github.com/pink-mist/sbotools/issues/54)
 
-2.1 - 2017-01-14
+#### 2.1 - 2017-01-14
   * Internals:
     - Adding internal documentation
     - Extract code to submodules for easier separation of concerns
@@ -263,7 +264,7 @@ Post-2.7 - 2019
     - stop excluding .tar.gz files when rsyncing
       (https://github.com/pink-mist/sbotools/issues/53)
 
-2.0 - 2016-07-02
+#### 2.0 - 2016-07-02
   * Major new features
     * LOCAL_OVERRIDES setting
       Allows to keep a directory with local slackbuild dirs that will override
@@ -342,7 +343,7 @@ Post-2.7 - 2019
        - https://github.com/pink-mist/sbotools/issues/27
        - Thanks to travis-82 for the request
 
-1.9 - 2015-11-27
+#### 1.9 - 2015-11-27
   * Make it compatible with perls newer than 5.18
   * Lots of code cleanup
   * Rewrite build-queue code (https://github.com/pink-mist/sbotools/issues/2)
