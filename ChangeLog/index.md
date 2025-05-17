@@ -1,4 +1,7 @@
 # ChangeLog
+* Post-Release
+  * Optimize queue construction: Shared dependency handling and `rationalize_queue`
+
 * 3.6 - 2025-05-10
   * Bugfix: *Download.pm*: Unlink existing symlinks with the same name as new ones
   * *sboinstall*, *sboupgrade*: Unless **CLASSIC** is on, display time taken and successful builds at the end
