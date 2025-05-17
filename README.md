@@ -19,11 +19,11 @@ This repository is for continuing **sbotools** development, and was forked from 
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
 ## Recent Changes
-* Post-Release
+#### Post-Release
   * Optimize queue construction: Shared dependency handling and rationalize_queue
   * Add setting ETC_PROFILE: Source executable \*.sh scripts in /etc/profile.d before running every SlackBuild
 
-* 3.6 - 2025-05-10
+#### 3.6 - 2025-05-10
   * Bugfix: Download.pm: Unlink existing symlinks with the same name as new ones
   * sboinstall, sboupgrade: Unless CLASSIC is on, display time taken and successful builds at the end
   * sbofind, sbocheck, sboconfig -l, sboinstall, sboupgrade, sboremove: Show a warning if the specified local overrides directory does not exist; exit if --batch or --nointeractive
@@ -40,4 +40,5 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
     * Thanks to fourtysixandtwo and lockywolf for the report
   * sbocheck: Use --obsolete-check to download the list of obsolete scripts only; GPG verify with -g
 
-See [ChangeLog.md](https://github.com/pghvlaans/sbotools/blob/master/SBO-Lib/ChangeLog.md) for a record of changes from version 1.9.
+## Previous Changes
+See [ChangeLog.md](https://github.com/pghvlaans/sbotools/blob/master/SBO-Lib/ChangeLog.md) for a record of changes from version 1.9 onward.
