@@ -5,6 +5,7 @@
   * Add setting ETC_PROFILE: Source executable \*.sh scripts in /etc/profile.d before running every SlackBuild
   * Download.pm: Change URI unescape positioning to accommodate potential %2F
     * Thanks to Slack Coder for the advice
+  * sboremove: Show the full reverse queue in --alwaysask; add a --compat32 option
 
 #### 3.6 - 2025-05-10
   * Download.pm: Unlink existing symlinks with the same name as new ones

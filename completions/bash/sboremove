@@ -20,7 +20,7 @@ _sboremove() {
 
   case "${cmd}" in
     sboremove)
-      opts="-h -v -a --help --version --alwaysask $REPOLIST"
+      opts="-h -v -a -p --help --version --alwaysask --compat32 $REPOLIST"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
@@ -30,7 +30,7 @@ _sboremove() {
         -h|--help|-v|--version)
           return 0
           ;;
-        -a|--alwaysask)
+        -a|--alwaysask|-p|--compat32)
           COMPREPLY=( $(compgen -W "$REPOLIST" -- "${cur}") )
           return 0
           ;;

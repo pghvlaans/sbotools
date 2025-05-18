@@ -8,7 +8,7 @@ sboremove
 .P
 sboremove [-h|-v]
 .P
-sboremove [-a] sbo_name (sbo_name)
+sboremove [-ap] sbo_name (sbo_name)
 .SH DESCRIPTION
 .P
 .B
@@ -34,6 +34,17 @@ is called with the
 --alwaysask
 flag, the dependency requirements of other installed SlackBuilds
 are not checked.
+.P
+To remove
+.I
+--compat32
+packages, call
+.B
+sboremove
+with the
+.B
+--compat32
+flag.
 .P
 In all cases, this script prompts the user package-by-package
 before performing any removal operations. No option exists to enable
@@ -70,6 +81,18 @@ Show version information.
 .RS
 Always ask to remove dependencies, even if they are
 required by other packages installed to the system.
+.RE
+.P
+.B
+-p|--compat32
+.RS
+Remove the
+.I
+compat32
+version of the script or scripts, along with
+.I
+compat32
+dependencies.
 .RE
 .SH EXIT CODES
 .P

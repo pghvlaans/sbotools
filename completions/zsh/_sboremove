@@ -11,6 +11,7 @@ _arguments \
     '(-)'{-v,--version}'[Show version]:' \
     - commands \
     '(-a --alwaysask)'{-a,--alwaysask}'[Always ask to remove requirements (even if required by installed packages).]' \
+    '(-p --compat32)'{-p,--compat32}'[Remove compat32 scripts only.]' \
     '(-)*:SlackBuild:(${packages:|words})'
 
 # Local Variables:

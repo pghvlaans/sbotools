@@ -11,7 +11,7 @@ package SBO::App::Remove;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_inst_names get_installed_packages get_sbo_location get_full_queue merge_queues get_requires get_readme_contents get_reverse_reqs prompt show_version in lint_sbo_config usage_error wrapsay %config /;
+use SBO::Lib qw/ get_installed_packages get_sbo_location get_full_queue get_full_reverse get_readme_contents get_reverse_reqs prompt show_version lint_sbo_config usage_error wrapsay %config @reverse_concluded /;
 use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO::App';
@@ -23,16 +23,17 @@ sub _parse_opts {
   my $class = shift;
   my @ARGS = @_;
 
-  my ($help, $vers, $alwaysask);
+  my ($help, $vers, $alwaysask, $compat);
 
   $options_ok = GetOptionsFromArray(
     \@ARGS,
     'help|h'        => \$help,
     'version|v'     => \$vers,
     'alwaysask|a'   => \$alwaysask,
+    'compat32|p'    => \$compat,
   );
 
-  return { help => $help, vers => $vers, alwaysask => $alwaysask, args => \@ARGS, };
+  return { help => $help, vers => $vers, alwaysask => $alwaysask, compat => $compat, args => \@ARGS, };
 }
 
 sub run {
@@ -72,7 +73,15 @@ sub run {
   #   - also offering to display README if %README% is passed
   # * remove the confirmed packages
 
-  my @args = @{ $self->{args} };
+  my @prelim_args = @{ $self->{args} };
+  my @args;
+  if ($self->{compat}) {
+    for my $sbo (@prelim_args) {
+      push @args, "$sbo-compat32";
+    }
+  } else {
+    @args = @prelim_args;
+  }
 
   my @installed = @{ get_installed_packages('SBO') };
   my $installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
@@ -81,15 +90,48 @@ sub run {
   exit 1 unless @args;
   my %sbos = map { $_ => 1 } @args;
 
-  my @remove = get_full_queue($installed, @args);
+  my @prelim_remove = get_full_queue($installed, @args);
+  my @remove;
+  if ($self->{compat}) {
+    my (@prelim_names, @compat_remove);
+    push @prelim_names, $_->{name} for @prelim_remove;
+    for my $cand (@installed) {
+      next unless $cand->{name} =~ m/-compat32$/;
+      if (grep { /^$cand->{name}$/ } @args) {
+        push @compat_remove, $cand;
+        next;
+      }
+      my $testname = $cand->{name};
+      $testname =~ s/-compat32$//;
+      push @compat_remove, $cand if grep { /^$testname$/ } @prelim_names;
+    }
+    @remove = @compat_remove;
+  } else {
+    @remove = @prelim_remove;
+  }
 
   my @confirmed;
 
   my $required_by = get_reverse_reqs($installed);
   for my $remove (@remove) {
-    # if $remove was on the commandline, mark it as not needed,
-    # otherwise check if it is needed by something else.
-    my @required_by = get_required_by($remove->{name}, [map { $_->{name} } @confirmed], $required_by);
+    # reset the shared array of concluded reverse queues
+    splice @reverse_concluded;
+    my @confirmed_names;
+    push @confirmed_names, $_->{name} for @confirmed;
+    my $check_name = $remove->{name};
+    # if compat32, check the full reverse for the base script
+    $check_name =~ s/-compat32$//;
+    my @all_required_by = get_full_reverse($check_name, $installed, $required_by);
+    my @required_by;
+    for my $cand (@installed) {
+      next unless grep { /^$cand->{name}$/ } @all_required_by;
+      # ignore all non-compat32 items if compat32
+      if ($self->{compat}) {
+        next unless $cand->{name} =~ m/-compat32$/;
+      }
+      # do not alert the user about being 'needed' by already-confirmed scripts
+      push @required_by, $cand->{name} unless grep { /^$cand->{name}$/ } @confirmed_names;
+    }
     my $needed = $sbos{$remove->{name}} ? 0 : @required_by;
 
     next if $needed and not $self->{alwaysask};
@@ -120,8 +162,11 @@ Options (defaults shown first where applicable):
     version information.
   -a|--alwaysask:
     always ask to remove, even if required by other packages on system.
+  -p|--compat32:
+    remove compat32 scripts.
 
-Note: optional dependencies need to be removed separately.
+Note: optional dependencies need to be removed separately unless they are
+specified in /etc/sbotools/sbotools.hints.
 
 EOF
 	return 1;
@@ -164,24 +209,14 @@ sub confirm {
     }
   }
 
-  if (prompt("Remove $remove->{name}?", default => @required_by ? 'no' : 'yes')) {
+  my $default = "no";
+  $default = "yes" unless @required_by;
+  if (prompt("Remove $remove->{name}?", default => $default)) {
     say " * Added to remove queue.\n";
     return 1;
   }
   say " * Ignoring.\n";
   return 0;
-}
-
-sub get_required_by {
-  my ($sbo, $confirmed, $required_by) = @_;
-  my @dep_of;
-
-  if ( $required_by->{$sbo} ) {
-    for my $req_by (keys %{$required_by->{$sbo}}) {
-      push @dep_of, $req_by unless in($req_by => @$confirmed);
-    }
-  }
-  return @dep_of;
 }
 
 sub remove {
