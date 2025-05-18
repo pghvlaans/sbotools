@@ -20,7 +20,7 @@
 
     sboremove [-h|-v]
 
-    sboremove [-a] sbo_name (sbo_name)
+    sboremove [-ap] sbo_name (sbo_name)
 
 ## DESCRIPTION
 
@@ -31,6 +31,9 @@ dependencies that are required by no other installed SlackBuilds are
 eligible for removal as well. **sboremove** does not handle blacklisted
 scripts. If **sboremove** is called with the **\--alwaysask** flag, the
 dependency requirements of other installed SlackBuilds are not checked.
+
+To remove *\--compat32* packages, call **sboremove** with the
+**\--compat32** flag.
 
 In all cases, this script prompts the user package-by-package before
 performing any removal operations. No option exists to enable
@@ -56,6 +59,11 @@ Show version information.
 
 Always ask to remove dependencies, even if they are required by other
 packages installed to the system.
+
+**-p\|\--compat32**
+
+Remove the *compat32* version of the script or scripts, along with
+*compat32* dependencies.
 
 ## EXIT CODES
 
