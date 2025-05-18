@@ -83,7 +83,7 @@ SBO::Lib::Build - Routines for building Slackware packages from SlackBuilds.org.
 This is a shared array that tracks scripts with verified
 completable build queues; it is used by C<get_build_queue()> to check for
 circular dependencies. Note that C<@concluded> is cleared
-by C<sbofind> between results.
+by C<sbofind> and C<sboremove> between results.
 
 =head2 $env_tmp
 
@@ -95,7 +95,7 @@ set.
 This is a shared array that tracks scripts with verified
 reverse dependency chains; it is used by C<get_full_reverse()> to check for
 circular reverse dependencies. Note that C<@reverse_concluded> is cleared
-by C<sbofind> between results.
+by C<sbofind> and C<sboremove> between results.
 
 =head2 $tempdir
 
