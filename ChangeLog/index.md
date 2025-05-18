@@ -2,6 +2,8 @@
 * Post-Release
   * Optimize queue construction: Shared dependency handling and `rationalize_queue`
   * Add setting **ETC_PROFILE**: Source executable `*.sh` scripts in `/etc/profile.d` before running every SlackBuild
+  * *Download.pm*: Change URI unescape positioning to accommodate potential `%2F`
+    * Thanks to Slack Coder for the advice
 
 * 3.6 - 2025-05-10
   * Bugfix: *Download.pm*: Unlink existing symlinks with the same name as new ones
