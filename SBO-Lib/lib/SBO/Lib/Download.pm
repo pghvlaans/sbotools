@@ -15,6 +15,7 @@ use SBO::Lib::Info qw/ get_download_info /;
 use Cwd;
 use Digest::MD5;
 use Exporter 'import';
+use File::Basename;
 use Time::HiRes qw/ time /;
 use URI::Escape qw/ uri_unescape /;
 
@@ -225,7 +226,7 @@ array reference.
 sub get_dl_fns {
   my $fns = shift;
   my $return;
-  push @$return, ($_ =~ qr|/([^/]+)$|)[0] for @$fns;
+  push @$return, basename $_ for @$fns;
   return $return;
 }
 
@@ -289,7 +290,7 @@ sub get_symlink_from_filename {
   script_error('get_symlink_from_filename requires two arguments.') unless @_ == 2;
   script_error('get_symlink_from_filename first argument is not a file.') unless -f $_[0];
   my ($filename, $location) = @_;
-  return "$location/". ($filename =~ qr#/([^/]+)$#)[0];
+  return "$location/". basename $filename;
 }
 
 =head2 verify_distfile
@@ -348,9 +349,8 @@ Copyright (C) 2024-2025, K. Eugene Carlson.
 # given a link, grab the filename from it and prepend $distfiles
 sub _get_fname {
   my ($fn, $md5) = @_;
-  my $regex = qr#/([^/]+)$#;
-  my ($filename) = $fn =~ $regex;
-  $filename = uri_unescape $filename if $filename;
+  my $filename = uri_unescape $fn;
+  $filename = basename $filename;
   return "$md5/$filename";
 }
 
