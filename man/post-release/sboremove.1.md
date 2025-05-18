@@ -32,7 +32,7 @@ eligible for removal as well. **sboremove** does not handle blacklisted
 scripts. If **sboremove** is called with the **\--alwaysask** flag, the
 dependency requirements of other installed SlackBuilds are not checked.
 
-To remove *\--compat32* packages, call **sboremove** with the
+To remove *compat32* packages, call **sboremove** with the
 **\--compat32** flag.
 
 In all cases, this script prompts the user package-by-package before
