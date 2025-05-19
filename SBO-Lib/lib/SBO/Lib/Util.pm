@@ -30,6 +30,7 @@ use constant $consts = {
   _ERR_CIRCULAR      => 13,  # attempted to calculate circular dependencies
   _ERR_USR_GRP       => 14,  # a required user or group is missing
   _ERR_GPG           => 15,  # GPG verification failed
+  _ERR_STDIN         => 16,  # reading keyboard input failed
 };
 
 my @EXPORT_CONSTS = keys %$consts;
@@ -849,6 +850,7 @@ sub prompt {
   print wrap('', '', $q);
 
   my $res = readline STDIN;
+  error_code("\nCould not read input; exiting.", _ERR_STDIN) unless defined $res;
 
   if (defined $def) {
     return 1 if $res =~ /^y/i;
@@ -1170,6 +1172,7 @@ The sbotools share the following exit codes:
   _ERR_CIRCULAR      13  attempted to calculate a circular dependency
   _ERR_USR_GRP       14  a required user or group is missing
   _ERR_GPG           15  GPG verification failed
+  _ERR_STDIN         16  reading keyboard input failed
 
 =head1 SEE ALSO
 

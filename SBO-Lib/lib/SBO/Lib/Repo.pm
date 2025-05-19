@@ -899,6 +899,7 @@ Repo.pm subroutines can return the following exit codes:
   _ERR_MD5SUM        4   md5sum verification failure
   _ERR_DOWNLOAD      5   download failure
   _ERR_GPG           15  GPG verification failed
+  _ERR_STDIN         16  reading keyboard input failed
 
 =head1 SEE ALSO
 

@@ -290,7 +290,8 @@ required).\
 13: circular dependencies detected.\
 14: in **batch**, **nointeractive** or **dry-run**, required user or
 group missing.\
-15: GPG verification failed.
+15: GPG verification failed.\
+16: reading keyboard input failed.
 
 ## BUGS
 

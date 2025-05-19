@@ -100,7 +100,8 @@ more scripts.
 **sbofind** ).\
 2: a script or module error occurred.\
 6: **sbofind** was unable to obtain a required file handle.\
-13: circular dependencies detected.
+13: circular dependencies detected.\
+16: reading keyboard input failed.
 
 ## BUGS
 

@@ -73,7 +73,8 @@ Remove the *compat32* version of the script or scripts, along with
 1: a usage error occurred, such as running **sboremove** with nothing to
 remove.\
 2: a script or module error occurred.\
-13: circular dependencies detected.
+13: circular dependencies detected.\
+16: reading keyboard input failed.
 
 ## BUGS
 
