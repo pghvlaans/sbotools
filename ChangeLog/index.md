@@ -3,10 +3,12 @@
   * Optimize queue construction: Shared dependency handling and `rationalize_queue`
   * Add setting **ETC_PROFILE**: Source executable `*.sh` scripts in `/etc/profile.d` before running every SlackBuild
   * *Download.pm*: Change URI unescape positioning to accommodate potential `%2F`
-    * Thanks to Slack Coder for the advice
+    * Thanks to Slack Coder for the advice.
   * *sboremove*: Show the full reverse queue in **\--alwaysask**; add a **\--compat32** option
   * Bugfix: Error out gracefully when reading standin fails for prompts
   * Bugfix: Properly detect **useradd** and **groupadd** commands in single quotes
+  * Bugfix: Fix handling build options from files with EOL
+    * Thanks to leoctrl for the report.
 
 * 3.6 - 2025-05-10
   * Bugfix: *Download.pm*: Unlink existing symlinks with the same name as new ones
