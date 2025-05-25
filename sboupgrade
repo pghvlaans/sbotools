@@ -554,7 +554,7 @@ FIRST: for my $sbo (@$upgrade_queue) {
 				if ($exit) {
 					warn $prev_fh;
 				} else {
-					my $opts = <$prev_fh>;
+					chomp(my $opts = <$prev_fh>);
 					$saved_options{$name} = $opts if $dry_run;
 					$options{$sbo} = $opts;
 					$options{$real_name} = $opts if $base_needed;

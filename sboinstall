@@ -574,7 +574,7 @@ FIRST: for my $sbo (@$build_queue) {
 					if ($exit) {
 						warn $prev_fh;
 					} else {
-						my $opts = <$prev_fh>;
+						chomp(my $opts = <$prev_fh>);
 						$saved_options{$name} = $opts if $dry_run;
 						$options{$name} = $opts;
 						$options{$sbo} = $opts if $base_needed;
