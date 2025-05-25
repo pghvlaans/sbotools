@@ -194,6 +194,7 @@ them.
 sub get_user_group {
   script_error('get_user_group requires two arguments.') unless @_ == 2;
   my ($readme, $location) = @_;
+  $readme =~ s/'//g;
   my @cmds = $readme =~ /^\s*#*\s*(useradd.*?|groupadd.*?)(?<!\\)\n/msg;
   unless (@cmds) {
     my @readmes = sort grep { ! m!/README$! } glob "$location/README*";

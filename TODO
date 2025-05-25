@@ -18,6 +18,21 @@
   out-of-PATH script that calls sboinstall one or more times, depending on
   the target.
 
+  Status: Offline work is underway. Implemented features so far:
+
+            * Test requested scripts and all reverse dependencies
+            * Reuse packages in an archive directory if appropriate
+            * Never remove packages that are already installed
+            * Log results
+            * Automatic useradd and groupadd (Docker/VM strongly advised)
+
+          To be implemented:
+
+            * Test the first level of reverse dependencies only
+            * Configurable git branch, upstream repo, archive, etc.
+            * A separate configuration directory for test runs
+            * sboclean: Remove out-of-date packages from the archive
+
 * Rebuild all scripts in a series.
 
   Potentially useful for the python, perl, ruby and haskell series.
@@ -27,3 +42,6 @@
   "sboremove --alwaysask" currently only reports the first level of
   installed reverse dependencies. Reporting all of them would be more
   helpful.
+
+  Status: A full list of reverse dependencies is reported; also added a
+          --compat32 flag.

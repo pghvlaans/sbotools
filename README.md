@@ -26,6 +26,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
     * Thanks to Slack Coder for the advice
   * sboremove: Show the full reverse queue in --alwaysask; add a --compat32 option
   * Bugfix: Error out gracefully when reading standin fails for prompts
+  * Bugfix: Properly detect useradd and groupadd commands in single quotes
 
 #### 3.6 - 2025-05-10
   * Bugfix: Download.pm: Unlink existing symlinks with the same name as new ones
