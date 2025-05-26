@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ auto_reverse get_optional lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay %config $conf_dir @listings /;
+use SBO::Lib qw/ auto_reverse get_optional lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay %config $conf_dir $hint_file @listings /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 
@@ -55,8 +55,6 @@ Options:
 
 EOF
 }
-
-my $hintfile = "$conf_dir/sbotools.hints";
 
 my ($help, $version, $list, $reset, $reverse, $optional, $replace_optional, $blacklist, $clear, $query);
 
@@ -153,7 +151,7 @@ sub alter_designation {
 		my @incoming;
 		# it is not possible to reach this point unless
 		# /etc/sbotools/sbotools.hints exists
-		my ($rfh, $rexit) = open_read($hintfile);
+		my ($rfh, $rexit) = open_read($hint_file);
 		if ($rexit) {
 			warn $rfh;
 			exit $rexit;
@@ -168,7 +166,7 @@ sub alter_designation {
 			for my $line (<$rfh>) { push @incoming, $line unless $line =~ m/^\~$sbo$/; }
 		}
 		close $rfh;
-		my ($fh, $exit) = open_fh($hintfile, ">");
+		my ($fh, $exit) = open_fh($hint_file, ">");
 		if ($exit) {
 			warn $fh;
 			exit $exit;
@@ -177,8 +175,8 @@ sub alter_designation {
 		close $fh;
 	} else {
 		mkdir $conf_dir unless -d $conf_dir;
-		system(qw/ touch /, $hintfile) unless -f $hintfile;
-		my ($fh, $exit) = open_fh($hintfile, ">>");
+		system(qw/ touch /, $hint_file) unless -f $hint_file;
+		my ($fh, $exit) = open_fh($hint_file, ">>");
 		if ($exit) {
 			warn $fh;
 			exit $exit;
@@ -351,7 +349,7 @@ sub reset_all {
 		wrapsay "No blacklist or optional dependency requests found.";
 		exit 0;
 	}
-	my ($rfh, $rexit) = open_read($hintfile);
+	my ($rfh, $rexit) = open_read($hint_file);
 	if ($rexit) {
 		warn $rfh;
 		exit $rexit;
@@ -361,7 +359,7 @@ sub reset_all {
 		push @remaining, $line unless grep { /^$search$/ } @loclistings;
 	}
 	close $rfh;
-	my ($fh, $exit) = open_fh($hintfile, '>');
+	my ($fh, $exit) = open_fh($hint_file, '>');
 	if ($exit) {
 		warn $fh;
 		exit $exit;
@@ -467,11 +465,11 @@ sub write_optional {
 	my ($sbo, @operation) = @_;
 	script_error("write_optional needs two arguments except for clear operations.") unless @operation or $clear;
 	mkdir $conf_dir unless -d $conf_dir;
-	read_hints() if -f $hintfile;
-	system(qw/ touch /, $hintfile) unless -f $hintfile;
+	read_hints() if -f $hint_file;
+	system(qw/ touch /, $hint_file) unless -f $hint_file;
 	@operation = uniq @operation if @operation;
 	my @loclistings = @listings;
-	my ($rfh, $rexit) = open_read($hintfile);
+	my ($rfh, $rexit) = open_read($hint_file);
 	if ($rexit) {
 		warn $rfh;
 		exit $rexit;
@@ -525,7 +523,7 @@ sub write_optional {
 		push @outgoing, $new_line;
 	}
 	close $rfh;
-	my ($fh, $exit) = open_fh($hintfile, '>');
+	my ($fh, $exit) = open_fh($hint_file, '>');
 	if ($exit) {
 		warn $fh;
 		exit $exit;

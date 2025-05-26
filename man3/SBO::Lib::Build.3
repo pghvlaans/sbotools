@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Pungenday, Discord 65, 3191 YOLD" "" "sbotools 3.6"
+.TH SBO::Lib::Build 3 "Sweetmorn, Confusion 5, 3191 YOLD - Syaday" "" "sbotools 3.6"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -314,11 +314,12 @@ status of 0 are returned.
 .SS run_tee
 .IX Subsection "run_tee"
 .Vb 1
-\&  my ($output, $exit) = run_tee($cmd);
+\&  my ($output, $exit) = run_tee($cmd, $log_name);
 .Ve
 .PP
 \&\f(CWrun_tee()\fR runs \f(CW$cmd\fR under \f(CWtee(1)\fR to display STDOUT and return it as
-a string. The second return value is the exit status.
+a string. The second return value is the exit status. If \f(CW\*(C`LOG_DIR\*(C'\fR is set,
+STDOUT and STDERR are saved to a timestamped log file named \f(CW$log_name\fR.
 .PP
 If the bash interpreter cannot be run, the first return value is \f(CW\*(C`undef\*(C'\fR and
 the exit status holds a non-zero value.
@@ -326,7 +327,7 @@ the exit status holds a non-zero value.
 .IX Header "EXIT CODES"
 Build.pm subroutines can return the following exit codes:
 .PP
-.Vb 8
+.Vb 9
 \&  _ERR_SCRIPT        2   script or module bug
 \&  _ERR_BUILD         3   errors when executing a SlackBuild
 \&  _ERR_OPENFH        6   failure to open file handles
@@ -335,6 +336,7 @@ Build.pm subroutines can return the following exit codes:
 \&  _ERR_NOCONVERTPKG  11  lacking convertpkg\-compat32 when needed
 \&  _ERR_INST_SIGNAL   12  the script was interrupted while building
 \&  _ERR_CIRCULAR      13  attempted to calculate a circular dependency
+\&  _ERR_STDIN         16  reading keyboard input failed
 .Ve
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"

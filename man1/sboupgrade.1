@@ -8,10 +8,8 @@ sboupgrade
 .P
 sboupgrade [-h|-v]
 .P
-sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \\
-           [-b TRUE|FALSE] [-S TRUE|FALSE] [-e TRUE|FALSE] \\
-           [-fiopqrz] [--batch|--dry-run] --all|sbo_name \\
-           (sbo_name)
+sboupgrade [-Scbde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+           [-fiopqrz] [--batch|--dry-run] --all|sbo_name (sbo_name)
 .SH DESCRIPTION
 .P
 .B
@@ -325,6 +323,30 @@ argument when a SlackBuild invoking
 .B
 make
 is run.
+.RE
+.P
+.B
+-k|--pkg-dir (FALSE|/path)
+.RS
+If an
+.B
+absolute path\fR\
+\&, save built packages there, overriding the value of the
+.B
+PKG_DIR
+setting.
+.RE
+.P
+-L|--log-dir (FALSE|/path)
+.RS
+If an
+.B
+absolute path\fR\
+\&, save build logs here, overriding the value of the
+.B
+LOG_DIR
+setting. Logs are saved with the name of the script
+and a timestamp.
 .RE
 .P
 .B

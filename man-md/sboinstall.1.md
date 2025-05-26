@@ -21,16 +21,15 @@
 
     sboinstall [-h|-v]
 
-    sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-e TRUE|FALSE] [-DiopRr] [--batch|--dry-run] \
-               [--create-template FILE] sbo_name (sbo_name)
+    sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
+               [-DRiopr] [--batch|--dry-run] [--create-template FILE] \
+               sbo_name (sbo_name)
 
-    sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-e TRUE|FALSE] [-Di] --use-template FILE
+    sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
+               [-Di] --use-template FILE
 
-    sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \
-               [-e TRUE|FALSE] [-Dioqr] [--create-template FILE] \
-\--mass-rebuild
+    sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
+               [-Dioqr] [--create-template FILE] --mass-rebuild
 
 ## DESCRIPTION
 
@@ -124,6 +123,17 @@ retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
 
 If **numerical**, pass to the **-j** argument when a SlackBuild invoking
 **make** is run.
+
+**-k\|\--pkg-dir (FALSE\|/path)**
+
+If an **absolute path**, save built packages there, overriding the value
+of the **PKG_DIR** setting.
+
+-L\|\--log-dir (FALSE\|/path)
+
+If an **absolute path**, save build logs here, overriding the value of
+the **LOG_DIR** setting. Logs are saved with the name of the script and
+a timestamp.
 
 **-o\|\--norecall**
 

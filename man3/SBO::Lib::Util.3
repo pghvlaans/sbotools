@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Boomtime, Discord 64, 3191 YOLD" "" "sbotools 3.6"
+.TH SBO::Lib::Util 3 "Sweetmorn, Confusion 5, 3191 YOLD - Syaday" "" "sbotools 3.6"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -75,11 +75,12 @@ SBO::Lib::Util \- Utility functions for SBO::Lib and the sbotools
 .ie n .SS $conf_dir
 .el .SS \f(CW$conf_dir\fP
 .IX Subsection "$conf_dir"
-\&\f(CW$conf_dir\fR is \f(CW\*(C`/etc/sbotools\*(C'\fR.
+\&\f(CW$conf_dir\fR is \f(CW\*(C`/etc/sbotools\*(C'\fR by default, or else the contents of an
+environment variable \f(CW\*(C`SBOTOOLS_CONF_DIR\*(C'\fR.
 .ie n .SS $conf_file
 .el .SS \f(CW$conf_file\fP
 .IX Subsection "$conf_file"
-\&\f(CW$conf_file\fR is \f(CW\*(C`/etc/sbotools/sbotools.conf\*(C'\fR.
+\&\f(CW$conf_file\fR is \f(CW\*(C`/etc/sbotools/sbotools.conf\*(C'\fR by default.
 .ie n .SS %config
 .el .SS \f(CW%config\fP
 .IX Subsection "%config"
@@ -90,12 +91,21 @@ they change according to the configuration. \f(CW\*(C`SBO_HOME\*(C'\fR is change
 The supported keys are: \f(CW\*(C`NOCLEAN\*(C'\fR, \f(CW\*(C`DISTCLEAN\*(C'\fR, \f(CW\*(C`JOBS\*(C'\fR, \f(CW\*(C`PKG_DIR\*(C'\fR,
 \&\f(CW\*(C`SBO_HOME\*(C'\fR, \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR, \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR, \f(CW\*(C`REPO\*(C'\fR, \f(CW\*(C`BUILD_IGNORE\*(C'\fR,
 \&\f(CW\*(C`GPG_VERIFY\*(C'\fR, \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR, \f(CW\*(C`STRICT_UPGRADES\*(C'\fR, \f(CW\*(C`GIT_BRANCH\*(C'\fR, \f(CW\*(C`CLASSIC\*(C'\fR,
-\&\f(CW\*(C`CPAN_IGNORE\*(C'\fR and \f(CW\*(C`ETC_PROFILE\*(C'\fR.
+\&\f(CW\*(C`CPAN_IGNORE\*(C'\fR, \f(CW\*(C`ETC_PROFILE\*(C'\fR and \f(CW\*(C`LOG_DIR\*(C'\fR.
 .ie n .SS $download_time
 .el .SS \f(CW$download_time\fP
 .IX Subsection "$download_time"
 The time spent downloading source files. Unless \f(CW\*(C`CLASSIC\*(C'\fR is \f(CW"TRUE"\fR, it is
 displayed when all builds are complete.
+.ie n .SS $head_file
+.el .SS \f(CW$head_file\fP
+.IX Subsection "$head_file"
+A file, \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR by default, containing blacklisted scripts,
+optional script dependencies and automatic revese dependency rebuild requests.
+.ie n .SS $is_sbotest
+.el .SS \f(CW$is_sbotest\fP
+.IX Subsection "$is_sbotest"
+This shared and unexportable variable indicates a run from \f(CW\*(C`sbotest\*(C'\fR.
 .ie n .SS $total_build_time
 .el .SS \f(CW$total_build_time\fP
 .IX Subsection "$total_build_time"
@@ -118,13 +128,17 @@ An array with blacklisted scripts and requests for optional dependencies and
 automatic reverse dependency rebuilds read in from \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR.
 Only \f(CWread_hints()\fR should interact with \f(CW@listings\fR directly; in other
 situations, make a copy (see e.g. \f(CW@on_blacklist()\fR.)
+.ie n .SS $obs_file
+.el .SS \f(CW$obs_file\fP
+.IX Subsection "$obs_file"
+This file contains a list of scripts that have been renamed and added to Slackware
+\&\-current, or are known to be obsolete build dependencies. It is located at
+\&\f(CW\*(C`/etc/sbotools/obsolete\*(C'\fR by default.
 .ie n .SS @obsolete
 .el .SS \f(CW@obsolete\fP
 .IX Subsection "@obsolete"
-An array with scripts that have been renamed and added to Slackware \-current, or
-are known to be obsolete build dependencies. The array is based on the contents of
-\&\f(CW\*(C`/etc/sbotools/obsolete\*(C'\fR. Only \f(CWobsolete_array()\fR should interact with
-\&\f(CW@obsolete\fR directly; in other situations, make a copy.
+This array is based on the contents of \f(CW$obs_file\fR. Only \f(CWobsolete_array()\fR should
+interact with \f(CW@obsolete\fR directly; in other situations, make a copy.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS auto_reverse
@@ -355,6 +369,12 @@ Output is wrapped at 72 characters.
 Additionally, \f(CW\*(C`BUILD_IGNORE\*(C'\fR and \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR are turned on if
 \&\f(CW\*(C`CLASSIC\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR.
 .PP
+When \f(CW\*(C`sbotest\*(C'\fR is running, the default value of \f(CW\*(C`SBO_HOME\*(C'\fR
+is \f(CW\*(C`/usr/sbotest\*(C'\fR, and \f(CW\*(C`ETC_PROFILE\*(C'\fR and \f(CW\*(C`CPAN_IGNORE\*(C'\fR default
+to \f(CW\*(C`TRUE\*(C'\fR. Supplementary setting \f(CW\*(C`SBO_ARCHIVE\*(C'\fR defaults to
+\&\f(CW\*(C`/usr/sbotest/archive\*(C'\fR. \f(CW\*(C`PKG_DIR\*(C'\fR defaults to \f(CW\*(C`/usr/sbotest/test\*(C'\fR,
+but this value is timestamped by \f(CW\*(C`sbotest\*(C'\fR.
+.PP
 There is no useful return value.
 .SS read_hints
 .IX Subsection "read_hints"
@@ -494,6 +514,7 @@ The sbotools share the following exit codes:
 \&  _ERR_CIRCULAR      13  attempted to calculate a circular dependency
 \&  _ERR_USR_GRP       14  a required user or group is missing
 \&  _ERR_GPG           15  GPG verification failed
+\&  _ERR_STDIN         16  reading keyboard input failed
 .Ve
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"

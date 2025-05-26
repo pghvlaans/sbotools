@@ -39,9 +39,12 @@ my @EXPORT_CONFIG = qw{
 
   $conf_dir
   $conf_file
+  $hint_file
   %config
   @listings
+  $obs_file
   @obsolete
+  $sbotest_compatible
 };
 
 my @EXPORT_TIME = qw{
@@ -122,11 +125,12 @@ SBO::Lib::Util - Utility functions for SBO::Lib and the sbotools
 
 =head2 $conf_dir
 
-C<$conf_dir> is C</etc/sbotools>.
+C<$conf_dir> is C</etc/sbotools> by default, or else the contents of an
+environment variable C<SBOTOOLS_CONF_DIR>.
 
 =head2 $conf_file
 
-C<$conf_file> is C</etc/sbotools/sbotools.conf>.
+C<$conf_file> is C</etc/sbotools/sbotools.conf> by default.
 
 =head2 %config
 
@@ -137,12 +141,21 @@ C</usr/sbo> if still C<"FALSE">.
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
-C<CPAN_IGNORE> and C<ETC_PROFILE>.
+C<CPAN_IGNORE>, C<ETC_PROFILE> and C<LOG_DIR>.
 
 =head2 $download_time
 
 The time spent downloading source files. Unless C<CLASSIC> is C<"TRUE">, it is
 displayed when all builds are complete.
+
+=head2 $head_file
+
+A file, C</etc/sbotools/sbotools.hints> by default, containing blacklisted scripts,
+optional script dependencies and automatic revese dependency rebuild requests.
+
+=head2 $is_sbotest
+
+This shared and unexportable variable indicates a run from C<sbotest>.
 
 =head2 $total_build_time
 
@@ -168,18 +181,32 @@ situations, make a copy (see e.g. C<@on_blacklist()>.)
 
 =cut
 
+=head2 $obs_file
+
+This file contains a list of scripts that have been renamed and added to Slackware
+-current, or are known to be obsolete build dependencies. It is located at
+C</etc/sbotools/obsolete> by default.
+
+=cut
+
 =head2 @obsolete
 
-An array with scripts that have been renamed and added to Slackware -current, or
-are known to be obsolete build dependencies. The array is based on the contents of
-C</etc/sbotools/obsolete>. Only C<obsolete_array()> should interact with
-C<@obsolete> directly; in other situations, make a copy.
+This array is based on the contents of C<$obs_file>. Only C<obsolete_array()> should
+interact with C<@obsolete> directly; in other situations, make a copy.
 
 =cut
 
 # global config variables
-our $conf_dir = '/etc/sbotools';
-our $conf_file = "$conf_dir/sbotools.conf";
+my $req_dir = $ENV{SBOTOOLS_CONF_DIR};
+our $conf_dir = defined $req_dir ? $req_dir : '/etc/sbotools';
+our $is_sbotest = $ENV{SBOTEST_MODE};
+my $dir_check_var = "\$SBOTOOLS_CONF_DIR";
+$dir_check_var .= " and \$SBOTEST_CONF_DIR" if defined $is_sbotest;
+usage_error("$conf_dir is not an absolute path.\nCheck the value of $dir_check_var. Exiting.") unless $conf_dir =~ m/^\//;
+my $filebase = defined $is_sbotest ? "sbotest" : "sbotools";
+our $conf_file = "$conf_dir/$filebase.conf";
+our $hint_file = "$conf_dir/$filebase.hints";
+our $obs_file = "$conf_dir/obsolete";
 our %config = (
   CLASSIC => 'FALSE',
   NOCLEAN => 'FALSE',
@@ -198,7 +225,14 @@ our %config = (
   CPAN_IGNORE => 'FALSE',
   OBSOLETE_CHECK => 'FALSE',
   ETC_PROFILE => 'FALSE',
+  LOG_DIR => 'FALSE',
 );
+
+if (defined $is_sbotest) {
+  $config{CPAN_IGNORE} = 'TRUE';
+  $config{ETC_PROFILE} = 'TRUE';
+  $config{SBO_ARCHIVE} = 'FALSE';
+}
 
 read_config();
 
@@ -226,6 +260,9 @@ our $resume_time;
 
 # Time spent downloading.
 our $download_time;
+
+# This version of sbotools is compatible with sbotest.
+our $sbotest_compatible = 1;
 
 =head1 SUBROUTINES
 
@@ -659,6 +696,12 @@ sub lint_sbo_config {
       push @invalid, "$warn -o (absolute path or FALSE)";
     }
   }
+  if (exists $configs{LOG_DIR}) {
+    unless ($configs{LOG_DIR} =~ qr#^(/|FALSE$)#) {
+      push @invalid, "LOG_DIR:" if $running ne 'sboconfig';
+      push @invalid, "$warn -L (absolute path or FALSE)";
+    }
+  }
   if (exists $configs{NOCLEAN}) {
     unless ($configs{NOCLEAN} =~ /^(TRUE|FALSE)$/) {
       push @invalid, "NOCLEAN:" if $running ne 'sboconfig';
@@ -719,7 +762,6 @@ C</etc/sbotools/obsolete> file.
 =cut
 
 sub obsolete_array {
-  my $obs_file = "$conf_dir/obsolete";
   my @result;
   return 0 unless -f $obs_file;
   my ($fh, $exit) = open_fh($obs_file, "<");
@@ -873,6 +915,12 @@ C<SBO_HOME> is C<FALSE>, it changes to C</usr/sbo>.
 Additionally, C<BUILD_IGNORE> and C<RSYNC_DEFAULT> are turned on if
 C<CLASSIC> is C<TRUE>.
 
+When C<sbotest> is running, the default value of C<SBO_HOME>
+is C</usr/sbotest>, and C<ETC_PROFILE> and C<CPAN_IGNORE> default
+to C<TRUE>. Supplementary setting C<SBO_ARCHIVE> defaults to
+C</usr/sbotest/archive>. C<PKG_DIR> defaults to C</usr/sbotest/test>,
+but this value is timestamped by C<sbotest>.
+
 There is no useful return value.
 
 =cut
@@ -893,7 +941,14 @@ sub read_config {
     $config{BUILD_IGNORE} = "TRUE";
     $config{RSYNC_DEFAULT} = "TRUE";
   }
-  $config{SBO_HOME} = '/usr/sbo' if $config{SBO_HOME} eq 'FALSE';
+  unless (defined $is_sbotest) {
+    $config{SBO_HOME} = '/usr/sbo' if $config{SBO_HOME} eq 'FALSE';
+  } else {
+    $config{SBO_HOME} = '/usr/sbotest' if $config{SBO_HOME} eq 'FALSE';
+    $config{SBO_ARCHIVE} = "$config{SBO_HOME}/archive" if $config{SBO_ARCHIVE} eq 'FALSE';
+    $config{PKG_DIR} = "$config{SBO_HOME}/test" if $config{PKG_DIR} eq 'FALSE';
+    $config{LOG_DIR} = "$config{SBO_HOME}/log" if $config{LOG_DIR} eq 'FALSE';
+  }
 }
 
 =head2 read_hints
@@ -909,9 +964,9 @@ when editing the hints file.
 
 sub read_hints{
   @listings = () if @listings;
-  if(-f "/etc/sbotools/sbotools.hints") {
-    my $contents = slurp("/etc/sbotools/sbotools.hints");
-    usage_error("read_hints: could not read existing /etc/sbotools/sbotools.hints.") unless
+  if(-f "$hint_file") {
+    my $contents = slurp("$hint_file");
+    usage_error("read_hints: could not read existing $hint_file.") unless
       defined $contents;
     my @contents = split("\n", $contents);
     for my $entry (@contents) {

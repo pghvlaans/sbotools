@@ -16,6 +16,8 @@ _arguments -s -C \
 	   '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code and the package after building.]:clean source and package?:((TRUE\:"Remove source and package" FALSE\:"Keep source and package"))' \
 	   '(-e --etc-profile)'{-e,--etc-profile}'[If TRUE, then source executable *.sh scripts in /etc/profile.d before building.]:source /etc/profile.d before building?:((TRUE\:"Source /etc/profile.d before building" FALSE\:"Do not source /etc/profile.d before building"))' \
 	   '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \
+	   '(-k --pkg-dir)'{-k,--pkg-dir}'[If an absolute path, save built packages here. If FALSE, do not save packages to PKG_DIR.]override default PKG_DIR?:((path\: "Save built packages here" FALSE\:"Do not save packages to PKG_DIR"))'\
+	   '(-L --log-dir)'{-L,--log-dir}'[If an absolute path, save build logs here. If FALSE, do not save logs.]override default LOG_DIR?:((path\: "Save build logs here" FALSE\:"Do not save logs to LOG_DIR"))'\
 	   '(-o --norecall)'{-o,--norecall}'[Do not automatically reuse build options if nointeractive.]' \
 	   '(-q --reverse-rebuild)'{-q,--reverse-rebuild}'[Rebuild the reverse dependency queue after upgrading.]' \
 	   '(-r --nointeractive)'{-r,--nointeractive}'[Skip README.]' \

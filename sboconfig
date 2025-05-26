@@ -55,8 +55,10 @@ Configuration options (defaults shown):
       GPG_VERIFY: verify the repo with gnupg
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
+  -L|--log-dir: FALSE:
+       LOG_DIR: if an absolute path, save a log file here after each build.
   -P|--cpan-ignore FALSE:
-      CPAN_IGNORE: install scripts even if they have been installed from the CPAN
+      CPAN_IGNORE: install scripts even if they have been installed from the CPAN.
   -p|--pkg-dir FALSE:
       PKG_DIR: set a directory to store packages in.
   -s|--sbo-home /usr/sbo:
@@ -85,7 +87,7 @@ GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'classic|C=s', '
 	'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 	'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
     'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
-    'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s');
+    'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s');
 
 if ($options{help}) {
 	show_usage();
@@ -116,6 +118,7 @@ my %valid_confs = (
 	'cpan-ignore'       => 'CPAN_IGNORE',
 	'obsolete-check'    => 'OBSOLETE_CHECK',
 	'etc-profile'         => 'ETC_PROFILE',
+	'log-dir'           => 'LOG_DIR',
 );
 
 my %params = (
@@ -136,6 +139,7 @@ my %params = (
 	CPAN_IGNORE       => 'P|--cpan-ignore',
 	OBSOLETE_CHECK    => 'O|--obsolete-check',
 	ETC_PROFILE       => 'e|--etc-profile',
+	LOG_DIR           => 'L|--log-dir',
 );
 
 if (exists $options{list}) {
@@ -274,6 +278,8 @@ sub interactive_menu {
 
 	SBO_HOME: config_prompt("SBO_HOME", "If set to an absolute path, this is where the SlackBuilds.org tree will live.", "An absolute path or FALSE.", "PATH");
 
+	LOG_DIR: config_prompt("LOG_DIR", "If set to an absolute path, save a log file for each build here.", "An absolute path or FALSE.", "PATH");
+
 	LOCAL_OVERRIDES: config_prompt("LOCAL_OVERRIDES", "If set to an absolute path, any directory name in the top level under that path matching a SlackBuild name will be used in preference to the main repository. Personalized builds can be stored here.", "An absolute path or FALSE.", "PATH");
 
 	STRICT_UPGRADES: config_prompt("STRICT_UPGRADES", "If TRUE, only perform upgrades when the incoming version or build number is higher. This has no effect on scripts in the local overrides directory.", "TRUE or FALSE.", "TF");
@@ -297,7 +303,7 @@ sub interactive_menu {
 			say "\t$title:$spacer$changes{$title}" if defined $changes{$title};
 		}
 
-		unless (prompt("\nWrite these settings to /etc/sbotools/sbotools.conf?", default => 'yes')) {
+		unless (prompt("\nWrite these settings to $conf_file?", default => 'yes')) {
 			if (prompt("Start this menu over?", default => 'no')) {
 				undef %changes;
 				interactive_menu();

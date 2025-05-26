@@ -31,6 +31,13 @@ sboconfig --reset
 
 
 .RE
+To use a configuration directory other than
+.I
+/etc/sbotools\fR\
+\&, export an environment variable
+.B
+SBOTOOLS_CONF_DIR
+with an absolute path.
 .P
 The current configuration keys are as follows:
 .P
@@ -196,6 +203,16 @@ named
 .I
 *.sh
 before running each SlackBuild in the build queue.
+.RE
+.P
+.B
+LOG_DIR=(FALSE|/path)
+.RS
+If set to an
+.B
+absolute path\fR\
+\&, save build logs here. Logs are saved with the name of the script
+and a timestamp.
 .RE
 .P
 .B

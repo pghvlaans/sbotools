@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.6';
 
-use SBO::Lib::Util qw/ %config :const error_code prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp wrapsay /;
+use SBO::Lib::Util qw/ %config :const error_code prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp wrapsay $conf_dir $obs_file /;
 
 use Cwd;
 use File::Copy;
@@ -315,10 +315,9 @@ sub get_obsolete {
   my $cwd = getcwd();
   my $link = "https://pghvlaans.github.io/sbotools/downloads/obsolete";
   my $link_asc = "$link.asc";
-  my $obs_file = "/etc/sbotools/obsolete";
   my $obs_asc = "$obs_file.asc";
-  if (-d "/etc/sbotools") {
-    chdir "/etc/sbotools";
+  if (-d "$conf_dir") {
+    chdir $conf_dir;
     move($obs_file, "$obs_file.bk") if -f $obs_file;
     wrapsay "\nDownloading the obsolete script list from $link...\n";
     unless (system('wget', '--tries=5', $link) == 0) {
@@ -800,7 +799,7 @@ C</etc/sbotools/obsolete> file. There is no useful return value.
 
 sub verify_obsolete {
   my $gpg_ok;
-  my $obs_asc = "/etc/sbotools/obsolete.asc";
+  my $obs_asc = "$obs_file.asc";
   my ($fh, $tempfile) = tempfile(DIR => "$config{SBO_HOME}");
   unlink $gpg_obsolete_log if -f $gpg_obsolete_log;
   open OLDERR, '>&', \*STDERR;
