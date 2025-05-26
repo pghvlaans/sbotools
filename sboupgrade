@@ -51,6 +51,10 @@ Options (defaults shown first where applicable):
     do not run upgradepkg at the end of the build process.
   -j|--jobs (FALSE|#):
     specify the number of parallel jobs (make).
+  -k|--pkg-dir (FALSE|/path):
+    set to an absolute path to save compiled packages here, or to FALSE.
+  -L|--log-dir (FALSE|/path):
+    set to an absolute path to save build logs here, or to FALSE.
   -o|--norecall:
     do not use saved build options with nointeractive.
   -p|--compat32:
@@ -75,7 +79,7 @@ my $build_ignore = $config{BUILD_IGNORE};
 my $gpg = $config{GPG_VERIFY};
 my $strict_upgrades = $config{STRICT_UPGRADES};
 my $etc_profile = $config{ETC_PROFILE};
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $pkg_dir, $log_dir);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -96,6 +100,8 @@ my $options_ok = GetOptions(
 	'batch'             => \$yes_really,
 	'dry-run|D'         => \$dry_run,
 	'etc-profile|e=s'   => \$etc_profile,
+	'pkg-dir|k=s'       => \$pkg_dir,
+	'log-dir|L=s'       => \$log_dir,
 );
 
 if ($help) {
@@ -157,14 +163,25 @@ if ($jobs) {
 		unless ($jobs =~ /^\d+$/ || $jobs eq 'FALSE');
 }
 
+if ($pkg_dir) {
+	usage_error("You have provided an invalid value for -k|--pkg-dir")
+		unless ($pkg_dir =~ /^(\/|FALSE$)/);
+}
+
+if ($log_dir) {
+	usage_error("You have provided an invalid value for -L|--log-dir")
+		unless ($log_dir =~ /^(\/|FALSE$)/);
+}
+
 $noclean = $noclean eq 'TRUE' ? 1 : 0;
 $distclean = $distclean eq 'TRUE' ? 1 : 0;
 $build_ignore = $build_ignore eq 'TRUE' ? 1 : 0;
 $gpg = $gpg eq 'TRUE' ? 1 : 0;
-# from here, only Pkgs.pm uses STRICT_UPGRADES
+# from here, only Pkgs.pm uses STRICT_UPGRADES, ETC_PROFILE and PKG_DIR
 $config{STRICT_UPGRADES} = $strict_upgrades if $strict_upgrades;
-# from here, only Build.pm uses ETC_PROFILE
 $config{ETC_PROFILE} = $etc_profile if $etc_profile;
+$config{PKG_DIR} = $pkg_dir if $pkg_dir;
+$config{LOG_DIR} = $log_dir if $log_dir;
 
 usage_error("force-reqs is incompatible with nointeractive.")
 	if $non_int && $force_reqs;

@@ -8,16 +8,15 @@ sboinstall
 .P
 sboinstall [-h|-v]
 .P
-sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
-           [-e TRUE|FALSE] [-DiopRr] [--batch|--dry-run] \\
-           [--create-template FILE] sbo_name (sbo_name)
+sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+           [-DRiopr] [--batch|--dry-run] [--create-template FILE] \\
+           sbo_name (sbo_name)
 .P
-sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
-           [-e TRUE|FALSE] [-Di] --use-template FILE
+sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+           [-Di] --use-template FILE
 .P
-sboinstall [-d TRUE|FALSE] [-j #|FALSE] [-c TRUE|FALSE] \\
-           [-e TRUE|FALSE] [-Dioqr] [--create-template FILE] \\
-           --mass-rebuild
+sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+           [-Dioqr] [--create-template FILE] --mass-rebuild
 .SH DESCRIPTION
 .P
 .B
@@ -294,6 +293,30 @@ argument when a SlackBuild invoking
 .B
 make
 is run.
+.RE
+.P
+.B
+-k|--pkg-dir (FALSE|/path)
+.RS
+If an
+.B
+absolute path\fR\
+\&, save built packages there, overriding the value of the
+.B
+PKG_DIR
+setting.
+.RE
+.P
+-L|--log-dir (FALSE|/path)
+.RS
+If an
+.B
+absolute path\fR\
+\&, save build logs here, overriding the value of the
+.B
+LOG_DIR
+setting. Logs are saved with the name of the script
+and a timestamp.
 .RE
 .P
 .B

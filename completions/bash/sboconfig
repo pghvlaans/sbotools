@@ -18,7 +18,7 @@ _sboconfig() {
 
   case "${cmd}" in
     sboconfig)
-      opts="-h -v -l -B -b -C -c -d -e -g -j -P -p -s -O -o -V -r -R -S --help --version --list --reset --branch --build-ignore --classic --cpan-ignore --noclean --distclean --etc-profile --gpg-verify --jobs --obsolete-check --pkg-dir --sbo-home --local-overrides --slackware-version --repo --rsync --strict-upgrades"
+      opts="-h -v -l -B -b -C -c -d -e -g -j -L -P -p -s -O -o -V -r -R -S --help --version --list --reset --branch --build-ignore --classic --cpan-ignore --noclean --distclean --etc-profile --gpg-verify --jobs --log-dir --obsolete-check --pkg-dir --sbo-home --local-overrides --slackware-version --repo --rsync --strict-upgrades"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
@@ -36,7 +36,7 @@ _sboconfig() {
           COMPREPLY=( $(compgen -W "FALSE TRUE" -- "${cur}") )
           return 0
           ;;
-        -p|--pkg-dir|-o|--local-overrides)
+        -p|--pkg-dir|-o|--local-overrides|-L|--log-dir)
           COMPREPLY=( $(compgen -d -W "FALSE" -- "${cur}") )
           return 0
           ;;

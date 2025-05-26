@@ -47,6 +47,10 @@ Options (defaults shown first where applicable):
     specify the number of parallel jobs (make).
   -o|--norecall:
     do not use saved build options with nointeractive.
+  -k|--pkg-dir (FALSE|/path):
+    set to an absolute path to save compiled packages here, or to FALSE.
+  -L|--log-dir (FALSE|/path):
+    set to an absolute path to save build logs here, or to FALSE.
   -p|--compat32:
     install a -compat32 package (multilib systems only).
   -q|--reverse-rebuild:
@@ -76,7 +80,7 @@ my $distclean = $config{DISTCLEAN};
 my $jobs = $config{JOBS};
 my $gpg = $config{GPG_VERIFY};
 my $etc_profile = $config{ETC_PROFILE};
-my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run);
+my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $pkg_dir, $log_dir);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -97,6 +101,8 @@ my $options_ok = GetOptions(
 	'batch'             => \$yes_really,
 	'dry-run|D'         => \$dry_run,
 	'etc-profile|e=s'   => \$etc_profile,
+	'pkg-dir|k=s'       => \$pkg_dir,
+	'log-dir|L=s'       => \$log_dir,
 );
 
 if ($help) {
@@ -152,11 +158,23 @@ if ($jobs) {
 		unless ($jobs =~ /^\d+$/ || $jobs eq 'FALSE');
 }
 
+if ($pkg_dir) {
+	usage_error("You have provided an invalid value for -k|--pkg-dir")
+		unless ($pkg_dir =~ /^(\/|FALSE$)/);
+}
+
+if ($log_dir) {
+	usage_error("You have provided an invalid value for -L|--log-dir")
+		unless ($log_dir =~ /^(\/|FALSE$)/);
+}
+
 $noclean = $noclean eq 'TRUE' ? 1 : 0;
 $distclean = $distclean eq 'TRUE' ? 1 : 0;
 $gpg = $gpg eq 'TRUE' ? 1 : 0;
-# from here, only Build.pm uses ETC_PROFILE
+# from here, only Build.pm uses ETC_PROFILE, PKG_DIR and LOG_DIR
 $config{ETC_PROFILE} = $etc_profile if $etc_profile;
+$config{PKG_DIR} = $pkg_dir if $pkg_dir;
+$config{LOG_DIR} = $log_dir if $log_dir;
 
 if ($gpg) { verify_gpg(); }
 

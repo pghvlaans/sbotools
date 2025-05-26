@@ -15,12 +15,9 @@ sboconfig [-l]
 .P
 sboconfig [--reset]
 .P
-sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \\
-          [-e TRUE|FALSE] [-g TRUE|FALSE ] [-j #|FALSE] \\
-          [-P TRUE|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo] \\
-          [-B branch_name|FALSE] [-b TRUE|FALSE] [-O TRUE|FALSE] \\
-          [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE] \\
-          [-R TRUE|FALSE] [-S TRUE|FALSE]
+sboconfig [-CPORScbdeg TRUE|FALSE] [-j #|FALSE] [-pLo /path|FALSE] \\
+          [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \\
+          [-r url|FALSE]
 .SH DESCRIPTION
 .P
 .B
@@ -44,6 +41,13 @@ relevant to
 .B
 sbotools
 configuration are ignored.
+To use a configuration directory other than
+.I
+/etc/sbotools\fR\
+\&, export an environment variable
+.B
+SBOTOOLS_CONF_DIR
+with an absolute path.
 .P
 Non-root users can only call
 .B
@@ -269,14 +273,15 @@ is run.
 .RE
 .P
 .B
--P|--cpan-ignore (FALSE|TRUE)
+-L|--log-dir (FALSE|/path)
 .RS
 .B
-CPAN_IGNORE\fR\
-\&: If
+LOG_DIR\fR\
+\&: If set to an
 .B
-TRUE\fR\
-\&, install scripts even if they are already installed from the CPAN.
+absolute path\fR\
+\&, save build logs here. Logs are saved with the name of the script
+and a timestamp.
 .RE
 .P
 .B
@@ -300,6 +305,17 @@ when running
 .B
 sbocheck(1)
 in Slackware -current.
+.RE
+.P
+.B
+-P|--cpan-ignore (FALSE|TRUE)
+.RS
+.B
+CPAN_IGNORE\fR\
+\&: If
+.B
+TRUE\fR\
+\&, install scripts even if they are already installed from the CPAN.
 .RE
 .P
 .B

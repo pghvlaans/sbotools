@@ -51,7 +51,9 @@ of the script at the end:
 Commented lines are ignored. There should not be whitespace to the left
 of any entry.
 
-[sbohints(1)](sbohints.1.md) can also be used to interface with this file.
+[sbohints(1)](sbohints.1.md) can also be used to interface with this file. To use a
+configuration directory other than */etc/sbotools*, export an
+environment variable **SBOTOOLS_CONF_DIR** with an absolute path.
 
 ## SEE ALSO
 

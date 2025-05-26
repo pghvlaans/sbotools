@@ -22,7 +22,7 @@
 
     sbohints [-l | --reset]
 
-    sbohints [-c] [-b | -o | -O | -r] sbo_name (sbo_name)
+    sbohints [-c] [-Obor] sbo_name (sbo_name)
 
     sbohints [-q] sbo_name (sbo_name)
 
@@ -46,7 +46,9 @@ be used in conjunction with **\--clear**, but not with each other.
 Non-root users can only call **sbohints** with the **\--list**,
 **\--query**, **\--help** and **\--version** flags. If an invalid
 configuration is detected in */etc/sbotools/sbotools.conf*, the script
-exits with a diagnostic message.
+exits with a diagnostic message. To use a configuration directory other
+than */etc/sbotools*, export an environment variable
+**SBOTOOLS_CONF_DIR** with an absolute path.
 
 ## OPTIONS
 

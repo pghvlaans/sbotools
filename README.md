@@ -18,7 +18,7 @@ This repository is for continuing **sbotools** development, and was forked from 
 
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
-## Recent Changes
+## Most Recent Changes
 #### Post-Release
   * Optimize queue construction: Shared dependency handling and rationalize_queue
   * Add setting ETC_PROFILE: Source executable \*.sh scripts in /etc/profile.d before running every SlackBuild
@@ -29,6 +29,9 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Bugfix: Properly detect useradd and groupadd commands in single quotes
   * Bugfix: Fix handling build options from files with EOL
     * Thanks to leoctrl for the report.
+  * Add configuration LOG_DIR for saving build logs
+  * Add environment variable SBOTOOLS_CONF_DIR for setting an alternative configuration directory
+  * Bugfix: Send the RESET escape after running each SlackBuild to clean up after colorful build systems
 
 #### 3.6 - 2025-05-10
   * Bugfix: Download.pm: Unlink existing symlinks with the same name as new ones

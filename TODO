@@ -1,3 +1,9 @@
+TODO: sbotools-3.7
+
+So far as I (KEC) know, implementing the items here will constitute
+feature completion for sbotools. However, the Issues page is always open
+and feature requests will be considered on a case-by-case basis.
+
 * Add a hint category for specifying pre-build commands
 
   Users may wish to run commands other than useradd and groupadd before
@@ -14,24 +20,14 @@
 
 * Add a reverse dependency build tester.
 
-  For script maintainers. This will likely take the form of a separate
-  out-of-PATH script that calls sboinstall one or more times, depending on
-  the target.
+  For script maintainers. Although the original plan was to install a new
+  script out of $PATH, a companion package depending on sbotools and
+  sbo-maintainer-tools seems more appropriate. "sbotest" will need to do
+  certain things that are reasonable in a build testing setup but definitely
+  not in a general-purpose Slackware installation.
 
-  Status: Offline work is underway. Implemented features so far:
-
-            * Test requested scripts and all reverse dependencies
-            * Reuse packages in an archive directory if appropriate
-            * Never remove packages that are already installed
-            * Log results
-            * Automatic useradd and groupadd (Docker/VM strongly advised)
-
-          To be implemented:
-
-            * Test the first level of reverse dependencies only
-            * Configurable git branch, upstream repo, archive, etc.
-            * A separate configuration directory for test runs
-            * sboclean: Remove out-of-date packages from the archive
+  Status: Expect an sbotest version release at about the same time as
+          sbotools-3.7.
 
 * Rebuild all scripts in a series.
 

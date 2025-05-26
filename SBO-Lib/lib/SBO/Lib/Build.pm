@@ -20,6 +20,7 @@ use File::Basename;
 use File::Copy; # copy() and move()
 use File::Path qw/ make_path remove_tree /;
 use File::Temp qw/ tempdir tempfile /;
+use Term::ANSIColor qw/ RESET /;
 use Tie::File;
 use Time::HiRes qw/ time /;
 use Cwd;
@@ -160,9 +161,11 @@ failure, it returns an error message instead of the package name.
 sub do_convertpkg {
   script_error('do_convertpkg requires an argument.') unless @_ == 1;
   my $pkg = shift;
+  my $log_name = basename $pkg;
+  $log_name =~ s/(-[^-]*){3}$//;
   my $c32tmpd = $env_tmp // '/tmp';
 
-  my ($out, $ret) = run_tee("/bin/bash -c '/usr/sbin/convertpkg-compat32 -i $pkg -d $c32tmpd'");
+  my ($out, $ret) = run_tee("/bin/bash -c '/usr/sbin/convertpkg-compat32 -i $pkg -d $c32tmpd'", "$log_name-convertpkg");
 
   if ($ret != 0) {
     return "convertpkg-compt32 returned non-zero exit status\n",
@@ -719,7 +722,9 @@ sub perform_sbo {
   my $cwd = getcwd();
   chdir $location;
   my $build_time = time();
-  my ($out, $ret) = run_tee($cmd);
+  my $log_name = $sbo;
+  $log_name .= "-compat32" if $args{C32};
+  my ($out, $ret) = run_tee($cmd, $log_name);
   my $completed_time = time();
   my $time_taken = $completed_time - $build_time;
   $time_taken = reconcile_time($time_taken);
@@ -1053,10 +1058,11 @@ sub rewrite_slackbuild {
 
 =head2 run_tee
 
-  my ($output, $exit) = run_tee($cmd);
+  my ($output, $exit) = run_tee($cmd, $log_name);
 
 C<run_tee()> runs C<$cmd> under C<tee(1)> to display STDOUT and return it as
-a string. The second return value is the exit status.
+a string. The second return value is the exit status. If C<LOG_DIR> is set,
+STDOUT and STDERR are saved to a timestamped log file named $log_name.
 
 If the bash interpreter cannot be run, the first return value is C<undef> and
 the exit status holds a non-zero value.
@@ -1066,6 +1072,7 @@ the exit status holds a non-zero value.
 sub run_tee {
   return undef unless $< == 0;
   my $cmd = shift;
+  my $log_name = shift;
 
   my $out_fh = tempfile(DIR => $tempdir);
   my $out_fn = get_tmp_extfn($out_fh);
@@ -1075,7 +1082,7 @@ sub run_tee {
   my $exit_fn = get_tmp_extfn($exit_fh);
   return undef, _ERR_F_SETFD if not defined $exit_fn;
 
-  $cmd = sprintf '( %s; echo $? > %s ) | tee %s', $cmd, $exit_fn, $out_fn;
+  $cmd = sprintf '( %s 2>&1 ; echo $? > %s ) | tee %s', $cmd, $exit_fn, $out_fn;
 
   my $ret = system('/bin/bash', '-c', $cmd);
 
@@ -1087,6 +1094,20 @@ sub run_tee {
   seek $out_fh, 0, 0;
   my $out = do { local $/; readline $out_fh; };
 
+  unless ($config{LOG_DIR} eq 'FALSE') {
+    make_path $config{LOG_DIR} unless -d $config{LOG_DIR};
+    chomp(my $save_date = `/usr/bin/date +%Y-%m-%d-%H:%M`);
+    $log_name .= "_$save_date";
+    $log_name = "$config{LOG_DIR}/$log_name";
+    copy $out_fn, $log_name;
+    if (-f $log_name) {
+      wrapsay "Saved a log to $log_name.";
+    } else {
+      wrapsay "Not saving a log file.";
+    }
+  }
+
+  print RESET;
   return $out, $ret;
 }
 
