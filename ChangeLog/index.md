@@ -9,6 +9,9 @@
   * Bugfix: Properly detect **useradd** and **groupadd** commands in single quotes
   * Bugfix: Fix handling build options from files with EOL
     * Thanks to leoctrl for the report.
+  * Add configuration **LOG_DIR** for saving build logs
+  * Add environment variable **SBOTOOLS_CONF_DIR** for setting an alternative configuration directory
+  * Bugfix: Send the *RESET* escape after running each SlackBuild to clean up after colorful build systems
 
 * 3.6 - 2025-05-10
   * Bugfix: *Download.pm*: Unlink existing symlinks with the same name as new ones
