@@ -34,6 +34,7 @@ include:
   - downloads
   - development
   - ChangeLog
+  - sbotest
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
@@ -96,6 +97,14 @@ defaults:
   # development
   - scope:
       path: "development"
+      type: pages
+    values:
+      layout: single
+      author_profile: false
+      title: false
+  # sbotest
+  - scope:
+      path: "sbotest"
       type: pages
     values:
       layout: single
