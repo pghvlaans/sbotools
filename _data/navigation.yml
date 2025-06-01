@@ -7,3 +7,5 @@ main:
     url: /downloads/
   - title: "Development"
     url: /development/
+  - title: "sbotest"
+    url: /sbotest/

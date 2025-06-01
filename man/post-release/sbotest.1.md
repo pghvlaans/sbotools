@@ -5,12 +5,12 @@
 [DISCLAIMER](#disclaimer)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
-[CONFIGURATION](#CONFIGURATION)\
+[CONFIGURATION](#configuration)\
 [EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
 [ACKNOWLEDGEMENTS](#acknowledgements)\
-[AUTHOR](#author)\
+[AUTHOR](#author)
 
 ------------------------------------------------------------------------
 
@@ -23,7 +23,7 @@
     sbotest [-h|-v]
 
     sbotest [-f|-s] [-j #|FALSE] [-akl /path|FALSE] \
-               sbo_name (sbo_name)
+            sbo_name (sbo_name)
 
 ## DISCLAIMER
 
@@ -104,7 +104,7 @@ If **FALSE**, use the default log directory of
 *SBO_HOME/logs/(timestamp)-logs*. If an **absolute path**, save build
 and **sbopkglint(1)** logs to that directory with a timestamp appended.
 
-## CONFIGURATION []{#CONFIGURATION}
+## CONFIGURATION
 
 The default configuration directory is */etc/sbotest* with files
 *sbotest.conf*, *sbotest.hints* and *obsolete* being recognized. To use
@@ -146,12 +146,10 @@ This setting is used only when running **sbotest**, and has a default
 value of *SBO_HOME/archive*. Any packages stored here will be installed
 prior to calling [sboinstall(1)](sboinstall.1.md), provided that they:
 
-  -- --- -- ----------------------------------------------------------------
-     •      Are not test targets.
-     •      Are required by the script to be tested.
-     •      Are not already installed.
-     •      Have versions and build numbers matching the local repository.
-  -- --- -- ----------------------------------------------------------------
+* Are not test targets.
+* Are required by the script to be tested.
+* Are not already installed.
+* Have versions and build numbers matching the local repository.
 
 Hints may be specified in */etc/sbotest/sbotest.hints*. Saved build
 options from **sbotools** are ignored. See **sbotools.config(5)** and
