@@ -946,8 +946,8 @@ sub read_config {
   } else {
     $config{SBO_HOME} = '/usr/sbotest' if $config{SBO_HOME} eq 'FALSE';
     $config{SBO_ARCHIVE} = "$config{SBO_HOME}/archive" if $config{SBO_ARCHIVE} eq 'FALSE';
-    $config{PKG_DIR} = "$config{SBO_HOME}/test" if $config{PKG_DIR} eq 'FALSE';
-    $config{LOG_DIR} = "$config{SBO_HOME}/log" if $config{LOG_DIR} eq 'FALSE';
+    $config{PKG_DIR} = "$config{SBO_HOME}/tests" if $config{PKG_DIR} eq 'FALSE';
+    $config{LOG_DIR} = "$config{SBO_HOME}/logs" if $config{LOG_DIR} eq 'FALSE';
   }
 }
 
