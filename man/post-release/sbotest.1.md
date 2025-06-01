@@ -152,7 +152,7 @@ prior to calling [sboinstall(1)](sboinstall.1.md), provided that they:
 * Have versions and build numbers matching the local repository.
 
 Hints may be specified in */etc/sbotest/sbotest.hints*. Saved build
-options from **sbotools** are ignored. See **sbotools.config(5)** and
+options from **sbotools** are ignored. See [sbotools.conf(5)](sbotools.conf.5.md) and
 [sbotools.hints(5)](sbotools.hints.5.md) for more information.
 
 ## EXIT CODES
