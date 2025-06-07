@@ -284,7 +284,10 @@ sub user_prompt {
   $cmds = ask_user_group($user_group, $readme) if $$user_group[0];
   # check for options mentioned in the README
   my $opts = 0;
-  chomp($opts = ask_opts($sbo, $readme)) if get_opts($readme);
+  if (get_opts($readme)) {
+    my $prel_opts = ask_opts($sbo, $readme));
+    chomp($opts = $prel_opts) if $prel_opts;
+  }
   ask_other_readmes($sbo, $location);
   # we have to return something substantial if the user says no so that we
   # can check the value of $cmds on the calling side. we should be able to
