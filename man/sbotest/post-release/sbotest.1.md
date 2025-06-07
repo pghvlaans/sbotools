@@ -5,6 +5,7 @@
 [DISCLAIMER](#disclaimer)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[TESTING STRATEGIES](#testing-strategies)\
 [CONFIGURATION](#configuration)\
 [EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
@@ -25,7 +26,7 @@
     sbotest [-f|-s] [-j #|FALSE] [-akl /path|FALSE] \
             sbo_name (sbo_name)
 
-    sbotest [-al /path|FALSE] --archive-rebuild
+    sbotest [-al /path|FALSE] [-S TRUE|FALSE] --archive-rebuild
 
 ## DISCLAIMER
 
@@ -59,14 +60,17 @@ or reinstalled.
 
 **sbopkglint(1)** is run on all test targets once [sboinstall(1)](sboinstall.1.md) has
 been called for the last time. A summary of results is displayed and
-saved to *SBO_HOME/test\_(timestamp).log*. Scripts that fail
+saved to *SBO_HOME/results/(timestamp).log*. Scripts that fail
 **sbolint(1)** or **sbopkglint(1)**, or fail to build altogether, are
 reported so that any issues can be taken care of before submitting
 scripts to **SlackBuilds.org**.
 
 The package archive can be kept current with **\--archive-rebuild**,
-which replaces all outdated packages in the archive, provided that they
-are not installed.
+which rebuilds all version- and build-mismatched packages in the
+archive, provided that they are not installed or on the blacklist. If
+**STRICT_UPGRADES** is **TRUE**, only mismatched packages with lower
+version or build numbers will be removed from the archive. By default,
+all mismatched packages are removed.
 
 ## OPTIONS
 
@@ -80,8 +84,16 @@ Show version information.
 
 **\--archive-rebuild**
 
-Replace outdated packages in the archive, */usr/sbotest/archive* by
-default. Please note that installed packages are ignored.
+Replace build- and version-mismatched packages in the archive,
+*/usr/sbotest/archive* by default. Please note that installed and
+blacklisted packages are ignored. If **STRICT_UPGRADES** is **TRUE**,
+only mismatched packages with lower version or build numbers will be
+removed from the archive.
+
+If a script to be rebuilt has an automatic reverse dependency rebuild
+request in */etc/sbotest/sbotest.hints*, its reverse dependencies are
+rebuilt and replaced as well. See [sbotools.hints(5)](sbotools.hints.5.md) for details
+about setting hints.
 
 **-f\|\--full-reverse**
 
@@ -115,11 +127,52 @@ If **FALSE**, use the default log directory of
 *SBO_HOME/logs/(timestamp)-logs*. If an **absolute path**, save build
 and **sbopkglint(1)** logs to that directory with a timestamp appended.
 
+**-S\|\--strict-upgrades**
+
+If **TRUE**, delete only mismatched packages with lower version or build
+numbers when running **\--archive-rebuild**. If **FALSE**, delete all
+mismatched packages from the archive. Overrides the setting in
+*/etc/sbotest/sbotest.conf*.
+
+## TESTING STRATEGIES
+
+There are three basic ways to test scripts with **sbotest**.
+
+* Test against the upstream repository without changes.
+* Test against a git branch with changes to be merged.
+* Test against the upstream repository with changes in a local overrides directory.
+
+The first case is the simplest, and requires no configuration beyond
+setting **RSYNC_DEFAULT** or **REPO** in */etc/sbotest/sbotest.conf* as
+appropriate.
+
+To test upcoming changes in a git branch, set **GIT_BRANCH** to the name
+of the branch and ensure that **REPO** is set if non-default. From here,
+run **sbotest**. If multiple scripts are to be tested for submission,
+using a single merged branch for testing may be convenient:
+
+    git branch testbranch\
+    git checkout testbranch\
+    git merge rust-opt dos2unix fvwm3\
+    git push \--set-upstream origin testbranch
+
+To use a local overrides directory, set **LOCAL_OVERRIDES** to an
+absolute path. Place directories for any script to be tested in the top
+level and run **sbotest**. Removing these directories when testing is
+complete is advisable.
+
+Reusing built packages in future test runs saves time and resources. The
+default archive directory is */usr/sbotest/archive*; packages stored
+here are reinstalled in lieu of building when needed, provided they are
+up-to-date. Copy packages from the test directories under (by default)
+*/usr/sbotest/tests* to use them again later.
+
 ## CONFIGURATION
 
 The default configuration directory is */etc/sbotest* with files
-*sbotest.conf*, *sbotest.hints* and *obsolete* being recognized. To use
-an alternative configuration directory, set an environment variable
+*sbotest.conf*, *sbotest.hints* and *obsolete* being recognized.
+*obsolete* is relevant only if testing against Slackware -current. To
+use an alternative configuration directory, set an environment variable
 *SBOTEST_CONF_DIR*.
 
 Several default settings differ from base **sbotools**:
@@ -162,8 +215,8 @@ prior to calling [sboinstall(1)](sboinstall.1.md), provided that they:
 * Are not already installed.
 * Have versions and build numbers matching the local repository.
 
-The archive can be kept current by running **sbotest** with
-**\--archive-rebuild** regularly.
+The archive can be kept in sync with the local repository by running
+**sbotest** with **\--archive-rebuild**.
 
 Hints may be specified in */etc/sbotest/sbotest.hints*. Saved build
 options from **sbotools** are ignored. See [sbotools.conf(5)](sbotools.conf.5.md) and
