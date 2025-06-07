@@ -1062,7 +1062,8 @@ sub rewrite_slackbuild {
 
 C<run_tee()> runs C<$cmd> under C<tee(1)> to display STDOUT and return it as
 a string. The second return value is the exit status. If C<LOG_DIR> is set,
-STDOUT and STDERR are saved to a timestamped log file named $log_name.
+STDOUT and STDERR are saved to a timestamped log file named $log_name. Otherwise,
+STDOUT only is saved to the temporary directory.
 
 If the bash interpreter cannot be run, the first return value is C<undef> and
 the exit status holds a non-zero value.
@@ -1082,7 +1083,11 @@ sub run_tee {
   my $exit_fn = get_tmp_extfn($exit_fh);
   return undef, _ERR_F_SETFD if not defined $exit_fn;
 
-  $cmd = sprintf '( %s 2>&1 ; echo $? > %s ) | tee %s', $cmd, $exit_fn, $out_fn;
+  if ($config{LOG_DIR} eq 'FALSE') {
+    $cmd = sprintf '( %s ; echo $? > %s ) | tee %s', $cmd, $exit_fn, $out_fn;
+  } else {
+    $cmd = sprintf '( %s 2>&1 ; echo $? > %s ) | tee %s', $cmd, $exit_fn, $out_fn;
+  }
 
   my $ret = system('/bin/bash', '-c', $cmd);
 

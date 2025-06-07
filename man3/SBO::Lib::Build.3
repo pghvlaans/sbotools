@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Sweetmorn, Confusion 5, 3191 YOLD - Syaday" "" "sbotools 3.6"
+.TH SBO::Lib::Build 3 "Pungenday, Confusion 12, 3191 YOLD" "" "sbotools 3.6"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -319,7 +319,8 @@ status of 0 are returned.
 .PP
 \&\f(CWrun_tee()\fR runs \f(CW$cmd\fR under \f(CWtee(1)\fR to display STDOUT and return it as
 a string. The second return value is the exit status. If \f(CW\*(C`LOG_DIR\*(C'\fR is set,
-STDOUT and STDERR are saved to a timestamped log file named \f(CW$log_name\fR.
+STDOUT and STDERR are saved to a timestamped log file named \f(CW$log_name\fR. Otherwise,
+STDOUT only is saved to the temporary directory.
 .PP
 If the bash interpreter cannot be run, the first return value is \f(CW\*(C`undef\*(C'\fR and
 the exit status holds a non-zero value.

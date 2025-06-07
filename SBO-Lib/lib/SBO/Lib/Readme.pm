@@ -285,7 +285,7 @@ sub user_prompt {
   # check for options mentioned in the README
   my $opts = 0;
   if (get_opts($readme)) {
-    my $prel_opts = ask_opts($sbo, $readme));
+    my $prel_opts = ask_opts($sbo, $readme);
     chomp($opts = $prel_opts) if $prel_opts;
   }
   ask_other_readmes($sbo, $location);
