@@ -151,10 +151,10 @@ of the branch and ensure that **REPO** is set if non-default. From here,
 run **sbotest**. If multiple scripts are to be tested for submission,
 using a single merged branch for testing may be convenient:
 
-    git branch testbranch\
-    git checkout testbranch\
-    git merge rust-opt dos2unix fvwm3\
-    git push \--set-upstream origin testbranch
+    git branch testbranch
+    git checkout testbranch
+    git merge rust-opt dos2unix fvwm3
+    git push --set-upstream origin testbranch
 
 To use a local overrides directory, set **LOCAL_OVERRIDES** to an
 absolute path. Place directories for any script to be tested in the top
