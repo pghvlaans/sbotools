@@ -21,7 +21,7 @@ a given name or names
 
     sbofind [-h|-v]
 
-    sbofind [-AERTeiqrt] search_term (search_term)
+    sbofind [-AEFRTeiqrt] search_term (search_term)
 
 ## DESCRIPTION
 
@@ -62,6 +62,11 @@ Exact matching only (case-sensitive).
 **-e\|\--exact**
 
 Exact matching only (case-insensitive).
+
+**-F\|\--first-reverse**
+
+Show all first-level reverse dependencies in the repository for each
+SlackBuild found.
 
 **-t\|\--no-tags**
 

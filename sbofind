@@ -35,6 +35,8 @@ Options:
     only exact matching (case-sensitive).
   -e|--exact:
     only exact matching (case-insensitive).
+  -F|--first-reverse:
+    show the first level of reverse dependencies.
   -t|--no-tags:
     exclude tags from search.
   -i|--info:
@@ -56,7 +58,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue, $all_reverse, $last_reverse);
+my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue, $all_reverse, $last_reverse, $first_reverse);
 
 GetOptions(
 	'help|h'    => \$help,
@@ -70,6 +72,7 @@ GetOptions(
 	'queue|q'   => \$show_queue,
 	'all-reverse|A' => \$all_reverse,
 	'top-reverse|T' => \$last_reverse,
+	'first-reverse|F' => \$first_reverse,
 );
 
 if ($help) { show_usage(); exit 0 }
@@ -178,7 +181,7 @@ sub perform_search {
 # get installed SlackBuilds and reverse dependency information if there is a
 # query, but only once
 sub reverse_queries {
-	if ($all_reverse or $last_reverse) {
+	if ($all_reverse or $last_reverse or $first_reverse) {
 		@available = @{ get_all_available() };
 		$available = +{ map {; $_->{name}, $_->{series} } @available };
 		$all_fulldeps = get_reverse_reqs($available);
@@ -234,6 +237,18 @@ sub last_level_reverse {
 	return "None";
 }
 
+# show the first level of reverse dependencies
+sub first_level_reverse {
+	script_error('first_level_reverse requires an argument.') unless @_ == 1;
+	my $found = shift;
+	my @first_reverse;
+	for my $sbo (keys %$available) {
+		push @first_reverse, $sbo if $all_fulldeps->{$found}->{$sbo};
+	}
+	return join(" ", uniq(sort(@first_reverse))) if @first_reverse;
+	return "None";
+}
+
 my $notfound = 0;
 for my $search (@ARGV) {
 	my $findings = perform_search($search);
@@ -271,6 +286,7 @@ for my $search (@ARGV) {
 			say "RevDep: ". show_reverse_dependencies($name) if $show_reverse;
 			say "AllRev: ". show_available_reverse($name) if $all_reverse;
 			say "LstRev: ". last_level_reverse($name) if $last_reverse;
+			say "1stRev: ". first_level_reverse($name) if $first_reverse;
 			say '';
 			$notfound = 0;
 		}

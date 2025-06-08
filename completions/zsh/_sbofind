@@ -22,6 +22,7 @@ _arguments -s \
 	   '(-A --all-reverse)'{-A,--all-reverse}'[Show all reverse dependencies in the repo.]' \
 	   '(-E --exact-case)'{-E,--exact-case}'[Only exact matching (case-sensitive).]' \
 	   '(-e --exact)'{-e,--exact}'[Only exact matching (case-insensitive).]' \
+	   '(-F --first-reverse)'{-F,--first-reverse}'[Show the first level of reverse dependencies.]' \
 	   '(-t --no-tags)'{-t,--no-tags}'[Exclude tags from search.]' \
 	   '(-i --info)'{-i,--info}'[Show the contents of the .info file for each SlackBuild.]' \
 	   '(-R --reverse)'{-R,--reverse}'[Show any reverse dependencies installed on the system.]' \

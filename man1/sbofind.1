@@ -11,7 +11,7 @@ tree for a given name or names
 .P
 sbofind [-h|-v]
 .P
-sbofind [-AERTeiqrt] search_term (search_term)
+sbofind [-AEFRTeiqrt] search_term (search_term)
 .SH DESCRIPTION
 .P
 .B
@@ -81,6 +81,13 @@ Exact matching only (case-sensitive).
 -e|--exact
 .RS
 Exact matching only (case-insensitive).
+.RE
+.P
+.B
+-F|--first-reverse
+.RS
+Show all first-level reverse dependencies in the
+repository for each SlackBuild found.
 .RE
 .P
 .B
