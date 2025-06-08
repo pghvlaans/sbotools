@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Sweetmorn, Confusion 5, 3191 YOLD - Syaday" "" "sbotools 3.6"
+.TH SBO::Lib::Util 3 "Prickle-Prickle, Confusion 13, 3191 YOLD" "" "sbotools 3.6"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -106,6 +106,10 @@ optional script dependencies and automatic revese dependency rebuild requests.
 .el .SS \f(CW$is_sbotest\fP
 .IX Subsection "$is_sbotest"
 This shared and unexportable variable indicates a run from \f(CW\*(C`sbotest\*(C'\fR.
+.ie n .SS $sbotest_compatible
+.el .SS \f(CW$sbotest_compatible\fP
+.IX Subsection "$sbotest_compatible"
+This shared variable indicates compatibility with the \f(CW\*(C`sbotest\*(C'\fR companion package.
 .ie n .SS $total_build_time
 .el .SS \f(CW$total_build_time\fP
 .IX Subsection "$total_build_time"
@@ -165,10 +169,10 @@ numbers are, upgrading for a script bump may be in order.
 \&  my $ml = check_multilib();
 .Ve
 .PP
-\&\f(CWcheck_multilib()\fR for \f(CW\*(C`/etc/profile.d/32dev.sh\*(C'\fR existence.
+\&\f(CWcheck_multilib()\fR verifies \f(CW\*(C`/etc/profile.d/32dev.sh\*(C'\fR existence.
 The sbotools use this file to build 32\-bit packages on x64 architecture.
 .PP
-Returns 1 if so, and 0 otherwise.
+Returns 1 if the file exists, and 0 otherwise.
 .SS error_code
 .IX Subsection "error_code"
 .Vb 1
@@ -372,8 +376,9 @@ Additionally, \f(CW\*(C`BUILD_IGNORE\*(C'\fR and \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR
 When \f(CW\*(C`sbotest\*(C'\fR is running, the default value of \f(CW\*(C`SBO_HOME\*(C'\fR
 is \f(CW\*(C`/usr/sbotest\*(C'\fR, and \f(CW\*(C`ETC_PROFILE\*(C'\fR and \f(CW\*(C`CPAN_IGNORE\*(C'\fR default
 to \f(CW\*(C`TRUE\*(C'\fR. Supplementary setting \f(CW\*(C`SBO_ARCHIVE\*(C'\fR defaults to
-\&\f(CW\*(C`/usr/sbotest/archive\*(C'\fR. \f(CW\*(C`PKG_DIR\*(C'\fR defaults to \f(CW\*(C`/usr/sbotest/test\*(C'\fR,
-but this value is timestamped by \f(CW\*(C`sbotest\*(C'\fR.
+\&\f(CW\*(C`/usr/sbotest/archive\*(C'\fR. \f(CW\*(C`PKG_DIR\*(C'\fR and \f(CW\*(C`LOG_DIR\*(C'\fR default to
+\&\f(CW\*(C`/usr/sbotest/tests\*(C'\fR and \f(CW\*(C`/usr/sbotest/logs\*(C'\fR, respectively, but
+\&\f(CW\*(C`sbotest\*(C'\fR uses timestamped directories under the configured paths.
 .PP
 There is no useful return value.
 .SS read_hints

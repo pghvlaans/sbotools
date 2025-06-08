@@ -77,7 +77,8 @@ SBO::Lib::Build \- Routines for building Slackware packages from SlackBuilds.org
 This is a shared array that tracks scripts with verified
 completable build queues; it is used by \f(CWget_build_queue()\fR to check for
 circular dependencies. Note that \f(CW@concluded\fR is cleared
-by \f(CW\*(C`sbofind\*(C'\fR and \f(CW\*(C`sboremove\*(C'\fR between results.
+by \f(CW\*(C`sbofind\*(C'\fR and \f(CW\*(C`sboremove\*(C'\fR between results, and by \f(CW\*(C`sboinstall\*(C'\fR when
+running with \f(CW\*(C`mass\-rebuild\*(C'\fR or \f(CW\*(C`series\-rebuild\*(C'\fR.
 .ie n .SS $env_tmp
 .el .SS \f(CW$env_tmp\fP
 .IX Subsection "$env_tmp"
@@ -89,7 +90,8 @@ set.
 This is a shared array that tracks scripts with verified
 reverse dependency chains; it is used by \f(CWget_full_reverse()\fR to check for
 circular reverse dependencies. Note that \f(CW@reverse_concluded\fR is cleared
-by \f(CW\*(C`sbofind\*(C'\fR and \f(CW\*(C`sboremove\*(C'\fR between results.
+by \f(CW\*(C`sbofind\*(C'\fR and \f(CW\*(C`sboremove\*(C'\fR between results, and by \f(CW\*(C`sboinstall\*(C'\fR when
+running with \f(CW\*(C`mass\-rebuild\*(C'\fR or \f(CW\*(C`series\-rebuild\*(C'\fR.
 .ie n .SS $tempdir
 .el .SS \f(CW$tempdir\fP
 .IX Subsection "$tempdir"

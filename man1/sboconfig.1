@@ -281,7 +281,17 @@ LOG_DIR\fR\
 .B
 absolute path\fR\
 \&, save build logs here. Logs are saved with the name of the script
-and a timestamp.
+and a timestamp. Please note that because
+.B
+STDERR
+must be redirected for a complete log, colors and formatting may differ
+when running some SlackBuilds unless
+.B
+LOG_DIR
+is
+.B
+FALSE\fR\
+\&.
 .RE
 .P
 .B

@@ -157,6 +157,10 @@ optional script dependencies and automatic revese dependency rebuild requests.
 
 This shared and unexportable variable indicates a run from C<sbotest>.
 
+=head2 $sbotest_compatible
+
+This shared variable indicates compatibility with the C<sbotest> companion package.
+
 =head2 $total_build_time
 
 A running total of the time it took to build and package each script in the queue.
@@ -312,10 +316,10 @@ sub build_cmp {
 
   my $ml = check_multilib();
 
-C<check_multilib()> for C</etc/profile.d/32dev.sh> existence.
+C<check_multilib()> verifies C</etc/profile.d/32dev.sh> existence.
 The sbotools use this file to build 32-bit packages on x64 architecture.
 
-Returns 1 if so, and 0 otherwise.
+Returns 1 if the file exists, and 0 otherwise.
 
 =cut
 
@@ -918,8 +922,9 @@ C<CLASSIC> is C<TRUE>.
 When C<sbotest> is running, the default value of C<SBO_HOME>
 is C</usr/sbotest>, and C<ETC_PROFILE> and C<CPAN_IGNORE> default
 to C<TRUE>. Supplementary setting C<SBO_ARCHIVE> defaults to
-C</usr/sbotest/archive>. C<PKG_DIR> defaults to C</usr/sbotest/test>,
-but this value is timestamped by C<sbotest>.
+C</usr/sbotest/archive>. C<PKG_DIR> and C<LOG_DIR> default to
+C</usr/sbotest/tests> and C</usr/sbotest/logs>, respectively, but
+C<sbotest> uses timestamped directories under the configured paths.
 
 There is no useful return value.
 

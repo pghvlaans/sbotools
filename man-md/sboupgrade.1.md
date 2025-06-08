@@ -138,7 +138,7 @@ If numerical, pass to the **-j** argument when a SlackBuild invoking
 If an **absolute path**, save built packages there, overriding the value
 of the **PKG_DIR** setting.
 
--L\|\--log-dir (FALSE\|/path)
+**-L\|\--log-dir (FALSE\|/path)**
 
 If an **absolute path**, save build logs here, overriding the value of
 the **LOG_DIR** setting. Logs are saved with the name of the script and

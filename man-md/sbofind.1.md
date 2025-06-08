@@ -21,7 +21,7 @@ a given name or names
 
     sbofind [-h|-v]
 
-    sbofind [-AERTetiqr] search_term (search_term)
+    sbofind [-AERTeiqrt] search_term (search_term)
 
 ## DESCRIPTION
 

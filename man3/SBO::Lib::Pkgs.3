@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Pkgs 3"
-.TH SBO::Lib::Pkgs 3 "Setting Orange, Discord 57, 3191 YOLD" "" "sbotools 3.6"
+.TH SBO::Lib::Pkgs 3 "Prickle-Prickle, Confusion 13, 3191 YOLD" "" "sbotools 3.6"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -109,7 +109,8 @@ SlackBuilds.
 .PP
 \&\f(CWget_installed_packages()\fR returns an array reference to a list of installed packages
 matching the specified \f(CW$type\fR. The available types are \f(CW\*(C`STD\*(C'\fR for non-SBo packages,
-\&\f(CW\*(C`SBO\*(C'\fR for in-tree _SBo packages, \f(CW\*(C`DIRTY\*(C'\fR for out-of-tree _SBo packages and \f(CW\*(C`ALL\*(C'\fR for all.
+\&\f(CW\*(C`SBO\*(C'\fR for in-tree _SBo and _SBocompat32 packages, \f(CW\*(C`DIRTY\*(C'\fR for out-of-tree _SBo packages
+and \f(CW\*(C`ALL\*(C'\fR for all.
 .PP
 The returned array reference holds a list of hash references representing
 the names, versions and full installed package names of the returned packages.
