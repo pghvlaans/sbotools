@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ %config :const auto_reverse error_code get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay /;
+use SBO::Lib qw/ :config :const auto_reverse error_code get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay @concluded @reverse_concluded /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -70,6 +70,8 @@ Options (defaults shown first where applicable):
     specified commands and options.
   --mass-rebuild:
     rebuild all installed SlackBuilds at the available version.
+  --series-rebuild (SERIES):
+    rebuild all installed SlackBuilds of a series at the available version.
 
 EOF
 	return 1;
@@ -80,7 +82,7 @@ my $distclean = $config{DISTCLEAN};
 my $jobs = $config{JOBS};
 my $gpg = $config{GPG_VERIFY};
 my $etc_profile = $config{ETC_PROFILE};
-my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $pkg_dir, $log_dir);
+my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $pkg_dir, $log_dir, $series_rebuild);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -103,6 +105,7 @@ my $options_ok = GetOptions(
 	'etc-profile|e=s'   => \$etc_profile,
 	'pkg-dir|k=s'       => \$pkg_dir,
 	'log-dir|L=s'       => \$log_dir,
+	'series-rebuild=s'  => \$series_rebuild,
 );
 
 if ($help) {
@@ -122,7 +125,7 @@ unless ($options_ok) {
 
 lint_sbo_config($self, %config);
 
-if (!@ARGV and not length $utemp and not $mass_rebuild) { show_usage(); exit 1 }
+if (!@ARGV and not length $utemp and not $mass_rebuild and not $series_rebuild) { show_usage(); exit 1 }
 if (defined $utemp and not length $utemp) { show_usage(); exit 1 }
 if (defined $ctemp and not length $ctemp) { show_usage(); exit 1 }
 
@@ -180,8 +183,9 @@ if ($gpg) { verify_gpg(); }
 
 if ($compat32) {
 	usage_error("compat32 only works on x86_64.") unless get_arch eq 'x86_64';
-	usage_error("compat32 is incompatible with mass-rebuild.") unless not $mass_rebuild;
-	usage_error("compat32 is incompatible with use-template.") unless not $utemp;
+	usage_error("compat32 is incompatible with mass-rebuild.") if $mass_rebuild;
+	usage_error("compat32 is incompatible with series-rebuild.") if $series_rebuild;
+	usage_error("compat32 is incompatible with use-template.") if $utemp;
 }
 
 if ($utemp and $mass_rebuild) {
@@ -196,12 +200,28 @@ if ($reverse_rebuild and $mass_rebuild) {
 	usage_error("mass-rebuild is incompatible with reverse_rebuild.");
 }
 
+if ($utemp and $series_rebuild) {
+	usage_error("series-rebuild is incompatible with use-template.");
+}
+
+if ($no_reqs and $series_rebuild) {
+	usage_error("series-rebuild is incompatible with norequirements.");
+}
+
+if ($reverse_rebuild and $series_rebuild) {
+	usage_error("series-rebuild is incompatible with reverse_rebuild.");
+}
+
 if ($utemp and $reverse_rebuild) {
 	usage_error("reverse-rebuild is incompatible with use-template.");
 }
 
 if ($no_reqs and $reverse_rebuild) {
 	usage_error("reverse-rebuild is incompatible with norequirements.");
+}
+
+if ($series_rebuild and $mass_rebuild) {
+	usage_error("mass-rebuild is incompatible with series-rebuild.");
 }
 
 $yes_really = 1 if $dry_run;
@@ -224,7 +244,7 @@ if ($mass_rebuild and -f $mtemp_resume) {
 	$utemp = $mtemp_resume;
 }
 my $requested_reinstall = 1 if $reinstall;
-$reinstall = 1 if $mass_rebuild or $reverse_rebuild;
+$reinstall = 1 if $mass_rebuild or $reverse_rebuild or $series_rebuild;
 
 my @sbos;
 
@@ -297,7 +317,7 @@ if (length $utemp) {
 		}
 	}
 # the --mass-rebuild queue is handled later
-} elsif (not $mass_rebuild) {
+} elsif (not $mass_rebuild and not $series_rebuild) {
 	# noninteractive and no requirements
 	if (not $reverse_rebuild and not $yes_really and ($no_reqs or $non_int)) {
 		my $interim_queue = \@sbos;
@@ -333,7 +353,7 @@ if (length $utemp) {
 
 # --reinstall, no --reverse-rebuild: trigger automatic rebuilds
 # and put everything in the right order.
-if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not $utemp) {
+if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not $utemp and not $series_rebuild) {
 	my $need_rationalize;
 	$save_queue = $build_queue;
 	for my $sbo (@$build_queue) {
@@ -364,9 +384,10 @@ my (%inst_names, %std_names);
 $inst_names{$_->{name}} = $_ for @$inst_pkgs;
 $std_names{$_->{name}} = $_ for @$std_pkgs;
 
-# prepare a queue in case of mass_rebuild
-if ($mass_rebuild and not $resume_mass_rebuild) {
+# prepare a queue in case of mass_rebuild or series_rebuild
+if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 	my $needs_rationalize;
+	my @needs_reverse;
 	my $inst_sbos = get_installed_packages('SBO');
 	my %sbos_names;
 	$sbos_names{$_->{name}} = $_ for @$inst_sbos;
@@ -374,12 +395,37 @@ if ($mass_rebuild and not $resume_mass_rebuild) {
 		my $name = $sbos_names{$sbo}{name};
 		next if not $name;
 		$needs_rationalize = 1 if $sbo =~ /-compat32$/;
+		if ($series_rebuild) {
+			my $location = get_sbo_location($sbo);
+			my $check_location = get_orig_location($sbo);
+			$location = $check_location if $check_location;
+			my $series = basename(dirname($location));
+			next if $series ne $series_rebuild;
+		}
+		if ($sbo =~ /-compat32$/) {
+			splice @concluded;
+			splice @reverse_concluded;
+		}
 		my $queue = get_build_queue([$name], \%warnings);
 		if ($sbo =~ /-compat32$/) {
+			splice @concluded;
+			splice @reverse_concluded;
 			for my $item (@$queue) { $item = "$item-compat32" unless $item =~ /-compat32$/; }
-			$needs_rationalize = 1;
 		}
 		$build_queue = merge_queues($build_queue, $queue);
+		push @needs_reverse, $sbo if $series_rebuild and auto_reverse($sbo);
+	}
+	if (@needs_reverse) {
+		my ($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 0, @needs_reverse);
+		if ($extra_queue) {
+			$needs_rationalize = 1;
+			$build_queue = merge_queues($build_queue, $extra_queue);
+			%warnings = (%warnings, %extra_warnings);
+		}
+	}
+	unless ($build_queue) {
+		usage_error("No SBo packages are installed. Exiting.") if $mass_rebuild;
+		usage_error("No SBo packages are installed from the $series_rebuild series. Exiting.");
 	}
 	$build_queue = rationalize_queue($build_queue) if $needs_rationalize;
 }
@@ -416,7 +462,7 @@ FIRST: for my $sbo (@$build_queue) {
 	my ($perl_ineligible, $arch_ineligible);
 	my $name;
 	if ($sbo =~ /-compat32$/) {
-		next FIRST unless $utemp or $mass_rebuild;
+		next FIRST unless $utemp or $mass_rebuild or $series_rebuild;
 		$name = $sbo;
 		$sbo =~ s/-compat32$//;
 	} else {
@@ -469,7 +515,7 @@ FIRST: for my $sbo (@$build_queue) {
 		if ($reinstall and $std_names{$name}) {
 			next FIRST unless prompt("$inst_msg\nWarning: $name is not an SBo package. Reinstall from SBo anyway?", default => 'no');
 		} elsif ($reinstall and not $non_int) {
-			if ($mass_rebuild or $reverse_rebuild) {
+			if ($mass_rebuild or $reverse_rebuild or $series_rebuild) {
 				next FIRST unless prompt("$inst_msg Do you want to reinstall from SBo?", default => 'yes');
 			} else {
 				next FIRST unless prompt("$inst_msg Do you want to reinstall from SBo?", default => 'no');

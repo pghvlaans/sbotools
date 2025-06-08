@@ -915,7 +915,7 @@ sub process_sbos {
 C<rationalize_queue()> takes a build queue and rearranges it such that
 no script appears before any of its dependencies. Currently, this is only
 useful when an automatic reverse dependency rebuild has been triggered or
-in case of a mass rebuild. The rearranged queue is returned.
+in case of a mass or series rebuild. The rearranged queue is returned.
 
 =cut
 

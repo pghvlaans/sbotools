@@ -25,13 +25,14 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Download.pm: Change URI unescape positioning to accommodate potential %2F
     * Thanks to Slack Coder for the advice.
   * sboremove: Show the full reverse queue in --alwaysask; add a --compat32 option
-  * Bugfix: Error out gracefully when reading standin fails for prompts
+  * Bugfix: Error out gracefully when reading STDIN fails for prompts
   * Bugfix: Properly detect useradd and groupadd commands in single quotes
   * Bugfix: Fix handling build options from files with EOL
     * Thanks to leoctrl for the report.
   * Add configuration LOG_DIR for saving build logs
   * Add environment variable SBOTOOLS_CONF_DIR for setting an alternative configuration directory
   * Bugfix: Send the RESET escape after running each SlackBuild to clean up after colorful build systems
+  * sboinstall: Add --series-rebuild to rebuild and reinstall all SBo packages in a series with their dependencies
 
 #### 3.6 - 2025-05-10
   * Bugfix: Download.pm: Unlink existing symlinks with the same name as new ones

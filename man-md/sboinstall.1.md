@@ -31,6 +31,9 @@
     sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
                [-Dioqr] [--create-template FILE] --mass-rebuild
 
+    sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
+               [-Dioqr] [--create-template FILE] --series-rebuild SERIES
+
 ## DESCRIPTION
 
 **sboinstall** is used to install SlackBuilds. If the
@@ -150,8 +153,8 @@ inspected prior to installation. GitHub Issues are welcome in case of
 unexpected failure.
 
 **sboinstall** will not attempt *compat32* builds for Perl-based or
-*noarch* scripts. Incompatible with **\--mass-rebuild** and
-**\--use-template**.
+*noarch* scripts. Incompatible with **\--mass-rebuild,
+\--series-rebuild** and **\--use-template**.
 
 **-q\|\--reverse-rebuild**
 
@@ -160,18 +163,18 @@ build queue also includes any missing dependencies for those scripts.
 With **\--compat32**, rebuild only installed *compat32* reverse
 dependencies.
 
-Incompatible with **\--norequirements**, **\--use-template** and
-**\--mass-rebuild**.
+Incompatible with **\--norequirements**, **\--use-template**,
+**\--mass-rebuild** and **\--series-rebuild**.
 
 **-r\|\--nointeractive**
 
 Bypass all user prompts for the requested SlackBuilds. Dependency
 resolution is bypassed as well except for **\--mass-rebuild**,
-**\--reverse-rebuild** and (extraneously) **\--batch**. Saved build
-options will be reused automatically unless **\--norecall** or
-**\--use-template** are passed as well. Unless it is obvious that new
-build options and dependency resolution are not required, consider using
-a template instead.
+**\--series-rebuild**, **\--reverse-rebuild** and (extraneously)
+**\--batch**. Saved build options will be reused automatically unless
+**\--norecall** or **\--use-template** are passed as well. Unless it is
+obvious that new build options and dependency resolution are not
+required, consider using a template instead.
 
 If an operation with **\--nointeractive** would install an in-tree
 *\_SBo* package in place of a package without this tag, the build is
@@ -203,9 +206,10 @@ commands and build options and save to the specified **FILE**.
 Build using the template saved to **FILE.** This disables all user
 prompts.
 
-Incompatible with **\--compat32**, **\--mass-rebuild** and
-**\--reverse-rebuild**. To make *compat32* packages from a template,
-consider using **\--create-template** with **\--compat32** first.
+Incompatible with **\--compat32**, **\--series-rebuild**,
+**\--mass-rebuild** and **\--reverse-rebuild**. To make *compat32*
+packages from a template, consider using **\--create-template** with
+**\--compat32** first.
 
 **\--mass-rebuild**
 
@@ -217,8 +221,8 @@ installed when dependencies have been added.
 In combination with **\--nointeractive** and **\--batch**, saved build
 options are reused automatically.
 
-Incompatible with **\--reverse-rebuild**, **\--compat32**,
-**\--use-template** and **\--norequirements**.
+Incompatible with **\--series-rebuild**, **\--reverse-rebuild**,
+**\--compat32**, **\--use-template** and **\--norequirements**.
 
 If the mass rebuild process is interrupted after downloading has been
 completed, whether by signal or by build failure, a template named
@@ -226,14 +230,28 @@ completed, whether by signal or by build failure, a template named
 mass rebuild restarts from the script after the script that failed when
 **\--mass-rebuild** is used again.
 
+**\--series-rebuild (SERIES)**
+
+Generate build queues, rebuild and reinstall all in-tree *\_SBo*
+SlackBuilds from the **SERIES** series. This is most potentially useful
+on Slackware -current for the **python**, **perl**, **ruby** and
+**haskell** series.
+
+In combination with **\--nointeractive** and **\--batch**, saved build
+options are reused automatically.
+
+Incompatible with **\--reverse-rebuild**, **\--compat32**,
+**\--use-template**, **\--mass-rebuild** and **\--norequirements**.
+
 **\--batch**
 
 Bypass all user prompts for the requested SlackBuilds, but perform
-dependency resolution, even if neither **\--mass-rebuild** nor
-**\--reverse-rebuild** are passed. Any saved build options are used
-again unless **\--norecall** is passed as well. If a script calls for
-**useradd** or **groupadd**, **sboinstall** exits with an informative
-message if any specified user and group does not exist.
+dependency resolution, even if none of **\--mass-rebuild**,
+**\--series-rebuild** or **\--reverse-rebuild** are passed. Any saved
+build options are used again unless **\--norecall** is passed as well.
+If a script calls for **useradd** or **groupadd**, **sboinstall** exits
+with an informative message if any specified user and group does not
+exist.
 
 This flag is not to be taken lightly, as it can cause new dependencies
 to be installed without prompting. Usage in a production environment

@@ -16,7 +16,7 @@ and feature requests will be considered on a case-by-case basis.
           building each SlackBuild in the queue. This obviates the main
           usecase for a pre-build command hint. Very convenient if a
           dependency installs a new profile script, but the existing
-          default behavior will probably stay the way it is.
+          default behavior will stay the way it is.
 
 * Add a reverse dependency build tester.
 
@@ -29,9 +29,17 @@ and feature requests will be considered on a case-by-case basis.
   Status: Expect an sbotest version release at about the same time as
           sbotools-3.7.
 
+  Associated sbotools changes:
+    * Save build logs to a directory with LOG_DIR
+    * Set an environment variable SBOTOOLS_CONF_DIR to use a custom
+      configuration directory
+
 * Rebuild all scripts in a series.
 
   Potentially useful for the python, perl, ruby and haskell series.
+
+  Status: Use e.g. "sboinstall --series-rebuild perl" to rebuild and reinstall
+          all installed _SBo packages in a series with their dependencies.
 
 * sboremove: With --alwaysask, show all 'needed' reverse dependencies
 

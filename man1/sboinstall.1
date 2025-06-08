@@ -17,6 +17,9 @@ sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
 .P
 sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-Dioqr] [--create-template FILE] --mass-rebuild
+.P
+sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+           [-Dioqr] [--create-template FILE] --series-rebuild SERIES
 .SH DESCRIPTION
 .P
 .B
@@ -362,7 +365,9 @@ builds for Perl-based or
 noarch
 scripts. Incompatible with
 .B
---mass-rebuild
+--mass-rebuild,
+.B
+--series-rebuild
 and
 .B
 --use-template\fR\
@@ -387,10 +392,13 @@ Incompatible with
 --norequirements\fR\
 \&,
 .B
---use-template
+--use-template\fR\
+\&,
+.B
+--mass-rebuild
 and
 .B
---mass-rebuild\fR\
+--series-rebuild\fR\
 \&.
 .RE
 .P
@@ -402,6 +410,9 @@ SlackBuilds. Dependency resolution is bypassed
 as well except for
 .B
 --mass-rebuild\fR\
+\&,
+.B
+--series-rebuild\fR\
 \&,
 .B
 --reverse-rebuild
@@ -484,6 +495,9 @@ Incompatible with
 --compat32\fR\
 \&,
 .B
+--series-rebuild\fR\
+\&,
+.B
 --mass-rebuild
 and
 .B
@@ -520,6 +534,9 @@ and
 
 Incompatible with
 .B
+--series-rebuild\fR\
+\&,
+.B
 --reverse-rebuild\fR\
 \&,
 .B
@@ -547,13 +564,66 @@ is used again.
 .RE
 .P
 .B
+--series-rebuild (SERIES)
+.RS
+Generate build queues, rebuild and reinstall all in-tree
+.I
+_SBo
+SlackBuilds from the
+.B
+SERIES
+series. This is most potentially useful on Slackware -current for the
+.B
+python\fR\
+\&,
+.B
+perl\fR\
+\&,
+.B
+ruby
+and
+.B
+haskell
+series.
+
+In combination with
+.B
+--nointeractive
+and
+.B
+--batch\fR\
+\&,
+saved build options are reused automatically.
+.P
+Incompatible with
+.B
+--reverse-rebuild\fR\
+\&,
+.B
+--compat32\fR\
+\&,
+.B
+--use-template\fR\
+\&,
+.B
+--mass-rebuild
+and
+.B
+--norequirements\fR\
+\&.
+.RE
+.P
+.B
 --batch
 .RS
 Bypass all user prompts for the requested SlackBuilds, but perform dependency
-resolution, even if neither
+resolution, even if none of
 .B
---mass-rebuild
-nor
+--mass-rebuild\fR\
+\&,
+.B
+--series-rebuild
+or
 .B
 --reverse-rebuild
 are passed. Any saved build options are used again unless
