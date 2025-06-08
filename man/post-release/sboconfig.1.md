@@ -124,7 +124,10 @@ SlackBuild invoking **make** is run.
 **-L\|\--log-dir (FALSE\|/path)**
 
 **LOG_DIR**: If set to an **absolute path**, save build logs here. Logs
-are saved with the name of the script and a timestamp.
+are saved with the name of the script and a timestamp. Please note that
+because **STDERR** must be redirected for a complete log, colors and
+formatting may differ when running some SlackBuilds unless **LOG_DIR**
+is **FALSE**.
 
 **-O\|\--obsolete-check (FALSE\|TRUE)**
 
