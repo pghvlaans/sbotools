@@ -393,13 +393,10 @@ Incompatible with
 --norequirements\fR\
 \&,
 .B
---use-template\fR\
-\&,
-.B
---mass-rebuild
+--use-template
 and
 .B
---series-rebuild\fR\
+--mass-rebuild\fR\
 \&.
 .RE
 .P
@@ -573,7 +570,12 @@ _SBo
 SlackBuilds from the
 .B
 SERIES
-series. This is most potentially useful on Slackware -current for the
+series. In combination with
+.B
+--reverse-rebuild\fR\
+\&, rebuild and reinstall reverse dependencies of these scripts
+as well. This is most potentially useful on Slackware -current for
+the
 .B
 python\fR\
 \&,
@@ -597,9 +599,6 @@ and
 saved build options are reused automatically.
 .P
 Incompatible with
-.B
---reverse-rebuild\fR\
-\&,
 .B
 --compat32\fR\
 \&,

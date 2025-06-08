@@ -208,10 +208,6 @@ if ($no_reqs and $series_rebuild) {
 	usage_error("series-rebuild is incompatible with norequirements.");
 }
 
-if ($reverse_rebuild and $series_rebuild) {
-	usage_error("series-rebuild is incompatible with reverse_rebuild.");
-}
-
 if ($utemp and $reverse_rebuild) {
 	usage_error("reverse-rebuild is incompatible with use-template.");
 }
@@ -413,7 +409,7 @@ if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 			for my $item (@$queue) { $item = "$item-compat32" unless $item =~ /-compat32$/; }
 		}
 		$build_queue = merge_queues($build_queue, $queue);
-		push @needs_reverse, $sbo if $series_rebuild and auto_reverse($sbo);
+		push @needs_reverse, $sbo if $series_rebuild and ($reverse_rebuild or auto_reverse($sbo));
 	}
 	if (@needs_reverse) {
 		my ($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 0, @needs_reverse);

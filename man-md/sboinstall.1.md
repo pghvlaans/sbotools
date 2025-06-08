@@ -163,8 +163,8 @@ build queue also includes any missing dependencies for those scripts.
 With **\--compat32**, rebuild only installed *compat32* reverse
 dependencies.
 
-Incompatible with **\--norequirements**, **\--use-template**,
-**\--mass-rebuild** and **\--series-rebuild**.
+Incompatible with **\--norequirements**, **\--use-template** and
+**\--mass-rebuild**.
 
 **-r\|\--nointeractive**
 
@@ -233,15 +233,16 @@ mass rebuild restarts from the script after the script that failed when
 **\--series-rebuild (SERIES)**
 
 Generate build queues, rebuild and reinstall all in-tree *\_SBo*
-SlackBuilds from the **SERIES** series. This is most potentially useful
-on Slackware -current for the **python**, **perl**, **ruby** and
-**haskell** series.
+SlackBuilds from the **SERIES** series. In combination with
+**\--reverse-rebuild**, rebuild and reinstall reverse dependencies of
+these scripts as well. This is most potentially useful on Slackware
+-current for the **python**, **perl**, **ruby** and **haskell** series.
 
 In combination with **\--nointeractive** and **\--batch**, saved build
 options are reused automatically.
 
-Incompatible with **\--reverse-rebuild**, **\--compat32**,
-**\--use-template**, **\--mass-rebuild** and **\--norequirements**.
+Incompatible with **\--compat32**, **\--use-template**,
+**\--mass-rebuild** and **\--norequirements**.
 
 **\--batch**
 
