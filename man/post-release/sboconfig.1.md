@@ -24,12 +24,10 @@
 
     sboconfig [--reset]
 
-    sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \
-              [-e TRUE|FALSE] [-g TRUE|FALSE ] [-j #|FALSE] \
-              [-P TRUE|FALSE] [-p /path|FALSE] [-s /path|/usr/sbo] \
-              [-B branch_name|FALSE] [-b TRUE|FALSE] [-O TRUE|FALSE] \
-              [-o /path|FALSE] [-V #.#|FALSE] [-r url|FALSE] \
-              [-R TRUE|FALSE] [-S TRUE|FALSE]
+    sboconfig [-CPORScbdeg TRUE|FALSE] [-j #|FALSE] [-pLo
+/path\|FALSE] \
+              [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \
+              [-r url|FALSE]
 
 ## DESCRIPTION
 
@@ -39,7 +37,9 @@ menu to specify settings; all options are accompanied by an explanatory
 message, and no changes are applied without user confirmation.
 
 The [sbotools.conf(5)](sbotools.conf.5.md) file can also be manually edited; any fields
-not relevant to **sbotools** configuration are ignored.
+not relevant to **sbotools** configuration are ignored. To use a
+configuration directory other than */etc/sbotools*, export an
+environment variable **SBOTOOLS_CONF_DIR** with an absolute path.
 
 Non-root users can only call **sboconfig** with the **\--list**,
 **\--help** and **\--version** flags.
@@ -121,10 +121,10 @@ Slackware 14.1.
 **JOBS**: If **numerical**, pass to the **-j** argument when a
 SlackBuild invoking **make** is run.
 
-**-P\|\--cpan-ignore (FALSE\|TRUE)**
+**-L\|\--log-dir (FALSE\|/path)**
 
-**CPAN_IGNORE**: If **TRUE**, install scripts even if they are already
-installed from the CPAN.
+**LOG_DIR**: If set to an **absolute path**, save build logs here. Logs
+are saved with the name of the script and a timestamp.
 
 **-O\|\--obsolete-check (FALSE\|TRUE)**
 
@@ -132,6 +132,11 @@ installed from the CPAN.
 obsolete script list to */etc/sbotools/obsolete* from the **sbotools**
 home page at <https://pghvlaans.github.io/sbotools> when running
 [sbocheck(1)](sbocheck.1.md) in Slackware -current.
+
+**-P\|\--cpan-ignore (FALSE\|TRUE)**
+
+**CPAN_IGNORE**: If **TRUE**, install scripts even if they are already
+installed from the CPAN.
 
 **-p\|\--pkg-dir (FALSE\|/path)**
 

@@ -12,6 +12,7 @@
   * Add configuration **LOG_DIR** for saving build logs
   * Add environment variable **SBOTOOLS_CONF_DIR** for setting an alternative configuration directory
   * Bugfix: Send the *RESET* escape after running each SlackBuild to clean up after colorful build systems
+  * *sboinstall*: Add **\--series-rebuild** to rebuild and reinstall all SBo packages in a series with their dependencies
 
 * 3.6 - 2025-05-10
   * Bugfix: *Download.pm*: Unlink existing symlinks with the same name as new ones
