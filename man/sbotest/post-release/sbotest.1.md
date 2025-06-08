@@ -43,9 +43,11 @@ Using **sbotest** on a general-purpose Slackware installation is
 
 **sbotest** is a reverse dependency build tester based on the
 **sbotools** library. Called without options, it builds any requested
-SlackBuilds with their first level of reverse dependencies. To test all
-reverse dependencies of the requested scripts, use the
-**\--full-reverse** option; **\--single** tests no reverse dependencies.
+SlackBuilds with their first level of reverse dependencies. Use
+**sbofind \--first-reverse** for a list of scripts that would be tested,
+if compatible. To test all reverse dependencies of the requested
+scripts, use the **\--full-reverse** option; **\--single** tests no
+reverse dependencies.
 
 Each test target has a separate testing workflow. First, dependencies
 saved to the **SBO_ARCHIVE** directory (default */usr/sbotest/archive*)
@@ -98,7 +100,8 @@ about setting hints.
 **-f\|\--full-reverse**
 
 Test all reverse dependencies for the requested scripts rather than the
-first level only.
+first level only. Use **sbofind \--all-reverse** to see which scripts
+would be tested, if compatible.
 
 **-s\|\--single**
 
@@ -243,8 +246,8 @@ None known. If found, Issues and Pull Requests to
 
 ## SEE ALSO
 
-[sboinstall(1)](sboinstall.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), SBO::Lib(3),
-SBO::Lib::Build(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3),
+[sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md),
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3),
 SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), sbolint(1),
 sbopkglint(1)
 
