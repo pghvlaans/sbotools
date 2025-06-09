@@ -1,6 +1,6 @@
 #compdef sboclean
 
-# sbotools: https://pink-mist.github.io/sbotools/
+# sbotools: https://pghvlaans.github.io/sbotools/
 
 # SlackBuilds with saved options
 slackbuilds=( ${(uf)"$(find /var/log/sbotools -type f -exec basename {} \;)"} )

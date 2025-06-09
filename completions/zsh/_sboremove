@@ -1,6 +1,6 @@
 #compdef sboremove
 
-# sbotools: https://pink-mist.github.io/sbotools/
+# sbotools: https://pghvlaans.github.io/sbotools/
 
 # get all installed SBo packages
 packages=( ${(uf)"$(ls /var/log/packages/*_SBo | cut -d'/' -f5 | rev | cut -d- -f4- | rev)"} )

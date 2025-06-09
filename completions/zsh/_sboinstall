@@ -1,6 +1,6 @@
 #compdef sboinstall
 
-# sbotools: https://pink-mist.github.io/sbotools/
+# sbotools: https://pghvlaans.github.io/sbotools/
 
 # work out where the SBo repo is (default to /usr/sbo/repo)
 # but also check for SBO_HOME setting in /etc/sbotools/sbotools.conf

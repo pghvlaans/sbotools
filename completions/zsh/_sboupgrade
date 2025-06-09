@@ -1,6 +1,6 @@
 #compdef sboupgrade
 
-# sbotools: https://pink-mist.github.io/sbotools/
+# sbotools: https://pghvlaans.github.io/sbotools/
 
 # get a list of available upgrades
 sboupdates=( ${(uf)"$(perl -MSBO::Lib::Pkgs=get_available_updates -E 'say $_->{name} for @{ get_available_updates("BOTH"); }')"} )

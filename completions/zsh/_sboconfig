@@ -1,6 +1,6 @@
 #compdef sboconfig
 
-# sbotools: https://pink-mist.github.io/sbotools/
+# sbotools: https://pghvlaans.github.io/sbotools/
 
 _arguments \
     - info \
