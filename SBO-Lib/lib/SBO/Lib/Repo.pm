@@ -178,7 +178,6 @@ sub check_repo {
     system
   };
   if (-d $repo_path) {
-    _race::cond '$repo_path could be deleted after -d check.';
     opendir(my $repo_handle, $repo_path);
     my $extra_dir;
     my $incomplete;
@@ -391,11 +390,9 @@ sub git_sbo_tree {
     $branchres = 0;
   }
   if (-d "$repo_path/.git" and check_git_remote($repo_path, $url)) {
-    _race::cond '$repo_path can be deleted after -d check.';
     chdir $repo_path or return 0;
     $res = eval {
       die unless system(qw! git fetch !) == 0; # if system() doesn't return 0, there was an error
-      _race::cond 'The git repo could be changed or deleted here.';
       die unless system(qw! git reset --hard origin !) == 0;
       unlink "$repo_path/SLACKBUILDS.TXT";
       if ($branchres) {
@@ -415,7 +412,6 @@ sub git_sbo_tree {
       }
     }
   }
-  _race::cond '$cwd could be deleted here';
   if ($config{GPG_VERIFY} eq 'TRUE') {
     return verify_git_commit($branch) if $branchres;
     return verify_git_commit("origin");

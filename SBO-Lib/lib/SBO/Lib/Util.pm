@@ -827,7 +827,6 @@ sub open_fh {
   }
   my ($file, $op) = @_;
   my $fh;
-  _race::cond('$file could be deleted between -f test and open');
   unless (open $fh, $op, $file) {
     my $warn = "Unable to open $file.\n";
     my $exit = _ERR_OPENFH;
@@ -1208,10 +1207,6 @@ sub wrapsay {
   print "\n" if $trail;
   return 1;
 }
-
-# _race::cond will allow both documenting and testing race conditions
-# by overriding its implementation for tests
-sub _race::cond { return }
 
 =head1 EXIT CODES
 
