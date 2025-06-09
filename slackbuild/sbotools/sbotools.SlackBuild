@@ -63,7 +63,7 @@ find -L . \
 ( cd SBO-Lib
 	/usr/bin/perl Makefile.PL \
 	  PREFIX=/usr \
-	  INSTALLDIRS=site \
+	  INSTALLDIRS=vendor \
 	  INSTALLVENDORMAN1DIR=/usr/man/man1 \
 	  INSTALLVENDORMAN3DIR=/usr/man/man3 \
 	  INSTALLMAN3DIR=none

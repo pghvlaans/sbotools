@@ -15,7 +15,7 @@ use File::Copy;
 use File::Find;
 use File::Path qw/ make_path remove_tree /;
 use File::Temp qw/ tempfile /;
-use Sort::Versions;
+use SBO::ThirdParty::Sort::Versions;
 
 use Exporter 'import';
 

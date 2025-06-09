@@ -15,4 +15,4 @@ lib/SBO/Lib/Readme.pm
 lib/SBO/Lib/Repo.pm
 lib/SBO/Lib/Tree.pm
 lib/SBO/Lib/Util.pm
-lib/Sort/Versions.pm
+lib/SBO/ThirdParty/Sort/Versions.pm

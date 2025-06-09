@@ -14,7 +14,7 @@ To install this module type the following:
 
 DEPENDENCIES
 
-This module bundles Sort::Versions 1.62 which has its own license:
+This module bundles Sort::Versions 1.62, which has its own license:
 
    The files in this package are copyright Kenneth J. Albanowski, Ed
    Avis, and Matt Johnson.  This package is free software; you can

@@ -10,7 +10,7 @@ our $VERSION = '3.6';
 
 use Exporter 'import';
 use File::Copy;
-use Sort::Versions;
+use SBO::ThirdParty::Sort::Versions;
 use Text::Wrap qw/ wrap $columns /;
 
 my $consts;

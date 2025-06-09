@@ -1,4 +1,4 @@
-package Sort::Versions;
+package SBO::ThirdParty::Sort::Versions;
 $Sort::Versions::VERSION = '1.62';
 # Copyright (c) 1996, Kenneth J. Albanowski. All rights reserved.  This
 # program is free software; you can redistribute it and/or modify it under

@@ -16,6 +16,7 @@
   * Bugfix: Send the RESET escape after running each SlackBuild to clean up after colorful build systems
   * sboinstall: Add --series-rebuild to rebuild and reinstall all SBo packages in a series with their dependencies
   * sbofind: Add --first-reverse to report all first-level reverse dependencies in the repository
+  * Install to vendor_perl; install bundled Sort::Versions in SBO::ThirdParty to avoid collisions
 
 #### 3.6 - 2025-05-10
   * Download.pm: Unlink existing symlinks with the same name as new ones

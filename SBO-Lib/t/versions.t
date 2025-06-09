@@ -5,7 +5,7 @@ use 5.006;
 use strict;
 use warnings;
 
-use Sort::Versions;
+use SBO::ThirdParty::Sort::Versions;
 use Test::More;
 
 my @tests;
@@ -48,7 +48,7 @@ while (@tests) {
 	
     eval {
 	package Foo;
-	use Sort::Versions;
+	use SBO::ThirdParty::Sort::Versions;
 	($a, $b) = @tests[0, 1];
 
         if (versions() != -1) {
