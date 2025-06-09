@@ -34,6 +34,9 @@ GPG verification and non-root permission for the less-destructive
 parts of sbotools were his ideas. He also suggested changing to the
 MIT License and has provided other useful feedback.
 
+Matteo Bernardini's fork of the SlackBuilds.org repository has been a
+valuable resource for maintaining the /etc/sbotools/obsolete file.
+
 Finally, a good number of users have made valuable reports and feature
 requests over the years, both before and after this sbotools repository
 was forked:
