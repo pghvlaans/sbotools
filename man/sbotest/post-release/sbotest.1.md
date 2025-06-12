@@ -23,10 +23,13 @@
 
     sbotest [-h|-v]
 
-    sbotest [-f|-s] [-j #|FALSE] [-akl /path|FALSE] \
-            sbo_name (sbo_name)
+    sbotest [-B BRANCH|FALSE] [-r URL|FALSE] --pull
 
-    sbotest [-al /path|FALSE] [-S TRUE|FALSE] --archive-rebuild
+    sbotest [-f|-s] [-akl /path|FALSE] [-j #|FALSE] \
+            [-D] sbo_name (sbo_name)
+
+    sbotest [-al /path|FALSE] [-B BRANCH|FALSE] [-r URL|FALSE] \
+            [-S TRUE|FALSE] [-D] --archive-rebuild
 
 ## DISCLAIMER
 
@@ -42,12 +45,17 @@ Using **sbotest** on a general-purpose Slackware installation is
 ## DESCRIPTION
 
 **sbotest** is a reverse dependency build tester based on the
-**sbotools** library. Called without options, it builds any requested
-SlackBuilds with their first level of reverse dependencies. Use
-**sbofind \--first-reverse** for a list of scripts that would be tested,
-if compatible. To test all reverse dependencies of the requested
-scripts, use the **\--full-reverse** option; **\--single** tests no
-reverse dependencies.
+**sbotools** library. To fetch or update the repository before testing,
+call **sbotest \--pull**. Select a git branch and repository URL by
+editing */etc/sbotest/sbotest.conf* or passing **\--git-branch** and
+**\--repo**.
+
+Called without options, **sbotest** builds any requested SlackBuilds
+with their first level of reverse dependencies. Use **sbofind
+\--first-reverse** or pass **\--dry-run** for a list of scripts that
+would be tested, if compatible. To test all reverse dependencies of the
+requested scripts, use the **\--full-reverse** option; **\--single**
+tests no reverse dependencies.
 
 Each test target has a separate testing workflow. First, dependencies
 saved to the **SBO_ARCHIVE** directory (default */usr/sbotest/archive*)
@@ -74,6 +82,10 @@ archive, provided that they are not installed or on the blacklist. If
 version or build numbers will be removed from the archive. By default,
 all mismatched packages are removed.
 
+To generate a report of potential operations, use **\--dry-run** with
+any combination of other options besides **\--pull**, **\--git-branch**
+and **\--repo**.
+
 ## OPTIONS
 
 **-h\|\--help**
@@ -97,11 +109,24 @@ request in */etc/sbotest/sbotest.hints*, its reverse dependencies are
 rebuilt and replaced as well. See [sbotools.hints(5)](sbotools.hints.5.md) for details
 about setting hints.
 
+**-B\|\--git-branch**
+
+If **FALSE**, use the default git branch for the running version of
+Slackware. If a **branch name**, use it in case of a git repository.
+Must be used with **\--pull**.
+
+**-D\|\--dry-run**
+
+Pull the upstream repository and generate a report on scripts to be
+tested and archived packages to be reused. In case of
+**\--archive-rebuild**, additionally report archived packages to be
+removed.
+
 **-f\|\--full-reverse**
 
 Test all reverse dependencies for the requested scripts rather than the
-first level only. Use **sbofind \--all-reverse** to see which scripts
-would be tested, if compatible.
+first level only. Use **sbofind \--all-reverse** or pass **\--dry-run**
+to see which scripts would be tested, if compatible.
 
 **-s\|\--single**
 
@@ -130,6 +155,12 @@ If **FALSE**, use the default log directory of
 *SBO_HOME/logs/(timestamp)-logs*. If an **absolute path**, save build
 and **sbopkglint(1)** logs to that directory with a timestamp appended.
 
+**-r\|\--repo**
+
+If **FALSE**, use the default repository URL for the running Slackware
+version. If a **URL**, pull from that URL. Must be used with
+**\--pull**.
+
 **-S\|\--strict-upgrades**
 
 If **TRUE**, delete only mismatched packages with lower version or build
@@ -139,7 +170,8 @@ mismatched packages from the archive. Overrides the setting in
 
 ## TESTING STRATEGIES
 
-There are three basic ways to test scripts with **sbotest**.
+There are three basic ways to test scripts with **sbotest**. After using
+**sbotest \--pull** to retrieve a new branch or the latest updates:
 
 * Test against the upstream repository without changes.
 * Test against a git branch with changes to be merged.
