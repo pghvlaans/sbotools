@@ -25,6 +25,8 @@
 
     sbotest [-B BRANCH|FALSE] [-r URL|FALSE] --pull
 
+    sbotest [--config|--hints] \...
+
     sbotest [-f|-s] [-akl /path|FALSE] [-j #|FALSE] \
             [-D] sbo_name (sbo_name)
 
@@ -48,7 +50,9 @@ Using **sbotest** on a general-purpose Slackware installation is
 **sbotools** library. To fetch or update the repository before testing,
 call **sbotest \--pull**. Select a git branch and repository URL by
 editing */etc/sbotest/sbotest.conf* or passing **\--git-branch** and
-**\--repo**.
+**\--repo**. **sbotest** is also configurable at the command line with
+**\--config**, and per-script hints can be applied with **\--hints**.
+See [sboconfig(1)](sboconfig.1.md) and [sbohints(1)](sbohints.1.md) for more details.
 
 Called without options, **sbotest** builds any requested SlackBuilds
 with their first level of reverse dependencies. Use **sbofind
@@ -109,6 +113,22 @@ request in */etc/sbotest/sbotest.hints*, its reverse dependencies are
 rebuilt and replaced as well. See [sbotools.hints(5)](sbotools.hints.5.md) for details
 about setting hints.
 
+**\--config**
+
+Interface with [sboconfig(1)](sboconfig.1.md) to modify settings. All **sboconfig**
+options can be used, with the addition of **\--sbo-archive**. See
+**CONFIGURATION** below.
+
+**\--hints**
+
+Interface with [sbohints(1)](sbohints.1.md) to modify per-script hints. All
+**sbohints** options can be used.
+
+**\--pull**
+
+Fetch the upstream repository to *SBO_HOME/repo*. Flags other than
+**\--git-branch** and **\--repo** have no effect.
+
 **-B\|\--git-branch**
 
 If **FALSE**, use the default git branch for the running version of
@@ -117,10 +137,10 @@ Must be used with **\--pull**.
 
 **-D\|\--dry-run**
 
-Pull the upstream repository and generate a report on scripts to be
-tested, queued packages in the local overrides directory and the number
-of archived packages to be reused. In case of **\--archive-rebuild**,
-additionally report archived packages to be removed.
+Generate a report on scripts to be tested, queued packages in the local
+overrides directory and the number of archived packages to be reused. In
+case of **\--archive-rebuild**, additionally report archived packages to
+be removed.
 
 **-f\|\--full-reverse**
 
@@ -182,9 +202,11 @@ setting **RSYNC_DEFAULT** or **REPO** in */etc/sbotest/sbotest.conf* as
 appropriate.
 
 To test upcoming changes in a git branch, set **GIT_BRANCH** to the name
-of the branch and ensure that **REPO** is set if non-default. From here,
-run **sbotest**. If multiple scripts are to be tested for submission,
-using a single merged branch for testing may be convenient:
+of the branch and ensure that **REPO** is set if non-default.
+Alternatively, specify with the **\--repo** and **\--git-branch**
+options when running **sbotest \--pull**. From here, run **sbotest**. If
+multiple scripts are to be tested for submission, using a single merged
+branch for testing may be convenient:
 
     git branch testbranch
     git checkout testbranch
@@ -209,6 +231,9 @@ The default configuration directory is */etc/sbotest* with files
 *obsolete* is relevant only if testing against Slackware -current. To
 use an alternative configuration directory, set an environment variable
 *SBOTEST_CONF_DIR*.
+
+Configuration options and hints can be set from the command line with
+**\--config** and **\--hints**, respectively.
 
 Several default settings differ from base **sbotools**:
 

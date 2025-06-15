@@ -4,6 +4,7 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[SBOTEST](#sbotest)\
 [EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
@@ -109,6 +110,11 @@ Show help information.
 **-v\|\--version**
 
 Show version information.
+
+## SBOTEST
+
+**sbohints** is called when running **sbotest \--hints**; flags are
+unchanged.
 
 ## EXIT CODES
 
