@@ -2,6 +2,12 @@ package SBO::Lib::Util;
 
 # vim: ts=2:et
 
+# The line below is used to inform the sbotest wrapper script
+# that sbotools is compatible with "sbotest --config" and
+# "sbotest --hints". Do not alter or remove.
+
+#% SBOTEST CONFIG HINTS %
+
 use 5.016;
 use strict;
 use warnings;
@@ -45,6 +51,7 @@ my @EXPORT_CONFIG = qw{
   $obs_file
   @obsolete
   $sbotest_compatible
+  $is_sbotest
 };
 
 my @EXPORT_TIME = qw{
@@ -155,7 +162,7 @@ optional script dependencies and automatic revese dependency rebuild requests.
 
 =head2 $is_sbotest
 
-This shared and unexportable variable indicates a run from C<sbotest>.
+This shared variable indicates a run from C<sbotest>.
 
 =head2 $sbotest_compatible
 

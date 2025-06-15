@@ -4,6 +4,7 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[SBOTEST](#sbotest)\
 [EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
@@ -24,7 +25,7 @@
 
     sboconfig [--reset]
 
-    sboconfig [-CPORScbdeg TRUE|FALSE] [-j #|FALSE] [-pLo
+    sboconfig [-CPORScbdeg TRUE|FALSE] [-j #|FALSE] [-Lpo
 /path\|FALSE] \
               [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \
               [-r url|FALSE]
@@ -190,6 +191,36 @@ for Slackware -current.
 **STRICT_UPGRADES**: If set to **TRUE**, upgrades are only attempted if
 the incoming version or build number is greater. This has no effect on
 scripts in the local overrides directory.
+
+## SBOTEST
+
+**sboconfig** is called when running **sbotest \--config**; the
+following default values change in this situation:
+
+**-A\|\--sbo-archive**
+
+Defaults to */usr/sbotest/archive*. This setting is specific to
+**sbotest**.
+
+**-e\|\--etc-profile**
+
+Defaults to **TRUE**.
+
+**-L\|\--log-dir**
+
+Defaults to */usr/sbotest/logs*.
+
+**-P\|\--cpan-ignore**
+
+Defaults to **TRUE**.
+
+**-p\|\--pkg-dir**
+
+Defaults to */usr/sbotest/tests*.
+
+**-s\|\--sbo-home**
+
+Defaults to */usr/sbotest*.
 
 ## EXIT CODES
 

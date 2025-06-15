@@ -14,16 +14,17 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ auto_reverse get_optional lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay %config $conf_dir $hint_file @listings /;
+use SBO::Lib qw/ :config auto_reverse get_optional lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 
 my $self = basename($0);
+my $label = $is_sbotest ? "sbotest --hints" : $self;
 
 sub show_usage {
 	print <<"EOF";
-Usage: $self [options] sbo ...
-       $self [-l|--reset]
+Usage: $label [options] sbo ...
+       $label [-l|--reset]
 
 Options:
   -h|--help:
@@ -49,9 +50,9 @@ Options:
     clear instead of add.
 
   Examples:
-  $self -b libsystemd sbotools
-  $self -cb vifm
-  $self -q qemu
+  $label -b libsystemd sbotools
+  $label -cb vifm
+  $label -q qemu
 
 EOF
 }
@@ -73,17 +74,20 @@ GetOptions(
 
 if ($help) {
 	show_usage();
-	wrapsay "Non-root users can call $self with -l, -q, -h and -v." unless $< == 0;
+	wrapsay "Non-root users can call $label with -l, -q, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($version) { show_version(); exit 0; }
 unless ($< == 0 or $list or $query) {
 	show_usage();
-	usage_error "Non-root users can call $self with -l, -q, -h and -v.";
+	usage_error "Non-root users can call $label with -l, -q, -h and -v.";
 }
 unless (@ARGV or $list or $reset) { show_usage(); exit 0; }
 
 lint_sbo_config($self, %config);
+if ($is_sbotest) {
+	usage_error("SBO_ARCHIVE must be FALSE or an absolute path. Exiting.") unless $config{SBO_ARCHIVE} =~ m/^(\/|FALSE$)/;
+}
 
 if (($blacklist and ($optional or $replace_optional or $reverse)) or ($optional and $replace_optional) or ($optional and $reverse) or ($replace_optional and $reverse)) {
 	usage_error("optional, replace_optional, reverse and blacklist cannot be used together.");

@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slurp usage_error script_error lint_sbo_config $tempdir open_fh prompt wrapsay %config $conf_dir $conf_file show_version /;
+use SBO::Lib qw/ :config slurp usage_error script_error lint_sbo_config $tempdir open_fh prompt wrapsay show_version /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always);
 use File::Copy;
@@ -22,11 +22,13 @@ use File::Path qw(make_path);
 use File::Temp qw(tempfile);;
 
 my $self = basename($0);
+my $label = $is_sbotest ? "sbotest --config" : $self;
 
 sub show_usage {
+	my $for_sbotest = $is_sbotest ? "\n  -A|--sbo-archive /usr/sbotest/archive:\n      SBO_ARCHIVE: the directory for package reuse." : "";
 	print <<"EOF";
-Usage: $self option argument ...
-       $self
+Usage: $label option argument ...
+       $label
 
 Options:
   -h|--help:
@@ -38,7 +40,7 @@ Options:
   --reset:
     restore the default configuration
 
-Configuration options (defaults shown):
+Configuration options (defaults shown):$for_sbotest
   -B|--branch FALSE:
       GIT_BRANCH: the name of a git branch to use, or FALSE for the Slackware version default.
   -b|--build-ignore FALSE:
@@ -74,7 +76,7 @@ Configuration options (defaults shown):
   -S|--strict-upgrades FALSE:
       STRICT_UPGRADES: only upgrade when the version or build number is higher.
 
-Use $self without options for an interactive menu.
+Use $label without options for an interactive menu.
 
 EOF
 	return 1;
@@ -83,21 +85,30 @@ EOF
 my $all_clear = 1 unless @ARGV;
 my %options;
 
-GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'classic|C=s', 'noclean|c=s',
-	'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
-	'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
-    'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
-    'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s');
+unless ($is_sbotest) {
+	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'classic|C=s', 'noclean|c=s',
+		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
+		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
+		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
+		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s');
+} else {
+	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'classic|C=s', 'noclean|c=s',
+		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
+		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
+		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
+		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
+		'sbo-archive|A=s');
+}
 
 if ($options{help}) {
 	show_usage();
-	wrapsay "Non-root users can call $self with -l, -h and -v." unless $< == 0;
+	wrapsay "Non-root users can call $label with -l, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($options{version}) { show_version(); exit 0 }
 unless ($< == 0 or $options{list}) {
 	show_usage();
-	usage_error "Non-root users can call $self with -l, -h and -v.";
+	usage_error "Non-root users can call $label with -l, -h and -v.";
 }
 
 my %valid_confs = (
@@ -120,6 +131,7 @@ my %valid_confs = (
 	'etc-profile'         => 'ETC_PROFILE',
 	'log-dir'           => 'LOG_DIR',
 );
+$valid_confs{"sbo-archive"} = 'SBO_ARCHIVE' if $is_sbotest;
 
 my %params = (
 	CLASSIC           => 'C|--classic',
@@ -141,6 +153,7 @@ my %params = (
 	ETC_PROFILE       => 'e|--etc-profile',
 	LOG_DIR           => 'L|--log-dir',
 );
+$params{SBO_ARCHIVE} = 'A|--sbo-archive' if $is_sbotest;
 
 if (exists $options{list}) {
 	my @keys = sort {$a cmp $b} keys %config;
@@ -169,6 +182,14 @@ for my $key (keys %valid_confs) {
 	}
 }
 $changes{'SBO_HOME'} = '/usr/sbo' if exists $options{reset};
+if (exists $options{reset} and $is_sbotest) {
+	$changes{'SBO_HOME'} = '/usr/sbotest';
+	$changes{'PKG_DIR'} = '/usr/sbotest/tests';
+	$changes{'LOG_DIR'} = '/usr/sbotest/logs';
+	$changes{'SBO_ARCHIVE'} = '/usr/sbotest/archive';
+	$changes{'ETC_PROFILE'} = 'TRUE';
+	$changes{'CPAN_IGNORE'} = 'TRUE';
+}
 
 if ($all_clear) {
 	interactive_menu();
@@ -178,6 +199,9 @@ if ($all_clear) {
 }
 
 lint_sbo_config($self, %changes);
+if ($changes{SBO_ARCHIVE} and $is_sbotest) {
+	usage_error("SBO_ARCHIVE must be FALSE or an absolute path. Exiting.") unless $changes{SBO_ARCHIVE} =~ m/^(\/|FALSE$)/;
+}
 
 my $change_requested;
 
@@ -239,7 +263,7 @@ sub validate_choice {
 # use an interactive settings menu if sboconfig is passed without
 # options; might be educational for new users
 sub interactive_menu {
-	if (not prompt("$self\n\nThis is the $self interactive menu. Use prompts to set configuration values?", default => 'yes')) {
+	if (not prompt("$label\n\nThis is the $label interactive menu. Use prompts to set configuration values?", default => 'yes')) {
 		say "Exiting without changes.";
 		exit 0;
 	}
@@ -263,8 +287,8 @@ sub interactive_menu {
 
 	GPG_VERIFY: config_prompt("GPG_VERIFY", "If TRUE, perform gpg verification.", "TRUE or FALSE.", "TF");
 
-	# CLASSIC turns this on automatically at runtime
-	BUILD_IGNORE: if (not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') {
+	# CLASSIC turns this on automatically at runtime; not applicable to sbotest
+	BUILD_IGNORE: if ((not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') and not $is_sbotest) {
 		config_prompt("BUILD_IGNORE", "If TRUE, do upgrades only if the version number differs.", "TRUE or FALSE.", "TF");
 	}
 
@@ -277,6 +301,9 @@ sub interactive_menu {
 	ETC_PROFILE: config_prompt("ETC_PROFILE", "If TRUE, source executable *.sh scripts in /etc/profile.d before building.", "TRUE or FALSE.", "TF");
 
 	SBO_HOME: config_prompt("SBO_HOME", "If set to an absolute path, this is where the SlackBuilds.org tree will live.", "An absolute path or FALSE.", "PATH");
+
+	# sbotest only
+	SBO_ARCHIVE: config_prompt("SBO_ARCHIVE", "If set to an absolute path, this is where archived packages will live.", "An absolute path or FALSE.", "PATH") if $is_sbotest;
 
 	LOG_DIR: config_prompt("LOG_DIR", "If set to an absolute path, save a log file for each build here.", "An absolute path or FALSE.", "PATH");
 
@@ -299,7 +326,7 @@ sub interactive_menu {
 			my $title = $valid_confs{$item};
 			my $spacer = "\t\t";
 			$spacer = "\t\t\t" if $title eq "JOBS" or $title eq "REPO";
-			$spacer = "\t" if $title eq "SLACKWARE_VERSION" or $title eq "LOCAL_OVERRIDES" or $title eq "STRICT_UPGRADES" or $title eq "OBSOLETE_CHECK";
+			$spacer = "\t" if $title eq "SLACKWARE_VERSION" or $title eq "LOCAL_OVERRIDES" or $title eq "STRICT_UPGRADES" or $title eq "OBSOLETE_CHECK" or $title eq "SBO_ARCHIVE";
 			say "\t$title:$spacer$changes{$title}" if defined $changes{$title};
 		}
 
@@ -331,14 +358,21 @@ sub config_write {
 	while (@_ >= 2) {
 		my $key = shift;
 		my $val = shift;
+		next if $key eq 'BUILD_IGNORE' and $is_sbotest;
 		say "Setting $key to $val..." unless exists $options{reset};
 
 		# Comment default values when written in
 		my $comment = '';
-		if ($val eq 'FALSE') {
-			$comment = '#';
-		} elsif ($key eq 'SBO_HOME' and $val eq '/usr/sbo') {
-			$comment = '#';
+		unless ($is_sbotest) {
+			$comment = '#' if $val eq 'FALSE';
+			$comment = '#' if $key eq 'SBO_HOME' and $val eq '/usr/sbo';
+		} else {
+			$comment = '#' if $key ne 'ETC_PROFILE' and $key ne 'CPAN_IGNORE' and $val eq 'FALSE';
+			$comment = '#' if ($key eq 'ETC_PROFILE' or $key eq 'CPAN_IGNORE') and $val eq 'TRUE';
+			$comment = '#' if $key eq 'SBO_HOME' and $val eq '/usr/sbotest';
+			$comment = '#' if $key eq 'PKG_DIR' and $val eq '/usr/sbotest/tests';
+			$comment = '#' if $key eq 'LOG_DIR' and $val eq '/usr/sbotest/logs';
+			$comment = '#' if $key eq 'SBO_ARCHIVE' and $val eq '/usr/sbotest/archive';
 		}
 
 		if ($conf =~ /^#(\s*)\Q$key\E=/m) {

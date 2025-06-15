@@ -15,7 +15,7 @@ sboconfig [-l]
 .P
 sboconfig [--reset]
 .P
-sboconfig [-CPORScbdeg TRUE|FALSE] [-j #|FALSE] [-pLo /path|FALSE] \\
+sboconfig [-CPORScbdeg TRUE|FALSE] [-j #|FALSE] [-Lpo /path|FALSE] \\
           [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \\
           [-r url|FALSE]
 .SH DESCRIPTION
@@ -470,6 +470,70 @@ TRUE\fR\
 \&, upgrades are only attempted if the incoming
 version or build number is greater. This has no
 effect on scripts in the local overrides directory.
+.RE
+.SH SBOTEST
+.B
+sboconfig
+is called when running
+.B
+sbotest --config\fR\
+\&; the following default values change in this situation:
+.P
+.B
+-A|--sbo-archive
+.RS
+Defaults to
+.I
+/usr/sbotest/archive\fR\
+\&. This setting is specific to
+.B
+sbotest\fR\
+\&.
+.RE
+.P
+.B
+-e|--etc-profile
+.RS
+Defaults to
+.B
+TRUE\fR\
+\&.
+.RE
+.P
+.B
+-L|--log-dir
+.RS
+Defaults to
+.I
+/usr/sbotest/logs\fR\
+\&.
+.RE
+.P
+.B
+-P|--cpan-ignore
+.RS
+Defaults to
+.B
+TRUE\fR\
+\&.
+.RE
+.P
+.B
+-p|--pkg-dir
+.RS
+Defaults to
+.I
+/usr/sbotest/tests\fR\
+\&.
+.RE
+.P
+.B
+-s|--sbo-home
+.P
+Defaults to
+.I
+/usr/sbotest\fR\
+\&.
 .RE
 .SH EXIT CODES
 .P
