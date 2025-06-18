@@ -86,6 +86,10 @@ To generate a report of potential operations, use **\--dry-run** with
 any combination of other options besides **\--config**, **\--hints**,
 **\--pull**, **\--git-branch** and **\--repo**.
 
+Non-root users can run sbotest with **\--help**, **\--version** and
+**\--dry-run. \--hints** and **\--config** can be run by anyone with
+listing-related options.
+
 ## OPTIONS
 
 **-h\|\--help**
