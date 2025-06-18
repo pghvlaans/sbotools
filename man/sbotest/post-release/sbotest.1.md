@@ -27,10 +27,10 @@
 
     sbotest [--config|--hints] \...
 
-    sbotest [-f|-s] [-akl /path|FALSE] [-j #|FALSE] \
-            [-D] sbo_name (sbo_name)
+    sbotest [-f|-s] [-Akl /path|FALSE] [-j #|FALSE] \
+            [-D] [--no-archive|--archive-force] sbo_name (sbo_name)
 
-    sbotest [-al /path|FALSE] [-B BRANCH|FALSE] [-r URL|FALSE] \
+    sbotest [-Al /path|FALSE] [-B BRANCH|FALSE] [-r URL|FALSE] \
             [-S TRUE|FALSE] [-D] --archive-rebuild
 
 ## DISCLAIMER
@@ -49,10 +49,11 @@ Using **sbotest** on a general-purpose Slackware installation is
 **sbotest** is a reverse dependency build tester based on the
 **sbotools** library. To fetch or update the repository before testing,
 call **sbotest \--pull**. Select a git branch and repository URL by
-editing */etc/sbotest/sbotest.conf* or passing **\--git-branch** and
-**\--repo**. **sbotest** is also configurable at the command line with
-**\--config**, and per-script hints can be applied with **\--hints**.
-See [sboconfig(1)](sboconfig.1.md) and [sbohints(1)](sbohints.1.md) for more details.
+editing */etc/sbotest/sbotest.conf* or, temporarily, by passing
+**\--git-branch** and **\--repo**. **sbotest** is also configurable at
+the command line with **\--config**, and per-script hints can be applied
+with **\--hints**. See [sboconfig(1)](sboconfig.1.md) and [sbohints(1)](sbohints.1.md) for more
+details.
 
 Called without options, **sbotest** builds any requested SlackBuilds
 with their first level of reverse dependencies. Use **sbofind
@@ -66,11 +67,13 @@ saved to the **SBO_ARCHIVE** directory (default */usr/sbotest/archive*)
 are installed to save time; see **CONFIGURATION** below for details. Any
 missing users and groups are added, and [sboinstall(1)](sboinstall.1.md) is called.
 
-Newly-built packages are saved to a timestamp-appended **PKG_DIR**. Any
-packages that are not required for the following build are removed
-afterwards. Packages without the *\_SBo* tag are unaffected, and no
-package that is already installed when **sbotest** starts can be removed
-or reinstalled.
+Newly-built packages are saved to a timestamp-appended **PKG_DIR**. By
+default, any dependencies (not test targets) built are saved to
+**SBO_ARCHIVE** for future use; to change this, see **\--no-archive**
+and **\--archive-force** below. Any packages that are not required for
+the following build are removed afterwards. Packages without the *\_SBo*
+tag are unaffected, and no package that is already installed when
+**sbotest** starts can be removed or reinstalled.
 
 **sbopkglint(1)** is run on all test targets once [sboinstall(1)](sboinstall.1.md) has
 been called for the last time. A summary of results is displayed and
@@ -79,16 +82,9 @@ saved to *SBO_HOME/results/(timestamp).log*. Scripts that fail
 reported so that any issues can be taken care of before submitting
 scripts to **SlackBuilds.org**.
 
-The package archive can be kept current with **\--archive-rebuild**,
-which rebuilds all version- and build-mismatched packages in the
-archive, provided that they are not installed or on the blacklist. If
-**STRICT_UPGRADES** is **TRUE**, only mismatched packages with lower
-version or build numbers will be removed from the archive. By default,
-all mismatched packages are removed.
-
 To generate a report of potential operations, use **\--dry-run** with
-any combination of other options besides **\--pull**, **\--git-branch**
-and **\--repo**.
+any combination of other options besides **\--config**, **\--hints**,
+**\--pull**, **\--git-branch** and **\--repo**.
 
 ## OPTIONS
 
@@ -105,13 +101,15 @@ Show version information.
 Replace build- and version-mismatched packages in the archive,
 */usr/sbotest/archive* by default. Please note that installed and
 blacklisted packages are ignored. If **STRICT_UPGRADES** is **TRUE**,
-only mismatched packages with lower version or build numbers will be
-removed from the archive.
+only mismatched packages with lower version or build numbers are removed
+from the archive.
 
 If a script to be rebuilt has an automatic reverse dependency rebuild
 request in */etc/sbotest/sbotest.hints*, its reverse dependencies are
 rebuilt and replaced as well. See [sbotools.hints(5)](sbotools.hints.5.md) for details
 about setting hints.
+
+Incompatible with **\--no-archive** and **\--archive-force**.
 
 **\--config**
 
@@ -128,6 +126,19 @@ Interface with [sbohints(1)](sbohints.1.md) to modify per-script hints. All
 
 Fetch the upstream repository to *SBO_HOME/repo*. Flags other than
 **\--git-branch** and **\--repo** have no effect.
+
+**-A\|\--sbo-archive**
+
+If **FALSE**, use the default archive directory at *SBO_HOME/archive*.
+If an **absolute path**, use that as the archive directory.
+
+**\--archive-force**
+
+When testing the requested scripts, move all built packages into
+**SBO_ARCHIVE**, */usr/sbotest/archive* by default. This includes even
+requested scripts and their reverse dependencies.
+
+Incompatible with **\--archive-rebuild** and **\-\--no-archive**.
 
 **-B\|\--git-branch**
 
@@ -152,11 +163,6 @@ to see which scripts would be tested, if compatible.
 
 Do not test reverse dependencies for any requested script.
 
-**-a\|\--sbo-archive**
-
-If **FALSE**, use the default archive directory at *SBO_HOME/archive*.
-If an **absolute path**, use that as the archive directory.
-
 **-j\|\--jobs**
 
 If **numeric**, pass to **make** with the **-j** flag.
@@ -174,6 +180,13 @@ under that path.
 If **FALSE**, use the default log directory of
 *SBO_HOME/logs/(timestamp)-logs*. If an **absolute path**, save build
 and **sbopkglint(1)** logs to that directory with a timestamp appended.
+
+**\--no-archive**
+
+Do not reuse any archived packages during the test run, and do not
+archive built packages.
+
+Incompatible with **\--archive-rebuild** and **\--archive-force**.
 
 **-r\|\--repo**
 
@@ -221,8 +234,17 @@ complete is advisable.
 Reusing built packages in future test runs saves time and resources. The
 default archive directory is */usr/sbotest/archive*; packages stored
 here are reinstalled in lieu of building when needed, provided they are
-up-to-date. Copy packages from the test directories under (by default)
-*/usr/sbotest/tests* to use them again later.
+up-to-date. During an **sbotest** run, all built dependencies are
+archived by default. To archive all built packages (including testing
+targets), use **\--archive-force**. Ignore the archive altogether with
+**\--no-archive**.
+
+The archive can be kept current with **\--archive-rebuild**. This
+rebuilds all version- and build-mismatched packages in the archive,
+provided that they are not installed or on the blacklist. If
+**STRICT_UPGRADES** is **TRUE**, only mismatched packages with lower
+version or build numbers are removed from the archive. By default, all
+mismatched packages are removed.
 
 ## CONFIGURATION
 
@@ -254,20 +276,20 @@ The default value is */usr/sbotest*.
 **PKG_DIR**
 
 The default value is *SBO_HOME/tests*. Unless an **absolute path** is
-specified, packages built during the test run will be saved to a
+specified, packages built during the test run are saved to a
 timestamp-designated directory under that path, e.g.
 */usr/sbotest/tests/2025-05-31-16:27-tests*.
 
 **LOG_DIR**
 
 The default value is *SBO_HOME/logs*. Unless an **absolute path** is
-specified, log files will be saved to a timestamp-designated directory
-under that path.
+specified, log files are saved to a timestamp-designated directory under
+that path.
 
 **SBO_ARCHIVE**
 
 This setting is used only when running **sbotest**, and has a default
-value of *SBO_HOME/archive*. Any packages stored here will be installed
+value of *SBO_HOME/archive*. Any packages stored here are installed
 prior to calling [sboinstall(1)](sboinstall.1.md), provided that they:
 
 * Are not test targets.

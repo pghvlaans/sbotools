@@ -2,7 +2,7 @@
 
 **sbotest** is a reverse dependency build tester based on the **sbotools** library.
 
-This **sbotools** extension was written with script maintainers in mind: Easily build and test scripts with their reverse dependencies in a single command. Copy built packages into an archive to be used again, and keep it up-to-date with **sbotest \--archive-rebuild**.
+This **sbotools** companion script was written with script maintainers in mind: Easily build and test scripts with their reverse dependencies in a single command. Maintain an archive for built dependencies and keep it up-to-date with **sbotest --archive-rebuild**.
 
 See the [man page](https://pghvlaans.github.io/sbotools/man/sbotest/post-release/sbotest.1.html) for more information about options and settings!
 
@@ -10,7 +10,7 @@ See the [man page](https://pghvlaans.github.io/sbotools/man/sbotest/post-release
 
 **sbotest** is not quite ready for a version release, which needs to wait for **sbotools-3.7**. In the meantime, please follow these steps if you would like to try **sbotest**:
 
-* Use **[sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild/)** to upgrade **sbotools** to version `20250601-1735124` at the oldest.
+* Use **[sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild/)** to upgrade **sbotools** to version `20250616-0d4e3dd` at the oldest.
 * Clone the **sbotest** repository.
 * From the root directory, run `./tools/source_to_slackbuild.sh`.
 * Run the SlackBuild in `slackbuild/sbotest`.
