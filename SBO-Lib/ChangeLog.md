@@ -18,6 +18,7 @@
   * sbofind: Add --first-reverse to report all first-level reverse dependencies in the repository
   * Install to vendor_perl; install bundled Sort::Versions in SBO::ThirdParty to avoid collisions
   * sboconfig, sbohints: Callable from sbotest with --config or --hints
+  * Tree.pm: Speed up location finding for all available; relevant for reverse dependency calculation
 
 #### 3.6 - 2025-05-10
   * Download.pm: Unlink existing symlinks with the same name as new ones

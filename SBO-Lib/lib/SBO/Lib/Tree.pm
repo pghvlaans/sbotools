@@ -48,6 +48,9 @@ SBO::Lib::Tree - Routines for interacting with a SlackBuilds.org tree.
 my $store;
 my %local;
 my %orig;
+# private variable indicating that the location
+# of all available builds is to be required
+my $full_sbtxt_read = 0;
 
 =head2 get_all_available
 
@@ -62,6 +65,7 @@ C<series> is C<local> if the script can be found in C<LOCAL_OVERRIDES>.
 sub get_all_available {
   return 0 unless -s $slackbuilds_txt;
   my @result;
+  $full_sbtxt_read = 1;
   my ($fh, $exit) = open_read($slackbuilds_txt);
   if ($exit) {
     warn $fh;
@@ -160,14 +164,20 @@ sub get_sbo_locations {
   while (my $line = <$fh>) {
     my ($loc, $sbo) = $line =~ m!LOCATION:\s+\.(/[^/]+/([^/\n]+))$!
       or next;
-    my $found = idx($sbo, @sbos);
-    next unless defined $found;
+    # skip checking for $sbo in @sbos if all are needed in any case; saves lots
+    # of time for some reverse dependency operations
+    unless ($full_sbtxt_read) {
+      my $found = idx($sbo, @sbos);
+      next unless defined $found;
+      $$store{$sbo} = $repo_path . $loc;
+      $locations{$sbo} = $$store{$sbo};
 
-    $$store{$sbo} = $repo_path . $loc;
-    $locations{$sbo} = $$store{$sbo};
-
-    splice @sbos, $found, 1;
-    last unless @sbos;
+      splice @sbos, $found, 1;
+      last unless @sbos;
+    } else {
+      $$store{$sbo} = $repo_path . $loc;
+      $locations{$sbo} = $$store{$sbo};
+    }
   }
   close $fh;
 
