@@ -192,6 +192,14 @@ sub reverse_queries {
 	}
 }
 
+# clear the shared completion arrays before performing dependency and
+# reverse dependency calculations
+sub splice_arrays {
+	splice @concluded;
+	splice @reverse_concluded;
+	splice @last_level_reverse;
+}
+
 # pull the contents of a file into a variable and format it for output
 sub get_file_contents {
 	script_error 'get_file_contents requires an argument.' unless @_ == 1;
@@ -204,6 +212,7 @@ sub get_file_contents {
 # get build queue and return it as a single line.
 sub show_build_queue {
 	script_error('show_build_queue requires an argument.') unless @_ == 1;
+	splice_arrays();
 	my $queue = get_build_queue([shift], {});
 	return join(" ", @$queue);
 }
@@ -212,6 +221,7 @@ sub show_build_queue {
 sub show_reverse_dependencies {
 	script_error('show_reverse_dependencies requires an argument.') unless @_ == 1;
 	my $found = shift;
+	splice_arrays();
 	my @full_reverse = get_full_reverse($found, $installed, $fulldeps);
 	return join(" ", sort(@full_reverse)) if @full_reverse;
 	return "None";
@@ -221,6 +231,7 @@ sub show_reverse_dependencies {
 sub show_available_reverse {
 	script_error('show_available_reverse requires an argument.') unless @_ == 1;
 	my $found = shift;
+	splice_arrays();
 	my @available_reverse = get_full_reverse($found, $available, $all_fulldeps);
 	return join(" ", @available_reverse) if @available_reverse;
 	return "None";
@@ -230,7 +241,7 @@ sub show_available_reverse {
 sub last_level_reverse {
 	script_error('last_level_reverse requires an argument.') unless @_ == 1;
 	my $found = shift;
-	splice @last_level_reverse;
+	splice_arrays();
 	my @available_reverse = get_full_reverse($found, $available, $all_fulldeps);
 	return join(" ", uniq(sort(@last_level_reverse))) if @last_level_reverse;
 	return "None";
@@ -256,8 +267,6 @@ for my $search (@ARGV) {
 	if (exists $$findings[0]) {
 		reverse_queries();
 		for my $hash (@$findings) {
-			splice @concluded;
-			splice @reverse_concluded;
 			if ($notfound) { say ''; }
 			my $name = $hash->{name};
 			if ($name =~ /^perl-/) {
