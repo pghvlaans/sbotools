@@ -194,8 +194,8 @@ scripts in the local overrides directory.
 
 ## SBOTEST
 
-**sboconfig** is called when running **sbotest \--config**; the
-following default values change in this situation:
+**sboconfig** is called when running **sbotest config**; the following
+default values change in this situation:
 
 **-A\|\--sbo-archive**
 
