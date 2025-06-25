@@ -113,7 +113,7 @@ Show version information.
 
 ## SBOTEST
 
-**sbohints** is called when running **sbotest \--hints**; flags are
+**sbohints** is called when running **sbotest hints**; flags are
 unchanged.
 
 ## EXIT CODES
