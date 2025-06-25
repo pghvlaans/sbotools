@@ -22,7 +22,7 @@ use File::Path qw(make_path);
 use File::Temp qw(tempfile);;
 
 my $self = basename($0);
-my $label = $is_sbotest ? "sbotest --config" : $self;
+my $label = $is_sbotest ? "sbotest config" : $self;
 
 sub show_usage {
 	my $for_sbotest = $is_sbotest ? "\n  -A|--sbo-archive /usr/sbotest/archive:\n      SBO_ARCHIVE: the directory for package reuse." : "";
