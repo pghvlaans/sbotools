@@ -23,9 +23,9 @@
 
     sbotest [-h|-v]
 
-    sbotest [-B BRANCH|FALSE] [-r URL|FALSE] --pull
+    sbotest pull [-B BRANCH|FALSE] [-r URL|FALSE]
 
-    sbotest [--config|--hints] \...
+    sbotest [config|hints] \...
 
     sbotest [-f|-s] [-Akl /path|FALSE] [-j #|FALSE] \
             [-D] [--no-archive|--archive-force] sbo_name (sbo_name)
@@ -48,11 +48,11 @@ Using **sbotest** on a general-purpose Slackware installation is
 
 **sbotest** is a reverse dependency build tester based on the
 **sbotools** library. To fetch or update the repository before testing,
-call **sbotest \--pull**. Select a git branch and repository URL by
-editing */etc/sbotest/sbotest.conf* or, temporarily, by passing
+call **sbotest pull**. Select a git branch and repository URL by editing
+*/etc/sbotest/sbotest.conf* or, temporarily, by passing
 **\--git-branch** and **\--repo**. **sbotest** is also configurable at
-the command line with **\--config**, and per-script hints can be applied
-with **\--hints**. See [sboconfig(1)](sboconfig.1.md) and [sbohints(1)](sbohints.1.md) for more
+the command line with **config**, and per-script hints can be applied
+with **hints**. See [sboconfig(1)](sboconfig.1.md) and [sbohints(1)](sbohints.1.md) for more
 details.
 
 Called without options, **sbotest** builds any requested SlackBuilds
@@ -83,11 +83,10 @@ reported so that any issues can be taken care of before submitting
 scripts to **SlackBuilds.org**.
 
 To generate a report of potential operations, use **\--dry-run** with
-any combination of other options besides **\--config**, **\--hints**,
-**\--pull**, **\--git-branch** and **\--repo**.
+any combination of other options.
 
 Non-root users can run sbotest with **\--help**, **\--version** and
-**\--dry-run. \--hints** and **\--config** can be run by anyone with
+**\--dry-run. hints** and **config** can be run by anyone with
 listing-related options.
 
 ## OPTIONS
@@ -99,6 +98,22 @@ Show help information.
 **-v\|\--version**
 
 Show version information.
+
+**config**
+
+Interface with [sboconfig(1)](sboconfig.1.md) to modify settings. All **sboconfig**
+options can be used, with the addition of **\--sbo-archive**. See
+**CONFIGURATION** below.
+
+**hints**
+
+Interface with [sbohints(1)](sbohints.1.md) to modify per-script hints. All
+**sbohints** options can be used.
+
+**pull**
+
+Fetch the upstream repository to *SBO_HOME/repo*. Flags other than
+**\--git-branch** and **\--repo** have no effect.
 
 **\--archive-rebuild**
 
@@ -114,22 +129,6 @@ rebuilt and replaced as well. See [sbotools.hints(5)](sbotools.hints.5.md) for d
 about setting hints.
 
 Incompatible with **\--no-archive** and **\--archive-force**.
-
-**\--config**
-
-Interface with [sboconfig(1)](sboconfig.1.md) to modify settings. All **sboconfig**
-options can be used, with the addition of **\--sbo-archive**. See
-**CONFIGURATION** below.
-
-**\--hints**
-
-Interface with [sbohints(1)](sbohints.1.md) to modify per-script hints. All
-**sbohints** options can be used.
-
-**\--pull**
-
-Fetch the upstream repository to *SBO_HOME/repo*. Flags other than
-**\--git-branch** and **\--repo** have no effect.
 
 **-A\|\--sbo-archive**
 
@@ -148,7 +147,7 @@ Incompatible with **\--archive-rebuild** and **\-\--no-archive**.
 
 If **FALSE**, use the default git branch for the running version of
 Slackware. If a **branch name**, use it in case of a git repository.
-Must be used with **\--pull**.
+Must be used with **pull**.
 
 **-D\|\--dry-run**
 
@@ -195,8 +194,7 @@ Incompatible with **\--archive-rebuild** and **\--archive-force**.
 **-r\|\--repo**
 
 If **FALSE**, use the default repository URL for the running Slackware
-version. If a **URL**, pull from that URL. Must be used with
-**\--pull**.
+version. If a **URL**, pull from that URL. Must be used with **pull**.
 
 **-S\|\--strict-upgrades**
 
@@ -208,7 +206,7 @@ mismatched packages from the archive. Overrides the setting in
 ## TESTING STRATEGIES
 
 There are three basic ways to test scripts with **sbotest**. After using
-**sbotest \--pull** to retrieve a new branch or the latest updates:
+**sbotest pull** to retrieve a new branch or the latest updates:
 
 * Test against the upstream repository without changes.
 * Test against a git branch with changes to be merged.
@@ -221,7 +219,7 @@ appropriate.
 To test upcoming changes in a git branch, set **GIT_BRANCH** to the name
 of the branch and ensure that **REPO** is set if non-default.
 Alternatively, specify with the **\--repo** and **\--git-branch**
-options when running **sbotest \--pull**. From here, run **sbotest**. If
+options when running **sbotest pull**. From here, run **sbotest**. If
 multiple scripts are to be tested for submission, using a single merged
 branch for testing may be convenient:
 
@@ -259,7 +257,7 @@ use an alternative configuration directory, set an environment variable
 *SBOTEST_CONF_DIR*.
 
 Configuration options and hints can be set from the command line with
-**\--config** and **\--hints**, respectively.
+**config** and **hints**, respectively.
 
 Several default settings differ from base **sbotools**:
 
