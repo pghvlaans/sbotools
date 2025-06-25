@@ -1,0 +1,1 @@
+../../post-release/sbocheck.1.md

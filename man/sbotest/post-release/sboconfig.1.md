@@ -1,0 +1,1 @@
+../../post-release/sboconfig.1.md

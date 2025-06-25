@@ -1,0 +1,1 @@
+../../post-release/sboinstall.1.md
