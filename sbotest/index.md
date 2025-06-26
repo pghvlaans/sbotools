@@ -4,6 +4,8 @@
 
 This **sbotools** companion script was written with script maintainers in mind: Easily build and test scripts with their reverse dependencies in a single command. Maintain an archive for built dependencies and keep it up-to-date with **sbotest --archive-rebuild**.
 
+**sbotest** is configured separately from **sbotools**. See the contents of `/etc/sbotest`, or run **sbotest config** and **sbotest hints** to set options from the command line.
+
 See the [man page](https://pghvlaans.github.io/sbotools/man/sbotest/post-release/sbotest.1.html) for more information about options and settings!
 
 ## Trying sbotest

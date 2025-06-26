@@ -1,0 +1,1 @@
+../../sboconfig.1.md
