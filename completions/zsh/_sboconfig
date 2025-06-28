@@ -7,6 +7,7 @@ _arguments \
     '(-)'{-h,--help}'[Show help.]:' \
     '(-)'{-v,--version}'[Show version.]:' \
     '(-)'{-l,--list}'[List current configuration options (including unmodified defaults).]:' \
+    '(-)'{-n,--non-default}'[List current non-default configuration options.]:' \
     '(-)'{--reset}'[Restore all default configuration options.]:' \
     - commands \
     '(-B --git-branch)'{-B,--git-branch}'[Use this git branch (instead of the default for the Slackware version).]:Git branch:()' \

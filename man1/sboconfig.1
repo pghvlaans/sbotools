@@ -11,7 +11,7 @@ configuration options
 .P
 sboconfig [-h|-v]
 .P
-sboconfig [-l]
+sboconfig [-l|-n]
 .P
 sboconfig [--reset]
 .P
@@ -57,6 +57,9 @@ with the
 --list\fR\
 \&,
 .B
+--non-default\fR\
+\&,
+.B
 --help
 and
 .B
@@ -77,6 +80,21 @@ sboconfig
 flag used to set each option for reference. The
 .B
 --list
+flag can be used without root privileges.
+.RE
+.P
+.B
+--non-default
+.RS
+List current non-default configuration options.
+.B
+--non-default
+also shows the
+.B
+sboconfig
+flag used to set each option for reference. The
+.B
+--non-default
 flag can be used without root privileges.
 .RE
 .P

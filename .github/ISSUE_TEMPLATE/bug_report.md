@@ -13,7 +13,9 @@ assignees: pghvlaans
 
 * Output of `sboconfig -v`:
 
-* Output of `sboconfig -l | grep -ve sboconfig -e FALSE`:
+* Output of `sboconfig -l | grep -ve sboconfig -e FALSE` (version 3.6 and earlier):
+
+* Output of `sboconfig -n` (version 3.7 and later):
 
 * Output of `sbohints -l` (version 3.4 and later):
 

@@ -25,7 +25,10 @@ my $self = basename($0);
 my $label = $is_sbotest ? "sbotest config" : $self;
 
 sub show_usage {
-	my $for_sbotest = $is_sbotest ? "\n  -A|--sbo-archive /usr/sbotest/archive:\n      SBO_ARCHIVE: the directory for package reuse." : "";
+	if ($is_sbotest) {
+		show_sbotest_usage();
+		return 1;
+	}
 	print <<"EOF";
 Usage: $label option argument ...
        $label
@@ -37,10 +40,12 @@ Options:
     version information.
   -l|--list:
     show current options.
+  -n|--non-default:
+    show current non-default options.
   --reset:
-    restore the default configuration
+    restore the default configuration.
 
-Configuration options (defaults shown):$for_sbotest
+Configuration options (defaults shown):
   -B|--branch FALSE:
       GIT_BRANCH: the name of a git branch to use, or FALSE for the Slackware version default.
   -b|--build-ignore FALSE:
@@ -57,7 +62,7 @@ Configuration options (defaults shown):$for_sbotest
       GPG_VERIFY: verify the repo with gnupg
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
-  -L|--log-dir: FALSE:
+  -L|--log-dir FALSE:
        LOG_DIR: if an absolute path, save a log file here after each build.
   -P|--cpan-ignore FALSE:
       CPAN_IGNORE: install scripts even if they have been installed from the CPAN.
@@ -82,17 +87,76 @@ EOF
 	return 1;
 }
 
+sub show_sbotest_usage {
+	print <<"EOF";
+Usage: $label option argument ...
+       $label
+
+Options:
+  -h|--help:
+    this screen.
+  -v|--version:
+    version information.
+  -l|--list:
+    show current options.
+  -n|--non-default:
+    show current non-default options.
+  --reset:
+    restore the default configuration.
+
+Configuration options (defaults shown):
+  -A|--sbo-archive /usr/sbotest/archive:
+      SBO_ARCHIVE: the directory for package reuse.
+  -B|--branch FALSE:
+      GIT_BRANCH: the name of a git branch to use, or FALSE for the Slackware version default.
+  -C|--classic FALSE:
+      CLASSIC: if TRUE, enable BUILD_IGNORE and RSYNC_DEFAULT and suppress extra sbotools output.
+  -c|--noclean FALSE:
+      NOCLEAN: if TRUE, do not clean up working directories after building by default.
+  -d|--distclean FALSE:
+      DISTCLEAN: if TRUE, clean the source and package archives by default after building.
+  -e|--etc-profile TRUE:
+      ETC_PROFILE: if FALSE, do not source executable scripts in /etc/profile.d before building.
+  -g|--gpg-verify FALSE:
+      GPG_VERIFY: verify the repo with gnupg
+  -j|--jobs FALSE:
+      JOBS: numeric -j setting to feed to make for multicore systems.
+  -L|--log-dir /usr/sbotest/logs:
+       LOG_DIR: if an absolute path, save a log file here after each build.
+  -P|--cpan-ignore TRUE:
+      CPAN_IGNORE: install scripts even if they have been installed from the CPAN.
+  -p|--pkg-dir /usr/sbotest/tests:
+      PKG_DIR: set a directory to store packages in.
+  -s|--sbo-home /usr/sbotest:
+      SBO_HOME: set the SBo directory.
+  -o|--local-overrides FALSE:
+      LOCAL_OVERRIDES: a directory containing local overrides.
+  -V|--slackware-version FALSE:
+      SLACKWARE_VERSION: use the SBo repository for this version.
+  -r|--repo FALSE:
+      REPO: use a repository other than SBo.
+  -R|--rsync FALSE:
+      RSYNC_DEFAULT: default mirrors (other than for -current) are rsync.
+  -S|--strict-upgrades FALSE:
+      STRICT_UPGRADES: with --archive-rebuild, only delete when the version or build number is lower.
+
+Use $label without options for an interactive menu.
+
+EOF
+	return 1;
+}
+
 my $all_clear = 1 unless @ARGV;
 my %options;
 
 unless ($is_sbotest) {
-	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'classic|C=s', 'noclean|c=s',
+	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s');
 } else {
-	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'reset', 'classic|C=s', 'noclean|c=s',
+	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
@@ -100,15 +164,16 @@ unless ($is_sbotest) {
 		'sbo-archive|A=s');
 }
 
+$options{list} = 1 if exists $options{'non-default'};
 if ($options{help}) {
 	show_usage();
-	wrapsay "Non-root users can call $label with -l, -h and -v." unless $< == 0;
+	wrapsay "Non-root users can call $label with -l, -n, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($options{version}) { show_version(); exit 0 }
 unless ($< == 0 or $options{list}) {
 	show_usage();
-	usage_error "Non-root users can call $label with -l, -h and -v.";
+	usage_error "Non-root users can call $label with -l, -n, -h and -v.";
 }
 
 my %valid_confs = (
@@ -157,7 +222,25 @@ $params{SBO_ARCHIVE} = 'A|--sbo-archive' if $is_sbotest;
 
 if (exists $options{list}) {
 	my @keys = sort {$a cmp $b} keys %config;
-	say "sboconfig -$params{$_}:\n    $_=$config{$_}" for @keys;
+	if (exists $options{'non-default'} and not $is_sbotest) {
+		for my $item (@keys) {
+			next if $config{$item} eq 'FALSE';
+			next if $item eq 'SBO_HOME' and $config{$item} eq '/usr/sbo';
+			say "$label -$params{$item}:\n    $item=$config{$item}";
+		}
+	} elsif (exists $options{'non-default'} and $is_sbotest) {
+		for my $item (@keys) {
+			if ($item eq 'ETC_PROFILE' or $item eq 'CPAN_IGNORE') { next if $config{$item} eq 'TRUE'; }
+			if ($item eq 'SBO_HOME') { next if $config{$item} eq 'FALSE' or $config{$item} eq '/usr/sbotest'; }
+			if ($item eq 'SBO_ARCHIVE') { next if $config{$item} eq 'FALSE' or $config{$item} eq '/usr/sbotest/archive'; }
+			if ($item eq 'PKG_DIR') { next if $config{$item} eq 'FALSE' or $config{$item} eq '/usr/sbotest/tests'; }
+			if ($item eq 'LOG_DIR') { next if $config{$item} eq 'FALSE' or $config{$item} eq '/usr/sbotest/logs'; }
+			next if $item ne 'ETC_PROFILE' and $item ne 'CPAN_IGNORE' and $config{$item} eq 'FALSE';
+			say "$label -$params{$item}:\n    $item=$config{$item}";
+		}
+	} else {
+		say "$label -$params{$_}:\n    $_=$config{$_}" for @keys;
+	}
 	wrapsay "\nWarning: Local overrides directory $config{LOCAL_OVERRIDES} does not exist." if $config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES};
 	exit 0;
 }
