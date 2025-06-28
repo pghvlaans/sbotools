@@ -21,7 +21,7 @@
 
     sboconfig [-h|-v]
 
-    sboconfig [-l]
+    sboconfig [-l|-n]
 
     sboconfig [--reset]
 
@@ -43,7 +43,7 @@ configuration directory other than */etc/sbotools*, export an
 environment variable **SBOTOOLS_CONF_DIR** with an absolute path.
 
 Non-root users can only call **sboconfig** with the **\--list**,
-**\--help** and **\--version** flags.
+**\--non-default**, **\--help** and **\--version** flags.
 
 ## OPTIONS
 
@@ -52,6 +52,12 @@ Non-root users can only call **sboconfig** with the **\--list**,
 List the current configuration options, including unmodified defaults.
 **\--list** also shows the **sboconfig** flag used to set each option
 for reference. The **\--list** flag can be used without root privileges.
+
+**\--non-default**
+
+List current non-default configuration options. **\--non-default** also
+shows the **sboconfig** flag used to set each option for reference. The
+**\--non-default** flag can be used without root privileges.
 
 **\--reset**
 
