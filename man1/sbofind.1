@@ -53,18 +53,6 @@ sbotools.conf(5)\fR\
 .SH OPTIONS
 .P
 .B
--h|--help
-.RS
-Show help information.
-.RE
-.P
-.B
--v|--version
-.RS
-Show version information.
-.RE
-.P
-.B
 -A|--all-reverse
 .RS
 Show all reverse dependencies in the repository for
@@ -143,6 +131,18 @@ file for each SlackBuild found.
 Show the top-level reverse dependencies, installed or not,
 for one or more scripts.
 .RE
+.P
+.B
+-h|--help
+.RS
+Show help information.
+.RE
+.P
+.B
+-v|--version
+.RS
+Show version information.
+.RE
 .SH EXIT CODES
 .P
 .B
@@ -150,22 +150,19 @@ sbofind
 can exit with the following codes:
 .RS
 
-0: all operations were succesful.
+0:  all operations were succesful.
 .RE
 .RS
-1: a usage error occured (e.g., incorrect options were passed to
+1:  a usage error occured (e.g., incorrect options were passed to
 .B
 sbofind
 ).
 .RE
 .RS
-2: a script or module error occurred.
+2:  a script or module error occurred.
 .RE
 .RS
-6:
-.B
-sbofind
-was unable to obtain a required file handle.
+6:  a required handle could not be obtained.
 .RE
 .RS
 13: circular dependencies detected.

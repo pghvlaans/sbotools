@@ -18,24 +18,32 @@ sboclean
 is used to clean files left by
 .B
 sbotools\fR\
-\&,
-such as saved options (in
+\&, including:
+.RS
+
+\[bu] saved build options in
 .I
-/var/log/sbotools\fR\
-\&), downloaded source files (\(lqdistfiles\(rq), or
-working directories under
+/var/log/sbotools
+
+\[bu] downloaded source files
+
+\[bu] working directories under
 .I
 /tmp/SBo
 (or
 .I
 $TMP\fR\
-\&) and, for compat32 installs, under
+\&)
+
+\[bu] for
+.B
+compat32
+packages, working directories under
 .I
 /tmp
-(or
-.I
-$TMP\fR\
-\&). Note that if run without the
+
+.RE
+Note that if run without the
 .B
 --interactive
 flag,
@@ -73,18 +81,6 @@ sboclean\fR\
 \&, or if invalid options are specified, the script
 exits with a diagnostic message.
 .SH OPTIONS
-.P
-.B
--h|--help
-.RS
-Show help information.
-.RE
-.P
-.B
--v|--version
-.RS
-Show version information.
-.RE
 .P
 .B
 -d|--dist
@@ -128,6 +124,19 @@ Be interactive;
 sboclean
 uses confirmation prompts for each item that could be
 removed.
+.RE
+.P
+.B
+-h|--help
+.RS
+Show help information.
+.RE
+.P
+.B
+-v|--version
+.RS
+Show version information.
+.RE
 .SH EXIT CODES
 .P
 .B
@@ -135,16 +144,16 @@ sboclean
 can exit with the following codes:
 .RS
 
-0: all operations completed successfully.
+0:  all operations completed successfully.
 .RE
 .RS
-1: a usage error occurred, such as passing incorrect options to
+1:  a usage error occurred, such as passing incorrect options to
 .B
 sboclean\fR\
 \&.
 .RE
 .RS
-2: a script or module error occurred.
+2:  a script or module error occurred.
 .RE
 .RS
 16: reading keyboard input failed.

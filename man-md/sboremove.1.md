@@ -27,10 +27,13 @@
 **sboremove** removes packages installed from SlackBuilds, along with
 any unneeded dependencies. Dependency information is pulled recursively
 from *info* files and honors the contents of [sbotools.hints(5)](sbotools.hints.5.md); any
-dependencies that are required by no other installed SlackBuilds are
-eligible for removal as well. **sboremove** does not handle blacklisted
-scripts. If **sboremove** is called with the **\--alwaysask** flag, the
-dependency requirements of other installed SlackBuilds are not checked.
+dependencies required by no other installed SlackBuilds are eligible for
+removal as well. **sboremove** does not handle blacklisted scripts.
+
+If **sboremove** is called with the **\--alwaysask** flag, all
+dependencies receive removal prompts, even if they are required by other
+installed SlackBuilds. The per-script prompts list installed reverse
+dependencies, if any.
 
 To remove *compat32* packages, call **sboremove** with the
 **\--compat32** flag.
@@ -47,14 +50,6 @@ message.
 
 ## OPTIONS
 
-**-h\|\--help**
-
-Show help information.
-
-**-v\|\--version**
-
-Show version information.
-
 **-a\|\--alwaysask**
 
 Always ask to remove dependencies, even if they are required by other
@@ -64,6 +59,14 @@ packages installed to the system.
 
 Remove the *compat32* version of the script or scripts, along with
 *compat32* dependencies.
+
+**-h\|\--help**
+
+Show help information.
+
+**-v\|\--version**
+
+Show version information.
 
 ## EXIT CODES
 

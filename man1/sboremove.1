@@ -22,18 +22,21 @@ files and honors the contents of
 .B
 sbotools.hints(5)\fR\
 \&; any dependencies
-that are required by no other installed SlackBuilds are eligible
+required by no other installed SlackBuilds are eligible
 for removal as well.
 .B
 sboremove
-does not handle blacklisted scripts. If
+does not handle blacklisted scripts.
+.P
+If
 .B
 sboremove
 is called with the
 .B
 --alwaysask
-flag, the dependency requirements of other installed SlackBuilds
-are not checked.
+flag, all dependencies receive removal prompts, even if they are
+required by other installed SlackBuilds. The per-script prompts list
+installed reverse dependencies, if any.
 .P
 To remove
 .I
@@ -65,18 +68,6 @@ exits with a diagnostic message.
 .SH OPTIONS
 .P
 .B
--h|--help
-.RS
-Show help information.
-.RE
-.P
-.B
--v|--version
-.RS
-Show version information.
-.RE
-.P
-.B
 -a|--alwaysask
 .RS
 Always ask to remove dependencies, even if they are
@@ -94,6 +85,18 @@ version of the script or scripts, along with
 compat32
 dependencies.
 .RE
+.P
+.B
+-h|--help
+.RS
+Show help information.
+.RE
+.P
+.B
+-v|--version
+.RS
+Show version information.
+.RE
 .SH EXIT CODES
 .P
 .B
@@ -101,16 +104,16 @@ sboremove
 can exit with the following codes:
 .RS
 
-0: all operations completed successfully.
+0:  all operations completed successfully.
 .RE
 .RS
-1: a usage error occurred, such as running
+1:  a usage error occurred, such as running
 .B
 sboremove
 with nothing to remove.
 .RE
 .RS
-2: a script or module error occurred.
+2:  a script or module error occurred.
 .RE
 .RS
 13: circular dependencies detected.

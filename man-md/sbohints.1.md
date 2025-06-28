@@ -19,9 +19,9 @@
 
 ## SYNOPSIS
 
-    sbohints [-h | -v]
+    sbohints [-h|-v]
 
-    sbohints [-l | --reset]
+    sbohints [-l|--reset]
 
     sbohints [-c] [-Obor] sbo_name (sbo_name)
 
@@ -38,11 +38,13 @@ in [sbotools.hints(5)](sbotools.hints.5.md). Three kinds of hints are recognized
 
 • automatic reverse dependency rebuild
 
+The modification flags are **\--blacklist**, **\--optional**,
+**\--replace-optional** and **\--reverse**. These can be used in
+conjunction with **\--clear**, but not with each other.
+
 Please note that all hints apply equally to the *compat32* version of
 the target script or scripts; specific requests for *compat32* scripts
-are unsupported. The modification flags are **\--blacklist**,
-**\--optional**, **\--replace-optional** and **\--reverse**. These can
-be used in conjunction with **\--clear**, but not with each other.
+are unsupported.
 
 Non-root users can only call **sbohints** with the **\--list**,
 **\--query**, **\--help** and **\--version** flags. If an invalid
@@ -123,7 +125,7 @@ unchanged.
 0: all operations were successful.\
 1: a usage error occurred.\
 2: a script or module error occurred.\
-6: **sbohints** was unable to obtain a required file handle.\
+6: a required file handle could not be obtained.\
 16: reading keyboard input failed.
 
 ## BUGS

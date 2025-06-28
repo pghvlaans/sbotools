@@ -76,6 +76,10 @@ For details about all configuration options in *sbotools.conf*, see
 [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md): blacklist, optional
 dependencies and automatic reverse dependency rebuilds.
 
+Those who wish to use **sbotools** for testing scripts and reverse
+dependencies in a clean build environment may be interested in the
+**sbotest** companion package.
+
 ## STARTUP
 
 When using **sbotools** for the first time, a copy of the SlackBuilds

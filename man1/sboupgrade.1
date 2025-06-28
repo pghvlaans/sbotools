@@ -31,8 +31,8 @@ offers to install any non-installed dependencies in
 the build queue, taking the hints in
 .B
 sbotools.hints(5)
-into account. If circular dependencies are detected, the
-script exits with an error message.
+into account. The script exits with an error message if circular
+dependencies are detected.
 .P
 .I
 README
@@ -140,18 +140,6 @@ unless passing
 \&, or if invalid options are specified, the script
 exits with a diagnostic message.
 .SH OPTIONS
-.P
-.B
--h|--help
-.RS
-Show help information.
-.RE
-.P
-.B
--v|--version
-.RS
-Show version information.
-.RE
 .P
 .B
 -b|--build-ignore (FALSE|TRUE)
@@ -331,7 +319,7 @@ is run.
 If an
 .B
 absolute path\fR\
-\&, save built packages there, overriding the value of the
+\&, save built packages here, overriding the value of the
 .B
 PKG_DIR
 setting.
@@ -539,6 +527,18 @@ Overrides
 --nointeractive\fR\
 \&.
 .RE
+.P
+.B
+-h|--help
+.RS
+Show help information.
+.RE
+.P
+.B
+-v|--version
+.RS
+Show version information.
+.RE
 .SH VARIABLES
 .P
 Beyond the options contained in
@@ -720,37 +720,37 @@ sboupgrade
 can exit with the following codes:
 .RS
 
-0: all operations were succesful.
+0:  all operations were succesful.
 .RE
 .RS
-1: a usage error occured, such as specifying invalid options.
+1:  a usage error occured, such as specifying invalid options.
 .RE
 .RS
-2: a script or module error occurred.
+2:  a script or module error occurred.
 .RE
 .RS
-3: a SlackBuild exited non-zero.
+3:  a SlackBuild exited non-zero.
 .RE
 .RS
-4: unable to md5sum verify the source file(s).
+4:  unable to md5sum verify the source file(s).
 .RE
 .RS
-5: unable to download the source file(s).
+5:  unable to download the source file(s).
 .RE
 .RS
-6: unable to obtain a required file handle.
+6:  unable to obtain a required file handle.
 .RE
 .RS
-7: unable to get required info from the
+7:  unable to get required info from the
 .I
 info
 file.
 .RE
 .RS
-8: unable to unset the exec-on-close bit on a temporary file.
+8:  unable to unset the exec-on-close bit on a temporary file.
 .RE
 .RS
-9: multilib has not been set up (where required).
+9:  multilib has not been set up (where required).
 .RE
 .RS
 10:

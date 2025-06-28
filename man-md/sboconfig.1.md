@@ -47,14 +47,6 @@ Non-root users can only call **sboconfig** with the **\--list**,
 
 ## OPTIONS
 
-**-h\|\--help**
-
-Show help information.
-
-**-v\|\--version**
-
-Show version information.
-
 **-l\|\--list**
 
 List the current configuration options, including unmodified defaults.
@@ -222,6 +214,14 @@ Defaults to */usr/sbotest/tests*.
 
 Defaults to */usr/sbotest*.
 
+**-h\|\--help**
+
+Show help information.
+
+**-v\|\--version**
+
+Show version information.
+
 ## EXIT CODES
 
 **sboconfig** can exit with the following codes:
@@ -229,7 +229,7 @@ Defaults to */usr/sbotest*.
 0: all operations were successful.\
 1: a usage error occurred (e.g. passing invalid option specifications)\
 2: a script or module error occurred.\
-6: **sboconfig** was unable to obtain a required file handle.\
+6: a required file handle could not be obtained.\
 16: reading keyboard input failed.
 
 ## BUGS

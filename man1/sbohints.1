@@ -6,9 +6,9 @@ sbohints
 - interact with sbotools.hints
 .SH SYNOPSIS
 .P
-sbohints [-h | -v]
+sbohints [-h|-v]
 .P
-sbohints [-l | --reset]
+sbohints [-l|--reset]
 .P
 sbohints [-c] [-Obor] sbo_name (sbo_name)
 .P
@@ -31,14 +31,7 @@ kinds of hints are recognized:
 \[bu] automatic reverse dependency rebuild
 
 .RE
-Please note that all hints apply equally to the
-.I
-compat32
-version of the target script or scripts; specific requests for
-.I
-compat32
-scripts are unsupported. The modification
-flags are
+The modification flags are
 .B
 --blacklist\fR\
 \&,
@@ -54,6 +47,14 @@ and
 .B
 --clear\fR\
 \&, but not with each other.
+.P
+Please note that all hints apply equally to the
+.I
+compat32
+version of the target script or scripts; specific requests for
+.I
+compat32
+scripts are unsupported.
 .P
 Non-root users can only call
 .B
@@ -215,19 +216,16 @@ sbohints
 can exit with the following codes:
 .RS
 
-0: all operations were successful.
+0:  all operations were successful.
 .RE
 .RS
-1: a usage error occurred.
+1:  a usage error occurred.
 .RE
 .RS
-2: a script or module error occurred.
+2:  a script or module error occurred.
 .RE
 .RS
-6:
-.B
-sbohints
-was unable to obtain a required file handle.
+6:  a required file handle could not be obtained.
 .RE
 .RS
 16: reading keyboard input failed.

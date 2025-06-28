@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Repo 3"
-.TH SBO::Lib::Repo 3 "Setting Orange, Discord 57, 3191 YOLD" "" "sbotools 3.6"
+.TH SBO::Lib::Repo 3 "Prickle-Prickle, Confusion 33, 3191 YOLD" "" "sbotools 3.6"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -274,12 +274,13 @@ that the user can trust the key.
 .IX Header "EXIT CODES"
 Repo.pm subroutines can return the following exit codes:
 .PP
-.Vb 5
+.Vb 6
 \&  _ERR_USAGE         1   usage errors
 \&  _ERR_SCRIPT        2   script or module bug
 \&  _ERR_MD5SUM        4   md5sum verification failure
 \&  _ERR_DOWNLOAD      5   download failure
 \&  _ERR_GPG           15  GPG verification failed
+\&  _ERR_STDIN         16  reading keyboard input failed
 .Ve
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"

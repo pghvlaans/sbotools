@@ -65,18 +65,6 @@ flags.
 .SH OPTIONS
 .P
 .B
--h|--help
-.RS
-Show help information.
-.RE
-.P
-.B
--v|--version
-.RS
-Show version information.
-.RE
-.P
-.B
 -l|--list
 .RS
 List the current configuration options, including
@@ -529,11 +517,23 @@ Defaults to
 .P
 .B
 -s|--sbo-home
-.P
+.RS
 Defaults to
 .I
 /usr/sbotest\fR\
 \&.
+.RE
+.P
+.B
+-h|--help
+.RS
+Show help information.
+.RE
+.P
+.B
+-v|--version
+.RS
+Show version information.
 .RE
 .SH EXIT CODES
 .P
@@ -542,19 +542,16 @@ sboconfig
 can exit with the following codes:
 .RS
 
-0: all operations were successful.
+0:  all operations were successful.
 .RE
 .RS
-1: a usage error occurred (e.g. passing invalid option specifications)
+1:  a usage error occurred (e.g. passing invalid option specifications)
 .RE
 .RS
-2: a script or module error occurred.
+2:  a script or module error occurred.
 .RE
 .RS
-6:
-.B
-sboconfig
-was unable to obtain a required file handle.
+6:  a required file handle could not be obtained.
 .RE
 .RS
 16: reading keyboard input failed.

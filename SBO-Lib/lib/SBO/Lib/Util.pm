@@ -3,8 +3,8 @@ package SBO::Lib::Util;
 # vim: ts=2:et
 
 # The line below is used to inform the sbotest wrapper script
-# that sbotools is compatible with "sbotest --config" and
-# "sbotest --hints". Do not alter or remove.
+# that sbotools is compatible with "sbotest config" and
+# "sbotest hints". Do not alter or remove.
 
 #% SBOTEST CONFIG HINTS %
 
