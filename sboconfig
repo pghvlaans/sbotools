@@ -232,9 +232,9 @@ if (exists $options{list}) {
 		for my $item (@keys) {
 			if ($item eq 'ETC_PROFILE' or $item eq 'CPAN_IGNORE') { next if $config{$item} eq 'TRUE'; }
 			if ($item eq 'SBO_HOME') { next if $config{$item} eq 'FALSE' or $config{$item} eq '/usr/sbotest'; }
-			if ($item eq 'SBO_ARCHIVE') { next if $config{$item} eq 'FALSE' or $config{$item} eq '/usr/sbotest/archive'; }
-			if ($item eq 'PKG_DIR') { next if $config{$item} eq 'FALSE' or $config{$item} eq '/usr/sbotest/tests'; }
-			if ($item eq 'LOG_DIR') { next if $config{$item} eq 'FALSE' or $config{$item} eq '/usr/sbotest/logs'; }
+			if ($item eq 'SBO_ARCHIVE') { next if $config{$item} eq 'FALSE' or $config{$item} eq "$config{'SBO_HOME'}/archive"; }
+			if ($item eq 'PKG_DIR') { next if $config{$item} eq 'FALSE' or $config{$item} eq "$config{'SBO_HOME'}/tests"; }
+			if ($item eq 'LOG_DIR') { next if $config{$item} eq 'FALSE' or $config{$item} eq "$config{'SBO_HOME'}/logs"; }
 			next if $item ne 'ETC_PROFILE' and $item ne 'CPAN_IGNORE' and $config{$item} eq 'FALSE';
 			say "$label -$params{$item}:\n    $item=$config{$item}";
 		}
