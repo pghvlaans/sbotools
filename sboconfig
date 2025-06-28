@@ -70,6 +70,8 @@ Configuration options (defaults shown):
       PKG_DIR: set a directory to store packages in.
   -s|--sbo-home /usr/sbo:
       SBO_HOME: set the SBo directory.
+  -O|--obsolete-check FALSE:
+      OBSOLETE_CHECK: for Slackware -current, download the obsolete scripts list with sbocheck.
   -o|--local-overrides FALSE:
       LOCAL_OVERRIDES: a directory containing local overrides.
   -V|--slackware-version FALSE:
@@ -129,6 +131,8 @@ Configuration options (defaults shown):
       PKG_DIR: set a directory to store packages in.
   -s|--sbo-home /usr/sbotest:
       SBO_HOME: set the SBo directory.
+  -O|--obsolete-check FALSE:
+      OBSOLETE_CHECK: for Slackware -current, download the obsolete scripts list with sbocheck.
   -o|--local-overrides FALSE:
       LOCAL_OVERRIDES: a directory containing local overrides.
   -V|--slackware-version FALSE:
