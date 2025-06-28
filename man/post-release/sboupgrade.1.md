@@ -32,8 +32,8 @@
 of requirements from the *info* file for any specified SlackBuild. This
 is a recursive operation over all dependencies. **sboupgrade** offers to
 install any non-installed dependencies in the build queue, taking the
-hints in [sbotools.hints(5)](sbotools.hints.5.md) into account. If circular dependencies
-are detected, the script exits with an error message.
+hints in [sbotools.hints(5)](sbotools.hints.5.md) into account. The script exits with an
+error message if circular dependencies are detected.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
 **sboupgrade** offers to run them prior to building if any of the
@@ -67,14 +67,6 @@ Root privileges are required to run **sboupgrade** unless passing
 script exits with a diagnostic message.
 
 ## OPTIONS
-
-**-h\|\--help**
-
-Show help information.
-
-**-v\|\--version**
-
-Show version information.
 
 **-b\|\--build-ignore (FALSE\|TRUE)**
 
@@ -135,7 +127,7 @@ If numerical, pass to the **-j** argument when a SlackBuild invoking
 
 **-k\|\--pkg-dir (FALSE\|/path)**
 
-If an **absolute path**, save built packages there, overriding the value
+If an **absolute path**, save built packages here, overriding the value
 of the **PKG_DIR** setting.
 
 **-L\|\--log-dir (FALSE\|/path)**
@@ -221,6 +213,14 @@ with **\--dry-run** first, which prints the **\--batch** build queue and
 exits, to verify the upcoming operation.
 
 Overrides **\--nointeractive**.
+
+**-h\|\--help**
+
+Show help information.
+
+**-v\|\--version**
+
+Show version information.
 
 ## VARIABLES
 

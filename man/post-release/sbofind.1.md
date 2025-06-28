@@ -42,14 +42,6 @@ exits with a diagnostic message.
 
 ## OPTIONS
 
-**-h\|\--help**
-
-Show help information.
-
-**-v\|\--version**
-
-Show version information.
-
 **-A\|\--all-reverse**
 
 Show all reverse dependencies in the repository for each SlackBuild
@@ -96,6 +88,14 @@ Show the contents of the *README* file for each SlackBuild found.
 Show the top-level reverse dependencies, installed or not, for one or
 more scripts.
 
+**-h\|\--help**
+
+Show help information.
+
+**-v\|\--version**
+
+Show version information.
+
 ## EXIT CODES
 
 **sbofind** can exit with the following codes:
@@ -104,7 +104,7 @@ more scripts.
 1: a usage error occured (e.g., incorrect options were passed to
 **sbofind** ).\
 2: a script or module error occurred.\
-6: **sbofind** was unable to obtain a required file handle.\
+6: a required handle could not be obtained.\
 13: circular dependencies detected.\
 16: reading keyboard input failed.
 

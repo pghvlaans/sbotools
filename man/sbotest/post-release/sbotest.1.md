@@ -91,14 +91,6 @@ listing-related options.
 
 ## OPTIONS
 
-**-h\|\--help**
-
-Show help information.
-
-**-v\|\--version**
-
-Show version information.
-
 **config**
 
 Interface with [sboconfig(1)](sboconfig.1.md) to modify settings. All **sboconfig**
@@ -202,6 +194,14 @@ If **TRUE**, delete only mismatched packages with lower version or build
 numbers when running **\--archive-rebuild**. If **FALSE**, delete all
 mismatched packages from the archive. Overrides the setting in
 */etc/sbotest/sbotest.conf*.
+
+**-h\|\--help**
+
+Show help information.
+
+**-v\|\--version**
+
+Show version information.
 
 ## TESTING STRATEGIES
 
