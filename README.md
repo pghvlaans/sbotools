@@ -39,6 +39,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboconfig, sbohints: Callable from sbotest with --config or --hints
   * Tree.pm: Speed up location finding for all available; relevant for reverse dependency calculation
   * sboconfig: Use --non-default to list only non-default options
+  * Bugfix: For git, create new branches from upstream in lieu of reset or pull
 
 #### 3.6 - 2025-05-10
   * Bugfix: Download.pm: Unlink existing symlinks with the same name as new ones

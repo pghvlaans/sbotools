@@ -343,8 +343,9 @@ sub get_obsolete {
   my $bool = git_sbo_tree($url);
 
 C<git_sbo_tree()> uses C<git clone --no-local> on the repository specified by C<$url> to the
-C<$repo_path> if the C<$url> repository is not present. If it is, it runs
-C<git fetch && git reset --hard origin>.
+C<$repo_path> if the C<$url> repository is not present. If it is, it uses C<git fetch>,
+followed by C<git checkout --detach> and C<git branch --force> to replace the existing branch
+with one from upstream. This avoids problems with divergent branches.
 
 If C<GIT_BRANCH> is set, or if the running or configured Slackware version has a
 recommended git branch, existence is checked with C<git ls-remote>. If the branch does not
@@ -366,39 +367,48 @@ sub git_sbo_tree {
   my $branchres;
   if ($config{GIT_BRANCH} eq 'FALSE' and $url ne "https://github.com/Ponce/slackbuilds.git") {
     $branch = get_slack_branch();
+  } elsif ($config{GIT_BRANCH} eq 'FALSE' and $url eq "https://github.com/Ponce/slackbuilds.git") {
+    $branch = "current";
   } elsif ($config{GIT_BRANCH} ne 'FALSE') {
     $branch = $config{GIT_BRANCH};
   }
   if ($branch) {
     $branchres = system(qw/ git ls-remote --exit-code /, $url, $branch) == 0;
+    my $backup_label;
     if (not $branchres) {
       if (-d "$repo_path/.git" and check_git_remote($repo_path, $url)) {
         chdir $repo_path or return 0;
-        $backup_branch = slurp("$repo_path/.git/HEAD");
+        chomp($backup_branch = slurp("$repo_path/.git/HEAD"));
+        return 0 unless defined $backup_branch;
         $backup_branch =~ s|.*/||s;
-        $backup_branch =~ s|\n||s;
-        $backup_branch = "branch $backup_branch";
+        $backup_label = "branch $backup_branch";
         chdir $cwd;
       } else {
-        $backup_branch = "origin";
+        $backup_label = "origin";
       }
-      unless (prompt("\nThis git repository does not have a branch named $branch.\nContinue with $backup_branch?", default => 'no')) {
+      unless (prompt("\nThis git repository does not have a branch named $branch.\nContinue with $backup_label?", default => 'no')) {
         usage_error("Exiting.");
       }
     }
   } else {
+    if (-d "$repo_path/.git" and check_git_remote($repo_path, $url)) {
+      chomp($backup_branch = slurp("$repo_path/.git/HEAD"));
+      return 0 unless defined $backup_branch;
+      $backup_branch =~ s|.*/||s;
+      wrapsay "No branch specified; trying branch $backup_branch.";
+    }
     $branchres = 0;
   }
   if (-d "$repo_path/.git" and check_git_remote($repo_path, $url)) {
     chdir $repo_path or return 0;
     $res = eval {
+      $branch = $backup_branch unless $branchres;
+      die unless defined $branch;
       die unless system(qw! git fetch !) == 0; # if system() doesn't return 0, there was an error
-      die unless system(qw! git reset --hard origin !) == 0;
+      die unless system(qw! git checkout --quiet --detach !) == 0;
+      die unless system(qw! git branch --force !, $branch, "origin/$branch") == 0;
+      die unless system(qw! git checkout !, $branch) == 0;
       unlink "$repo_path/SLACKBUILDS.TXT";
-      if ($branchres) {
-        die unless system(qw/ git checkout /, $branch) == 0;
-        system(qw! git pull !);
-      }
       1;
     };
   } else {
