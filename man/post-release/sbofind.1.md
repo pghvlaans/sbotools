@@ -4,6 +4,7 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[SBOTEST](#sbotest)\
 [EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
@@ -95,6 +96,12 @@ Show help information.
 **-v\|\--version**
 
 Show version information.
+
+## SBOTEST
+
+**sbofind** is called when running **sbotest find**; flags are
+unchanged. Scripts with an up-to-date package in the archive are
+indicated.
 
 ## EXIT CODES
 

@@ -25,7 +25,7 @@
 
     sbotest pull [-B BRANCH|FALSE] [-r URL|FALSE]
 
-    sbotest [config|hints] \...
+    sbotest [config|find|hints] \...
 
     sbotest [-f|-s] [-Akl /path|FALSE] [-j #|FALSE] \
             [-D] [--no-archive|--archive-force] sbo_name (sbo_name)
@@ -56,7 +56,7 @@ with **hints**. See [sboconfig(1)](sboconfig.1.md) and [sbohints(1)](sbohints.1.
 details.
 
 Called without options, **sbotest** builds any requested SlackBuilds
-with their first level of reverse dependencies. Use **sbofind
+with their first level of reverse dependencies. Use **sbotest find
 \--first-reverse** or pass **\--dry-run** for a list of scripts that
 would be tested, if compatible. To test all reverse dependencies of the
 requested scripts, use the **\--full-reverse** option; **\--single**
@@ -86,7 +86,7 @@ To generate a report of potential operations, use **\--dry-run** with
 any combination of other options.
 
 Non-root users can run sbotest with **\--help**, **\--version** and
-**\--dry-run. hints** and **config** can be run by anyone with
+**\--dry-run. hints**, **config** and **find** can be run by anyone with
 listing-related options.
 
 ## OPTIONS
@@ -96,6 +96,12 @@ listing-related options.
 Interface with [sboconfig(1)](sboconfig.1.md) to modify settings. All **sboconfig**
 options can be used, with the addition of **\--sbo-archive**. See
 **CONFIGURATION** below.
+
+**find**
+
+Interface with [sbofind(1)](sbofind.1.md) to search the local copy of the repository
+for SlackBuilds. Scripts with up-to-date packages in the archive are
+indicated. All **sbofind** options can be used.
 
 **hints**
 
@@ -151,8 +157,8 @@ be removed.
 **-f\|\--full-reverse**
 
 Test all reverse dependencies for the requested scripts rather than the
-first level only. Use **sbofind \--all-reverse** or pass **\--dry-run**
-to see which scripts would be tested, if compatible.
+first level only. Use **sbotest find \--all-reverse** or pass
+**\--dry-run** to see which scripts would be tested, if compatible.
 
 **-s\|\--single**
 
