@@ -2,11 +2,12 @@ package SBO::Lib::Util;
 
 # vim: ts=2:et
 
-# The line below is used to inform the sbotest wrapper script
-# that sbotools is compatible with "sbotest config" and
-# "sbotest hints". Do not alter or remove.
+# The lines below are used to inform the sbotest wrapper script
+# that sbotools is compatible with "sbotest config",
+# "sbotest hints" and "sbotest find". Do not alter or remove.
 
 #% SBOTEST CONFIG HINTS %
+#% SBOTEST FIND %
 
 use 5.016;
 use strict;

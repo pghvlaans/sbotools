@@ -14,15 +14,17 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs on_blacklist %config @concluded @reverse_concluded $slackbuilds_txt $repo_path @last_level_reverse show_version in indent get_from_info uniq lint_sbo_config wrapsay /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_location get_sbo_version on_blacklist build_cmp version_cmp %config @concluded @reverse_concluded $slackbuilds_txt $repo_path @last_level_reverse $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay /;
+use Cwd;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 
 my $self = basename($0);
+my $label = $is_sbotest ? "sbotest find" : $self;
 
 sub show_usage {
 	print <<"EOF";
-Usage: $self (options) search_term ...
+Usage: $label (options) search_term ...
 
 Options:
   -h|--help:
@@ -51,8 +53,8 @@ Options:
     show the last level of reverse dependencies.
 
 Examples:
-  $self regedit
-  $self -qe libsystemd snapd
+  $label regedit
+  $label -qe libsystemd snapd
 
 EOF
 	return 1;
@@ -177,6 +179,44 @@ sub perform_search {
 	return \@findings;
 }
 
+# sbotest only; determine whether an up-to-date version of the script has
+# been archived
+sub in_archive {
+	script_error("in_archive requires an argument. Exiting.") unless @_ == 1;
+	my $search_name = shift;
+	return 0 unless $is_sbotest and -d $config{SBO_ARCHIVE};
+	my $archived = 0;
+	my $cwd = getcwd();
+	chdir $config{SBO_ARCHIVE};
+	opendir(my $dh, $config{SBO_ARCHIVE});
+	while (my $ls = readdir $dh) {
+		next unless -f $ls and $ls =~ m/^$search_name/;
+		# indicates a potentially valid _SBo package name
+		next unless $ls =~ m/_SBo(|compat32)\.(t[gxlb]z|tar\.([gxl]z|bz2|lzma))$/;
+		my $pkg_name = $ls;
+		my @pkg_string = split '-', $pkg_name;
+		my $pkg_version = $pkg_string[-3];
+		my $pkg_build = $pkg_string[-1];
+		$pkg_build =~ s/[\D].*$//;
+		$pkg_name =~ s/(-[^-]*){3}$//;
+		next unless defined $pkg_name and defined $pkg_build and defined $pkg_name;
+		next unless $pkg_name eq $search_name;
+		my $pkg_location = get_sbo_location($pkg_name);
+		next unless $pkg_location;
+		my $sbo_version = get_sbo_version($pkg_location);
+		my $sbo_build = get_sbo_build_number($pkg_location);
+		next if version_cmp($pkg_version, $sbo_version);
+		next if build_cmp($pkg_build, $sbo_build, $pkg_version, $sbo_version);
+		# the package is up-to-date if this point has been reached
+		$archived = 1;
+		last;
+	}
+	close $dh;
+	chdir $cwd;
+	return $archived;
+}
+
+
 # get installed SlackBuilds and reverse dependency information if there is a
 # query, but only once
 sub reverse_queries {
@@ -285,6 +325,7 @@ for my $search (@ARGV) {
 			my $sbo = "SBo:   "; $sbo = "Local: " if $hash->{local};
 			say "$sbo $name $version";
 			say "        blacklisted" if on_blacklist($name);
+			say "        archived" if in_archive($name); # sbotest-only
 			say "        CPAN" if grep { /^$name$/ } @cpans;
 			say "        CPAN, file(s) missing" if grep { /^$name$/ } @defective_cpans;
 			say "Path:   $location";

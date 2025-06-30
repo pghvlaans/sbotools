@@ -36,7 +36,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboinstall: Add --series-rebuild to rebuild and reinstall all SBo packages in a series with their dependencies
   * sbofind: Add --first-reverse to report all first-level reverse dependencies in the repository
   * Install to vendor_perl; install bundled Sort::Versions in SBO::ThirdParty to avoid collisions
-  * sboconfig, sbohints: Callable from sbotest with --config or --hints
+  * sboconfig, sbohints, sbofind: Callable from sbotest with config, hints and find, respectively
   * Tree.pm: Speed up location finding for all available; relevant for reverse dependency calculation
   * sboconfig: Use --non-default to list only non-default options
   * Bugfix: For git, create new branches from upstream in lieu of reset or pull
