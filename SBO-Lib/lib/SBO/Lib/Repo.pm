@@ -343,9 +343,10 @@ sub get_obsolete {
   my $bool = git_sbo_tree($url);
 
 C<git_sbo_tree()> uses C<git clone --no-local> on the repository specified by C<$url> to the
-C<$repo_path> if the C<$url> repository is not present. If it is, it uses C<git fetch>,
-followed by C<git checkout --detach> and C<git branch --force> to replace the existing branch
-with one from upstream. This avoids problems with divergent branches.
+C<$repo_path> if the C<$url> repository is not present. If it is, it uses C<git reset --hard>
+to revert modifications to tracked files, followed by C<git fetch>, C<git checkout --detach>
+and C<git branch --force> to replace the existing branch with one from upstream. This avoids
+problems with divergent branches.
 
 If C<GIT_BRANCH> is set, or if the running or configured Slackware version has a
 recommended git branch, existence is checked with C<git ls-remote>. If the branch does not
@@ -404,7 +405,8 @@ sub git_sbo_tree {
     $res = eval {
       $branch = $backup_branch unless $branchres;
       die unless defined $branch;
-      die unless system(qw! git fetch !) == 0; # if system() doesn't return 0, there was an error
+      die unless system(qw! git reset --hard !) == 0; # if system() doesn't return 0, there was an error
+      die unless system(qw! git fetch !) == 0;
       die unless system(qw! git checkout --quiet --detach !) == 0;
       die unless system(qw! git branch --force !, $branch, "origin/$branch") == 0;
       die unless system(qw! git checkout !, $branch) == 0;

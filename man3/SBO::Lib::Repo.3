@@ -55,7 +55,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Repo 3"
-.TH SBO::Lib::Repo 3 "Setting Orange, Confusion 34, 3191 YOLD" "" "sbotools 3.6"
+.TH SBO::Lib::Repo 3 "Pungenday, Confusion 37, 3191 YOLD" "" "sbotools 3.6"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -161,9 +161,10 @@ is performed if \f(CW\*(C`GPG_VERIFY\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR. There is
 .Ve
 .PP
 \&\f(CWgit_sbo_tree()\fR uses \f(CW\*(C`git clone \-\-no\-local\*(C'\fR on the repository specified by \f(CW$url\fR to the
-\&\f(CW$repo_path\fR if the \f(CW$url\fR repository is not present. If it is, it uses \f(CW\*(C`git fetch\*(C'\fR,
-followed by \f(CW\*(C`git checkout \-\-detach\*(C'\fR and \f(CW\*(C`git branch \-\-force\*(C'\fR to replace the existing branch
-with one from upstream. This avoids problems with divergent branches.
+\&\f(CW$repo_path\fR if the \f(CW$url\fR repository is not present. If it is, it uses \f(CW\*(C`git reset \-\-hard\*(C'\fR
+to revert modifications to tracked files, followed by \f(CW\*(C`git fetch\*(C'\fR, \f(CW\*(C`git checkout \-\-detach\*(C'\fR
+and \f(CW\*(C`git branch \-\-force\*(C'\fR to replace the existing branch with one from upstream. This avoids
+problems with divergent branches.
 .PP
 If \f(CW\*(C`GIT_BRANCH\*(C'\fR is set, or if the running or configured Slackware version has a
 recommended git branch, existence is checked with \f(CW\*(C`git ls\-remote\*(C'\fR. If the branch does not
