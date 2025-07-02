@@ -286,9 +286,6 @@ if ($all_clear) {
 }
 
 lint_sbo_config($self, %changes);
-if ($changes{SBO_ARCHIVE} and $is_sbotest) {
-	usage_error("SBO_ARCHIVE must be FALSE or an absolute path. Exiting.") unless $changes{SBO_ARCHIVE} =~ m/^(\/|FALSE$)/;
-}
 
 my $change_requested;
 

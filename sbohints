@@ -85,9 +85,6 @@ unless ($< == 0 or $list or $query) {
 unless (@ARGV or $list or $reset) { show_usage(); exit 0; }
 
 lint_sbo_config($self, %config);
-if ($is_sbotest) {
-	usage_error("SBO_ARCHIVE must be FALSE or an absolute path. Exiting.") unless $config{SBO_ARCHIVE} =~ m/^(\/|FALSE$)/;
-}
 
 if (($blacklist and ($optional or $replace_optional or $reverse)) or ($optional and $replace_optional) or ($optional and $reverse) or ($replace_optional and $reverse)) {
 	usage_error("optional, replace_optional, reverse and blacklist cannot be used together.");

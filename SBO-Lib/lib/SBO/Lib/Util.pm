@@ -9,6 +9,8 @@ package SBO::Lib::Util;
 #% SBOTEST CONFIG HINTS %
 #% SBOTEST FIND %
 
+#% SBOTEST V1 COMPAT %
+
 use 5.016;
 use strict;
 use warnings;
@@ -657,7 +659,7 @@ sub lint_sbo_config {
   if ($running eq 'sboconfig') {
     $warn = 'Invalid parameter for';
   } else {
-    $warn = 'sboconfig';
+    $warn = $is_sbotest ? 'sbotest config' : 'sboconfig';
   }
 
   if (exists $configs{BUILD_IGNORE}) {
@@ -736,6 +738,12 @@ sub lint_sbo_config {
     unless ($configs{RSYNC_DEFAULT} =~ /^(TRUE|FALSE)$/) {
       push @invalid, "RSYNC_DEFAULT:" if $running ne 'sboconfig';
       push @invalid, "$warn -R (TRUE or FALSE)";
+    }
+  }
+  if (exists $configs{SBO_ARCHIVE}) {
+    unless ($configs{SBO_ARCHIVE} =~ qr#^(/|FALSE$)#) {
+      push @invalid, "SBO_ARCHIVE" if $running ne 'sboconfig';
+      push @invalid, "$warn -A (absolute path or FALSE)";
     }
   }
   if (exists $configs{SBO_HOME}) {
