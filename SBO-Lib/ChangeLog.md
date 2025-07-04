@@ -1,6 +1,6 @@
 # sbotools
 
-#### Post-Release
+#### 3.7 - 2025-07-04
   * Optimize queue construction: Shared dependency handling and rationalize_queue
   * Add setting ETC_PROFILE: Source executable \*.sh scripts in /etc/profile.d before running every SlackBuild
   * Download.pm: Change URI unescape positioning to accommodate potential %2F
@@ -20,7 +20,7 @@
   * sboconfig, sbohints, sbofind: Callable from sbotest with config, hints and find, respectively
   * Tree.pm: Speed up location finding for all available; relevant for reverse dependency calculation
   * sboconfig: Use --non-default to list only non-default options
-  * Bugfix: For git, create new branches from upstream in lieu of reset or pull
+  * Bugfix: For git, create new branches from upstream in lieu of reset and pull
 
 #### 3.6 - 2025-05-10
   * Download.pm: Unlink existing symlinks with the same name as new ones

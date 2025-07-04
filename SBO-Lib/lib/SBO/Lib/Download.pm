@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '3.6';
+our $VERSION = '3.7';
 
 use SBO::Lib::Util qw/ :const :times script_error get_sbo_from_loc open_read get_arch /;
 use SBO::Lib::Repo qw/ $distfiles /;

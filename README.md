@@ -14,12 +14,14 @@ dependency rebuilds.
 
 Features include dependency handling, using a custom git branch for the upstream repository, reverse dependency search and rebuild, batch mode, gpg verification and more. See **sbotools(1)** for a startup guide.
 
-This repository is for continuing **sbotools** development, and was forked from the [pink-mist repository](https://github.com/pink-mist/sbotools), which covered development from version 0.1 through version 2.7. A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
+Script maintainers may be interested in the **[sbotest](https://github.com/pghvlaans/sbotest)** companion package for convenient reverse dependency build testing.
+
+This repository is an **sbotools** revival, and was forked from the [pink-mist repository](https://github.com/pink-mist/sbotools), which covered development from version 0.1 through version 2.7. A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
 ## Most Recent Changes
-#### Post-Release
+#### 3.7 - 2025-07-04
   * Optimize queue construction: Shared dependency handling and rationalize_queue
   * Add setting ETC_PROFILE: Source executable \*.sh scripts in /etc/profile.d before running every SlackBuild
   * Download.pm: Change URI unescape positioning to accommodate potential %2F
@@ -39,24 +41,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboconfig, sbohints, sbofind: Callable from sbotest with config, hints and find, respectively
   * Tree.pm: Speed up location finding for all available; relevant for reverse dependency calculation
   * sboconfig: Use --non-default to list only non-default options
-  * Bugfix: For git, create new branches from upstream in lieu of reset or pull
-
-#### 3.6 - 2025-05-10
-  * Bugfix: Download.pm: Unlink existing symlinks with the same name as new ones
-  * sboinstall, sboupgrade: Unless CLASSIC is on, display time taken and successful builds at the end
-  * sbofind, sbocheck, sboconfig -l, sboinstall, sboupgrade, sboremove: Show a warning if the specified local overrides directory does not exist; exit if --batch or --nointeractive
-    * Thanks to Slack Coder for the suggestion.
-  * sboinstall, sboupgrade: Do not notify the user about 'missing' scripts that are already installed, or, on -current, are known to have been renamed and added to -current or obsoleted
-    * Thanks to fourtysixandtwo for the feedback.
-  * Added setting OBSOLETE_CHECK: Update the list of scripts at /etc/sbotools/obsolete from the sbotools home page when running sbocheck on -current
-    * Inspired by the renames list on sbopkg.
-  * sbofind: Use -A to show every reverse dependency in the repository; use -T to show the final level of reverse dependencies
-  * Bugfix: Verify suspected circular reverse dependencies by checking a build queue
-  * Add error codes for failed GPG verification and missing users or groups
-  * Bugfix: Corrected some error codes
-  * Bugfix: Fix all URI escapes in distfile names
-    * Thanks to fourtysixandtwo and lockywolf for the report
-  * sbocheck: Use --obsolete-check to download the list of obsolete scripts only; GPG verify with -g
+  * Bugfix: For git, create new branches from upstream in lieu of reset and pull
 
 ## Previous Changes
 See [ChangeLog.md](https://github.com/pghvlaans/sbotools/blob/master/SBO-Lib/ChangeLog.md) for a record of changes from version 1.9 onward.
