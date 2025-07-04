@@ -24,15 +24,22 @@
 
 ## DESCRIPTION
 
-**sboclean** is used to clean files left by **sbotools**, such as saved
-options (in */var/log/sbotools*), downloaded source files ("distfiles"),
-or working directories under */tmp/SBo* (or *\$TMP*) and, for compat32
-installs, under */tmp* (or *\$TMP*). Note that if run without the
-**\--interactive** flag, **sboclean** removes anything in the distfiles
-and/or */tmp/SBo* (or *\$TMP*) directories and any
-*/tmp/package-\*-compat32* (or *\$TMP/package-\*-compat32*) directories
-with extreme prejudice. One of **\--dist**, **\--work** or **\--option**
-must be specified for this script to do anything.
+**sboclean** is used to clean files left by **sbotools**, including:
+
+• saved build options in */var/log/sbotools*
+
+• downloaded source files
+
+• working directories under */tmp/SBo* (or *\$TMP*)
+
+• for **compat32** packages, working directories under */tmp*
+
+Note that if run without the **\--interactive** flag, **sboclean**
+removes anything in the distfiles and/or */tmp/SBo* (or *\$TMP*)
+directories and any */tmp/package-\*-compat32* (or
+*\$TMP/package-\*-compat32*) directories with extreme prejudice. One of
+**\--dist**, **\--work** or **\--option** must be specified for this
+script to do anything.
 
 Root privileges are required to run **sboclean**. If an invalid
 configuration is detected in */etc/sbotools/sbotools.conf*, or if
@@ -40,14 +47,6 @@ invalid options are specified, the script exits with a diagnostic
 message.
 
 ## OPTIONS
-
-**-h\|\--help**
-
-Show help information.
-
-**-v\|\--version**
-
-Show version information.
 
 **-d\|\--dist**
 
@@ -68,6 +67,14 @@ name of a SlackBuild, clean the saved options for that SlackBuild only.
 Be interactive; **sboclean** uses confirmation prompts for each item
 that could be removed.
 
+**-h\|\--help**
+
+Show help information.
+
+**-v\|\--version**
+
+Show version information.
+
 ## EXIT CODES
 
 **sboclean** can exit with the following codes:
@@ -75,7 +82,8 @@ that could be removed.
 0: all operations completed successfully.\
 1: a usage error occurred, such as passing incorrect options to
 **sboclean**.\
-2: a script or module error occurred.
+2: a script or module error occurred.\
+16: reading keyboard input failed.
 
 ## BUGS
 

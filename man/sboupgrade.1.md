@@ -21,9 +21,9 @@
 
     sboupgrade [-h|-v]
 
-    sboupgrade [-c TRUE|FALSE] [-d TRUE|FALSE] [-j #|FALSE] \
-               [-b TRUE|FALSE] [-S TRUE|FALSE] [-fiopqrz] \
-               [--batch|--dry-run] --all|sbo_name (sbo_name)
+    sboupgrade [-Scbde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+\
+               [-fiopqrz] [--batch|--dry-run] --all|sbo_name (sbo_name)
 
 ## DESCRIPTION
 
@@ -32,8 +32,8 @@
 of requirements from the *info* file for any specified SlackBuild. This
 is a recursive operation over all dependencies. **sboupgrade** offers to
 install any non-installed dependencies in the build queue, taking the
-hints in [sbotools.hints(5)](sbotools.hints.5.md) into account. If circular dependencies
-are detected, the script exits with an error message.
+hints in [sbotools.hints(5)](sbotools.hints.5.md) into account. The script exits with an
+error message if circular dependencies are detected.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
 **sboupgrade** offers to run them prior to building if any of the
@@ -68,14 +68,6 @@ script exits with a diagnostic message.
 
 ## OPTIONS
 
-**-h\|\--help**
-
-Show help information.
-
-**-v\|\--version**
-
-Show version information.
-
 **-b\|\--build-ignore (FALSE\|TRUE)**
 
 If **TRUE**, do not perform upgrades unless the version number differs.
@@ -109,6 +101,12 @@ default. The package archive (in */tmp* by default) is also removed.
 This option can be set as default via the [sboconfig(1)](sboconfig.1.md) command. See
 also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
 
+**-e\|\--etc-profile**
+
+If **TRUE**, source any executable scripts in */etc/profile.d* named
+*\*.sh* before running each SlackBuild in the build queue. This option
+overrides the default.
+
 **-f\|\--force**
 
 Force an upgrade, even if the installed version and build number are
@@ -126,6 +124,17 @@ retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
 
 If numerical, pass to the **-j** argument when a SlackBuild invoking
 **make** is run.
+
+**-k\|\--pkg-dir (FALSE\|/path)**
+
+If an **absolute path**, save built packages here, overriding the value
+of the **PKG_DIR** setting.
+
+**-L\|\--log-dir (FALSE\|/path)**
+
+If an **absolute path**, save build logs here, overriding the value of
+the **LOG_DIR** setting. Logs are saved with the name of the script and
+a timestamp.
 
 **-o\|\--norecall**
 
@@ -205,6 +214,14 @@ exits, to verify the upcoming operation.
 
 Overrides **\--nointeractive**.
 
+**-h\|\--help**
+
+Show help information.
+
+**-v\|\--version**
+
+Show version information.
+
 ## VARIABLES
 
 Beyond the options contained in *README* files, certain variables are
@@ -283,7 +300,8 @@ required).\
 13: circular dependencies detected.\
 14: in **batch**, **nointeractive** or **dry-run**, required user or
 group missing.\
-15: GPG verification failed.
+15: GPG verification failed.\
+16: reading keyboard input failed.
 
 ## BUGS
 

@@ -4,6 +4,7 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[SBOTEST](#sbotest)\
 [EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
@@ -20,16 +21,14 @@
 
     sboconfig [-h|-v]
 
-    sboconfig [-l]
+    sboconfig [-l|-n]
 
     sboconfig [--reset]
 
-    sboconfig [-C TRUE|FALSE] [-c TRUE|FALSE] [-d TRUE|FALSE] \
-              [-g TRUE|FALSE ] [-j #|FALSE] [-P TRUE|FALSE] \
-              [-p /path|FALSE] [-s /path|/usr/sbo] [-B branch_name|FALSE] \
-              [-b TRUE|FALSE] [-O TRUE|FALSE] [-o /path|FALSE] \
-              [-V #.#|FALSE] [-r url|FALSE] [-R TRUE|FALSE] \
-              [-S TRUE|FALSE]
+    sboconfig [-CPORScbdeg TRUE|FALSE] [-j #|FALSE] [-Lpo
+/path\|FALSE] \
+              [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \
+              [-r url|FALSE]
 
 ## DESCRIPTION
 
@@ -39,26 +38,26 @@ menu to specify settings; all options are accompanied by an explanatory
 message, and no changes are applied without user confirmation.
 
 The [sbotools.conf(5)](sbotools.conf.5.md) file can also be manually edited; any fields
-not relevant to **sbotools** configuration are ignored.
+not relevant to **sbotools** configuration are ignored. To use a
+configuration directory other than */etc/sbotools*, export an
+environment variable **SBOTOOLS_CONF_DIR** with an absolute path.
 
 Non-root users can only call **sboconfig** with the **\--list**,
-**\--help** and **\--version** flags.
+**\--non-default**, **\--help** and **\--version** flags.
 
 ## OPTIONS
-
-**-h\|\--help**
-
-Show help information.
-
-**-v\|\--version**
-
-Show version information.
 
 **-l\|\--list**
 
 List the current configuration options, including unmodified defaults.
 **\--list** also shows the **sboconfig** flag used to set each option
 for reference. The **\--list** flag can be used without root privileges.
+
+**\--non-default**
+
+List current non-default configuration options. **\--non-default** also
+shows the **sboconfig** flag used to set each option for reference. The
+**\--non-default** flag can be used without root privileges.
 
 **\--reset**
 
@@ -100,6 +99,12 @@ directories under */usr/sbo/distfiles* (with default **SBO_HOME**). If
 **PKG_DIR** is set, package archives are saved there regardless of
 **DISTCLEAN**.
 
+**-e\|\--etc-profile (FALSE\|TRUE)**
+
+**ETC_PROFILE**: If **TRUE**, source any executable scripts in
+*/etc/profile.d* named *\*.sh* before running each SlackBuild in the
+build queue.
+
 **-g\|\--gpg-verify (FALSE\|TRUE)**
 
 **GPG_VERIFY**: If **TRUE**, use **gpg** to verify the contents of the
@@ -115,10 +120,13 @@ Slackware 14.1.
 **JOBS**: If **numerical**, pass to the **-j** argument when a
 SlackBuild invoking **make** is run.
 
-**-P\|\--cpan-ignore (FALSE\|TRUE)**
+**-L\|\--log-dir (FALSE\|/path)**
 
-**CPAN_IGNORE**: If **TRUE**, install scripts even if they are already
-installed from the CPAN.
+**LOG_DIR**: If set to an **absolute path**, save build logs here. Logs
+are saved with the name of the script and a timestamp. Please note that
+because **STDERR** must be redirected for a complete log, colors and
+formatting may differ when running some SlackBuilds unless **LOG_DIR**
+is **FALSE**.
 
 **-O\|\--obsolete-check (FALSE\|TRUE)**
 
@@ -126,6 +134,11 @@ installed from the CPAN.
 obsolete script list to */etc/sbotools/obsolete* from the **sbotools**
 home page at <https://pghvlaans.github.io/sbotools> when running
 [sbocheck(1)](sbocheck.1.md) in Slackware -current.
+
+**-P\|\--cpan-ignore (FALSE\|TRUE)**
+
+**CPAN_IGNORE**: If **TRUE**, install scripts even if they are already
+installed from the CPAN.
 
 **-p\|\--pkg-dir (FALSE\|/path)**
 
@@ -177,6 +190,44 @@ for Slackware -current.
 the incoming version or build number is greater. This has no effect on
 scripts in the local overrides directory.
 
+## SBOTEST
+
+**sboconfig** is called when running **sbotest config**; the following
+default values change in this situation:
+
+**-A\|\--sbo-archive**
+
+Defaults to */usr/sbotest/archive*. This setting is specific to
+**sbotest**.
+
+**-e\|\--etc-profile**
+
+Defaults to **TRUE**.
+
+**-L\|\--log-dir**
+
+Defaults to */usr/sbotest/logs*.
+
+**-P\|\--cpan-ignore**
+
+Defaults to **TRUE**.
+
+**-p\|\--pkg-dir**
+
+Defaults to */usr/sbotest/tests*.
+
+**-s\|\--sbo-home**
+
+Defaults to */usr/sbotest*.
+
+**-h\|\--help**
+
+Show help information.
+
+**-v\|\--version**
+
+Show version information.
+
 ## EXIT CODES
 
 **sboconfig** can exit with the following codes:
@@ -184,7 +235,8 @@ scripts in the local overrides directory.
 0: all operations were successful.\
 1: a usage error occurred (e.g. passing invalid option specifications)\
 2: a script or module error occurred.\
-6: **sboconfig** was unable to obtain a required file handle.
+6: a required file handle could not be obtained.\
+16: reading keyboard input failed.
 
 ## BUGS
 

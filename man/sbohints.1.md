@@ -4,6 +4,7 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[SBOTEST](#sbotest)\
 [EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
@@ -18,11 +19,11 @@
 
 ## SYNOPSIS
 
-    sbohints [-h | -v]
+    sbohints [-h|-v]
 
-    sbohints [-l | --reset]
+    sbohints [-l|--reset]
 
-    sbohints [-c] [-b | -o | -O | -r] sbo_name (sbo_name)
+    sbohints [-c] [-Obor] sbo_name (sbo_name)
 
     sbohints [-q] sbo_name (sbo_name)
 
@@ -37,16 +38,20 @@ in [sbotools.hints(5)](sbotools.hints.5.md). Three kinds of hints are recognized
 
 • automatic reverse dependency rebuild
 
+The modification flags are **\--blacklist**, **\--optional**,
+**\--replace-optional** and **\--reverse**. These can be used in
+conjunction with **\--clear**, but not with each other.
+
 Please note that all hints apply equally to the *compat32* version of
 the target script or scripts; specific requests for *compat32* scripts
-are unsupported. The modification flags are **\--blacklist**,
-**\--optional**, **\--replace-optional** and **\--reverse**. These can
-be used in conjunction with **\--clear**, but not with each other.
+are unsupported.
 
 Non-root users can only call **sbohints** with the **\--list**,
 **\--query**, **\--help** and **\--version** flags. If an invalid
 configuration is detected in */etc/sbotools/sbotools.conf*, the script
-exits with a diagnostic message.
+exits with a diagnostic message. To use a configuration directory other
+than */etc/sbotools*, export an environment variable
+**SBOTOOLS_CONF_DIR** with an absolute path.
 
 ## OPTIONS
 
@@ -108,6 +113,11 @@ Show help information.
 
 Show version information.
 
+## SBOTEST
+
+**sbohints** is called when running **sbotest hints**; flags are
+unchanged.
+
 ## EXIT CODES
 
 **sbohints** can exit with the following codes:
@@ -115,7 +125,8 @@ Show version information.
 0: all operations were successful.\
 1: a usage error occurred.\
 2: a script or module error occurred.\
-6: **sbohints** was unable to obtain a required file handle.
+6: a required file handle could not be obtained.\
+16: reading keyboard input failed.
 
 ## BUGS
 

@@ -24,6 +24,9 @@ To quickly restore all default settings, run
 
     sboconfig --reset
 
+To use a configuration directory other than */etc/sbotools*, export an
+environment variable **SBOTOOLS_CONF_DIR** with an absolute path.
+
 The current configuration keys are as follows:
 
 **CLASSIC=(FALSE\|TRUE)**
@@ -77,6 +80,19 @@ when using [sbocheck(1)](sbocheck.1.md) with an upstream git repository.
 
 If **TRUE**, do not perform upgrades unless the version number differs.
 By default, upgrades also occur when the build number differs.
+
+**ETC_PROFILE=(FALSE\|TRUE)**
+
+**If TRUE**, source any executable scripts in */etc/profile.d* named
+*\*.sh* before running each SlackBuild in the build queue.
+
+**LOG_DIR=(FALSE\|/path)**
+
+If set to an **absolute path**, save build logs here. Logs are saved
+with the name of the script and a timestamp. Please note that because
+**STDERR** must be redirected for a complete log, colors and formatting
+may differ when running some SlackBuilds unless **LOG_DIR** is
+**FALSE**.
 
 **OBSOLETE_CHECK=(FALSE\|TRUE)**
 

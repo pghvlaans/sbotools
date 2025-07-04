@@ -20,17 +20,23 @@
 
     sboremove [-h|-v]
 
-    sboremove [-a] sbo_name (sbo_name)
+    sboremove [-ap] sbo_name (sbo_name)
 
 ## DESCRIPTION
 
 **sboremove** removes packages installed from SlackBuilds, along with
 any unneeded dependencies. Dependency information is pulled recursively
 from *info* files and honors the contents of [sbotools.hints(5)](sbotools.hints.5.md); any
-dependencies that are required by no other installed SlackBuilds are
-eligible for removal as well. **sboremove** does not handle blacklisted
-scripts. If **sboremove** is called with the **\--alwaysask** flag, the
-dependency requirements of other installed SlackBuilds are not checked.
+dependencies required by no other installed SlackBuilds are eligible for
+removal as well. **sboremove** does not handle blacklisted scripts.
+
+If **sboremove** is called with the **\--alwaysask** flag, all
+dependencies receive removal prompts, even if they are required by other
+installed SlackBuilds. The per-script prompts list installed reverse
+dependencies, if any.
+
+To remove *compat32* packages, call **sboremove** with the
+**\--compat32** flag.
 
 In all cases, this script prompts the user package-by-package before
 performing any removal operations. No option exists to enable
@@ -44,6 +50,16 @@ message.
 
 ## OPTIONS
 
+**-a\|\--alwaysask**
+
+Always ask to remove dependencies, even if they are required by other
+packages installed to the system.
+
+**-p\|\--compat32**
+
+Remove the *compat32* version of the script or scripts, along with
+*compat32* dependencies.
+
 **-h\|\--help**
 
 Show help information.
@@ -51,11 +67,6 @@ Show help information.
 **-v\|\--version**
 
 Show version information.
-
-**-a\|\--alwaysask**
-
-Always ask to remove dependencies, even if they are required by other
-packages installed to the system.
 
 ## EXIT CODES
 
@@ -65,7 +76,8 @@ packages installed to the system.
 1: a usage error occurred, such as running **sboremove** with nothing to
 remove.\
 2: a script or module error occurred.\
-13: circular dependencies detected.
+13: circular dependencies detected.\
+16: reading keyboard input failed.
 
 ## BUGS
 

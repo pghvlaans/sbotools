@@ -2,24 +2,29 @@
 
 **sbotest** is a reverse dependency build tester based on the **sbotools** library.
 
-This **sbotools** companion script was written with script maintainers in mind: Easily build and test scripts with their reverse dependencies in a single command. Maintain an archive for built dependencies and keep it up-to-date with **sbotest --archive-rebuild**.
+This **sbotools** companion script is written with script maintainers in mind: Easily build and test scripts with their reverse dependencies in a single command. Maintain an archive for built dependencies and keep it up-to-date with **sbotest \--archive-rebuild**.
 
 **sbotest** is configured separately from **sbotools**. See the contents of `/etc/sbotest`, or run **sbotest config** and **sbotest hints** to set options from the command line.
 
-See the [man page](https://pghvlaans.github.io/sbotools/man/sbotest/post-release/sbotest.1.html) for more information about options and settings!
+See the [man page](https://pghvlaans.github.io/sbotools/man/sbotest/release/sbotest.1.html) for more information about options and settings!
 
-## Trying sbotest
+## Getting sbotest
 
-**sbotest** is not quite ready for a version release, which needs to wait for **sbotools-3.7**. In the meantime, please follow these steps if you would like to try **sbotest**:
+**sbotest-1.0** is soon to be submitted to **SlackBuilds.org**. **sbotest** requires **sbotools-3.7** (next Public Update) or above and **sbo-maintainer-tools**.
 
-* Use **[sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild/)** to upgrade **sbotools** to version `20250630-4a2fbc9` at the oldest.
+**sbotest** and **sbotools** source archives can be found at [Downloads](https://pghvlaans.github.io/sbotools/downloads/).
+
+To use a development version:
+* Use **[sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild/)** to upgrade **sbotools** to version `20250702-1cd4031` at the oldest.
 * Clone the **sbotest** repository.
-* From the root directory, run `./tools/source_to_slackbuild.sh`.
+* Run `./tools/source_to_slackbuild.sh` from the root of the local repository.
 * Run the SlackBuild in `slackbuild/sbotest`.
 
-Issues and requests are welcome; please indicate the most recent commit with the output of:
+Issues and requests are welcome; if running post-release **sbotest**, please indicate the most recent commit with the output of:
 
     git log | head -n 1
+
+Post-release man pages can be found [here](https://pghvlaans.github.io/sbotools/man/sbotest/post-release/sbotest.1.html).
 
 ## Acknowledgments
 

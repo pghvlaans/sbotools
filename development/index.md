@@ -11,10 +11,3 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 ## Prospective Features
 
 Nothing else for now, but requests are welcome and will receive due consideration.
-
-## Incoming for sbotools-3.7
-
-* A setting **ETC_PROFILE** to source profile.d scripts before building
-* A setting **LOG_DIR** to save build logs in
-* Add a reverse dependency build tester for script maintainers (the sbotest companion package)
-* `sboinstall`: Rebuild all installed scripts in a series

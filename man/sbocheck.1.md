@@ -21,7 +21,7 @@ updates
 
     sbocheck [-h|-v]
 
-    sbocheck [-g|-O|-n]
+    sbocheck [-Ogn]
 
 ## DESCRIPTION
 

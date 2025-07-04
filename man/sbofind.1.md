@@ -4,6 +4,7 @@
 [SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [OPTIONS](#options)\
+[SBOTEST](#sbotest)\
 [EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
@@ -21,7 +22,7 @@ a given name or names
 
     sbofind [-h|-v]
 
-    sbofind [-AEetiqRrT] search_term (search_term)
+    sbofind [-AEFRTeiqrt] search_term (search_term)
 
 ## DESCRIPTION
 
@@ -42,14 +43,6 @@ exits with a diagnostic message.
 
 ## OPTIONS
 
-**-h\|\--help**
-
-Show help information.
-
-**-v\|\--version**
-
-Show version information.
-
 **-A\|\--all-reverse**
 
 Show all reverse dependencies in the repository for each SlackBuild
@@ -62,6 +55,11 @@ Exact matching only (case-sensitive).
 **-e\|\--exact**
 
 Exact matching only (case-insensitive).
+
+**-F\|\--first-reverse**
+
+Show all first-level reverse dependencies in the repository for each
+SlackBuild found.
 
 **-t\|\--no-tags**
 
@@ -91,6 +89,20 @@ Show the contents of the *README* file for each SlackBuild found.
 Show the top-level reverse dependencies, installed or not, for one or
 more scripts.
 
+**-h\|\--help**
+
+Show help information.
+
+**-v\|\--version**
+
+Show version information.
+
+## SBOTEST
+
+**sbofind** is called when running **sbotest find**; flags are
+unchanged. Scripts with an up-to-date package in the archive are
+indicated.
+
 ## EXIT CODES
 
 **sbofind** can exit with the following codes:
@@ -99,8 +111,9 @@ more scripts.
 1: a usage error occured (e.g., incorrect options were passed to
 **sbofind** ).\
 2: a script or module error occurred.\
-6: **sbofind** was unable to obtain a required file handle.\
-13: circular dependencies detected.
+6: a required handle could not be obtained.\
+13: circular dependencies detected.\
+16: reading keyboard input failed.
 
 ## BUGS
 
