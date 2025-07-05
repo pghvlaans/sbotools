@@ -1,6 +1,6 @@
 # Downloads
 
-A SlackBuild for `sbotools` is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) on SlackBuilds.org.
+SlackBuilds for **[sbotools](https://slackbuilds.org/repository/15.0/system/sbotools/)** and **[sbotest](https://slackbuilds.org/repository/15.0/system/sbotest/)** are available on SlackBuilds.org.
 
 ## Notes
 

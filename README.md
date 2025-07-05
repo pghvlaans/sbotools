@@ -8,7 +8,7 @@ A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maint
 
 For online man pages and executive summaries of all commands, see [man](/sbotools/man/). Installation notes and release tarballs are available at [Downloads](/sbotools/downloads/). A record of changes to **sbotools-3.x** and **sbotools** back to version 1.9 can be found in [ChangeLog](/sbotools/ChangeLog/). [Development](/sbotools/development/) has links to **sbotools**-related repositories and information about future plans. Script maintainers may be interested in the **[sbotest](/sbotools/sbotest/)** companion package for convenient reverse dependency build testing.
 
-A SlackBuild for **sbotools** is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) on SlackBuilds.org.
+SlackBuilds for **[sbotools](https://slackbuilds.org/repository/15.0/system/sbotools/)** and **[sbotest](https://slackbuilds.org/repository/15.0/system/sbotest/)** are available on SlackBuilds.org.
 
 To verify commits (excluding resolved PR, which are verified with GitHub's key), use [GPG_KEY](/sbotools/downloads/GPG_KEY). Key updated 2024-12-15.
 

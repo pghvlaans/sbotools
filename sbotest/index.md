@@ -10,7 +10,7 @@ See the [man page](https://pghvlaans.github.io/sbotools/man/sbotest/release/sbot
 
 ## Getting sbotest
 
-**sbotest-1.0** is soon to be submitted to **SlackBuilds.org**. **sbotest** requires **sbotools-3.7** (next Public Update) or above and **sbo-maintainer-tools**.
+A SlackBuild for **sbotest** is [available](https://slackbuilds.org/repository/15.0/system/sbotest/) on **SlackBuilds.org**. **sbotest** requires **sbotools-3.7** or above and **sbo-maintainer-tools**.
 
 **sbotest** and **sbotools** source archives can be found at [Downloads](https://pghvlaans.github.io/sbotools/downloads/).
 
