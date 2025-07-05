@@ -130,7 +130,19 @@ some packages, such as
 google-go-lang\fR\
 \&, fails unless a version-specific profile script has been
 sourced. Requesting reverse dependency rebuilds for such
-packages is not advised.
+packages is not advised unless the
+.B
+ETC_PROFILE
+setting is
+.B
+TRUE\fR\
+\&. See
+.B
+sboconfig(1)
+or
+.B
+sbotools.conf(5)
+for details.
 .RE
 .P
 .B

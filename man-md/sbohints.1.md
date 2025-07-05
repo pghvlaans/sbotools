@@ -79,7 +79,8 @@ Add (or, with **\--clear**, clear) automatic reverse dependency rebuild
 requests for one or more scripts. Please note that building against some
 packages, such as **google-go-lang**, fails unless a version-specific
 profile script has been sourced. Requesting reverse dependency rebuilds
-for such packages is not advised.
+for such packages is not advised unless the **ETC_PROFILE** setting is
+**TRUE**. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md) for details.
 
 **-c\|\--clear**
 
