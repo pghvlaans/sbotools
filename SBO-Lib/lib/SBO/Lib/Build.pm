@@ -697,38 +697,6 @@ sub perform_sbo {
     }
     $cmd .= '. /etc/profile.d/32dev.sh &&';
   }
-  # special case: a 32-bit userland is running on a 64-bit kernel;
-  # ARCH must be set to avoid any use of "uname -m" while building
-  if (defined $userland_32) {
-    my (@arch_mentioned, $cmd_arch);
-    my ($fh, $exit) = open_read("$location/$sbo.SlackBuild");
-    error_code("Could not open $location/$sbo.SlackBuild for reading. Exiting.", _ERR_OPENFH) if $exit;
-    for my $line (<$fh>) {
-      next if $line =~ m/^(|\s)#/;
-      next unless $line =~ m/ARCH=/;
-      if ($line =~ m/ARCH=i686/) {
-        push @arch_mentioned, "i686";
-        last;
-      }
-      push @arch_mentioned, "i586" if $line =~ m/ARCH=i586/;
-      push @arch_mentioned, "i486" if $line =~ m/ARCH=i486/;
-      push @arch_mentioned, "i386" if $line =~ m/ARCH=i386/;
-      push @arch_mentioned, "x86" if $line =~ m/ARCH=x86/;
-    }
-    close $fh;
-    if (grep { /i686/ } @arch_mentioned) {
-      $cmd_arch = "i686";
-    } elsif (grep { /i586/ } @arch_mentioned) {
-      $cmd_arch = "i586";
-    } elsif (grep { /i486/ } @arch_mentioned) {
-      $cmd_arch = "i486";
-    } elsif (grep { /i386/ } @arch_mentioned) {
-      $cmd_arch = "i386";
-    } elsif (grep { /x86/ } @arch_mentioned) {
-      $cmd_arch = "x86";
-    }
-    $cmd .= " ARCH=$cmd_arch" if defined $cmd_arch;
-  }
   if ($args{JOBS} and $args{JOBS} ne 'FALSE') {
     $changes{jobs} = 1;
   }
@@ -741,6 +709,8 @@ sub perform_sbo {
   # set TMP/OUTPUT if set in the environment
   $cmd .= " TMP=$env_tmp" if $env_tmp;
   $cmd .= " OUTPUT=$ENV{OUTPUT}" if defined $ENV{OUTPUT};
+  # special case: 32-bit userland and 64-bit kernel
+  $cmd .= " setarch i686" if defined $userland_32;
   $cmd .= " /bin/bash $location/$sbo.SlackBuild";
 
   # attempt to rewrite the slackbuild, or exit if we can't
