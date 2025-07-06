@@ -21,6 +21,9 @@ This repository is an **sbotools** revival, and was forked from the [pink-mist r
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
 ## Most Recent Changes
+#### Post-Release
+  * Bugfix: If running in a 32-bit userland on a 64-bit kernel, pass an appropriate ARCH to the SlackBuild
+
 #### 3.7 - 2025-07-04
   * Optimize queue construction: Shared dependency handling and rationalize_queue
   * Add setting ETC_PROFILE: Source executable \*.sh scripts in /etc/profile.d before running every SlackBuild

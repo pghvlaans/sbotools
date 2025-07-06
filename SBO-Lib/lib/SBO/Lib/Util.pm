@@ -55,6 +55,7 @@ my @EXPORT_CONFIG = qw{
   @obsolete
   $sbotest_compatible
   $is_sbotest
+  $userland_32
 };
 
 my @EXPORT_TIME = qw{
@@ -278,6 +279,9 @@ our $download_time;
 # This version of sbotools is compatible with sbotest.
 our $sbotest_compatible = 1;
 
+# A 32-bit userland is running on a 64-bit kernel.
+our $userland_32;
+
 =head1 SUBROUTINES
 
 =cut
@@ -387,12 +391,19 @@ sub display_times {
   my $arch = get_arch();
 
 C<get_arch()> returns the machine architechture as reported by C<uname
--m>.
+-m>. For the C<x86_64> architecture, additionally check whether C</bin/bash>
+is 64- or 32-bit to account for 32-bit userlands running on a 64-bit kernel.
 
 =cut
 
 sub get_arch {
   chomp(my $arch = `uname -m`);
+  if ($arch eq "x86_64") {
+    if (`file /bin/bash` =~ m/32-bit/) {
+      $arch = "i686";
+      $userland_32 = 1;
+    }
+  }
   return $arch;
 }
 
