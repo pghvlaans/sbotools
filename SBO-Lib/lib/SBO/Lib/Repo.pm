@@ -410,7 +410,7 @@ sub git_sbo_tree {
       die unless system(qw! git checkout --quiet --detach !) == 0;
       die unless system(qw! git branch --force !, $branch, "origin/$branch") == 0;
       die unless system(qw! git checkout !, $branch) == 0;
-      system('git log -n 1 --pretty="    %h: %s"');
+      system('git --no-pager log -n 1 --pretty="    %h: %s"');
       unlink "$repo_path/SLACKBUILDS.TXT";
       1;
     };
