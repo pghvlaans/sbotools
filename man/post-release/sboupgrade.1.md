@@ -233,8 +233,8 @@ relevant to nearly all SlackBuilds, and can be used when running
 **ARCH** passes a CPU architecture to the build process, and is mostly
 used to build **i?86** packages on **x86_64** machines and *compat32*
 packages. **sboupgrade** does not require **ARCH** to build *compat32*
-packages. This process is not necessarily bug-free; please do not
-hesitate to report *compat32* issues.
+packages, instead using **setarch(1)**. This process is not necessarily
+bug-free; please do not hesitate to report *compat32* issues.
 
 **BUILD**
 
@@ -311,7 +311,8 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md),
+setarch(1)
 
 ## AUTHORS
 
