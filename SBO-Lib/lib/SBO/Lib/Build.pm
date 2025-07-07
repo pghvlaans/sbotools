@@ -709,8 +709,8 @@ sub perform_sbo {
   # set TMP/OUTPUT if set in the environment
   $cmd .= " TMP=$env_tmp" if $env_tmp;
   $cmd .= " OUTPUT=$ENV{OUTPUT}" if defined $ENV{OUTPUT};
-  # special case: 32-bit userland and 64-bit kernel
-  $cmd .= " setarch i686" if defined $userland_32;
+  # special cases: 32-bit compatible build or 32-bit userland and 64-bit kernel
+  $cmd .= " setarch i686" if defined $userland_32 or $args{X32} or $args{C32};
   $cmd .= " /bin/bash $location/$sbo.SlackBuild";
 
   # attempt to rewrite the slackbuild, or exit if we can't

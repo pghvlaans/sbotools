@@ -22,7 +22,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 
 ## Most Recent Changes
 #### Post-Release
-  * Bugfix: If running in a 32-bit userland on a 64-bit kernel, pass an appropriate ARCH to the SlackBuild
+  * Bugfix: For compatibility builds and when running in a 32-bit userland on a 64-bit kernel, call SlackBuilds with setarch
 
 #### 3.7 - 2025-07-04
   * Optimize queue construction: Shared dependency handling and rationalize_queue
