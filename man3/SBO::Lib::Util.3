@@ -146,6 +146,11 @@ This file contains a list of scripts that have been renamed and added to Slackwa
 .IX Subsection "@obsolete"
 This array is based on the contents of \f(CW$obs_file\fR. Only \f(CWobsolete_array()\fR should
 interact with \f(CW@obsolete\fR directly; in other situations, make a copy.
+.ie n .SS $userland_32
+.el .SS \f(CW$userland_32\fP
+.IX Subsection "$userland_32"
+\&\f(CWget_arch()\fR defines this variable when running in a 32\-bit userland on a 64\-bit
+kernel.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS auto_reverse

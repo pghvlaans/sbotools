@@ -97,7 +97,7 @@ It displays the files one by one upon prompt.
 \&  my $bool = ask_user_group($cmds);
 .Ve
 .PP
-\&\f(CWask_user_group()\fR takes the \f(CW\*(C`useradd\*(C'\fR and \f(CW\*(C`groupadd\*(C'\fR commands found in a
+\&\f(CWask_user_group()\fR takes the \f(CWuseradd(1)\fR and \f(CWgroupadd(1)\fR commands found in a
 \&\f(CW\*(C`README\*(C'\fR file and calls \f(CWuser_group_exist()\fR; if at least one of the specified
 users or groups does not exist, it prompts for running the commands. If yes,
 the \f(CW$cmds\fR are returned, and \f(CW\*(C`undef\*(C'\fR otherwise.
@@ -123,8 +123,8 @@ its contents. On error, it returns \f(CW\*(C`undef\*(C'\fR.
 \&  my @cmds = @{ get_user_group($readme, $location) };
 .Ve
 .PP
-\&\f(CWget_user_group()\fR searches the \f(CW$readme\fR in \f(CW$location\fR for \f(CW\*(C`useradd\*(C'\fR and
-\&\f(CW\*(C`groupadd\*(C'\fR commands, and returns them in an array reference. If no
+\&\f(CWget_user_group()\fR searches the \f(CW$readme\fR in \f(CW$location\fR for \f(CWuseradd(1)\fR and
+\&\f(CWgroupadd(1)\fR commands, and returns them in an array reference. If no
 commands are found initially, it searches any other \f(CW\*(C`README*\*(C'\fR files for
 them.
 .SS user_group_exist
@@ -169,7 +169,7 @@ Readme.pm subroutines can return the following exit codes:
 .Ve
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
-\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBSBO::Lib::Util\fR\|(3)
+\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBSBO::Lib::Util\fR\|(3), \fBgroupadd\fR\|(1), \fBuseradd\fR\|(1)
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

@@ -211,6 +211,13 @@ interact with C<@obsolete> directly; in other situations, make a copy.
 
 =cut
 
+=head2 $userland_32
+
+C<get_arch()> defines this variable when running in a 32-bit userland on a 64-bit
+kernel.
+
+=cut
+
 # global config variables
 my $req_dir = $ENV{SBOTOOLS_CONF_DIR};
 our $conf_dir = defined $req_dir ? $req_dir : '/etc/sbotools';

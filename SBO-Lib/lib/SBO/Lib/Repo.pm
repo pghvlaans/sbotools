@@ -772,7 +772,7 @@ sub verify_rsync {
   verify_gpg();
 
 C<verify_gpg> determines whether a git repo is in use, and then
-runs C<gnupg> verification. It is exportable, and is currently used in
+runs C<gpg(1)> verification. It is exportable, and is currently used in
 C<sboinstall(1)>, C<sboupgrade(1)> and C<sbocheck(1)>.
 
 =cut
@@ -911,7 +911,7 @@ Repo.pm subroutines can return the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), git(1), gpg(1), rsync(1)
 
 =head1 AUTHORS
 

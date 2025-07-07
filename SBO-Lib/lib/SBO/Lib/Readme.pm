@@ -125,7 +125,7 @@ sub ask_other_readmes {
 
   my $bool = ask_user_group($cmds);
 
-C<ask_user_group()> takes the C<useradd> and C<groupadd> commands found in a
+C<ask_user_group()> takes the C<useradd(1)> and C<groupadd(1)> commands found in a
 C<README> file and calls C<user_group_exist()>; if at least one of the specified
 users or groups does not exist, it prompts for running the commands. If yes,
 the C<$cmds> are returned, and C<undef> otherwise.
@@ -183,8 +183,8 @@ sub get_readme_contents {
 
   my @cmds = @{ get_user_group($readme, $location) };
 
-C<get_user_group()> searches the C<$readme> in C<$location> for C<useradd> and
-C<groupadd> commands, and returns them in an array reference. If no
+C<get_user_group()> searches the C<$readme> in C<$location> for C<useradd(1)> and
+C<groupadd(1)> commands, and returns them in an array reference. If no
 commands are found initially, it searches any other C<README*> files for
 them.
 
@@ -307,7 +307,7 @@ Readme.pm subroutines can return the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), groupadd(1), useradd(1)
 
 =head1 AUTHORS
 

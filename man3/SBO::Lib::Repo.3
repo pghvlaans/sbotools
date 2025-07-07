@@ -253,7 +253,7 @@ script installation and upgrade until the issue has been resolved, \f(CW\*(C`GPG
 .Ve
 .PP
 \&\f(CW\*(C`verify_gpg\*(C'\fR determines whether a git repo is in use, and then
-runs \f(CW\*(C`gnupg\*(C'\fR verification. It is exportable, and is currently used in
+runs \f(CWgpg(1)\fR verification. It is exportable, and is currently used in
 \&\f(CWsboinstall(1)\fR, \f(CWsboupgrade(1)\fR and \f(CWsbocheck(1)\fR.
 .SS verify_obsolete
 .IX Subsection "verify_obsolete"
@@ -289,7 +289,7 @@ Repo.pm subroutines can return the following exit codes:
 .Ve
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
-\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBSBO::Lib::Util\fR\|(3)
+\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBSBO::Lib::Util\fR\|(3), \fBgit\fR\|(1), \fBgpg\fR\|(1), \fBrsync\fR\|(1)
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
