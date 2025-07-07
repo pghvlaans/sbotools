@@ -47,7 +47,7 @@ increment checks are disabled when **CLASSIC** is **TRUE**; if
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
 To check for updated SlackBuilds without updating the SlackBuilds tree,
-pass the **\--nopull** option. **sbocheck** performs **gpg**
+pass the **\--nopull** option. **sbocheck** performs **gpg(1)**
 verification upon pulling the tree if **GPG_VERIFY** is **TRUE** (see
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). The **\--gpg-verify** option
 has the same effect. Passing both **\--gpg-verify** and **\--nopull**
@@ -68,17 +68,17 @@ diagnostic message.
 
 **-g\|\--gpg-verify**
 
-Use **gpg** to verify the fetched repository, even if **GPG_VERIFY** is
-**FALSE**. When called with **\--nopull**, verify the repo without
+Use **gpg(1)** to verify the fetched repository, even if **GPG_VERIFY**
+is **FALSE**. When called with **\--nopull**, verify the repo without
 fetching. Only rsync repositories can be verified on Slackware 14.0 and
 Slackware 14.1.
 
 **-O\|\--obsolete-check**
 
 If running Slackware -current, download a copy of the obsolete script
-list from <https://pghvlaans.github.io/sbotools> and verify with gpg if
-**GPG_VERIFY** is **TRUE** or **\--gpg-verify** is passed. Incompatible
-with **\--nopull**.
+list from <https://pghvlaans.github.io/sbotools> and verify with gpg(1)
+if **GPG_VERIFY** is **TRUE** or **\--gpg-verify** is passed.
+Incompatible with **\--nopull**.
 
 **-n\|\--nopull**
 
@@ -114,7 +114,7 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
 
 ## AUTHORS
 

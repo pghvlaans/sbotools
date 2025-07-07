@@ -57,7 +57,7 @@ or the md5sum check fails, a new download is attempted from
 <ftp://slackware.uk/sbosrcarch/> as a fallback measure. The **\--all**
 flag may be passed to upgrade all eligible SlackBuilds simultaneously.
 
-**sboupgrade** verifies the local repository with **gpg** if
+**sboupgrade** verifies the local repository with **gpg(1)** if
 **GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
 Slackware 14.0 and Slackware 14.1.
 
@@ -312,7 +312,7 @@ None known. If found, Issues and Pull Requests to
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
 [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md),
-setarch(1)
+gpg(1), setarch(1)
 
 ## AUTHORS
 

@@ -107,8 +107,8 @@ build queue.
 
 **-g\|\--gpg-verify (FALSE\|TRUE)**
 
-**GPG_VERIFY**: If **TRUE**, use **gpg** to verify the contents of the
-local repository (and, if applicable, */etc/sbotools/obsolete*) when
+**GPG_VERIFY**: If **TRUE**, use **gpg(1)** to verify the contents of
+the local repository (and, if applicable, */etc/sbotools/obsolete*) when
 running [sbocheck(1)](sbocheck.1.md), [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md).
 Missing public keys are detected, and a download from
 [keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 is offered if
@@ -246,7 +246,7 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
 
 ## AUTHORS
 
