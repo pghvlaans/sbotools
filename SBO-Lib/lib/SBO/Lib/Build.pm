@@ -686,16 +686,28 @@ sub perform_sbo {
       my @profile_d = grep { ! in( $_ => qw/ . .. /) } readdir $prof_dh;
       if (@profile_d) {
         for my $profile_script (@profile_d) {
-          $cmd .= ". /etc/profile.d/$profile_script &&" if -x "/etc/profile.d/$profile_script" and $profile_script =~ m/\.sh$/;
+          $cmd .= " . /etc/profile.d/$profile_script &&" if -x "/etc/profile.d/$profile_script" and $profile_script =~ m/\.sh$/;
         }
       }
     }
   }
-  if ($args{ARCH} eq 'x86_64' and ($args{C32} || $args{X32})) {
-    if ($args{C32}) {
-      $changes{libdirsuffix} = '';
+  my $use_setarch;
+  if ($args{ARCH} =~ m/64/ and ($args{C32} || $args{X32})) {
+    $use_setarch = 1;
+    if ($args{X32}) {
+      my ($fh, $exit) = open_read("$location/$sbo.SlackBuild");
+      error_code("Unable to open $location/$sbo.SlackBuild. Exiting.", _ERR_OPENFH) if $exit;
+      for my $line (<$fh>) {
+        next if $line =~ m/^(|\s)#/;
+        next unless $line =~ m/LIBDIRSUFFIX=/;
+        if ($line =~ m/\S64/) {
+          undef $use_setarch;
+          last;
+        }
+      }
+      close $fh;
     }
-    $cmd .= '. /etc/profile.d/32dev.sh &&';
+    $cmd .= ' . /etc/profile.d/32dev.sh &&';
   }
   if ($args{JOBS} and $args{JOBS} ne 'FALSE') {
     $changes{jobs} = 1;
@@ -710,7 +722,7 @@ sub perform_sbo {
   $cmd .= " TMP=$env_tmp" if $env_tmp;
   $cmd .= " OUTPUT=$ENV{OUTPUT}" if defined $ENV{OUTPUT};
   # special cases: 32-bit compatible build or 32-bit userland and 64-bit kernel
-  $cmd .= " setarch i686" if defined $userland_32 or $args{X32} or $args{C32};
+  $cmd .= " setarch i686" if defined $userland_32 or defined $use_setarch;
   $cmd .= " /bin/bash $location/$sbo.SlackBuild";
 
   # attempt to rewrite the slackbuild, or exit if we can't
@@ -1023,7 +1035,6 @@ sub rewrite_slackbuild {
       _ERR_OPENFH;
   }
 
-  my $libdir_regex = qr/^\s*LIBDIRSUFFIX="64"\s*$/;
   my $dc_regex = qr/(?<![a-z])(tar|p7zip|unzip|ar|rpm2cpio|sh)\s+/;
   my $make_regex = qr/^\s*make\s*$/;
   # tie the slackbuild, because this is the easiest way to handle this.
@@ -1049,9 +1060,6 @@ sub rewrite_slackbuild {
   }
   for my $line (@sb_file) {
     # then check for and apply any other %$changes
-    if (exists $$changes{libdirsuffix}) {
-      $line =~ s/64/$$changes{libdirsuffix}/ if $line =~ $libdir_regex;
-    }
     if (exists $changes->{jobs}) {
       $line =~ s/make/make \$MAKEOPTS/ if $line =~ $make_regex;
     }
