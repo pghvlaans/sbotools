@@ -143,13 +143,16 @@ Do not reuse saved build options if running with **\--nointeractive** or
 
 **-p\|\--compat32**
 
-Create a *compat32* package on multilib x86_64 systems. This requires
-the **compat32-tools** package by Eric Hameleers. Please note that this
-operation is not necessarily foolproof, and is unsupported by anyone in
-principle. **\--compat32** can be combined with **\--noinstall** and
-**\--distclean FALSE** so that the contents of the package can be
-inspected prior to installation. GitHub Issues are welcome in case of
-unexpected failure.
+Create a *compat32* package on multilib x86_64 systems. Any requested
+64-bit only scripts are not queued, and 32-bit only scripts are built
+as-is.
+
+This requires the **compat32-tools** package by Eric Hameleers. Please
+note that this operation is not necessarily foolproof, and is
+unsupported by anyone in principle. **\--compat32** can be combined with
+**\--noinstall** and **\--distclean FALSE** so that the contents of the
+package can be inspected prior to installation. GitHub Issues are
+welcome in case of unexpected failure.
 
 **sboinstall** will not attempt *compat32* builds for Perl-based or
 *noarch* scripts. Incompatible with **\--all**.

@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const auto_reverse error_code get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay @concluded @reverse_concluded /;
+use SBO::Lib qw/ :config :const auto_reverse check_x32 check_x64 check_multilib error_code get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay @concluded @reverse_concluded /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -246,14 +246,17 @@ my @sbos;
 
 # if a requested compat32 script is ineligible anyway,
 # do not bother with its dependencies, etc.
+#
+# also check here for incompatible architecture
 if (@ARGV and $compat32) {
 	for my $sbo (@ARGV) {
-		my ($perl_ineligible, $arch_ineligible);
+		my ($perl_ineligible, $arch_ineligible, $only_64);
 		my $sbo_location = get_sbo_location($sbo);
 		if ($sbo_location) {
 			my $check_location = $sbo_location;
 			my $orig_location = get_orig_location($sbo);
 			$check_location = $orig_location if $orig_location;
+			$only_64 = check_x64 $check_location;
 			$perl_ineligible = 1 if $sbo =~ /^perl-/ or basename(dirname($check_location)) eq "perl";
 			unless ($perl_ineligible) {
 				my ($fh, $exit) = open_fh("$sbo_location/$sbo.SlackBuild", "<") if -f "$sbo_location/$sbo.SlackBuild";
@@ -265,10 +268,39 @@ if (@ARGV and $compat32) {
 					close $fh;
 				}
 			}
+			push @sbos, $sbo unless $perl_ineligible or $arch_ineligible or $only_64;
+			wrapsay "$sbo is 64-bit only; skipping compat32." if $only_64;
+			wrapsay "$sbo is Perl-based; skipping compat32." if $perl_ineligible;
+			wrapsay "$sbo is a noarch script; skipping compat32." if $arch_ineligible and not $perl_ineligible;
+		} else {
+			wrapsay "$sbo not found; skipping.";
 		}
-		push @sbos, $sbo unless $perl_ineligible or $arch_ineligible;
-		wrapsay "$sbo is Perl-based; skipping compat32." if $perl_ineligible;
-		wrapsay "$sbo is a noarch script; skipping compat32." if $arch_ineligible and not $perl_ineligible;
+	}
+} elsif (@ARGV and not get_arch() =~ m/64/) {
+	for my $sbo (@ARGV) {
+		my $sbo_location = get_sbo_location($sbo);
+		if ($sbo_location) {
+			if (check_x64 $sbo_location) {
+				wrapsay "$sbo is 64-bit only; skipping.";
+			} else {
+				push @sbos, $sbo;
+			}
+		} else {
+			wrapsay "$sbo not found; skipping.";
+		}
+	}
+} elsif (@ARGV and get_arch() =~ m/64/) {
+	for my $sbo (@ARGV) {
+		my $sbo_location = get_sbo_location($sbo);
+		if ($sbo_location) {
+			if (check_x32 $sbo_location and not check_multilib()) {
+				wrapsay "$sbo is 32-bit only; skipping.";
+			} else {
+				push @sbos, $sbo;
+			}
+		} else {
+			wrapsay "$sbo not found; skipping.";
+		}
 	}
 } elsif (@ARGV) {
 	@sbos = @ARGV;
@@ -455,7 +487,7 @@ if (defined $template) {
 my $added = ' added to install queue.';
 my (@see_readme, %saved_options);
 FIRST: for my $sbo (@$build_queue) {
-	my ($perl_ineligible, $arch_ineligible);
+	my ($perl_ineligible, $arch_ineligible, $only_64, $only_32);
 	my $name;
 	if ($sbo =~ /-compat32$/) {
 		next FIRST unless $utemp or $mass_rebuild or $series_rebuild;
@@ -473,6 +505,8 @@ FIRST: for my $sbo (@$build_queue) {
 	# ineligible scripts here, but skip them after checking for the base
 	# package
 	if ($name =~ /-compat32$/ and $locations{$name}) {
+		$only_64 = check_x64 $locations{$name};
+		$only_32 = check_x32 $locations{$name};
 		my $check_location = $locations{$name};
 		my $orig_location = get_orig_location($sbo);
 		$check_location = $orig_location if $orig_location;
@@ -558,7 +592,7 @@ FIRST: for my $sbo (@$build_queue) {
 		# if a compat32 build, we need to see if the non-compat version exists.
 		if ($name =~ /-compat32$/) {
 			unless ($inst_names{$sbo} or grep { /^$sbo$/ } @temp_queue) {
-				say "$name requires $sbo." unless $perl_ineligible or $arch_ineligible;
+				say "$name requires $sbo." unless $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
 				my ($cmds, $opts, $exit) = user_prompt($sbo, $locations{$sbo});
 				if ($exit) {
 					warn "Unable to open README for $sbo.\n";
@@ -574,6 +608,14 @@ FIRST: for my $sbo (@$build_queue) {
 			}
 		}
 		# actually skip ineligible compat32 builds here (interactive)
+		if ($only_64) {
+			wrapsay "$sbo is 64-bit only; skipping compat32.";
+			next FIRST;
+		}
+		if ($only_32) {
+			wrapsay "$sbo is 32-bit only; skipping compat32.";
+			next FIRST;
+		}
 		if ($perl_ineligible) {
 			wrapsay "$sbo is Perl-based; skipping compat32.";
 			next FIRST;
@@ -621,7 +663,7 @@ FIRST: for my $sbo (@$build_queue) {
 			# add the required base script if --batch
 			if ($yes_really and $name =~ /-compat32$/) {
 				unless ($inst_names{$sbo} or grep { /^$sbo$/ } @temp_queue) {
-					say "$name requires $sbo." unless $dry_run or $perl_ineligible or $arch_ineligible;
+					say "$name requires $sbo." unless $dry_run or $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
 					$base_needed = 1;
 				}
 			}
@@ -644,17 +686,25 @@ FIRST: for my $sbo (@$build_queue) {
 			# this can only happen if --batch or --dry-run
 			if ($base_needed) {
 				push(@temp_queue, $sbo);
-				say "\n$sbo$added" unless $dry_run or $perl_ineligible or $arch_ineligible;
+				say "\n$sbo$added" unless $dry_run or $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
 			}
 			# for dry-run, do not want to notify the user of %README%, missing user/group
 			# or saved build options unless the script will actually be built
-			if ($dry_run and not $base_needed and ($perl_ineligible or $arch_ineligible)) {
+			if ($dry_run and not $base_needed and ($perl_ineligible or $arch_ineligible or $only_64 or $only_32)) {
 				@see_readme = grep { !/^$sbo$/ } @see_readme;
 				push @ignore_script, $name;
 				push @ignore_script, $sbo;
 			}
 		}
 		# actually skip ineligible compat32 builds here (non-interactive)
+		if ($only_64) {
+			wrapsay "$sbo is 64-bit only; skipping compat32.";
+			next FIRST;
+		}
+		if ($only_32) {
+			wrapsay "$sbo is 32-bit only; skipping compat32.";
+			next FIRST;
+		}
 		if ($perl_ineligible) {
 			wrapsay "$sbo is Perl-based; skipping compat32.";
 			next FIRST;

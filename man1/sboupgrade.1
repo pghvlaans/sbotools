@@ -356,7 +356,9 @@ or
 Create a
 .I
 compat32
-package on multilib x86_64 systems.
+package on multilib x86_64 systems. Any requested 64-bit only
+scripts are not queued, and 32-bit only scripts are built as-is.
+.P
 This requires the
 .B
 compat32-tools

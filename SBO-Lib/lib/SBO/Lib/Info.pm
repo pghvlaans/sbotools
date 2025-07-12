@@ -15,6 +15,7 @@ use Exporter 'import';
 
 our @EXPORT_OK = qw{
   check_x32
+  check_x64
   get_download_info
   get_from_info
   get_orig_build_number
@@ -53,15 +54,33 @@ SBO::Lib::Info - Utilities to get data from SBo info files.
   my $bool = check_x32($location);
 
 C<check_x32()> returns a true value if the SlackBuild in C<$location> considers
-64-bit builds C<UNTESTED> or C<UNSUPPORTED>. Otherwise, it returns a false value.
+64-bit builds C<UNTESTED> or C<UNSUPPORTED> and false otherwise.
 
 =cut
 
 # determine whether or not a given sbo is 32-bit only
 sub check_x32 {
   script_error('check_x32 requires an argument.') unless @_ == 1;
-  my $dl = get_from_info(LOCATION => shift, GET => 'DOWNLOAD_x86_64');
-  return $$dl[0] =~ /UN(SUPPOR|TES)TED/ ? 1 : undef;
+  my $location = shift;
+  my $dl = get_from_info(LOCATION => $location, GET => 'DOWNLOAD_x86_64');
+  return $$dl[0] =~ /UN(SUPPOR|TES)TED/ ? 1 : 0;
+}
+
+=head2 check_x64
+
+  my $bool = check_x64($location);
+
+C<check_x64()> returns a true value if the SlackBuild in C<$location> considers
+32-bit builds C<UNTESTED> or C<UNSUPPORTED> and false otherwise.
+
+=cut
+
+# determine whether or not a given sbo is 64-bit only
+sub check_x64 {
+  script_error('check_x64 requires an argument.') unless @_ == 1;
+  my $location = shift;
+  my $dl = get_from_info(LOCATION => $location, GET => 'DOWNLOAD');
+  return $$dl[0] =~ /UN(SUPPOR|TES)TED/ ? 1 : 0;
 }
 
 =head2 get_download_info
