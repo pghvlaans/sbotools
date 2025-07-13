@@ -1085,6 +1085,7 @@ the exit status holds a non-zero value.
 sub run_tee {
   return undef unless $< == 0;
   my $cmd = shift;
+  $cmd =~ s/(^\s|\s$)//;
   my $log_name = shift;
 
   my $out_fh = tempfile(DIR => $tempdir);
