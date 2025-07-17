@@ -28,6 +28,7 @@ _arguments \
     '(-r --repo)'{-r,--repo}'[Use git/rsync repo at URL instead of the SBo repo for your SLACKWARE_VERSION.]:repo URL:()' \
     '(-R --rsync)'{-R,--rsync}'[If TRUE, then default mirrors are rsync except for -current.]:rsync default mirror?:((TRUE\:"Default mirrors are rsync." FALSE\:"No rsync preference."))' \
     '(-S --strict-upgrades)'{-S,--strict-upgrades}'[If TRUE, then only perform non-override upgrades if the version or build number is greater.]:strict versions?:((TRUE\:"Strict upgrades only." FALSE\:"Upgrade on differing version and build number."))' \
+    '(-w --nowrap)'{-w,--nowrap}'[If TRUE, then do not wrap sbotools output.]:disable sbotools output wrapping?:((TRUE\:"Wrapping is disabled." FALSE\:"Wrapping is enabled."))' \
     && return 0
 
 return 1

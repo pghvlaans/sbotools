@@ -18,7 +18,7 @@ _sboconfig() {
 
   case "${cmd}" in
     sboconfig)
-      opts="-h -v -l -n -B -b -C -c -d -e -g -j -L -P -p -s -O -o -V -r -R -S --help --version --list --non-default --reset --branch --build-ignore --classic --cpan-ignore --noclean --distclean --etc-profile --gpg-verify --jobs --log-dir --obsolete-check --pkg-dir --sbo-home --local-overrides --slackware-version --repo --rsync --strict-upgrades"
+      opts="-h -v -l -n -B -b -C -c -d -e -g -j -L -P -p -s -O -o -V -r -R -S -w --help --version --list --non-default --reset --branch --build-ignore --classic --cpan-ignore --noclean --distclean --etc-profile --gpg-verify --jobs --log-dir --nowrap --obsolete-check --pkg-dir --sbo-home --local-overrides --slackware-version --repo --rsync --strict-upgrades"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
@@ -32,7 +32,7 @@ _sboconfig() {
           COMPREPLY=( $(compgen -W "FALSE" -- "${cur}") )
           return 0
           ;;
-        -b|--build-ignore|-C|--classic|-c|--clean|-d|--distclean|-e|--etc-profile|-g|--gpg-verify|-R|--rsync|-S|--strict-upgrades|-P|--cpan-ignore|-O|--obsolete-check)
+        -b|--build-ignore|-C|--classic|-c|--clean|-d|--distclean|-e|--etc-profile|-g|--gpg-verify|-R|--rsync|-S|--strict-upgrades|-P|--cpan-ignore|-O|--obsolete-check|-w|--nowrap)
           COMPREPLY=( $(compgen -W "FALSE TRUE" -- "${cur}") )
           return 0
           ;;

@@ -152,7 +152,7 @@ C</usr/sbo> if still C<"FALSE">.
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
-C<CPAN_IGNORE>, C<ETC_PROFILE> and C<LOG_DIR>.
+C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR> and C<NOWRAP>.
 
 =head2 $download_time
 
@@ -248,6 +248,7 @@ our %config = (
   OBSOLETE_CHECK => 'FALSE',
   ETC_PROFILE => 'FALSE',
   LOG_DIR => 'FALSE',
+  NOWRAP => 'FALSE',
 );
 
 if (defined $is_sbotest) {
@@ -366,8 +367,13 @@ respectively.
 
 sub error_code {
   script_error("error_code requires two arguments.") unless @_ == 2;
-  $columns = 73;
-  warn wrap('', '', shift). "\n";
+  my $msg = shift;
+  unless ($config{NOWRAP} eq 'TRUE') {
+    $columns = 73;
+    warn wrap('', '', $msg). "\n";
+  } else {
+    warn "$msg\n";
+  }
   exit shift;
 }
 
@@ -740,6 +746,12 @@ sub lint_sbo_config {
       push @invalid, "$warn -c (TRUE or FALSE)";
     }
   }
+  if (exists $configs{NOWRAP}) {
+    unless ($configs{NOWRAP} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "NOWRAP" if $running ne 'sboconfig';
+      push @invalid, "$warn -w (TRUE or FALSE)";
+    }
+  }
   if (exists $configs{OBSOLETE_CHECK}) {
     unless ($configs{OBSOLETE_CHECK} =~ /^(TRUE|FALSE)$/) {
       push @invalid, "OBSOLETE_CHECK" if $running ne 'sboconfig';
@@ -925,8 +937,12 @@ sub prompt {
   my $def = $opts{default};
   $q = sprintf '%s [%s] ', $q, $def eq 'yes' ? 'y' : 'n' if defined $def;
 
-  $columns = 73;
-  print wrap('', '', $q);
+  unless ($config{NOWRAP} eq 'TRUE') {
+    $columns = 73;
+    print wrap('', '', $q);
+  } else {
+    print $q;
+  }
 
   my $res = readline STDIN;
   error_code("\nCould not read input; exiting.", _ERR_STDIN) unless defined $res;
@@ -1179,8 +1195,13 @@ error codes, use C<error_code()>.
 
 # subroutine for usage errors
 sub usage_error {
-  $columns = 73;
-  warn wrap('', '', shift). "\n";
+  my $msg = shift;
+  unless ($config{NOWRAP} eq 'TRUE') {
+    $columns = 73;
+    warn wrap('', '', $msg). "\n";
+  } else {
+    warn "$msg\n";
+  }
   exit _ERR_USAGE;
 }
 
@@ -1236,8 +1257,12 @@ for use in scripts (e.g., queue reports from C<sbofind(1)>).
 sub wrapsay {
   script_error("wrapsay requires an argument.") unless @_ >= 1;
   my ($msg, $trail) = @_;
-  $columns = 73;
-  print wrap('', '', "$msg\n");
+  unless ($config{NOWRAP} eq 'TRUE') {
+    $columns = 73;
+    print wrap('', '', "$msg\n");
+  } else {
+    say $msg;
+  }
   print "\n" if $trail;
   return 1;
 }

@@ -15,7 +15,7 @@ sboconfig [-l|-n]
 .P
 sboconfig [--reset]
 .P
-sboconfig [-CPORScbdeg TRUE|FALSE] [-j #|FALSE] [-Lpo /path|FALSE] \\
+sboconfig [-CPORScbdegw TRUE|FALSE] [-j #|FALSE] [-Lpo /path|FALSE] \\
           [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \\
           [-r url|FALSE]
 .SH DESCRIPTION
@@ -476,6 +476,20 @@ TRUE\fR\
 \&, upgrades are only attempted if the incoming
 version or build number is greater. This has no
 effect on scripts in the local overrides directory.
+.RE
+.P
+.B
+-w|--nowrap (FALSE|TRUE)
+.RS
+.B
+NOWRAP\fR\
+\&: If set to
+.B
+TRUE\fR\
+\&, do not wrap
+.B
+sbotools
+output.
 .RE
 .SH SBOTEST
 .B

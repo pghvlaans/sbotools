@@ -5,6 +5,8 @@
   * Repo.pm: Use --no-pager with git-log
   * sboinstall, sboupgrade: Do not attempt compat32 builds for 64- and 32-bit only scripts
   * sboinstall, sboupgrade: Filter ineligible compat32 scripts and unsupported or nonexistent scripts from the arguments
+  * Add setting NOWRAP to disable autowrapping sbotools output
+    * Thanks to shamefulCake1 for the request.
 
 #### 3.7 - 2025-07-04
   * Optimize queue construction: Shared dependency handling and rationalize_queue

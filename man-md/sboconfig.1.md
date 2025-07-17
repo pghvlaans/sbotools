@@ -25,7 +25,7 @@
 
     sboconfig [--reset]
 
-    sboconfig [-CPORScbdeg TRUE|FALSE] [-j #|FALSE] [-Lpo
+    sboconfig [-CPORScbdegw TRUE|FALSE] [-j #|FALSE] [-Lpo
 /path\|FALSE] \
               [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \
               [-r url|FALSE]
@@ -189,6 +189,10 @@ for Slackware -current.
 **STRICT_UPGRADES**: If set to **TRUE**, upgrades are only attempted if
 the incoming version or build number is greater. This has no effect on
 scripts in the local overrides directory.
+
+**-w\|\--nowrap (FALSE\|TRUE)**
+
+**NOWRAP**: If set to **TRUE**, do not wrap **sbotools** output.
 
 ## SBOTEST
 

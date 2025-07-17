@@ -150,6 +150,10 @@ If set to **TRUE**, upgrades are only attempted if the incoming version
 or build number is greater. This has no effect on scripts in the local
 overrides directory.
 
+**NOWRAP=(FALSE\|TRUE)**
+
+If set to **TRUE**, do not wrap **sbotools** output.
+
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),

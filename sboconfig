@@ -82,6 +82,8 @@ Configuration options (defaults shown):
       RSYNC_DEFAULT: default mirrors (other than for -current) are rsync.
   -S|--strict-upgrades FALSE:
       STRICT_UPGRADES: only upgrade when the version or build number is higher.
+  -w|--nowrap FALSE:
+      NOWRAP: do not automatically wrap sbotools output.
 
 Use $label without options for an interactive menu.
 
@@ -143,6 +145,8 @@ Configuration options (defaults shown):
       RSYNC_DEFAULT: default mirrors (other than for -current) are rsync.
   -S|--strict-upgrades FALSE:
       STRICT_UPGRADES: with --archive-rebuild, only delete when the version or build number is lower.
+  -w|--nowrap FALSE:
+      NOWRAP: do not automatically wrap sbotest output.
 
 Use $label without options for an interactive menu.
 
@@ -158,13 +162,13 @@ unless ($is_sbotest) {
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
-		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s');
+		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s', 'nowrap|w=s');
 } else {
 	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
-		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
+		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s', 'nowrap|w=s',
 		'sbo-archive|A=s');
 }
 
@@ -197,8 +201,9 @@ my %valid_confs = (
 	'strict-upgrades'   => 'STRICT_UPGRADES',
 	'cpan-ignore'       => 'CPAN_IGNORE',
 	'obsolete-check'    => 'OBSOLETE_CHECK',
-	'etc-profile'         => 'ETC_PROFILE',
+	'etc-profile'       => 'ETC_PROFILE',
 	'log-dir'           => 'LOG_DIR',
+	nowrap              => 'NOWRAP',
 );
 $valid_confs{"sbo-archive"} = 'SBO_ARCHIVE' if $is_sbotest;
 
@@ -221,6 +226,7 @@ my %params = (
 	OBSOLETE_CHECK    => 'O|--obsolete-check',
 	ETC_PROFILE       => 'e|--etc-profile',
 	LOG_DIR           => 'L|--log-dir',
+	NOWRAP            => 'w|--nowrap',
 );
 $params{SBO_ARCHIVE} = 'A|--sbo-archive' if $is_sbotest;
 
@@ -377,6 +383,8 @@ sub interactive_menu {
 	}
 
 	CPAN_IGNORE: config_prompt("CPAN_IGNORE", "If TRUE, install scripts even if they are installed from the CPAN.", "TRUE or FALSE.", "TF");
+
+	NOWRAP: config_prompt("NOWRAP", "If TRUE, do not wrap sbotools output.", "TRUE or FALSE.", "TF");
 
 	OBSOLETE_CHECK: config_prompt("OBSOLETE_CHECK", "If TRUE, sbocheck updates the obsolete script list from the sbotools home page.", "TRUE or FALSE.", "TF");
 
