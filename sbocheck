@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree build_cmp get_available_updates get_removed_builds get_obsolete script_error open_fh is_local show_version get_local_outdated_versions on_blacklist $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay %config /;
+use SBO::Lib qw/ update_tree build_cmp get_available_updates get_removed_builds get_obsolete script_error open_fh is_local show_version get_local_outdated_versions on_blacklist $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors %config /;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 use File::Basename;
 use List::Util 'max';
@@ -31,27 +31,29 @@ Options:
     this screen.
   -v|--version:
     version information.
+  --(no)color:
+    (do not) use sbotools color output.
   -g|--gpg-verify:
     perform gpg verification.
   -O|--obsolete-check:
     download an updated list of obsolete scripts.
   -n|--nopull:
     run without updating the tree.
-
 EOF
 	return 1;
 }
 
-my ($help, $vers, $gpg, $nopull, $obsolete_check);
+my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color);
 
-GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull);
+GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color);
 
 if ($help) {
 	show_usage();
-	wrapsay "Non-root users can call $self with -n, -h and -v." unless $< == 0;
+	wrapsay "\nNon-root users can call $self with -n, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
+$config{NOCOLOR} = $color ? 'FALSE' : 'TRUE' if $color xor $nocolor;
 if ($< != 0) { $config{GPG_VERIFY} = "FALSE"; }
 unless ($< == 0 or ($nopull and not $gpg)) {
 	show_usage();
@@ -70,15 +72,15 @@ if ($gpg and $nopull) { verify_gpg(); }
 elsif ($gpg) { $config{GPG_VERIFY} = "TRUE"; }
 
 if ($obsolete_check) {
-	print "Not updating the SlackBuilds tree...\n";
+	wrapsay_color $color_notice, "Not updating the SlackBuilds tree...";
 	get_obsolete;
 	exit 0;
 }
 
 update_tree() unless $nopull;
 if ($nopull and slackbuilds_or_fetch()) {
-	print "Not updating the SlackBuilds tree...\n";
-	print "Not writing log files...\n" unless $< == 0;
+	wrapsay_color $color_notice, "Not updating the SlackBuilds tree...";
+	wrapsay_color $color_notice, "Not writing log files..." unless $< == 0;
 }
 
 # retrieve and format list of removed builds
@@ -231,7 +233,7 @@ sub print_output {
 	if($logfile eq '/var/log/sbocheck-bumps.log') { $message="\tNo build numbers differ."; }
 	if($logfile eq '/var/log/sbocheck-out-of-tree.log') { $message="\tNo out-of-tree _SBo builds."; }
 	if (@listing) {
-		if ($config{CLASSIC} ne "TRUE" and $< == 0) { print "\tSee $logfile.\n\n"; }
+		if ($config{CLASSIC} ne "TRUE" and $< == 0) { print_color $color_notice; print "\tSee $logfile.\n\n"; print_color $color_default; }
 		else { print "\n"; }
 		say $_ for @listing;
 		print "\n";
@@ -241,7 +243,7 @@ sub print_output {
 			my ($log_fh, $exit) = open_fh($logfile, '>');
 			# non-fatal
 			if ($exit) {
-				warn $log_fh;
+				warn_color $color_lesser, $log_fh;
 			} else {
 				say {$log_fh} $_ for @listing;
 				close $log_fh;
@@ -249,7 +251,7 @@ sub print_output {
 			}
 		}
 	} else {
-		say "$message";
+		wrapsay_color $color_notice, $message;
 	}
 	return 1;
 }
@@ -264,4 +266,4 @@ if ($config{CLASSIC} ne "TRUE") {
 }
 wrapsay "\nWarning: Local overrides directory $config{LOCAL_OVERRIDES} does not exist." if $config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES};
 
-exit 0;
+END { say ""; }

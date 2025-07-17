@@ -12,6 +12,8 @@ tree for a given name or names
 sbofind [-h|-v]
 .P
 sbofind [-AEFRTeiqrt] search_term (search_term)
+.P
+sbofind [--color|--nocolor] ...
 .SH DESCRIPTION
 .P
 .B
@@ -143,6 +145,27 @@ Show help information.
 .RS
 Show version information.
 .RE
+.P
+.B
+--color
+.RS
+Turn on
+.B
+sbotools
+color output. See also
+.B
+sbotools.colors(5)\fR\
+\&.
+.RE
+.P
+.B
+--nocolor
+.RS
+Turn off
+.B
+sbotools
+color output.
+.RE
 .SH SBOTEST
 .B
 sbofind
@@ -186,7 +209,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.conf(5), sbotools.hints(5)
+sbocheck(1), sboclean(1), sboconfig(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>

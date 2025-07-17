@@ -13,6 +13,7 @@ for man in tools check clean config hints find install remove upgrade ; do
 done
 cat sbotools.conf.5 | groff -mandoc -Thtml > sbotools.conf.5.html
 cat sbotools.hints.5 | groff -mandoc -Thtml > sbotools.hints.5.html
+cat sbotools.colors.5 | groff -mandoc -Thtml > sbotools.colors.5.html
 rm *1 *5
 
 # If something happens to me and someone else takes over the project,
@@ -28,6 +29,7 @@ done
 
 pandoc --from=html --to=markdown sbotools.conf.5.html > sbotools.conf.5.md
 pandoc --from=html --to=markdown sbotools.hints.5.html > sbotools.hints.5.md
+pandoc --from=html --to=markdown sbotools.colors.5.html > sbotools.colors.5.md
 
 rm -f ./*html
 
@@ -61,7 +63,7 @@ sed -i "s/^## SBOTEST.*/## SBOTEST/g" *
 sed -i "s/^## AUTHORS.*/## AUTHORS/g" *
 sed -i "s/^## MAINTAINER.*/## MAINTAINER/g" *
 
-for item in check clean config hints find install remove tools.conf tools.hints upgrade ; do
+for item in check clean config hints find install remove tools.colors tools.conf tools.hints upgrade ; do
   sed -i "s/^# sbo$item.*/# sbo$item/g" *
 done
 
@@ -75,6 +77,8 @@ done
 
 sed -i "s/sbotools.conf(5)/[sbotools.conf(5)](sbotools.conf.5.md)/g" *
 sed -i "s/[*]\+\[sbotools.conf(5)\](sbotools.conf.5.md)[*]\+/[sbotools.conf(5)](sbotools.conf.5.md)/g" *
+sed -i "s/sbotools.colors(5)/[sbotools.colors(5)](sbotools.colors.5.md)/g" *
+sed -i "s/[*]\+\[sbotools.colors(5)\](sbotools.colors.5.md)[*]\+/[sbotools.colors(5)](sbotools.colors.5.md)/g" *
 
 sed -i "s/sbotools.hints(5)/[sbotools.hints(5)](sbotools.hints.5.md)/g" *
 sed -i "s/[*]\+\[sbotools.hints(5)\](sbotools.hints.5.md)[*]\+/[sbotools.hints(5)](sbotools.hints.5.md)/g" *

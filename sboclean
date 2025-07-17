@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ prompt usage_error script_error in show_version lint_sbo_config wrapsay %config /;
+use SBO::Lib qw/ prompt usage_error script_error in show_version lint_sbo_config wrapsay :colors %config /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 use File::Path qw(remove_tree);
@@ -31,6 +31,8 @@ Options:
     this screen.
   -v|--version:
     version information.
+  --(no)color:
+    (do not) use sbotools color output.
   -d|--dist:
     clean distfiles.
   -w|--work:
@@ -39,12 +41,11 @@ Options:
     clean saved options.
   -i|--interactive:
     use prompts before deleting files.
-
 EOF
 	return 1;
 }
 
-my ($help, $vers, $dist, $work, $options, $interactive);
+my ($help, $vers, $dist, $work, $options, $interactive, $nocolor, $color);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -53,21 +54,24 @@ my $options_ok = GetOptions(
 	'work|clean-work|w' => \$work,
 	'options|o=s'       => \$options,
 	'interactive|i'     => \$interactive,
+	'nocolor'           => \$nocolor,
+	'color'             => \$color,
 );
 
 if ($help) {
 	show_usage();
-	wrapsay "This is a root-only script." unless $< == 0;
+	wrapsay "\nThis is a root-only script." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
+$config{NOCOLOR} = $color ? 'FALSE' : 'TRUE' if $color xor $nocolor;
 unless ($< == 0) {
 	show_usage();
-	usage_error "This is a root-only script.";
+	usage_error "\nThis is a root-only script.";
 }
 unless ($options_ok) {
 	show_usage();
-	usage_error "One or more invalid options detected.";
+	usage_error "\nOne or more invalid options detected.";
 }
 
 lint_sbo_config($self, %config);
@@ -86,7 +90,7 @@ sub rm_full {
 		$message = "Remove $full?";
 	}
 	if ($interactive) {
-		return() unless prompt("$message", default => 'no');
+		return() unless prompt($color_lesser, "$message", default => 'no');
 	}
 	unlink $full if -f $full;
 	remove_tree($full) if -d $full;
@@ -140,7 +144,7 @@ if ($work) {
 	my $env_tmp = $SBO::Lib::env_tmp;
 	my $tsbo = $SBO::Lib::tmpd;
 	if ($env_tmp && !$interactive) {
-		remove_stuff($tsbo) if prompt("This will remove the entire contents of $env_tmp.\nProceed?", default => 'yes');
+		remove_stuff($tsbo) if prompt($color_warn, "This will remove the entire contents of $env_tmp.\nProceed?", default => 'yes');
 	} else {
 		remove_stuff($tsbo);
 	}
@@ -153,7 +157,7 @@ if ($options) {
 		remove_stuff($opt_dir)
 	} else {
 		if (-f "$opt_dir/$options" && $interactive) {
-			unlink("$opt_dir/$options") if prompt("This will clear the saved options for $options.\nProceed?", default => 'no');
+			unlink("$opt_dir/$options") if prompt($color_lesser, "This will clear the saved options for $options.\nProceed?", default => 'no');
 		} elsif (-f "$opt_dir/$options") {
 			unlink("$opt_dir/$options");
 		} else {
@@ -161,4 +165,5 @@ if ($options) {
 		}
 	}
 }
-exit 0;
+
+END { say ""; }

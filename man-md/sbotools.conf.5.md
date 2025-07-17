@@ -31,11 +31,11 @@ The current configuration keys are as follows:
 
 **CLASSIC=(FALSE\|TRUE)**
 
-If **TRUE**, automatically enable **RSYNC_DEFAULT** and **BUILD_IGNORE**
-(overriding the contents of this file). Build increment and out-of-tree
-SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are disabled, and previously-used
-build options are not displayed. This provides a more traditional
-**sbotools** look and feel for those who want it.
+If **TRUE**, automatically enable **RSYNC_DEFAULT**, **BUILD_IGNORE**
+and **NOCOLOR** (overriding the contents of this file). Build increment
+and out-of-tree SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are disabled, and
+previously-used build options are not displayed. This provides a more
+traditional **sbotools** look and feel for those who want it.
 
 **CPAN_IGNORE=(FALSE\|TRUE)**
 
@@ -69,6 +69,12 @@ If **numerical**, pass to the **-j** argument when a SlackBuild invoking
 
 If **TRUE**, do not clean working directories after building. These are
 the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
+
+**NOCOLOR=(FALSE\|TRUE)**
+
+If **TRUE**, disable **sbotools** color output. To customize color
+output, edit the */etc/sbotools/sbotools.colors* file directly. See
+[sbotools.colors(5)](sbotools.colors.5.md) for more details.
 
 **GIT_BRANCH=(FALSE\|branch_name)**
 
@@ -157,7 +163,8 @@ If set to **TRUE**, do not wrap **sbotools** output.
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
+[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
+[sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
 
 ## AUTHORS
 

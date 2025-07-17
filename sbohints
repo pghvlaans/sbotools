@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config auto_reverse get_optional lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay /;
+use SBO::Lib qw/ :config :colors auto_reverse get_optional lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 
@@ -31,6 +31,8 @@ Options:
     this screen.
   -v|--version:
     version information.
+  --(no)color:
+    (do not) use sbotools color output.
   -l|--list:
     show current blacklist and optional dependencies.
   -q|--query:
@@ -53,11 +55,10 @@ Options:
   $label -b libsystemd sbotools
   $label -cb vifm
   $label -q qemu
-
 EOF
 }
 
-my ($help, $version, $list, $reset, $reverse, $optional, $replace_optional, $blacklist, $clear, $query);
+my ($help, $version, $list, $reset, $reverse, $optional, $replace_optional, $blacklist, $clear, $query, $nocolor, $color);
 
 GetOptions(
 	'help|h'              => \$help,
@@ -70,17 +71,20 @@ GetOptions(
 	'clear|c'             => \$clear,
 	'query|q'             => \$query,
 	'blacklist|b'         => \$blacklist,
+	'nocolor'             => \$nocolor,
+	'color'               => \$color,
 );
 
 if ($help) {
 	show_usage();
-	wrapsay "Non-root users can call $label with -l, -q, -h and -v." unless $< == 0;
+	wrapsay "\nNon-root users can call $label with -l, -q, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($version) { show_version(); exit 0; }
+$config{NOCOLOR} = $color ? 'FALSE' : 'TRUE' if $color xor $nocolor;
 unless ($< == 0 or $list or $query) {
 	show_usage();
-	usage_error "Non-root users can call $label with -l, -q, -h and -v.";
+	usage_error "\nNon-root users can call $label with -l, -q, -h and -v.";
 }
 unless (@ARGV or $list or $reset) { show_usage(); exit 0; }
 
@@ -103,7 +107,7 @@ if ($reset and ($optional or $clear or $replace_optional or $blacklist or $clear
 }
 
 if ($reset) {
-	if (prompt("Are you sure you want to clear all scripts from the blacklist and all optional dependency requests?", default => 'no')) {
+	if (prompt($color_warn, "Are you sure you want to clear all scripts from the blacklist and all optional dependency requests?", default => 'no')) {
 		wrapsay "Clearing the blacklist and all optional depedency requests...";
 		reset_all();
 	} else {
@@ -153,10 +157,7 @@ sub alter_designation {
 		# it is not possible to reach this point unless
 		# /etc/sbotools/sbotools.hints exists
 		my ($rfh, $rexit) = open_read($hint_file);
-		if ($rexit) {
-			warn $rfh;
-			exit $rexit;
-		}
+		error_code("Failed to open $hint_file; exiting.", $rexit) if $rexit;
 		# flag -cb/-cr; only write back lines that don't alter the
 		# designation for $sbo
 		if ($blacklist) {
@@ -168,20 +169,14 @@ sub alter_designation {
 		}
 		close $rfh;
 		my ($fh, $exit) = open_fh($hint_file, ">");
-		if ($exit) {
-			warn $fh;
-			exit $exit;
-		}
+		error_code("Failed to open $hint_file; exiting.", $exit) if $exit;
 		print {$fh} @incoming;
 		close $fh;
 	} else {
 		mkdir $conf_dir unless -d $conf_dir;
 		system(qw/ touch /, $hint_file) unless -f $hint_file;
 		my ($fh, $exit) = open_fh($hint_file, ">>");
-		if ($exit) {
-			warn $fh;
-			exit $exit;
-		}
+		error_code("Failed to open $hint_file; exiting.", $exit) if $exit;
 		# flag -b/-r; print a new line blacklisting/requesting reverse
 		# rebuilds for $sbo
 		if ($blacklist) {
@@ -210,9 +205,9 @@ sub make_query {
 		}
 		if (my @optionals = get_optional($sbo)) {
 			if (@optionals == 1) {
-				wrapsay "Optional dependency request for $sbo:";
+				wrapsay_color $color_notice, "Optional dependency request for $sbo:";
 			} else {
-				wrapsay "Optional dependency requests for $sbo:";
+				wrapsay_color $color_notice, "Optional dependency requests for $sbo:";
 			}
 			wrapsay(join(" ", @optionals));
 			$made_output = 1;
@@ -234,7 +229,7 @@ sub make_query {
 						my $requested = shift @optional_for;
 						wrapsay "$sbo is an optional dependency of $requested.";
 					} else {
-						wrapsay "The following scripts optionally depend on $sbo:";
+						wrapsay_color $color_notice, "The following scripts optionally depend on $sbo:";
 						@optional_for = sort @optional_for;
 						for my $result (@optional_for) { wrapsay "$result"; }
 					}
@@ -260,22 +255,22 @@ sub prompt_queue {
 		wrapsay(join(" ", @current), 1);
 		# flags -co, -o, -O
 		unless ($replace_optional and $clear) {
-			if (@incoming = split(" ", prompt($message))) {
+			if (@incoming = split(" ", prompt($color_notice, $message))) {
 				if (grep { /-compat32$/ } @incoming) {
 					wrapsay("Separate -compat32 requests are not needed.", 1);
 					prompt_queue($sbo);
 					return;
 				}
 				if (grep { /\!/ } @incoming) {
-					wrapsay("! cannot be used in optional dependency requests.", 1);
+					wrapsay_color $color_lesser, "! cannot be used in optional dependency requests.", 1;
 					prompt_queue($sbo);
 					return;
 				}
 				if (grep { /^$sbo$/ } @incoming) {
 					if ($clear) {
-						wrapsay("Cannot clear $sbo from its own list.", 1);
+						wrapsay_color $color_lesser, "Cannot clear $sbo from its own list.", 1;
 					} else {
-						wrapsay("$sbo cannot be its own optional dependency.", 1);
+						wrapsay_color $color_lesser, "$sbo cannot be its own optional dependency.", 1;
 					}
 					prompt_queue($sbo);
 					return;
@@ -297,7 +292,7 @@ sub prompt_queue {
 				say "Skipping.";
 				return;
 			}
-		} elsif (prompt($message, default => 'no')) {
+		} elsif (prompt($color_lesser, $message, default => 'no')) {
 			# flag -cO
 			write_optional($sbo);
 			return;
@@ -312,22 +307,22 @@ sub prompt_queue {
 	} else {
 		# flags -o and -O, no existing entry
 		wrapsay("$sbo has no optional dependency requests.", 1);
-		if (@incoming = split(" ", prompt($message))) {
+		if (@incoming = split(" ", prompt($color_notice, $message))) {
 			if (grep { /-compat32$/ } @incoming) {
-				wrapsay("Separate -compat32 requests are not needed.", 1);
+				wrapsay_color $color_lesser, "Separate -compat32 requests are not needed.", 1;
 				prompt_queue($sbo);
 				return;
 			}
 			if (grep { /\!/ } @incoming) {
-				wrapsay("! cannot be used in optional dependency requests.", 1);
+				wrapsay_color $color_lesser, "! cannot be used in optional dependency requests.", 1;
 				prompt_queue($sbo);
 				return;
 			}
 			if (grep { /^$sbo$/ } @incoming) {
 				if ($clear) {
-					wrapsay("Cannot clear $sbo from its own list.", 1);
+					wrapsay_color $color_lesser, "Cannot clear $sbo from its own list.", 1;
 				} else {
-					wrapsay("$sbo cannot be its own optional dependency.", 1);
+					wrapsay_color $color_lesser, "$sbo cannot be its own optional dependency.", 1;
 				}
 				prompt_queue($sbo);
 				return;
@@ -351,20 +346,14 @@ sub reset_all {
 		exit 0;
 	}
 	my ($rfh, $rexit) = open_read($hint_file);
-	if ($rexit) {
-		warn $rfh;
-		exit $rexit;
-	}
+	error_code("Failed to open $hint_file; exiting.", $rexit) if $rexit;
 	for my $line (<$rfh>) {
 		chomp(my $search = $line);
 		push @remaining, $line unless grep { /^$search$/ } @loclistings;
 	}
 	close $rfh;
 	my ($fh, $exit) = open_fh($hint_file, '>');
-	if ($exit) {
-		warn $fh;
-		exit $exit;
-	}
+	error_code("Failed to open $hint_file; exiting.", $exit) if $exit;
 	print {$fh} @remaining;
 	close $fh;
 }
@@ -408,7 +397,7 @@ sub show_list {
 		wrapsay "$result is blacklisted.";
 		$wrote_blacklist = 1;
 	} elsif (@blacklisted) {
-		wrapsay "The following scripts are blacklisted:";
+		wrapsay_color $color_notice, "The following scripts are blacklisted:";
 		for my $sbo (@blacklisted) {
 			say "$sbo";
 		}
@@ -421,7 +410,7 @@ sub show_list {
 		$wrote_auto_reverse = 1;
 	} elsif (@has_auto_reverse) {
 		say " " if $wrote_blacklist;
-		wrapsay "The following scripts have reverse dependency rebuilding:";
+		wrapsay_color $color_notice, "The following scripts have reverse dependency rebuilding:";
 		for my $sbo (@has_auto_reverse) {
 			say "$sbo";
 		}
@@ -431,9 +420,9 @@ sub show_list {
 		if (my @optionals = get_optional($sbo)) {
 			say " " if $wrote_blacklist or $wrote_optional or $wrote_auto_reverse;
 			if (@optionals == 1) {
-				say "Optional dependency request for $sbo:";
+				wrapsay_color $color_notice, "Optional dependency request for $sbo:";
 			} else {
-				say "Optional dependency requests for $sbo:";
+				wrapsay_color $color_notice, "Optional dependency requests for $sbo:";
 			}
 			wrapsay(join(" ", @optionals));
 			push @ineffectuals, $sbo if on_blacklist($sbo);
@@ -446,13 +435,13 @@ sub show_list {
 	if (@ineffectuals) {
 		@ineffectuals = sort @ineffectuals;
 		say " ";
-		wrapsay "The following scripts have optional dependency requests, but are blacklisted:";
+		wrapsay_color $color_lesser, "The following scripts have optional dependency requests, but are blacklisted:";
 		wrapsay(join("\n", @ineffectuals));
 	}
 	if (@ineffectual_requests) {
 		@ineffectual_requests = uniq sort(@ineffectual_requests);
 		say " ";
-		wrapsay "The following scripts are requested as optional dependencies, but are blacklisted:";
+		wrapsay_color $color_lesser, "The following scripts are requested as optional dependencies, but are blacklisted:";
 		wrapsay(join("\n", @ineffectual_requests));
 	}
 	wrapsay $message unless $wrote_blacklist or $wrote_optional;
@@ -471,10 +460,7 @@ sub write_optional {
 	@operation = uniq @operation if @operation;
 	my @loclistings = @listings;
 	my ($rfh, $rexit) = open_read($hint_file);
-	if ($rexit) {
-		warn $rfh;
-		exit $rexit;
-	}
+	error_code("Failed to open $hint_file; exiting.", $rexit) if $rexit;
 	my (@outgoing, $replaced);
 	push @operation, $sbo if $replace_optional and not $clear;
 	if ($optional and not $clear) {
@@ -525,10 +511,9 @@ sub write_optional {
 	}
 	close $rfh;
 	my ($fh, $exit) = open_fh($hint_file, '>');
-	if ($exit) {
-		warn $fh;
-		exit $exit;
-	}
+	error_code("Failed to open $hint_file; exiting.", $exit) if $exit;
 	print {$fh} @outgoing;
 	close $fh;
 }
+
+END { say ""; }

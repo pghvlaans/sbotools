@@ -14,6 +14,8 @@ _arguments -s \
     	   '(-w --work)'{-w,--work}'[Clean working directories (default /tmp/SBo; /tmp for compat32).]' \
 	   '(-o --options)'{-o,--options}'[Clean saved options (ALL for all saved).]:SlackBuild:(${slackbuilds})' \
     	   '(-i --interactive)'{-i,--interactive}'[Ask for confirmation for each item to be removed.]' \
+	   '(--nocolor)'{--nocolor}'[Disable sbotools color output.]:' \
+	   '(--color)'{--color}'[Enable sbotools color output.]:' \
     && return 0
 
 return 1

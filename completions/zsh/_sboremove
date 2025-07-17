@@ -9,6 +9,8 @@ _arguments \
     - info \
     '(-)'{-h,--help}'[Show help]:' \
     '(-)'{-v,--version}'[Show version]:' \
+    '(-)'{--nocolor}'[Disable sbotools color output.]:' \
+    '(-)'{--color}'[Enable sbotools color output.]:' \
     - commands \
     '(-a --alwaysask)'{-a,--alwaysask}'[Always ask to remove requirements (even if required by installed packages).]' \
     '(-p --compat32)'{-p,--compat32}'[Remove compat32 scripts only.]' \

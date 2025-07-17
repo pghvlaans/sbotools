@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.7';
 
-use SBO::Lib::Util qw/ script_error open_read uniq idx %config /;
+use SBO::Lib::Util qw/ error_code script_error open_read uniq idx %config /;
 use SBO::Lib::Repo qw/ $repo_path $slackbuilds_txt /;
 
 use Exporter 'import';
@@ -67,10 +67,7 @@ sub get_all_available {
   my @result;
   $full_sbtxt_read = 1;
   my ($fh, $exit) = open_read($slackbuilds_txt);
-  if ($exit) {
-    warn $fh;
-    exit $exit;
-  }
+  error_code("Failed to open $slackbuilds_txt; exiting.", $exit) if $exit;
   FIRST: for my $line (<$fh>) {
     next FIRST unless $line =~ /LOCATION/;
     my @line = split(" ", $line);
@@ -156,10 +153,7 @@ sub get_sbo_locations {
   return %locations unless @sbos;
 
   my ($fh, $exit) = open_read($slackbuilds_txt);
-  if ($exit) {
-    warn $fh;
-    exit $exit;
-  }
+  error_code("Failed to open $slackbuilds_txt; exiting.", $exit) if $exit;
 
   while (my $line = <$fh>) {
     my ($loc, $sbo) = $line =~ m!LOCATION:\s+\.(/[^/]+/([^/\n]+))$!
@@ -222,6 +216,7 @@ sub is_local {
 Tree.pm subroutines can return the following exit code:
 
   _ERR_SCRIPT        2   script or module bug
+  _ERR_OPENFH        6   failure to open file handles
 
 =head1 SEE ALSO
 

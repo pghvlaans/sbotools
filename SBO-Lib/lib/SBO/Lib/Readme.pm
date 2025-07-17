@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.7';
 
-use SBO::Lib::Util qw/ error_code prompt script_error slurp open_read open_fh usage_error wrapsay %config  :const /;
+use SBO::Lib::Util qw/ :const :colors error_code prompt script_error slurp open_read open_fh usage_error wrapsay %config /;
 use SBO::Lib::Tree qw/ is_local /;
 
 use Exporter 'import';
@@ -68,27 +68,29 @@ sub ask_opts {
   if (-f $opts_log) {
     my ($prev_fh, $exit) = open_fh($opts_log, '<');
     if ($exit) {
-      warn $prev_fh;
+      warn_color $color_lesser, $prev_fh;
     } else {
       my $prev_opts = <$prev_fh>;
       if ($config{CLASSIC} ne "TRUE") {
-        if (prompt("\nIt looks like options were previously specified for $sbo:\n\n$prev_opts\n\nWould you like to use these options to build $sbo?", default => 'yes')) {
+        wrapsay_color $color_notice, "\nIt looks like options were previously specified for $sbo:\n";
+        wrapsay "\n$prev_opts\n";
+        if (prompt($color_notice, "\nWould you like to use these options to build $sbo?", default => 'yes')) {
           my $opts = $prev_opts;
-	  return $opts;
+          return $opts;
         }
       }
     }
   }
-  if (prompt("\nIt looks like $sbo has options; would you like to set any when the slackbuild is run?", default => 'no')) {
+  if (prompt($color_notice, "\nIt looks like $sbo has options; would you like to set any when the slackbuild is run?", default => 'no')) {
     my $ask = sub {
-      chomp(my $opts = prompt("\nPlease supply any options here, or press Enter to skip: "));
+      chomp(my $opts = prompt($color_default, "\nPlease supply any options here, or press Enter to skip: "));
       return $opts;
     };
     my $kv_regex = qr/[A-Z0-9]+=[^\s]+(|\s([A-Z]+=[^\s]+){0,})/;
     my $opts = $ask->();
     return() unless $opts;
     while ($opts !~ $kv_regex) {
-      warn "Invalid input received.\n";
+      warn_color $color_lesser, "Invalid input received.";
       $opts = $ask->();
       return() unless $opts;
     }
@@ -112,7 +114,7 @@ sub ask_other_readmes {
 
   return unless @readmes;
 
-  return unless prompt("\nIt looks like $sbo has additional README files. Would you like to view those as well?", default => 'yes');
+  return unless (prompt($color_notice, "\nIt looks like $sbo has additional README files. Would you like to view those as well?", default => 'yes'));
 
   for my $fn (@readmes) {
     my ($display_fn) = $fn =~ m!/(README.*)$!;
@@ -141,9 +143,9 @@ sub ask_user_group {
     wrapsay "\nRequired user(s) and group(s) already exist.";
     return undef;
   } else {
-    wrapsay "\nIt looks like this slackbuild requires the following command(s) to be run first:";
+    wrapsay_color $color_lesser, "\nIt looks like this SlackBuild requires the following command(s) to be run first:";
     say "    # $_" for @$cmds;
-    return prompt('Run the commands prior to building?', default => 'yes') ? $cmds : undef;
+    return prompt($color_lesser, 'Run the commands prior to building?', default => 'yes') ? $cmds : undef;
   }
 }
 
@@ -276,7 +278,7 @@ sub user_prompt {
   if (not defined $location) { usage_error("Unable to locate $sbo in the SlackBuilds.org tree."); }
   my $readme = get_readme_contents($location);
   return "Could not open README for $sbo.", undef, _ERR_OPENFH if not defined $readme;
-  if (is_local($sbo)) { print "\nFound $sbo in local overrides.\n"; }
+  wrapsay_color $color_lesser, "\nFound $sbo in local overrides.", 1 if is_local($sbo);
   print "\n". $readme;
   # check for user/group add commands, offer to run any found
   my $user_group = get_user_group($readme, $location);
@@ -292,7 +294,7 @@ sub user_prompt {
   # we have to return something substantial if the user says no so that we
   # can check the value of $cmds on the calling side. we should be able to
   # assume that 'N' will  never be a valid command to run.
-  return 'N' unless prompt("\nProceed with $sbo?", default => 'yes');
+  return 'N' unless prompt($color_notice, "\nProceed with $sbo?", default => 'yes');
   return $cmds, $opts;
 }
 

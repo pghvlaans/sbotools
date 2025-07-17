@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.7';
 
-use SBO::Lib::Util qw/ :const in get_arch get_sbo_from_loc get_optional open_read script_error slurp usage_error uniq wrapsay /;
+use SBO::Lib::Util qw/ :const in get_arch get_sbo_from_loc get_optional open_read script_error slurp usage_error error_code uniq wrapsay /;
 use SBO::Lib::Tree qw/ get_orig_location get_sbo_location get_sbo_locations is_local /;
 
 use Exporter 'import';
@@ -296,7 +296,7 @@ sub get_sbo_build_number {
   my $build;
 
   my ($fh, $exit) = open_read("$location/$sbo.SlackBuild");
-  usage_error("get_sbo_build_number: could not read $location/$sbo.SlackBuild.") if $exit;
+  error_code("get_sbo_build_number: could not read $location/$sbo.SlackBuild.", $exit) if $exit;
 
   while (my $line = <$fh>) {
     $build = $line if $line =~ m/^BUILD=/;

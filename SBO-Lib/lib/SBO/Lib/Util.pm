@@ -20,6 +20,7 @@ our $VERSION = '3.7';
 use Exporter 'import';
 use File::Copy;
 use SBO::ThirdParty::Sort::Versions;
+use Term::ANSIColor qw/ color colorvalid /;
 use Text::Wrap qw/ wrap $columns /;
 
 my $consts;
@@ -48,6 +49,7 @@ my @EXPORT_CONFIG = qw{
 
   $conf_dir
   $conf_file
+  $color_file
   $hint_file
   %config
   @listings
@@ -70,6 +72,17 @@ my @EXPORT_TIME = qw{
   $paused_time
 };
 
+my @EXPORT_COLORS = qw{
+  print_color
+  wrapsay_color
+  warn_color
+
+  $color_default
+  $color_lesser
+  $color_notice
+  $color_warn
+};
+
 our @EXPORT_OK = (
   qw{
     auto_reverse
@@ -77,6 +90,7 @@ our @EXPORT_OK = (
     check_multilib
     error_code
     get_arch
+    get_colors
     get_kernel_version
     get_optional
     get_sbo_from_loc
@@ -92,6 +106,7 @@ our @EXPORT_OK = (
     on_blacklist
     open_fh
     open_read
+    print_color
     print_failures
     prompt
     read_hints
@@ -105,6 +120,7 @@ our @EXPORT_OK = (
     version_cmp
     wrapsay
   },
+  @EXPORT_COLORS,
   @EXPORT_CONSTS,
   @EXPORT_CONFIG,
   @EXPORT_TIME,
@@ -112,6 +128,7 @@ our @EXPORT_OK = (
 
 our %EXPORT_TAGS = (
   all => \@EXPORT_OK,
+  colors => \@EXPORT_COLORS,
   const => \@EXPORT_CONSTS,
   config => \@EXPORT_CONFIG,
   times => \@EXPORT_TIME,
@@ -134,6 +151,16 @@ SBO::Lib::Util - Utility functions for SBO::Lib and the sbotools
 
 =head1 VARIABLES
 
+=head2 ($color_default, $color_lesser, $color_notice, $color_warn)
+
+These variables are ANSI colors. C<$color_notice> is C<cyan> for selected
+C<sbotools> informative messages. C<$color_lesser> is C<bold> for warnings
+of lesser concern. C<$color_warn>, C<red bold>, is for errors and warnings of greater concern.
+C<sbotools> color display can be disabled by setting C<NOCOLOR> to C<TRUE>. C<$color_default>
+is currently C<reset> and is not configurable.
+
+C<get_colors()> reads C</etc/sbotools/sbotools.colors> for custom values.
+
 =head2 $conf_dir
 
 C<$conf_dir> is C</etc/sbotools> by default, or else the contents of an
@@ -152,7 +179,7 @@ C</usr/sbo> if still C<"FALSE">.
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
-C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR> and C<NOWRAP>.
+C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP> and C<NOCOLOR>.
 
 =head2 $download_time
 
@@ -229,6 +256,7 @@ my $filebase = defined $is_sbotest ? "sbotest" : "sbotools";
 our $conf_file = "$conf_dir/$filebase.conf";
 our $hint_file = "$conf_dir/$filebase.hints";
 our $obs_file = "$conf_dir/obsolete";
+our $color_file = "$conf_dir/$filebase.colors";
 our %config = (
   CLASSIC => 'FALSE',
   NOCLEAN => 'FALSE',
@@ -248,6 +276,7 @@ our %config = (
   OBSOLETE_CHECK => 'FALSE',
   ETC_PROFILE => 'FALSE',
   LOG_DIR => 'FALSE',
+  NOCOLOR => 'FALSE',
   NOWRAP => 'FALSE',
 );
 
@@ -289,6 +318,13 @@ our $sbotest_compatible = 1;
 
 # A 32-bit userland is running on a 64-bit kernel.
 our $userland_32;
+
+# Set colors here
+our $color_default = "reset";
+our $color_lesser = "bold";
+our $color_notice = "cyan";
+our $color_warn = "red bold";
+get_colors();
 
 =head1 SUBROUTINES
 
@@ -370,10 +406,19 @@ sub error_code {
   my $msg = shift;
   unless ($config{NOWRAP} eq 'TRUE') {
     $columns = 73;
-    warn wrap('', '', $msg). "\n";
+    unless ($config{NOCOLOR} eq 'TRUE') {
+      warn color($color_warn). wrap('', '', $msg). "\n";
+    } else {
+      warn wrap('', '', $msg). "\n";
+    }
   } else {
-    warn "$msg\n";
+    unless ($config{NOCOLOR} eq 'TRUE') {
+      warn color($color_warn). "$msg\n";
+    } else {
+      warn "$msg\n";
+    }
   }
+  print color($color_default);
   exit shift;
 }
 
@@ -392,10 +437,12 @@ sub display_times {
   $build_time_string = time_format($total_build_time) if $total_build_time;
   $download_time_string = time_format($download_time) if $download_time;
   $install_time_string = time_format($total_install_time) if $total_install_time;
+  print_color($color_notice);
   say "" if $build_time_string or $download_time_string or $install_time_string;
   say "Download: $download_time_string" if $download_time_string;
   say "Package:  $build_time_string" if $build_time_string;
   say "Install:  $install_time_string" if $install_time_string;
+  print_color($color_default);
   return;
 }
 
@@ -418,6 +465,34 @@ sub get_arch {
     }
   }
   return $arch;
+}
+
+=head2 get_colors
+
+  my ($color_notice, $color_lesser, $color_warn) = get_colors();
+
+C<get_colors()> reads the contents of C</etc/sbotools/sbotools.colors> to
+set custom values for C<$color_notice>, C<$color_lesser> and C<$color_warn>.
+No color can be set to an invalid ANSI specification; in such cases, the default
+value is used instead. See C<Term::ANSIColor(3)> for details.
+
+=cut
+
+sub get_colors {
+  return unless -s $color_file;
+  my ($fh, $exit) = open_read($color_file);
+  return if $exit;
+  for my $line (<$fh>) {
+    next if $line =~ m/^(\s|#)/;
+    next unless $line =~ m/^(\s+|)color_(notice|lesser|warn)(\s+|)=/;
+    $line =~ s/("|')//g;
+    my @items = split "=", $line;
+    next unless colorvalid($items[1]);
+    $items[0] =~ s/\s//g;
+    $color_notice = $items[1] if $items[0] eq "color_notice";
+    $color_lesser = $items[1] if $items[0] eq "color_lesser";
+    $color_warn = $items[1] if $items[0] eq "color_warn";
+  }
 }
 
 =head2 get_kernel_version
@@ -539,10 +614,7 @@ sub get_slack_version {
   $version = $config{SLACKWARE_VERSION} unless $config{SLACKWARE_VERSION} eq 'FALSE';
   if (not $version) {
     my ($fh, $exit) = open_read('/etc/slackware-version');
-    if ($exit) {
-      warn $fh;
-      exit $exit;
-    }
+    error_code("Could not open /etc/slackware-version; exiting.", $exit) if $exit;
     chomp(my $line = <$fh>);
     close $fh;
     $version = ($line =~ /\s+(\d+[^\s]+)$/)[0];
@@ -746,6 +818,12 @@ sub lint_sbo_config {
       push @invalid, "$warn -c (TRUE or FALSE)";
     }
   }
+  if (exists $configs{NOCOLOR}) {
+    unless ($configs{NOCOLOR} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "NOCOLOR" if $running ne 'sboconfig';
+      push @invalid, "$warn -K (TRUE or FALSE)";
+    }
+  }
   if (exists $configs{NOWRAP}) {
     unless ($configs{NOWRAP} =~ /^(TRUE|FALSE)$/) {
       push @invalid, "NOWRAP" if $running ne 'sboconfig';
@@ -816,7 +894,7 @@ sub obsolete_array {
   return 0 unless -f $obs_file;
   my ($fh, $exit) = open_fh($obs_file, "<");
   if ($exit) {
-    warn($fh);
+    warn_color($color_lesser, "Could not open $obs_file.");
     return 0;
   }
   FIRST: for my $line (<$fh>) {
@@ -874,7 +952,7 @@ sub open_fh {
   my ($file, $op) = @_;
   my $fh;
   unless (open $fh, $op, $file) {
-    my $warn = "Unable to open $file.\n";
+    my $warn = "Unable to open $file.";
     my $exit = _ERR_OPENFH;
     return ($warn, $exit);
   }
@@ -896,6 +974,31 @@ sub open_read {
   return open_fh(shift, '<');
 }
 
+=head2 print_color
+
+  print_color "red bold";
+
+C<print_color()> takes one or more ANSI colors and prints, provided that the
+C<NOCOLOR> setting is C<FALSE>. See the C<Function Interface> section in
+C<Term::ANSIColor(3)> for a list of available colors.
+
+Using colors C<black> through C<bright_white>, C<bold> and C<reset> only is
+advisable to ensure terminal compatibility. When calling C<print_color()> before
+exiting, ensure that a new line follows to avoid an improper cursor on some
+terminals.
+
+There is no useful return value.
+
+=cut
+
+sub print_color {
+  return if $config{NOCOLOR} eq 'TRUE';
+  script_error("print_color requires at least one argument; exiting.") unless @_;
+  my $color = shift;
+  print color($color) if colorvalid($color);
+  return;
+}
+
 =head2 print_failures
 
   print_failures($failures);
@@ -911,16 +1014,17 @@ There is no useful return value.
 sub print_failures {
   my $failures = shift;
   if (@$failures > 0) {
-    warn "\nFailures:\n";
+    warn_color($color_warn, "\nFailures:");
     for my $failure (@$failures) {
-      warn "  $_: $$failure{$_}" for keys %$failure;
+      warn "  $_: $$failure{$_}\n" for keys %$failure;
     }
+  print color("reset");
   }
 }
 
 =head2 prompt
 
-  exit unless prompt "Should we continue?", default => "yes";
+  exit unless prompt $color_notice, "Should we continue?", default => "yes";
 
 C<prompt()> prompts the user for an answer, optionally specifying a default of
 C<yes> or C<no>.
@@ -933,15 +1037,29 @@ Output is wrapped at 72 characters.
 =cut
 
 sub prompt {
-  my ($q, %opts) = @_;
+  my ($color, $q, %opts) = @_;
   my $def = $opts{default};
+  my $extra_line;
+  if ($q =~ m/^\n/) {
+    $q =~ s/^\n//;
+    $extra_line = 1;
+  }
   $q = sprintf '%s [%s] ', $q, $def eq 'yes' ? 'y' : 'n' if defined $def;
-
+  say "" if defined $extra_line;
+  my $printcolor = colorvalid($color) ? $color : $color_default;
   unless ($config{NOWRAP} eq 'TRUE') {
     $columns = 73;
-    print wrap('', '', $q);
+    if ($config{NOCOLOR} eq 'FALSE') {
+      print color($printcolor). wrap('', '', $q). color($color_default);
+    } else {
+      print wrap('', '', $q);
+    }
   } else {
-    print $q;
+    if ($config{NOCOLOR} eq 'FALSE') {
+      print color($printcolor). $q. color($color_default);
+    } else {
+      print $q;
+    }
   }
 
   my $res = readline STDIN;
@@ -965,8 +1083,8 @@ sub prompt {
 C<read_config()> reads in the configuration settings from
 C</etc/sbotools/sbotools.conf>, updating the C<%config> hash. If
 C<SBO_HOME> is C<FALSE>, it changes to C</usr/sbo>.
-Additionally, C<BUILD_IGNORE> and C<RSYNC_DEFAULT> are turned on if
-C<CLASSIC> is C<TRUE>.
+Additionally, C<BUILD_IGNORE>, C<RSYNC_DEFAULT> and C<NOCOLOR>
+are turned on if C<CLASSIC> is C<TRUE>.
 
 When C<sbotest> is running, the default value of C<SBO_HOME>
 is C</usr/sbotest>, and C<ETC_PROFILE> and C<CPAN_IGNORE> default
@@ -989,11 +1107,12 @@ sub read_config {
     }
     $config{JOBS} = 'FALSE' unless $config{JOBS} =~ /^\d+$/;
   } else {
-    warn "Unable to open $conf_file.\n" if -f $conf_file;
+    warn_color($color_warn, "Unable to open $conf_file.") if -f $conf_file;
   }
   if ($config{CLASSIC} eq "TRUE") {
     $config{BUILD_IGNORE} = "TRUE";
     $config{RSYNC_DEFAULT} = "TRUE";
+    $config{NOCOLOR} = "TRUE";
   }
   unless (defined $is_sbotest) {
     $config{SBO_HOME} = '/usr/sbo' if $config{SBO_HOME} eq 'FALSE';
@@ -1070,7 +1189,7 @@ sub save_options {
   if(-f $logfile) { move($logfile, "$logfile.bk"); }
   my ($args_fh, $exit) = open_fh($logfile, '>');
   if ($exit) {
-    warn $args_fh;
+    warn_color($color_lesser, $args_fh);
     move("$logfile.bk", $logfile);
     return 0;
   } else {
@@ -1107,10 +1226,19 @@ codes, use C<error_code()>.
 # subroutine for throwing internal script errors
 sub script_error {
   if (@_) {
-    warn "A fatal script error has occurred:\n$_[0]\nExiting.\n";
+    unless ($config{NOCOLOR} eq 'TRUE') {
+      warn color($color_warn). "A fatal script error has occurred:\n$_[0]\nExiting.\n";
+    } else {
+      warn "A fatal script error has occurred:\n$_[0]\nExiting.\n";
+    }
   } else {
-    warn "A fatal script error has occurred. Exiting.\n";
+    unless ($config{NOCOLOR} eq 'TRUE') {
+      warn color($color_warn). "A fatal script error has occurred. Exiting.\n";
+    } else {
+      warn "A fatal script error has occurred. Exiting.\n";
+    }
   }
+  print color("reset");
   exit _ERR_SCRIPT;
 }
 
@@ -1198,10 +1326,19 @@ sub usage_error {
   my $msg = shift;
   unless ($config{NOWRAP} eq 'TRUE') {
     $columns = 73;
-    warn wrap('', '', $msg). "\n";
+    unless($config{NOCOLOR} eq 'TRUE') {
+      warn color($color_warn). wrap('', '', $msg). "\n";
+    } else {
+      warn wrap('', '', $msg). "\n";
+    }
   } else {
-    warn "$msg\n";
+    unless ($config{NOCOLOR} eq 'TRUE') {
+      warn color($color_warn). $msg. "\n";
+    } else {
+      warn "$msg\n";
+    }
   }
+  print color($color_default);
   exit _ERR_USAGE;
 }
 
@@ -1239,6 +1376,29 @@ sub version_cmp {
   versioncmp($v1, $v2);
 }
 
+=head2 warn_color
+
+  warn_color($color, $msg);
+
+C<warn_color()> emits a warning in the chosen color and resets the color
+afterwards. No colors are used if C<NOCOLOR> is C<TRUE>. A newline is added
+automatically after the message. There is no useful return value.
+
+=cut
+
+sub warn_color {
+  script_error("warn_color requires two arguments; exiting.") unless @_ == 2;
+  my ($color, $message) = @_;
+  my $warn_color = colorvalid($color) ? $color : $color_default;
+  unless ($config{NOCOLOR} eq 'TRUE') {
+    warn color($warn_color). $message. color($color_default). "\n";
+    print color($color_default);
+  } else {
+    warn "$message\n";
+  }
+  return;
+}
+
 =head2 wrapsay
 
   wrapsay($msg, $trail);
@@ -1267,6 +1427,34 @@ sub wrapsay {
   return 1;
 }
 
+=head2 wrapsay_color
+
+  wrapsay_color($color, $msg, $trail);
+
+C<wrapsay_color()> takes a color, a message and any true value if a trailing line
+is required. It applies a color, runs the message through C<wrapsay()> and
+resets the color afterwards. No colors are used if C<NOCOLOR> is C<TRUE>. There
+is no useful return value.
+
+=cut
+
+sub wrapsay_color {
+  my $color = shift;
+  return () unless colorvalid($color);
+  script_error("wrapsay_color requires a message; exiting.") unless @_;
+  my ($msg, $trail) = @_;
+  my $extra_line;
+  if ($msg =~ m/^\n/) {
+    $msg =~ s/^\n//;
+    $extra_line = 1;
+  }
+  say "" if defined $extra_line;
+  print color($color) unless $config{NOCOLOR} eq 'TRUE';
+  wrapsay($msg, $trail);
+  print color($color_default) unless $config{NOCOLOR} eq 'TRUE';
+  return;
+}
+
 =head1 EXIT CODES
 
 The sbotools share the following exit codes:
@@ -1290,7 +1478,7 @@ The sbotools share the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3)
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), Term::ANSIColor(3)
 
 =head1 AUTHORS
 

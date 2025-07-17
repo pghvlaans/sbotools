@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_location get_sbo_version on_blacklist build_cmp version_cmp %config @concluded @reverse_concluded $slackbuilds_txt $repo_path @last_level_reverse $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_location get_sbo_version on_blacklist build_cmp version_cmp :colors %config @concluded @reverse_concluded $slackbuilds_txt $repo_path @last_level_reverse $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay /;
 use Cwd;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
@@ -31,6 +31,8 @@ Options:
     this screen.
   -v|--verison:
     version information.
+  --(no)color:
+    (do not) use sbotools color output.
   -A|--all-reverse:
     show all reverse dependencies in the repo.
   -E|--exact-case:
@@ -55,12 +57,11 @@ Options:
 Examples:
   $label regedit
   $label -qe libsystemd snapd
-
 EOF
 	return 1;
 }
 
-my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue, $all_reverse, $last_reverse, $first_reverse);
+my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue, $all_reverse, $last_reverse, $first_reverse, $nocolor, $color);
 
 GetOptions(
 	'help|h'    => \$help,
@@ -75,11 +76,14 @@ GetOptions(
 	'all-reverse|A' => \$all_reverse,
 	'top-reverse|T' => \$last_reverse,
 	'first-reverse|F' => \$first_reverse,
+	'nocolor' => \$nocolor,
+	'color' => \$color,
 );
 
 if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
 
+$config{NOCOLOR} = $color ? 'FALSE' : 'TRUE' if $color xor $nocolor;
 lint_sbo_config($self, %config);
 
 if (!@ARGV) { show_usage(); exit 1 }
@@ -125,10 +129,7 @@ sub perform_search {
 
 	my $loc_regex = qr/LOCATION:\s+\.?(.*)$/;
 	my ($fh, $exit) = open_read $slackbuilds_txt;
-	if ($exit) {
-		warn $fh;
-		exit $exit;
-	}
+	error_code("Failed to open $slackbuilds_txt; exiting.", $exit) if $exit;
 	my (%local, @findings);
 	FIRST: while (my $line = <$fh>) {
 		if ($line =~ /NAME:\s+(.*)$/) {
@@ -324,10 +325,11 @@ for my $search (@ARGV) {
 			my $version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
 			my $sbo = "SBo:   "; $sbo = "Local: " if $hash->{local};
 			say "$sbo $name $version";
-			say "        blacklisted" if on_blacklist($name);
-			say "        archived" if in_archive($name); # sbotest-only
-			say "        CPAN" if grep { /^$name$/ } @cpans;
-			say "        CPAN, file(s) missing" if grep { /^$name$/ } @defective_cpans;
+			wrapsay_color $color_warn, "        blacklisted" if on_blacklist($name);
+			# sbotest-only
+			wrapsay_color $color_notice, "        archived" if in_archive($name);
+			wrapsay_color $color_lesser, "        CPAN" if grep { /^$name$/ } @cpans;
+			wrapsay_color $color_lesser, "        CPAN, file(s) missing" if grep { /^$name$/ } @defective_cpans;
 			say "Path:   $location";
 			say "info:   ". get_file_contents("$location/$name.info") if $show_info;
 			say "README: ". get_file_contents("$location/README") if $show_readme;
@@ -339,11 +341,11 @@ for my $search (@ARGV) {
 			say '';
 			$notfound = 0;
 		}
-		wrapsay "Warning: Local overrides directory $config{LOCAL_OVERRIDES} does not exist." if $config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES};
+		wrapsay "Warning: Local overrides directory $config{LOCAL_OVERRIDES} does not exist.\n" if $config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES};
 	} else {
-		say "Nothing found for search term: $search";
+		wrapsay_color $color_lesser, "Nothing found for search term: $search";
 		$notfound = 1;
 	}
 }
 
-exit 0;
+END { say "" if $notfound or $?; }

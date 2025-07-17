@@ -18,6 +18,8 @@ _arguments -s \
 	   - info \
 	   '(-)'{-h,--help}'[Show help]:' \
 	   '(-)'{-v,--version}'[Show version information.]:' \
+	   '(-)'{--nocolor}'[Disable sbotools color output.]:' \
+	   '(-)'{--color}'[Enable sbotools color output.]:' \
 	   - commands \
 	   '(-q --query)'{-q,--query}'[Get the hint status of one or more scripts.]:' \
 	   '(-l --list)'{-l,--list}'[Display all hints.]:' \

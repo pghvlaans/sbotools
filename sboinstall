@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const auto_reverse check_x32 check_x64 check_multilib error_code get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay @concluded @reverse_concluded /;
+use SBO::Lib qw/ :config :const :colors auto_reverse check_x32 check_x64 check_multilib error_code get_arch get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay @concluded @reverse_concluded /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -33,6 +33,8 @@ Options (defaults shown first where applicable):
     this screen.
   -v|--version:
     version information.
+  --(no)color:
+    (do not) use sbotools color output.
   -c|--noclean (FALSE|TRUE):
     if TRUE, do not clean working directories after building.
   -D|--dry-run:
@@ -72,7 +74,6 @@ Options (defaults shown first where applicable):
     rebuild all installed SlackBuilds at the available version.
   --series-rebuild (SERIES):
     rebuild all installed SlackBuilds of a series at the available version.
-
 EOF
 	return 1;
 }
@@ -82,7 +83,7 @@ my $distclean = $config{DISTCLEAN};
 my $jobs = $config{JOBS};
 my $gpg = $config{GPG_VERIFY};
 my $etc_profile = $config{ETC_PROFILE};
-my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $pkg_dir, $log_dir, $series_rebuild);
+my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $pkg_dir, $log_dir, $series_rebuild, $nocolor, $color);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -106,21 +107,24 @@ my $options_ok = GetOptions(
 	'pkg-dir|k=s'       => \$pkg_dir,
 	'log-dir|L=s'       => \$log_dir,
 	'series-rebuild=s'  => \$series_rebuild,
+	'nocolor'           => \$nocolor,
+	'color'             => \$color,
 );
 
 if ($help) {
 	show_usage();
-	wrapsay "Non-root users can call $self with -D, -v and -h." unless $< == 0;
+	wrapsay "\nNon-root users can call $self with -D, -v and -h." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0; }
+$config{NOCOLOR} = $color ? 'FALSE' : 'TRUE' if $color xor $nocolor;
 unless ($< == 0 or $dry_run) {
 	show_usage();
-	usage_error "Non-root users can call $self with -D, -v and -h.";
+	usage_error "\nNon-root users can call $self with -D, -v and -h.";
 }
 unless ($options_ok) {
 	show_usage();
-	usage_error "One or more invalid options detected.";
+	usage_error "\nOne or more invalid options detected.";
 }
 
 lint_sbo_config($self, %config);
@@ -134,9 +138,11 @@ if (defined $ctemp and not length $ctemp) { show_usage(); exit 1 }
 if ($config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES}) {
 	usage_error "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist. Exiting." if $yes_really or $non_int;
 	if ($dry_run) {
-		wrapsay "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.";
+		wrapsay_color $color_lesser, "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.";
 	} else {
-		exit 1 unless prompt("$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.\nContinue anyway?", default => 'no');
+		unless (prompt($color_lesser, "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.\nContinue anyway?", default => 'no')) {
+			exit 1;
+		}
 	}
 }
 
@@ -269,11 +275,11 @@ if (@ARGV and $compat32) {
 				}
 			}
 			push @sbos, $sbo unless $perl_ineligible or $arch_ineligible or $only_64;
-			wrapsay "$sbo is 64-bit only; skipping compat32." if $only_64;
-			wrapsay "$sbo is Perl-based; skipping compat32." if $perl_ineligible;
-			wrapsay "$sbo is a noarch script; skipping compat32." if $arch_ineligible and not $perl_ineligible;
+			wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32." if $only_64;
+			wrapsay_color $color_lesser, "$sbo is Perl-based; skipping compat32." if $perl_ineligible;
+			wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32." if $arch_ineligible and not $perl_ineligible;
 		} else {
-			wrapsay "$sbo not found; skipping.";
+			wrapsay_color $color_lesser, "$sbo not found; skipping.";
 		}
 	}
 } elsif (@ARGV and not get_arch() =~ m/64/) {
@@ -281,12 +287,12 @@ if (@ARGV and $compat32) {
 		my $sbo_location = get_sbo_location($sbo);
 		if ($sbo_location) {
 			if (check_x64 $sbo_location) {
-				wrapsay "$sbo is 64-bit only; skipping.";
+				wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping.";
 			} else {
 				push @sbos, $sbo;
 			}
 		} else {
-			wrapsay "$sbo not found; skipping.";
+			wrapsay_color $color_lesser, "$sbo not found; skipping.";
 		}
 	}
 } elsif (@ARGV and get_arch() =~ m/64/) {
@@ -294,12 +300,12 @@ if (@ARGV and $compat32) {
 		my $sbo_location = get_sbo_location($sbo);
 		if ($sbo_location) {
 			if (check_x32 $sbo_location and not check_multilib()) {
-				wrapsay "$sbo is 32-bit only; skipping.";
+				wrapsay_color $color_lesser, "$sbo is 32-bit only; skipping.";
 			} else {
 				push @sbos, $sbo;
 			}
 		} else {
-			wrapsay "$sbo not found; skipping.";
+			wrapsay_color $color_lesser, "$sbo not found; skipping.";
 		}
 	}
 } elsif (@ARGV) {
@@ -318,7 +324,7 @@ if (length $utemp) {
 	if (length $data) {
 		eval { $template = $json->decode($data); };
 	}
-	do { error_code("Could not read template from $utemp.\n", _ERR_OPENFH); } if not defined $template;
+	do { error_code("Could not read template from $utemp.", _ERR_OPENFH); } if not defined $template;
 
 	for my $cand (@{ $template->{build_queue} }) {
 		unless (on_blacklist($cand)) {
@@ -333,7 +339,7 @@ if (length $utemp) {
 			for my $cand (@$build_queue) {
 				if (auto_reverse($cand)) {
 					push @needs_reverse, $cand;
-					wrapsay "Reverse dependency rebuild for $cand.";
+					wrapsay_color $color_notice, "Reverse dependency rebuild for $cand.";
 				}
 			}
 			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 0, @needs_reverse) if @needs_reverse;
@@ -388,7 +394,7 @@ if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not 
 		my ($extra_queue, %extra_warnings);
 		if (auto_reverse($sbo)) {
 			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
-			wrapsay "Reverse dependency rebuild for $sbo.";
+			wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo.";
 		}
 		if ($extra_queue) {
 			$need_rationalize = 1;
@@ -543,12 +549,12 @@ FIRST: for my $sbo (@$build_queue) {
 		# always warn with default "no" for reinstall if the package is
 		# installed non-SBo and it exists in the tree
 		if ($reinstall and $std_names{$name}) {
-			next FIRST unless prompt("$inst_msg\nWarning: $name is not an SBo package. Reinstall from SBo anyway?", default => 'no');
+			next FIRST unless prompt($color_warn, "$inst_msg\nWarning: $name is not an SBo package. Reinstall from SBo anyway?", default => 'no');
 		} elsif ($reinstall and not $non_int) {
 			if ($mass_rebuild or $reverse_rebuild or $series_rebuild) {
-				next FIRST unless prompt("$inst_msg Do you want to reinstall from SBo?", default => 'yes');
+				next FIRST unless prompt($color_notice, "$inst_msg Do you want to reinstall from SBo?", default => 'yes');
 			} else {
-				next FIRST unless prompt("$inst_msg Do you want to reinstall from SBo?", default => 'no');
+				next FIRST unless prompt($color_notice, "$inst_msg Do you want to reinstall from SBo?", default => 'no');
 			}
 		} elsif ($reinstall) {
 			say "$inst_msg Reinstalling." unless $dry_run;
@@ -580,7 +586,7 @@ FIRST: for my $sbo (@$build_queue) {
 		unless ($inst_names{$sbo}) {
 			wrapsay "Unable to locate $sbo in the SlackBuilds.org tree.";
 			if (not $non_int) {
-				exit 0 unless prompt "Do you want to ignore it and continue?", default => 'yes';
+				exit 0 unless prompt($color_default, "Do you want to ignore it and continue?", default => 'yes');
 			}
 		}
 		next FIRST;
@@ -594,13 +600,8 @@ FIRST: for my $sbo (@$build_queue) {
 			unless ($inst_names{$sbo} or grep { /^$sbo$/ } @temp_queue) {
 				say "$name requires $sbo." unless $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
 				my ($cmds, $opts, $exit) = user_prompt($sbo, $locations{$sbo});
-				if ($exit) {
-					warn "Unable to open README for $sbo.\n";
-					exit $exit;
-				}
-				if ($cmds) {
-					next FIRST if $cmds eq 'N';
-				}
+				error_code("Unable to open README for $sbo; exiting.", $exit) if $exit;
+				if ($cmds) { next FIRST if $cmds eq 'N'; }
 				push(@temp_queue, $sbo);
 				$commands{$sbo} = $cmds;
 				$options{$sbo} = $opts;
@@ -609,29 +610,24 @@ FIRST: for my $sbo (@$build_queue) {
 		}
 		# actually skip ineligible compat32 builds here (interactive)
 		if ($only_64) {
-			wrapsay "$sbo is 64-bit only; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32.";
 			next FIRST;
 		}
 		if ($only_32) {
-			wrapsay "$sbo is 32-bit only; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is 32-bit only; skipping compat32.";
 			next FIRST;
 		}
 		if ($perl_ineligible) {
-			wrapsay "$sbo is Perl-based; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is Perl-based; skipping compat32.";
 			next FIRST;
 		}
 		if ($arch_ineligible) {
-			wrapsay "$sbo is a noarch script; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32.";
 			next FIRST;
 		}
 		my ($cmds, $opts, $exit) = user_prompt($name, $locations{$name});
-		if ($exit) {
-			warn "Unable to open README for $name.\n";
-			exit $exit;
-		}
-		if ($cmds) {
-			next FIRST if $cmds eq 'N';
-		}
+		error_code("Unable to open README for $name; exiting.", $exit) if $exit;
+		if ($cmds) { next FIRST if $cmds eq 'N'; }
 		push(@temp_queue, $name);
 		$commands{$name} = $cmds;
 		$options{$name} = $opts;
@@ -643,7 +639,7 @@ FIRST: for my $sbo (@$build_queue) {
 			if ($yes_really) {
 				my $readme = get_readme_contents($locations{$sbo});
 				unless (defined $readme) {
-					error_code("Unable to open README for $sbo.\n", _ERR_OPENFH);
+					error_code("Unable to open README for $sbo.", _ERR_OPENFH);
 				}
 				my $cmds = get_user_group($readme, $locations{$sbo});
 				if ($$cmds[0]) {
@@ -651,7 +647,7 @@ FIRST: for my $sbo (@$build_queue) {
 						if ($dry_run) {
 							$missing_user_group{$sbo} = $cmds;
 						} else {
-							wrapsay "A required user or group is missing for $sbo:", 1;
+							wrapsay_color $color_warn, "A required user or group is missing for $sbo:", 1;
 							for my $cmd (@$cmds) { say $cmd; }
 							say "";
 							error_code("Run these commands to install $sbo with --batch.", _ERR_USR_GRP);
@@ -674,7 +670,7 @@ FIRST: for my $sbo (@$build_queue) {
 				if (-f $opts_log) {
 					my ($prev_fh, $exit) = open_fh($opts_log, '<');
 					if ($exit) {
-						warn $prev_fh;
+						warn_color $color_lesser, $prev_fh;
 					} else {
 						chomp(my $opts = <$prev_fh>);
 						$saved_options{$name} = $opts if $dry_run;
@@ -698,19 +694,19 @@ FIRST: for my $sbo (@$build_queue) {
 		}
 		# actually skip ineligible compat32 builds here (non-interactive)
 		if ($only_64) {
-			wrapsay "$sbo is 64-bit only; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32.";
 			next FIRST;
 		}
 		if ($only_32) {
-			wrapsay "$sbo is 32-bit only; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is 32-bit only; skipping compat32.";
 			next FIRST;
 		}
 		if ($perl_ineligible) {
-			wrapsay "$sbo is Perl-based; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is Perl-based; skipping compat32.";
 			next FIRST;
 		}
 		if ($arch_ineligible) {
-			wrapsay "$sbo is a noarch script; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32.";
 			next FIRST;
 		}
 		push(@temp_queue, $name);
@@ -719,14 +715,14 @@ FIRST: for my $sbo (@$build_queue) {
 }
 @$build_queue = @temp_queue;
 
-exit 0 if @{ $build_queue } == 0;
+exit 0 if (@{ $build_queue } == 0);
 if ($dry_run) {
 	if (@see_readme) {
-		wrapsay "\nSee README for:";
+		wrapsay_color $color_lesser, "\nSee README for:";
 		for my $item (@see_readme) { say "  $item"; }
 	}
 	if (%saved_options) {
-		say "\nSaved build options to be used:";
+		wrapsay_color $color_notice, "\nSaved build options to be used:";
 		for my $item (keys %saved_options) {
 			say "  $item: $saved_options{$item}" unless grep { /^$item$/ } @ignore_script;
 		}
@@ -734,17 +730,19 @@ if ($dry_run) {
 }
 wrapsay "\nInstall queue: " . join(' ', @$build_queue);
 unless ($non_int) {
-    exit 0 unless prompt("\nAre you sure you wish to continue?", default => 'yes');
+	unless (prompt($color_notice, "\nAre you sure you wish to continue?", default => 'yes')) {
+		exit 0;
+	}
 }
 if ($dry_run) {
 	my $usr_grp_missing;
 	if (%missing_user_group) {
 		for my $item (keys %missing_user_group) {
 			unless (grep { /^$item$/ } @ignore_script) {
-				wrapsay "\nA required user or group is missing for $item:", 1;
+				wrapsay_color $color_lesser, "\nA required user or group is missing for $item:", 1;
 				for my $cmd (@{ $missing_user_group{$item} }) { say $cmd; }
 				say "";
-				wrapsay "Run these commands to install $item with --batch.";
+				wrapsay_color $color_lesser, "Run these commands to install $item with --batch.";
 				$usr_grp_missing = 1;
 			}
 		}
@@ -756,7 +754,7 @@ if ($dry_run) {
 if (defined $ctemp or $mass_rebuild) {
 	$ctemp = $mtemp unless defined $ctemp;
 	my ($temp_fh, $exit) = open_fh($ctemp, '>');
-	do { warn $temp_fh; exit $exit } if $exit;
+	error_code("Failed to open $ctemp; exiting.", $exit) if $exit;
 
 	my $json = JSON::PP->new->latin1->pretty->canonical;
 	my $build_settings = {
@@ -794,3 +792,5 @@ if ($exit) {
 } else {
 	exit 0;
 }
+
+END { say ""; }

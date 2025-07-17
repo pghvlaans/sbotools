@@ -18,6 +18,8 @@ _arguments -s \
 	   - info \
 	   '(-)'{-h,--help}'[Show help information.]:' \
 	   '(-)'{-v,--version}'[Show version information.]:' \
+	   '(-)'{--nocolor}'[Disable sbotools color output.]:' \
+	   '(-)'{--color}'[Enable sbotools color output.]:' \
 	   - commands \
 	   '(-A --all-reverse)'{-A,--all-reverse}'[Show all reverse dependencies in the repo.]' \
 	   '(-E --exact-case)'{-E,--exact-case}'[Only exact matching (case-sensitive).]' \

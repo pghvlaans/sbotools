@@ -25,7 +25,7 @@
 
     sboconfig [--reset]
 
-    sboconfig [-CPORScbdegw TRUE|FALSE] [-j #|FALSE] [-Lpo
+    sboconfig [-CKPORScbdegw TRUE|FALSE] [-j #|FALSE] [-Lpo
 /path\|FALSE] \
               [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \
               [-r url|FALSE]
@@ -78,12 +78,12 @@ number differs.
 
 **-C\|\--classic (FALSE\|TRUE)**
 
-**CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT** and
-**BUILD_IGNORE** (overriding the contents of [sbotools.conf(5)](sbotools.conf.5.md)).
-Build increment and out-of-tree SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are
-disabled, and previously-used build options are not displayed. This
-provides a more traditional **sbotools** look and feel for those who
-want it.
+**CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT**,
+**BUILD_IGNORE** and **NOCOLOR** (overriding the contents of
+[sbotools.conf(5)](sbotools.conf.5.md)). Build increment and out-of-tree SlackBuild checks
+by [sbocheck(1)](sbocheck.1.md) are disabled, and previously-used build options are
+not displayed. This provides a more traditional **sbotools** look and
+feel for those who want it.
 
 **-c\|\--noclean (FALSE\|TRUE)**
 
@@ -119,6 +119,12 @@ Slackware 14.1.
 
 **JOBS**: If **numerical**, pass to the **-j** argument when a
 SlackBuild invoking **make** is run.
+
+**-K\|\--nocolor (FALSE\|TRUE)**
+
+**NOCOLOR**: If **TRUE**, disable all **sbotools** color output. To
+customize color output, edit the */etc/sbotools/sbotools.colors* file
+directly. See [sbotools.colors(5)](sbotools.colors.5.md) for details.
 
 **-L\|\--log-dir (FALSE\|/path)**
 
@@ -250,7 +256,8 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
+[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md),
+[sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
 
 ## AUTHORS
 

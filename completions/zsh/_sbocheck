@@ -8,6 +8,8 @@ _arguments \
     '(-)'{-g,--gpg-verify}'[Verify with gpg.]:' \
     '(-)'{-O,--obsolete-check}'[In -current, download the obsolete scripts list.]:' \
     '(-)'{-n,--nopull}'[Check for updates without updating the tree.]:' \
+    '(-)'{--nocolor}'[Disable sbotools color output.]:'\
+    '(-)'{--color}'[Enable sbotools color output.]:'\
     && return 0
 
 return 1

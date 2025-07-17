@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :const auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates get_arch prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_sbo_locations get_user_group in is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue verify_gpg %config show_version lint_sbo_config wrapsay /;
+use SBO::Lib qw/ :const :colors auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates get_arch prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_sbo_locations get_user_group in is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue verify_gpg %config show_version lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -31,6 +31,8 @@ Options (defaults shown first where applicable):
     this screen.
   -v|--version:
     version information.
+  --(no)color:
+    (do not) use sbotools color output.
   --all
     this flag will upgrade everything reported by sbocheck(1).
   --batch:
@@ -67,7 +69,6 @@ Options (defaults shown first where applicable):
     if TRUE, SBo upgrades only when the version or build number is higher.
   -z|--force-reqs:
     rebuild dependencies as well.
-
 EOF
 	return 1;
 }
@@ -79,7 +80,7 @@ my $build_ignore = $config{BUILD_IGNORE};
 my $gpg = $config{GPG_VERIFY};
 my $strict_upgrades = $config{STRICT_UPGRADES};
 my $etc_profile = $config{ETC_PROFILE};
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $pkg_dir, $log_dir);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $pkg_dir, $log_dir, $nocolor, $color);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -102,21 +103,24 @@ my $options_ok = GetOptions(
 	'etc-profile|e=s'   => \$etc_profile,
 	'pkg-dir|k=s'       => \$pkg_dir,
 	'log-dir|L=s'       => \$log_dir,
+	'nocolor'           => \$nocolor,
+	'color'             => \$color,
 );
 
 if ($help) {
 	show_usage();
-	wrapsay "Non-root users can call $self with -D, -v and -h." unless $< == 0;
+	wrapsay "\nNon-root users can call $self with -D, -v and -h." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
+$config{NOCOLOR} = $color ? 'FALSE' : 'TRUE' if $color xor $nocolor;
 unless ($< == 0 or $dry_run) {
 	show_usage();
-	usage_error "Non-root users can call $self with -D, -v and -h.";
+	usage_error "\nNon-root users can call $self with -D, -v and -h.";
 }
 unless ($options_ok) {
 	show_usage();
-	usage_error "One or more invalid options detected.";
+	usage_error "\nOne or more invalid options detected.";
 }
 
 lint_sbo_config($self, %config);
@@ -126,9 +130,11 @@ lint_sbo_config($self, %config);
 if ($config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES}) {
 	usage_error "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist. Exiting." if $yes_really or $non_int;
 	if ($dry_run) {
-		wrapsay "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.";
+		wrapsay_color $color_lesser, "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.";
 	} else {
-		exit 1 unless prompt("$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.\nContinue anyway?", default => 'no');
+		unless (prompt($color_lesser, "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.\nContinue anyway?", default => 'no')) {
+			exit 0;
+		}
 	}
 }
 
@@ -198,14 +204,14 @@ if ($gpg) { verify_gpg(); }
 my $updates;
 if ($all) {
 	slackbuilds_or_fetch();
-	print "Checking for updated SlackBuilds...\n";
+	wrapsay_color $color_notice, "Checking for updated SlackBuilds...";
 	if ($build_ignore) {
 		$updates = get_available_updates('VERS');
 	} else {
 		$updates = get_available_updates('BOTH');
 	}
 	push @ARGV, map { $_->{name} } @$updates;
-	if (!@ARGV) { print "Nothing to update.\n"; exit 0 }
+	unless (@ARGV) { print "Nothing to update."; exit 0; }
 }
 
 if (!@ARGV) { show_usage(); exit 1 }
@@ -240,11 +246,11 @@ if (@ARGV and $compat32) {
 				}
 			}
 			push @sbos, $sbo unless $perl_ineligible or $arch_ineligible or $only_64;
-			wrapsay "$sbo is 64-bit only; skipping compat32." if $only_64;
-			wrapsay "$sbo is Perl-based; skipping compat32." if $perl_ineligible;
-			wrapsay "$sbo is a noarch script; skipping compat32." if $arch_ineligible and not $perl_ineligible;
+			wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32." if $only_64;
+			wrapsay_color $color_lesser, "$sbo is Perl-based; skipping compat32." if $perl_ineligible;
+			wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32." if $arch_ineligible and not $perl_ineligible;
 		} else {
-			wrapsay "$sbo not found; skipping.";
+			wrapsay_color $color_lesser, "$sbo not found; skipping.";
 		}
 	}
 } elsif (@ARGV and not get_arch() =~ m/64/) {
@@ -252,12 +258,12 @@ if (@ARGV and $compat32) {
 		my $sbo_location = get_sbo_location($sbo);
 		if ($sbo_location) {
 			if (check_x64 $sbo_location) {
-				wrapsay "$sbo is 64-bit only; skipping.";
+				wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping.";
 			} else {
 				push @sbos, $sbo;
 			}
 		} else {
-			wrapsay "$sbo not found; skipping.";
+			wrapsay_color $color_lesser, "$sbo not found; skipping.";
 		}
 	}
 } elsif (@ARGV and get_arch() =~ m/64/) {
@@ -265,18 +271,18 @@ if (@ARGV and $compat32) {
 		my $sbo_location = get_sbo_location($sbo);
 		if ($sbo_location) {
 			if (check_x32 $sbo_location and not check_multilib()) {
-				wrapsay "$sbo is 32-bit only; skipping.";
+				wrapsay_color $color_lesser, "$sbo is 32-bit only; skipping.";
 			} else {
 				push @sbos, $sbo;
 			}
 		} else {
-			wrapsay "$sbo not found; skipping.";
+			wrapsay_color $color_lesser, "$sbo not found; skipping.";
 		}
 	}
 } elsif (@ARGV) {
 	@sbos = @ARGV;
 }
-exit 0 if (@ARGV and not @sbos);
+if (@ARGV and not @sbos) { exit 0; }
 @sbos = uniq @sbos;
 
 get_sbo_locations(@sbos) if @sbos;
@@ -338,7 +344,7 @@ if ($non_int and not $reverse and not $yes_really) {
 			push @$upgrade_queue, $sbo if $inst_names{$sbo};
 			if (auto_reverse($sbo) and not $no_install) {
 				push @needs_reverse, $sbo;
-				wrapsay "Reverse dependency rebuild for $sbo.";
+				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo.";
 			}
 		}
 	# non-interactive, no --force
@@ -347,7 +353,7 @@ if ($non_int and not $reverse and not $yes_really) {
 			push @$upgrade_queue, $sbo if $updates{$sbo};
 			if (auto_reverse($sbo) and not $no_install) {
 				push @needs_reverse, $sbo;
-				wrapsay "Reverse dependency rebuild for $sbo.";
+				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo.";
 			}
 		}
 	}
@@ -502,7 +508,7 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		unless ($inst_names{$sbo}) {
 			wrapsay "Unable to locate $sbo in the SlackBuilds.org tree.";
 			if (not $non_int) {
-				exit 0 unless prompt("Do you want to ignore it and continue?", default => 'yes');
+				exit 0 unless prompt($color_default, "Do you want to ignore it and continue?", default => 'yes');
 			}
 		}
 		next FIRST;
@@ -532,13 +538,8 @@ FIRST: for my $sbo (@$upgrade_queue) {
 			unless ($inst_names{$sbo} or grep { /^$sbo$/ } @temp_queue) {
 				say "$name requires $sbo." unless $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
 				my ($cmds, $opts, $exit) = user_prompt($sbo, $locations{$sbo});
-				if ($exit) {
-					warn "Unable to open README for $sbo.\n";
-					exit $exit;
-				}
-				if ($cmds) {
-					next FIRST if $cmds eq 'N';
-				}
+				error_code("Unable to open README for $sbo; exiting.", $exit) if $exit;
+				if ($cmds) { next FIRST if $cmds eq 'N'; }
 				push(@temp_queue, $sbo);
 				$commands{$sbo} = $cmds;
 				$options{$sbo} = $opts;
@@ -547,29 +548,24 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		}
 		# actually skip ineligible compat32 builds here (interactive)
 		if ($only_64) {
-			wrapsay "$sbo is 64-bit only; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32.";
 			next FIRST;
 		}
 		if ($only_32) {
-			wrapsay "$sbo is 32-bit only; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is 32-bit only; skipping compat32.";
 			next FIRST;
 		}
 		if ($perl_ineligible) {
-			wrapsay "$sbo is Perl-based; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is Perl-based; skipping compat32.";
 			next FIRST;
 		}
 		if ($arch_ineligible) {
-			wrapsay "$sbo is a noarch script; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32.";
 			next FIRST;
 		}
 		my ($cmds, $opts, $exit) = user_prompt($name, $locations{$name});
-		if ($exit) {
-			warn "Unable to open README for $sbo.\n";
-			exit $exit;
-		}
-		if ($cmds) {
-			next FIRST if $cmds eq 'N';
-		}
+		error_code("Unable to open README for $sbo; exiting.", $exit) if $exit;
+		if ($cmds) { next FIRST if $cmds eq 'N'; }
 		push(@temp_queue, $name);
 		$commands{$name} = $cmds;
 		$options{$name} = $opts;
@@ -580,7 +576,7 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		if ($yes_really) {
 			my $readme = get_readme_contents($locations{$real_name});
 			unless (defined $readme) {
-				error_code("Unable to open README for $sbo.\n", _ERR_OPENFH);
+				error_code("Unable to open README for $sbo.", _ERR_OPENFH);
 			}
 			my $cmds = get_user_group($readme, $locations{$real_name});
 			if ($$cmds[0]) {
@@ -588,7 +584,7 @@ FIRST: for my $sbo (@$upgrade_queue) {
 					if ($dry_run) {
 						$missing_user_group{$sbo} = $cmds;
 					} else {
-						wrapsay "A required user or group is missing for $sbo:", 1;
+						wrapsay_color $color_warn, "A required user or group is missing for $sbo:", 1;
 						for my $cmd (@$cmds) { say $cmd; }
 						say "";
 						error_code("Run these commands to install $sbo with --batch.", _ERR_USR_GRP);
@@ -611,7 +607,7 @@ FIRST: for my $sbo (@$upgrade_queue) {
 			if (-f $opts_log) {
 				my ($prev_fh, $exit) = open_fh($opts_log, '<');
 				if ($exit) {
-					warn $prev_fh;
+					warn_color $color_lesser, $prev_fh;
 				} else {
 					chomp(my $opts = <$prev_fh>);
 					$saved_options{$name} = $opts if $dry_run;
@@ -634,19 +630,19 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		}
 		# actually skip ineligible compat32 builds here (non-interactive)
 		if ($only_64) {
-			wrapsay "$sbo is 64-bit only; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32.";
 			next FIRST;
 		}
 		if ($only_32) {
-			wrapsay "$sbo is 32-bit only; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is 32-bit only; skipping compat32.";
 			next FIRST;
 		}
 		if ($perl_ineligible) {
-			wrapsay "$real_name is Perl-based; skipping compat32.";
+			wrapsay_color $color_lesser, "$real_name is Perl-based; skipping compat32.";
 			next FIRST;
 		}
 		if ($arch_ineligible) {
-			wrapsay "$real_name is a noarch script; skipping compat32.";
+			wrapsay_color $color_lesser, "$real_name is a noarch script; skipping compat32.";
 			next FIRST;
 		}
 		push(@temp_queue, $name);
@@ -655,14 +651,14 @@ FIRST: for my $sbo (@$upgrade_queue) {
 }
 @$upgrade_queue = @temp_queue;
 
-exit 0 unless exists $$upgrade_queue[0];
+unless (exists $$upgrade_queue[0]) { say "Nothing to update."; exit 0; }
 if ($dry_run) {
 	if (@see_readme) {
-		wrapsay "\nSee README for:";
+		wrapsay_color $color_lesser, "\nSee README for:";
 		for my $item (@see_readme) { say "  $item"; }
 	}
 	if (%saved_options) {
-		say "\nSaved build options to be used:";
+		wrapsay_color $color_notice, "\nSaved build options to be used:";
 		for my $item (keys %saved_options) {
 			say "  $item: $saved_options{$item}" unless grep { /^$item$/ } @ignore_script;
 		}
@@ -670,21 +666,22 @@ if ($dry_run) {
 }
 wrapsay "\nUpgrade queue: ". join(' ', @$upgrade_queue);
 unless ($non_int) {
-    exit 0 unless prompt("\nAre you sure you wish to continue?", default => 'yes');
+	exit 0 unless prompt($color_notice, "\nAre you sure you wish to continue?", default => 'yes');
 }
 if ($dry_run) {
 	my $usr_grp_missing;
 	if (%missing_user_group) {
 		for my $item (keys %missing_user_group) {
 			unless (grep { /^$item$/ } @ignore_script) {
-				wrapsay "\nA required user or group is missing for $item:", 1;
+				wrapsay_color $color_lesser, "\nA required user or group is missing for $item:", 1;
 				for my $cmd (@{ $missing_user_group{$item} }) { say $cmd; }
 				say "";
-				wrapsay "Run these commands to install $item with --batch.";
+				wrapsay_color $color_lesser, "Run these commands to install $item with --batch.";
 				$usr_grp_missing = 1;
 			}
 		}
 	}
+	say "";
 	exit _ERR_USR_GRP if $usr_grp_missing;
 	exit 0;
 }
@@ -707,3 +704,5 @@ if ($exit) {
 } else {
 	exit 0;
 }
+
+END { say ""; }

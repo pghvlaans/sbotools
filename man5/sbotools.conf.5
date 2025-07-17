@@ -49,10 +49,13 @@ If
 TRUE\fR\
 \&, automatically enable
 .B
-RSYNC_DEFAULT
-and
+RSYNC_DEFAULT\fR\
+\&,
 .B
 BUILD_IGNORE
+and
+.B
+NOCOLOR
 (overriding the contents of this file). Build increment and out-of-tree
 SlackBuild checks by
 .B
@@ -156,6 +159,24 @@ directories under
 .I
 $TMP\fR\
 ).
+.RE
+.P
+.B
+NOCOLOR=(FALSE|TRUE)
+.RS
+If
+.B
+TRUE\fR\
+\&, disable
+.B
+sbotools
+color output. To customize color output, edit the
+.I
+/etc/sbotools/sbotools.colors
+file directly. See
+.B
+sbotools.colors(5)
+for more details.
 .RE
 .P
 .B
@@ -392,7 +413,7 @@ sbotools
 output.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.hints(5), gpg(1)
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.colors(5), sbotools.hints(5), gpg(1)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>

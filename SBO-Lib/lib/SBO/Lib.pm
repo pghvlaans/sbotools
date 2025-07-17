@@ -137,6 +137,7 @@ our %EXPORT_TAGS = (
 	download => \@SBO::Lib::Download::EXPORT_OK,
 	const => $SBO::Lib::Util::EXPORT_TAGS{const},
 	config => $SBO::Lib::Util::EXPORT_TAGS{config},
+	colors => $SBO::Lib::Util::EXPORT_TAGS{colors},
 );
 
 =head1 AUTHORS

@@ -11,7 +11,7 @@ package SBO::App::Remove;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ get_installed_packages get_sbo_location get_full_queue get_full_reverse get_readme_contents get_reverse_reqs prompt show_version lint_sbo_config usage_error wrapsay %config @reverse_concluded /;
+use SBO::Lib qw/ :colors get_installed_packages get_sbo_location get_full_queue get_full_reverse get_readme_contents get_reverse_reqs prompt show_version lint_sbo_config error_code usage_error wrapsay %config @reverse_concluded /;
 use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO::App';
@@ -23,7 +23,7 @@ sub _parse_opts {
   my $class = shift;
   my @ARGS = @_;
 
-  my ($help, $vers, $alwaysask, $compat);
+  my ($help, $vers, $alwaysask, $compat, $nocolor, $color);
 
   $options_ok = GetOptionsFromArray(
     \@ARGS,
@@ -31,9 +31,11 @@ sub _parse_opts {
     'version|v'     => \$vers,
     'alwaysask|a'   => \$alwaysask,
     'compat32|p'    => \$compat,
+    'nocolor'       => \$nocolor,
+    'color'         => \$color,
   );
 
-  return { help => $help, vers => $vers, alwaysask => $alwaysask, compat => $compat, args => \@ARGS, };
+  return { help => $help, vers => $vers, alwaysask => $alwaysask, compat => $compat, nocolor => $nocolor, color => $color, args => \@ARGS, };
 }
 
 sub run {
@@ -45,6 +47,7 @@ sub run {
     exit 0;
   }
   if ($self->{vers}) { $self->show_version(); return 0; }
+  $config{NOCOLOR} = $self->{color} ? 'FALSE' : 'TRUE' if $self->{color} xor $self->{nocolor};
   if (!@{ $self->{args} }) {
     $self->show_usage();
     usage_error "This is a root-only script." unless $< == 0;
@@ -61,7 +64,9 @@ sub run {
   lint_sbo_config($self, %config);
 
   if ($config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES}) {
-    exit 1 unless prompt("$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.\nContinue anyway?", default => 'no');
+    unless (prompt($color_lesser, "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.\nContinue anyway?", default => 'no')) {
+      exit 1;
+    }
   }
 
   # current workflow:
@@ -87,7 +92,7 @@ sub run {
   my $installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
 
   @args = grep { check_sbo($_, $installed) } @args;
-  exit 1 unless @args;
+  usage_error("sboremove requires at least one argument.") unless @args;
   my %sbos = map { $_ => 1 } @args;
 
   my @prelim_remove = get_full_queue($installed, @args);
@@ -198,8 +203,8 @@ sub confirm {
   }
 
   if ($remove->{warning}) {
-    say "Viewing the README before continuing is recommended.";
-    if (prompt("Display README now?", default => 'yes')) {
+    wrapsay_color $color_lesser, "Viewing the README before continuing is recommended.";
+    if (prompt($color_lesser, "Display README now?", default => 'yes')) {
       my $readme = get_readme_contents(get_sbo_location($remove->{name}));
       if (not defined $readme) {
         warn "Unable to open README for $remove->{name}.\n";
@@ -211,7 +216,7 @@ sub confirm {
 
   my $default = "no";
   $default = "yes" unless @required_by;
-  if (prompt("Remove $remove->{name}?", default => $default)) {
+  if (prompt($color_lesser, "Remove $remove->{name}?", default => $default)) {
     say " * Added to remove queue.\n";
     return 1;
   }
@@ -226,13 +231,13 @@ sub remove {
   say sprintf "Removing %d package(s).", scalar @confirmed;
   wrapsay join " ", map { $_->{name} } @confirmed;
 
-  if (!prompt("\nAre you sure you want to continue?", default => 'no')) {
-    return say 'Exiting.';
+  if (!prompt($color_warn, "\nAre you sure you want to continue?", default => 'no')) {
+    return say "Exiting.";
   }
 
   system("/sbin/removepkg", $_->{pkg}) for @confirmed;
 
-  say "All operations have completed successfully.";
+  wrapsay_color $color_notice, "All operations have completed successfully.";
 }
 
 1;

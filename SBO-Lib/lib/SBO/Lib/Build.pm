@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.7';
 
-use SBO::Lib::Util qw/ :const :times idx prompt error_code script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh open_read uniq save_options wrapsay %config in $userland_32 /;
+use SBO::Lib::Util qw/ :const :times :colors idx prompt error_code script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh open_read uniq save_options wrapsay %config in $userland_32 /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires get_reverse_reqs /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
@@ -170,7 +170,7 @@ sub do_convertpkg {
   my ($out, $ret) = run_tee("/bin/bash -c '/usr/sbin/convertpkg-compat32 -i $pkg -d $c32tmpd'", "$log_name-convertpkg");
 
   if ($ret != 0) {
-    return "convertpkg-compt32 returned non-zero exit status\n",
+    return "convertpkg-compt32 returned non-zero exit status.",
       _ERR_CONVERTPKG;
   }
   unlink $pkg;
@@ -209,11 +209,11 @@ sub do_slackbuild {
   # ensure x32 stuff is set correctly, or that we're setup for it
   if ($args{COMPAT32}) {
     unless ($multilib) {
-      return "compat32 packages can only be built on multilib systems.\n", (undef) x 2,
+      return "compat32 packages can only be built on multilib systems.", (undef) x 2,
         _ERR_NOMULTILIB;
     }
     unless (-f '/usr/sbin/convertpkg-compat32') {
-      return "compat32 requires /usr/sbin/convertpkg-compat32.\n",
+      return "compat32 requires /usr/sbin/convertpkg-compat32.",
         (undef) x 2, _ERR_NOCONVERTPKG;
     }
   } else {
@@ -221,7 +221,7 @@ sub do_slackbuild {
       $x32 = check_x32 $args{LOCATION};
       if ($x32 && ! $multilib) {
         my $warn =
-          "$sbo is 32-bit, which requires multilib on x86_64.\n";
+          "$sbo is 32-bit, which requires multilib on x86_64.";
         return $warn, (undef) x 2, _ERR_NOMULTILIB;
       }
     }
@@ -616,7 +616,7 @@ sub make_distclean {
       if (dirname(dirname($filename)) eq "$config{SBO_HOME}/distfiles") {
         remove_tree dirname($filename) if -d dirname($filename);
       } else {
-        warn "Distcleaning for $sbo-$args{VERSION} failed...";
+        warn_color $color_lesser, "Distcleaning for $sbo-$args{VERSION} failed...";
       }
     }
   }
@@ -749,9 +749,9 @@ sub perform_sbo {
 
   revert_slackbuild("$location/$sbo.SlackBuild");
   # return error now if the slackbuild didn't exit 0
-  return "$sbo.SlackBuild return non-zero\n", undef, _ERR_BUILD if $ret != 0;
+  return "$sbo.SlackBuild return non-zero.", undef, _ERR_BUILD if $ret != 0;
   my $pkg = get_pkg_name($out);
-  return "$sbo.SlackBuild didn't create a package\n", undef, _ERR_BUILD if not defined $pkg;
+  return "$sbo.SlackBuild did not create a package.", undef, _ERR_BUILD if not defined $pkg;
   my $src = get_src_dir(@src_ls);
   return $pkg, $src;
 }
@@ -809,17 +809,17 @@ sub process_sbos {
       # return now if we're not interactive
       if ($args{NON_INT}) {
         unlink for @symlinks;
-        if (@successes and $config{CLASSIC} ne "TRUE") { say "\nBuilt:"; wrapsay join(" ", @successes); }
+        if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
       }
-      wrapsay "Unable to download/verify source file(s) for $sbo:";
+      wrapsay_color $color_warn, "Unable to download/verify source file(s) for $sbo:";
       say "  $fail";
-      if (prompt('Do you want to proceed?' , default => 'no')) {
+      if (prompt($color_lesser, 'Do you want to proceed?' , default => 'no')) {
         next FIRST;
       } else {
         unlink for @symlinks;
-        if (@successes and $config{CLASSIC} ne "TRUE") { say "\nBuilt:"; wrapsay join(" ", @successes); }
+        if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
       }
@@ -833,7 +833,7 @@ sub process_sbos {
     my $options = $$opts{$sbo} // 0;
     my $cmds = $$cmds{$sbo} // [];
     for my $cmd (@$cmds) {
-      system($cmd) == 0 or warn "\"$cmd\" exited non-zero.\n";
+      system($cmd) == 0 or warn_color $color_warn, "\"$cmd\" exited non-zero.";
     }
     # switch compat32 on if upgrading/installing a -compat32
     # else make sure compat32 is off
@@ -849,10 +849,10 @@ sub process_sbos {
       push @failures, {$sbo => $fail};
       if ($mass and -f $mtemp_in) {
         my ($in_fh, $exit_in) = open_fh($mtemp_in, '<');
-        do { warn $in_fh; exit $exit_in } if $exit_in;
+        error_code("Failed to open $mtemp_in; exiting.", $exit_in) if $exit_in;
         unlink $mtemp_resume if -f $mtemp_resume;
         my ($out_fh, $exit_out) = open_fh($mtemp_resume, '>');
-        do { warn $out_fh; exit $exit_out } if $exit_out;
+        error_code("Failed to open $mtemp_resume; exiting.", $exit_out) if $exit_out;
         while(readline($in_fh)) {
           if ($. < 3 or $. > $count + 2) {
             print {$out_fh} $_;
@@ -864,24 +864,24 @@ sub process_sbos {
       # return now if we're not interactive
       if ($args{NON_INT}) {
         unlink for @symlinks;
-        if (@successes and $config{CLASSIC} ne "TRUE") { say "\nBuilt:"; wrapsay join(" ", @successes); }
+        if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
       }
       # or if this is the last $sbo
       if ($count == @$todo) {
         unlink for @symlinks;
-        if (@successes and $config{CLASSIC} ne "TRUE") { say "\nBuilt:"; wrapsay join(" ", @successes); }
+        if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
       }
-      wrapsay "A failure occurred while building $sbo:";
+      wrapsay_color $color_warn, "A failure occurred while building $sbo:";
       say "  $fail";
-      if (prompt('Do you want to proceed?', default => 'no')) {
+      if (prompt($color_lesser, 'Do you want to proceed?', default => 'no')) {
         next FIRST;
       } else {
         unlink for @symlinks;
-        if (@successes and $config{CLASSIC} ne "TRUE") { say "\nBuilt:"; wrapsay join(" ", @successes); }
+        if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
       }
@@ -906,12 +906,12 @@ sub process_sbos {
     unless ($config{PKG_DIR} eq 'FALSE') {
       my $dir = $config{PKG_DIR};
       unless (-d $dir) {
-        mkdir($dir) or warn "Unable to create $dir.\n";
+        mkdir($dir) or warn_color $color_warn, "Unable to create $dir.";
       }
       if (-d $dir) {
         move($pkg, $dir), wrapsay "$pkg stored in $dir.";
       } else {
-        warn "$pkg left in $tmpd.\n";
+        warn_color $color_lesser, "$pkg left in $tmpd.";
       }
     } elsif ($args{DISTCLEAN}) {
       unlink $pkg;
@@ -919,7 +919,7 @@ sub process_sbos {
   }
   unlink $mtemp_resume if $mass and -f $mtemp_resume;
   unlink for @symlinks;
-  if (@successes and $config{CLASSIC} ne "TRUE") { say "\nBuilt:"; wrapsay join(" ", @successes); }
+  if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
   display_times() unless $config{CLASSIC} eq "TRUE";
   return \@failures, $err;
 }
@@ -1031,7 +1031,7 @@ sub rewrite_slackbuild {
   };
   if (not $status) {
     rename "$slackbuild.orig", $slackbuild if not -f $slackbuild;
-    return "Unable to backup $slackbuild to $slackbuild.orig\n",
+    return "Unable to backup $slackbuild to $slackbuild.orig.",
       _ERR_OPENFH;
   }
 

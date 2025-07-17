@@ -218,6 +218,32 @@ sboconfig(1)
 without flags enters an interactive settings menu. Each option is explained
 and no changes are made without verification. Using flags is faster, but
 new users may find this a helpful resource.
+.P
+.B
+sbotools
+prints some messages and prompts in color by default. All scripts except for
+.B
+sboconfig
+have
+.B
+--color
+and
+.B
+--nocolor
+options to turn colors on and off. To turn all colors off by default
+set
+.B
+NOCOLOR
+to
+.B
+TRUE\fR\
+\&. Output colors can be customized by editing the
+.I
+/etc/sbotools/sbotools.colors
+file. See the comments there or
+.B
+sbotools.colors(5)
+for details.
 .SH BUGS
 .P
 None known. If found, Issues and Pull Requests to
@@ -226,7 +252,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.conf(5), sbotools.hints(5)
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>

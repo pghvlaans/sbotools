@@ -19,3 +19,5 @@ use SBO::App::Remove;
 my $app = SBO::App::Remove->new(@ARGV);
 
 exit $app->run();
+
+END { say ""; }

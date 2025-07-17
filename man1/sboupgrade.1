@@ -10,6 +10,8 @@ sboupgrade [-h|-v]
 .P
 sboupgrade [-Scbde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-fiopqrz] [--batch|--dry-run] --all|sbo_name (sbo_name)
+.P
+sboupgrade [--color|--nocolor] ...
 .SH DESCRIPTION
 .P
 .B
@@ -541,6 +543,27 @@ Show help information.
 .RS
 Show version information.
 .RE
+.P
+.B
+--color
+.RS
+Turn on
+.B
+sbotools
+color output. See also
+.B
+sbotools.colors(5)\fR\
+\&.
+.RE
+.P
+.B
+--nocolor
+.RS
+Turn off
+.B
+sbotools
+color output.
+.RE
 .SH VARIABLES
 .P
 Beyond the options contained in
@@ -801,7 +824,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sbotools.conf(5), sbotools.hints(5), gpg(1), setarch(1)
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), gpg(1), setarch(1)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>

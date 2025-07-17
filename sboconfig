@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config slurp usage_error script_error lint_sbo_config $tempdir open_fh prompt wrapsay show_version /;
+use SBO::Lib qw/ :config :colors slurp usage_error script_error lint_sbo_config $tempdir open_fh prompt wrapsay show_version /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always);
 use File::Copy;
@@ -62,8 +62,10 @@ Configuration options (defaults shown):
       GPG_VERIFY: verify the repo with gnupg
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
+  -K|--nocolor FALSE:
+      NOCOLOR: if TRUE, disable sbotools color output.
   -L|--log-dir FALSE:
-       LOG_DIR: if an absolute path, save a log file here after each build.
+      LOG_DIR: if an absolute path, save a log file here after each build.
   -P|--cpan-ignore FALSE:
       CPAN_IGNORE: install scripts even if they have been installed from the CPAN.
   -p|--pkg-dir FALSE:
@@ -86,7 +88,6 @@ Configuration options (defaults shown):
       NOWRAP: do not automatically wrap sbotools output.
 
 Use $label without options for an interactive menu.
-
 EOF
 	return 1;
 }
@@ -125,8 +126,10 @@ Configuration options (defaults shown):
       GPG_VERIFY: verify the repo with gnupg
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
+  -K|--nocolor FALSE:
+      NOCOLOR: if TRUE, disable sbotools color output.
   -L|--log-dir /usr/sbotest/logs:
-       LOG_DIR: if an absolute path, save a log file here after each build.
+      LOG_DIR: if an absolute path, save a log file here after each build.
   -P|--cpan-ignore TRUE:
       CPAN_IGNORE: install scripts even if they have been installed from the CPAN.
   -p|--pkg-dir /usr/sbotest/tests:
@@ -149,7 +152,6 @@ Configuration options (defaults shown):
       NOWRAP: do not automatically wrap sbotest output.
 
 Use $label without options for an interactive menu.
-
 EOF
 	return 1;
 }
@@ -162,26 +164,27 @@ unless ($is_sbotest) {
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
-		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s', 'nowrap|w=s');
+		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
+		'nowrap|w=s', 'nocolor|K=s');
 } else {
 	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
-		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s', 'nowrap|w=s',
-		'sbo-archive|A=s');
+		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
+		'nowrap|w=s', 'nocolor|K=s', 'sbo-archive|A=s');
 }
 
 $options{list} = 1 if exists $options{'non-default'};
 if ($options{help}) {
 	show_usage();
-	wrapsay "Non-root users can call $label with -l, -n, -h and -v." unless $< == 0;
+	wrapsay "\nNon-root users can call $label with -l, -n, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($options{version}) { show_version(); exit 0 }
 unless ($< == 0 or $options{list}) {
 	show_usage();
-	usage_error "Non-root users can call $label with -l, -n, -h and -v.";
+	usage_error "\nNon-root users can call $label with -l, -n, -h and -v.";
 }
 
 my %valid_confs = (
@@ -203,6 +206,7 @@ my %valid_confs = (
 	'obsolete-check'    => 'OBSOLETE_CHECK',
 	'etc-profile'       => 'ETC_PROFILE',
 	'log-dir'           => 'LOG_DIR',
+	nocolor             => 'NOCOLOR',
 	nowrap              => 'NOWRAP',
 );
 $valid_confs{"sbo-archive"} = 'SBO_ARCHIVE' if $is_sbotest;
@@ -226,6 +230,7 @@ my %params = (
 	OBSOLETE_CHECK    => 'O|--obsolete-check',
 	ETC_PROFILE       => 'e|--etc-profile',
 	LOG_DIR           => 'L|--log-dir',
+	NOCOLOR           => 'K|--nocolor',
 	NOWRAP            => 'w|--nowrap',
 );
 $params{SBO_ARCHIVE} = 'A|--sbo-archive' if $is_sbotest;
@@ -256,7 +261,7 @@ if (exists $options{list}) {
 }
 
 if (exists $options{reset}) {
-	if (prompt("Reset all options to the default setting?", default => 'no')) {
+	if (prompt($color_warn, "Reset all options to the default setting?", default => 'no')) {
 		say "Restoring default configuration...";
 	} else {
 		say "Exiting without changes.";
@@ -276,7 +281,7 @@ for my $key (keys %valid_confs) {
 }
 $changes{'SBO_HOME'} = '/usr/sbo' if exists $options{reset};
 if (exists $options{reset} and $is_sbotest) {
-	$changes{'SBO_HOME'} = '/usr/sbotest';
+	$changes{'SBO_HOME'} =  '/usr/sbotest';
 	$changes{'PKG_DIR'} = '/usr/sbotest/tests';
 	$changes{'LOG_DIR'} = '/usr/sbotest/logs';
 	$changes{'SBO_ARCHIVE'} = '/usr/sbotest/archive';
@@ -301,8 +306,9 @@ sub config_prompt {
 	script_error("config_prompt requires at least four arguments.") unless @_ >= 4;
 	my ($config_name, $description, $validity_description, $validator) = @_;
 	my $user_input;
-	wrapsay "\n$config_name\n\n$description\n\n$validity_description";
-	chomp($user_input = prompt("\tCurrent value is $config{$config_name}: "));
+	wrapsay_color $color_notice, "\n$config_name", 1;
+	wrapsay "$description\n\n$validity_description";
+	chomp($user_input = prompt($color_notice, "\tCurrent value is $config{$config_name}: "));
 	return 0 unless $user_input;
 	if ($validator) {
 		if (validate_choice($config_name, $user_input, $validator)) {
@@ -353,7 +359,7 @@ sub validate_choice {
 # use an interactive settings menu if sboconfig is passed without
 # options; might be educational for new users
 sub interactive_menu {
-	if (not prompt("$label\n\nThis is the $label interactive menu. Use prompts to set configuration values?", default => 'yes')) {
+	if (not prompt($color_default, "$label\n\nThis is the $label interactive menu. Use prompts to set configuration values?", default => 'yes')) {
 		say "Exiting without changes.";
 		exit 0;
 	}
@@ -408,8 +414,13 @@ sub interactive_menu {
 	REPO: config_prompt("REPO", "If set to a URL, use this as the upstream SBo repository. Git and rsync repositories only.", "A URL or FALSE.", 0);
 
 	# CLASSIC turns this on automatically at runtime
+	NOCOLOR: if (not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') {
+		config_prompt("NOCOLOR", "If TRUE, turn off all sbotools color output.", "TRUE or FALSE.", "TF");
+	}
+
+	# CLASSIC turns this on automatically at runtime
 	RSYNC_DEFAULT: if (not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') {
-		config_prompt("RSYNC_DEFAULT", "If TRUE, If TRUE, the default mirror will be rsync except for Slackware -current. Please note that REPO overrides this setting.", "TRUE or FALSE.", "TF");
+		config_prompt("RSYNC_DEFAULT", "If TRUE, the default mirror will be rsync except for Slackware -current. Please note that REPO overrides this setting.", "TRUE or FALSE.", "TF");
 	}
 
 	if ($change_requested) {
@@ -422,8 +433,8 @@ sub interactive_menu {
 			say "\t$title:$spacer$changes{$title}" if defined $changes{$title};
 		}
 
-		unless (prompt("\nWrite these settings to $conf_file?", default => 'yes')) {
-			if (prompt("Start this menu over?", default => 'no')) {
+		unless (prompt($color_lesser, "\nWrite these settings to $conf_file?", default => 'yes')) {
+			if (prompt($color_notice, "Start this menu over?", default => 'no')) {
 				undef %changes;
 				interactive_menu();
 			} else {
@@ -479,10 +490,7 @@ sub config_write {
 	_fixup_conf($conf);
 
 	my ($conffh, $exit) = open_fh($conf_file, '>');
-	if ($exit) {
-		warn $conffh;
-		exit $exit;
-	}
+	error_code("Failed to open $conf_file; exiting.", $exit) if $exit;
 	print {$conffh} $conf;
 }
 
@@ -504,6 +512,8 @@ sub _fixup_conf {
 	$_[0] = join "\n", @fixed, ''; # make sure we end with a newline if there are any lines
 }
 
-config_write(%changes) if %changes;
+if (%changes) {
+	config_write(%changes);
+}
 
-exit 0;
+END { say ""; }

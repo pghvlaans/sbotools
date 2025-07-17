@@ -7,6 +7,8 @@ _arguments \
     '(-)'{-v,--version}'[Show version.]:' \
     '(-)'{-g,--gpg-verify}'[Verify with gpg.]:' \
     '(-)'{-n,--nopull}'[Check for updates without updating the tree.]:' \
+    '(-)'{--nocolor}'[Disable sbotools color output.]:' \
+    '(-)'{--color}'[Enable sbotools color output.]:' \
     && return 0
 
 return 1

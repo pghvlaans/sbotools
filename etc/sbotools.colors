@@ -1,0 +1,29 @@
+# sbotools.colors
+
+# Use this file to customize colors for sbotools output. To disable color
+# sbotools output altogether, use either the CLASSIC or the NOCOLOR setting;
+# see sbotools.conf(5) or sboconfig(5).
+#
+# Color settings use KEY=VALUE, with or without spaces. If a color is specified
+# more than once, the last instance is used. Quotes may be used, but are not
+# required. Empty and commented lines are ignored.
+#
+# All colors must be specified with valid ANSI designations. For more
+# information, see the "Function Interface" section of Term::ANSIColor(3).
+# Any color set to "reset" will simply have default formatting.
+#
+# See also sbotools.colors(5).
+
+# color_notice (default: cyan) is for neutral prompts and selected
+# notifications.
+
+#color_notice = cyan
+
+# color_lesser (default: bold) is for less-serious warnings.
+
+#color_lesser = bold
+
+# color_warn (default: red bold) is for failures and potentially serious
+# warnings.
+
+#color_warn = red bold

@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.7';
 
-use SBO::Lib::Util qw/ %config :const error_code prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp wrapsay $conf_dir $obs_file /;
+use SBO::Lib::Util qw/ %config :const :colors error_code prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp wrapsay $conf_dir $obs_file /;
 
 use Cwd;
 use File::Copy;
@@ -214,43 +214,43 @@ sub check_repo {
       # Give different warning levels depending on how the repo
       # differs from expected and the fetch method.
       if ($extra_dir and $incomplete and not $is_git_fetch) {
-        if (prompt("\nWARNING! $repo_path exists and is non-empty.\n\nIt has different top-level directories from an SBo repository.\n\nData loss is certain if you continue.\nContinue anyway?", default=>"no")) {
+        if (prompt($color_warn, "\nWARNING! $repo_path exists and is non-empty.\n\nIt has different top-level directories from an SBo repository.\n\nData loss is certain if you continue.\nContinue anyway?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.");
         }
       } elsif ($extra_dir and $incomplete and $is_git_fetch) {
-        if (prompt("\n$repo_path exists and is non-empty.\n\nIt has different top-level directories from an SBo repository.\n\nUntracked files will not be touched, but other files may be overwritten if you continue.\nContinue anyway?", default=>"no")) {
+        if (prompt($color_lesser, "\n$repo_path exists and is non-empty.\n\nIt has different top-level directories from an SBo repository.\n\nUntracked files will not be touched, but other files may be overwritten if you continue.\nContinue anyway?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.");
         }
       } elsif ($incomplete and not $is_git_fetch) {
-        if (prompt("\nWarning! $repo_path exists and is non-empty.\n\nIt may be an incomplete SBo repository.\n\nData loss is possible if you continue.\nContinue anyway?", default=>"no")) {
+        if (prompt($color_warn, "\nWarning! $repo_path exists and is non-empty.\n\nIt may be an incomplete SBo repository.\n\nData loss is possible if you continue.\nContinue anyway?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.");
         }
       } elsif ($incomplete and $is_git_fetch) {
-        if (prompt("\n$repo_path exists and is non-empty.\n\nIt may be an incomplete SBo repository.\nContinue?", default=>"no")) {
+        if (prompt($color_notice, "\n$repo_path exists and is non-empty.\n\nIt may be an incomplete SBo repository.\nContinue?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.");
         }
       } elsif ($extra_dir and not $is_git_fetch) {
-        if (prompt("\nWARNING! $repo_path exists and is non-empty.\n\nIt contains at least one top-level directory that does not belong to the repository.\n\nData loss is certain if you continue.\nContinue anyway?", default=>"no")) {
+        if (prompt($color_warn, "\nWARNING! $repo_path exists and is non-empty.\n\nIt contains at least one top-level directory that does not belong to the repository.\n\nData loss is certain if you continue.\nContinue anyway?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.");
         }
       } elsif ($extra_dir and $is_git_fetch) {
-        if (prompt("\n$repo_path exists and is non-empty.\n\nIt contains at least one top-level directory that does not belong to the repository.\n\nUntracked files will not be touched, but other files may be overwritten if you continue.\nContinue?", default=>"no")) {
+        if (prompt($color_lesser, "\n$repo_path exists and is non-empty.\n\nIt contains at least one top-level directory that does not belong to the repository.\n\nUntracked files will not be touched, but other files may be overwritten if you continue.\nContinue?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.");
         }
       } elsif (not -s $slackbuilds_txt and not $is_git_fetch) {
-        if (prompt("\n$repo_path is non-empty, but has an identical top-level directory structure to an SBo repository.\n\nRegenerate $slackbuilds_txt and proceed?", default=>"no")) {
+        if (prompt($color_notice, "\n$repo_path is non-empty, but has an identical top-level directory structure to an SBo repository.\n\nRegenerate $slackbuilds_txt and proceed?", default=>"no")) {
           return 1 if generate_slackbuilds_txt();
         } else {
           usage_error("$repo_path exists and is not empty. Exiting.");
@@ -387,7 +387,7 @@ sub git_sbo_tree {
       } else {
         $backup_label = "origin";
       }
-      unless (prompt("\nThis git repository does not have a branch named $branch.\nContinue with $backup_label?", default => 'no')) {
+      unless (prompt($color_lesser, "\nThis git repository does not have a branch named $branch.\nContinue with $backup_label?", default => 'no')) {
         usage_error("Exiting.");
       }
     }
@@ -396,7 +396,7 @@ sub git_sbo_tree {
       chomp($backup_branch = slurp("$repo_path/.git/HEAD"));
       return 0 unless defined $backup_branch;
       $backup_branch =~ s|.*/||s;
-      wrapsay "No branch specified; trying branch $backup_branch.";
+      wrapsay_color $color_notice, "No branch specified; trying branch $backup_branch.";
     }
     $branchres = 0;
   }
@@ -463,14 +463,14 @@ sub pull_sbo_tree {
   } else {
     $res = git_sbo_tree($url);
     if ($res == 0) {
-      if (prompt("Sync from $url failed. Retry?", default => 'no')) {
+      if (prompt($color_lesser, "Sync from $url failed. Retry?", default => 'no')) {
         generate_slackbuilds_txt() if not -s $slackbuilds_txt;
         return pull_sbo_tree();
       }
     }
   }
 
-  if ($res == 0) { error_code("Could not sync from $url.\n", _ERR_DOWNLOAD); }
+  if ($res == 0) { error_code("Could not sync from $url.", _ERR_DOWNLOAD); }
 
   my $wanted = sub { chown 0, 0, $File::Find::name; };
   find($wanted, $repo_path) if -d $repo_path;
@@ -528,13 +528,13 @@ sub slackbuilds_or_fetch {
     unless ($< == 0) {
       error_code("$slackbuilds_txt is empty, missing, or the running user does not have read permissions.\n\nTry running as root.", _ERR_OPENFH);
     }
-    if (prompt("$slackbuilds_txt is empty or missing.\nCheck $repo_path and fetch the repository now?", default => 'yes')) {
+    if (prompt($color_lesser, "$slackbuilds_txt is empty or missing.\nCheck $repo_path and fetch the repository now?", default => 'yes')) {
       update_tree();
     } elsif (-d $repo_path) {
-      wrapsay "Please check the contents of $repo_path, and then run \"sbocheck\".";
+      wrapsay_color $color_lesser, "Please check the contents of $repo_path, and then run \"sbocheck\".";
       exit 0;
     } else {
-      say "Please run \"sbocheck\"";
+      wrapsay_color $color_notice, "Please run \"sbocheck\"";
       exit 0;
     }
   }
@@ -555,9 +555,9 @@ before any update proceeds.
 
 sub update_tree {
   if (-s $slackbuilds_txt) {
-    say 'Updating SlackBuilds tree...';
+    wrapsay_color $color_notice, 'Updating SlackBuilds tree...';
   } else {
-    say 'Pulling SlackBuilds tree...';
+    wrapsay_color $color_notice, 'Pulling SlackBuilds tree...';
   }
   check_repo();
   pull_sbo_tree(), return 1;
@@ -579,7 +579,7 @@ sub verify_git_commit {
   script_error('verify_git_commit requires an argument.') unless @_ == 1;
   # verifying git commits is only supported for 14.2 onwards
   if (versioncmp(get_slack_version(), '14.1') != 1) {
-    if (prompt("Git verification is unsupported for Slackware 14.0 and 14.1. Proceed anyway?", default => 'no')) {
+    if (prompt($color_warn, "Git verification is unsupported for Slackware 14.0 and 14.1. Proceed anyway?", default => 'no')) {
       return 1;
     } else {
       usage_error("Exiting. Consider using rsync or change GPG_VERIFY to FALSE.");
@@ -670,10 +670,10 @@ sub verify_rsync {
     open STDERR, '>', $gpg_log;
     if (versioncmp(get_slack_version(), '14.0') == 1) {
       $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw/ --verify CHECKSUMS.md5.asc /) == 0;
-      wrapsay "CHECKSUMS.md5.asc verified. See $gpg_log." if $checksum_asc_ok;
+      wrapsay_color $color_notice, "CHECKSUMS.md5.asc verified. See $gpg_log." if $checksum_asc_ok;
     } else {
       # CHECKSUMS.md5.asc is unsigned in the 14.0 repository; check all .asc files
-      say "\nChecking .asc files...";
+      wrapsay_color $color_notice, "\nChecking .asc files...";
       $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw! --verify system/sbotools.tar.gz.asc !) == 0;
       if ($checksum_asc_ok) {
         my @ascs = split(' ', `find . -name "*.asc"`);
@@ -685,7 +685,7 @@ sub verify_rsync {
           }
         }
       }
-      wrapsay ".asc files verified. See $gpg_log." if $checksum_asc_ok;
+      wrapsay_color $color_notice, ".asc files verified. See $gpg_log." if $checksum_asc_ok;
     }
     close STDERR;
     open STDERR, '>&', \*OLDERR;
@@ -872,23 +872,23 @@ sub retrieve_key {
   my $fingerprint = shift;
   my $res;
   my $key_log = "$config{SBO_HOME}/.key_download-$fingerprint.log";
-  say "\nThe public key for GPG verification is missing.";
-  say "Searching by keyid $fingerprint...\n";
+  wrapsay_color $color_lesser, "\nThe public key for GPG verification is missing.";
+  wrapsay_color $color_notice, "Searching by keyid $fingerprint...", 1;
   unlink $key_log if -f $key_log;
   open OLDERR, '>&', \*STDERR;
   open STDERR,'>', $key_log;
   system(qw! gpg --no-tty --batch --keyserver hkp://keyserver.ubuntu.com:80 --search-keys !, $fingerprint);
-  if (prompt("Download and add this key?", default => "no")) {
+  if (prompt($color_lesser, "Download and add this key?", default => "no")) {
     {
       $res = system(qw\ gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-key \, $fingerprint) == 0;
       close STDERR;
       open STDERR, '>&', \*OLDERR;
     }
     if ($res) {
-      print("The key has been added. See $key_log.\n");
+      wrapsay_color $color_notice, "The key has been added. See $key_log", 1;
       return $res;
     } else {
-      print("Failed to add the key. See $key_log.\n");
+      wrapsay_color $color_warn, "Failed to add the key. See $key_log.", 1;
       return 0;
     }
   } else {

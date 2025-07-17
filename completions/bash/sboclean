@@ -19,14 +19,14 @@ _sboclean() {
 
   case "${cmd}" in
     sboclean)
-      opts="-h -v -d -w -o -i --help --version --dist --work --options --interactive"
+      opts="-h -v -d -w -o -i --help --version --color --nocolor --dist --work --options --interactive"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
       fi
 
       case "${prev}" in
-        -h|--help|-v|--version|-d|--dist|-w|--work|-i|--interactive)
+        -h|--help|-v|--version|-d|--dist|-w|--work|-i|--interactive|--color|--nocolor)
           return 0
           ;;
         -o|--options)

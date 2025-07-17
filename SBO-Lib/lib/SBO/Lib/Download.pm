@@ -86,7 +86,7 @@ sub check_distfiles {
   );
   # return an error if we're unable to get download info
   unless (keys %$downloads > 0) {
-    return "Unable to get download informtion from $location/$sbo.info\n",
+    return "Unable to get download informtion from $location/$sbo.info.",
       _ERR_NOINFO;
   }
   for my $link (keys %$downloads) {
@@ -172,7 +172,7 @@ sub get_distfile {
   #  if wget $link && verify, return
   #  else wget sbosrcarch && verify
   if (system('wget', '--tries=5', $link) != 0) {
-    $fail->{msg} = "Unable to wget $link.\n";
+    $fail->{msg} = "Unable to wget $link.";
     $fail->{err} = _ERR_DOWNLOAD;
   }
   if (not %$fail and verify_distfile(@_)) {
@@ -184,7 +184,7 @@ sub get_distfile {
     return 1;
   }
   if (not %$fail) {
-    $fail->{msg} = "The md5sum could not be verified for $filename.\n";
+    $fail->{msg} = "The md5sum could not be verified for $filename.";
     $fail->{err} = _ERR_MD5SUM;
   }
 

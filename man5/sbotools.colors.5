@@ -1,0 +1,106 @@
+.TH sbotools.colors 5 "Sweetmorn, Confusion 50, 3191 YOLD" "sbotools 3.7" sbotools
+.SH NAME
+.P
+.B
+sbotools.colors
+- customize output colors for
+.B
+sbotools
+.SH DESCRIPTION
+.P
+The
+.I
+/etc/sbotools/sbotools.colors
+file allows for customizing
+.B
+sbotools
+output colors. To disable all
+.B
+sbotools
+color output, set
+.B
+NOCOLOR
+to
+.B
+TRUE\fR\
+\&; see
+.B
+sbotools.conf(5)
+or
+.B
+sboconfig(1)
+for details. Three color categories are available.
+.B
+color_notice
+is
+.B
+cyan
+by default, and covers neutral prompts and selected notifications.
+.B
+color_lesser
+is default
+.B
+bold\fR\
+\&, and is for lesser warnings.
+.B
+color_warn
+marks errors and potentially serious warnings, and defaults to
+.B
+red bold\fR\
+\&.
+.P
+Color specifications follow a
+.I
+KEY=VALUE
+pattern; spaces are allowed, quotation marks are optional and commented lines
+are ignored. If a color is specified more than once, the last valid specification
+applies.
+.P
+All colors must be specified with valid ANSI designations. For more information,
+see the
+.B
+Function Interface
+section of
+.B
+Term::ANSIColor(3)\fR\
+\&. If a color category has an invalid specification, it uses the default color
+instead. Examples of valid specifications include
+.B
+yellow reverse
+and
+.B
+bright_black\fR\
+\&.
+.B
+rRRRgGGGbBBB
+specifications are also possible for true color output. Please note that not all
+terminal emulators can handle all specifications listed in
+.B
+Term::ANSIColor(3)\fR\
+\&.
+.P
+To disable coloration for any color category, set it to
+.B
+reset\fR\
+\&.
+.P
+To use a configuration directory other than
+.I
+/etc/sbotools\fR\
+\&, export an environment variable
+.B
+SBOTOOLS_CONF_DIR
+with an absolute path.
+.SH SEE ALSO
+.P
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.conf(5), sbotools.hints(5), Term::ANSIColor(3)
+.SH AUTHORS
+.P
+Jacob Pipkin <j@dawnrazor.net>
+.P
+Luke Williams <xocel@iquidus.org>
+.P
+Andreas Guldstrand <andreas.guldstrand@gmail.com>
+.SH MAINTAINER
+.P
+K. Eugene Carlson <kvngncrlsn@gmail.com>
