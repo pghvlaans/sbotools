@@ -11,3 +11,8 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 ## Prospective Features
 
 Nothing else for now, but requests are welcome and will receive due consideration.
+
+## Incoming
+
+* Customizable color output with a setting to turn it off
+* A setting to turn off sbotools output wrapping

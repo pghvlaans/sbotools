@@ -23,6 +23,8 @@ updates
 
     sbocheck [-Ogn]
 
+    sbocheck [--color|--nocolor] \...
+
 ## DESCRIPTION
 
 **sbocheck** updates or fetches a copy of the **SlackBuilds.org** tree,
@@ -94,6 +96,14 @@ Show help information.
 
 Show version information.
 
+**\--color**
+
+Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors.5.md).
+
+**\--nocolor**
+
+Turn off **sbotools** color output.
+
 ## EXIT CODES
 
 **sbocheck** can exit with the following codes:
@@ -114,7 +124,8 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
+[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md),
+[sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
 
 ## AUTHORS
 

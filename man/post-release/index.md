@@ -18,6 +18,8 @@ The pages here reflect post-release development. For the version 3.7 pages (2025
     * Interactively remove installed SlackBuilds along with any unused dependencies.
 * [sboupgrade(1)](sboupgrade.1.md)
     * Upgrade previously-installed SlackBuilds.
+* [sbotools.colors(5)](sbotools.colors.5.md)
+    * Customize sbotools output colors with this file.
 * [sbotools.conf(5)](sbotools.conf.5.md)
     * View details about all configuration options in *sbotools.conf*.
 * [sbotools.hints(5)](sbotools.hints.5.md)
