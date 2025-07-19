@@ -16,3 +16,5 @@ Nothing else for now, but requests are welcome and will receive due consideratio
 
 * Customizable color output with a setting to turn it off
 * A setting to turn off sbotools output wrapping
+* Installation status reporting in sbofind
+* Time-of-installation reporting in sboinstall
