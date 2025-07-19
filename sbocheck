@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree build_cmp get_available_updates get_removed_builds get_obsolete script_error open_fh is_local show_version get_local_outdated_versions on_blacklist $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors %config /;
+use SBO::Lib qw/ update_tree build_cmp get_available_updates get_removed_builds get_obsolete script_error open_fh is_local is_obsolete show_version get_local_outdated_versions on_blacklist open_read $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors %config /;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 use File::Basename;
 use List::Util 'max';
@@ -96,9 +96,24 @@ sub get_removed_list {
 	}
 
 	my @remove_list;
+	my $changelog = "$config{SBO_HOME}/repo/ChangeLog.txt";
 	foreach my $gone (keys %removes) {
 		my $info = $removes{$gone};
 		my $item = sprintf "%s %s", $gone, $info->{installed};
+		if (is_obsolete($gone)) {
+			$item .= " - Obsolete on -current.";
+		} elsif (-s $changelog) {
+			my ($fh, $exit) = open_read($changelog);
+			unless ($exit) {
+				for my $line (<$fh>) {
+					next unless $line =~ m/\/$gone: Removed/;
+					$line =~ s/.*\/$gone: //;
+					chomp($item .= " - $line");
+					last;
+				}
+				close $fh;
+			}
+		}
 		push @remove_list, $item;
 	}
 
@@ -236,7 +251,7 @@ sub print_output {
 		if ($config{CLASSIC} ne "TRUE" and $< == 0) { print_color $color_notice; print "\tSee $logfile.\n\n"; print_color $color_default; }
 		else { print "\n"; }
 		say $_ for @listing;
-		print "\n";
+		print "\n" unless $logfile eq '/var/log/sbocheck-out-of-tree.log';
 		# root can save a log of available updates
 		if ($< == 0) {
 			unlink $logfile if -f $logfile;
