@@ -326,6 +326,8 @@ our $color_notice = "cyan";
 our $color_warn = "red bold";
 get_colors();
 
+usage_error("Aborting; \$TMP is set to /\n") if defined $ENV{TMP} and $ENV{TMP} eq '/';
+
 =head1 SUBROUTINES
 
 =cut
@@ -801,13 +803,13 @@ sub lint_sbo_config {
     }
   }
   if (exists $configs{LOCAL_OVERRIDES}) {
-    unless ($configs{LOCAL_OVERRIDES} =~ qr#^(/|FALSE$)#) {
+    unless ($configs{LOCAL_OVERRIDES} =~ qr#^(/.+|FALSE$)#) {
       push @invalid, "LOCAL_OVERRIDES:" if $running ne 'sboconfig';
       push @invalid, "$warn -o (absolute path or FALSE)";
     }
   }
   if (exists $configs{LOG_DIR}) {
-    unless ($configs{LOG_DIR} =~ qr#^(/|FALSE$)#) {
+    unless ($configs{LOG_DIR} =~ qr#^(/.+|FALSE$)#) {
       push @invalid, "LOG_DIR:" if $running ne 'sboconfig';
       push @invalid, "$warn -L (absolute path or FALSE)";
     }
@@ -837,7 +839,7 @@ sub lint_sbo_config {
     }
   }
   if (exists $configs{PKG_DIR}) {
-    unless ($configs{PKG_DIR} =~ qr#^(/|FALSE$)#) {
+    unless ($configs{PKG_DIR} =~ qr#^(/.+|FALSE$)#) {
       push @invalid, "PKG_DIR:" if $running ne 'sboconfig';
       push @invalid, "$warn -p (absolute path or FALSE)";
     }
@@ -849,13 +851,13 @@ sub lint_sbo_config {
     }
   }
   if (exists $configs{SBO_ARCHIVE}) {
-    unless ($configs{SBO_ARCHIVE} =~ qr#^(/|FALSE$)#) {
+    unless ($configs{SBO_ARCHIVE} =~ qr#^(/.+|FALSE$)#) {
       push @invalid, "SBO_ARCHIVE" if $running ne 'sboconfig';
       push @invalid, "$warn -A (absolute path or FALSE)";
     }
   }
   if (exists $configs{SBO_HOME}) {
-    unless ($configs{SBO_HOME} =~ qr#^(/|FALSE$)#) {
+    unless ($configs{SBO_HOME} =~ qr#^(/.+|FALSE$)#) {
       push @invalid, "SBO_HOME:" if $running ne 'sboconfig';
       push @invalid, "$warn -s (absolute path or FALSE)";
     }
