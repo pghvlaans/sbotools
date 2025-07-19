@@ -13,6 +13,7 @@ use SBO::Lib::Tree qw/ get_sbo_location get_sbo_locations is_local /;
 use SBO::Lib::Info qw/ get_orig_build_number get_orig_version get_sbo_build_number get_sbo_version /;
 
 use Exporter 'import';
+use POSIX 'strftime';
 
 our @EXPORT_OK = qw{
   get_available_updates
@@ -203,12 +204,13 @@ sub get_installed_packages {
       or next;
     my $numbuild = $build;
     $numbuild =~ s/_SBo(|compat32)$//g ;
-    push @pkgs, { name => $name, version => $version, build => $build, numbuild => $numbuild, pkg => $pkg };
+    my $created = strftime "%F, %H:%M:%S", localtime((stat "$pkg_db/$pkg")[10]);
+    push @pkgs, { name => $name, version => $version, build => $build, numbuild => $numbuild, pkg => $pkg, created => $created };
     $types{$name} = 'STD';
   }
 
   # If we want all packages, let's just return them all
-  return [ map { +{ name => $_->{name}, version => $_->{version}, build=> $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg} } } @pkgs ]
+  return [ map { +{ name => $_->{name}, version => $_->{version}, build=> $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg}, created => $_->{created} } } @pkgs ]
     if $filter eq 'ALL';
 
   # Otherwise, SlackBuilds with locations can be marked with SBO, and packages with
@@ -224,7 +226,7 @@ sub get_installed_packages {
       }
     }
   }
-  return [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg} } }
+  return [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg}, created => $_->{created} } }
     grep { $types{$_->{name}} eq $filter } @pkgs ];
 }
 

@@ -546,20 +546,21 @@ FIRST: for my $sbo (@$build_queue) {
 	if ($inst_names{$name}) {
 		next FIRST if defined $warnings{$sbo} and $warnings{$sbo} eq 'nonexistent';
 		my $inst_msg = sprintf "%s (%s) is already installed.", $name, $inst_names{$name}{pkg};
+		$inst_msg = $config{CLASSIC} eq 'TRUE' ? $inst_msg : $inst_msg. "\n  ($inst_names{$name}{created})";
+		say $inst_msg;
 		# always warn with default "no" for reinstall if the package is
 		# installed non-SBo and it exists in the tree
 		if ($reinstall and $std_names{$name}) {
-			next FIRST unless prompt($color_warn, "$inst_msg\nWarning: $name is not an SBo package. Reinstall from SBo anyway?", default => 'no');
+			next FIRST unless prompt($color_warn, "Warning: $name is not an SBo package. Reinstall from SBo anyway?", default => 'no');
 		} elsif ($reinstall and not $non_int) {
 			if ($mass_rebuild or $reverse_rebuild or $series_rebuild) {
-				next FIRST unless prompt($color_notice, "$inst_msg Do you want to reinstall from SBo?", default => 'yes');
+				next FIRST unless prompt($color_notice, "Do you want to reinstall from SBo?", default => 'yes');
 			} else {
-				next FIRST unless prompt($color_notice, "$inst_msg Do you want to reinstall from SBo?", default => 'no');
+				next FIRST unless prompt($color_notice, "Do you want to reinstall from SBo?", default => 'no');
 			}
 		} elsif ($reinstall) {
-			say "$inst_msg Reinstalling." unless $dry_run;
+			say "Reinstalling." unless $dry_run;
 		} else {
-			say $inst_msg;
 			next FIRST;
 		}
 	} else {

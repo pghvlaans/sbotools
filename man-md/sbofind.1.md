@@ -29,8 +29,9 @@ a given name or names
 ## DESCRIPTION
 
 **sbofind** searches the names of all available SlackBuilds for one or
-more search terms. It reports back any SlackBuilds found along with path
-and version information. This is equivalent to running
+more search terms. It reports back any SlackBuilds found along with
+path, version and installation status information. This is equivalent to
+running
 
     cd /usr/ports; make search name=$search_term display=name,path
 

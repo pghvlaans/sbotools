@@ -12,6 +12,9 @@
   * Leave a trailing line more consistently
   * Add --color and --nocolor options to all scripts except sboconfig
     * Thanks to SCerovec for the suggestion.
+  * sboinstall: Report package installation time in the reinstall notification
+    * Thanks to shamefulCake1 for the request.
+  * sbofind: Report package installation status
 
 #### 3.7 - 2025-07-04
   * Optimize queue construction: Shared dependency handling and rationalize_queue

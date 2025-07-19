@@ -91,8 +91,10 @@ if (!@ARGV) { show_usage(); exit 1 }
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
 
+# used to report package installation status
+my (@installed, $installed_times, $installed_vers, @installed_std, $std_times, $std_vers, @installed_oot, $oot_times, $oot_vers);
 # these will be used later in case of reverse dependency searches
-my (@available, $available, $all_fulldeps, @installed, $installed, $fulldeps);
+my (@available, $available, $all_fulldeps, $installed, $fulldeps);
 
 # get lists of installed and defective CPAN modules
 my (@cpans, @defective_cpans);
@@ -218,8 +220,7 @@ sub in_archive {
 }
 
 
-# get installed SlackBuilds and reverse dependency information if there is a
-# query, but only once
+# get reverse dependency information if there is a query, but only once
 sub reverse_queries {
 	if ($all_reverse or $last_reverse or $first_reverse) {
 		@available = @{ get_all_available() };
@@ -227,7 +228,6 @@ sub reverse_queries {
 		$all_fulldeps = get_reverse_reqs($available);
 	}
 	if ($show_reverse) {
-		@installed = @{ get_installed_packages('SBO') };
 		$installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
 		$fulldeps = get_reverse_reqs($installed);
 	}
@@ -302,6 +302,16 @@ sub first_level_reverse {
 
 my $notfound = 0;
 for my $search (@ARGV) {
+	@installed = @{ get_installed_packages('SBO') };
+	$installed_times = +{ map {; $_->{name}, $_->{created} } @installed };
+	$installed_vers = +{ map {; $_->{name}, $_->{version} } @installed };
+	@installed_std = @{ get_installed_packages('STD') };
+	$std_times = +{ map {; $_->{name}, $_->{created} } @installed_std };
+	$std_vers = +{ map {; $_->{name}, $_->{version} } @installed_std };
+	@installed_oot = @{ get_installed_packages('DIRTY') };
+	$oot_times = +{ map {; $_->{name}, $_->{created} } @installed_oot };
+	$oot_vers = +{ map {; $_->{name}, $_->{version} } @installed_oot };
+
 	my $findings = perform_search($search);
 
 	# pretty formatting
@@ -326,6 +336,9 @@ for my $search (@ARGV) {
 			my $sbo = "SBo:   "; $sbo = "Local: " if $hash->{local};
 			say "$sbo $name $version";
 			wrapsay_color $color_warn, "        blacklisted" if on_blacklist($name);
+			wrapsay_color $color_notice, "        $installed_vers->{$name} installed ($installed_times->{$name})" if $installed_times->{$name};
+			wrapsay_color $color_lesser, "        $oot_vers->{$name} installed, out-of-tree ($oot_times->{$name})" if $oot_times->{$name};
+			wrapsay_color $color_lesser, "        $std_vers->{$name} installed, non-SBo ($std_times->{$name})" if $std_times->{$name};
 			# sbotest-only
 			wrapsay_color $color_notice, "        archived" if in_archive($name);
 			wrapsay_color $color_lesser, "        CPAN" if grep { /^$name$/ } @cpans;
