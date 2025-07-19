@@ -681,7 +681,6 @@ if ($dry_run) {
 			}
 		}
 	}
-	say "";
 	exit _ERR_USR_GRP if $usr_grp_missing;
 	exit 0;
 }
