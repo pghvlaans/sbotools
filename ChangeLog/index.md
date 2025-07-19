@@ -15,7 +15,7 @@
     * Thanks to shamefulCake1 for the request.
   * *sbofind*: Report package installation status
   * *sbocheck*: Attempt to report why scripts are out-of-tree
-  * *Util.pm*: Block `/` as a directory setting
+  * *Util.pm*: Block `/root`, `/home` (and its top-level directories) and `/` as directory settings and for `$TMP`
 
 * 3.7 - 2025-07-04
   * Optimize queue construction: Shared dependency handling and `rationalize_queue`
