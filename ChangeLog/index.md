@@ -14,6 +14,7 @@
   * *sboinstall*: Report package installation time in the reinstall notification
     * Thanks to shamefulCake1 for the request.
   * *sbofind*: Report package installation status
+  * *sbocheck*: Attempt to report why scripts are out-of-tree
 
 
 * 3.7 - 2025-07-04

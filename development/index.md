@@ -18,3 +18,4 @@ Nothing else for now, but requests are welcome and will receive due consideratio
 * A setting to turn off sbotools output wrapping
 * Installation status reporting in sbofind
 * Time-of-installation reporting in sboinstall
+* sbocheck tries to report why missing scripts are missing
