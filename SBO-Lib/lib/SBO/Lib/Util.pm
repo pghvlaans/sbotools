@@ -88,6 +88,7 @@ our @EXPORT_OK = (
     auto_reverse
     build_cmp
     check_multilib
+    dangerous_directory
     error_code
     get_arch
     get_colors
@@ -326,7 +327,7 @@ our $color_notice = "cyan";
 our $color_warn = "red bold";
 get_colors();
 
-usage_error("Aborting; \$TMP is set to /\n") if defined $ENV{TMP} and $ENV{TMP} eq '/';
+usage_error("Forbidden value of \$TMP: $ENV{TMP}\n") if defined $ENV{TMP} and dangerous_directory($ENV{TMP});
 
 =head1 SUBROUTINES
 
@@ -388,6 +389,27 @@ Returns 1 if the file exists, and 0 otherwise.
 sub check_multilib {
   return 1 if -f '/etc/profile.d/32dev.sh';
   return();
+}
+
+=head2 dangerous_directory
+
+  my $dangerous = dangerous_directory($dirname);
+
+C<dangerous_directory()> takes a string and returns true if it is equal to C</>,
+C</root>, C</home> or a possible directory under C</home>.
+
+=cut
+
+sub dangerous_directory {
+  script_error("dangerous_directory requires an argument.") unless @_ == 1;
+  my $dirname = shift;
+  my $dangerous = 0;
+  if ($dirname =~ m/^\/+$/ or
+      $dirname =~ m/^\/+home\/+[^\/]+(|\/+)$/ or
+      $dirname =~ m/^\/+(home|root)(|\/+)$/) {
+    $dangerous = 1;
+  }
+  return $dangerous;
 }
 
 =head2 error_code
@@ -741,7 +763,7 @@ sub is_obsolete {
   lint_sbo_config($running_script, %configs);
 
 C<lint_sbo_config()> takes the name of an sbotools script and a hash with configuration
-parameters. It checks the validity of all parameters except for GIT_BRANCH and REPO,
+parameters. It checks the validity of all parameters except for REPO,
 exiting with an error message in case of invalid options.
 
 C<sboconfig(1)> runs this subroutine to lint any requested parameter changes;
@@ -753,6 +775,7 @@ sub lint_sbo_config {
   script_error("lint_sbo_config requires two arguments.") unless @_ > 2;
   my ($running, %configs) = @_;
   my @invalid;
+  my @dangerous;
   my $warn;
   if ($running eq 'sboconfig') {
     $warn = 'Invalid parameter for';
@@ -803,15 +826,19 @@ sub lint_sbo_config {
     }
   }
   if (exists $configs{LOCAL_OVERRIDES}) {
-    unless ($configs{LOCAL_OVERRIDES} =~ qr#^(/.+|FALSE$)#) {
+    unless ($configs{LOCAL_OVERRIDES} =~ qr#^(/|FALSE$)#) {
       push @invalid, "LOCAL_OVERRIDES:" if $running ne 'sboconfig';
       push @invalid, "$warn -o (absolute path or FALSE)";
+    } elsif ($configs{LOCAL_OVERRIDES} =~ qr#^/#) {
+      push @dangerous, "LOCAL_OVERRIDES: $configs{LOCAL_OVERRIDES}" if dangerous_directory($configs{LOCAL_OVERRIDES});
     }
   }
   if (exists $configs{LOG_DIR}) {
-    unless ($configs{LOG_DIR} =~ qr#^(/.+|FALSE$)#) {
+    unless ($configs{LOG_DIR} =~ qr#^(/|FALSE$)#) {
       push @invalid, "LOG_DIR:" if $running ne 'sboconfig';
       push @invalid, "$warn -L (absolute path or FALSE)";
+    } elsif ($configs{LOG_DIR} =~ qr#^/#) {
+      push @dangerous, "LOG_DIR: $configs{LOG_DIR}" if dangerous_directory($configs{LOG_DIR});
     }
   }
   if (exists $configs{NOCLEAN}) {
@@ -839,9 +866,11 @@ sub lint_sbo_config {
     }
   }
   if (exists $configs{PKG_DIR}) {
-    unless ($configs{PKG_DIR} =~ qr#^(/.+|FALSE$)#) {
+    unless ($configs{PKG_DIR} =~ qr#^(/|FALSE$)#) {
       push @invalid, "PKG_DIR:" if $running ne 'sboconfig';
       push @invalid, "$warn -p (absolute path or FALSE)";
+    } elsif ($configs{PKG_DIR} =~ qr#^/#) {
+      push @dangerous, "PKG_DIR: $configs{PKG_DIR}" if dangerous_directory($configs{PKG_DIR});
     }
   }
   if (exists $configs{RSYNC_DEFAULT}) {
@@ -850,16 +879,25 @@ sub lint_sbo_config {
       push @invalid, "$warn -R (TRUE or FALSE)";
     }
   }
+  if (exists $configs{REPO}) {
+    if ($configs{REPO} =~ qr#^/#) {
+      push @dangerous, "REPO: $configs{REPO}" if dangerous_directory($configs{REPO});
+    }
+  }
   if (exists $configs{SBO_ARCHIVE}) {
-    unless ($configs{SBO_ARCHIVE} =~ qr#^(/.+|FALSE$)#) {
+    unless ($configs{SBO_ARCHIVE} =~ qr#^(/|FALSE$)#) {
       push @invalid, "SBO_ARCHIVE" if $running ne 'sboconfig';
       push @invalid, "$warn -A (absolute path or FALSE)";
+    } elsif ($configs{SBO_ARCHIVE} =~ qr#^/#) {
+      push @dangerous, "SBO_ARCHIVE: $configs{SBO_ARCHIVE}" if dangerous_directory($configs{SBO_ARCHIVE});
     }
   }
   if (exists $configs{SBO_HOME}) {
-    unless ($configs{SBO_HOME} =~ qr#^(/.+|FALSE$)#) {
+    unless ($configs{SBO_HOME} =~ qr#^(/|FALSE$)#) {
       push @invalid, "SBO_HOME:" if $running ne 'sboconfig';
       push @invalid, "$warn -s (absolute path or FALSE)";
+    } elsif ($configs{SBO_HOME} =~ qr#^/#) {
+      push @dangerous, "SBO_HOME: $configs{SBO_HOME}" if dangerous_directory($configs{SBO_HOME});
     }
   }
   if (exists $configs{STRICT_UPGRADES}) {
@@ -879,6 +917,12 @@ sub lint_sbo_config {
   if ($invalid_string) {
     wrapsay("The configuration in $conf_file contains one or more invalid parameters.", 1) if $running ne 'sboconfig';
     usage_error("$invalid_string");
+  }
+  my $dangerous_string = join("\n", @dangerous);
+  if ($dangerous_string) {
+    wrapsay("The configuration in $conf_file contains one or more forbidden parameters.", 1) if $running ne 'sboconfig';
+    wrapsay("The requested configuration contains one or more forbidden parameters.", 1) if $running eq 'sboconfig';
+    usage_error("$dangerous_string");
   }
 }
 

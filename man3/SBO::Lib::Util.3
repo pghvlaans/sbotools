@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Prickle-Prickle, Confusion 53, 3191 YOLD" "" "sbotools 3.7"
+.TH SBO::Lib::Util 3 "Setting Orange, Confusion 54, 3191 YOLD" "" "sbotools 3.7"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -191,6 +191,14 @@ numbers are, upgrading for a script bump may be in order.
 The sbotools use this file to build 32\-bit packages on x64 architecture.
 .PP
 Returns 1 if the file exists, and 0 otherwise.
+.SS dangerous_directory
+.IX Subsection "dangerous_directory"
+.Vb 1
+\&  my $dangerous = dangerous_directory($dirname);
+.Ve
+.PP
+\&\f(CWdangerous_directory()\fR takes a string and returns true if it is equal to \f(CW\*(C`/\*(C'\fR,
+\&\f(CW\*(C`/root\*(C'\fR, \f(CW\*(C`/home\*(C'\fR or a possible directory under \f(CW\*(C`/home\*(C'\fR.
 .SS error_code
 .IX Subsection "error_code"
 .Vb 1
@@ -324,7 +332,7 @@ Slackware version is \-current equivalent.
 .Ve
 .PP
 \&\f(CWlint_sbo_config()\fR takes the name of an sbotools script and a hash with configuration
-parameters. It checks the validity of all parameters except for GIT_BRANCH and REPO,
+parameters. It checks the validity of all parameters except for REPO,
 exiting with an error message in case of invalid options.
 .PP
 \&\f(CWsboconfig(1)\fR runs this subroutine to lint any requested parameter changes;
