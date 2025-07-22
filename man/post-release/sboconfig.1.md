@@ -81,8 +81,8 @@ number differs.
 
 **-C\|\--classic (FALSE\|TRUE)**
 
-**CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT**,
-**BUILD_IGNORE** and **NOCOLOR** (overriding the contents of
+**CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT**and
+**BUILD_IGNORE**, and disable **COLOR** (overriding the contents of
 [sbotools.conf(5)](sbotools.conf.5.md)). Build increment and out-of-tree SlackBuild checks
 by [sbocheck(1)](sbocheck.1.md) are disabled, and previously-used build options are
 not displayed. This provides a more traditional **sbotools** look and
@@ -125,9 +125,9 @@ SlackBuild invoking **make** is run.
 
 **-K\|\--nocolor (FALSE\|TRUE)**
 
-**NOCOLOR**: If **TRUE**, disable all **sbotools** color output. To
-customize color output, edit the */etc/sbotools/sbotools.colors* file
-directly. See [sbotools.colors(5)](sbotools.colors.5.md) for details.
+**COLOR**: If **TRUE**, enable **sbotools** color output. To customize
+color output, edit the */etc/sbotools/sbotools.colors* file directly.
+See [sbotools.colors(5)](sbotools.colors.5.md) for details.
 
 **-L\|\--log-dir (FALSE\|/path)**
 

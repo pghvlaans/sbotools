@@ -15,13 +15,13 @@
 ## DESCRIPTION
 
 The */etc/sbotools/sbotools.colors* file allows for customizing
-**sbotools** output colors. To disable all **sbotools** color output,
-set **NOCOLOR** to **TRUE**; see [sbotools.conf(5)](sbotools.conf.5.md) or
-[sboconfig(1)](sboconfig.1.md) for details. Three color categories are available.
-**color_notice** is **cyan** by default, and covers neutral prompts and
-selected notifications. **color_lesser** is default **bold**, and is for
-lesser warnings. **color_warn** marks errors and potentially serious
-warnings, and defaults to **red bold**.
+**sbotools** output colors. To enable **sbotools** color output, set
+**COLOR** to **TRUE**; see [sbotools.conf(5)](sbotools.conf.5.md) or [sboconfig(1)](sboconfig.1.md) for
+details. Three color categories are available. **color_notice** is
+**cyan** by default, and covers neutral prompts and selected
+notifications. **color_lesser** is default **bold**, and is for lesser
+warnings. **color_warn** marks errors and potentially serious warnings,
+and defaults to **red bold**.
 
 Color specifications follow a *KEY=VALUE* pattern; spaces are allowed,
 quotation marks are optional and commented lines are ignored. If a color
