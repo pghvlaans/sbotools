@@ -81,7 +81,7 @@ if ($help) {
 	exit 0;
 }
 if ($version) { show_version(); exit 0; }
-$config{NOCOLOR} = $color ? 'FALSE' : 'TRUE' if $color xor $nocolor;
+$config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
 unless ($< == 0 or $list or $query) {
 	show_usage();
 	usage_error "\nNon-root users can call $label with -l, -q, -h and -v.";

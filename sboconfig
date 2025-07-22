@@ -62,8 +62,8 @@ Configuration options (defaults shown):
       GPG_VERIFY: verify the repo with gnupg
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
-  -K|--nocolor FALSE:
-      NOCOLOR: if TRUE, disable sbotools color output.
+  -K|--color FALSE:
+      COLOR: if TRUE, enable sbotools color output.
   -L|--log-dir FALSE:
       LOG_DIR: if an absolute path, save a log file here after each build.
   -P|--cpan-ignore FALSE:
@@ -126,8 +126,8 @@ Configuration options (defaults shown):
       GPG_VERIFY: verify the repo with gnupg
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
-  -K|--nocolor FALSE:
-      NOCOLOR: if TRUE, disable sbotools color output.
+  -K|--color FALSE:
+      COLOR: if TRUE, enable sbotools color output.
   -L|--log-dir /usr/sbotest/logs:
       LOG_DIR: if an absolute path, save a log file here after each build.
   -P|--cpan-ignore TRUE:
@@ -165,14 +165,14 @@ unless ($is_sbotest) {
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'nocolor|K=s');
+		'nowrap|w=s', 'color|K=s');
 } else {
 	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'nocolor|K=s', 'sbo-archive|A=s');
+		'nowrap|w=s', 'color|K=s', 'sbo-archive|A=s');
 }
 
 $options{list} = 1 if exists $options{'non-default'};
@@ -206,7 +206,7 @@ my %valid_confs = (
 	'obsolete-check'    => 'OBSOLETE_CHECK',
 	'etc-profile'       => 'ETC_PROFILE',
 	'log-dir'           => 'LOG_DIR',
-	nocolor             => 'NOCOLOR',
+	color               => 'COLOR',
 	nowrap              => 'NOWRAP',
 );
 $valid_confs{"sbo-archive"} = 'SBO_ARCHIVE' if $is_sbotest;
@@ -230,7 +230,7 @@ my %params = (
 	OBSOLETE_CHECK    => 'O|--obsolete-check',
 	ETC_PROFILE       => 'e|--etc-profile',
 	LOG_DIR           => 'L|--log-dir',
-	NOCOLOR           => 'K|--nocolor',
+	COLOR             => 'K|--color',
 	NOWRAP            => 'w|--nowrap',
 );
 $params{SBO_ARCHIVE} = 'A|--sbo-archive' if $is_sbotest;
@@ -413,9 +413,9 @@ sub interactive_menu {
 
 	REPO: config_prompt("REPO", "If set to a URL, use this as the upstream SBo repository. Git and rsync repositories only.", "A URL or FALSE.", 0);
 
-	# CLASSIC turns this on automatically at runtime
-	NOCOLOR: if (not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') {
-		config_prompt("NOCOLOR", "If TRUE, turn off all sbotools color output.", "TRUE or FALSE.", "TF");
+	# CLASSIC turns this off automatically at runtime
+	COLOR: if (not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') {
+		config_prompt("COLOR", "If TRUE, turn on sbotools color output.", "TRUE or FALSE.", "TF");
 	}
 
 	# CLASSIC turns this on automatically at runtime

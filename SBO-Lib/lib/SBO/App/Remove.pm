@@ -47,7 +47,7 @@ sub run {
     exit 0;
   }
   if ($self->{vers}) { $self->show_version(); return 0; }
-  $config{NOCOLOR} = $self->{color} ? 'FALSE' : 'TRUE' if $self->{color} xor $self->{nocolor};
+  $config{COLOR} = $self->{color} ? 'TRUE' : 'FALSE' if $self->{color} xor $self->{nocolor};
   if (!@{ $self->{args} }) {
     $self->show_usage();
     usage_error "This is a root-only script." unless $< == 0;

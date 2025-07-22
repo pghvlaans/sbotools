@@ -165,12 +165,13 @@ TRUE\fR\
 \&, automatically enable
 .B
 RSYNC_DEFAULT\fR\
-\&,
-.B
-BUILD_IGNORE
 and
 .B
-NOCOLOR
+BUILD_IGNORE\fR\
+\&,
+and disable
+.B
+COLOR
 (overriding the contents of
 .B
 sbotools.conf(5)\fR\
@@ -298,11 +299,11 @@ is run.
 -K|--nocolor (FALSE|TRUE)
 .RS
 .B
-NOCOLOR\fR\
+COLOR\fR\
 \&: If
 .B
 TRUE\fR\
-\&, disable all
+\&, enable
 .B
 sbotools
 color output. To customize color output, edit the

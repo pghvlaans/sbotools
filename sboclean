@@ -64,7 +64,7 @@ if ($help) {
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
-$config{NOCOLOR} = $color ? 'FALSE' : 'TRUE' if $color xor $nocolor;
+$config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
 unless ($< == 0) {
 	show_usage();
 	usage_error "\nThis is a root-only script.";

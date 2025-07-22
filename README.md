@@ -28,7 +28,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboinstall, sboupgrade: Filter ineligible compat32 scripts and unsupported or nonexistent scripts from the arguments
   * Add setting NOWRAP to disable autowrapping sbotools output
     * Thanks to shamefulCake1 for the request.
-  * Add sbotools color output, and a setting NOCOLOR to disable it
+  * Add sbotools color output, and a setting COLOR to enable it
   * Add /etc/sbotools/sbotools.colors to customize colors
   * Leave a trailing line more consistently
   * Add --color and --nocolor options to all scripts except sboconfig

@@ -34,11 +34,12 @@ The current configuration keys are as follows:
 
 **CLASSIC=(FALSE\|TRUE)**
 
-If **TRUE**, automatically enable **RSYNC_DEFAULT**, **BUILD_IGNORE**
-and **NOCOLOR** (overriding the contents of this file). Build increment
-and out-of-tree SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are disabled, and
-previously-used build options are not displayed. This provides a more
-traditional **sbotools** look and feel for those who want it.
+If **TRUE**, automatically enable **RSYNC_DEFAULT**and **BUILD_IGNORE**,
+and disable **COLOR** (overriding the contents of this file). Build
+increment and out-of-tree SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are
+disabled, and previously-used build options are not displayed. This
+provides a more traditional **sbotools** look and feel for those who
+want it.
 
 **CPAN_IGNORE=(FALSE\|TRUE)**
 
@@ -73,9 +74,9 @@ If **numerical**, pass to the **-j** argument when a SlackBuild invoking
 If **TRUE**, do not clean working directories after building. These are
 the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
 
-**NOCOLOR=(FALSE\|TRUE)**
+**COLOR=(FALSE\|TRUE)**
 
-If **TRUE**, disable **sbotools** color output. To customize color
+If **TRUE**, enable **sbotools** color output. To customize color
 output, edit the */etc/sbotools/sbotools.colors* file directly. See
 [sbotools.colors(5)](sbotools.colors.5.md) for more details.
 

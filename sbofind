@@ -83,7 +83,7 @@ GetOptions(
 if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
 
-$config{NOCOLOR} = $color ? 'FALSE' : 'TRUE' if $color xor $nocolor;
+$config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
 lint_sbo_config($self, %config);
 
 if (!@ARGV) { show_usage(); exit 1 }

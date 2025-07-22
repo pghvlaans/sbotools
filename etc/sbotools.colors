@@ -1,10 +1,10 @@
 # sbotools.colors
 
 # Use this file to customize colors for sbotools output. To disable color
-# sbotools output altogether, use either the CLASSIC or the NOCOLOR setting;
-# see sbotools.conf(5) or sboconfig(5).
+# sbotools output altogether, either use the CLASSIC setting or set COLOR
+# to FALSE. See sbotools.conf(5) or sboconfig(5).
 #
-# Color settings use KEY=VALUE, with or without spaces. If a color is specified
+# Color settings use key=value, with or without spaces. If a color is specified
 # more than once, the last instance is used. Quotes may be used, but are not
 # required. Empty and commented lines are ignored.
 #

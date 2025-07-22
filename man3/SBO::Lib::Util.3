@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Setting Orange, Confusion 54, 3191 YOLD" "" "sbotools 3.7"
+.TH SBO::Lib::Util 3 "Prickle-Prickle, Confusion 58, 3191 YOLD" "" "sbotools 3.7"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -81,7 +81,7 @@ SBO::Lib::Util \- Utility functions for SBO::Lib and the sbotools
 These variables are ANSI colors. \f(CW$color_notice\fR is \f(CW\*(C`cyan\*(C'\fR for selected
 \&\f(CW\*(C`sbotools\*(C'\fR informative messages. \f(CW$color_lesser\fR is \f(CW\*(C`bold\*(C'\fR for warnings
 of lesser concern. \f(CW$color_warn\fR, \f(CW\*(C`red bold\*(C'\fR, is for errors and warnings of greater concern.
-\&\f(CW\*(C`sbotools\*(C'\fR color display can be disabled by setting \f(CW\*(C`NOCOLOR\*(C'\fR to \f(CW\*(C`TRUE\*(C'\fR. \f(CW$color_default\fR
+\&\f(CW\*(C`sbotools\*(C'\fR color display can be enabled by setting \f(CW\*(C`COLOR\*(C'\fR to \f(CW\*(C`TRUE\*(C'\fR. \f(CW$color_default\fR
 is currently \f(CW\*(C`reset\*(C'\fR and is not configurable.
 .PP
 \&\f(CWget_colors()\fR reads \f(CW\*(C`/etc/sbotools/sbotools.colors\*(C'\fR for custom values.
@@ -104,7 +104,7 @@ they change according to the configuration. \f(CW\*(C`SBO_HOME\*(C'\fR is change
 The supported keys are: \f(CW\*(C`NOCLEAN\*(C'\fR, \f(CW\*(C`DISTCLEAN\*(C'\fR, \f(CW\*(C`JOBS\*(C'\fR, \f(CW\*(C`PKG_DIR\*(C'\fR,
 \&\f(CW\*(C`SBO_HOME\*(C'\fR, \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR, \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR, \f(CW\*(C`REPO\*(C'\fR, \f(CW\*(C`BUILD_IGNORE\*(C'\fR,
 \&\f(CW\*(C`GPG_VERIFY\*(C'\fR, \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR, \f(CW\*(C`STRICT_UPGRADES\*(C'\fR, \f(CW\*(C`GIT_BRANCH\*(C'\fR, \f(CW\*(C`CLASSIC\*(C'\fR,
-\&\f(CW\*(C`CPAN_IGNORE\*(C'\fR, \f(CW\*(C`ETC_PROFILE\*(C'\fR, \f(CW\*(C`LOG_DIR\*(C'\fR, \f(CW\*(C`NOWRAP\*(C'\fR and \f(CW\*(C`NOCOLOR\*(C'\fR.
+\&\f(CW\*(C`CPAN_IGNORE\*(C'\fR, \f(CW\*(C`ETC_PROFILE\*(C'\fR, \f(CW\*(C`LOG_DIR\*(C'\fR, \f(CW\*(C`NOWRAP\*(C'\fR and \f(CW\*(C`COLOR\*(C'\fR.
 .ie n .SS $download_time
 .el .SS \f(CW$download_time\fP
 .IX Subsection "$download_time"
@@ -382,7 +382,7 @@ is non\-zero, it returns an error message rather than a file handle.
 .Ve
 .PP
 \&\f(CWprint_color()\fR takes one or more ANSI colors and prints, provided that the
-\&\f(CW\*(C`NOCOLOR\*(C'\fR setting is \f(CW\*(C`FALSE\*(C'\fR. See the \f(CW\*(C`Function Interface\*(C'\fR section in
+\&\f(CW\*(C`COLOR\*(C'\fR setting is \f(CW\*(C`TRUE\*(C'\fR. See the \f(CW\*(C`Function Interface\*(C'\fR section in
 \&\f(CWTerm::ANSIColor(3)\fR for a list of available colors.
 .PP
 Using colors \f(CW\*(C`black\*(C'\fR through \f(CW\*(C`bright_white\*(C'\fR, \f(CW\*(C`bold\*(C'\fR and \f(CW\*(C`reset\*(C'\fR only is
@@ -423,8 +423,8 @@ Output is wrapped at 72 characters.
 \&\f(CWread_config()\fR reads in the configuration settings from
 \&\f(CW\*(C`/etc/sbotools/sbotools.conf\*(C'\fR, updating the \f(CW%config\fR hash. If
 \&\f(CW\*(C`SBO_HOME\*(C'\fR is \f(CW\*(C`FALSE\*(C'\fR, it changes to \f(CW\*(C`/usr/sbo\*(C'\fR.
-Additionally, \f(CW\*(C`BUILD_IGNORE\*(C'\fR, \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR and \f(CW\*(C`NOCOLOR\*(C'\fR
-are turned on if \f(CW\*(C`CLASSIC\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR.
+Additionally, \f(CW\*(C`BUILD_IGNORE\*(C'\fR and \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR are turned on
+if \f(CW\*(C`CLASSIC\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR; \f(CW\*(C`COLOR\*(C'\fR is turned off.
 .PP
 When \f(CW\*(C`sbotest\*(C'\fR is running, the default value of \f(CW\*(C`SBO_HOME\*(C'\fR
 is \f(CW\*(C`/usr/sbotest\*(C'\fR, and \f(CW\*(C`ETC_PROFILE\*(C'\fR and \f(CW\*(C`CPAN_IGNORE\*(C'\fR default
@@ -545,7 +545,7 @@ as well as any locale information that may have been appended to the version str
 .Ve
 .PP
 \&\f(CWwarn_color()\fR emits a warning in the chosen color and resets the color
-afterwards. No colors are used if \f(CW\*(C`NOCOLOR\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR. A newline is added
+afterwards. No colors are used unless \f(CW\*(C`COLOR\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR. A newline is added
 automatically after the message. There is no useful return value.
 .SS wrapsay
 .IX Subsection "wrapsay"
@@ -569,7 +569,7 @@ for use in scripts (e.g., queue reports from \f(CWsbofind(1)\fR).
 .PP
 \&\f(CWwrapsay_color()\fR takes a color, a message and any true value if a trailing line
 is required. It applies a color, runs the message through \f(CWwrapsay()\fR and
-resets the color afterwards. No colors are used if \f(CW\*(C`NOCOLOR\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR. There
+resets the color afterwards. No colors are used unless \f(CW\*(C`COLOR\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR. There
 is no useful return value.
 .SH "EXIT CODES"
 .IX Header "EXIT CODES"

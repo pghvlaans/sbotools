@@ -157,7 +157,7 @@ SBO::Lib::Util - Utility functions for SBO::Lib and the sbotools
 These variables are ANSI colors. C<$color_notice> is C<cyan> for selected
 C<sbotools> informative messages. C<$color_lesser> is C<bold> for warnings
 of lesser concern. C<$color_warn>, C<red bold>, is for errors and warnings of greater concern.
-C<sbotools> color display can be disabled by setting C<NOCOLOR> to C<TRUE>. C<$color_default>
+C<sbotools> color display can be enabled by setting C<COLOR> to C<TRUE>. C<$color_default>
 is currently C<reset> and is not configurable.
 
 C<get_colors()> reads C</etc/sbotools/sbotools.colors> for custom values.
@@ -180,7 +180,7 @@ C</usr/sbo> if still C<"FALSE">.
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
-C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP> and C<NOCOLOR>.
+C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP> and C<COLOR>.
 
 =head2 $download_time
 
@@ -277,7 +277,7 @@ our %config = (
   OBSOLETE_CHECK => 'FALSE',
   ETC_PROFILE => 'FALSE',
   LOG_DIR => 'FALSE',
-  NOCOLOR => 'FALSE',
+  COLOR => 'FALSE',
   NOWRAP => 'FALSE',
 );
 
@@ -430,13 +430,13 @@ sub error_code {
   my $msg = shift;
   unless ($config{NOWRAP} eq 'TRUE') {
     $columns = 73;
-    unless ($config{NOCOLOR} eq 'TRUE') {
+    if ($config{COLOR} eq 'TRUE') {
       warn color($color_warn). wrap('', '', $msg). "\n";
     } else {
       warn wrap('', '', $msg). "\n";
     }
   } else {
-    unless ($config{NOCOLOR} eq 'TRUE') {
+    if ($config{COLOR} eq 'TRUE') {
       warn color($color_warn). "$msg\n";
     } else {
       warn "$msg\n";
@@ -847,9 +847,9 @@ sub lint_sbo_config {
       push @invalid, "$warn -c (TRUE or FALSE)";
     }
   }
-  if (exists $configs{NOCOLOR}) {
-    unless ($configs{NOCOLOR} =~ /^(TRUE|FALSE)$/) {
-      push @invalid, "NOCOLOR" if $running ne 'sboconfig';
+  if (exists $configs{COLOR}) {
+    unless ($configs{COLOR} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "COLOR" if $running ne 'sboconfig';
       push @invalid, "$warn -K (TRUE or FALSE)";
     }
   }
@@ -1025,7 +1025,7 @@ sub open_read {
   print_color "red bold";
 
 C<print_color()> takes one or more ANSI colors and prints, provided that the
-C<NOCOLOR> setting is C<FALSE>. See the C<Function Interface> section in
+C<COLOR> setting is C<TRUE>. See the C<Function Interface> section in
 C<Term::ANSIColor(3)> for a list of available colors.
 
 Using colors C<black> through C<bright_white>, C<bold> and C<reset> only is
@@ -1038,7 +1038,7 @@ There is no useful return value.
 =cut
 
 sub print_color {
-  return if $config{NOCOLOR} eq 'TRUE';
+  return if $config{COLOR} ne 'TRUE';
   script_error("print_color requires at least one argument; exiting.") unless @_;
   my $color = shift;
   print color($color) if colorvalid($color);
@@ -1095,13 +1095,13 @@ sub prompt {
   my $printcolor = colorvalid($color) ? $color : $color_default;
   unless ($config{NOWRAP} eq 'TRUE') {
     $columns = 73;
-    if ($config{NOCOLOR} eq 'FALSE') {
+    if ($config{COLOR} eq 'TRUE') {
       print color($printcolor). wrap('', '', $q). color($color_default);
     } else {
       print wrap('', '', $q);
     }
   } else {
-    if ($config{NOCOLOR} eq 'FALSE') {
+    if ($config{COLOR} eq 'TRUE') {
       print color($printcolor). $q. color($color_default);
     } else {
       print $q;
@@ -1129,8 +1129,8 @@ sub prompt {
 C<read_config()> reads in the configuration settings from
 C</etc/sbotools/sbotools.conf>, updating the C<%config> hash. If
 C<SBO_HOME> is C<FALSE>, it changes to C</usr/sbo>.
-Additionally, C<BUILD_IGNORE>, C<RSYNC_DEFAULT> and C<NOCOLOR>
-are turned on if C<CLASSIC> is C<TRUE>.
+Additionally, C<BUILD_IGNORE> and C<RSYNC_DEFAULT> are turned on
+if C<CLASSIC> is C<TRUE>; C<COLOR> is turned off.
 
 When C<sbotest> is running, the default value of C<SBO_HOME>
 is C</usr/sbotest>, and C<ETC_PROFILE> and C<CPAN_IGNORE> default
@@ -1158,7 +1158,7 @@ sub read_config {
   if ($config{CLASSIC} eq "TRUE") {
     $config{BUILD_IGNORE} = "TRUE";
     $config{RSYNC_DEFAULT} = "TRUE";
-    $config{NOCOLOR} = "TRUE";
+    $config{COLOR} = "FALSE";
   }
   unless (defined $is_sbotest) {
     $config{SBO_HOME} = '/usr/sbo' if $config{SBO_HOME} eq 'FALSE';
@@ -1272,13 +1272,13 @@ codes, use C<error_code()>.
 # subroutine for throwing internal script errors
 sub script_error {
   if (@_) {
-    unless ($config{NOCOLOR} eq 'TRUE') {
+    if ($config{COLOR} eq 'TRUE') {
       warn color($color_warn). "A fatal script error has occurred:\n$_[0]\nExiting.\n";
     } else {
       warn "A fatal script error has occurred:\n$_[0]\nExiting.\n";
     }
   } else {
-    unless ($config{NOCOLOR} eq 'TRUE') {
+    if ($config{COLOR} eq 'TRUE') {
       warn color($color_warn). "A fatal script error has occurred. Exiting.\n";
     } else {
       warn "A fatal script error has occurred. Exiting.\n";
@@ -1372,13 +1372,13 @@ sub usage_error {
   my $msg = shift;
   unless ($config{NOWRAP} eq 'TRUE') {
     $columns = 73;
-    unless($config{NOCOLOR} eq 'TRUE') {
+    if ($config{COLOR} eq 'TRUE') {
       warn color($color_warn). wrap('', '', $msg). "\n";
     } else {
       warn wrap('', '', $msg). "\n";
     }
   } else {
-    unless ($config{NOCOLOR} eq 'TRUE') {
+    if ($config{COLOR} eq 'TRUE') {
       warn color($color_warn). $msg. "\n";
     } else {
       warn "$msg\n";
@@ -1427,7 +1427,7 @@ sub version_cmp {
   warn_color($color, $msg);
 
 C<warn_color()> emits a warning in the chosen color and resets the color
-afterwards. No colors are used if C<NOCOLOR> is C<TRUE>. A newline is added
+afterwards. No colors are used unless C<COLOR> is C<TRUE>. A newline is added
 automatically after the message. There is no useful return value.
 
 =cut
@@ -1436,7 +1436,7 @@ sub warn_color {
   script_error("warn_color requires two arguments; exiting.") unless @_ == 2;
   my ($color, $message) = @_;
   my $warn_color = colorvalid($color) ? $color : $color_default;
-  unless ($config{NOCOLOR} eq 'TRUE') {
+  if ($config{COLOR} eq 'TRUE') {
     warn color($warn_color). $message. color($color_default). "\n";
     print color($color_default);
   } else {
@@ -1479,7 +1479,7 @@ sub wrapsay {
 
 C<wrapsay_color()> takes a color, a message and any true value if a trailing line
 is required. It applies a color, runs the message through C<wrapsay()> and
-resets the color afterwards. No colors are used if C<NOCOLOR> is C<TRUE>. There
+resets the color afterwards. No colors are used unless C<COLOR> is C<TRUE>. There
 is no useful return value.
 
 =cut
@@ -1495,9 +1495,9 @@ sub wrapsay_color {
     $extra_line = 1;
   }
   say "" if defined $extra_line;
-  print color($color) unless $config{NOCOLOR} eq 'TRUE';
+  print color($color) if $config{COLOR} eq 'TRUE';
   wrapsay($msg, $trail);
-  print color($color_default) unless $config{NOCOLOR} eq 'TRUE';
+  print color($color_default) if $config{COLOR} eq 'TRUE';
   return;
 }
 
