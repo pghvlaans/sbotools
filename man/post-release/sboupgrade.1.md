@@ -21,7 +21,7 @@
 
     sboupgrade [-h|-v]
 
-    sboupgrade [-Scbde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboupgrade [-SXcbde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
                [-fiopqrz] [--batch|--dry-run] --all|sbo_name (sbo_name)
 
@@ -62,6 +62,17 @@ flag may be passed to upgrade all eligible SlackBuilds simultaneously.
 **sboupgrade** verifies the local repository with **gpg(1)** if
 **GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
 Slackware 14.0 and Slackware 14.1.
+
+Upgrades to Slackware and third-party packages occasionally cause
+breakage due to **\*.so** version differences. To check for missing
+first-order shared object (solib) dependencies after running
+**sboupgrade** without rebuild-related flags, use **\--so-check TRUE**.
+Each affected package is logged to */var/log/sboupgrade-solibs.log* with
+a list of missing shared objects. This can be done automatically on
+every eligible **sboupgrade** run by setting **SO_CHECK** to **TRUE**.
+Please note that scripts repackaging from binary packages occasionally
+trigger false positives. Such packages generally do not require
+rebuilds.
 
 Root privileges are required to run **sboupgrade** unless passing
 **\--dry-run**. If an invalid configuration is detected in
@@ -184,6 +195,12 @@ If **TRUE**, only perform upgrades if the incoming version or build
 number is higher. This has no effect scripts in the local overrides
 directory. This option can be set as default via [sboconfig(1)](sboconfig.1.md). See
 also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
+
+**-X\|\--so-check (FALSE\|TRUE)**
+
+If **TRUE**, check for missing first-order shared object dependencies
+when running **sboupgrade** without rebuild-related flags. Overrides the
+**SO_CHECK** setting.
 
 **-z\|\--force-reqs**
 
@@ -325,7 +342,7 @@ None known. If found, Issues and Pull Requests to
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
 [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md),
-[sbotools.hints(5)](sbotools.hints.5.md), gpg(1), setarch(1)
+[sbotools.hints(5)](sbotools.hints.5.md), gpg(1), setarch(1), readelf(1)
 
 ## AUTHORS
 
