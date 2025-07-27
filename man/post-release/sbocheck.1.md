@@ -51,13 +51,12 @@ increment checks are disabled when **CLASSIC** is **TRUE**; if
 Upgrades to Slackware and third-party packages occasionally cause
 breakage due to **\*.so** version differences. To check for missing
 first-order shared object (solib) dependencies among all installed
-in-tree *\_SBo* packages with **readelf(1)**, use the **\--so-check**
-option. Each affected package is logged to
-*/var/log/sbocheck-solibs.log* with a list of missing shared objects.
-This can be done automatically on every **sbocheck** run by setting
-**SO_CHECK** to **TRUE**. Please note that scripts repackaging from
-binary packages occasionally trigger false positives. Such packages
-generally do not require rebuilds.
+in-tree *\_SBo* packages, use the **\--so-check** option. Each affected
+package is logged to */var/log/sbocheck-solibs.log* with a list of
+missing shared objects. This can be done automatically on every
+**sbocheck** run by setting **SO_CHECK** to **TRUE**. Please note that
+scripts repackaging from binary packages occasionally trigger false
+positives. Such packages generally do not require rebuilds.
 
 To check for updated SlackBuilds without updating the SlackBuilds tree,
 pass the **\--nopull** option. **sbocheck** performs **gpg(1)**
@@ -143,7 +142,7 @@ None known. If found, Issues and Pull Requests to
 
 [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md),
 [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md),
-[sbotools.hints(5)](sbotools.hints.5.md), gpg(1), readelf(1)
+[sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
 
 ## AUTHORS
 
