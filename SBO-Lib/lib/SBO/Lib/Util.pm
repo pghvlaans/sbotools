@@ -433,18 +433,18 @@ used, returning a decimal string.
 
 sub decimalize {
   script_error("decimalize requires two arguments.") unless @_ == 2;
-	my ($string, $big_endian) = @_;
+  my ($string, $big_endian) = @_;
   script_error("decimalize requires a string with an even number of characters.") unless length($string) % 2 == 0;
-	my $new_string;
-	unless ($big_endian) {
-		while ($string) {
-			$new_string .= substr $string, -2;
-			$string = substr $string, 0, length($string)-2;
-		}
-	} else {
-		$new_string = $string;
-	}
-	return hex $new_string;
+  my $new_string;
+  unless ($big_endian) {
+    while ($string) {
+      $new_string .= substr $string, -2;
+      $string = substr $string, 0, length($string)-2;
+    }
+  } else {
+    $new_string = $string;
+  }
+  return hex $new_string;
 }
 
 =head2 elf_links
