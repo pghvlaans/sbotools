@@ -38,6 +38,8 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbofind: Report package installation status
   * sbocheck: Attempt to report why scripts are out-of-tree
   * Util.pm: Block /root, /home (and its top-level directories) and / as directory settings and for $TMP
+  * sbocheck, sboupgrade: Optionally check all SBO packages for missing shared objects
+  * Add setting SO_CHECK to enable automatic shared object checks for sbocheck and sboupgrade
 
 #### 3.7 - 2025-07-04
   * Optimize queue construction: Shared dependency handling and rationalize_queue

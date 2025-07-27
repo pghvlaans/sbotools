@@ -138,6 +138,12 @@ If set to a **version number**, use the **SlackBuilds.org** repository
 for that version of Slackware rather than the one specified in
 */etc/slackware-version*.
 
+**SO_CHECK=(FALSE\|TRUE)**
+
+If set to **TRUE**, check for missing first-order shared object (solib)
+dependencies among *\_SBo* packages when running [sbocheck(1)](sbocheck.1.md) and
+[sboupgrade(1)](sboupgrade.1.md).
+
 **REPO=(FALSE\|url\|/path)**
 
 If set to a git or rsync **URL**, use that repository instead of the

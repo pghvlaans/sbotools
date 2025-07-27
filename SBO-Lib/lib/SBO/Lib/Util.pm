@@ -47,6 +47,7 @@ my @EXPORT_CONSTS = keys %$consts;
 my @EXPORT_CONFIG = qw{
   read_config
 
+  $arch
   $conf_dir
   $conf_file
   $color_file
@@ -90,7 +91,6 @@ our @EXPORT_OK = (
     check_multilib
     dangerous_directory
     error_code
-    get_arch
     get_colors
     get_kernel_version
     get_optional
@@ -101,12 +101,14 @@ our @EXPORT_OK = (
     idx
     in
     indent
+    is_elf
     is_obsolete
     lint_sbo_config
     obsolete_array
     on_blacklist
     open_fh
     open_read
+    parse_readelf
     print_color
     print_failures
     prompt
@@ -152,6 +154,10 @@ SBO::Lib::Util - Utility functions for SBO::Lib and the sbotools
 
 =head1 VARIABLES
 
+=head2 $arch
+
+The kernel architecture, accounting for C<i?86> userlands reporting a C<x86_64> kernel.
+
 =head2 ($color_default, $color_lesser, $color_notice, $color_warn)
 
 These variables are ANSI colors. C<$color_notice> is C<cyan> for selected
@@ -180,7 +186,7 @@ C</usr/sbo> if still C<"FALSE">.
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
-C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP> and C<COLOR>.
+C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<COLOR> and C<SO_CHECK>.
 
 =head2 $download_time
 
@@ -246,6 +252,8 @@ kernel.
 
 =cut
 
+our $arch = get_arch();
+
 # global config variables
 my $req_dir = $ENV{SBOTOOLS_CONF_DIR};
 our $conf_dir = defined $req_dir ? $req_dir : '/etc/sbotools';
@@ -279,6 +287,7 @@ our %config = (
   LOG_DIR => 'FALSE',
   COLOR => 'FALSE',
   NOWRAP => 'FALSE',
+  SO_CHECK => 'FALSE',
 );
 
 if (defined $is_sbotest) {
@@ -478,12 +487,15 @@ C<get_arch()> returns the machine architechture as reported by C<uname
 -m>. For the C<x86_64> architecture, additionally check whether C</bin/bash>
 is 64- or 32-bit to account for 32-bit userlands running on a 64-bit kernel.
 
+C<get_arch> is not exported; use the exported variable C<$arch> if it is necessary
+to check for architecture.
+
 =cut
 
 sub get_arch {
   chomp(my $arch = `uname -m`);
   if ($arch eq "x86_64") {
-    if (`file /bin/bash` =~ m/32-bit/) {
+    if (is_elf("/bin/bash") lt 0) {
       $arch = "i686";
       $userland_32 = 1;
     }
@@ -738,6 +750,36 @@ sub indent {
   return join "\n", @lines;
 }
 
+=head2 is_elf
+
+  my $is_elf = is_elf($file);
+
+C<is_elf()> takes a path and checks whether it is an ELF binary; please note that
+the C<relocatable> type is disregarded for the purposes of C<sbotools>.
+
+The return value is 0 for a non-ELF file, 1 for a 64-bit ELF file and -1 for a 32-bit
+ELF file.
+
+=cut
+
+sub is_elf {
+  script_error("is_elf requires an argument; exiting.") unless @_ == 1;
+  my $file = shift;
+  open my $fh, "<:raw", $file or return 0;
+  my $read_in = read $fh, my $contents, 18;
+  close $fh;
+  undef $fh;
+  unless (defined $read_in) { return 0; }
+  unless ($read_in == 18) { return 0; }
+  # two bits at a time for H, one byte at a time for x
+  my ($elf, $elf_type, $end, $type) = unpack "H8 H2 H2 x10 H4", $contents;
+  unless ($elf eq "7f454c46") { return 0; } # ELF magic bytes
+  if ($end eq "01" and $type =~ m/^01/) { return 0; } # little-endian
+  if ($end eq "02" and $type =~ m/01$/) { return 0; } # big-endian
+  unless ($elf_type eq "01" or $elf_type eq "02") { return 0 }; # 32- and 64-bit ELF
+  return $elf_type = $elf_type eq "02" ? "1" : "-1";
+}
+
 =head2 is_obsolete
 
   my $is_obsolete = check_obsolete($sbo);
@@ -900,6 +942,12 @@ sub lint_sbo_config {
       push @dangerous, "SBO_HOME: $configs{SBO_HOME}" if dangerous_directory($configs{SBO_HOME});
     }
   }
+  if (exists $configs{SO_CHECK}) {
+    unless ($configs{SO_CHECK} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "SO_CHECK" if $running ne 'sboconfig';
+      push @invalid, "$warn -X (TRUE or FALSE)";
+    }
+  }
   if (exists $configs{STRICT_UPGRADES}) {
     unless ($configs{STRICT_UPGRADES} =~ /^(TRUE|FALSE)$/) {
       push @invalid, "STRICT_UPGRADES:" if $running ne 'sboconfig';
@@ -1018,6 +1066,24 @@ is non-zero, it returns an error message rather than a file handle.
 
 sub open_read {
   return open_fh(shift, '<');
+}
+
+=head2 parse_readelf
+
+  my $so_candidate = parse_readelf($readelf_line);
+
+C<parse_readelf()> takes a line of C<readelf(1)> output and returns the name of
+the C<NEEDED> shared object (solib) inside, if any.
+
+=cut
+
+sub parse_readelf {
+  script_error("parse_readelf requires an argument.") unless @_ == 1;
+  my $cand = shift;
+  return 0 unless $cand =~ m/NEEDED/;
+  my $res = (split('\[', $cand))[1];
+  $res =~ s/\]$//;
+  return $res;
 }
 
 =head2 print_color
@@ -1524,7 +1590,7 @@ The sbotools share the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), Term::ANSIColor(3)
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), Term::ANSIColor(3), readelf(1)
 
 =head1 AUTHORS
 

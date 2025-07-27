@@ -27,6 +27,7 @@ _arguments -s -C \
 	   '(-z --force-reqs)'{-z,--force-reqs}'[Force update of requirements.]' \
 	   '(-i --noinstall)'{-i,--noinstall}'[Build package but do not install.]' \
 	   '(-S --strict-upgrades)'{-S,--strict-upgrades}'[If TRUE, then only perform non-override upgrades if the version or build number is greater.]:strict versions?:((TRUE\:"Strict upgrades only." FALSE\:"Upgrade on differing version and build number."))' \
+	   '(-X --so-check)'{-X,--so-check}'[If TRUE, then check for missing shared object dependencies after building.]:solib check?:((TRUE\:"Check for shared objects." FALSE\:"No shared object check."))' \
 	   '--batch[Be non-interactive and calculate dependencies; use with caution.]' \
 	   '(-D --dry-run)'{-D,--dry-run}'[Print the potential queue and exit.]' \
 	   '(-)*:SlackBuild:(${sboupdates:|words})' \

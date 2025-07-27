@@ -30,6 +30,7 @@ _arguments \
     '(-R --rsync)'{-R,--rsync}'[If TRUE, then default mirrors are rsync except for -current.]:rsync default mirror?:((TRUE\:"Default mirrors are rsync." FALSE\:"No rsync preference."))' \
     '(-S --strict-upgrades)'{-S,--strict-upgrades}'[If TRUE, then only perform non-override upgrades if the version or build number is greater.]:strict versions?:((TRUE\:"Strict upgrades only." FALSE\:"Upgrade on differing version and build number."))' \
     '(-w --nowrap)'{-w,--nowrap}'[If TRUE, then do not wrap sbotools output.]:disable sbotools output wrapping?:((TRUE\:"Wrapping is disabled." FALSE\:"Wrapping is enabled."))' \
+    '(-X --so-check)'{-X,--so-check}'[If TRUE, then check for missing shared objects when running sbocheck and sboupgrade.]:sbocheck and sboupgrade check for missing .so dependencies?:((TRUE\:"sbocheck and sboupgrade find missing shared objects." FALSE\:"No automatic shared object check."))' \
     && return 0
 
 return 1

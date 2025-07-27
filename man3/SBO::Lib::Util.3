@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Prickle-Prickle, Confusion 58, 3191 YOLD" "" "sbotools 3.7"
+.TH SBO::Lib::Util 3 "Boomtime, Confusion 61, 3191 YOLD" "" "sbotools 3.7"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -75,6 +75,10 @@ SBO::Lib::Util \- Utility functions for SBO::Lib and the sbotools
 .Ve
 .SH VARIABLES
 .IX Header "VARIABLES"
+.ie n .SS $arch
+.el .SS \f(CW$arch\fP
+.IX Subsection "$arch"
+The kernel architecture, accounting for \f(CW\*(C`i?86\*(C'\fR userlands reporting a \f(CW\*(C`x86_64\*(C'\fR kernel.
 .ie n .SS "($color_default, $color_lesser, $color_notice, $color_warn)"
 .el .SS "($color_default, \f(CW$color_lesser\fP, \f(CW$color_notice\fP, \f(CW$color_warn\fP)"
 .IX Subsection "($color_default, $color_lesser, $color_notice, $color_warn)"
@@ -104,7 +108,7 @@ they change according to the configuration. \f(CW\*(C`SBO_HOME\*(C'\fR is change
 The supported keys are: \f(CW\*(C`NOCLEAN\*(C'\fR, \f(CW\*(C`DISTCLEAN\*(C'\fR, \f(CW\*(C`JOBS\*(C'\fR, \f(CW\*(C`PKG_DIR\*(C'\fR,
 \&\f(CW\*(C`SBO_HOME\*(C'\fR, \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR, \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR, \f(CW\*(C`REPO\*(C'\fR, \f(CW\*(C`BUILD_IGNORE\*(C'\fR,
 \&\f(CW\*(C`GPG_VERIFY\*(C'\fR, \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR, \f(CW\*(C`STRICT_UPGRADES\*(C'\fR, \f(CW\*(C`GIT_BRANCH\*(C'\fR, \f(CW\*(C`CLASSIC\*(C'\fR,
-\&\f(CW\*(C`CPAN_IGNORE\*(C'\fR, \f(CW\*(C`ETC_PROFILE\*(C'\fR, \f(CW\*(C`LOG_DIR\*(C'\fR, \f(CW\*(C`NOWRAP\*(C'\fR and \f(CW\*(C`COLOR\*(C'\fR.
+\&\f(CW\*(C`CPAN_IGNORE\*(C'\fR, \f(CW\*(C`ETC_PROFILE\*(C'\fR, \f(CW\*(C`LOG_DIR\*(C'\fR, \f(CW\*(C`NOWRAP\*(C'\fR, \f(CW\*(C`COLOR\*(C'\fR and \f(CW\*(C`SO_CHECK\*(C'\fR.
 .ie n .SS $download_time
 .el .SS \f(CW$download_time\fP
 .IX Subsection "$download_time"
@@ -229,6 +233,9 @@ value.
 \&\f(CWget_arch()\fR returns the machine architechture as reported by \f(CW\*(C`uname
 \&\-m\*(C'\fR. For the \f(CW\*(C`x86_64\*(C'\fR architecture, additionally check whether \f(CW\*(C`/bin/bash\*(C'\fR
 is 64\- or 32\-bit to account for 32\-bit userlands running on a 64\-bit kernel.
+.PP
+\&\f(CW\*(C`get_arch\*(C'\fR is not exported; use the exported variable \f(CW$arch\fR if it is necessary
+to check for architecture.
 .SS get_colors
 .IX Subsection "get_colors"
 .Vb 1
@@ -316,6 +323,17 @@ was found, and a false value otherwise.
 .PP
 \&\f(CWindent()\fR indents every non\-empty line in \f(CW$text\fR by \f(CW$indent\fR spaces and
 returns the resulting string.
+.SS is_elf
+.IX Subsection "is_elf"
+.Vb 1
+\&  my $is_elf = is_elf($file);
+.Ve
+.PP
+\&\f(CWis_elf()\fR takes a path and checks whether it is an ELF binary; please note that
+the \f(CW\*(C`relocatable\*(C'\fR type is disregarded for the purposes of \f(CW\*(C`sbotools\*(C'\fR.
+.PP
+The return value is 0 for a non\-ELF file, 1 for a 64\-bit ELF file and \-1 for a 32\-bit
+ELF file.
 .SS is_obsolete
 .IX Subsection "is_obsolete"
 .Vb 1
@@ -375,6 +393,14 @@ is non\-zero, it returns an error message rather than a file handle.
 .PP
 It returns two values: the file handle and the exit status. If the exit status
 is non\-zero, it returns an error message rather than a file handle.
+.SS parse_readelf
+.IX Subsection "parse_readelf"
+.Vb 1
+\&  my $so_candidate = parse_readelf($readelf_line);
+.Ve
+.PP
+\&\f(CWparse_readelf()\fR takes a line of \f(CWreadelf(1)\fR output and returns the name of
+the \f(CW\*(C`NEEDED\*(C'\fR shared object (solib) inside, if any.
 .SS print_color
 .IX Subsection "print_color"
 .Vb 1
@@ -595,7 +621,7 @@ The sbotools share the following exit codes:
 .Ve
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
-\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBTerm::ANSIColor\fR\|(3)
+\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBTerm::ANSIColor\fR\|(3), \fBreadelf\fR\|(1)
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
