@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_sbo_locations get_user_group in is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue readelf_check verify_gpg %config show_version lint_sbo_config wrapsay /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_sbo_locations get_user_group in is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue solib_check verify_gpg %config show_version lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -719,7 +719,7 @@ if ($config{SO_CHECK} eq "TRUE" and not $reverse and not $no_install) {
 		for my $sbo (keys %$installed_pkg) {
 			$count++;
 			print "\rChecking packages for missing shared objects... ($count / $pkg_count)";
-			push @actionable, $sbo unless readelf_check($installed_pkg->{$sbo});
+			push @actionable, $sbo unless solib_check($installed_pkg->{$sbo});
 		}
 		$| = 0;
 		if (@actionable) {
