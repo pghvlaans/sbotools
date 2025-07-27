@@ -341,7 +341,7 @@ sub get_removed_builds {
   my $solibs_good = solib_check($pkg);
 
 C<solib_check()> takes the name of a package file and checks for the presence of any
-required first-order shard object dependencies as based on the C<@native_libs> shared
+required first-order shared object dependencies as based on the C<@native_libs> shared
 object array. It returns 1 if all required shared objects appear to be present and 0
 otherwise.
 
