@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.7';
 
-use SBO::Lib::Util qw/ :const :times :colors idx prompt error_code script_error get_sbo_from_loc get_arch check_multilib on_blacklist open_fh open_read uniq save_options wrapsay %config in $userland_32 /;
+use SBO::Lib::Util qw/ :config :const :times :colors idx prompt error_code script_error get_sbo_from_loc check_multilib on_blacklist open_fh open_read uniq save_options wrapsay in $userland_32 /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires get_reverse_reqs /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
@@ -202,7 +202,6 @@ sub do_slackbuild {
   $args{LOCATION} or script_error('do_slackbuild requires LOCATION.');
   my $location = $args{LOCATION};
   my $sbo = get_sbo_from_loc($location);
-  my $arch = get_arch();
   my $multilib = check_multilib();
   my $version = get_sbo_version($location);
   my $x32;

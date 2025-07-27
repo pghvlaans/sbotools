@@ -8,6 +8,7 @@ _arguments \
     '(-)'{-g,--gpg-verify}'[Verify with gpg.]:' \
     '(-)'{-O,--obsolete-check}'[In -current, download the obsolete scripts list.]:' \
     '(-)'{-n,--nopull}'[Check for updates without updating the tree.]:' \
+    '(-)'{-X,--so-check}'[Check for missing shared objects only.]:' \
     '(-)'{--nocolor}'[Disable sbotools color output.]:'\
     '(-)'{--color}'[Enable sbotools color output.]:'\
     && return 0

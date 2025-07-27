@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :const :colors auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates get_arch prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_sbo_locations get_user_group in is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue verify_gpg %config show_version lint_sbo_config wrapsay /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_sbo_locations get_user_group in is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue solib_check verify_gpg %config show_version lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -67,6 +67,8 @@ Options (defaults shown first where applicable):
     non-interactive; skips README and all prompts.
   -S|--strict-upgrades (FALSE|TRUE):
     if TRUE, SBo upgrades only when the version or build number is higher.
+  -X|--so-check (FALSE|TRUE):
+    if TRUE, check for missing .so dependencies if needed.
   -z|--force-reqs:
     rebuild dependencies as well.
 EOF
@@ -80,7 +82,7 @@ my $build_ignore = $config{BUILD_IGNORE};
 my $gpg = $config{GPG_VERIFY};
 my $strict_upgrades = $config{STRICT_UPGRADES};
 my $etc_profile = $config{ETC_PROFILE};
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $pkg_dir, $log_dir, $nocolor, $color);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $pkg_dir, $log_dir, $nocolor, $color, $socheck);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -105,6 +107,7 @@ my $options_ok = GetOptions(
 	'log-dir|L=s'       => \$log_dir,
 	'nocolor'           => \$nocolor,
 	'color'             => \$color,
+	'so-check|X=s'      => \$socheck,
 );
 
 if ($help) {
@@ -179,6 +182,11 @@ if ($log_dir) {
 		unless ($log_dir =~ /^(\/|FALSE$)/);
 }
 
+if ($socheck) {
+	usage_error("You have provided an invalid value for -X|--so-check")
+		unless ($socheck =~ /^(TRUE|FALSE)$/);
+}
+
 $noclean = $noclean eq 'TRUE' ? 1 : 0;
 $distclean = $distclean eq 'TRUE' ? 1 : 0;
 $build_ignore = $build_ignore eq 'TRUE' ? 1 : 0;
@@ -188,6 +196,7 @@ $config{STRICT_UPGRADES} = $strict_upgrades if $strict_upgrades;
 $config{ETC_PROFILE} = $etc_profile if $etc_profile;
 $config{PKG_DIR} = $pkg_dir if $pkg_dir;
 $config{LOG_DIR} = $log_dir if $log_dir;
+$config{SO_CHECK} = $socheck if $socheck;
 
 usage_error("force-reqs is incompatible with nointeractive.")
 	if $non_int && $force_reqs;
@@ -253,7 +262,7 @@ if (@ARGV and $compat32) {
 			wrapsay_color $color_lesser, "$sbo not found; skipping.";
 		}
 	}
-} elsif (@ARGV and not get_arch() =~ m/64/) {
+} elsif (@ARGV and not $arch =~ m/64/) {
 	for my $sbo (@ARGV) {
 		my $sbo_location = get_sbo_location($sbo);
 		if ($sbo_location) {
@@ -266,7 +275,7 @@ if (@ARGV and $compat32) {
 			wrapsay_color $color_lesser, "$sbo not found; skipping.";
 		}
 	}
-} elsif (@ARGV and get_arch() =~ m/64/) {
+} elsif (@ARGV and $arch =~ m/64/) {
 	for my $sbo (@ARGV) {
 		my $sbo_location = get_sbo_location($sbo);
 		if ($sbo_location) {
@@ -697,6 +706,42 @@ my ($failures, $exit) = process_sbos(
 	NON_INT   => $non_int,
 );
 print_failures($failures);
+
+if ($config{SO_CHECK} eq "TRUE" and not $reverse and not $no_install) {
+	print "\nChecking packages for missing shared objects...";
+	my (@actionable, @log_output);
+	my @new_installed = @{ get_installed_packages("SBO") };
+	my $installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @new_installed };
+	my $pkg_count = @new_installed;
+	my $count = 0;
+	if ($pkg_count) {
+		$| = 1;
+		for my $sbo (keys %$installed_pkg) {
+			$count++;
+			print "\rChecking packages for missing shared objects... ($count / $pkg_count)";
+			push @actionable, $sbo unless solib_check($installed_pkg->{$sbo});
+		}
+		$| = 0;
+		if (@actionable) {
+			wrapsay_color $color_lesser, "\nThe following packages may require rebuilding:";
+			for my $sbo (sort @actionable) { print "  $sbo\n"; }
+			for my $sbo (sort @actionable) { push @log_output, "  $sbo:\n$old_libs{$installed_pkg->{$sbo}}\n"; }
+			wrapsay_color $color_lesser, "Binary repackages generally do not require rebuilds.";
+		}
+		my $logfile = '/var/log/sboupgrade-solibs.log';
+		unlink $logfile if -f $logfile;
+		my ($log_fh, $exit) = open_fh($logfile, '>');
+		if ($exit) {
+			warn_color $color_lesser, $log_fh;
+		} else {
+			say {$log_fh} $_ for @log_output;
+			close $log_fh;
+			wrapsay "See $logfile for a breakdown of missing shared objects.";
+		}
+	}
+} elsif ($config{SO_CHECK} eq "TRUE" and $reverse and not $no_install) {
+	wrapsay_color $color_lesser, "\nUsed a rebuild option; skipping the shared object check.";
+}
 
 if ($exit) {
 	exit $exit;

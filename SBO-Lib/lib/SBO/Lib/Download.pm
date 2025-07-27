@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.7';
 
-use SBO::Lib::Util qw/ :const :times script_error get_sbo_from_loc open_read get_arch /;
+use SBO::Lib::Util qw/ :config :const :times script_error get_sbo_from_loc open_read /;
 use SBO::Lib::Repo qw/ $distfiles /;
 use SBO::Lib::Info qw/ get_download_info /;
 
@@ -265,7 +265,6 @@ sub get_sbo_downloads {
   $args{LOCATION} or script_error('get_sbo_downloads requires LOCATION.');
   my $location = $args{LOCATION};
   -d $location or script_error('get_sbo_downloads was given a non-directory.');
-  my $arch = get_arch();
   my $dl_info;
   if ($arch eq 'x86_64') {
     $dl_info = get_download_info(LOCATION => $location) unless $args{32};

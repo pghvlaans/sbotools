@@ -363,6 +363,25 @@ the one specified in
 .RE
 .P
 .B
+SO_CHECK=(FALSE|TRUE)
+.RS
+If set to
+.B
+TRUE\fR\
+\&, check for missing first-order shared object (solib) dependencies
+among
+.I
+_SBo
+packages when running
+.B
+sbocheck(1)
+and
+.B
+sboupgrade(1)\fR\
+\&.
+.RE
+.P
+.B
 REPO=(FALSE|url|/path)
 .RS
 If set to a git or rsync

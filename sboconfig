@@ -86,6 +86,8 @@ Configuration options (defaults shown):
       STRICT_UPGRADES: only upgrade when the version or build number is higher.
   -w|--nowrap FALSE:
       NOWRAP: do not automatically wrap sbotools output.
+  -X|--so-check FALSE:
+      SO_CHECK: check for missing .so dependencies when running sbocheck and sboupgrade.
 
 Use $label without options for an interactive menu.
 EOF
@@ -150,6 +152,8 @@ Configuration options (defaults shown):
       STRICT_UPGRADES: with --archive-rebuild, only delete when the version or build number is lower.
   -w|--nowrap FALSE:
       NOWRAP: do not automatically wrap sbotest output.
+  -X|--so-check FALSE:
+      SO_CHECK: check for missing .so dependencies when running sbocheck.
 
 Use $label without options for an interactive menu.
 EOF
@@ -165,14 +169,14 @@ unless ($is_sbotest) {
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'color|K=s');
+		'nowrap|w=s', 'color|K=s', 'so-check|X=s');
 } else {
 	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'color|K=s', 'sbo-archive|A=s');
+		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'sbo-archive|A=s');
 }
 
 $options{list} = 1 if exists $options{'non-default'};
@@ -208,6 +212,7 @@ my %valid_confs = (
 	'log-dir'           => 'LOG_DIR',
 	color               => 'COLOR',
 	nowrap              => 'NOWRAP',
+	'so-check'          => 'SO_CHECK',
 );
 $valid_confs{"sbo-archive"} = 'SBO_ARCHIVE' if $is_sbotest;
 
@@ -232,6 +237,7 @@ my %params = (
 	LOG_DIR           => 'L|--log-dir',
 	COLOR             => 'K|--color',
 	NOWRAP            => 'w|--nowrap',
+	SO_CHECK          => 'X|--so-check',
 );
 $params{SBO_ARCHIVE} = 'A|--sbo-archive' if $is_sbotest;
 
@@ -391,6 +397,8 @@ sub interactive_menu {
 	CPAN_IGNORE: config_prompt("CPAN_IGNORE", "If TRUE, install scripts even if they are installed from the CPAN.", "TRUE or FALSE.", "TF");
 
 	NOWRAP: config_prompt("NOWRAP", "If TRUE, do not wrap sbotools output.", "TRUE or FALSE.", "TF");
+
+	SO_CHECK: config_prompt("SO_CHECK", "If TRUE, sbocheck and sboupgrade look for missing shared objects among SBo packages.", "TRUE or FALSE.", "TF");
 
 	OBSOLETE_CHECK: config_prompt("OBSOLETE_CHECK", "If TRUE, sbocheck updates the obsolete script list from the sbotools home page.", "TRUE or FALSE.", "TF");
 

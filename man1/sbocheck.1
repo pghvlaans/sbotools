@@ -11,7 +11,7 @@ tree and check for updates
 .P
 sbocheck [-h|-v]
 .P
-sbocheck [-Ogn]
+sbocheck [-OXgn]
 .P
 sbocheck [--color|--nocolor] ...
 .SH DESCRIPTION
@@ -98,6 +98,35 @@ or
 sbotools.conf(5)\fR\
 ).
 .P
+Upgrades to Slackware and third-party packages occasionally cause breakage due to
+.B
+*.so
+version differences. To check for missing first-order shared object (solib) dependencies
+among all installed in-tree
+.I
+_SBo
+packages with
+.B
+readelf(1)\fR\
+\&, use the
+.B
+--so-check
+option. Each affected package is logged to
+.I
+/var/log/sbocheck-solibs.log
+with a list of missing shared objects. This can be done automatically on every
+.B
+sbocheck
+run
+by setting
+.B
+SO_CHECK
+to
+.B
+TRUE\fR\
+\&. Please note that scripts repackaging from binary packages occasionally trigger
+false positives. Such packages generally do not require rebuilds.
+.P
 To check for updated SlackBuilds without updating the SlackBuilds
 tree, pass
 the
@@ -150,6 +179,9 @@ sbocheck
 with the
 .B
 --nopull\fR\
+\&,
+.B
+--so-check\fR\
 \&,
 .B
 --help
@@ -227,6 +259,30 @@ flag can be used without root privileges, but no log is kept.
 .RE
 .P
 .B
+-X|--so-check
+.RS
+Check all installed
+.I
+_SBo
+packages for missing shared object dependencies; no other operations are
+performed. To do this automatically every time
+.B
+sbocheck
+is run, set
+.B
+SO_CHECK
+to
+.B
+TRUE
+(see
+.B
+sboconfig(1)
+or
+.B
+sbotools.conf(5)\fR\
+\&).
+.P
+.B
 -h|--help
 .RS
 Show help information.
@@ -293,7 +349,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), gpg(1)
+sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), gpg(1), readelf(1)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>

@@ -25,7 +25,7 @@
 
     sboconfig [--reset]
 
-    sboconfig [-CKPORScbdegw TRUE|FALSE] [-j #|FALSE] [-Lpo
+    sboconfig [-CKPORSXcbdegw TRUE|FALSE] [-j #|FALSE] [-Lpo
 /path\|FALSE] \
               [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \
               [-r url|FALSE]
@@ -202,6 +202,12 @@ scripts in the local overrides directory.
 **-w\|\--nowrap (FALSE\|TRUE)**
 
 **NOWRAP**: If set to **TRUE**, do not wrap **sbotools** output.
+
+**-X\|\--so-check (FALSE\|TRUE)**
+
+**SO_CHECK**: If set to **TRUE**, check for missing first-order shared
+object (solib) dependencies among *\_SBo* packages when running
+[sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md).
 
 ## SBOTEST
 

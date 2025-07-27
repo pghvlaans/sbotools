@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.7';
 
-use SBO::Lib::Util qw/ :const in get_arch get_sbo_from_loc get_optional open_read script_error slurp usage_error error_code uniq wrapsay /;
+use SBO::Lib::Util qw/ :config :const in get_sbo_from_loc get_optional open_read script_error slurp usage_error error_code uniq wrapsay /;
 use SBO::Lib::Tree qw/ get_orig_location get_sbo_location get_sbo_locations is_local /;
 
 use Exporter 'import';

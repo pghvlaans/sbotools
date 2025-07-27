@@ -15,7 +15,7 @@ sboconfig [-l|-n]
 .P
 sboconfig [--reset]
 .P
-sboconfig [-CKPORScbdegw TRUE|FALSE] [-j #|FALSE] [-Lpo /path|FALSE] \\
+sboconfig [-CKPORSXcbdegw TRUE|FALSE] [-j #|FALSE] [-Lpo /path|FALSE] \\
           [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \\
           [-r url|FALSE]
 .SH DESCRIPTION
@@ -527,6 +527,27 @@ TRUE\fR\
 .B
 sbotools
 output.
+.RE
+.P
+.B
+-X|--so-check (FALSE|TRUE)
+.RS
+.B
+SO_CHECK\fR\
+\&: If set to
+.B
+TRUE\fR\
+\&, check for missing first-order shared object (solib) dependencies
+among
+.I
+_SBo
+packages when running
+.B
+sbocheck(1)
+and
+.B
+sboupgrade(1)\fR\
+\&.
 .RE
 .SH SBOTEST
 .B

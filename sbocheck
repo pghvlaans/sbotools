@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree build_cmp get_available_updates get_removed_builds get_obsolete script_error open_fh is_local is_obsolete show_version get_local_outdated_versions on_blacklist open_read $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors %config /;
+use SBO::Lib qw/ update_tree build_cmp get_available_updates get_installed_packages get_removed_builds get_obsolete script_error open_fh is_local is_obsolete show_version get_local_outdated_versions on_blacklist open_read solib_check $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors %old_libs %config /;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 use File::Basename;
 use List::Util 'max';
@@ -39,13 +39,15 @@ Options:
     download an updated list of obsolete scripts.
   -n|--nopull:
     run without updating the tree.
+  -X|--so-check:
+    check for missing shared objects only.
 EOF
 	return 1;
 }
 
-my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color);
+my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck);
 
-GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color);
+GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'X|so-check' => \$socheck);
 
 if ($help) {
 	show_usage();
@@ -55,9 +57,9 @@ if ($help) {
 if ($vers) { show_version(); exit 0 }
 $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
 if ($< != 0) { $config{GPG_VERIFY} = "FALSE"; }
-unless ($< == 0 or ($nopull and not $gpg)) {
+unless ($< == 0 or ($nopull and not $gpg) or $socheck) {
 	show_usage();
-	usage_error "Non-root users can call $self with -n, -h and -v." unless $< == 0;
+	usage_error "Non-root users can call $self with -n, -X, -h and -v." unless $< == 0;
 }
 
 usage_error "obsolete-check is incompatible with nopull." if $nopull and $obsolete_check;
@@ -77,10 +79,34 @@ if ($obsolete_check) {
 	exit 0;
 }
 
-update_tree() unless $nopull;
-if ($nopull and slackbuilds_or_fetch()) {
+update_tree() unless $nopull or $socheck;
+if (($nopull or $socheck) and slackbuilds_or_fetch()) {
 	wrapsay_color $color_notice, "Not updating the SlackBuilds tree...";
 	wrapsay_color $color_notice, "Not writing log files..." unless $< == 0;
+}
+
+# check for and display missing shared objects
+sub evaluate_solibs {
+	print "\nChecking packages for missing shared objects...";
+	my (@actionable, @to_rebuild);
+	my @installed = @{ get_installed_packages('SBO') };
+	my $installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @installed };
+	my $installed_vers = +{ map {; $_->{name}, $_->{version} } @installed };
+	my $pkg_count = @installed;
+	my $count = 0;
+	return unless $pkg_count;
+	$| = 1;
+	for my $sbo (keys %$installed_pkg) {
+			$count++;
+			print "\rChecking packages for missing shared objects... ($count / $pkg_count)";
+		push @actionable, $sbo unless solib_check($installed_pkg->{$sbo});
+	}
+	$| = 0;
+	print "\nChecked for missing objects.      ";
+	if (@actionable) {
+		for my $sbo (sort @actionable) { push @to_rebuild, "$sbo $installed_vers->{$sbo}:\n$old_libs{$installed_pkg->{$sbo}}"; }
+	}
+	return @to_rebuild;
 }
 
 # retrieve and format list of removed builds
@@ -247,11 +273,27 @@ sub print_output {
 	}
 	if($logfile eq '/var/log/sbocheck-bumps.log') { $message="\tNo build numbers differ."; }
 	if($logfile eq '/var/log/sbocheck-out-of-tree.log') { $message="\tNo out-of-tree _SBo builds."; }
+	if($logfile eq '/var/log/sbocheck-solibs.log') { $message="\tNo missing shared objects."; }
 	if (@listing) {
 		if ($config{CLASSIC} ne "TRUE" and $< == 0) { print_color $color_notice; print "\tSee $logfile.\n\n"; print_color $color_default; }
-		else { print "\n"; }
-		say $_ for @listing;
-		print "\n" unless $logfile eq '/var/log/sbocheck-out-of-tree.log';
+		else { print "\n\n"; }
+		if ($config{SO_CHECK} eq "TRUE" or $socheck) {
+			for my $listing (@listing) {
+				my $print_line = (split "\n", $listing)[0];
+				$print_line =~ s/\:$//;
+				say $print_line;
+			}
+			if ($logfile eq '/var/log/sbocheck-solibs.log') {
+				wrapsay_color $color_lesser, "\nBinary repackages generally do not require rebuilds.";
+				wrapsay "See $logfile for a breakdown of missing shared objects." if $< == 0;
+				wrapsay "Run as root and see $logfile for a breakdown of missing shared objects." if $< != 0;
+			} else {
+				print "\n";
+			}
+		} else {
+			say $_ for @listing;
+			print "\n" unless $logfile eq '/var/log/sbocheck-out-of-tree.log';
+		}
 		# root can save a log of available updates
 		if ($< == 0) {
 			unlink $logfile if -f $logfile;
@@ -271,13 +313,19 @@ sub print_output {
 	return 1;
 }
 
-my @listing = get_update_list('VERS');
-print_output('/var/log/sbocheck.log', @listing);
-if ($config{CLASSIC} ne "TRUE") {
-	my @bumps = get_update_list('BUILD');
-	print_output('/var/log/sbocheck-bumps.log', @bumps);
-	my @removed = get_removed_list();
-	print_output('/var/log/sbocheck-out-of-tree.log', @removed);
+unless ($socheck) {
+	my @listing = get_update_list('VERS');
+	print_output('/var/log/sbocheck.log', @listing);
+	if ($config{CLASSIC} ne "TRUE") {
+		my @bumps = get_update_list('BUILD');
+		print_output('/var/log/sbocheck-bumps.log', @bumps);
+		my @removed = get_removed_list();
+		print_output('/var/log/sbocheck-out-of-tree.log', @removed);
+	}
+}
+if ($socheck or $config{SO_CHECK} eq "TRUE") {
+	my @to_rebuild = evaluate_solibs();
+	print_output('/var/log/sbocheck-solibs.log', @to_rebuild);
 }
 wrapsay "\nWarning: Local overrides directory $config{LOCAL_OVERRIDES} does not exist." if $config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES};
 

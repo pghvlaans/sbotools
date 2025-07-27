@@ -8,7 +8,7 @@ sboupgrade
 .P
 sboupgrade [-h|-v]
 .P
-sboupgrade [-Scbde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboupgrade [-SXcbde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-fiopqrz] [--batch|--dry-run] --all|sbo_name (sbo_name)
 .P
 sboupgrade [--color|--nocolor] ...
@@ -129,6 +129,31 @@ is
 TRUE\fR\
 \&.
 Only rsync repositories can be verified on Slackware 14.0 and Slackware 14.1.
+.P
+Upgrades to Slackware and third-party packages occasionally cause breakage due to
+.B
+*.so
+version differences. To check for missing first-order shared object (solib) dependencies
+after running
+.B
+sboupgrade
+without rebuild-related flags, use
+.B
+--so-check TRUE\fR\
+\&. Each affected package is logged to
+.I
+/var/log/sboupgrade-solibs.log
+with a list of missing shared objects. This can be done automatically on every eligible
+.B
+sboupgrade
+run by setting
+.B
+SO_CHECK
+to
+.B
+TRUE\fR\
+\&. Please note that scripts repackaging from binary packages occasionally trigger
+false positives. Such packages generally do not require rebuilds.
 .P
 Root privileges are required to run
 .B
@@ -445,6 +470,21 @@ sboconfig(1)\fR\
 .B
 sbotools.conf(5)\fR\
 \&. This option overrides the default.
+.RE
+.P
+.B
+-X|--so-check (FALSE|TRUE)
+.RS
+If
+.B
+TRUE\fR\
+\&, check for missing first-order shared object dependencies when running
+.B
+sboupgrade
+without rebuild-related flags. Overrides the
+.B
+SO_CHECK
+setting.
 .RE
 .P
 .B
@@ -824,7 +864,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), gpg(1), setarch(1)
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), gpg(1), setarch(1), readelf(1)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>
