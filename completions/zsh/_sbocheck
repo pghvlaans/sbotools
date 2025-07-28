@@ -5,10 +5,11 @@
 _arguments \
     '(-)'{-h,--help}'[Show help.]:' \
     '(-)'{-v,--version}'[Show version.]:' \
+    '(-)'{-c,--check-package}'[Check a list of package names for missing shared objects only.]:' \
     '(-)'{-g,--gpg-verify}'[Verify with gpg.]:' \
     '(-)'{-O,--obsolete-check}'[In -current, download the obsolete scripts list.]:' \
     '(-)'{-n,--nopull}'[Check for updates without updating the tree.]:' \
-    '(-)'{-X,--so-check}'[Check for missing shared objects only.]:' \
+    '(-)'{-X,--so-check}'[Check all _SBo packages for missing shared objects only.]:' \
     '(-)'{--nocolor}'[Disable sbotools color output.]:'\
     '(-)'{--color}'[Enable sbotools color output.]:'\
     && return 0

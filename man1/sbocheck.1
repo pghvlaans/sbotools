@@ -13,6 +13,8 @@ sbocheck [-h|-v]
 .P
 sbocheck [-OXgn]
 .P
+sbocheck [-c] package [package]
+.P
 sbocheck [--color|--nocolor] ...
 .SH DESCRIPTION
 .P
@@ -121,8 +123,11 @@ SO_CHECK
 to
 .B
 TRUE\fR\
-\&. Please note that scripts repackaging from binary packages occasionally trigger
-false positives. Such packages generally do not require rebuilds.
+\&. Use the
+.B
+--check-package
+option to check only a list of packages. Please note that scripts repackaging from binary
+packages occasionally trigger false positives. Such packages generally do not require rebuilds.
 .P
 To check for updated SlackBuilds without updating the SlackBuilds
 tree, pass
@@ -204,6 +209,19 @@ sbotools.conf(5)\fR\
 .SH OPTIONS
 .P
 .B
+-c|--check-package
+.RS
+Check one or more package names for missing shared objects; the packages need not be
+tagged with
+.I
+_SBo\fR\
+\&. Incompatible with
+.B
+--so-check\fR\
+\&.
+.RE
+.P
+.B
 -g|--gpg-verify
 .RS
 Use
@@ -277,7 +295,10 @@ sboconfig(1)
 or
 .B
 sbotools.conf(5)\fR\
-\&).
+\&). Incompatible with
+.B
+--check-package\fR\
+\&.
 .P
 .B
 -h|--help
