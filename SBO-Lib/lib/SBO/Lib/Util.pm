@@ -339,6 +339,37 @@ get_colors();
 
 usage_error("Forbidden value of \$TMP: $ENV{TMP}\n") if defined $ENV{TMP} and dangerous_directory($ENV{TMP});
 
+# ELF-related variables
+my $elf_bytes = "7f454c46";
+
+my $word = 4;
+my $addr_64 = 8;
+my $addr_32 = 4;
+my $xword_64 = 8;
+my $xword_32 = 4;
+my $off_64 = 8;
+my $off_32 = 4;
+my $half = 2;
+my $pre = 16;
+
+my $word_H = $word*2;
+my $addr_64_H = $addr_64*2;
+my $addr_32_H = $addr_32*2;
+my $xword_64_H = $xword_64*2;
+my $xword_32_H = $xword_32*2;
+my $off_64_H = $off_64*2;
+my $off_32_H = $off_32*2;
+my $half_H = $half*2;
+
+my $dynamic_type_little = "06000000";
+my $dynamic_type_big = "00000006";
+my $needed_type_little = "01000000";
+my $needed_type_big = "00000001";
+my $runpath_type_little = "1d000000";
+my $runpath_type_big = "0000001d";
+my $rpath_type_little = "0f000000";
+my $rpath_type_big = "0000000f";
+
 =head1 SUBROUTINES
 
 =cut
@@ -462,29 +493,48 @@ sub elf_links {
   script_error("elf_links requires an argument; exiting.") unless @_ == 1;
   my $file = shift;
   open my $fh, "<:raw", $file or return 0;
-  my $read_in = read $fh, my $contents, 18;
+  my ($read_in, $contents);
+  $read_in = read $fh, $contents, $pre;
   unless (defined $read_in) { close $fh; undef $fh; return 0; }
-  unless ($read_in == 18) { close $fh; undef $fh; return 0; }
+  unless ($read_in == $pre) { close $fh; undef $fh; return 0; }
   # need to be hardcoded until the architecture is determined
-  my ($elf, $elf_type, $end, $type) = unpack "H8 H2 H2 x10 H4", $contents;
-  unless ($elf eq "7f454c46") { close $fh; undef $fh; return 0; } # ELF magic bytes
+  my ($elf, $elf_type, $end) = unpack "H8 H2 H2", $contents;
+  unless ($elf eq $elf_bytes) { close $fh; undef $fh; return 0; }
   my ($is_32, $big_endian);
   $big_endian = $end eq "02" ? 1 : 0;
   $is_32 = $elf_type eq "01" ? 1 : 0;
 
-  # sizes of various data types in ELF tables
-  my $word = 4;
-  my $addr = $is_32 ? 4 : 8;
-  my $xword = $is_32 ? 4 : 8;
-  my $off = $is_32 ? 4 : 8;
-  my $half = 2;
-  my $pre = 16;
-
-  my $word_H = $word*2;
-  my $addr_H = $addr*2;
-  my $xword_H = $xword*2;
-  my $off_H = $off*2;
-  my $half_H = $half*2;
+  # get usable variables based on file characteristics
+  my ($addr, $addr_H, $off, $off_H, $xword, $xword_H);
+  my ($dynamic_type, $needed_type, $runpath_type, $rpath_type, $padding);
+  if ($is_32) {
+    $padding = '';
+    $addr = $addr_32;
+    $addr_H = $addr_32_H;
+    $off = $off_32;
+    $off_H = $off_32_H;
+    $xword = $xword_32;
+    $xword_H = $xword_32_H;
+  } else {
+    $padding = "00000000";
+    $addr = $addr_64;
+    $addr_H = $addr_64_H;
+    $off = $off_64;
+    $off_H = $off_64_H;
+    $xword = $xword_64;
+    $xword_H = $xword_64_H;
+  }
+  if ($big_endian) {
+    $dynamic_type = $dynamic_type_big;
+    $needed_type = $padding. $needed_type_big;
+    $runpath_type = $padding. $runpath_type_big;
+    $rpath_type = $padding. $rpath_type_big;
+  } else {
+    $dynamic_type = $dynamic_type_little;
+    $needed_type = $needed_type_little. $padding;
+    $runpath_type = $runpath_type_little. $padding;
+    $rpath_type = $rpath_type_little. $padding;
+  }
 
   # information about the section header table
   seek $fh, $pre+$half*2+$word+$xword*2, 0;
@@ -508,7 +558,7 @@ sub elf_links {
     my $section_info = read $fh, $section_contents, $sh_entry;
     unless ($section_info == $sh_entry) { close $fh; undef $fh; return 0; }
     my ($type, $offset, $size, $link, $entry) = unpack "x$word H$word_H x$xword x$xword H$xword_H H$xword_H H$word_H x$word x$xword H$xword_H", $section_contents;
-    if ($type eq "06000000" or $type eq "00000060") {
+    if ($type eq $dynamic_type) {
       $dyn_link = decimalize($link, $big_endian);
       $dynamic_location = decimalize($offset, $big_endian);
       $dynamic_size = decimalize($size, $big_endian);
@@ -532,7 +582,6 @@ sub elf_links {
   unless ($dynamic_size % $dynamic_entry == 0) { close $fh; undef $fh; return 0; }
   my $dynamic_entries = $dynamic_size / $dynamic_entry;
   seek $fh, $dynamic_location, 0;
-  my $padding = $is_32 ? "" : "00000000";
   my (@needed, @rpaths);
   $i = 0;
   while ($i < $dynamic_entries) {
@@ -541,11 +590,9 @@ sub elf_links {
     $dyn_entry = read $fh, $dyn_contents, $dynamic_entry;
     unless ($dyn_entry == $dynamic_entry) { close $fh; undef $fh; return 0; }
     my ($type, $offset) = unpack "H$xword_H H$xword_H", $dyn_contents;
-    if ($type eq "01000000$padding" or $type eq $padding. "00000010") {
+    if ($type eq $needed_type) {
       push @needed, decimalize($offset, $big_endian) + $str_offset;
-    } elsif ($type eq "1d000000$padding" or $type eq $padding. "0000001d") {
-      push @rpaths, decimalize($offset, $big_endian) + $str_offset;
-    } elsif ($type eq "0f000000$padding" or $type eq $padding. "000000f0") {
+    } elsif ($type eq $runpath_type or $type eq $rpath_type) {
       push @rpaths, decimalize($offset, $big_endian) + $str_offset;
     }
   }
