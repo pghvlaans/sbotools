@@ -23,6 +23,8 @@ updates
 
     sbocheck [-OXgn]
 
+    sbocheck [-c] package [package]
+
     sbocheck [--color|--nocolor] \...
 
 ## DESCRIPTION
@@ -54,9 +56,10 @@ first-order shared object (solib) dependencies among all installed
 in-tree *\_SBo* packages, use the **\--so-check** option. Each affected
 package is logged to */var/log/sbocheck-solibs.log* with a list of
 missing shared objects. This can be done automatically on every
-**sbocheck** run by setting **SO_CHECK** to **TRUE**. Please note that
-scripts repackaging from binary packages occasionally trigger false
-positives. Such packages generally do not require rebuilds.
+**sbocheck** run by setting **SO_CHECK** to **TRUE**. Use the
+**\--check-package** option to check only a list of packages. Please
+note that scripts repackaging from binary packages occasionally trigger
+false positives. Such packages generally do not require rebuilds.
 
 To check for updated SlackBuilds without updating the SlackBuilds tree,
 pass the **\--nopull** option. **sbocheck** performs **gpg(1)**
@@ -77,6 +80,11 @@ invalid configuration is detected in */etc/sbotools/sbotools.conf*, the
 script exits with a diagnostic message.
 
 ## OPTIONS
+
+**-c\|\--check-package**
+
+Check one or more package names for missing shared objects; the packages
+need not be tagged with *\_SBo*. Incompatible with **\--so-check**.
 
 **-g\|\--gpg-verify**
 
@@ -103,7 +111,8 @@ kept.
 Check all installed *\_SBo* packages for missing shared object
 dependencies; no other operations are performed. To do this
 automatically every time **sbocheck** is run, set **SO_CHECK** to
-**TRUE** (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
+**TRUE** (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). Incompatible
+with **\--check-package**.
 
 **-h\|\--help**
 
