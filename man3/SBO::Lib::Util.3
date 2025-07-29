@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Pungenday, Confusion 62, 3191 YOLD" "" "sbotools 3.7"
+.TH SBO::Lib::Util 3 "Setting Orange, Confusion 64, 3191 YOLD" "" "sbotools 3.7"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -203,24 +203,6 @@ Returns 1 if the file exists, and 0 otherwise.
 .PP
 \&\f(CWdangerous_directory()\fR takes a string and returns true if it is equal to \f(CW\*(C`/\*(C'\fR,
 \&\f(CW\*(C`/root\*(C'\fR, \f(CW\*(C`/home\*(C'\fR or a possible directory under \f(CW\*(C`/home\*(C'\fR.
-.SS decimalize
-.IX Subsection "decimalize"
-.Vb 1
-\&  my $decimal = decimalize($hex, $big_endian);
-.Ve
-.PP
-\&\f(CWdecimalize()\fR takes a hex string and an indicator of whether big\-endian calculation is to be
-used, returning a decimal string.
-.SS elf_links
-.IX Subsection "elf_links"
-.Vb 1
-\&  my ($elf_type, @cand_libs) = is_elf($file);
-.Ve
-.PP
-\&\f(CWelf_links()\fR takes a path and checks whether it is a dynamically\-linked ELF binary; it returns
-0 if not. Otherwise, it returns 1 for a 64\-bit ELF file, \-1 for a 32\-bit ELF file and an array of
-first\-order shared object dependencies that do not exist on the system under an \f(CW\*(C`rpath\*(C'\fR or
-\&\f(CW\*(C`runpath\*(C'\fR.
 .SS error_code
 .IX Subsection "error_code"
 .Vb 1
@@ -621,9 +603,6 @@ The sbotools share the following exit codes:
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
 \&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBTerm::ANSIColor\fR\|(3)
-.PP
-\&\f(CW\*(C`https://refspecs.linuxbase.org/elf/gabi4+/\*(C'\fR is a helpful resource about the structure of
-ELF files.
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.7';
 
-use SBO::Lib::Util qw/ %config :const :colors error_code prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp wrapsay $conf_dir $obs_file /;
+use SBO::Lib::Util qw/ :config :const :colors error_code prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp wrapsay /;
 
 use Cwd;
 use File::Copy;
@@ -911,7 +911,7 @@ Repo.pm subroutines can return the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), git(1), gpg(1), rsync(1)
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Solibs(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), git(1), gpg(1), rsync(1)
 
 =head1 AUTHORS
 

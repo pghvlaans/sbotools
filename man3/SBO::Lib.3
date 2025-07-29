@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib 3"
-.TH SBO::Lib 3 "Sweetmorn, Confusion 60, 3191 YOLD" "" "sbotools 3.7"
+.TH SBO::Lib 3 "Setting Orange, Confusion 64, 3191 YOLD" "" "sbotools 3.7"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -99,6 +99,10 @@ handled here.
 .IX Subsection "SBO::Lib::Repo"
 \&\f(CW\*(C`Repo.pm\*(C'\fR is responsible for fetching, updating and linting the local copy of the SlackBuilds.org
 repository, as well as GPG verification and key addition.
+.SS SBO::Lib::Solibs
+.IX Subsection "SBO::Lib::Solibs"
+\&\f(CW\*(C`Solibs.pm\*(C'\fR contains variables and subroutines related to checking packages for missing
+shared object dependencies.
 .SS SBO::Lib::Tree
 .IX Subsection "SBO::Lib::Tree"
 \&\f(CW\*(C`Tree.pm\*(C'\fR determines the location of scripts in the repository and local overrides directory.
@@ -130,7 +134,7 @@ The sbotools share the following exit codes:
 .Ve
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
-\&\fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBSBO::Lib::Util\fR\|(3)
+\&\fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Solibs\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBSBO::Lib::Util\fR\|(3)
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

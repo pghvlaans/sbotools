@@ -66,6 +66,11 @@ handled here.
 C<Repo.pm> is responsible for fetching, updating and linting the local copy of the SlackBuilds.org
 repository, as well as GPG verification and key addition.
 
+=head2 SBO::Lib::Solibs
+
+C<Solibs.pm> contains variables and subroutines related to checking packages for missing
+shared object dependencies.
+
 =head2 SBO::Lib::Tree
 
 C<Tree.pm> determines the location of scripts in the repository and local overrides directory.
@@ -99,7 +104,7 @@ The sbotools share the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
+SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Solibs(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
 
 =cut
 
@@ -111,6 +116,7 @@ use SBO::Lib::Pkgs qw/ :all /;
 use SBO::Lib::Build qw/:all /;
 use SBO::Lib::Readme qw/ :all /;
 use SBO::Lib::Download qw/ :all /;
+use SBO::Lib::Solibs qw/ :all /;
 
 use Exporter 'import';
 
@@ -123,6 +129,7 @@ our @EXPORT_OK = (
 	@SBO::Lib::Build::EXPORT_OK,
 	@SBO::Lib::Readme::EXPORT_OK,
 	@SBO::Lib::Download::EXPORT_OK,
+	@SBO::Lib::Solibs::EXPORT_OK,
 );
 
 our %EXPORT_TAGS = (
@@ -135,6 +142,7 @@ our %EXPORT_TAGS = (
 	build => \@SBO::Lib::Build::EXPORT_OK,
 	readme => \@SBO::Lib::Readme::EXPORT_OK,
 	download => \@SBO::Lib::Download::EXPORT_OK,
+	solibs => \@SBO::Lib::Solibs::EXPORT_OK,
 	const => $SBO::Lib::Util::EXPORT_TAGS{const},
 	config => $SBO::Lib::Util::EXPORT_TAGS{config},
 	colors => $SBO::Lib::Util::EXPORT_TAGS{colors},

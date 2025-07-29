@@ -13,6 +13,7 @@ lib/SBO/Lib/Info.pm
 lib/SBO/Lib/Pkgs.pm
 lib/SBO/Lib/Readme.pm
 lib/SBO/Lib/Repo.pm
+lib/SBO/Lib/Solibs.pm
 lib/SBO/Lib/Tree.pm
 lib/SBO/Lib/Util.pm
 lib/SBO/ThirdParty/Sort/Versions.pm

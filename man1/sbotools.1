@@ -244,6 +244,23 @@ file. See the comments there or
 .B
 sbotools.colors(5)
 for details.
+.P
+Upgrading Slackware or other packages occasionally causes breakage related
+to missing shared object dependencies (solibs). To check first-order
+dependencies for all installed
+.I
+SBo
+packages for missing shared object dependencies (solibs),
+use
+.B
+sbocheck
+with the
+.B
+-X
+option. Use
+.B
+-c
+instead to check a list of installed packages.
 .SH BUGS
 .P
 None known. If found, Issues and Pull Requests to

@@ -57,7 +57,9 @@ my @EXPORT_CONFIG = qw{
   @listings
   $obs_file
   @obsolete
+  $pkg_db
   $sbotest_compatible
+  $script_db
   $is_sbotest
   $userland_32
 };
@@ -91,8 +93,6 @@ our @EXPORT_OK = (
     build_cmp
     check_multilib
     dangerous_directory
-    decimalize
-    elf_links
     error_code
     get_colors
     get_kernel_version
@@ -255,6 +255,9 @@ kernel.
 
 our $arch = get_arch();
 
+our $pkg_db = '/var/log/packages';
+our $script_db = '/var/log/scripts';
+
 # global config variables
 my $req_dir = $ENV{SBOTOOLS_CONF_DIR};
 our $conf_dir = defined $req_dir ? $req_dir : '/etc/sbotools';
@@ -339,37 +342,6 @@ get_colors();
 
 usage_error("Forbidden value of \$TMP: $ENV{TMP}\n") if defined $ENV{TMP} and dangerous_directory($ENV{TMP});
 
-# ELF-related variables
-my $elf_bytes = "7f454c46";
-
-my $word = 4;
-my $addr_64 = 8;
-my $addr_32 = 4;
-my $xword_64 = 8;
-my $xword_32 = 4;
-my $off_64 = 8;
-my $off_32 = 4;
-my $half = 2;
-my $pre = 16;
-
-my $word_H = $word*2;
-my $addr_64_H = $addr_64*2;
-my $addr_32_H = $addr_32*2;
-my $xword_64_H = $xword_64*2;
-my $xword_32_H = $xword_32*2;
-my $off_64_H = $off_64*2;
-my $off_32_H = $off_32*2;
-my $half_H = $half*2;
-
-my $dynamic_type_little = "06000000";
-my $dynamic_type_big = "00000006";
-my $needed_type_little = "01000000";
-my $needed_type_big = "00000001";
-my $runpath_type_little = "1d000000";
-my $runpath_type_big = "0000001d";
-my $rpath_type_little = "0f000000";
-my $rpath_type_big = "0000000f";
-
 =head1 SUBROUTINES
 
 =cut
@@ -451,191 +423,6 @@ sub dangerous_directory {
     $dangerous = 1;
   }
   return $dangerous;
-}
-
-=head2 decimalize
-
-  my $decimal = decimalize($hex, $big_endian);
-
-C<decimalize()> takes a hex string and an indicator of whether big-endian calculation is to be
-used, returning a decimal string.
-
-=cut
-
-sub decimalize {
-  script_error("decimalize requires two arguments.") unless @_ == 2;
-  my ($string, $big_endian) = @_;
-  script_error("decimalize requires a string with an even number of characters.") unless length($string) % 2 == 0;
-  my $new_string;
-  unless ($big_endian) {
-    while ($string) {
-      $new_string .= substr $string, -2;
-      $string = substr $string, 0, length($string)-2;
-    }
-  } else {
-    $new_string = $string;
-  }
-  return hex $new_string;
-}
-
-=head2 elf_links
-
-  my ($elf_type, @cand_libs) = is_elf($file);
-
-C<elf_links()> takes a path and checks whether it is a dynamically-linked ELF binary; it returns
-0 if not. Otherwise, it returns 1 for a 64-bit ELF file, -1 for a 32-bit ELF file and an array of
-first-order shared object dependencies that do not exist on the system under an C<rpath> or
-C<runpath>.
-
-=cut
-
-sub elf_links {
-  script_error("elf_links requires an argument; exiting.") unless @_ == 1;
-  my $file = shift;
-  open my $fh, "<:raw", $file or return 0;
-  my ($read_in, $contents);
-  $read_in = read $fh, $contents, $pre;
-  unless (defined $read_in) { close $fh; undef $fh; return 0; }
-  unless ($read_in == $pre) { close $fh; undef $fh; return 0; }
-  # need to be hardcoded until the architecture is determined
-  my ($elf, $elf_type, $end) = unpack "H8 H2 H2", $contents;
-  unless ($elf eq $elf_bytes) { close $fh; undef $fh; return 0; }
-  my ($is_32, $big_endian);
-  $big_endian = $end eq "02" ? 1 : 0;
-  $is_32 = $elf_type eq "01" ? 1 : 0;
-
-  # get usable variables based on file characteristics
-  my ($addr, $addr_H, $off, $off_H, $xword, $xword_H);
-  my ($dynamic_type, $needed_type, $runpath_type, $rpath_type, $padding);
-  if ($is_32) {
-    $padding = '';
-    $addr = $addr_32;
-    $addr_H = $addr_32_H;
-    $off = $off_32;
-    $off_H = $off_32_H;
-    $xword = $xword_32;
-    $xword_H = $xword_32_H;
-  } else {
-    $padding = "00000000";
-    $addr = $addr_64;
-    $addr_H = $addr_64_H;
-    $off = $off_64;
-    $off_H = $off_64_H;
-    $xword = $xword_64;
-    $xword_H = $xword_64_H;
-  }
-  if ($big_endian) {
-    $dynamic_type = $dynamic_type_big;
-    $needed_type = $padding. $needed_type_big;
-    $runpath_type = $padding. $runpath_type_big;
-    $rpath_type = $padding. $rpath_type_big;
-  } else {
-    $dynamic_type = $dynamic_type_little;
-    $needed_type = $needed_type_little. $padding;
-    $runpath_type = $runpath_type_little. $padding;
-    $rpath_type = $rpath_type_little. $padding;
-  }
-
-  # information about the section header table
-  seek $fh, $pre+$half*2+$word+$xword*2, 0;
-  my $sh_data = $xword+$word+$half*6;
-  my ($sec_head_info, $sh_contents);
-  $sec_head_info = read $fh, $sh_contents, $sh_data;
-  unless ($sec_head_info == $sh_data) { close $fh; undef $fh; return $0; }
-  my ($sh_offset, $sh_entry, $sh_num) = unpack "H$xword_H x$word x$half x$half x$half H$half_H H$half_H", $sh_contents;
-  $sh_offset = decimalize($sh_offset, $big_endian);
-  $sh_entry = decimalize($sh_entry, $big_endian);
-  $sh_num = decimalize($sh_num, $big_endian);
-
-  # finding the dynamic section entry; one and only one is
-  # mandatory for dynamically-linked ELF
-  seek $fh, $sh_offset, 0;
-  my ($dyn_link, $dynamic_location, $dynamic_size, $dynamic_entry);
-  my $i = 0;
-  while ($i < $sh_num) {
-    $i++;
-    my $section_contents;
-    my $section_info = read $fh, $section_contents, $sh_entry;
-    unless ($section_info == $sh_entry) { close $fh; undef $fh; return 0; }
-    my ($type, $offset, $size, $link, $entry) = unpack "x$word H$word_H x$xword x$xword H$xword_H H$xword_H H$word_H x$word x$xword H$xword_H", $section_contents;
-    if ($type eq $dynamic_type) {
-      $dyn_link = decimalize($link, $big_endian);
-      $dynamic_location = decimalize($offset, $big_endian);
-      $dynamic_size = decimalize($size, $big_endian);
-      $dynamic_entry = decimalize($entry, $big_endian);
-      last;
-    }
-  }
-  unless (defined $dyn_link) { close $fh, undef $fh, return 0; }
-
-  # find the section header entry with the appropriate string table
-  seek $fh, $sh_offset+$dyn_link*$sh_entry, 0;
-  my $str_entry_data = $word*2+$xword+$addr+$off;
-  my ($string_info, $string_contents);
-  $string_info = read $fh, $string_contents, $str_entry_data;
-  unless ($string_info == $str_entry_data) { close $fh; undef $fh; return 0; }
-  my $str_offset = unpack "x$word x$word x$xword x$addr H$xword_H", $string_contents;
-  $str_offset = decimalize($str_offset, $big_endian);
-
-  # read the dynamic section for the proper string table offsets for
-  # rpaths and objects
-  unless ($dynamic_size % $dynamic_entry == 0) { close $fh; undef $fh; return 0; }
-  my $dynamic_entries = $dynamic_size / $dynamic_entry;
-  seek $fh, $dynamic_location, 0;
-  my (@needed, @rpaths);
-  $i = 0;
-  while ($i < $dynamic_entries) {
-    $i++;
-    my ($dyn_entry, $dyn_contents);
-    $dyn_entry = read $fh, $dyn_contents, $dynamic_entry;
-    unless ($dyn_entry == $dynamic_entry) { close $fh; undef $fh; return 0; }
-    my ($type, $offset) = unpack "H$xword_H H$xword_H", $dyn_contents;
-    if ($type eq $needed_type) {
-      push @needed, decimalize($offset, $big_endian) + $str_offset;
-    } elsif ($type eq $runpath_type or $type eq $rpath_type) {
-      push @rpaths, decimalize($offset, $big_endian) + $str_offset;
-    }
-  }
-
-  # read the strings
-  my $dirname = dirname $file if @rpaths;
-  my (@cand_libs, @cand_rpaths);
-  for my $cand (@rpaths) {
-    seek $fh, $cand, 0;
-    my $string;
-    my $char = 1;
-    while ($char) {
-      my $byte = read $fh, my $byte_contents, 1;
-      unless ($byte == 1) { close $fh; undef $fh; return 0; }
-      $char = unpack "A1", $byte_contents;
-      last if $char eq "00";
-      $string .= $char;
-    }
-    $string =~ s/\$ORIGIN/$dirname/g;
-    push @cand_rpaths, split ":", $string;
-  }
-  CANDS: for my $cand (@needed) {
-    seek $fh, $cand, 0;
-    my $string;
-    my $bits = 1;
-    while ($bits) {
-      my $byte = read $fh, my $byte_contents, 1;
-      unless ($byte == 1) { close $fh; undef $fh; return 0; }
-      $bits = unpack "H2", $byte_contents;
-      last if $bits eq "00";
-      my $char = unpack "A1", $byte_contents;
-      $string .= $char;
-    }
-    next CANDS unless $string =~ m/\.so(|\.\d+(|\.\d+(|\.\d+)))$/;
-    for my $rpath (@cand_rpaths) {
-      next CANDS if -f "$rpath/$string" or -l "$rpath/$string";
-    }
-    push @cand_libs, $string;
-  }
-  my $elf_return_value = $is_32 ? -1 : 1;
-  close $fh;
-  undef $fh;
-  return $elf_return_value, @cand_libs;
 }
 
 =head2 error_code
@@ -1760,9 +1547,6 @@ The sbotools share the following exit codes:
 =head1 SEE ALSO
 
 SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), Term::ANSIColor(3)
-
-C<https://refspecs.linuxbase.org/elf/gabi4+/> is a helpful resource about the structure of
-ELF files.
 
 =head1 AUTHORS
 
