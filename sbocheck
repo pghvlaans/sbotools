@@ -107,7 +107,7 @@ sub evaluate_solibs {
 	wrapsay_color $color_lesser, "Not installed: ". join", ", @missing if @missing;
 	my $pkg_count = $pkg_check ? @to_check : @installed;
 	my $count = 0;
-	print "\n" if $pkg_check;
+	print "\n" if $pkg_check or $socheck;
 	print "Checking packages for missing shared objects...";
 	return unless $pkg_count;
 	$| = 1;
