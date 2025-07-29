@@ -126,6 +126,12 @@ by default, set **COLOR** to **TRUE**. Output colors can be customized
 by editing the */etc/sbotools/sbotools.colors* file. See the comments
 there or [sbotools.colors(5)](sbotools.colors.5.md) for details.
 
+Upgrading Slackware or other packages occasionally causes breakage
+related to missing shared object dependencies (solibs). To check
+first-order dependencies for all installed *SBo* packages, use
+**sbocheck** with the **-X** option. Use **-c** instead to check a list
+of installed packages.
+
 ## BUGS
 
 None known. If found, Issues and Pull Requests to
