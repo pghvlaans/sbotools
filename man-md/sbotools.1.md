@@ -128,9 +128,9 @@ there or [sbotools.colors(5)](sbotools.colors.5.md) for details.
 
 Upgrading Slackware or other packages occasionally causes breakage
 related to missing shared object dependencies (solibs). To check
-first-order dependencies for all installed *SBo* packages for missing
-shared object dependencies (solibs), use **sbocheck** with the **-X**
-option. Use **-c** instead to check a list of installed packages.
+first-order dependencies for all installed *SBo* packages, use
+**sbocheck** with the **-X** option. Use **-c** instead to check a list
+of installed packages.
 
 ## BUGS
 
