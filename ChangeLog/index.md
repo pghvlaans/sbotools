@@ -21,6 +21,7 @@
   * Add setting **SO_CHECK** to enable automatic shared object checks for *sbocheck* and *sboupgrade*
   * *sbocheck*: Use **\--check-package** to check a list of packages (SBO or otherwise) for missing shared objects
   * Add *Solibs.pm*, a new module for performing shared object checks
+  * Bugfix: Improve interrupt behavior
 
 * 3.7 - 2025-07-04
   * Optimize queue construction: Shared dependency handling and `rationalize_queue`
