@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_sbo_locations get_user_group in is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue solib_check verify_gpg %config show_version lint_sbo_config wrapsay /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_sbo_locations get_user_group in installed_solibs is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue solib_check verify_gpg %config show_version lint_sbo_config wrapsay /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -694,6 +694,18 @@ if ($dry_run) {
 	exit 0;
 }
 
+my @solib_search;
+if ($config{SO_CHECK} eq "TRUE") {
+	wrapsay_color $color_notice, "Checking for shared objects installed in the upgrade queue...";
+	my @before_installed = @{ get_installed_packages("SBO") };
+	my $installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @before_installed };
+	for my $sbo (@$upgrade_queue) {
+		next unless exists $inst_names{$sbo};
+		my $pkg = $installed_pkg->{$sbo};
+		if (my @pkg_solibs = installed_solibs $pkg) { push @solib_search, $_ for (@pkg_solibs); }
+	}
+}
+
 my ($failures, $exit) = process_sbos(
 	TODO      => $upgrade_queue,
 	CMDS      => \%commands,
@@ -707,8 +719,8 @@ my ($failures, $exit) = process_sbos(
 );
 print_failures($failures);
 
-if ($config{SO_CHECK} eq "TRUE" and not $reverse and not $no_install) {
-	print "\nChecking packages for missing shared objects...";
+if ($config{SO_CHECK} eq "TRUE" and @solib_search and not $no_install) {
+	print "\nChecking for broken shared object dependencies from this upgrade...";
 	my (@actionable, @log_output);
 	my @new_installed = @{ get_installed_packages("SBO") };
 	my $installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @new_installed };
@@ -718,29 +730,30 @@ if ($config{SO_CHECK} eq "TRUE" and not $reverse and not $no_install) {
 		$| = 1;
 		for my $sbo (keys %$installed_pkg) {
 			$count++;
-			print "\rChecking packages for missing shared objects... ($count / $pkg_count)";
-			push @actionable, $sbo unless solib_check($installed_pkg->{$sbo});
+			print "\rChecking for broken shared object dependencies from this upgrade... ($count / $pkg_count)";
+			push @actionable, $sbo unless solib_check($installed_pkg->{$sbo}, @solib_search);
 		}
 		$| = 0;
 		if (@actionable) {
-			wrapsay_color $color_lesser, "\nThe following packages may require rebuilding:";
+			wrapsay_color $color_lesser, "\nThe following packages may require rebuilding:", 1;
 			for my $sbo (sort @actionable) { print "  $sbo\n"; }
 			for my $sbo (sort @actionable) { push @log_output, "  $sbo:\n$old_libs{$installed_pkg->{$sbo}}\n"; }
-			wrapsay_color $color_lesser, "Binary repackages generally do not require rebuilds.";
-		}
-		my $logfile = '/var/log/sboupgrade-solibs.log';
-		unlink $logfile if -f $logfile;
-		my ($log_fh, $exit) = open_fh($logfile, '>');
-		if ($exit) {
-			warn_color $color_lesser, $log_fh;
+			my $logfile = '/var/log/sboupgrade-solibs.log';
+			unlink $logfile if -f $logfile;
+			my ($log_fh, $exit) = open_fh($logfile, '>');
+			if ($exit) {
+				warn_color $color_lesser, $log_fh;
+			} else {
+				say {$log_fh} $_ for @log_output;
+				close $log_fh;
+				wrapsay "\nSee $logfile for details.";
+			}
 		} else {
-			say {$log_fh} $_ for @log_output;
-			close $log_fh;
-			wrapsay "See $logfile for a breakdown of missing shared objects.";
+			wrapsay_color $color_notice, "\nNo broken dependencies from this upgrade found.";
 		}
 	}
-} elsif ($config{SO_CHECK} eq "TRUE" and $reverse and not $no_install) {
-	wrapsay_color $color_lesser, "\nUsed a rebuild option; skipping the shared object check.";
+} elsif ($config{SO_CHECK} eq "TRUE" and not @solib_search and not $no_install) {
+	wrapsay_color $color_notice, "\nNo outgoing package provided shared objects. Skipping the shared object check.";
 }
 
 if ($exit) {

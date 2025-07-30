@@ -16,6 +16,7 @@ use File::Basename;
 our @EXPORT_OK = qw{
   decimalize
   elf_links
+  installed_solibs
   solib_check
   update_known_solibs
 
@@ -283,14 +284,56 @@ sub elf_links {
   return $elf_return_value, @cand_libs;
 }
 
+=head2 installed_solibs
+
+  my @pkg_solibs = installed_solibs($pkg);
+
+C<installed_solibs()> takes the name of a package file. It returns an array of
+shared object names that are installed as files or symlinks, or 0 if none exist.
+
+=cut
+
+sub installed_solibs {
+  script_error("installed_solibs requires an argument.") unless @_ == 1;
+  my $pkg = shift;
+  unless (-f "$pkg_db/$pkg") { return 0; }
+  my $exit = open(my $fh, "<", "$pkg_db/$pkg") == 0;
+  if ($exit) { return 0; }
+  my ($start_reading, @pkg_solibs);
+  for my $line (<$fh>) {
+    $start_reading = 1 if $line eq "./\n";
+    next unless defined $start_reading;
+    chomp($line);
+    next unless $line =~ m/\.so(|\.\d+(|\.\d+(|\.\d+)))$/;
+    push @pkg_solibs, basename $line;
+  }
+  close $fh;
+  undef $fh;
+  unless (-f "$script_db/$pkg") { return @pkg_solibs; }
+  my $script_exit = open(my $sfh, "<", "$script_db/$pkg") == 0;
+  if ($script_exit) { return @pkg_solibs; }
+  for my $line (<$sfh>) {
+    chomp($line);
+    next unless $line =~ m/^\( cd .* ; rm -rf/;
+    my $cand = (split " ", $line)[-2];
+    next unless $cand =~ m/\.so(|\.\d+(|\.\d+(|\.\d+)))$/;
+    push @pkg_solibs, basename $cand;
+  }
+  close $sfh;
+  undef $sfh;
+  return @pkg_solibs;
+}
+
 =head2 solib_check
 
   my $solibs_good = solib_check($pkg);
 
-C<solib_check()> takes the name of a package file and checks for the presence of any
-required first-order shared object dependencies as based on the C<@native_libs> shared
-object array. It returns 1 if all required shared objects appear to be present and 0
-otherwise.
+  my $solibs_good = solib_check($pkg, @search);
+
+C<solib_check()> takes the name of a package file and, optionally, an array of shared
+object names to search, and checks for the presence of any required first-order shared
+object dependencies as based on the C<@native_libs> shared object array. It returns 1 if
+all required shared objects appear to be present and 0 otherwise.
 
 Because C<elf_links()> is called, performance is cache-dependent. It is best to call
 C<solib_check()> judiciously.
@@ -298,8 +341,8 @@ C<solib_check()> judiciously.
 =cut
 
 sub solib_check {
-  script_error("solib_check requires an argument.") unless @_ == 1;
-  my $pkg = shift;
+  script_error("solib_check requires at least one argument.") unless @_ ge 1;
+  my ($pkg, @search) = @_;
   my $is_x86_64 = $arch eq "x86_64" ? 1 : 0;
   update_known_solibs() unless @native_libs;
   my $exit = open(my $fh, "<", "$pkg_db/$pkg") == 0;
@@ -326,10 +369,12 @@ sub solib_check {
   }
   return 1 unless @shared or @x86_shared;
   for my $cand (uniq @shared) {
+    if (@search) { next unless in $cand, @search; }
     next if in $cand, @native_libs;
     push @nonexistent, "\t$cand" unless solib_present($cand, $pkg, @file_list);
   }
   for my $cand (uniq @x86_shared) {
+    if (@search) { next unless in $cand, @search; }
     next if in $cand, @x86_libs;
     push @nonexistent, "\t$cand (x86)" unless solib_present($cand, $pkg, @file_list);
   }

@@ -63,16 +63,13 @@ flag may be passed to upgrade all eligible SlackBuilds simultaneously.
 **GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
 Slackware 14.0 and Slackware 14.1.
 
-Upgrades to Slackware and third-party packages occasionally cause
-breakage due to **\*.so** version differences. To check for missing
-first-order shared object (solib) dependencies after running
-**sboupgrade** without rebuild-related flags, use **\--so-check TRUE**.
-Each affected package is logged to */var/log/sboupgrade-solibs.log* with
-a list of missing shared objects. This can be done automatically on
-every eligible **sboupgrade** run by setting **SO_CHECK** to **TRUE**.
-Please note that scripts repackaging from binary packages occasionally
-trigger false positives. Such packages generally do not require
-rebuilds.
+Package upgrades occasionally cause breakage due to **\*.so** version
+differences. To check for missing first-order shared object (solib)
+dependencies that may have resulted from running **sboupgrade**, use
+**\--so-check TRUE**. Each affected package is logged to
+*/var/log/sboupgrade-solibs.log* with a list of missing shared objects.
+This can be done automatically after every **sboupgrade** run by setting
+**SO_CHECK** to **TRUE**.
 
 Root privileges are required to run **sboupgrade** unless passing
 **\--dry-run**. If an invalid configuration is detected in
@@ -199,8 +196,10 @@ also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
 **-X\|\--so-check (FALSE\|TRUE)**
 
 If **TRUE**, check for missing first-order shared object dependencies
-when running **sboupgrade** without rebuild-related flags. Overrides the
-**SO_CHECK** setting.
+after running **sboupgrade**. Please note that only those shared objects
+provided by outgoing packages are reflected in the results. For a full
+shared object check, see [sbocheck(1)](sbocheck.1.md). Overrides the **SO_CHECK**
+setting.
 
 **-z\|\--force-reqs**
 

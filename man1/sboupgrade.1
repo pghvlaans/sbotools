@@ -130,20 +130,20 @@ TRUE\fR\
 \&.
 Only rsync repositories can be verified on Slackware 14.0 and Slackware 14.1.
 .P
-Upgrades to Slackware and third-party packages occasionally cause breakage due to
+Package upgrades occasionally cause breakage due to
 .B
 *.so
 version differences. To check for missing first-order shared object (solib) dependencies
-after running
+that may have resulted from running
 .B
-sboupgrade
-without rebuild-related flags, use
+sboupgrade\fR\
+\&, use
 .B
 --so-check TRUE\fR\
 \&. Each affected package is logged to
 .I
 /var/log/sboupgrade-solibs.log
-with a list of missing shared objects. This can be done automatically on every eligible
+with a list of missing shared objects. This can be done automatically after every
 .B
 sboupgrade
 run by setting
@@ -152,8 +152,7 @@ SO_CHECK
 to
 .B
 TRUE\fR\
-\&. Please note that scripts repackaging from binary packages occasionally trigger
-false positives. Such packages generally do not require rebuilds.
+\&.
 .P
 Root privileges are required to run
 .B
@@ -478,10 +477,14 @@ sbotools.conf(5)\fR\
 If
 .B
 TRUE\fR\
-\&, check for missing first-order shared object dependencies when running
+\&, check for missing first-order shared object dependencies after running
 .B
-sboupgrade
-without rebuild-related flags. Overrides the
+sboupgrade\fR\
+\&. Please note that only those shared objects provided by outgoing packages are reflected
+in the results. For a full shared object check, see
+.B
+sbocheck(1)\fR\
+\&. Overrides the
 .B
 SO_CHECK
 setting.

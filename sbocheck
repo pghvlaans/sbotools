@@ -303,7 +303,6 @@ sub print_output {
 			}
 			if ($logfile eq '/var/log/sbocheck-solibs.log') {
 				wrapsay_color $color_lesser, "\nBinary repackages generally do not require rebuilds.";
-				wrapsay "See $logfile for a breakdown of missing shared objects." if $< == 0;
 				wrapsay "Run as root and see $logfile for a breakdown of missing shared objects." if $< != 0;
 			} else {
 				print "\n";
