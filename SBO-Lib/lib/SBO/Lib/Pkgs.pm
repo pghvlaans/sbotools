@@ -15,6 +15,8 @@ use SBO::Lib::Info qw/ get_orig_build_number get_orig_version get_sbo_build_numb
 use Exporter 'import';
 use POSIX 'strftime';
 
+use sigtrap qw/ handler _caught_signal ABRT INT QUIT TERM /;
+
 our @EXPORT_OK = qw{
   get_available_updates
   get_inst_names
@@ -333,5 +335,9 @@ Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
 Copyright (C) 2024-2025, K. Eugene Carlson.
 
 =cut
+
+sub _caught_signal {
+  exit 0;
+}
 
 1;

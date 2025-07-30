@@ -20,6 +20,8 @@ use File::Basename;
 use File::Copy;
 use JSON::PP;
 
+use sigtrap qw/ handler _caught_signal ABRT INT QUIT TERM /;
+
 my $self = basename($0);
 
 sub show_usage {
@@ -791,6 +793,10 @@ unlink $mtemp if -f $mtemp;
 if ($exit) {
 	exit $exit;
 } else {
+	exit 0;
+}
+
+sub _caught_signal {
 	exit 0;
 }
 

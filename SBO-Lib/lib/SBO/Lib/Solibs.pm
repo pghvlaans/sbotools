@@ -13,6 +13,8 @@ use SBO::Lib::Util qw/ :config :const in uniq error_code script_error /;
 use Exporter 'import';
 use File::Basename;
 
+use sigtrap qw/ handler _caught_signal ABRT INT QUIT TERM /;
+
 our @EXPORT_OK = qw{
   decimalize
   elf_links
@@ -492,5 +494,9 @@ Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
 Copyright (C) 2024-2025, K. Eugene Carlson.
 
 =cut
+
+sub _caught_signal {
+  exit 0;
+}
 
 1;
