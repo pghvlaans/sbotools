@@ -248,21 +248,7 @@ sub elf_links {
   # read the strings
   my $dirname = dirname $file if @rpaths;
   my (@cand_libs, @cand_rpaths);
-  for my $cand (@rpaths) {
-    seek $fh, $cand, 0;
-    my $string;
-    my $char = 1;
-    while ($char) {
-      my $byte = read $fh, my $byte_contents, 1;
-      unless ($byte == 1) { close $fh; undef $fh; return 0; }
-      $char = unpack "A1", $byte_contents;
-      last if $char eq "00";
-      $string .= $char;
-    }
-    $string =~ s/\$ORIGIN/$dirname/g;
-    push @cand_rpaths, split ":", $string;
-  }
-  CANDS: for my $cand (@needed) {
+  CANDS: for my $cand (@rpaths, @needed) {
     seek $fh, $cand, 0;
     my $string;
     my $bits = 1;
@@ -274,11 +260,16 @@ sub elf_links {
       my $char = unpack "A1", $byte_contents;
       $string .= $char;
     }
-    next CANDS unless $string =~ m/\.so(|\.\d+(|\.\d+(|\.\d+)))$/;
-    for my $rpath (@cand_rpaths) {
-      next CANDS if -f "$rpath/$string" or -l "$rpath/$string";
+    if (in $cand, @rpaths) {
+      $string =~ s/\$ORIGIN/$dirname/g;
+      push @cand_rpaths, split ":", $string;
+    } else {
+      next CANDS unless $string =~ m/\.so(|\.\d+(|\.\d+(|\.\d+)))$/;
+      for my $rpath (@cand_rpaths) {
+        next CANDS if -f "$rpath/$string" or -l "$rpath/$string";
+      }
+      push @cand_libs, $string;
     }
-    push @cand_libs, $string;
   }
   my $elf_return_value = $is_32 ? -1 : 1;
   close $fh;
