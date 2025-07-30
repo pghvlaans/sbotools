@@ -194,7 +194,7 @@ C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<COLOR> and C<SO_CHECK>.
 The time spent downloading source files. Unless C<CLASSIC> is C<"TRUE">, it is
 displayed when all builds are complete.
 
-=head2 $head_file
+=head2 $hint_file
 
 A file, C</etc/sbotools/sbotools.hints> by default, containing blacklisted scripts,
 optional script dependencies and automatic revese dependency rebuild requests.
