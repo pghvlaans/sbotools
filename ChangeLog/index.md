@@ -16,7 +16,8 @@
   * *sbofind*: Report package installation status
   * *sbocheck*: Attempt to report why scripts are out-of-tree
   * *Util.pm*: Block `/root`, `/home` (and its top-level directories) and `/` as directory settings and for `$TMP`
-  * *sbocheck*, *sboupgrade*: Optionally check all SBO packages for missing shared objects
+  * *sbocheck*: Optionally check all SBO packages for missing shared objects
+  * *sboupgrade*: Optionally check all SBO packages for relevant missing shared objects
   * Add setting **SO_CHECK** to enable automatic shared object checks for *sbocheck* and *sboupgrade*
   * *sbocheck*: Use **\--check-package** to check a list of packages (SBO or otherwise) for missing shared objects
   * Add *Solibs.pm*, a new module for performing shared object checks
