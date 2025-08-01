@@ -405,11 +405,11 @@ sub git_sbo_tree {
     $res = eval {
       $branch = $backup_branch unless $branchres;
       die unless defined $branch;
-      die unless system(qw! git reset --hard !) == 0; # if system() doesn't return 0, there was an error
-      die unless system(qw! git fetch !) == 0;
-      die unless system(qw! git checkout --quiet --detach !) == 0;
-      die unless system(qw! git branch --force !, $branch, "origin/$branch") == 0;
-      die unless system(qw! git checkout !, $branch) == 0;
+      die unless system(qw! git --no-pager reset --hard !) == 0; # if system() doesn't return 0, there was an error
+      die unless system(qw! git --no-pager fetch !) == 0;
+      die unless system(qw! git --no-pager checkout --quiet --detach !) == 0;
+      die unless system(qw! git --no-pager branch --force !, $branch, "origin/$branch") == 0;
+      die unless system(qw! git --no-pager checkout !, $branch) == 0;
       system('git --no-pager log -n 1 --pretty="    %h: %s"');
       unlink "$repo_path/SLACKBUILDS.TXT";
       1;
@@ -417,11 +417,11 @@ sub git_sbo_tree {
   } else {
     chdir $config{SBO_HOME} or return 0;
     remove_tree($repo_path) if -d $repo_path;
-    $res = system(qw/ git clone --no-local /, $url, $repo_path) == 0;
+    $res = system(qw/ git --no-pager clone --no-local /, $url, $repo_path) == 0;
     if ($res) {
       chdir $repo_path or return 0;
       if($branchres) {
-        die unless system(qw/ git checkout /, $branch) == 0;
+        die unless system(qw/ git --no-pager checkout /, $branch) == 0;
       }
     }
   }
