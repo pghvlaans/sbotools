@@ -56,7 +56,7 @@ List the current configuration options, including unmodified defaults.
 **\--list** also shows the **sboconfig** flag used to set each option
 for reference. The **\--list** flag can be used without root privileges.
 
-**\--non-default**
+**-n\|\--non-default**
 
 List current non-default configuration options. **\--non-default** also
 shows the **sboconfig** flag used to set each option for reference. The
@@ -123,7 +123,7 @@ Slackware 14.1.
 **JOBS**: If **numerical**, pass to the **-j** argument when a
 SlackBuild invoking **make** is run.
 
-**-K\|\--nocolor (FALSE\|TRUE)**
+**-K\|\--color (FALSE\|TRUE)**
 
 **COLOR**: If **TRUE**, enable **sbotools** color output. To customize
 color output, edit the */etc/sbotools/sbotools.colors* file directly.
@@ -209,6 +209,14 @@ scripts in the local overrides directory.
 object (solib) dependencies among *\_SBo* packages when running
 [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md).
 
+**-h\|\--help**
+
+Show help information.
+
+**-v\|\--version**
+
+Show version information.
+
 ## SBOTEST
 
 **sboconfig** is called when running **sbotest config**; the following
@@ -238,14 +246,6 @@ Defaults to */usr/sbotest/tests*.
 **-s\|\--sbo-home**
 
 Defaults to */usr/sbotest*.
-
-**-h\|\--help**
-
-Show help information.
-
-**-v\|\--version**
-
-Show version information.
 
 ## EXIT CODES
 

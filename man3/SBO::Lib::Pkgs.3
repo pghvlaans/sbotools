@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Pkgs 3"
-.TH SBO::Lib::Pkgs 3 "Setting Orange, Confusion 64, 3191 YOLD" "" "sbotools 3.7"
+.TH SBO::Lib::Pkgs 3 "Sweetmorn, Confusion 70, 3191 YOLD" "" "sbotools 3.7"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -115,8 +115,8 @@ matching the specified \f(CW$type\fR. The available types are \f(CW\*(C`STD\*(C'
 \&\f(CW\*(C`SBO\*(C'\fR for in\-tree _SBo and _SBocompat32 packages, \f(CW\*(C`DIRTY\*(C'\fR for out\-of\-tree _SBo packages
 and \f(CW\*(C`ALL\*(C'\fR for all.
 .PP
-The returned array reference holds a list of hash references representing
-the names, versions and full installed package names of the returned packages.
+The returned array reference holds a list of hash references representing the names,
+versions, full installed package names and creation times of the returned packages.
 .SS get_local_outdated_versions
 .IX Subsection "get_local_outdated_versions"
 .Vb 1
@@ -142,8 +142,9 @@ This subroutine is used only by \f(CWsbocheck(1)\fR.
 .IX Header "EXIT CODES"
 Pkgs.pm subroutines can return the following exit codes:
 .PP
-.Vb 1
+.Vb 2
 \&  _ERR_SCRIPT        2   script or module bug
+\&  _ERR_OPENFH        6   failure to open file handles
 .Ve
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"

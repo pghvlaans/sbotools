@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Sweetmorn, Confusion 65, 3191 YOLD" "" "sbotools 3.7"
+.TH SBO::Lib::Util 3 "Sweetmorn, Confusion 70, 3191 YOLD" "" "sbotools 3.7"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -203,6 +203,15 @@ Returns 1 if the file exists, and 0 otherwise.
 .PP
 \&\f(CWdangerous_directory()\fR takes a string and returns true if it is equal to \f(CW\*(C`/\*(C'\fR,
 \&\f(CW\*(C`/root\*(C'\fR, \f(CW\*(C`/home\*(C'\fR or a possible directory under \f(CW\*(C`/home\*(C'\fR.
+.SS display_times
+.IX Subsection "display_times"
+.Vb 1
+\&  display_times();
+.Ve
+.PP
+\&\f(CWdisplay_times()\fR shows the time spent downloading, packaging and installing
+the scripts in the build queue. It takes no arguments and has no useful return
+value.
 .SS error_code
 .IX Subsection "error_code"
 .Vb 1
@@ -215,15 +224,6 @@ There is no useful return value.
 .PP
 For _ERR_USAGE and _ERR_SCRIPT, use \f(CWusage_error()\fR and \f(CWscript_error()\fR,
 respectively.
-.SS display_times
-.IX Subsection "display_times"
-.Vb 1
-\&  display_times();
-.Ve
-.PP
-\&\f(CWdisplay_times()\fR shows the time spent downloading, packaging and installing
-the scripts in the build queue. It takes no arguments and has no useful return
-value.
 .SS get_arch
 .IX Subsection "get_arch"
 .Vb 1
@@ -271,6 +271,15 @@ copied.
 .Ve
 .PP
 \&\f(CWget_sbo_from_loc()\fR returns the package name from the \f(CW$location\fR passed in.
+.SS get_slack_branch
+.IX Subsection "get_slack_branch"
+.Vb 1
+\&  my $url = get_slack_branch();
+.Ve
+.PP
+\&\f(CWget_slack_branch()\fR returns the default git branch for the given Slackware
+version, if any. If the upstream repository does not have this branch, an onscreen
+message appears.
 .SS get_slack_version
 .IX Subsection "get_slack_version"
 .Vb 1
@@ -290,15 +299,6 @@ The program exits if the version is unsupported or if an error occurs.
 version.
 .PP
 The program exits if the version is unsupported or if an error occurs.
-.SS get_slack_branch
-.IX Subsection "get_slack_branch"
-.Vb 1
-\&  my $url = get_slack_branch();
-.Ve
-.PP
-\&\f(CWget_slack_branch()\fR returns the default git branch for the given Slackware
-version, if any. If the upstream repository does not have this branch, an onscreen
-message appears.
 .SS idx
 .IX Subsection "idx"
 .Vb 1

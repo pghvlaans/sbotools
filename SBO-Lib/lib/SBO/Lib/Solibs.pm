@@ -37,7 +37,7 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Solibs - Functions for evaluating ELF binaries
+SBO::Lib::Solibs - Routines for evaluating ELF binaries
 
 =head1 SYNOPSIS
 

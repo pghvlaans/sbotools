@@ -97,7 +97,7 @@ flag can be used without root privileges.
 .RE
 .P
 .B
---non-default
+-n|--non-default
 .RS
 List current non-default configuration options.
 .B
@@ -296,7 +296,7 @@ is run.
 .RE
 .P
 .B
--K|--nocolor (FALSE|TRUE)
+-K|--color (FALSE|TRUE)
 .RS
 .B
 COLOR\fR\
@@ -549,6 +549,18 @@ and
 sboupgrade(1)\fR\
 \&.
 .RE
+.P
+.B
+-h|--help
+.RS
+Show help information.
+.RE
+.P
+.B
+-v|--version
+.RS
+Show version information.
+.RE
 .SH SBOTEST
 .B
 sboconfig
@@ -612,18 +624,6 @@ Defaults to
 .I
 /usr/sbotest\fR\
 \&.
-.RE
-.P
-.B
--h|--help
-.RS
-Show help information.
-.RE
-.P
-.B
--v|--version
-.RS
-Show version information.
 .RE
 .SH EXIT CODES
 .P

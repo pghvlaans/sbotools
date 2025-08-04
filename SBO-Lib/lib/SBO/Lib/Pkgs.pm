@@ -185,8 +185,8 @@ matching the specified C<$type>. The available types are C<STD> for non-SBo pack
 C<SBO> for in-tree _SBo and _SBocompat32 packages, C<DIRTY> for out-of-tree _SBo packages
 and C<ALL> for all.
 
-The returned array reference holds a list of hash references representing
-the names, versions and full installed package names of the returned packages.
+The returned array reference holds a list of hash references representing the names,
+versions, full installed package names and creation times of the returned packages.
 
 =cut
 
@@ -311,6 +311,7 @@ sub get_removed_builds {
 Pkgs.pm subroutines can return the following exit codes:
 
   _ERR_SCRIPT        2   script or module bug
+  _ERR_OPENFH        6   failure to open file handles
 
 =head1 SEE ALSO
 

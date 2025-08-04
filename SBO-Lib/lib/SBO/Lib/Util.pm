@@ -425,6 +425,30 @@ sub dangerous_directory {
   return $dangerous;
 }
 
+=head2 display_times
+
+  display_times();
+
+C<display_times()> shows the time spent downloading, packaging and installing
+the scripts in the build queue. It takes no arguments and has no useful return
+value.
+
+=cut
+
+sub display_times {
+  my ($build_time_string, $download_time_string, $install_time_string);
+  $build_time_string = time_format($total_build_time) if $total_build_time;
+  $download_time_string = time_format($download_time) if $download_time;
+  $install_time_string = time_format($total_install_time) if $total_install_time;
+  print_color($color_notice);
+  say "" if $build_time_string or $download_time_string or $install_time_string;
+  say "Download: $download_time_string" if $download_time_string;
+  say "Package:  $build_time_string" if $build_time_string;
+  say "Install:  $install_time_string" if $install_time_string;
+  print_color($color_default);
+  return;
+}
+
 =head2 error_code
 
   error_code($message, $code);
@@ -457,30 +481,6 @@ sub error_code {
   }
   print color($color_default);
   exit shift;
-}
-
-=head2 display_times
-
-  display_times();
-
-C<display_times()> shows the time spent downloading, packaging and installing
-the scripts in the build queue. It takes no arguments and has no useful return
-value.
-
-=cut
-
-sub display_times {
-  my ($build_time_string, $download_time_string, $install_time_string);
-  $build_time_string = time_format($total_build_time) if $total_build_time;
-  $download_time_string = time_format($download_time) if $download_time;
-  $install_time_string = time_format($total_install_time) if $total_install_time;
-  print_color($color_notice);
-  say "" if $build_time_string or $download_time_string or $install_time_string;
-  say "Download: $download_time_string" if $download_time_string;
-  say "Package:  $build_time_string" if $build_time_string;
-  say "Install:  $install_time_string" if $install_time_string;
-  print_color($color_default);
-  return;
 }
 
 =head2 get_arch
@@ -604,16 +604,6 @@ sub get_sbo_from_loc {
   return (shift =~ qr#/([^/]+)$#)[0];
 }
 
-=head2 get_slack_version
-
-  my $version = get_slack_version();
-
-C<get_slack_version()> returns the appropriate version of the SBo reposiotry.
-
-The program exits if the version is unsupported or if an error occurs.
-
-=cut
-
 # %supported maps what's in /etc/slackware-version to an https URL, or to an
 # rsync URL if RSYNC_DEFAULT is true. Git commit verification is unavailable
 # prior to Slackware 14.2, so prior versions have rsync as well.
@@ -649,6 +639,30 @@ my %branch = (
   '15.1' => '15.1',
 );
 
+=head2 get_slack_branch
+
+  my $url = get_slack_branch();
+
+C<get_slack_branch()> returns the default git branch for the given Slackware
+version, if any. If the upstream repository does not have this branch, an onscreen
+message appears.
+
+=cut
+
+sub get_slack_branch {
+  return $branch{get_slack_version()};
+}
+
+=head2 get_slack_version
+
+  my $version = get_slack_version();
+
+C<get_slack_version()> returns the appropriate version of the SBo reposiotry.
+
+The program exits if the version is unsupported or if an error occurs.
+
+=cut
+
 sub get_slack_version {
   my $version;
   $version = $config{SLACKWARE_VERSION} unless $config{SLACKWARE_VERSION} eq 'FALSE';
@@ -682,20 +696,6 @@ sub get_slack_version_url {
   my $exists = system(qw! git ls-remote --exit-code https://gitlab.com/SlackBuilds.org/slackbuilds.git --heads origin 15.1 !) == 0;
   return $supported{$version} if $exists;
   return $supported{current};
-}
-
-=head2 get_slack_branch
-
-  my $url = get_slack_branch();
-
-C<get_slack_branch()> returns the default git branch for the given Slackware
-version, if any. If the upstream repository does not have this branch, an onscreen
-message appears.
-
-=cut
-
-sub get_slack_branch {
-  return $branch{get_slack_version()};
 }
 
 =head2 idx
