@@ -947,20 +947,20 @@ sub rationalize_queue {
     for my $item (@queue) {
       my $real_item = $item;
       $real_item =~ s/-compat32$//;
-      push @check_queue, $real_item;
+      push @check_queue, $real_item unless $real_name eq $real_item;
     }
-    my $reqs = get_requires($real_name);
-    unless ($reqs) {
+    my $requirements = get_requires($real_name);
+    unless (defined $requirements) {
+      push @result_queue, $sbo;
+      next FIRST;
+    }
+    my @reqs = @{ $requirements };
+    unless ($reqs[0]) {
       push @result_queue, $sbo;
       next FIRST;
     } else {
-      if (idx($real_name, @check_queue)) {
-        push @queue, $sbo;
-        next FIRST;
-      }
-      my @reqs = @{ $reqs };
       for my $check (@reqs) {
-        if (idx($check, @check_queue)) {
+        if (defined idx($check, @check_queue)) {
           push @queue, $sbo;
           next FIRST;
         }
