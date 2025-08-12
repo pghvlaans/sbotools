@@ -421,8 +421,8 @@ sub interactive_menu {
 
 	REPO: config_prompt("REPO", "If set to a URL, use this as the upstream SBo repository. Git and rsync repositories only.", "A URL or FALSE.", 0);
 
-	# CLASSIC turns this off automatically at runtime
-	COLOR: if (not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') {
+	# CLASSIC turns this off automatically at runtime; not applicable to sbotest
+	COLOR: if ((not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') and not $is_sbotest) {
 		config_prompt("COLOR", "If TRUE, turn on sbotools color output.", "TRUE or FALSE.", "TF");
 	}
 
@@ -470,6 +470,7 @@ sub config_write {
 		my $key = shift;
 		my $val = shift;
 		next if $key eq 'BUILD_IGNORE' and $is_sbotest;
+		next if $key eq 'COLOR' and $is_sbotest;
 		say "Setting $key to $val..." unless exists $options{reset};
 
 		# Comment default values when written in
