@@ -229,6 +229,7 @@ if (!@ARGV) { show_usage(); exit 1 }
 slackbuilds_or_fetch();
 
 my @sbos;
+get_sbo_locations(@ARGV) if @ARGV;
 
 # if a requested compat32 script is ineligible anyway,
 # do not bother with its dependencies, etc.
@@ -294,8 +295,6 @@ if (@ARGV and $compat32) {
 if (@ARGV and not @sbos) { exit 0; }
 @sbos = uniq @sbos;
 
-get_sbo_locations(@sbos) if @sbos;
-
 # Filter out standard packages
 my $std_installs = get_inst_names(get_installed_packages('STD'));
 my %std_names;
@@ -337,6 +336,7 @@ unless ($config{CPAN_IGNORE} eq "TRUE") {
 my $upgrade_queue = [];
 my @needs_reverse;
 my (%warnings, $save_queue);
+my $needs_rationalize;
 
 # ensure that compat32 is picked up on the upgrade list
 if ($compat32) {
@@ -407,7 +407,7 @@ if ($non_int and not $reverse and not $yes_really) {
 			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
 		}
 	}
-	$upgrade_queue = rationalize_queue($upgrade_queue) if $reverse;
+	$needs_rationalize = 1 if $reverse;
 	# no --reverse-rebuild; trigger automatic rebuilds unless --no-install
 	# and put everything in the right order
 	unless ($no_install or $reverse) {
@@ -425,6 +425,7 @@ if ($non_int and not $reverse and not $yes_really) {
 
 # handle all automatic reverse dependency rebuilds here
 if (@needs_reverse and not $no_install and not $reverse) {
+	$needs_rationalize = 1;
 	my ($extra_queue, %extra_warnings);
 	for my $sbo (@needs_reverse) {
 		my $needs_compat;
@@ -446,7 +447,6 @@ if (@needs_reverse and not $no_install and not $reverse) {
 			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
 		}
 	}
-	$upgrade_queue = rationalize_queue($upgrade_queue);
 }
 
 # remove -compat32 here; note that --all needs to retain
@@ -468,6 +468,7 @@ for my $sbo (@$upgrade_queue) { push @reverses, $sbo unless grep { /^$sbo$/ } @$
 # Get user input regarding upgrades
 my (@temp_queue, %commands, %options, %missing_user_group, @ignore_script);
 my (@see_readme, %saved_options);
+$upgrade_queue = rationalize_queue($upgrade_queue) if $needs_rationalize;
 FIRST: for my $sbo (@$upgrade_queue) {
 	my ($perl_ineligible, $arch_ineligible, $only_64, $only_32);
 	next FIRST if $std_names{$sbo};

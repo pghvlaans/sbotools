@@ -237,7 +237,7 @@ $non_int = 1 if $yes_really;
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
 
-my (%warnings, $build_queue, $save_queue, $template);
+my (%warnings, $build_queue, $save_queue, $template, $needs_rationalize);
 
 # if SBO_HOME/resume.temp exists, resume the mass rebuild
 my $mtemp = "$config{SBO_HOME}/mass_rebuild.temp";
@@ -251,6 +251,7 @@ my $requested_reinstall = 1 if $reinstall;
 $reinstall = 1 if $mass_rebuild or $reverse_rebuild or $series_rebuild;
 
 my @sbos;
+get_sbo_locations(@ARGV) if @ARGV;
 
 # if a requested compat32 script is ineligible anyway,
 # do not bother with its dependencies, etc.
@@ -315,8 +316,6 @@ if (@ARGV and $compat32) {
 }
 exit 0 if (@ARGV and not @sbos);
 @sbos = uniq @sbos;
-
-get_sbo_locations(@sbos) if @sbos;
 
 if (length $utemp) {
 	my $json = JSON::PP->new->latin1;
@@ -390,7 +389,6 @@ if (length $utemp) {
 # --reinstall, no --reverse-rebuild: trigger automatic rebuilds
 # and put everything in the right order.
 if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not $utemp and not $series_rebuild) {
-	my $need_rationalize;
 	$save_queue = $build_queue;
 	for my $sbo (@$build_queue) {
 		my ($extra_queue, %extra_warnings);
@@ -399,12 +397,11 @@ if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not 
 			wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo.";
 		}
 		if ($extra_queue) {
-			$need_rationalize = 1;
+			$needs_rationalize = 1;
 			$build_queue = merge_queues($build_queue, $extra_queue);
 			%warnings = (%warnings, %extra_warnings);
 		}
 	}
-	$build_queue = rationalize_queue($build_queue) if $need_rationalize;
 }
 
 # get lists of installed packages and perl modules from CPAN
@@ -422,7 +419,6 @@ $std_names{$_->{name}} = $_ for @$std_pkgs;
 
 # prepare a queue in case of mass_rebuild or series_rebuild
 if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
-	my $needs_rationalize;
 	my @needs_reverse;
 	my $inst_sbos = get_installed_packages('SBO');
 	my %sbos_names;
@@ -463,7 +459,6 @@ if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 		usage_error("No SBo packages are installed. Exiting.") if $mass_rebuild;
 		usage_error("No SBo packages are installed from the $series_rebuild series. Exiting.");
 	}
-	$build_queue = rationalize_queue($build_queue) if $needs_rationalize;
 }
 
 # populate %locations and sanity check
@@ -494,6 +489,7 @@ if (defined $template) {
 }
 my $added = ' added to install queue.';
 my (@see_readme, %saved_options);
+$build_queue = rationalize_queue($build_queue) if $needs_rationalize;
 FIRST: for my $sbo (@$build_queue) {
 	my ($perl_ineligible, $arch_ineligible, $only_64, $only_32);
 	my $name;
