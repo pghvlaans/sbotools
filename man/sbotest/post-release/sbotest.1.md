@@ -28,13 +28,14 @@
     sbotest [config|find|hints] \...
 
     sbotest [-f|-s] [-Akl /path|FALSE] [-j #|FALSE] \
-            [-D] [--no-archive|--archive-force] sbo_name (sbo_name)
+            [-X TRUE|FALSE] [-D] [--no-archive|--archive-force] \
+            sbo_name (sbo_name)
 
-    sbotest [-Al /path|FALSE] [-B BRANCH|FALSE] [-r URL|FALSE] \
-            [-S TRUE|FALSE] [-D] --archive-rebuild
+    sbotest [-Al /path|FALSE] [-SX TRUE|FALSE] [-j #|FALSE] \
+            [-D] --archive-rebuild
 
-    sbotest [-Al /path|FALSE] [-B BRANCH|FALSE] [-r URL|FALSE] \
-            [-S TRUE|FALSE] [-D] --archive-reverse
+    sbotest [-Al /path|FALSE] [-SX TRUE|FALSE] [-j #|FALSE] \
+            [-D] --archive-reverse
 
 ## DISCLAIMER
 
@@ -79,6 +80,12 @@ and **\--archive-force** below. Any packages that are not required for
 the following build are removed afterwards. Packages without the *\_SBo*
 tag are unaffected, and no package that is already installed when
 **sbotest** starts can be removed or reinstalled.
+
+Packages in the archive with missed rebuilds may lack required shared
+object dependencies, which can in turn cause builds to fail. To check
+all installed *\_SBo* packages for missing dependencies upon build test
+failure, set **SO_CHECK** to **TRUE** or pass **\--so-check TRUE** to
+**sbotest**.
 
 **sbopkglint(1)** is run on all test targets once [sboinstall(1)](sboinstall.1.md) has
 been called for the last time. A summary of results is displayed and
@@ -215,6 +222,12 @@ If **TRUE**, delete only mismatched packages with lower version or build
 numbers when running **\--archive-rebuild** or **\--archive-reverse**.
 If **FALSE**, delete all mismatched packages from the archive. Overrides
 the setting in */etc/sbotest/sbotest.conf*.
+
+**-X\|\--so-check**
+
+If **TRUE**, perform a missing shared object dependency check on all
+installed *\_SBo* packages upon build test failure. Overrides the
+setting in */etc/sbotest/sbotest.conf*.
 
 **-h\|\--help**
 
