@@ -364,8 +364,8 @@ None known. If found, Issues and Pull Requests to
 
 [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md), [sbotools.conf(5)](sbotools.conf.5.md),
 [sbotools.hints(5)](sbotools.hints.5.md), SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Info(3),
-SBO::Lib::Pkgs(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3),
-SBO::Lib::Util(3), sbolint(1), sbopkglint(1)
+SBO::Lib::Pkgs(3), SBO::Lib::Repo(3), SBO::Lib::Solibs(3),
+SBO::Lib::Tree(3), SBO::Lib::Util(3), sbolint(1), sbopkglint(1)
 
 ## ACKNOWLEDGMENTS
 
