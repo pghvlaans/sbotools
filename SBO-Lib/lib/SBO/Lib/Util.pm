@@ -694,7 +694,7 @@ The program exits if the version is unsupported or if an error occurs.
 sub get_slack_version_url {
   my $version = get_slack_version();
   return $supported{$version} unless $version eq "15.1";
-  my $exists = system(qw! git ls-remote --exit-code https://gitlab.com/SlackBuilds.org/slackbuilds.git --heads origin 15.1 !) == 0;
+  my $exists = system(qw! git --no-pager ls-remote --exit-code https://gitlab.com/SlackBuilds.org/slackbuilds.git --heads origin 15.1 !) == 0;
   return $supported{$version} if $exists;
   return $supported{current};
 }
