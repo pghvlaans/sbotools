@@ -5,6 +5,7 @@
 _arguments \
     '(-)'{-h,--help}'[Show help.]:' \
     '(-)'{-v,--version}'[Show version.]:' \
+    '(-)'{-C,--check-all-packages}'[Check all installed packages for missing shared objects only.]:' \
     '(-)'{-c,--check-package}'[Check a list of package names for missing shared objects only.]:' \
     '(-)'{-g,--gpg-verify}'[Verify with gpg.]:' \
     '(-)'{-O,--obsolete-check}'[In -current, download the obsolete scripts list.]:' \

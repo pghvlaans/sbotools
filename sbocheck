@@ -33,8 +33,10 @@ Options:
     version information.
   --(no)color:
     (do not) use sbotools color output.
+  -C|--check-all-packages:
+    check all installed packages for missing shared objects.
   -c|--check-package:
-    chek one or more packages for missing shared objects.
+    check one or more packages for missing shared objects.
   -g|--gpg-verify:
     perform gpg verification.
   -O|--obsolete-check:
@@ -47,25 +49,25 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $pkg_check);
+my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $pkg_check, $full_check);
 
-GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check);
+GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check);
 
 if ($help) {
 	show_usage();
-	wrapsay "\nNon-root users can call $self with -c, -n, -X, -h and -v." unless $< == 0;
+	wrapsay "\nNon-root users can call $self with -C -c, -n, -X, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
 $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
 if ($< != 0) { $config{GPG_VERIFY} = "FALSE"; }
-unless ($< == 0 or ($nopull and not $gpg) or $socheck or $pkg_check) {
+unless ($< == 0 or ($nopull and not $gpg) or $socheck or $pkg_check or $full_check) {
 	show_usage();
-	usage_error "Non-root users can call $self with -c, -n, -X, -h and -v." unless $< == 0;
+	usage_error "Non-root users can call $self with -C, -c, -n, -X, -h and -v." unless $< == 0;
 }
 
 usage_error "obsolete-check is incompatible with nopull." if $nopull and $obsolete_check;
-usage_error "so-check is incompatible with pkg-check." if $socheck and $pkg_check;
+usage_error "so-check, check-all-packages and check-package are incompatible with each other." if ($socheck and $pkg_check) or ($socheck and $full_check) or ($pkg_check and $full_check);
 usage_error "pkg-check requires a list of packages." if $pkg_check and not @ARGV;
 my @requested = @ARGV if $pkg_check;
 
@@ -84,8 +86,8 @@ if ($obsolete_check) {
 	exit 0;
 }
 
-update_tree() unless $nopull or $socheck or $pkg_check;
-if (($nopull or $socheck or $pkg_check) and slackbuilds_or_fetch()) {
+update_tree() unless $nopull or $socheck or $pkg_check or $full_check;
+if (($nopull or $socheck or $pkg_check or $full_check) and slackbuilds_or_fetch()) {
 	wrapsay_color $color_notice, "Not updating the SlackBuilds tree...";
 	wrapsay_color $color_notice, "Not writing log files..." unless $< == 0;
 }
@@ -93,7 +95,7 @@ if (($nopull or $socheck or $pkg_check) and slackbuilds_or_fetch()) {
 # check for and display missing shared objects
 sub evaluate_solibs {
 	my (@actionable, @to_rebuild, @to_check, @missing);
-	my $scope = $pkg_check ? "ALL" : "SBO";
+	my $scope = ($pkg_check or $full_check) ? "ALL" : "SBO";
 	my @installed = @{ get_installed_packages($scope) };
 	my $installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @installed };
 	my $installed_vers = +{ map {; $_->{name}, $_->{version} } @installed };
@@ -107,7 +109,7 @@ sub evaluate_solibs {
 	wrapsay_color $color_lesser, "Not installed: ". join", ", @missing if @missing;
 	my $pkg_count = $pkg_check ? @to_check : @installed;
 	my $count = 0;
-	print "\n" if $pkg_check or $socheck;
+	print "\n" if $pkg_check or $socheck or $full_check;
 	print "Checking packages for missing shared objects...";
 	return unless $pkg_count;
 	$| = 1;
@@ -330,7 +332,7 @@ sub print_output {
 	return 1;
 }
 
-unless ($socheck or $pkg_check) {
+unless ($socheck or $pkg_check or $full_check) {
 	my @listing = get_update_list('VERS');
 	print_output('/var/log/sbocheck.log', @listing);
 	if ($config{CLASSIC} ne "TRUE") {
@@ -340,7 +342,7 @@ unless ($socheck or $pkg_check) {
 		print_output('/var/log/sbocheck-out-of-tree.log', @removed);
 	}
 }
-if ($socheck or $config{SO_CHECK} eq "TRUE" or $pkg_check) {
+if ($socheck or $config{SO_CHECK} eq "TRUE" or $pkg_check or $full_check) {
 	my @to_rebuild = evaluate_solibs();
 	print_output('/var/log/sbocheck-solibs.log', @to_rebuild);
 }

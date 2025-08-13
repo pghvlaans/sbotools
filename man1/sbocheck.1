@@ -11,7 +11,7 @@ tree and check for updates
 .P
 sbocheck [-h|-v]
 .P
-sbocheck [-OXgn]
+sbocheck [-COXgn]
 .P
 sbocheck [-c] package [package]
 .P
@@ -126,7 +126,10 @@ TRUE\fR\
 \&. Use the
 .B
 --check-package
-option to check only a list of packages. Please note that scripts repackaging from binary
+option to check only a list of packages.
+.B
+--check-all-packages
+checks all packages installed to the system. Please note that scripts repackaging from binary
 packages occasionally trigger false positives. Such packages generally do not require rebuilds.
 .P
 To check for updated SlackBuilds without updating the SlackBuilds
@@ -212,6 +215,22 @@ sbotools.conf(5)\fR\
 .SH OPTIONS
 .P
 .B
+-C|--check-all-packages
+.RS
+Check every package on the system,
+.I
+_SBo
+or otherwise\fR\
+\&, for missing shared objects. Incompatible with
+.B
+--so-check
+and
+.B
+--check-package\fR\
+\&.
+.RE
+.P
+.B
 -c|--check-package
 .RS
 Check one or more package names for missing shared objects; the packages need not be
@@ -220,7 +239,10 @@ tagged with
 _SBo\fR\
 \&. Incompatible with
 .B
---so-check\fR\
+--so-check
+and
+.B
+--check-all-packages\fR\
 \&.
 .RE
 .P
@@ -300,7 +322,10 @@ or
 sbotools.conf(5)\fR\
 \&). Incompatible with
 .B
---check-package\fR\
+--check-package
+and
+.B
+--check-all-packages\fR\
 \&.
 .RE
 .P

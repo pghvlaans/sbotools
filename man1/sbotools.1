@@ -23,7 +23,7 @@ for version updates, build number changes and out-of-tree installed
 SlackBuilds with the
 .I
 _SBo
-tag.
+tag. Perform shared object dependency checks.
 .RE
 .P
 .B
@@ -260,8 +260,13 @@ with the
 option. Use
 .B
 -c
-instead to check a list of installed packages. Checks are performed automatically
-after running
+instead to check a list of installed packages, or
+.B
+-C
+to check all installed packages. Checks of
+.I
+_SBo
+packages only are performed automatically after running
 .B
 sbocheck
 and

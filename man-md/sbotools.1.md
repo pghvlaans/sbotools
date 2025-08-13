@@ -25,7 +25,8 @@ its own man page.
 
 Fetch the latest version of the upstream SlackBuilds repository. Check
 for version updates, build number changes and out-of-tree installed
-SlackBuilds with the *\_SBo* tag.
+SlackBuilds with the *\_SBo* tag. Perform shared object dependency
+checks.
 
 [sboclean(1)](sboclean.1.md)
 
@@ -130,7 +131,8 @@ Upgrading Slackware or other packages occasionally causes breakage
 related to missing shared object dependencies (solibs). To check
 first-order dependencies for all installed *SBo* packages, use
 **sbocheck** with the **-X** option. Use **-c** instead to check a list
-of installed packages. Checks are performed automatically after running
+of installed packages, or **-C** to check all installed packages. Checks
+of *\_SBo* packages only are performed automatically after running
 **sbocheck** and [sboupgrade(1)](sboupgrade.1.md) when the **SO_CHECK** setting is
 **TRUE**.
 
