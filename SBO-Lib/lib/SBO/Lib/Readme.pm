@@ -12,12 +12,12 @@ use SBO::Lib::Util qw/ :const :colors error_code prompt script_error slurp open_
 use SBO::Lib::Tree qw/ is_local /;
 
 use Exporter 'import';
+use File::Basename;
 
 our @EXPORT_OK = qw{
   ask_opts
   ask_other_readmes
   ask_user_group
-  get_opts
   get_readme_contents
   get_user_group
   user_group_exist
@@ -58,19 +58,17 @@ C<compat32> packages, saved options are shared with the base script.
 
 # provide an opportunity to set options or retrieve previously-used options
 sub ask_opts {
-  # TODO: check number of args
-  script_error('ask_opts requires an argument.') unless @_;
+  script_error('ask_opts requires at least one argument.') unless @_;
   my ($sbo, $readme) = @_;
   my $real_name = $sbo;
   $real_name =~ s/-compat32$//;
-  my ($opts_log) = "/var/log/sbotools/$real_name";
-  my ($opts_bk) = "$opts_log.bk";
+  my $opts_log = "/var/log/sbotools/$real_name";
   if (-f $opts_log) {
-    my ($prev_fh, $exit) = open_fh($opts_log, '<');
+    my ($fh, $exit) = open_fh($opts_log, '<');
     if ($exit) {
-      warn_color $color_lesser, $prev_fh;
+      warn_color $color_lesser, $fh;
     } else {
-      my $prev_opts = <$prev_fh>;
+      my $prev_opts = <$fh>;
       if ($config{CLASSIC} ne "TRUE") {
         wrapsay_color $color_notice, "\nIt looks like options were previously specified for $sbo:\n";
         wrapsay "\n$prev_opts\n";
@@ -81,6 +79,7 @@ sub ask_opts {
       }
     }
   }
+  return() unless $readme =~ /[A-Z0-9]+=[^\s]/;
   if (prompt($color_notice, "\nIt looks like $sbo has options; would you like to set any when the slackbuild is run?", default => 'no')) {
     my $ask = sub {
       chomp(my $opts = prompt($color_default, "\nPlease supply any options here, or press Enter to skip: "));
@@ -109,16 +108,17 @@ It displays the files one by one upon prompt.
 =cut
 
 sub ask_other_readmes {
+  script_error('ask_other_readmes requires two arguments.') unless @_ == 2;
   my ($sbo, $location) = @_;
-  my @readmes = sort grep { ! m!/README$! } glob "$location/README*";
+  my @readmes = sort glob "$location/README?*";
 
   return unless @readmes;
 
   return unless (prompt($color_notice, "\nIt looks like $sbo has additional README files. Would you like to view those as well?", default => 'yes'));
 
   for my $fn (@readmes) {
-    my ($display_fn) = $fn =~ m!/(README.*)$!;
-    say "\n$display_fn:";
+    my $display_fn = basename $fn;
+    wrapsay_color $color_notice, "\n$display_fn:";
     say slurp $fn;
   }
 }
@@ -147,22 +147,6 @@ sub ask_user_group {
     say "    # $_" for @$cmds;
     return prompt($color_lesser, 'Run the commands prior to building?', default => 'yes') ? $cmds : undef;
   }
-}
-
-=head2 get_opts
-
-  my $bool = get_opts($readme);
-
-C<get_opts()> checks the C<$readme> for defined options in the form KEY=VALUE.
-It returns a true value if any are found, and a false value otherwise.
-
-=cut
-
-# see if the README mentions any options
-sub get_opts {
-  script_error('get_opts requires an argument.') unless @_ == 1;
-  my $readme = shift;
-  return $readme =~ /[A-Z0-9]+=[^\s]/ ? 1 : undef;
 }
 
 =head2 get_readme_contents
@@ -199,12 +183,12 @@ sub get_user_group {
   $readme =~ s/'//g;
   my @cmds = $readme =~ /^\s*#*\s*(useradd.*?|groupadd.*?)(?<!\\)\n/msg;
   unless (@cmds) {
-    my @readmes = sort grep { ! m!/README$! } glob "$location/README*";
+    my @readmes = sort glob "$location/README?*";
     if (@readmes) {
       for my $other_file (@readmes) {
-        next if @cmds;
-	my $other_readme = slurp $other_file;
-	@cmds = $other_readme =~ /^\s*#*\s*(useradd.*?|groupadd.*?)(?<!\\)\n/msg;
+        my $other_readme = slurp $other_file;
+        @cmds = $other_readme =~ /^\s*#*\s*(useradd.*?|groupadd.*?)(?<!\\)\n/msg;
+        last if @cmds;
       }
     }
   }
@@ -250,24 +234,14 @@ sub user_group_exist {
 
 =head2 user_prompt
 
-  my ($cmds, $opts, $exit) = user_prompt($sbo, $location);
+  my ($proceed, $cmds, $opts) = user_prompt($sbo, $location);
 
 C<user_prompt()> is the main point of access to the other commands in C<Readme.pm>.
 It calls subroutines to find options and commands, and then prompts the user for
-installation. Three values are potentially returned.
+installation. It returns the answer to the installation prompt (true for 'yes' and
+false for 'no'), the list of commands and the list of options.
 
-In case of error, the first is the error message and the third is a true value.
-
-If the user refuses the prompt to build C<$sbo>, the first value is C<'N'>.
-
-If C<$sbo> is to be built, the first value is the commands that would run
-in advance, or C<$undef> if none. The second value contains build options.
-
-B<Note>: This should really be changed.
-
-B<Note>: The previous note is old. I (KEC) agree that this subroutine is asked to do
-quite a lot. Keeping it in place might be the most parsimonious thing to do, but I
-have yet to look into the question closely.
+The script exits if a non-empty C<README> file cannot be read.
 
 =cut
 
@@ -275,27 +249,26 @@ have yet to look into the question closely.
 sub user_prompt {
   script_error('user_prompt requires two arguments.') unless @_ == 2;
   my ($sbo, $location) = @_;
-  if (not defined $location) { usage_error("Unable to locate $sbo in the SlackBuilds.org tree."); }
-  my $readme = get_readme_contents($location);
-  return "Could not open README for $sbo.", undef, _ERR_OPENFH if not defined $readme;
-  wrapsay_color $color_lesser, "\nFound $sbo in local overrides." if is_local($sbo);
-  print "\n". $readme;
-  # check for user/group add commands, offer to run any found
-  my $user_group = get_user_group($readme, $location);
   my $cmds;
-  $cmds = ask_user_group($user_group, $readme) if $$user_group[0];
-  # check for options mentioned in the README
   my $opts = 0;
-  if (get_opts($readme)) {
-    my $prel_opts = ask_opts($sbo, $readme);
-    chomp($opts = $prel_opts) if $prel_opts;
+  my $readme = 0;
+  unless (defined $location) { usage_error("Unable to locate $sbo in the SlackBuilds.org tree."); }
+  wrapsay_color $color_lesser, "\nFound $sbo in local overrides." if is_local($sbo);
+  if (-s "$location/README") {
+    $readme = get_readme_contents($location);
+    error_code("Unable to open README for $sbo; exiting.") unless defined $readme;
+    print "\n". $readme;
+    # check for user/group add commands, offer to run any found
+    my $user_group = get_user_group($readme, $location);
+    $cmds = ask_user_group($user_group, $readme) if $$user_group[0];
+  } else {
+    wrapsay_color $color_lesser, "\n$sbo has no README file.";
   }
-  ask_other_readmes($sbo, $location);
-  # we have to return something substantial if the user says no so that we
-  # can check the value of $cmds on the calling side. we should be able to
-  # assume that 'N' will  never be a valid command to run.
-  return 'N' unless prompt($color_notice, "\nProceed with $sbo?", default => 'yes');
-  return $cmds, $opts;
+  my $prel_opts = ask_opts($sbo, $readme);
+  chomp($opts = $prel_opts) if $prel_opts;
+  ask_other_readmes($sbo, $location) if $readme;
+  my $proceed = prompt($color_notice, "\nProceed with $sbo?", default => 'yes');
+  return $proceed, $cmds, $opts;
 }
 
 =head1 EXIT CODES

@@ -168,8 +168,8 @@ level under that path matching a SlackBuild name is used in preference
 to the in-tree version. This works even if the SlackBuild is
 out-of-tree. Scripts installing packages not marked with the *\_SBo* tag
 are neither upgradeable with [sboupgrade(1)](sboupgrade.1.md) nor removable with
-[sboremove(1)](sboremove.1.md). *README*, *slack-desc*, an *info* file and a
-SlackBuild must all be present.
+[sboremove(1)](sboremove.1.md). *slack-desc*, an *info* file and a SlackBuild must all
+be present.
 
 **-V\|\--slackware-version (FALSE\|#.#)**
 

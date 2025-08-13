@@ -45,6 +45,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Add Solibs.pm, a new module for performing shared object checks
   * Bugfix: Improve interrupt behavior
   * Bugfix: Fix rationalize_queue
+  * Readme.pm: General clean-up; account for no-README case and using previously-specified options without detected options
 
 #### 3.7 - 2025-07-04
   * Optimize queue construction: Shared dependency handling and rationalize_queue

@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Readme 3"
-.TH SBO::Lib::Readme 3 "Setting Orange, Confusion 64, 3191 YOLD" "" "sbotools 3.7"
+.TH SBO::Lib::Readme 3 "Setting Orange, Bureaucracy 6, 3191 YOLD" "" "sbotools 3.7"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -101,14 +101,6 @@ It displays the files one by one upon prompt.
 \&\f(CW\*(C`README\*(C'\fR file and calls \f(CWuser_group_exist()\fR; if at least one of the specified
 users or groups does not exist, it prompts for running the commands. If yes,
 the \f(CW$cmds\fR are returned, and \f(CW\*(C`undef\*(C'\fR otherwise.
-.SS get_opts
-.IX Subsection "get_opts"
-.Vb 1
-\&  my $bool = get_opts($readme);
-.Ve
-.PP
-\&\f(CWget_opts()\fR checks the \f(CW$readme\fR for defined options in the form KEY=VALUE.
-It returns a true value if any are found, and a false value otherwise.
 .SS get_readme_contents
 .IX Subsection "get_readme_contents"
 .Vb 1
@@ -138,25 +130,15 @@ returning a true value if the user and group exist and an undefined value if the
 .SS user_prompt
 .IX Subsection "user_prompt"
 .Vb 1
-\&  my ($cmds, $opts, $exit) = user_prompt($sbo, $location);
+\&  my ($proceed, $cmds, $opts) = user_prompt($sbo, $location);
 .Ve
 .PP
 \&\f(CWuser_prompt()\fR is the main point of access to the other commands in \f(CW\*(C`Readme.pm\*(C'\fR.
 It calls subroutines to find options and commands, and then prompts the user for
-installation. Three values are potentially returned.
+installation. It returns the answer to the installation prompt (true for \*(Aqyes\*(Aq and
+false for \*(Aqno\*(Aq), the list of commands and the list of options.
 .PP
-In case of error, the first is the error message and the third is a true value.
-.PP
-If the user refuses the prompt to build \f(CW$sbo\fR, the first value is \f(CW\*(AqN\*(Aq\fR.
-.PP
-If \f(CW$sbo\fR is to be built, the first value is the commands that would run
-in advance, or \f(CW$undef\fR if none. The second value contains build options.
-.PP
-\&\fBNote\fR: This should really be changed.
-.PP
-\&\fBNote\fR: The previous note is old. I (KEC) agree that this subroutine is asked to do
-quite a lot. Keeping it in place might be the most parsimonious thing to do, but I
-have yet to look into the question closely.
+The script exits if a non\-empty \f(CW\*(C`README\*(C'\fR file cannot be read.
 .SH "EXIT CODES"
 .IX Header "EXIT CODES"
 Readme.pm subroutines can return the following exit codes:

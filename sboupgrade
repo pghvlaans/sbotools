@@ -547,9 +547,8 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		if ($compat32 or $name =~ /-compat32$/) {
 			unless ($inst_names{$sbo} or grep { /^$sbo$/ } @temp_queue) {
 				say "$name requires $sbo." unless $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
-				my ($cmds, $opts, $exit) = user_prompt($sbo, $locations{$sbo});
-				error_code("Unable to open README for $sbo; exiting.", $exit) if $exit;
-				if ($cmds) { next FIRST if $cmds eq 'N'; }
+				my ($proceed, $cmds, $opts) = user_prompt($sbo, $locations{$sbo});
+				next FIRST unless $proceed;
 				push(@temp_queue, $sbo);
 				$commands{$sbo} = $cmds;
 				$options{$sbo} = $opts;
@@ -573,9 +572,8 @@ FIRST: for my $sbo (@$upgrade_queue) {
 			wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32.";
 			next FIRST;
 		}
-		my ($cmds, $opts, $exit) = user_prompt($name, $locations{$name});
-		error_code("Unable to open README for $sbo; exiting.", $exit) if $exit;
-		if ($cmds) { next FIRST if $cmds eq 'N'; }
+		my ($proceed, $cmds, $opts) = user_prompt($name, $locations{$name});
+		next FIRST unless $proceed;
 		push(@temp_queue, $name);
 		$commands{$name} = $cmds;
 		$options{$name} = $opts;
@@ -584,11 +582,16 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		# for --batch, check for existing user and group, exiting
 		# with a message if not
 		if ($yes_really) {
-			my $readme = get_readme_contents($locations{$real_name});
-			unless (defined $readme) {
-				error_code("Unable to open README for $sbo.", _ERR_OPENFH);
+			my $cmds;
+			if (-s "$locations{$real_name}/README") {
+				my $readme = get_readme_contents($locations{$real_name});
+				unless (defined $readme) {
+					error_code("Unable to open README for $sbo.", _ERR_OPENFH);
+				}
+				$cmds = get_user_group($readme, $locations{$real_name});
+			} else {
+				wrapsay_color $color_lesser, "$locations{$real_name}/README is empty or does not exist.";
 			}
-			my $cmds = get_user_group($readme, $locations{$real_name});
 			if ($$cmds[0]) {
 				unless (user_group_exist(@$cmds)) {
 					if ($dry_run) {
