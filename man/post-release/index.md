@@ -3,7 +3,7 @@ The pages here reflect post-release development. For the version 3.7 pages (2025
 * [sbotools(1)](sbotools.1.md)
     * A summary man page with brief descriptions of the tools.
 * [sbocheck(1)](sbocheck.1.md)
-    * Fetch the latest version of the upstream SlackBuilds repository; check for version updates, build number changes and out-of-tree installed SlackBuilds.
+    * Fetch the latest version of the upstream SlackBuilds repository; check for version updates, build number changes and out-of-tree installed SlackBuilds. Perform shared object dependency checks.
 * [sboclean(1)](sboclean.1.md)
     * Remove cruft by cleaning source archives, build directories and saved build options.
 * [sboconfig(1)](sboconfig.1.md)
