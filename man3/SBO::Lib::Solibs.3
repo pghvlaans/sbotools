@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Solibs 3"
-.TH SBO::Lib::Solibs 3 "Sweetmorn, Confusion 70, 3191 YOLD" "" "sbotools 3.7"
+.TH SBO::Lib::Solibs 3 "Setting Orange, Bureaucracy 6, 3191 YOLD" "" "sbotools 3.7"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -81,8 +81,14 @@ of calling.
 .ie n .SS %old_libs
 .el .SS \f(CW%old_libs\fP
 .IX Subsection "%old_libs"
-A hash with a per\-package list of apparently missing first\-order shared object dependencies.
-It is generated when running \f(CWsolib_check()\fR.
+A hash with a per\-package list of apparently missing first\-order shared object dependencies;
+each missing dependency comes with a list of files that link to it. This hash is generated
+when running \f(CWsolib_check()\fR.
+.ie n .SS %per_cand
+.el .SS \f(CW%per_cand\fP
+.IX Subsection "%per_cand"
+A hash with per\-object lists of dynamically\-linked files. It is used to produce the file lists
+in \f(CW%old_libs\fR, and is not exported.
 .ie n .SS @x86_libs
 .el .SS \f(CW@x86_libs\fP
 .IX Subsection "@x86_libs"

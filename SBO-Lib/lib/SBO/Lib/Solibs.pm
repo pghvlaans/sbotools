@@ -53,8 +53,14 @@ of calling.
 
 =head2 %old_libs
 
-A hash with a per-package list of apparently missing first-order shared object dependencies.
-It is generated when running C<solib_check()>.
+A hash with a per-package list of apparently missing first-order shared object dependencies;
+each missing dependency comes with a list of files that link to it. This hash is generated
+when running C<solib_check()>.
+
+=head2 %per_cand
+
+A hash with per-object lists of dynamically-linked files. It is used to produce the file lists
+in C<%old_libs>, and is not exported.
 
 =head2 @x86_libs
 
@@ -98,6 +104,7 @@ my $rpath_type_big = "0000000f";
 our @native_libs;
 our @x86_libs;
 our %old_libs;
+our %per_cand;
 
 =head1 SUBROUTINES
 
@@ -268,6 +275,7 @@ sub elf_links {
       for my $rpath (@cand_rpaths) {
         next CANDS if -f "$rpath/$string" or -l "$rpath/$string";
       }
+      $per_cand{$string} .= " $file";
       push @cand_libs, $string;
     }
   }
@@ -361,20 +369,27 @@ sub solib_check {
     }
   }
   return 1 unless @shared or @x86_shared;
-  for my $cand (uniq @shared) {
+  for my $cand (uniq sort @shared) {
     if (@search) { next unless in $cand, @search; }
     next if in $cand, @native_libs;
-    push @nonexistent, "\t$cand" unless solib_present($cand, $pkg, @file_list);
+    unless (solib_present($cand, $pkg, @file_list)) {
+      push @nonexistent, "  $cand:";
+      for my $file (uniq sort split " ", $per_cand{$cand}) { push @nonexistent, "    $file" if in $file, @file_list; }
+    }
   }
-  for my $cand (uniq @x86_shared) {
+  for my $cand (uniq sort @x86_shared) {
     if (@search) { next unless in $cand, @search; }
     next if in $cand, @x86_libs;
-    push @nonexistent, "\t$cand (x86)" unless solib_present($cand, $pkg, @file_list);
+    unless (solib_present($cand, $pkg, @file_list)) {
+      push @nonexistent, "  $cand (x86):";
+      for my $file (uniq sort split " ", $per_cand{$cand}) { push @nonexistent, "    $file" if in $file, @file_list; }
+    }
   }
   undef @file_list;
   undef @shared;
   undef @x86_shared;
   if (@nonexistent) {
+    push @nonexistent, "";
     $old_libs{$pkg} = join("\n", @nonexistent);
     return 0;
   }
@@ -443,11 +458,13 @@ sub update_known_solibs {
   my $is_x86_64 = $arch eq "x86_64" ? 1 : 0;
   for my $line (@ld_lines) {
     next unless $line =~ m/^\s/;
+    my @item = split " ", $line;
+    next unless -f $item[-1] or -l $item[-1];
     unless ($is_x86_64) {
-      push @native_libs, (split " ", $line)[0];
+      push @native_libs, $item[0];
     } else {
-      push @native_libs, (split " ", $line)[0] if $line =~ m/\(libc6,x86-64(\)|, )/;
-      push @x86_libs, (split " ", $line)[0] if $line =~ m/\(libc6(\)|, )/;
+      push @native_libs, $item[0] if $line =~ m/\(libc6,x86-64(\)|, )/;
+      push @x86_libs, $item[0] if $line =~ m/\(libc6(\)|, )/;
     }
   }
 }
