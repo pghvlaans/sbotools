@@ -130,7 +130,9 @@ Upgrading Slackware or other packages occasionally causes breakage
 related to missing shared object dependencies (solibs). To check
 first-order dependencies for all installed *SBo* packages, use
 **sbocheck** with the **-X** option. Use **-c** instead to check a list
-of installed packages.
+of installed packages. Checks are performed automatically after running
+**sbocheck** and [sboupgrade(1)](sboupgrade.1.md) when the **SO_CHECK** setting is
+**TRUE**.
 
 ## BUGS
 

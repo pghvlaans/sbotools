@@ -73,11 +73,12 @@ Please note that **sbosnap**, which was removed as an independent script
 in **sbotools-3.3**, is a compatibility symlink to **sbocheck**.
 
 Non-root users can only call **sbocheck** with the **\--nopull**,
-**\--so-check**, **\--help** and **\--version** flags. **sbocheck**
-issues a warning if the directory specified with **LOCAL_OVERRIDES**
-does not exist (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). If an
-invalid configuration is detected in */etc/sbotools/sbotools.conf*, the
-script exits with a diagnostic message.
+**\--so-check**, **\--check-package**, **\--help** and **\--version**
+flags. **sbocheck** issues a warning if the directory specified with
+**LOCAL_OVERRIDES** does not exist (see [sboconfig(1)](sboconfig.1.md) or
+[sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
+message.
 
 ## OPTIONS
 
