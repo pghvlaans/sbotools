@@ -57,10 +57,10 @@ A hash with a per-package list of apparently missing first-order shared object d
 each missing dependency comes with a list of files that link to it. This hash is generated
 when running C<solib_check()>.
 
-=head2 %per_cand
+=head2 %per_cand, %x86_per_cand
 
-A hash with per-object lists of dynamically-linked files. It is used to produce the file lists
-in C<%old_libs>, and is not exported.
+Hashes with per-object lists of dynamically-linked files. they are used to produce the file lists
+in C<%old_libs>, and are not exported.
 
 =head2 @x86_libs
 
@@ -105,6 +105,7 @@ our @native_libs;
 our @x86_libs;
 our %old_libs;
 our %per_cand;
+our %x86_per_cand;
 
 =head1 SUBROUTINES
 
@@ -147,6 +148,7 @@ shared object dependencies that do not exist on the system under an C<rpath> or 
 sub elf_links {
   script_error("elf_links requires an argument; exiting.") unless @_ == 1;
   my $file = shift;
+  my $is_x86_64 = $arch eq "x86_64" ? 1 : 0;
   open my $fh, "<:raw", $file or return 0;
   my ($read_in, $contents);
   $read_in = read $fh, $contents, $pre;
@@ -275,7 +277,11 @@ sub elf_links {
       for my $rpath (@cand_rpaths) {
         next CANDS if -f "$rpath/$string" or -l "$rpath/$string";
       }
-      $per_cand{$string} .= " $file";
+      if ($is_x86_64 and $is_32) {
+        $x86_per_cand{$string} .= " $file";
+      } else {
+        $per_cand{$string} .= " $file";
+      }
       push @cand_libs, $string;
     }
   }
@@ -382,7 +388,7 @@ sub solib_check {
     next if in $cand, @x86_libs;
     unless (solib_present($cand, $pkg, @file_list)) {
       push @nonexistent, "  $cand (x86):";
-      for my $file (uniq sort split " ", $per_cand{$cand}) { push @nonexistent, "    $file" if in $file, @file_list; }
+      for my $file (uniq sort split " ", $x86_per_cand{$cand}) { push @nonexistent, "    $file" if in $file, @file_list; }
     }
   }
   undef @file_list;

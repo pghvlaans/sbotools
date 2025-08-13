@@ -84,11 +84,11 @@ of calling.
 A hash with a per\-package list of apparently missing first\-order shared object dependencies;
 each missing dependency comes with a list of files that link to it. This hash is generated
 when running \f(CWsolib_check()\fR.
-.ie n .SS %per_cand
-.el .SS \f(CW%per_cand\fP
-.IX Subsection "%per_cand"
-A hash with per\-object lists of dynamically\-linked files. It is used to produce the file lists
-in \f(CW%old_libs\fR, and is not exported.
+.ie n .SS "%per_cand, %x86_per_cand"
+.el .SS "\f(CW%per_cand\fP, \f(CW%x86_per_cand\fP"
+.IX Subsection "%per_cand, %x86_per_cand"
+Hashes with per\-object lists of dynamically\-linked files. they are used to produce the file lists
+in \f(CW%old_libs\fR, and are not exported.
 .ie n .SS @x86_libs
 .el .SS \f(CW@x86_libs\fP
 .IX Subsection "@x86_libs"
