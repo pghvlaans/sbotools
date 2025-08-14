@@ -87,7 +87,7 @@ if ($obsolete_check) {
 }
 
 update_tree() unless $nopull or $socheck or $pkg_check or $full_check;
-if (($nopull or $socheck or $pkg_check or $full_check) and slackbuilds_or_fetch()) {
+if ((($nopull or $socheck) and slackbuilds_or_fetch()) or $pkg_check or $full_check) {
 	wrapsay_color $color_notice, "Not updating the SlackBuilds tree...";
 	wrapsay_color $color_notice, "Not writing log files..." unless $< == 0;
 }

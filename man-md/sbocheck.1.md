@@ -87,14 +87,16 @@ message.
 **-C\|\--check-all-packages**
 
 Check every package on the system, *\_SBo* or otherwise, for missing
-shared objects. Incompatible with **\--so-check** and
+shared objects. This option is usable even when there is no local copy
+of the repository. Incompatible with **\--so-check** and
 **\--check-package**.
 
 **-c\|\--check-package**
 
 Check one or more package names for missing shared objects; the packages
-need not be tagged with *\_SBo*. Incompatible with **\--so-check** and
-**\--check-all-packages**.
+need not be tagged with *\_SBo*. This option is usable even when there
+is no local copy of the repository. Incompatible with **\--so-check**
+and **\--check-all-packages**.
 
 **-g\|\--gpg-verify**
 
