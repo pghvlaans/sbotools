@@ -25,7 +25,7 @@
 
     sboconfig [--reset]
 
-    sboconfig [-CKPORSXcbdegw TRUE|FALSE] [-j #|FALSE] [-Lpo
+    sboconfig [-CKOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-Lpo
 /path\|FALSE] \
               [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \
               [-r url|FALSE]
@@ -81,7 +81,7 @@ number differs.
 
 **-C\|\--classic (FALSE\|TRUE)**
 
-**CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT**and
+**CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT** and
 **BUILD_IGNORE**, and disable **COLOR** (overriding the contents of
 [sbotools.conf(5)](sbotools.conf.5.md)). Build increment and out-of-tree SlackBuild checks
 by [sbocheck(1)](sbocheck.1.md) are disabled, and previously-used build options are
