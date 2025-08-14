@@ -14,8 +14,8 @@
 
 ## DESCRIPTION
 
-The */etc/sbotools/sbotools.hints* file is used to give sbotools hints
-about individual scripts. Three kinds of hints are recognized:
+The */etc/sbotools/sbotools.hints* file is used to give **sbotools**
+hints about individual scripts. Three kinds of hints are recognized:
 
 • blacklist
 

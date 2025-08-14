@@ -55,13 +55,13 @@ breakage due to **\*.so** version differences. To check for missing
 first-order shared object (solib) dependencies among all installed
 in-tree *\_SBo* packages, use the **\--so-check** option. Each affected
 package is logged to */var/log/sbocheck-solibs.log* with a list of
-missing shared objects. This can be done automatically on every
-**sbocheck** run by setting **SO_CHECK** to **TRUE**. Use the
-**\--check-package** option to check only a list of packages.
-**\--check-all-packages** checks all packages installed to the system.
-Please note that scripts repackaging from binary packages occasionally
-trigger false positives. Such packages generally do not require
-rebuilds.
+missing shared objects and the files that have first-order dependencies
+on them. This can be done automatically on every **sbocheck** run by
+setting **SO_CHECK** to **TRUE**. Use the **\--check-package** option to
+check only a list of packages. **\--check-all-packages** checks all
+packages installed to the system. Please note that scripts repackaging
+from binary packages occasionally trigger false positives. Such packages
+generally do not require rebuilds.
 
 To check for updated SlackBuilds without updating the SlackBuilds tree,
 pass the **\--nopull** option. **sbocheck** performs **gpg(1)**
@@ -75,12 +75,12 @@ Please note that **sbosnap**, which was removed as an independent script
 in **sbotools-3.3**, is a compatibility symlink to **sbocheck**.
 
 Non-root users can only call **sbocheck** with the **\--nopull**,
-**\--so-check**, **\--check-package**, **\--help** and **\--version**
-flags. **sbocheck** issues a warning if the directory specified with
-**LOCAL_OVERRIDES** does not exist (see [sboconfig(1)](sboconfig.1.md) or
-[sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
-message.
+**\--so-check**, **\--check-package**, **\--check-all-packages**,
+**\--help** and **\--version** flags. **sbocheck** issues a warning if
+the directory specified with **LOCAL_OVERRIDES** does not exist (see
+[sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration
+is detected in */etc/sbotools/sbotools.conf*, the script exits with a
+diagnostic message.
 
 ## OPTIONS
 

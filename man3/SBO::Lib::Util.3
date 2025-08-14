@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Sweetmorn, Confusion 70, 3191 YOLD" "" "sbotools 3.7"
+.TH SBO::Lib::Util 3 "Sweetmorn, Bureaucracy 7, 3191 YOLD" "" "sbotools 3.7"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -202,7 +202,7 @@ Returns 1 if the file exists, and 0 otherwise.
 .Ve
 .PP
 \&\f(CWdangerous_directory()\fR takes a string and returns true if it is equal to \f(CW\*(C`/\*(C'\fR,
-\&\f(CW\*(C`/root\*(C'\fR, \f(CW\*(C`/home\*(C'\fR or a possible directory under \f(CW\*(C`/home\*(C'\fR.
+\&\f(CW\*(C`/root\*(C'\fR, \f(CW\*(C`/home\*(C'\fR or a possible top\-level directory under \f(CW\*(C`/home\*(C'\fR.
 .SS display_times
 .IX Subsection "display_times"
 .Vb 1
@@ -368,7 +368,7 @@ be the same for the \f(CW\*(C`compat32\*(C'\fR version of the script. Note that 
 .Ve
 .PP
 \&\f(CWopen_fh()\fR opens \f(CW$fn\fR for reading and/or writing depending on
-\&\f(CW$op\fR.
+\&\f(CW$op\fR (e.g., ">" or "<").
 .PP
 It returns two values: the file handle and the exit status. If the exit status
 is non\-zero, it returns an error message rather than a file handle.

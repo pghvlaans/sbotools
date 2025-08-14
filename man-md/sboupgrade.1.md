@@ -67,8 +67,9 @@ Package upgrades occasionally cause breakage due to **\*.so** version
 differences. To check for missing first-order shared object (solib)
 dependencies that may have resulted from running **sboupgrade**, use
 **\--so-check TRUE**. Each affected package is logged to
-*/var/log/sboupgrade-solibs.log* with a list of missing shared objects.
-This can be done automatically after every **sboupgrade** run by setting
+*/var/log/sboupgrade-solibs.log* with a list of missing shared objects
+and the files that have first-order dependencies on them. This can be
+done automatically after every **sboupgrade** run by setting
 **SO_CHECK** to **TRUE**.
 
 Root privileges are required to run **sboupgrade** unless passing

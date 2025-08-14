@@ -410,7 +410,7 @@ sub check_multilib {
   my $dangerous = dangerous_directory($dirname);
 
 C<dangerous_directory()> takes a string and returns true if it is equal to C</>,
-C</root>, C</home> or a possible directory under C</home>.
+C</root>, C</home> or a possible top-level directory under C</home>.
 
 =cut
 
@@ -1001,7 +1001,7 @@ sub on_blacklist {
   my ($ret, $exit) = open_fh($fn, $op);
 
 C<open_fh()> opens C<$fn> for reading and/or writing depending on
-C<$op>.
+C<$op> (e.g., ">" or "<").
 
 It returns two values: the file handle and the exit status. If the exit status
 is non-zero, it returns an error message rather than a file handle.

@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Solibs 3"
-.TH SBO::Lib::Solibs 3 "Setting Orange, Bureaucracy 6, 3191 YOLD" "" "sbotools 3.7"
+.TH SBO::Lib::Solibs 3 "Sweetmorn, Bureaucracy 7, 3191 YOLD" "" "sbotools 3.7"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -87,7 +87,7 @@ when running \f(CWsolib_check()\fR.
 .ie n .SS "%per_cand, %x86_per_cand"
 .el .SS "\f(CW%per_cand\fP, \f(CW%x86_per_cand\fP"
 .IX Subsection "%per_cand, %x86_per_cand"
-Hashes with per\-object lists of dynamically\-linked files. they are used to produce the file lists
+Hashes with per\-object lists of dynamically\-linked files. They are used to produce the file lists
 in \f(CW%old_libs\fR, and are not exported.
 .ie n .SS @x86_libs
 .el .SS \f(CW@x86_libs\fP
@@ -160,7 +160,7 @@ This subroutine is not exported.
 .Ve
 .PP
 \&\f(CWupdate_known_solibs()\fR takes no arguments. It uses the \f(CW\*(C`\-\-print\-cache\*(C'\fR option of
-\&\f(CWldconfig(1)\fR to generate an array of known shared objects, \f(CW@native_libs\fR. On
+\&\f(CWldconfig(1)\fR to generate an array of existent known shared objects, \f(CW@native_libs\fR. On
 \&\f(CW\*(C`x86_64\*(C'\fR systems, it generates \f(CW@x86_libs\fR as well, an array with 32\-bit shared objects.
 .PP
 The script exits in case of \f(CW\*(C`ldcdonfig\*(C'\fR failure. There is no useful return value.

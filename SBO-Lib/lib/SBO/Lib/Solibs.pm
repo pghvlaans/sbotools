@@ -59,7 +59,7 @@ when running C<solib_check()>.
 
 =head2 %per_cand, %x86_per_cand
 
-Hashes with per-object lists of dynamically-linked files. they are used to produce the file lists
+Hashes with per-object lists of dynamically-linked files. They are used to produce the file lists
 in C<%old_libs>, and are not exported.
 
 =head2 @x86_libs
@@ -449,7 +449,7 @@ sub solib_present {
   update_known_solibs;
 
 C<update_known_solibs()> takes no arguments. It uses the C<--print-cache> option of
-C<ldconfig(1)> to generate an array of known shared objects, C<@native_libs>. On
+C<ldconfig(1)> to generate an array of existent known shared objects, C<@native_libs>. On
 C<x86_64> systems, it generates C<@x86_libs> as well, an array with 32-bit shared objects.
 
 The script exits in case of C<ldcdonfig> failure. There is no useful return value.

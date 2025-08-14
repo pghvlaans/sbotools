@@ -117,11 +117,9 @@ sub get_orig_location {
 C<get_sbo_location()> returns the location in C<LOCAL_OVERRIDES> or the
 SlackBuilds.org tree for the first C<$sbo> given.
 
-Specifying more than one C<$sbo> is useful only for accessing the
-filesystem once when searching or populating the internal cache. No
-code does this currently. If the subroutine is to be called sequentially
-on any substantial number of C<$sbo>, calling C<get_sbo_locations()> on
-them collectively first is advisable for performance reasons.
+If this subroutine is to be called sequentially on any substantial number
+of C<$sbo>, calling C<get_sbo_locations()> on them collectively first is
+advisable for performance reasons.
 
 =cut
 
