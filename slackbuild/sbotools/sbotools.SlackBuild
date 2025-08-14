@@ -26,7 +26,7 @@
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=sbotools
-VERSION=${VERSION:-3.7}
+VERSION=${VERSION:-3.8}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_pghv}
 PKGTYPE=${PKGTYPE:-tgz}
@@ -84,7 +84,7 @@ for i in $SCRIPTS; do
   install -m 0644 completions/zsh/_sbo$i $PKG/usr/share/zsh/site-functions
   install -m 0644 completions/bash/sbo$i $PKG/usr/share/bash-completion/completions/sbo$i
 done
-# sbofind and parts of some other scripts can be used without root
+# sbofind and parts of most other scripts can be used without root
 mkdir -p $PKG/usr/bin
 (
 cd $PKG/usr/bin

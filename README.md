@@ -2,7 +2,7 @@
 
 **[sbotools](https://pghvlaans.github.io/sbotools/)** is a set of Perl scripts providing a ports-like automation interface to [SlackBuilds.org](https://www.slackbuilds.org/). The tools are:
 
-  * **sbocheck**: Fetch the latest version of SlackBuilds.org repository; check for version updates, build number changes and out-of-tree installed SlackBuilds.
+  * **sbocheck**: Fetch the latest version of SlackBuilds.org repository; check for version updates, build number changes and out-of-tree installed SlackBuilds. Perform shared object dependency checks.
   * **sboclean**: Remove cruft by cleaning source archives, build directories and saved build options.
   * **sboconfig**: A command line interface for changing settings.
   * **sbofind**: Search the local copy of the repository.
@@ -21,7 +21,7 @@ This repository is an **sbotools** revival, and was forked from the [pink-mist r
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
 ## Most Recent Changes
-#### Post-Release
+#### 3.8 - 2025-08-14
   * Bugfix: For most compatibility builds and when running in a 32-bit userland reporting a 64-bit kernel, call SlackBuilds with setarch
   * Repo.pm: Use --no-pager with git-log
   * sboinstall, sboupgrade: Do not attempt compat32 builds for 64- and 32-bit only scripts

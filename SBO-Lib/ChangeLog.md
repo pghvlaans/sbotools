@@ -1,6 +1,6 @@
 # sbotools
 
-#### Post-Release
+#### 3.8 - 2025-08-14
   * Bugfix: For most compatibility builds and when running in a 32-bit userland reporting a 64-bit kernel, call SlackBuilds with setarch
   * Repo.pm: Use --no-pager with git-log
   * sboinstall, sboupgrade: Do not attempt compat32 builds for 64- and 32-bit only scripts

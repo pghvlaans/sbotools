@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '3.7';
+our $VERSION = '3.8';
 
 use SBO::Lib::Util qw/ :config :const build_cmp in script_error error_code open_read version_cmp /;
 use SBO::Lib::Tree qw/ get_sbo_location get_sbo_locations is_local /;

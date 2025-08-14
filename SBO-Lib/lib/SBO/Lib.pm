@@ -16,7 +16,7 @@ use strict;
 use warnings FATAL => 'all';
 
 package SBO::Lib;
-our $VERSION = '3.7';
+our $VERSION = '3.8';
 
 =pod
 
