@@ -6,7 +6,7 @@ This **sbotools** companion script is written with script maintainers in mind: E
 
 **sbotest** is configured separately from **sbotools**. See the contents of `/etc/sbotest`, or run **sbotest config** and **sbotest hints** to set options from the command line.
 
-See the [man page](https://pghvlaans.github.io/sbotools/man/sbotest/release/sbotest.1.html) for more information about options and settings!
+The [ChangeLog](ChangeLog.md) has a record of changes since the initial release. See the [man page](https://pghvlaans.github.io/sbotools/man/sbotest/release/sbotest.1.html) for more information about options and settings!
 
 ## Getting sbotest
 
