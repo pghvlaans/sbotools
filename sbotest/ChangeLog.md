@@ -1,6 +1,6 @@
 ## ChangeLog.md
 
-#### Post-Release
+#### 1.1 - 2025-08-14
   * bin/test: Report test targets with failures in the build queue separately
   * bin/test: Add --archive-reverse
   * bin/test: Replace get_arch(), which is no longer exported by SBO::Lib::Util

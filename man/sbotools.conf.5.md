@@ -27,15 +27,19 @@ To quickly restore all default settings, run
 To use a configuration directory other than */etc/sbotools*, export an
 environment variable **SBOTOOLS_CONF_DIR** with an absolute path.
 
+*/root*, */home*, */* and possible top-level directories under */home*
+are not permitted as directory settings.
+
 The current configuration keys are as follows:
 
 **CLASSIC=(FALSE\|TRUE)**
 
-If **TRUE**, automatically enable **RSYNC_DEFAULT** and **BUILD_IGNORE**
-(overriding the contents of this file). Build increment and out-of-tree
-SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are disabled, and previously-used
-build options are not displayed. This provides a more traditional
-**sbotools** look and feel for those who want it.
+If **TRUE**, automatically enable **RSYNC_DEFAULT** and
+**BUILD_IGNORE**, and disable **COLOR** (overriding the contents of this
+file). Build increment and out-of-tree SlackBuild checks by
+[sbocheck(1)](sbocheck.1.md) are disabled, and previously-used build options are not
+displayed. This provides a more traditional **sbotools** look and feel
+for those who want it.
 
 **CPAN_IGNORE=(FALSE\|TRUE)**
 
@@ -52,8 +56,8 @@ under */usr/sbo/distfiles* (with *SBO_HOME=/usr/sbo*) by default. If
 
 **GPG_VERIFY=(FALSE\|TRUE)**
 
-If **TRUE**, use **gpg** to verify the contents of the local repository
-(and, if applicable, */etc/sbotools/obsolete*) when running
+If **TRUE**, use **gpg(1)** to verify the contents of the local
+repository (and, if applicable, */etc/sbotools/obsolete*) when running
 [sbocheck(1)](sbocheck.1.md), [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md). Missing public
 keys are detected, and a download from
 [keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 is offered if
@@ -69,6 +73,12 @@ If **numerical**, pass to the **-j** argument when a SlackBuild invoking
 
 If **TRUE**, do not clean working directories after building. These are
 the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
+
+**COLOR=(FALSE\|TRUE)**
+
+If **TRUE**, enable **sbotools** color output. To customize color
+output, edit the */etc/sbotools/sbotools.colors* file directly. See
+[sbotools.colors(5)](sbotools.colors.5.md) for more details.
 
 **GIT_BRANCH=(FALSE\|branch_name)**
 
@@ -119,14 +129,19 @@ path matching a SlackBuild name is used in preference to the in-tree
 version. This works even if the SlackBuild is out-of-tree. Scripts
 installing packages not marked with the *\_SBo* tag are neither
 upgradeable with [sboupgrade(1)](sboupgrade.1.md) nor removable with [sboremove(1)](sboremove.1.md).
-*README*, *slack-desc*, an *info* file and a SlackBuild must all be
-present.
+*slack-desc*, an *info* file and a SlackBuild must all be present.
 
 **SLACKWARE_VERSION=(FALSE\|#.#)**
 
 If set to a **version number**, use the **SlackBuilds.org** repository
 for that version of Slackware rather than the one specified in
 */etc/slackware-version*.
+
+**SO_CHECK=(FALSE\|TRUE)**
+
+If set to **TRUE**, check for missing first-order shared object (solib)
+dependencies among *\_SBo* packages when running [sbocheck(1)](sbocheck.1.md) and
+[sboupgrade(1)](sboupgrade.1.md).
 
 **REPO=(FALSE\|url\|/path)**
 
@@ -150,10 +165,15 @@ If set to **TRUE**, upgrades are only attempted if the incoming version
 or build number is greater. This has no effect on scripts in the local
 overrides directory.
 
+**NOWRAP=(FALSE\|TRUE)**
+
+If set to **TRUE**, do not wrap **sbotools** output.
+
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
+[sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
 
 ## AUTHORS
 

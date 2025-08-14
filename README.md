@@ -31,5 +31,6 @@ Nonetheless, this repository was originally a simple fork adding a feature: Savi
 * Use `--dry-run` and `--batch` to test and install build queues non-interactively
 * Rebuild all `SBo` scripts with `--mass-rebuild`, or individual series with `--series-rebuild`
 * Optional build log capabilities
+* Optional shared object dependency checking
 
 Those who prefer a more traditional **sbotools** experience can use the **CLASSIC** metasetting to disable most new on-screen messaging and lock other settings to version 2.7 behavior. [sbotools2](https://git.server.ky/slackcoder/sbotools2/about/), a Slackware 15.0-compatible **sbotools-2.7** maintenance fork by Slack Coder, may also be of interest.

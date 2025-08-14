@@ -21,7 +21,11 @@ updates
 
     sbocheck [-h|-v]
 
-    sbocheck [-Ogn]
+    sbocheck [-COXgn]
+
+    sbocheck [-c] package [package]
+
+    sbocheck [--color|--nocolor] \...
 
 ## DESCRIPTION
 
@@ -46,8 +50,21 @@ increment checks are disabled when **CLASSIC** is **TRUE**; if
 "differs", but are not acted on by [sboupgrade(1)](sboupgrade.1.md) (see
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
+Upgrades to Slackware and third-party packages occasionally cause
+breakage due to **\*.so** version differences. To check for missing
+first-order shared object (solib) dependencies among all installed
+in-tree *\_SBo* packages, use the **\--so-check** option. Each affected
+package is logged to */var/log/sbocheck-solibs.log* with a list of
+missing shared objects and the files that have first-order dependencies
+on them. This can be done automatically on every **sbocheck** run by
+setting **SO_CHECK** to **TRUE**. Use the **\--check-package** option to
+check only a list of packages. **\--check-all-packages** checks all
+packages installed to the system. Please note that scripts repackaging
+from binary packages occasionally trigger false positives. Such packages
+generally do not require rebuilds.
+
 To check for updated SlackBuilds without updating the SlackBuilds tree,
-pass the **\--nopull** option. **sbocheck** performs **gpg**
+pass the **\--nopull** option. **sbocheck** performs **gpg(1)**
 verification upon pulling the tree if **GPG_VERIFY** is **TRUE** (see
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). The **\--gpg-verify** option
 has the same effect. Passing both **\--gpg-verify** and **\--nopull**
@@ -58,6 +75,7 @@ Please note that **sbosnap**, which was removed as an independent script
 in **sbotools-3.3**, is a compatibility symlink to **sbocheck**.
 
 Non-root users can only call **sbocheck** with the **\--nopull**,
+**\--so-check**, **\--check-package**, **\--check-all-packages**,
 **\--help** and **\--version** flags. **sbocheck** issues a warning if
 the directory specified with **LOCAL_OVERRIDES** does not exist (see
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration
@@ -66,25 +84,47 @@ diagnostic message.
 
 ## OPTIONS
 
+**-C\|\--check-all-packages**
+
+Check every package on the system, *\_SBo* or otherwise, for missing
+shared objects. This option is usable even when there is no local copy
+of the repository. Incompatible with **\--so-check** and
+**\--check-package**.
+
+**-c\|\--check-package**
+
+Check one or more package names for missing shared objects; the packages
+need not be tagged with *\_SBo*. This option is usable even when there
+is no local copy of the repository. Incompatible with **\--so-check**
+and **\--check-all-packages**.
+
 **-g\|\--gpg-verify**
 
-Use **gpg** to verify the fetched repository, even if **GPG_VERIFY** is
-**FALSE**. When called with **\--nopull**, verify the repo without
+Use **gpg(1)** to verify the fetched repository, even if **GPG_VERIFY**
+is **FALSE**. When called with **\--nopull**, verify the repo without
 fetching. Only rsync repositories can be verified on Slackware 14.0 and
 Slackware 14.1.
 
 **-O\|\--obsolete-check**
 
 If running Slackware -current, download a copy of the obsolete script
-list from <https://pghvlaans.github.io/sbotools> and verify with gpg if
-**GPG_VERIFY** is **TRUE** or **\--gpg-verify** is passed. Incompatible
-with **\--nopull**.
+list from <https://pghvlaans.github.io/sbotools> and verify with gpg(1)
+if **GPG_VERIFY** is **TRUE** or **\--gpg-verify** is passed.
+Incompatible with **\--nopull**.
 
 **-n\|\--nopull**
 
 Check for updated SlackBuilds without updating the SlackBuilds tree. The
 **\--nopull** flag can be used without root privileges, but no log is
 kept.
+
+**-X\|\--so-check**
+
+Check all installed *\_SBo* packages for missing shared object
+dependencies; no other operations are performed. To do this
+automatically every time **sbocheck** is run, set **SO_CHECK** to
+**TRUE** (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). Incompatible
+with **\--check-package** and **\--check-all-packages**.
 
 **-h\|\--help**
 
@@ -93,6 +133,14 @@ Show help information.
 **-v\|\--version**
 
 Show version information.
+
+**\--color**
+
+Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors.5.md).
+
+**\--nocolor**
+
+Turn off **sbotools** color output.
 
 ## EXIT CODES
 
@@ -114,7 +162,8 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md),
+[sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
 
 ## AUTHORS
 

@@ -25,7 +25,8 @@ its own man page.
 
 Fetch the latest version of the upstream SlackBuilds repository. Check
 for version updates, build number changes and out-of-tree installed
-SlackBuilds with the *\_SBo* tag.
+SlackBuilds with the *\_SBo* tag. Perform shared object dependency
+checks.
 
 [sboclean(1)](sboclean.1.md)
 
@@ -119,6 +120,23 @@ menu. Each option is explained and no changes are made without
 verification. Using flags is faster, but new users may find this a
 helpful resource.
 
+**sbotools** can be set up to print some messages and prompts in color.
+All scripts except for **sboconfig** have **\--color** and
+**\--nocolor** options to turn colors on and off. To turn all colors on
+by default, set **COLOR** to **TRUE**. Output colors can be customized
+by editing the */etc/sbotools/sbotools.colors* file. See the comments
+there or [sbotools.colors(5)](sbotools.colors.5.md) for details.
+
+Upgrading Slackware or other packages occasionally causes breakage
+related to missing shared object dependencies (solibs). To check
+first-order dependencies for all installed *SBo* packages, use
+**sbocheck** with the **-X** option. Use **-c** instead to check a list
+of installed packages, or **-C** to check all installed packages. **-C**
+and **-c** can be used without a local copy of the repository. Checks of
+*\_SBo* packages only are performed automatically after running
+**sbocheck** and [sboupgrade(1)](sboupgrade.1.md) when the **SO_CHECK** setting is
+**TRUE**.
+
 ## BUGS
 
 None known. If found, Issues and Pull Requests to
@@ -127,8 +145,8 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md),
-[sbotools.hints(5)](sbotools.hints.5.md)
+[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
+[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 

@@ -11,12 +11,3 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 ## Prospective Features
 
 Nothing else for now, but requests are welcome and will receive due consideration.
-
-## Incoming
-
-* Customizable color output with a setting to turn it on
-* A setting to turn off sbotools output wrapping
-* Installation status reporting in sbofind
-* Time-of-installation reporting in sboinstall
-* sbocheck tries to report why missing scripts are missing
-* missing shared object checks; run from sboupgrade and sbocheck (automatically if SO_CHECK)

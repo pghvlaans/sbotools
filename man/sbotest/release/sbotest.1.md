@@ -28,10 +28,14 @@
     sbotest [config|find|hints] \...
 
     sbotest [-f|-s] [-Akl /path|FALSE] [-j #|FALSE] \
-            [-D] [--no-archive|--archive-force] sbo_name (sbo_name)
+            [-X TRUE|FALSE] [-D] [--no-archive|--archive-force] \
+            sbo_name (sbo_name)
 
-    sbotest [-Al /path|FALSE] [-B BRANCH|FALSE] [-r URL|FALSE] \
-            [-S TRUE|FALSE] [-D] --archive-rebuild
+    sbotest [-Al /path|FALSE] [-SX TRUE|FALSE] [-j #|FALSE] \
+            [-D] --archive-rebuild
+
+    sbotest [-Al /path|FALSE] [-SX TRUE|FALSE] [-j #|FALSE] \
+            [-D] --archive-reverse
 
 ## DISCLAIMER
 
@@ -76,6 +80,12 @@ and **\--archive-force** below. Any packages that are not required for
 the following build are removed afterwards. Packages without the *\_SBo*
 tag are unaffected, and no package that is already installed when
 **sbotest** starts can be removed or reinstalled.
+
+Packages in the archive with missed rebuilds may lack required shared
+object dependencies, which can in turn cause builds to fail. To check
+all installed *\_SBo* packages for missing dependencies upon build test
+failure, set **SO_CHECK** to **TRUE** or pass **\--so-check TRUE** to
+**sbotest**.
 
 **sbopkglint(1)** is run on all test targets once [sboinstall(1)](sboinstall.1.md) has
 been called for the last time. A summary of results is displayed and
@@ -130,6 +140,13 @@ about setting hints.
 
 Incompatible with **\--no-archive** and **\--archive-force**.
 
+**\--archive-reverse**
+
+Perform an archive rebuild as with **\--archive-rebuild**, but rebuild
+all reverse dependencies as well.
+
+Incompatible with **\--no-archive** and **\--archive-force**.
+
 **-A\|\--sbo-archive**
 
 If **FALSE**, use the default archive directory at *SBO_HOME/archive*.
@@ -141,7 +158,8 @@ When testing the requested scripts, copy all built packages into
 **SBO_ARCHIVE**, */usr/sbotest/archive* by default. This includes even
 requested scripts and their reverse dependencies.
 
-Incompatible with **\--archive-rebuild** and **\-\--no-archive**.
+Incompatible with **\--archive-rebuild**, **\--archive-reverse** and
+**\-\--no-archive**.
 
 **-B\|\--git-branch**
 
@@ -153,8 +171,8 @@ Must be used with **pull**.
 
 Generate a report on scripts to be tested, queued packages in the local
 overrides directory and the number of archived packages to be reused. In
-case of **\--archive-rebuild**, additionally report archived packages to
-be removed.
+case of **\--archive-rebuild** or **\--archive-reverse**, additionally
+report archived packages to be removed.
 
 **-f\|\--full-reverse**
 
@@ -190,7 +208,8 @@ and **sbopkglint(1)** logs to that directory with a timestamp appended.
 Do not reuse any archived packages during the test run, and do not
 archive built packages.
 
-Incompatible with **\--archive-rebuild** and **\--archive-force**.
+Incompatible with **\--archive-rebuild**, **\--archive-reverse** and
+**\--archive-force**.
 
 **-r\|\--repo**
 
@@ -200,9 +219,15 @@ version. If a **URL**, pull from that URL. Must be used with **pull**.
 **-S\|\--strict-upgrades**
 
 If **TRUE**, delete only mismatched packages with lower version or build
-numbers when running **\--archive-rebuild**. If **FALSE**, delete all
-mismatched packages from the archive. Overrides the setting in
-*/etc/sbotest/sbotest.conf*.
+numbers when running **\--archive-rebuild** or **\--archive-reverse**.
+If **FALSE**, delete all mismatched packages from the archive. Overrides
+the setting in */etc/sbotest/sbotest.conf*.
+
+**-X\|\--so-check**
+
+If **TRUE**, perform a missing shared object dependency check on all
+installed *\_SBo* packages upon build test failure. Overrides the
+setting in */etc/sbotest/sbotest.conf*.
 
 **-h\|\--help**
 
@@ -252,7 +277,8 @@ targets), use **\--archive-force**. Ignore the archive altogether with
 
 The archive can be kept current with **\--archive-rebuild**. This
 rebuilds all version- and build-mismatched packages in the archive,
-provided that they are not installed or on the blacklist. If
+provided that they are not installed or on the blacklist.
+**\--archive-reverse** rebuilds all reverse dependencies as well. If
 **STRICT_UPGRADES** is **TRUE**, only mismatched packages with lower
 version or build numbers are removed from the archive. By default, all
 mismatched packages are removed.
@@ -336,10 +362,10 @@ None known. If found, Issues and Pull Requests to
 
 ## SEE ALSO
 
-[sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md),
-SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3),
-SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), sbolint(1),
-sbopkglint(1)
+[sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md), [sbotools.conf(5)](sbotools.conf.5.md),
+[sbotools.hints(5)](sbotools.hints.5.md), SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Info(3),
+SBO::Lib::Pkgs(3), SBO::Lib::Repo(3), SBO::Lib::Solibs(3),
+SBO::Lib::Tree(3), SBO::Lib::Util(3), sbolint(1), sbopkglint(1)
 
 ## ACKNOWLEDGMENTS
 

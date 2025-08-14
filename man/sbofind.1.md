@@ -24,11 +24,14 @@ a given name or names
 
     sbofind [-AEFRTeiqrt] search_term (search_term)
 
+    sbofind [--color|--nocolor] \...
+
 ## DESCRIPTION
 
 **sbofind** searches the names of all available SlackBuilds for one or
-more search terms. It reports back any SlackBuilds found along with path
-and version information. This is equivalent to running
+more search terms. It reports back any SlackBuilds found along with
+path, version and installation status information. This is akin to
+running
 
     cd /usr/ports; make search name=$search_term display=name,path
 
@@ -97,6 +100,14 @@ Show help information.
 
 Show version information.
 
+**\--color**
+
+Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors.5.md).
+
+**\--nocolor**
+
+Turn off **sbotools** color output.
+
 ## SBOTEST
 
 **sbofind** is called when running **sbotest find**; flags are
@@ -109,7 +120,7 @@ indicated.
 
 0: all operations were succesful.\
 1: a usage error occured (e.g., incorrect options were passed to
-**sbofind** ).\
+**sbofind**).\
 2: a script or module error occurred.\
 6: a required handle could not be obtained.\
 13: circular dependencies detected.\
@@ -123,7 +134,8 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md),
+[sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 

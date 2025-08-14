@@ -34,6 +34,8 @@
     sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
                [-Dioqr] [--create-template FILE] --series-rebuild SERIES
 
+    sboinstall [--color|--nocolor] \...
+
 ## DESCRIPTION
 
 **sboinstall** is used to install SlackBuilds. If the
@@ -136,13 +138,16 @@ Do not reuse saved build options if running with **\--nointeractive**.
 
 **-p\|\--compat32**
 
-Create a *compat32* package on multilib x86_64 systems. This requires
-the **compat32-tools** package by Eric Hameleers. Please note that this
-operation is not necessarily foolproof, and is unsupported by anyone in
-principle. **\--compat32** can be combined with **\--noinstall** and
-**\--distclean FALSE** so that the contents of the package can be
-inspected prior to installation. GitHub Issues are welcome in case of
-unexpected failure.
+Create a *compat32* package on multilib x86_64 systems. Any requested
+64-bit only scripts are not queued, and 32-bit only scripts are built
+as-is.
+
+This requires the **compat32-tools** package by Eric Hameleers. Please
+note that this operation is not necessarily foolproof, and is
+unsupported by anyone in principle. **\--compat32** can be combined with
+**\--noinstall** and **\--distclean FALSE** so that the contents of the
+package can be inspected prior to installation. GitHub Issues are
+welcome in case of unexpected failure.
 
 **sboinstall** will not attempt *compat32* builds for Perl-based or
 *noarch* scripts. Incompatible with **\--mass-rebuild,
@@ -264,6 +269,14 @@ Show help information.
 
 Show version information.
 
+**\--color**
+
+Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors.5.md).
+
+**\--nocolor**
+
+Turn off **sbotools** color output.
+
 ## VARIABLES
 
 Beyond the options contained in *README* files, certain variables are
@@ -275,8 +288,8 @@ relevant to nearly all SlackBuilds, and can be used when running
 **ARCH** passes a CPU architecture to the build process, and is mostly
 used to build **i?86** packages on **x86_64** machines and *compat32*
 packages. **sboinstall** does not require **ARCH** to build *compat32*
-packages. This process is not necessarily bug-free; please do not
-hesitate to report *compat32* issues.
+packages, instead using **setarch(1)**. This process is not necessarily
+bug-free; please do not hesitate to report *compat32* issues.
 
 **BUILD**
 
@@ -353,7 +366,8 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md),
+[sbotools.hints(5)](sbotools.hints.5.md), gpg(1), setarch(1)
 
 ## AUTHORS
 

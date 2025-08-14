@@ -21,9 +21,11 @@
 
     sboupgrade [-h|-v]
 
-    sboupgrade [-Scbde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboupgrade [-SXcbde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
                [-fiopqrz] [--batch|--dry-run] --all|sbo_name (sbo_name)
+
+    sboupgrade [--color|--nocolor] \...
 
 ## DESCRIPTION
 
@@ -57,9 +59,18 @@ or the md5sum check fails, a new download is attempted from
 <ftp://slackware.uk/sbosrcarch/> as a fallback measure. The **\--all**
 flag may be passed to upgrade all eligible SlackBuilds simultaneously.
 
-**sboupgrade** verifies the local repository with **gpg** if
+**sboupgrade** verifies the local repository with **gpg(1)** if
 **GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
 Slackware 14.0 and Slackware 14.1.
+
+Package upgrades occasionally cause breakage due to **\*.so** version
+differences. To check for missing first-order shared object (solib)
+dependencies that may have resulted from running **sboupgrade**, use
+**\--so-check TRUE**. Each affected package is logged to
+*/var/log/sboupgrade-solibs.log* with a list of missing shared objects
+and the files that have first-order dependencies on them. This can be
+done automatically after every **sboupgrade** run by setting
+**SO_CHECK** to **TRUE**.
 
 Root privileges are required to run **sboupgrade** unless passing
 **\--dry-run**. If an invalid configuration is detected in
@@ -143,13 +154,16 @@ Do not reuse saved build options if running with **\--nointeractive** or
 
 **-p\|\--compat32**
 
-Create a *compat32* package on multilib x86_64 systems. This requires
-the **compat32-tools** package by Eric Hameleers. Please note that this
-operation is not necessarily foolproof, and is unsupported by anyone in
-principle. **\--compat32** can be combined with **\--noinstall** and
-**\--distclean FALSE** so that the contents of the package can be
-inspected prior to installation. GitHub Issues are welcome in case of
-unexpected failure.
+Create a *compat32* package on multilib x86_64 systems. Any requested
+64-bit only scripts are not queued, and 32-bit only scripts are built
+as-is.
+
+This requires the **compat32-tools** package by Eric Hameleers. Please
+note that this operation is not necessarily foolproof, and is
+unsupported by anyone in principle. **\--compat32** can be combined with
+**\--noinstall** and **\--distclean FALSE** so that the contents of the
+package can be inspected prior to installation. GitHub Issues are
+welcome in case of unexpected failure.
 
 **sboinstall** will not attempt *compat32* builds for Perl-based or
 *noarch* scripts. Incompatible with **\--all**.
@@ -179,6 +193,14 @@ If **TRUE**, only perform upgrades if the incoming version or build
 number is higher. This has no effect scripts in the local overrides
 directory. This option can be set as default via [sboconfig(1)](sboconfig.1.md). See
 also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
+
+**-X\|\--so-check (FALSE\|TRUE)**
+
+If **TRUE**, check for missing first-order shared object dependencies
+after running **sboupgrade**. Please note that only those shared objects
+provided by outgoing packages are reflected in the results. For a full
+shared object check, see [sbocheck(1)](sbocheck.1.md). Overrides the **SO_CHECK**
+setting.
 
 **-z\|\--force-reqs**
 
@@ -222,6 +244,14 @@ Show help information.
 
 Show version information.
 
+**\--color**
+
+Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors.5.md).
+
+**\--nocolor**
+
+Turn off **sbotools** color output.
+
 ## VARIABLES
 
 Beyond the options contained in *README* files, certain variables are
@@ -233,8 +263,8 @@ relevant to nearly all SlackBuilds, and can be used when running
 **ARCH** passes a CPU architecture to the build process, and is mostly
 used to build **i?86** packages on **x86_64** machines and *compat32*
 packages. **sboupgrade** does not require **ARCH** to build *compat32*
-packages. This process is not necessarily bug-free; please do not
-hesitate to report *compat32* issues.
+packages, instead using **setarch(1)**. This process is not necessarily
+bug-free; please do not hesitate to report *compat32* issues.
 
 **BUILD**
 
@@ -311,7 +341,8 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md),
+[sbotools.hints(5)](sbotools.hints.5.md), gpg(1), setarch(1)
 
 ## AUTHORS
 

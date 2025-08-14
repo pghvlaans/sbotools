@@ -27,6 +27,8 @@
 
     sbohints [-q] sbo_name (sbo_name)
 
+    sbohints [--color|--nocolor] \...
+
 ## DESCRIPTION
 
 **sbohints** is a script for querying and editing script-specific hints
@@ -79,7 +81,8 @@ Add (or, with **\--clear**, clear) automatic reverse dependency rebuild
 requests for one or more scripts. Please note that building against some
 packages, such as **google-go-lang**, fails unless a version-specific
 profile script has been sourced. Requesting reverse dependency rebuilds
-for such packages is not advised.
+for such packages is not advised unless the **ETC_PROFILE** setting is
+**TRUE**. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md) for details.
 
 **-c\|\--clear**
 
@@ -113,6 +116,14 @@ Show help information.
 
 Show version information.
 
+**\--color**
+
+Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors.5.md).
+
+**\--nocolor**
+
+Turn off **sbotools** color output.
+
 ## SBOTEST
 
 **sbohints** is called when running **sbotest hints**; flags are
@@ -136,7 +147,8 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md),
+[sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 
