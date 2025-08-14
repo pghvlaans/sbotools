@@ -171,7 +171,7 @@ Must be used with **pull**.
 
 Generate a report on scripts to be tested, queued packages in the local
 overrides directory and the number of archived packages to be reused. In
-case of **\--archive-rebuild**or **\--archive-reverse**, additionally
+case of **\--archive-rebuild** or **\--archive-reverse**, additionally
 report archived packages to be removed.
 
 **-f\|\--full-reverse**
