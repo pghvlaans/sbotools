@@ -373,12 +373,12 @@ sub get_full_reverse {
 
   if (@sublist) {
     for my $revdep (@sublist) {
-      next if grep { /^$revdep$/ } @reverse_concluded;
+      next if in $revdep, @reverse_concluded;
       my %warnings;
       # The first two conditions are prone to false positives if a script
       # and its dependency share a listed dependency; get_build_queue
       # makes certain in these cases.
-      if (grep { /^$revdep$/ } @checked and grep { /^$revdep$/ } get_build_queue([$sbo], \%warnings)) {
+      if (in $revdep, @checked and in $revdep, get_build_queue([$sbo], \%warnings)) {
         error_code("Circular dependency for $revdep detected. Exiting.", _ERR_CIRCULAR);
       }
       push @checked, $revdep;
@@ -429,7 +429,7 @@ sub get_full_reverse_queue {
     if ($from eq "sboinstall" and not $self_include) {
       my $check_queue = get_build_queue([$sbo], \%warnings);
       @$check_queue = grep { !/^$sbo$/ } @$check_queue;
-      for my $sbo2 (@_) { next REVERSE if grep { /^$sbo2$/ } @$check_queue; }
+      for my $sbo2 (@_) { next REVERSE if in $sbo2, @$check_queue; }
     }
     my $interim_queue;
     my @full_reverse = get_full_reverse($sbo, $installed, $fulldeps);
@@ -441,15 +441,15 @@ sub get_full_reverse_queue {
         # queue if upgradable.
         for my $cand (@$queue) {
           if ($from eq "sboinstall" and $self_include) {
-            if (grep { /^$cand$/ } @full_reverse or not grep { /^$cand$/ } @namelist or grep { /^$cand$/ } @ARGV) {
+            if (in $cand, @full_reverse or not in $cand, @namelist or in $cand, @ARGV) {
               push @$interim_queue, $cand unless $cand eq $sbo;
             }
           } elsif ($from eq "sboinstall" and not $self_include) {
-            if (grep { /^$cand$/ } @full_reverse or not grep { /^$cand$/ } @namelist) {
+            if (in $cand, @full_reverse or not in $cand, @namelist) {
               push @$interim_queue, $cand unless $cand eq $sbo;
             }
           } else {
-            if (grep { /^$cand$/ } @full_reverse or not grep { /^$cand$/ } @namelist or grep { /^$cand$/ } @$updates) {
+            if (in $cand, @full_reverse or not in $cand, @namelist or in $cand, @$updates) {
               push @$interim_queue, $cand unless $cand eq $sbo;
             }
           }
@@ -750,7 +750,7 @@ sub perform_sbo {
   # return error now if the slackbuild didn't exit 0
   return "$sbo.SlackBuild return non-zero.", undef, _ERR_BUILD if $ret != 0;
   my $pkg = get_pkg_name($out);
-  return "$sbo.SlackBuild did not create a package.", undef, _ERR_BUILD if not defined $pkg;
+  return "$sbo.SlackBuild did not create a package.", undef, _ERR_BUILD unless defined $pkg;
   my $src = get_src_dir(@src_ls);
   return $pkg, $src;
 }
@@ -1028,8 +1028,8 @@ sub rewrite_slackbuild {
     copy("$slackbuild.orig", $slackbuild) or die "not ok";
     1;
   };
-  if (not $status) {
-    rename "$slackbuild.orig", $slackbuild if not -f $slackbuild;
+  unless ($status) {
+    rename "$slackbuild.orig", $slackbuild unless -f $slackbuild;
     return "Unable to backup $slackbuild to $slackbuild.orig.",
       _ERR_OPENFH;
   }
@@ -1089,11 +1089,11 @@ sub run_tee {
 
   my $out_fh = tempfile(DIR => $tempdir);
   my $out_fn = get_tmp_extfn($out_fh);
-  return undef, _ERR_F_SETFD if not defined $out_fn;
+  return undef, _ERR_F_SETFD unless defined $out_fn;
 
   my $exit_fh = tempfile(DIR => $tempdir);
   my $exit_fn = get_tmp_extfn($exit_fh);
-  return undef, _ERR_F_SETFD if not defined $exit_fn;
+  return undef, _ERR_F_SETFD unless defined $exit_fn;
 
   if ($config{LOG_DIR} eq 'FALSE') {
     $cmd = sprintf '( %s ; echo $? > %s ) | tee %s', $cmd, $exit_fn, $out_fn;
@@ -1189,13 +1189,13 @@ sub _time_restart {
 sub _build_queue {
   my ($sbos, $warnings, @checked) = @_;
   my @queue;
-  for my $cand (@$sbos) { push @queue, $cand if not on_blacklist($cand); }
+  for my $cand (@$sbos) { push @queue, $cand unless on_blacklist($cand); }
   my @result;
 
   while (my $sbo = shift @queue) {
     next if $sbo eq "%README%";
-    next if grep { /^$sbo$/ } @concluded;
-    if (grep { /^$sbo$/ } @checked) {
+    next if in $sbo, @concluded;
+    if (in $sbo, @checked) {
       error_code("Circular dependencies for $sbo detected. Exiting.", _ERR_CIRCULAR);
     }
     push @checked, $sbo;

@@ -73,7 +73,7 @@ my @requested = @ARGV if $pkg_check;
 
 lint_sbo_config($self, %config);
 
-if (not $gpg) {
+unless ($gpg) {
 	$gpg = $config{GPG_VERIFY};
 	$gpg = $gpg eq 'TRUE' ? 1 : 0;
 }
@@ -268,7 +268,7 @@ sub get_update_list {
 		my $info = $updates{$sbo};
 
 		my $sign = "<";
-		$sign = "=" if grep { /^$sbo$/ } @not_upgradable and $config{CLASSIC} ne 'TRUE';
+		$sign = "=" if in $sbo, @not_upgradable and $config{CLASSIC} ne 'TRUE';
 		my $str = sprintf "%s  $sign  %s", $info->{name_str}, $info->{upd_str};
 		if (length($str) <= 80) {
 			$str = sprintf "%-*s  $sign  %s", $max, $info->{name_str}, $info->{upd_str};

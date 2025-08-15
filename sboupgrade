@@ -318,11 +318,11 @@ my $inst_names = get_inst_names(get_installed_packages('SBO'));
 my %inst_names;
 $inst_names{$_} = 1 for @$inst_names;
 my %updates;
-if (not $non_int or not $force) {
+unless ($non_int and $force) {
 	if ($build_ignore) {
-		$updates = get_available_updates('VERS') if not defined $updates;
+		$updates = get_available_updates('VERS') unless defined $updates;
 	} else {
-		$updates = get_available_updates('BOTH') if not defined $updates;
+		$updates = get_available_updates('BOTH') unless defined $updates;
 	}
 	$updates{$$_{name}} = 1 for @$updates;
 }
@@ -373,12 +373,12 @@ if ($non_int and not $reverse and not $yes_really) {
 		my ($extra_queue, %extra_warnings);
 		my $name = $sbo;
 		$name =~ s/-compat32$// unless $compat32 or $all;
-		next if not $name;
+		next unless $name;
 		unless ($force_reqs or $force) {
 			next unless $updates{$name};
 		}
 		my $queue = get_build_queue([$name], \%warnings);
-		if (not $force_reqs) {
+		unless ($force_reqs) {
 			@$queue = grep { !$inst_names{$_} or $updates{$_} } @$queue;
 		}
 		push @$queue, $name if $force;
@@ -416,7 +416,7 @@ if ($non_int and not $reverse and not $yes_really) {
 		for my $sbo (@$upgrade_queue) {
 			if (auto_reverse($sbo)) {
 				push @needs_reverse, $sbo;
-				wrapsay "Reverse dependency rebuild for $sbo." unless grep { /^$sbo$/ } @notified;
+				wrapsay "Reverse dependency rebuild for $sbo." unless in $sbo, @notified;
 				push @notified, $sbo;
 			}
 		}
@@ -463,7 +463,7 @@ my %locs = get_sbo_locations($upgrade_queue);
 # see what has been installed as part of a reverse
 # dependency queue
 my @reverses;
-for my $sbo (@$upgrade_queue) { push @reverses, $sbo unless grep { /^$sbo$/ } @$save_queue; }
+for my $sbo (@$upgrade_queue) { push @reverses, $sbo unless in $sbo, @$save_queue; }
 
 # Get user input regarding upgrades
 my (@temp_queue, %commands, %options, %missing_user_group, @ignore_script);
@@ -499,7 +499,7 @@ FIRST: for my $sbo (@$upgrade_queue) {
 	}
 	# for items in a reverse dependency rebuild queue, do not add
 	# new compat32 packages unless they are a missing requirement
-	if ($name =~ /-compat32/ and grep { /^$sbo$/ } @reverses) {
+	if ($name =~ /-compat32/ and in $sbo, @reverses) {
 		my $needed_compat;
 		unless ($inst_names{$name}) {
 			for my $cand (@reverses) {
@@ -507,7 +507,7 @@ FIRST: for my $sbo (@$upgrade_queue) {
 				my $cand_reqs = get_requires($cand);
 				my $cand_name = $cand;
 				$cand_name = "$cand_name-compat32" unless $cand_name =~ /-compat32$/;
-				$needed_compat = 1 if grep { /^$sbo$/ } @$cand_reqs and $inst_names{$cand_name};
+				$needed_compat = 1 if in $sbo, @$cand_reqs and $inst_names{$cand_name};
 			}
 		}
 		next FIRST unless $inst_names{$name} or $needed_compat;
@@ -517,7 +517,7 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		next FIRST if is_obsolete($sbo);
 		unless ($inst_names{$sbo}) {
 			wrapsay "Unable to locate $sbo in the SlackBuilds.org tree.";
-			if (not $non_int) {
+			unless ($non_int) {
 				exit 0 unless prompt($color_default, "Do you want to ignore it and continue?", default => 'yes');
 			}
 		}
@@ -545,7 +545,7 @@ FIRST: for my $sbo (@$upgrade_queue) {
 	unless ($non_int) {
 		# if compat32 is TRUE, we need to see if the non-compat version exists.
 		if ($compat32 or $name =~ /-compat32$/) {
-			unless ($inst_names{$sbo} or grep { /^$sbo$/ } @temp_queue) {
+			unless ($inst_names{$sbo} or in $sbo, @temp_queue) {
 				say "$name requires $sbo." unless $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
 				my ($proceed, $cmds, $opts) = user_prompt($sbo, $locations{$sbo});
 				next FIRST unless $proceed;
@@ -610,7 +610,7 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		my $base_needed;
 		# add the required base script if --batch
 		if ($yes_really and $name =~ /-compat32$/) {
-			unless ($inst_names{$real_name} or grep { /^$real_name$/ } @temp_queue) {
+			unless ($inst_names{$real_name} or in $real_name, @temp_queue) {
 				say "$name requires $real_name." unless $dry_run or $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
 				$base_needed = 1;
 			}
@@ -673,7 +673,7 @@ if ($dry_run) {
 	if (%saved_options) {
 		wrapsay_color $color_notice, "\nSaved build options to be used:";
 		for my $item (keys %saved_options) {
-			say "  $item: $saved_options{$item}" unless grep { /^$item$/ } @ignore_script;
+			say "  $item: $saved_options{$item}" unless in $item, @ignore_script;
 		}
 	}
 }
@@ -685,7 +685,7 @@ if ($dry_run) {
 	my $usr_grp_missing;
 	if (%missing_user_group) {
 		for my $item (keys %missing_user_group) {
-			unless (grep { /^$item$/ } @ignore_script) {
+			unless (in $item, @ignore_script) {
 				wrapsay_color $color_lesser, "\nA required user or group is missing for $item:", 1;
 				for my $cmd (@{ $missing_user_group{$item} }) { say $cmd; }
 				say "";

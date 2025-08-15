@@ -11,7 +11,7 @@ package SBO::App::Remove;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :colors get_installed_packages get_sbo_location get_full_queue get_full_reverse get_readme_contents get_reverse_reqs prompt show_version lint_sbo_config error_code usage_error wrapsay %config @reverse_concluded /;
+use SBO::Lib qw/ :colors get_installed_packages get_sbo_location get_full_queue get_full_reverse get_readme_contents get_reverse_reqs in prompt show_version lint_sbo_config error_code usage_error wrapsay %config @reverse_concluded /;
 use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO::App';
@@ -102,13 +102,13 @@ sub run {
     push @prelim_names, $_->{name} for @prelim_remove;
     for my $cand (@installed) {
       next unless $cand->{name} =~ m/-compat32$/;
-      if (grep { /^$cand->{name}$/ } @args) {
+      if (in $cand->{name}, @args) {
         push @compat_remove, $cand;
         next;
       }
       my $testname = $cand->{name};
       $testname =~ s/-compat32$//;
-      push @compat_remove, $cand if grep { /^$testname$/ } @prelim_names;
+      push @compat_remove, $cand if in $testname, @prelim_names;
     }
     @remove = @compat_remove;
   } else {
@@ -129,13 +129,13 @@ sub run {
     my @all_required_by = get_full_reverse($check_name, $installed, $required_by);
     my @required_by;
     for my $cand (@installed) {
-      next unless grep { /^$cand->{name}$/ } @all_required_by;
+      next unless in $cand->{name}, @all_required_by;
       # ignore all non-compat32 items if compat32
       if ($self->{compat}) {
         next unless $cand->{name} =~ m/-compat32$/;
       }
       # do not alert the user about being 'needed' by already-confirmed scripts
-      push @required_by, $cand->{name} unless grep { /^$cand->{name}$/ } @confirmed_names;
+      push @required_by, $cand->{name} unless in $cand->{name}, @confirmed_names;
     }
     my $needed = $sbos{$remove->{name}} ? 0 : @required_by;
 
@@ -180,12 +180,12 @@ EOF
 sub check_sbo {
   my ($sbo, $installed) = @_;
 
-  if (not get_sbo_location($sbo)) {
+  unless (get_sbo_location($sbo)) {
     wrapsay "Unable to locate $sbo in the SlackBuilds.org tree.";
     return 0;
   }
 
-  if (not exists $installed->{$sbo}) {
+  unless (exists $installed->{$sbo}) {
     wrapsay "$sbo is not installed from SlackBuilds.org.";
     return 0;
   }
@@ -206,7 +206,7 @@ sub confirm {
     wrapsay_color $color_lesser, "Viewing the README before continuing is recommended.";
     if (prompt($color_lesser, "Display README now?", default => 'yes')) {
       my $readme = get_readme_contents(get_sbo_location($remove->{name}));
-      if (not defined $readme) {
+      unless (defined $readme) {
         warn "Unable to open README for $remove->{name}.\n";
       } else {
         print "\n" . $readme;

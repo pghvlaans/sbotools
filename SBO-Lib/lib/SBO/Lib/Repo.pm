@@ -202,13 +202,13 @@ sub check_repo {
         readdir($repo_handle);
       close($repo_handle);
       for my $found (@found_dirs) {
-        $extra_dir = 1 if not grep(/^$found$/, @categories);
+        $extra_dir = 1 unless in $found, @categories;
         last if $extra_dir;
       }
       for my $cat (@categories) {
         # The gis category was added in 14.1.
         next if $cat eq "gis";
-        $incomplete = 1 if not grep(/^$cat$/, @found_dirs);
+        $incomplete = 1 unless in $cat, @found_dirs;
         last if $incomplete;
       }
       # Give different warning levels depending on how the repo
@@ -376,7 +376,7 @@ sub git_sbo_tree {
   if ($branch) {
     $branchres = system(qw/ git ls-remote --exit-code /, $url, $branch) == 0;
     my $backup_label;
-    if (not $branchres) {
+    unless ($branchres) {
       if (-d "$repo_path/.git" and check_git_remote($repo_path, $url)) {
         chdir $repo_path or return 0;
         chomp($backup_branch = slurp("$repo_path/.git/HEAD"));
@@ -464,7 +464,7 @@ sub pull_sbo_tree {
     $res = git_sbo_tree($url);
     if ($res == 0) {
       if (prompt($color_lesser, "Sync from $url failed. Retry?", default => 'no')) {
-        generate_slackbuilds_txt() if not -s $slackbuilds_txt;
+        generate_slackbuilds_txt() unless -s $slackbuilds_txt;
         return pull_sbo_tree();
       }
     }
@@ -601,7 +601,7 @@ sub verify_git_commit {
   # if no output from "verify commit", it simply wasn't a signed commit
   my ($fh, $tempfile) = tempfile(DIR => "$config{SBO_HOME}");
   `git verify-commit --raw $branch 2> $tempfile`;
-  if (not -s $tempfile) {
+  unless (-s $tempfile) {
     unlink $tempfile if -f $tempfile;
     error_code("The most recent commit on this git branch is unsigned.\n\nExiting. To use this branch, set GPG_VERIFY to FALSE.", _ERR_GPG);
   }
@@ -679,7 +679,7 @@ sub verify_rsync {
         my @ascs = split(' ', `find . -name "*.asc"`);
         for my $asc (@ascs) {
           my $ascres = system(qw/ gpg --verify /, $asc) == 0;
-          if (not $ascres) {
+          unless ($ascres) {
             $checksum_asc_ok = 0;
             last;
           }
@@ -692,7 +692,7 @@ sub verify_rsync {
   }
   my @raw = split(" ", slurp($tempfile));
   unlink $tempfile;
-  if (not $checksum_asc_ok) {
+  unless ($checksum_asc_ok) {
     # ERRSIG: signed, but public key is missing; attempt download
     if (grep(/ERRSIG/, @raw)) {
       my $fingerprint;
@@ -720,7 +720,7 @@ sub verify_rsync {
     }
   }
   if ($fullcheck) {
-    if (not $checksum_asc_ok) {
+    unless ($checksum_asc_ok) {
       system(qw/ touch /, $rsync_lock);
       # BADSIG: big warning and exit
       if (grep(/BADSIG/, @raw)) {
@@ -760,7 +760,7 @@ sub verify_rsync {
       error_code("\nOne or more md5 errors was detected after sync.\n\nRemove $rsync_lock or turn off GPG verification with caution.\n\nExiting.", _ERR_MD5SUM);
     }
   }
-  if (not $checksum_asc_ok) {
+  unless ($checksum_asc_ok) {
     system(qw/ touch /, $rsync_lock);
     error_code("\nThe contents of CHECKSUMS.md5 have been altered. Please run sbocheck.\n\nExiting.", _ERR_MD5SUM) unless $checksum_asc_ok;
   }

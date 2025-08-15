@@ -365,7 +365,7 @@ sub validate_choice {
 # use an interactive settings menu if sboconfig is passed without
 # options; might be educational for new users
 sub interactive_menu {
-	if (not prompt($color_default, "$label\n\nThis is the $label interactive menu. Use prompts to set configuration values?", default => 'yes')) {
+	unless (prompt($color_default, "$label\n\nThis is the $label interactive menu. Use prompts to set configuration values?", default => 'yes')) {
 		say "Exiting without changes.";
 		exit 0;
 	}

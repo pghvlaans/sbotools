@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :colors auto_reverse get_optional lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay /;
+use SBO::Lib qw/ :config :colors auto_reverse get_optional in lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 
@@ -221,7 +221,7 @@ sub make_query {
 					next FIRST unless $hinted =~ m/(^|\s)$sbo\s/;
 					my @items = split(' ', $hinted);
 					my $result = pop @items;
-					push @optional_for, $result unless grep { /^$result$/ } @optional_for;
+					push @optional_for, $result unless in $result, @optional_for;
 				}
 				if (@optional_for) {
 					$made_output = 1;
@@ -266,7 +266,7 @@ sub prompt_queue {
 					prompt_queue($sbo);
 					return;
 				}
-				if (grep { /^$sbo$/ } @incoming) {
+				if (in $sbo, @incoming) {
 					if ($clear) {
 						wrapsay_color $color_lesser, "Cannot clear $sbo from its own list.", 1;
 					} else {
@@ -278,9 +278,9 @@ sub prompt_queue {
 				my $is_needed;
 				# for -o and -co, don't attempt changes if unneeded
 				if ($clear) {
-					for my $item (@incoming) { $is_needed = 1 if grep { /^$item$/ } @current; }
+					for my $item (@incoming) { $is_needed = 1 if in $item, @current; }
 				} elsif ($optional) {
-					for my $item (@incoming) { $is_needed = 1 unless grep { /^$item$/ } @current; }
+					for my $item (@incoming) { $is_needed = 1 unless in $item, @current; }
 				} else { $is_needed = 1; }
 				if ($is_needed) {
 					write_optional($sbo, @incoming) if $is_needed;
@@ -349,7 +349,7 @@ sub reset_all {
 	error_code("Failed to open $hint_file; exiting.", $rexit) if $rexit;
 	for my $line (<$rfh>) {
 		chomp(my $search = $line);
-		push @remaining, $line unless grep { /^$search$/ } @loclistings;
+		push @remaining, $line unless in $search, @loclistings;
 	}
 	close $rfh;
 	my ($fh, $exit) = open_fh($hint_file, '>');
@@ -372,7 +372,7 @@ sub show_list {
 	for my $listing (@loclistings) {
 		$listing =~ s/^(\!|~)//;
 		my @members = split(" ", $listing);
-		next if not @members;
+		next unless @members;
 		for my $cand (@members) { push @candlist, $cand; }
 	}
 	unless (@candlist) {
@@ -384,11 +384,11 @@ sub show_list {
 	my ($wrote_blacklist, $wrote_auto_reverse, $wrote_optional, @blacklisted, @has_auto_reverse);
 	for my $sbo (@candlist) {
 		if (on_blacklist($sbo)) {
-			push @blacklisted, $sbo unless grep {/^$sbo$/} @blacklisted;
+			push @blacklisted, $sbo unless in $sbo, @blacklisted;
 			$wrote_blacklist = 1;
 		}
 		if (auto_reverse($sbo)) {
-			push @has_auto_reverse, $sbo unless grep {/^$sbo$/} @has_auto_reverse;
+			push @has_auto_reverse, $sbo unless in $sbo, @has_auto_reverse;
 			$wrote_auto_reverse = 1;
 		}
 	}
@@ -476,7 +476,7 @@ sub write_optional {
 	# line is written back in to the file depends on the flags
 	FIRST: for my $line (<$rfh>) {
 		chomp(my $search = $line);
-		my $target = (grep { /^$search$/ } @loclistings and $search =~ m/\s$sbo$/);
+		my $target = (in $search, @loclistings and $search =~ m/\s$sbo$/);
 		unless ($clear) {
 			# replace the first specification for $sbo, and then
 			# skip further instances (flags: -O, -o)

@@ -100,7 +100,7 @@ sub rm_full {
 sub remove_stuff {
 	script_error 'remove_stuff requires an argument.' unless @_ == 1;
 	my $dir = shift;
-	if (not -d $dir) {
+	unless (-d $dir) {
 		say 'Nothing to do.';
 		return 0;
 	}

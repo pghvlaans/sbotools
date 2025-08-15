@@ -325,7 +325,7 @@ if (length $utemp) {
 	if (length $data) {
 		eval { $template = $json->decode($data); };
 	}
-	do { error_code("Could not read template from $utemp.", _ERR_OPENFH); } if not defined $template;
+	do { error_code("Could not read template from $utemp.", _ERR_OPENFH); } unless defined $template;
 
 	for my $cand (@{ $template->{build_queue} }) {
 		unless (on_blacklist($cand)) {
@@ -425,7 +425,7 @@ if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 	$sbos_names{$_->{name}} = $_ for @$inst_sbos;
 	for my $sbo (%sbos_names) {
 		my $name = $sbos_names{$sbo}{name};
-		next if not $name;
+		next unless $name;
 		$needs_rationalize = 1 if $sbo =~ /-compat32$/;
 		if ($series_rebuild) {
 			my $location = get_sbo_location($sbo);
@@ -478,7 +478,7 @@ SANITY: for my $sbo (@$build_queue) {
 my @reverses;
 for my $sbo (@$build_queue) {
 	next if $sbo =~ /-compat32$/;
-	push @reverses, $sbo unless grep { /^$sbo$/ } @$save_queue;
+	push @reverses, $sbo unless in $sbo, @$save_queue;
 }
 
 # check for already-installeds and prompt for the rest
@@ -527,7 +527,7 @@ FIRST: for my $sbo (@$build_queue) {
 	}
 	# for items in a reverse dependency rebuild queue, do not add
 	# new compat32 packages unless they are a missing requirement
-	if ($name =~ /-compat32/ and grep { /^$sbo$/ } @reverses) {
+	if ($name =~ /-compat32/ and in $sbo, @reverses) {
 		my $needed_compat;
 		unless ($inst_names{$name}) {
 			for my $cand (@reverses) {
@@ -535,7 +535,7 @@ FIRST: for my $sbo (@$build_queue) {
 				my $cand_reqs = get_requires($cand);
 				my $cand_name = $cand;
 				$cand_name = "$cand_name-compat32" unless $cand_name =~ /-compat32$/;
-				$needed_compat = 1 if grep { /^$sbo$/ } @$cand_reqs and $inst_names{$cand_name};
+				$needed_compat = 1 if in $sbo, @$cand_reqs and $inst_names{$cand_name};
 			}
 		}
 		next FIRST unless $inst_names{$name} or $needed_compat;
@@ -584,7 +584,7 @@ FIRST: for my $sbo (@$build_queue) {
 		next FIRST if is_obsolete($sbo);
 		unless ($inst_names{$sbo}) {
 			wrapsay "Unable to locate $sbo in the SlackBuilds.org tree.";
-			if (not $non_int) {
+			unless ($non_int) {
 				exit 0 unless prompt($color_default, "Do you want to ignore it and continue?", default => 'yes');
 			}
 		}
@@ -596,7 +596,7 @@ FIRST: for my $sbo (@$build_queue) {
 	unless ($non_int) {
 		# if a compat32 build, we need to see if the non-compat version exists.
 		if ($name =~ /-compat32$/) {
-			unless ($inst_names{$sbo} or grep { /^$sbo$/ } @temp_queue) {
+			unless ($inst_names{$sbo} or in $sbo, @temp_queue) {
 				say "$name requires $sbo." unless $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
 				my ($proceed, $cmds, $opts) = user_prompt($sbo, $locations{$sbo});
 				next FIRST unless $proceed;
@@ -660,7 +660,7 @@ FIRST: for my $sbo (@$build_queue) {
 			my $base_needed;
 			# add the required base script if --batch
 			if ($yes_really and $name =~ /-compat32$/) {
-				unless ($inst_names{$sbo} or grep { /^$sbo$/ } @temp_queue) {
+				unless ($inst_names{$sbo} or in $sbo, @temp_queue) {
 					say "$name requires $sbo." unless $dry_run or $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
 					$base_needed = 1;
 				}
@@ -726,7 +726,7 @@ if ($dry_run) {
 	if (%saved_options) {
 		wrapsay_color $color_notice, "\nSaved build options to be used:";
 		for my $item (keys %saved_options) {
-			say "  $item: $saved_options{$item}" unless grep { /^$item$/ } @ignore_script;
+			say "  $item: $saved_options{$item}" unless in $item, @ignore_script;
 		}
 	}
 }
@@ -740,7 +740,7 @@ if ($dry_run) {
 	my $usr_grp_missing;
 	if (%missing_user_group) {
 		for my $item (keys %missing_user_group) {
-			unless (grep { /^$item$/ } @ignore_script) {
+			unless (in $item, @ignore_script) {
 				wrapsay_color $color_lesser, "\nA required user or group is missing for $item:", 1;
 				for my $cmd (@{ $missing_user_group{$item} }) { say $cmd; }
 				say "";

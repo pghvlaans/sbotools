@@ -362,9 +362,7 @@ sub auto_reverse {
   my $sbo = shift;
   $sbo =~ s/-compat32$//;
   my @loclistings = @listings;
-  for my $entry (@loclistings) {
-    next if grep { /\s/ } $entry;
-    return 1 if $entry eq "~$sbo"; }
+  return 1 if in("~$sbo", @loclistings);
   return 0;
 }
 
@@ -576,8 +574,8 @@ sub get_optional {
   my @optional;
   my @loclistings = @listings;
   for my $entry (@loclistings) {
-    next unless grep { /\s$sbo$/ } $entry;
-    next if grep { /^#|^!|^~/ } $entry;
+    next unless $entry =~ m/\s$sbo$/;
+    next if $entry =~ m/^(!|~)/;
     $entry =~ s/\s$sbo$//;
     push @optional, split(" ", $entry);
   }
@@ -667,7 +665,7 @@ The program exits if the version is unsupported or if an error occurs.
 sub get_slack_version {
   my $version;
   $version = $config{SLACKWARE_VERSION} unless $config{SLACKWARE_VERSION} eq 'FALSE';
-  if (not $version) {
+  unless ($version) {
     my ($fh, $exit) = open_read('/etc/slackware-version');
     error_code("Could not open /etc/slackware-version; exiting.", $exit) if $exit;
     chomp(my $line = <$fh>);
@@ -990,9 +988,7 @@ sub on_blacklist {
   my $sbo = shift;
   $sbo =~ s/-compat32$//;
   my @loclistings = @listings;
-  for my $entry (@loclistings) {
-    next if grep { /\s/ } $entry;
-    return 1 if $entry eq "!$sbo"; }
+  return 1 if in("!$sbo", @loclistings);
   return 0;
 }
 
@@ -1212,7 +1208,7 @@ sub read_hints{
       defined $contents;
     my @contents = split("\n", $contents);
     for my $entry (@contents) {
-      push @listings, $entry unless grep { /^#|^\s/ } $entry;
+      push @listings, $entry unless $entry =~ m/^(#|\s)/;
     }
   }
   push @listings, "NULL" unless @listings;

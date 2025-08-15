@@ -341,8 +341,8 @@ for my $search (@ARGV) {
 			wrapsay_color $color_lesser, "        $std_vers->{$name} installed, non-SBo ($std_times->{$name})" if $std_times->{$name};
 			# sbotest-only
 			wrapsay_color $color_notice, "        archived" if in_archive($name);
-			wrapsay_color $color_lesser, "        CPAN" if grep { /^$name$/ } @cpans;
-			wrapsay_color $color_lesser, "        CPAN, file(s) missing" if grep { /^$name$/ } @defective_cpans;
+			wrapsay_color $color_lesser, "        CPAN" if in $name, @cpans;
+			wrapsay_color $color_lesser, "        CPAN, file(s) missing" if in $name, @defective_cpans;
 			say "Path:   $location";
 			say "info:   ". get_file_contents("$location/$name.info") if $show_info;
 			say "README: ". get_file_contents("$location/README") if $show_readme;

@@ -203,7 +203,7 @@ sub get_orig_build_number {
 
   my $location = get_orig_location($sbo);
 
-  return $location if not defined $location;
+  return undef unless defined $location;
 
   return get_sbo_build_number($location);
 }
@@ -225,7 +225,7 @@ sub get_orig_version {
 
   my $location = get_orig_location($sbo);
 
-  return $location if not defined $location;
+  return undef unless defined $location;
 
   return get_sbo_version($location);
 }

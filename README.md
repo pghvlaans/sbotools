@@ -21,6 +21,9 @@ This repository is an **sbotools** revival, and was forked from the [pink-mist r
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
 ## Most Recent Changes
+#### Post-Release
+  * Replace most grep instances
+
 #### 3.8 - 2025-08-14
   * Bugfix: For most compatibility builds and when running in a 32-bit userland reporting a 64-bit kernel, call SlackBuilds with setarch
   * Repo.pm: Use --no-pager with git-log
@@ -47,28 +50,6 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Bugfix: Fix rationalize_queue
   * Readme.pm: General clean-up; account for no-README case and using previously-specified options without detected options
   * sbocheck: Use --check-all-packages to check all packages (SBO or otherwise) for missing shared objects
-
-#### 3.7 - 2025-07-04
-  * Optimize queue construction: Shared dependency handling and rationalize_queue
-  * Add setting ETC_PROFILE: Source executable \*.sh scripts in /etc/profile.d before running every SlackBuild
-  * Download.pm: Change URI unescape positioning to accommodate potential %2F
-    * Thanks to Slack Coder for the advice.
-  * sboremove: Show the full reverse queue in --alwaysask; add a --compat32 option
-  * Bugfix: Error out gracefully when reading STDIN fails for prompts
-  * Bugfix: Properly detect useradd and groupadd commands in single quotes
-  * Bugfix: Fix handling build options from files with EOL
-    * Thanks to leoctrl for the report.
-  * Add configuration LOG_DIR for saving build logs
-  * Add environment variable SBOTOOLS_CONF_DIR for setting an alternative configuration directory
-  * sboinstall, sboupgrade: Add --log-dir and --pkg-dir
-  * Bugfix: Send the RESET escape after running each SlackBuild to clean up after colorful build systems
-  * sboinstall: Add --series-rebuild to rebuild and reinstall all SBo packages in a series with their dependencies
-  * sbofind: Add --first-reverse to report all first-level reverse dependencies in the repository
-  * Install to vendor_perl; install bundled Sort::Versions in SBO::ThirdParty to avoid collisions
-  * sboconfig, sbohints, sbofind: Callable from sbotest with config, hints and find, respectively
-  * Tree.pm: Speed up location finding for all available; relevant for reverse dependency calculation
-  * sboconfig: Use --non-default to list only non-default options
-  * Bugfix: For git, create new branches from upstream in lieu of reset and pull
 
 ## Previous Changes
 See [ChangeLog.md](https://github.com/pghvlaans/sbotools/blob/master/SBO-Lib/ChangeLog.md) for a record of changes from version 1.9 onward.
