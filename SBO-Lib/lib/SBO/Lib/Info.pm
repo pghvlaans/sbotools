@@ -18,6 +18,7 @@ use sigtrap qw/ handler _caught_signal ABRT INT QUIT TERM /;
 our @EXPORT_OK = qw{
   check_x32
   check_x64
+  fix_info
   get_download_info
   get_from_info
   get_orig_build_number
@@ -83,6 +84,50 @@ sub check_x64 {
   my $location = shift;
   my $dl = get_from_info(LOCATION => $location, GET => 'DOWNLOAD');
   return $$dl[0] =~ /UN(SUPPOR|TES)TED/ ? 1 : 0;
+}
+
+=head2 fix_info
+
+  my $fixed_string = fix_info($info_string);
+
+C<fix_info()> sanitizes the contents of info files, and should be run once when a
+C<parse_info()> call fails. It attempts to repair trailing whitespace, blank lines,
+garbage lines and missing quotation marks and backslashes.
+
+=cut
+
+sub fix_info {
+  script_error('fix_info requires an argument.') unless @_ == 1;
+  my $info_str = shift;
+  # Fix blank lines
+  $info_str =~ s/\n\n/\n/g;
+  # Fix trailing whitespace
+  $info_str =~ s/\s\n/\n/g;
+  # Fix EOF quotation marks
+  $info_str =~ s/(?<=[^\"])\n+$/\"\n/g;
+  # Fix missing backslashes
+  $info_str =~ s/(?<=[^\\\"])\n(?=\s)/\\\n/g;
+  # Fix missing terminal quotation marks
+  $info_str =~ s/(?<=[^\\\"])\n(?=[A-Z])/\"\n/g;
+  # Fix missing initial quotation marks
+  my @fields = qw{
+        PRGNAM
+        VERSION
+        HOMEPAGE
+        DOWNLOAD
+        MD5SUM
+        DOWNLOAD_x86_64
+        MD5SUM_x86_64
+        REQUIRES
+        MAINTAINER
+        EMAIL
+  };
+  for my $field (@fields) { $info_str =~ s/(?<=$field)=(?=[^\"])/=\"/g; }
+  # Anything that follows a terminal quote and doesn't start KEY="VALUE" is unwanted
+  $info_str =~ s/\"\n[^=\"]+(\\|\")\n/\"\n/g;
+  # And the start of the file
+  $info_str =~ s/^[^=\"]+(\\|\")\n//g;
+  return $info_str;
 }
 
 =head2 get_download_info
@@ -163,7 +208,11 @@ sub get_from_info {
   }
 
   my %parse = parse_info($contents);
-  script_error("Error when parsing file $sbo.info.") unless %parse;
+  unless (%parse) {
+    my $new_contents = fix_info($contents);
+    %parse = parse_info($new_contents);
+    script_error("Error when parsing file $sbo.info.") unless %parse;
+  }
 
   $store = {};
   $store->{LOCATION} = [$args{LOCATION}];
@@ -331,42 +380,15 @@ sub get_sbo_version {
   my %parse = parse_info($str);
 
 C<parse_info()> parses the contents of an info file from C<$str> and returns
-a key-value list of all values present. It attempts to repair trailing whitespace,
-blank lines, garbage lines and missing quotation marks and backslashes.
+a key-value list of all values present.
+
+In case of failure, use C<fix_info()> on the offending file and try again.
 
 =cut
 
 sub parse_info {
     script_error('parse_info requires an argument.') unless @_ == 1;
     my $info_str = shift;
-    # Fix blank lines
-    $info_str =~ s/\n\n/\n/g;
-    # Fix trailing whitespace
-    $info_str =~ s/\s\n/\n/g;
-    # Fix EOF quotation marks
-    $info_str =~ s/(?<=[^\"])\n+$/\"\n/g;
-    # Fix missing backslashes
-    $info_str =~ s/(?<=[^\\\"])\n(?=\s)/\\\n/g;
-    # Fix missing terminal quotation marks
-    $info_str =~ s/(?<=[^\\\"])\n(?=[A-Z])/\"\n/g;
-    # Fix missing initial quotation marks
-    my @fields = qw{
-        PRGNAM
-        VERSION
-        HOMEPAGE
-        DOWNLOAD
-        MD5SUM
-        DOWNLOAD_x86_64
-        MD5SUM_x86_64
-        REQUIRES
-        MAINTAINER
-        EMAIL
-    };
-    for my $field (@fields) { $info_str =~ s/(?<=$field)=(?=[^\"])/=\"/g; }
-    # Anything that follows a terminal quote and doesn't start KEY="VALUE" is unwanted
-    $info_str =~ s/\"\n[^=\"]+(\\|\")\n/\"\n/g;
-    # And the start of the file
-    $info_str =~ s/^[^=\"]+(\\|\")\n//g;
 
     my $pos = 0;
     my %ret;
