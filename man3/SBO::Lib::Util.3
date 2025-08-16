@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Sweetmorn, Bureaucracy 7, 3191 YOLD" "" "sbotools 3.8"
+.TH SBO::Lib::Util 3 "Pungenday, Bureaucracy 9, 3191 YOLD" "" "sbotools 3.8"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -147,8 +147,6 @@ Times are adjusted in the \f(CWreconcile_time()\fR subroutine before reporting.
 .IX Subsection "@listings"
 An array with blacklisted scripts and requests for optional dependencies and
 automatic reverse dependency rebuilds read in from \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR.
-Only \f(CWread_hints()\fR should interact with \f(CW@listings\fR directly; in other
-situations, make a copy (see e.g. \f(CW@on_blacklist()\fR.)
 .ie n .SS $obs_file
 .el .SS \f(CW$obs_file\fP
 .IX Subsection "$obs_file"
@@ -174,8 +172,7 @@ kernel.
 .Ve
 .PP
 \&\f(CWauto_reverse()\fR checks whether automatic reverse dependency rebuilding for \f(CW$sbo\fR has
-been requested. Results will be the same for the \f(CW\*(C`compat32\*(C'\fR version of the script. Note
-that global array \f(CW@listings\fR is copied.
+been requested. Results will be the same for the \f(CW\*(C`compat32\*(C'\fR version of the script.
 .SS build_cmp
 .IX Subsection "build_cmp"
 .Vb 1
@@ -262,8 +259,7 @@ it in a format suitable for appending to a Slackware package version.
 .PP
 \&\f(CWget_optional()\fR checks for user\-requested optional dependencies for \f(CW$sbo\fR.
 In all cases, results for \f(CW\*(C`compat32\*(C'\fR scripts have the corresponding \f(CW\*(C`compat32\*(C'\fR
-scripts to the results for the base script. Note that global array \f(CW@listings\fR is
-copied.
+scripts to the results for the base script.
 .SS get_sbo_from_loc
 .IX Subsection "get_sbo_from_loc"
 .Vb 1
@@ -359,8 +355,7 @@ all other scripts lint the full configuration at startup.
 .Ve
 .PP
 \&\f(CWon_blacklist()\fR checks whether \f(CW$sbo\fR has been blacklisted. Results will
-be the same for the \f(CW\*(C`compat32\*(C'\fR version of the script. Note that global array
-\&\f(CW@listings\fR is copied.
+be the same for the \f(CW\*(C`compat32\*(C'\fR version of the script.
 .SS open_fh
 .IX Subsection "open_fh"
 .Vb 1

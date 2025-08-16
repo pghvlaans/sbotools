@@ -937,19 +937,12 @@ in case of a mass or series rebuild. The rearranged queue is returned.
 sub rationalize_queue {
   script_error('rationalize_queue requires an argument.') unless @_ == 1;
   my $queue = shift;
+  # removing "sort" here would mean a very bad time with compat32
   my @queue = sort @{ $queue };
-  my @result_queue;
+  my (%all_reqs, @have_requirements, @result_queue);
 
   FIRST: while (my $sbo = shift @queue) {
-    my $real_name = $sbo;
-    $real_name =~ s/-compat32$//;
-    my @check_queue;
-    for my $item (@queue) {
-      my $real_item = $item;
-      $real_item =~ s/-compat32$//;
-      push @check_queue, $real_item unless $real_name eq $real_item;
-    }
-    my $requirements = get_requires($real_name);
+    my $requirements = get_requires($sbo);
     unless (defined $requirements) {
       push @result_queue, $sbo;
       next FIRST;
@@ -958,11 +951,21 @@ sub rationalize_queue {
     unless ($reqs[0]) {
       push @result_queue, $sbo;
       next FIRST;
-    } else {
-      for my $check (@reqs) {
-        if (defined idx($check, @check_queue)) {
-          push @queue, $sbo;
-          next FIRST;
+    }
+    $all_reqs{$sbo} = \@reqs;
+    push @have_requirements, $sbo;
+  }
+  my $needs_compat = 1 if grep { /-compat32$/ } @have_requirements;
+  SECOND: while (my $sbo = shift @have_requirements) {
+    for my $check (@{$all_reqs{$sbo}}) {
+      if (in $check, @have_requirements) {
+        push @have_requirements, $sbo;
+        next SECOND;
+      }
+      if ($needs_compat) {
+        if (in "$check-compat32", @have_requirements) {
+          push @have_requirements, $sbo;
+          next SECOND;
         }
       }
     }

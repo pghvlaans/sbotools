@@ -227,8 +227,6 @@ Times are adjusted in the C<reconcile_time()> subroutine before reporting.
 
 An array with blacklisted scripts and requests for optional dependencies and
 automatic reverse dependency rebuilds read in from C</etc/sbotools/sbotools.hints>.
-Only C<read_hints()> should interact with C<@listings> directly; in other
-situations, make a copy (see e.g. C<@on_blacklist()>.)
 
 =cut
 
@@ -352,8 +350,7 @@ usage_error("Forbidden value of \$TMP: $ENV{TMP}\n") if defined $ENV{TMP} and da
   my $result = auto_reverse($sbo)
 
 C<auto_reverse()> checks whether automatic reverse dependency rebuilding for C<$sbo> has
-been requested. Results will be the same for the C<compat32> version of the script. Note
-that global array C<@listings> is copied.
+been requested. Results will be the same for the C<compat32> version of the script.
 
 =cut
 
@@ -361,8 +358,7 @@ sub auto_reverse {
   script_error("auto_reverse requires an argument.") unless @_ == 1;
   my $sbo = shift;
   $sbo =~ s/-compat32$//;
-  my @loclistings = @listings;
-  return 1 if in("~$sbo", @loclistings);
+  return 1 if in("~$sbo", @listings);
   return 0;
 }
 
@@ -558,8 +554,7 @@ sub get_kernel_version {
 
 C<get_optional()> checks for user-requested optional dependencies for C<$sbo>.
 In all cases, results for C<compat32> scripts have the corresponding C<compat32>
-scripts to the results for the base script. Note that global array C<@listings> is
-copied.
+scripts to the results for the base script.
 
 =cut
 
@@ -572,12 +567,12 @@ sub get_optional {
     $sbo =~ s/-compat32$//;
   }
   my @optional;
-  my @loclistings = @listings;
-  for my $entry (@loclistings) {
+  for my $entry (@listings) {
     next unless $entry =~ m/\s$sbo$/;
     next if $entry =~ m/^(!|~)/;
-    $entry =~ s/\s$sbo$//;
-    push @optional, split(" ", $entry);
+    my $wanted = $entry;
+    $wanted =~ s/\s$sbo$//;
+    push @optional, split(" ", $wanted);
   }
   if (@optional) {
     @optional = uniq(@optional);
@@ -978,8 +973,7 @@ sub obsolete_array {
   my $result = on_blacklist($sbo);
 
 C<on_blacklist()> checks whether C<$sbo> has been blacklisted. Results will
-be the same for the C<compat32> version of the script. Note that global array
-C<@listings> is copied.
+be the same for the C<compat32> version of the script.
 
 =cut
 
@@ -987,8 +981,7 @@ sub on_blacklist {
   script_error("on_blacklist requires an argument.") unless @_ == 1;
   my $sbo = shift;
   $sbo =~ s/-compat32$//;
-  my @loclistings = @listings;
-  return 1 if in("!$sbo", @loclistings);
+  return 1 if in("!$sbo", @listings);
   return 0;
 }
 
