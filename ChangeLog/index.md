@@ -1,6 +1,7 @@
 # ChangeLog
 * Post-Release
   * Replace most grep instances
+  * Simplify location finding
 
 * 3.8 - 2025-08-14
   * Bugfix: For most compatibility builds and when running in a 32-bit userland reporting a 64-bit kernel, call SlackBuilds with setarch
