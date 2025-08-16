@@ -108,8 +108,8 @@ or \f(CWget_all_available()\fR is run before attempting \f(CWget_sbo_location()\
 .Ve
 .PP
 \&\f(CW\*(C`get_sbo_locations\*(C'\fR finds all SlackBuilds in \f(CW@sbos\fR and returns a hash matching each
-package name to its location. It should be called once and only once near the start of
-each script requiring the use of locations.
+package name to its location. After \f(CWget_sbo_locations()\fR has been run for the first time,
+it simply returns the hash again in subsequent calls.
 .SS is_local
 .IX Subsection "is_local"
 .Vb 1

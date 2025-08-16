@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_location get_sbo_version on_blacklist build_cmp version_cmp :colors %config @concluded @reverse_concluded $slackbuilds_txt $repo_path @last_level_reverse $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_location get_sbo_version is_local on_blacklist build_cmp version_cmp :colors %config @concluded @reverse_concluded $slackbuilds_txt $repo_path @last_level_reverse $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay /;
 use Cwd;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
@@ -90,12 +90,12 @@ if (!@ARGV) { show_usage(); exit 1 }
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
+my @available = get_all_available();
 
 # used to report package installation status
-my (@installed, $installed_times, $installed_vers, @installed_std, $std_times, $std_vers, @installed_oot, $oot_times, $oot_vers);
+my (@installed, $installed_times, $installed_vers, @installed_std, $std_times, $std_vers);
 # these will be used later in case of reverse dependency searches
 my ($available, $all_fulldeps, $installed, $fulldeps);
-my @available = get_all_available();
 
 # get lists of installed and defective CPAN modules
 my (@cpans, @defective_cpans);
@@ -130,55 +130,10 @@ sub perform_search {
 		}
 	}
 
-	my $loc_regex = qr/LOCATION:\s+\.?(.*)$/;
-	my ($fh, $exit) = open_read $slackbuilds_txt;
-	error_code("Failed to open $slackbuilds_txt; exiting.", $exit) if $exit;
-	my (%local, @findings);
-	FIRST: while (my $line = <$fh>) {
-		if ($line =~ /NAME:\s+(.*)$/) {
-			my $name = $1;
-
-			# Try to match either one of the names from TAGS.txt or the search string
-
-			my $names = @names;
-			# Whenever we find an element equal to $name, throw it away (and
-			# replace with last element rather than shifting stuff around)
-			for (reverse @names) { $_ = pop @names if $_ eq $name; }
-
-			# next if $name didn't match either one of @names or $search_name_re
-			if ($names == @names and $name !~ $search_name_re) { next FIRST; }
-
-			# We only reach this point if $name matched one of @names, or if
-			# $search_name_re matched
-
-			# If the name matches a local override, use its location
-			if ($config{LOCAL_OVERRIDES} ne 'FALSE' and -d "$config{LOCAL_OVERRIDES}/$name") {
-				push @findings, {name => $name, location => "$config{LOCAL_OVERRIDES}/$name", local => 1 };
-				$local{$name} = 1;
-				next FIRST;
-			}
-
-			# Otherwise the location should be in the next line
-			LOCATION: {
-				my $loc_line = <$fh>;
-				if (my ($location) = $loc_line =~ $loc_regex) {
-					push @findings, {name => $name, location => $repo_path . $location};
-					next FIRST;
-				} else {
-					redo LOCATION; # But if it isn't, we try again...
-				}
-			}
-		}
-	}
-	if ($config{LOCAL_OVERRIDES} ne 'FALSE' and -d $config{LOCAL_OVERRIDES}) {
-		opendir(my $dh, $config{LOCAL_OVERRIDES});
-		while (my $dir = readdir($dh)) {
-			next if $local{$dir};
-			if ($dir =~ $search_name_re or in($dir, @names)) {
-				push @findings, {name => $dir, location => "$config{LOCAL_OVERRIDES}/$dir", local => 1 };
-			}
-		}
-		closedir $dh;
+	my @findings;
+	for (@available) {
+		push @findings, {name => $_, location => get_sbo_location($_), local => is_local($_)} if
+			$_ =~ $search_name_re or in $_, @names;
 	}
 	return \@findings;
 }
@@ -308,9 +263,6 @@ for my $search (@ARGV) {
 	@installed_std = @{ get_installed_packages('STD') };
 	$std_times = +{ map {; $_->{name}, $_->{created} } @installed_std };
 	$std_vers = +{ map {; $_->{name}, $_->{version} } @installed_std };
-	@installed_oot = @{ get_installed_packages('DIRTY') };
-	$oot_times = +{ map {; $_->{name}, $_->{created} } @installed_oot };
-	$oot_vers = +{ map {; $_->{name}, $_->{version} } @installed_oot };
 
 	my $findings = perform_search($search);
 
@@ -333,11 +285,10 @@ for my $search (@ARGV) {
 
 			my $location = $hash->{location};
 			my $version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
-			my $sbo = "SBo:   "; $sbo = "Local: " if $hash->{local};
+			my $sbo = $hash->{local} ? "Local: " : "SBo:   ";
 			say "$sbo $name $version";
 			wrapsay_color $color_warn, "        blacklisted" if on_blacklist($name);
 			wrapsay_color $color_notice, "        $installed_vers->{$name} installed ($installed_times->{$name})" if $installed_times->{$name};
-			wrapsay_color $color_lesser, "        $oot_vers->{$name} installed, out-of-tree ($oot_times->{$name})" if $oot_times->{$name};
 			wrapsay_color $color_lesser, "        $std_vers->{$name} installed, non-SBo ($std_times->{$name})" if $std_times->{$name};
 			# sbotest-only
 			wrapsay_color $color_notice, "        archived" if in_archive($name);

@@ -47,7 +47,7 @@ SBO::Lib::Tree - Routines for interacting with a SlackBuilds.org tree.
 =cut
 
 # private variables needed by most subroutines
-my ($store, %local, %orig, @available);
+my (%store, %local, %orig, @available);
 my $ran_locations = 0;
 
 =head2 get_all_available
@@ -99,7 +99,7 @@ sub get_sbo_location {
   script_error('get_sbo_location requires an argument.') unless $sbo;
   script_error('get_sbo_locations or get_all_available must be run before get_sbo_location.') unless $ran_locations;
 
-  return $$store{$sbo} if exists $$store{$sbo};
+  return $store{$sbo} if exists $store{$sbo};
   return undef;
 }
 
@@ -108,25 +108,23 @@ sub get_sbo_location {
   my %locations = get_sbo_locations();
 
 C<get_sbo_locations> finds all SlackBuilds in C<@sbos> and returns a hash matching each
-package name to its location. It should be called once and only once near the start of
-each script requiring the use of locations.
+package name to its location. After C<get_sbo_locations()> has been run for the first time,
+it simply returns the hash again in subsequent calls.
 
 =cut
 
 sub get_sbo_locations {
-  my %locations;
-
+  return %store if $ran_locations;
+  $ran_locations = 1;
   my ($fh, $exit) = open_read($slackbuilds_txt);
   error_code("Failed to open $slackbuilds_txt; exiting.", $exit) if $exit;
-  $ran_locations = 1;
 
   while (my $line = <$fh>) {
     my ($loc, $sbo) = $line =~ m!LOCATION:\s+\.(/[^/]+/([^/\n]+))$!
       or next;
     next unless -f "$repo_path$loc/$sbo.info";
-    $$store{$sbo} = $repo_path . $loc;
-    $locations{$sbo} = $$store{$sbo};
-    $orig{$sbo} = $$store{$sbo};
+    $store{$sbo} = $repo_path . $loc;
+    $orig{$sbo} = $store{$sbo};
     push @available, $sbo;
   }
   close $fh;
@@ -136,14 +134,13 @@ sub get_sbo_locations {
     for my $loc (glob "$local/*") {
       my $sbo = basename $loc;
       next unless -f "$loc/$sbo.info";
-      $$store{$sbo} = $loc;
-      $locations{$sbo} = $loc;
+      $store{$sbo} = $loc;
       $local{$sbo} = $local;
       push @available, $sbo unless in $sbo, @available;
     }
   }
 
-  return %locations;
+  return %store;
 }
 
 =head2 is_local

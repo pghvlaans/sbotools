@@ -310,16 +310,7 @@ sub get_reverse_reqs {
   my %required_by;
 
   my @packs = keys %$slackbuilds;
-  FIRST: for my $sbo (keys %$slackbuilds) {
-    my $location = get_sbo_location($sbo);
-    unless (get_optional($sbo) or not -f "$location/$sbo.info") {
-      my ($fh, $exit) = open_read("$location/$sbo.info");
-      next FIRST if $exit;
-      for my $line (<$fh>) {
-        if ($line eq "REQUIRES=\"\"\n") { close $fh; next FIRST; }
-      }
-      close $fh;
-    }
+  for my $sbo (keys %$slackbuilds) {
     for my $req (@{ get_requires($sbo) }) {
       $required_by{$req}{$sbo} = 1 if exists $slackbuilds->{$req};
     }
