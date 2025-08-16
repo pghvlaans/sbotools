@@ -11,7 +11,7 @@ package SBO::App::Remove;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :colors get_installed_packages get_sbo_location get_full_queue get_full_reverse get_readme_contents get_reverse_reqs in prompt show_version lint_sbo_config error_code usage_error wrapsay %config @reverse_concluded /;
+use SBO::Lib qw/ :colors get_installed_packages get_sbo_locations get_sbo_location get_full_queue get_full_reverse get_readme_contents get_reverse_reqs in prompt show_version lint_sbo_config error_code usage_error wrapsay %config @reverse_concluded /;
 use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO::App';
@@ -62,6 +62,7 @@ sub run {
   }
 
   lint_sbo_config($self, %config);
+  get_sbo_locations();
 
   if ($config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES}) {
     unless (prompt($color_lesser, "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.\nContinue anyway?", default => 'no')) {

@@ -9,7 +9,7 @@ use warnings;
 our $VERSION = '3.8';
 
 use SBO::Lib::Util qw/ :config :const build_cmp in script_error error_code open_read version_cmp /;
-use SBO::Lib::Tree qw/ get_sbo_location get_sbo_locations is_local /;
+use SBO::Lib::Tree qw/ get_sbo_location is_local /;
 use SBO::Lib::Info qw/ get_orig_build_number get_orig_version get_sbo_build_number get_sbo_version /;
 
 use Exporter 'import';
@@ -218,10 +218,9 @@ sub get_installed_packages {
   my @sbos = map { $_->{name} } grep { $_->{build} =~ m/_SBo(|compat32)$/ }
     @pkgs;
   if (@sbos) {
-    my %locations = get_sbo_locations(map { s/-compat32//gr } @sbos);
     foreach my $sbo (@sbos) {
       $types{$sbo} = 'DIRTY';
-      if ($locations{ $sbo =~ s/-compat32//gr }) {
+      if (defined get_sbo_location($sbo =~ s/-compat32//gr)) {
          $types{$sbo} = 'SBO';
       }
     }

@@ -251,7 +251,7 @@ my $requested_reinstall = 1 if $reinstall;
 $reinstall = 1 if $mass_rebuild or $reverse_rebuild or $series_rebuild;
 
 my @sbos;
-get_sbo_locations(@ARGV) if @ARGV;
+my %locations = get_sbo_locations();
 
 # if a requested compat32 script is ineligible anyway,
 # do not bother with its dependencies, etc.
@@ -370,6 +370,7 @@ if (length $utemp) {
 		exit 0 unless $build_queue;
 	} else {
 		for my $sbo (@sbos) {
+			next if in $sbo, @concluded;
 			my ($extra_queue, %extra_warnings);
 			my $queue = get_build_queue([$sbo], \%warnings);
 			$build_queue = merge_queues($build_queue, $queue);
@@ -462,13 +463,12 @@ if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 }
 
 # populate %locations and sanity check
-my %locations = get_sbo_locations($build_queue);
 SANITY: for my $sbo (@$build_queue) {
 	next SANITY if $inst_names{$sbo};
 
-	if ($utemp and not $locations{$sbo}) {
+	if ($utemp and not defined get_sbo_location($sbo)) {
 		usage_error("Unable to locate $sbo and using a template.");
-	} elsif ($non_int and not $yes_really and not $locations{$sbo} and in($sbo, @sbos)) {
+	} elsif ($non_int and not $yes_really and get_sbo_location($sbo) and in($sbo, @sbos)) {
 		usage_error("Unable to locate $sbo and using nointeractive.")
 	}
 }

@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_sbo_locations get_user_group in installed_solibs is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue solib_check verify_gpg %config show_version lint_sbo_config wrapsay /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_all_available get_full_reverse_queue get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group in installed_solibs is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue solib_check verify_gpg %config show_version lint_sbo_config wrapsay @concluded @reverse_concluded /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -210,6 +210,10 @@ $non_int = 1 if $yes_really;
 
 if ($gpg) { verify_gpg(); }
 
+# if we can't find SLACKBUILDS.TXT in $config{SBO_HOME}, prompt to fetch the tree
+slackbuilds_or_fetch();
+get_all_available();
+
 my $updates;
 if ($all) {
 	slackbuilds_or_fetch();
@@ -225,11 +229,7 @@ if ($all) {
 
 if (!@ARGV) { show_usage(); exit 1 }
 
-# if we can't find SLACKBUILDS.TXT in $config{SBO_HOME}, prompt to fetch the tree
-slackbuilds_or_fetch();
-
 my @sbos;
-get_sbo_locations(@ARGV) if @ARGV;
 
 # if a requested compat32 script is ineligible anyway,
 # do not bother with its dependencies, etc.
@@ -374,6 +374,7 @@ if ($non_int and not $reverse and not $yes_really) {
 		my $name = $sbo;
 		$name =~ s/-compat32$// unless $compat32 or $all;
 		next unless $name;
+		next if in @concluded, $sbo;
 		unless ($force_reqs or $force) {
 			next unless $updates{$name};
 		}
@@ -456,9 +457,6 @@ if ($compat32) {
 }
 
 my $cqueue;
-# get locations for all the things
-my %locs = get_sbo_locations($upgrade_queue);
-@locations{keys %locs} = values %locs;
 
 # see what has been installed as part of a reverse
 # dependency queue

@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree build_cmp get_available_updates get_installed_packages get_removed_builds get_obsolete script_error open_fh in is_local is_obsolete show_version get_local_outdated_versions on_blacklist open_read solib_check $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors %old_libs %config /;
+use SBO::Lib qw/ update_tree build_cmp get_all_available get_available_updates get_installed_packages get_removed_builds get_obsolete script_error open_fh in is_local is_obsolete show_version get_local_outdated_versions on_blacklist open_read solib_check $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors %old_libs %config /;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 use File::Basename;
 use List::Util 'max';
@@ -91,6 +91,7 @@ if ((($nopull or $socheck) and slackbuilds_or_fetch()) or $pkg_check or $full_ch
 	wrapsay_color $color_notice, "Not updating the SlackBuilds tree...";
 	wrapsay_color $color_notice, "Not writing log files..." unless $< == 0;
 }
+get_all_available();
 
 # check for and display missing shared objects
 sub evaluate_solibs {

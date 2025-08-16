@@ -94,7 +94,8 @@ slackbuilds_or_fetch();
 # used to report package installation status
 my (@installed, $installed_times, $installed_vers, @installed_std, $std_times, $std_vers, @installed_oot, $oot_times, $oot_vers);
 # these will be used later in case of reverse dependency searches
-my (@available, $available, $all_fulldeps, $installed, $fulldeps);
+my ($available, $all_fulldeps, $installed, $fulldeps);
+my @available = get_all_available();
 
 # get lists of installed and defective CPAN modules
 my (@cpans, @defective_cpans);
@@ -223,8 +224,7 @@ sub in_archive {
 # get reverse dependency information if there is a query, but only once
 sub reverse_queries {
 	if ($all_reverse or $last_reverse or $first_reverse) {
-		@available = @{ get_all_available() };
-		$available = +{ map {; $_->{name}, $_->{series} } @available };
+		$available = +{ map {; $_, $_ } @available };
 		$all_fulldeps = get_reverse_reqs($available);
 	}
 	if ($show_reverse) {

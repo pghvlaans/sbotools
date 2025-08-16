@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Tree 3"
-.TH SBO::Lib::Tree 3 "Sweetmorn, Bureaucracy 7, 3191 YOLD" "" "sbotools 3.8"
+.TH SBO::Lib::Tree 3 "Pungenday, Bureaucracy 9, 3191 YOLD" "" "sbotools 3.8"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -81,8 +81,8 @@ SBO::Lib::Tree \- Routines for interacting with a SlackBuilds.org tree.
 .Ve
 .PP
 \&\f(CWget_all_available()\fR returns a hash of available scripts based on \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR
-and the contents of the \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR directory. Keys include \f(CW\*(C`name\*(C'\fR and \f(CW\*(C`series\*(C'\fR.
-\&\f(CW\*(C`series\*(C'\fR is \f(CW\*(C`local\*(C'\fR if the script can be found in \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR.
+and the contents of the \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR directory. This subroutine may be called
+in lieu of \f(CWget_sbo_locations()\fR near the start of the script.
 .SS get_orig_location
 .IX Subsection "get_orig_location"
 .Vb 1
@@ -90,28 +90,26 @@ and the contents of the \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR directory. Keys includ
 .Ve
 .PP
 \&\f(CWget_orig_location()\fR returns the location in the SlackBuilds.org tree for the
-given \f(CW$sbo\fR.
+given \f(CW$sbo\fR. Ensure that either \f(CWget_sbo_locations()\fR or \f(CWget_all_available()\fR
+is run before attempting \f(CWget_orig_location()\fR.
 .SS get_sbo_location
 .IX Subsection "get_sbo_location"
-.Vb 2
-\&  my $loc = get_sbo_location($sbo, ...);
-\&  my $loc = get_sbo_location([$sbo, ...]);
+.Vb 1
+\&  my $loc = get_sbo_location($sbo);
 .Ve
 .PP
 \&\f(CWget_sbo_location()\fR returns the location in \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR or the
-SlackBuilds.org tree for the first \f(CW$sbo\fR given.
-.PP
-If this subroutine is to be called sequentially on any substantial number
-of \f(CW$sbo\fR, calling \f(CWget_sbo_locations()\fR on them collectively first is
-advisable for performance reasons.
+SlackBuilds.org tree for \f(CW$sbo\fR. Ensure that either \f(CWget_sbo_locations()\fR
+or \f(CWget_all_available()\fR is run before attempting \f(CWget_sbo_location()\fR.
 .SS get_sbo_locations
 .IX Subsection "get_sbo_locations"
 .Vb 1
-\&  my %locations = get_sbo_locations(@sbos);
+\&  my %locations = get_sbo_locations();
 .Ve
 .PP
 \&\f(CW\*(C`get_sbo_locations\*(C'\fR finds all SlackBuilds in \f(CW@sbos\fR and returns a hash matching each
-package name to its location.
+package name to its location. It should be called once and only once near the start of
+each script requiring the use of locations.
 .SS is_local
 .IX Subsection "is_local"
 .Vb 1
