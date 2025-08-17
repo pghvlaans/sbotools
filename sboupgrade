@@ -212,7 +212,7 @@ if ($gpg) { verify_gpg(); }
 
 # if we can't find SLACKBUILDS.TXT in $config{SBO_HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
-get_all_available();
+my %locations = get_sbo_locations();
 
 my $updates;
 if ($all) {
@@ -301,17 +301,6 @@ my %std_names;
 $std_names{$_} = 1 for @$std_installs;
 @sbos = grep { not $std_names{$_} } @sbos;
 
-# pull locations for everything specified on command line.
-my %locations;
-for my $sbo (@sbos) {
-	my $name = $sbo;
-	$name =~ s/-compat32//;
-	$locations{$sbo} = get_sbo_location($name);
-	if (not $locations{$sbo} and in($sbo, @sbos) and $non_int and not $yes_really) {
-		usage_error("Unable to locate $sbo and using nointeractive.");
-	}
-}
-
 # get a list of installed SBos to check upgradability against,
 # and perl modules from CPAN
 my $inst_names = get_inst_names(get_installed_packages('SBO'));
@@ -353,7 +342,7 @@ if ($non_int and not $reverse and not $yes_really) {
 			push @$upgrade_queue, $sbo if $inst_names{$sbo};
 			if (auto_reverse($sbo) and not $no_install) {
 				push @needs_reverse, $sbo;
-				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo.";
+				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo." unless not $all and not $compat32 and $sbo =~ m/-compat32$/;
 			}
 		}
 	# non-interactive, no --force
@@ -362,7 +351,7 @@ if ($non_int and not $reverse and not $yes_really) {
 			push @$upgrade_queue, $sbo if $updates{$sbo};
 			if (auto_reverse($sbo) and not $no_install) {
 				push @needs_reverse, $sbo;
-				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo.";
+				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo." unless not $all and not $compat32 and $sbo =~ m/-compat32/;
 			}
 		}
 	}
@@ -371,36 +360,19 @@ if ($non_int and not $reverse and not $yes_really) {
 	my @notified;
 	for my $sbo (@sbos) {
 		my ($extra_queue, %extra_warnings);
-		my $name = $sbo;
-		$name =~ s/-compat32$// unless $compat32 or $all;
-		next unless $name;
 		next if in @concluded, $sbo;
 		unless ($force_reqs or $force) {
-			next unless $updates{$name};
+			next unless $updates{$sbo};
 		}
-		my $queue = get_build_queue([$name], \%warnings);
+		my $queue = get_build_queue([$sbo], \%warnings);
 		unless ($force_reqs) {
 			@$queue = grep { !$inst_names{$_} or $updates{$_} } @$queue;
 		}
-		push @$queue, $name if $force;
+		push @$queue, $sbo if $force;
 		$upgrade_queue = merge_queues($upgrade_queue, $queue);
 		# with --reverse-rebuild
 		if ($reverse) {
-			my $needs_compat;
-			if ($sbo =~ /-compat32$/) {
-				$needs_compat = 1;
-				$sbo =~ s/-compat32$//;
-			}
 			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, $sbo);
-			if ($needs_compat) {
-				$sbo = "$sbo-compat32";
-				for my $item (@$extra_queue) {
-					unless ($item =~ /-compat32$/) {
-						$extra_warnings{"$item-compat32"} = $extra_warnings{$item};
-						$item = "$item-compat32";
-					}
-				}
-			}
 		}
 		$save_queue = $upgrade_queue;
 		if ($extra_queue) {
@@ -417,7 +389,7 @@ if ($non_int and not $reverse and not $yes_really) {
 		for my $sbo (@$upgrade_queue) {
 			if (auto_reverse($sbo)) {
 				push @needs_reverse, $sbo;
-				wrapsay "Reverse dependency rebuild for $sbo." unless in $sbo, @notified;
+				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo." unless in $sbo, @notified or (not $all and not $compat32 and $sbo =~ m/-compat32$/);
 				push @notified, $sbo;
 			}
 		}
@@ -429,31 +401,12 @@ if (@needs_reverse and not $no_install and not $reverse) {
 	$needs_rationalize = 1;
 	my ($extra_queue, %extra_warnings);
 	for my $sbo (@needs_reverse) {
-		my $needs_compat;
-		if ($sbo =~ /-compat32$/) {
-			$sbo =~ s/-compat32$//;
-			$needs_compat = 1;
-		}
 		($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, $sbo);
-		if ($needs_compat) {
-			for my $item (@$extra_queue) {
-				unless ($item =~ /-compat32$/) {
-					$extra_warnings{"$item-compat32"} = $extra_warnings{$item};
-					$item = "$item-compat32" unless $item =~ /-compat32$/;
-				}
-			}
-		}
 		if ($extra_queue) {
 			%warnings = (%warnings, %extra_warnings);
 			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
 		}
 	}
-}
-
-# remove -compat32 here; note that --all needs to retain
-if ($compat32) {
-	for my $sbo (@$upgrade_queue) { $sbo =~ s/-compat32$//; }
-	@$upgrade_queue = uniq @$upgrade_queue;
 }
 
 my $cqueue;
@@ -470,11 +423,10 @@ $upgrade_queue = rationalize_queue($upgrade_queue) if $needs_rationalize;
 FIRST: for my $sbo (@$upgrade_queue) {
 	my ($perl_ineligible, $arch_ineligible, $only_64, $only_32);
 	next FIRST if $std_names{$sbo};
-	next FIRST if $sbo =~ /-compat32$/ and not $all;
-	my $name = $compat32 ? "$sbo-compat32" : $sbo;
-	$locations{$name} = get_sbo_location($sbo) if $compat32 or $all;
-	my $real_name = $sbo;
-	$real_name =~ s/-compat32//;
+	next FIRST if $sbo =~ /-compat32$/ and not ($all or $compat32);
+	my $name = $sbo;
+	$sbo =~ s/-compat32$//;
+	$locations{$name} = get_sbo_location($name) unless $locations{$name};
 	# do not attempt compat32 builds if noarch or perl-based; catch
 	# ineligible scripts here, but skip them after checking for the base
 	# package
@@ -482,11 +434,11 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		$only_64 = check_x64 $locations{$name};
 		$only_32 = check_x32 $locations{$name};
 		my $check_location = $locations{$name};
-		my $orig_location = get_orig_location($real_name);
+		my $orig_location = get_orig_location($name);
 		$check_location = $orig_location if $orig_location;
 		$perl_ineligible = 1 if $name =~ /^perl-/ or basename(dirname($check_location)) eq "perl";
 		unless ($perl_ineligible) {
-			my ($fh, $exit) = open_fh("$locations{$name}/$real_name.SlackBuild", "<") if -f "$locations{$name}/$real_name.SlackBuild";
+			my ($fh, $exit) = open_fh("$locations{$name}/$sbo.SlackBuild", "<") if -f "$locations{$name}/$sbo.SlackBuild";
 			next FIRST if $exit;
 			for my $line (<$fh>) {
 				$perl_ineligible = 1 if $line =~ /perl (Makefile|Build).PL/;
@@ -495,26 +447,11 @@ FIRST: for my $sbo (@$upgrade_queue) {
 			close $fh;
 		}
 	}
-	# for items in a reverse dependency rebuild queue, do not add
-	# new compat32 packages unless they are a missing requirement
-	if ($name =~ /-compat32/ and in $sbo, @reverses) {
-		my $needed_compat;
-		unless ($inst_names{$name}) {
-			for my $cand (@reverses) {
-				next if $cand eq $sbo;
-				my $cand_reqs = get_requires($cand);
-				my $cand_name = $cand;
-				$cand_name = "$cand_name-compat32" unless $cand_name =~ /-compat32$/;
-				$needed_compat = 1 if in $sbo, @$cand_reqs and $inst_names{$cand_name};
-			}
-		}
-		next FIRST unless $inst_names{$name} or $needed_compat;
-	}
 
-	if (defined $warnings{$sbo} and $warnings{$sbo} eq 'nonexistent') {
+	if (defined $warnings{$name} and $warnings{$name} eq 'nonexistent') {
 		next FIRST if is_obsolete($sbo);
-		unless ($inst_names{$sbo}) {
-			wrapsay "Unable to locate $sbo in the SlackBuilds.org tree.";
+		unless ($inst_names{$name}) {
+			wrapsay "Unable to locate $name in the SlackBuilds.org tree.";
 			unless ($non_int) {
 				exit 0 unless prompt($color_default, "Do you want to ignore it and continue?", default => 'yes');
 			}
@@ -522,9 +459,9 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		next FIRST;
 	}
 	# will give %README% advisories later for --dry-run
-	push @see_readme, $sbo if defined $warnings{$sbo} and $warnings{$sbo} eq '%README%';
+	push @see_readme, $name if defined $warnings{$name} and $warnings{$name} eq '%README%';
 
-	if ($sbo =~ /^perl-/ and $config{CPAN_IGNORE} ne "TRUE" and not $inst_names{$sbo}) {
+	if ($name =~ /^perl-/ and $config{CPAN_IGNORE} ne "TRUE" and not $inst_names{$name}) {
 		my $pm_name = $sbo;
 		$pm_name =~ s/^perl-//;
 		for my $pm (@$pms) {
@@ -541,18 +478,6 @@ FIRST: for my $sbo (@$upgrade_queue) {
 	}
 
 	unless ($non_int) {
-		# if compat32 is TRUE, we need to see if the non-compat version exists.
-		if ($compat32 or $name =~ /-compat32$/) {
-			unless ($inst_names{$sbo} or in $sbo, @temp_queue) {
-				say "$name requires $sbo." unless $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
-				my ($proceed, $cmds, $opts) = user_prompt($sbo, $locations{$sbo});
-				next FIRST unless $proceed;
-				push(@temp_queue, $sbo);
-				$commands{$sbo} = $cmds;
-				$options{$sbo} = $opts;
-				say "$sbo added to queue.";
-			}
-		}
 		# actually skip ineligible compat32 builds here (interactive)
 		if ($only_64) {
 			wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32.";
@@ -581,19 +506,19 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		# with a message if not
 		if ($yes_really) {
 			my $cmds;
-			if (-s "$locations{$real_name}/README") {
-				my $readme = get_readme_contents($locations{$real_name});
+			if (-s "$locations{$name}/README") {
+				my $readme = get_readme_contents($locations{$name});
 				unless (defined $readme) {
 					error_code("Unable to open README for $sbo.", _ERR_OPENFH);
 				}
-				$cmds = get_user_group($readme, $locations{$real_name});
+				$cmds = get_user_group($readme, $locations{$name});
 			} else {
-				wrapsay_color $color_lesser, "$locations{$real_name}/README is empty or does not exist.";
+				wrapsay_color $color_lesser, "$locations{$name}/README is empty or does not exist.";
 			}
 			if ($$cmds[0]) {
 				unless (user_group_exist(@$cmds)) {
 					if ($dry_run) {
-						$missing_user_group{$sbo} = $cmds;
+						$missing_user_group{$name} = $cmds;
 					} else {
 						wrapsay_color $color_warn, "A required user or group is missing for $sbo:", 1;
 						for my $cmd (@$cmds) { say $cmd; }
@@ -605,16 +530,8 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		}
 		# reuse build options automatically if non-interactive
 		# unless norecall is used
-		my $base_needed;
-		# add the required base script if --batch
-		if ($yes_really and $name =~ /-compat32$/) {
-			unless ($inst_names{$real_name} or in $real_name, @temp_queue) {
-				say "$name requires $real_name." unless $dry_run or $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
-				$base_needed = 1;
-			}
-		}
 		unless ($no_recall) {
-			my $opts_log = "/var/log/sbotools/$real_name";
+			my $opts_log = "/var/log/sbotools/$sbo";
 			if (-f $opts_log) {
 				my ($prev_fh, $exit) = open_fh($opts_log, '<');
 				if ($exit) {
@@ -622,22 +539,15 @@ FIRST: for my $sbo (@$upgrade_queue) {
 				} else {
 					chomp(my $opts = <$prev_fh>);
 					$saved_options{$name} = $opts if $dry_run;
-					$options{$sbo} = $opts;
-					$options{$real_name} = $opts if $base_needed;
+					$options{$name} = $opts;
 				}
 			}
 		}
-		# this can only happen if --batch or --dry-run
-		if ($base_needed) {
-			push(@temp_queue, $real_name);
-			say "\n$real_name added to upgrade queue." unless $dry_run;
-		}
 		# for dry-run, do not want to notify the user of %README%, missing user/group
 		# or saved build options unless the script will actually be built
-		if ($dry_run and not $base_needed and ($perl_ineligible or $arch_ineligible or $only_64 or $only_32)) {
-			@see_readme = grep { !/^$real_name$/ } @see_readme;
+		if ($dry_run and ($perl_ineligible or $arch_ineligible or $only_64 or $only_32)) {
+			@see_readme = grep { !/^$name$/ } @see_readme;
 			push @ignore_script, $name;
-			push @ignore_script, $real_name;
 		}
 		# actually skip ineligible compat32 builds here (non-interactive)
 		if ($only_64) {
@@ -649,11 +559,11 @@ FIRST: for my $sbo (@$upgrade_queue) {
 			next FIRST;
 		}
 		if ($perl_ineligible) {
-			wrapsay_color $color_lesser, "$real_name is Perl-based; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is Perl-based; skipping compat32.";
 			next FIRST;
 		}
 		if ($arch_ineligible) {
-			wrapsay_color $color_lesser, "$real_name is a noarch script; skipping compat32.";
+			wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32.";
 			next FIRST;
 		}
 		push(@temp_queue, $name);

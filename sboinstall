@@ -316,6 +316,7 @@ if (@ARGV and $compat32) {
 }
 exit 0 if (@ARGV and not @sbos);
 @sbos = uniq @sbos;
+if ($compat32) { $_ .= "-compat32" for (@sbos); }
 
 if (length $utemp) {
 	my $json = JSON::PP->new->latin1;
@@ -340,7 +341,7 @@ if (length $utemp) {
 			for my $cand (@$build_queue) {
 				if (auto_reverse($cand)) {
 					push @needs_reverse, $cand;
-					wrapsay_color $color_notice, "Reverse dependency rebuild for $cand.";
+					wrapsay_color $color_notice, "Reverse dependency rebuild for $cand." unless $cand =~ m/-compat32/ and not $compat32;
 				}
 			}
 			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 0, @needs_reverse) if @needs_reverse;
@@ -395,7 +396,7 @@ if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not 
 		my ($extra_queue, %extra_warnings);
 		if (auto_reverse($sbo)) {
 			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
-			wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo.";
+			wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo." unless $sbo =~ m/-compat32/ and not $compat32;
 		}
 		if ($extra_queue) {
 			$needs_rationalize = 1;
@@ -420,6 +421,7 @@ $std_names{$_->{name}} = $_ for @$std_pkgs;
 
 # prepare a queue in case of mass_rebuild or series_rebuild
 if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
+	$needs_rationalize = 1;
 	my @needs_reverse;
 	my $inst_sbos = get_installed_packages('SBO');
 	my %sbos_names;
@@ -427,7 +429,6 @@ if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 	for my $sbo (%sbos_names) {
 		my $name = $sbos_names{$sbo}{name};
 		next unless $name;
-		$needs_rationalize = 1 if $sbo =~ /-compat32$/;
 		if ($series_rebuild) {
 			my $location = get_sbo_location($sbo);
 			my $check_location = get_orig_location($sbo);
@@ -435,23 +436,13 @@ if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 			my $series = basename(dirname($location));
 			next if $series ne $series_rebuild;
 		}
-		if ($sbo =~ /-compat32$/) {
-			splice @concluded;
-			splice @reverse_concluded;
-		}
 		my $queue = get_build_queue([$name], \%warnings);
-		if ($sbo =~ /-compat32$/) {
-			splice @concluded;
-			splice @reverse_concluded;
-			for my $item (@$queue) { $item = "$item-compat32" unless $item =~ /-compat32$/; }
-		}
 		$build_queue = merge_queues($build_queue, $queue);
 		push @needs_reverse, $sbo if $series_rebuild and ($reverse_rebuild or auto_reverse($sbo));
 	}
 	if (@needs_reverse) {
 		my ($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 0, @needs_reverse);
 		if ($extra_queue) {
-			$needs_rationalize = 1;
 			$build_queue = merge_queues($build_queue, $extra_queue);
 			%warnings = (%warnings, %extra_warnings);
 		}
@@ -477,7 +468,6 @@ SANITY: for my $sbo (@$build_queue) {
 # dependency queue
 my @reverses;
 for my $sbo (@$build_queue) {
-	next if $sbo =~ /-compat32$/;
 	push @reverses, $sbo unless in $sbo, @$save_queue;
 }
 
@@ -492,19 +482,16 @@ my (@see_readme, %saved_options);
 $build_queue = rationalize_queue($build_queue) if $needs_rationalize;
 FIRST: for my $sbo (@$build_queue) {
 	my ($perl_ineligible, $arch_ineligible, $only_64, $only_32);
-	my $name;
+	my $name = $sbo;
 	if ($sbo =~ /-compat32$/) {
-		next FIRST unless $utemp or $mass_rebuild or $series_rebuild;
-		$name = $sbo;
+		next FIRST unless $utemp or $mass_rebuild or $series_rebuild or $compat32;
 		$sbo =~ s/-compat32$//;
-	} else {
-		$name = $compat32 ? "$sbo-compat32" : $sbo;
 	}
 	if ($std_names{$name} and $non_int) {
 		wrapsay "$sbo is not an SBo package. Skipping.";
 		next FIRST;
 	}
-	$locations{$name} = get_sbo_location($sbo) if $name =~ /-compat32$/;
+	$locations{$name} = get_sbo_location($sbo) unless $locations{$name};
 	# do not attempt compat32 builds if noarch or perl-based; catch
 	# ineligible scripts here, but skip them after checking for the base
 	# package
@@ -512,7 +499,7 @@ FIRST: for my $sbo (@$build_queue) {
 		$only_64 = check_x64 $locations{$name};
 		$only_32 = check_x32 $locations{$name};
 		my $check_location = $locations{$name};
-		my $orig_location = get_orig_location($sbo);
+		my $orig_location = get_orig_location($name);
 		$check_location = $orig_location if $orig_location;
 		$perl_ineligible = 1 if $name =~ /^perl-/ or basename(dirname($check_location)) eq "perl";
 		unless ($perl_ineligible) {
@@ -525,24 +512,9 @@ FIRST: for my $sbo (@$build_queue) {
 			close $fh;
 		}
 	}
-	# for items in a reverse dependency rebuild queue, do not add
-	# new compat32 packages unless they are a missing requirement
-	if ($name =~ /-compat32/ and in $sbo, @reverses) {
-		my $needed_compat;
-		unless ($inst_names{$name}) {
-			for my $cand (@reverses) {
-				next if $cand eq $sbo;
-				my $cand_reqs = get_requires($cand);
-				my $cand_name = $cand;
-				$cand_name = "$cand_name-compat32" unless $cand_name =~ /-compat32$/;
-				$needed_compat = 1 if in $sbo, @$cand_reqs and $inst_names{$cand_name};
-			}
-		}
-		next FIRST unless $inst_names{$name} or $needed_compat;
-	}
 
 	if ($inst_names{$name}) {
-		next FIRST if defined $warnings{$sbo} and $warnings{$sbo} eq 'nonexistent';
+		next FIRST if defined $warnings{$name} and $warnings{$name} eq 'nonexistent';
 		my $inst_msg = sprintf "%s (%s) is already installed.", $name, $inst_names{$name}{pkg};
 		$inst_msg = $config{CLASSIC} eq 'TRUE' ? $inst_msg : $inst_msg. "\n  ($inst_names{$name}{created})";
 		say $inst_msg;
@@ -580,10 +552,10 @@ FIRST: for my $sbo (@$build_queue) {
 	}
 
 	# Make sure the slackbuild exists on SBo
-	if (defined $warnings{$sbo} and $warnings{$sbo} eq 'nonexistent') {
+	if (defined $warnings{$name} and $warnings{$name} eq 'nonexistent') {
 		next FIRST if is_obsolete($sbo);
-		unless ($inst_names{$sbo}) {
-			wrapsay "Unable to locate $sbo in the SlackBuilds.org tree.";
+		unless ($inst_names{$name}) {
+			wrapsay "Unable to locate $name in the SlackBuilds.org tree.";
 			unless ($non_int) {
 				exit 0 unless prompt($color_default, "Do you want to ignore it and continue?", default => 'yes');
 			}
@@ -591,21 +563,9 @@ FIRST: for my $sbo (@$build_queue) {
 		next FIRST;
 	}
 	# will give %README% advisories later for --dry-run
-	push @see_readme, $sbo if defined $warnings{$sbo} and $warnings{$sbo} eq '%README%';
+	push @see_readme, $sbo if defined $warnings{$name} and $warnings{$name} eq '%README%';
 
 	unless ($non_int) {
-		# if a compat32 build, we need to see if the non-compat version exists.
-		if ($name =~ /-compat32$/) {
-			unless ($inst_names{$sbo} or in $sbo, @temp_queue) {
-				say "$name requires $sbo." unless $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
-				my ($proceed, $cmds, $opts) = user_prompt($sbo, $locations{$sbo});
-				next FIRST unless $proceed;
-				push(@temp_queue, $sbo);
-				$commands{$sbo} = $cmds;
-				$options{$sbo} = $opts;
-				say "$sbo$added";
-			}
-		}
 		# actually skip ineligible compat32 builds here (interactive)
 		if ($only_64) {
 			wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32.";
@@ -657,14 +617,6 @@ FIRST: for my $sbo (@$build_queue) {
 					}
 				}
 			}
-			my $base_needed;
-			# add the required base script if --batch
-			if ($yes_really and $name =~ /-compat32$/) {
-				unless ($inst_names{$sbo} or in $sbo, @temp_queue) {
-					say "$name requires $sbo." unless $dry_run or $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
-					$base_needed = 1;
-				}
-			}
 			# if nointeractive or batch, use saved build options unless reading a template
 			# or passing norecall
 			unless ($no_recall) {
@@ -677,18 +629,12 @@ FIRST: for my $sbo (@$build_queue) {
 						chomp(my $opts = <$prev_fh>);
 						$saved_options{$name} = $opts if $dry_run;
 						$options{$name} = $opts;
-						$options{$sbo} = $opts if $base_needed;
 					}
 				}
 			}
-			# this can only happen if --batch or --dry-run
-			if ($base_needed) {
-				push(@temp_queue, $sbo);
-				say "\n$sbo$added" unless $dry_run or $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
-			}
 			# for dry-run, do not want to notify the user of %README%, missing user/group
 			# or saved build options unless the script will actually be built
-			if ($dry_run and not $base_needed and ($perl_ineligible or $arch_ineligible or $only_64 or $only_32)) {
+			if ($dry_run and ($perl_ineligible or $arch_ineligible or $only_64 or $only_32)) {
 				@see_readme = grep { !/^$sbo$/ } @see_readme;
 				push @ignore_script, $name;
 				push @ignore_script, $sbo;

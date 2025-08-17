@@ -96,25 +96,7 @@ sub run {
   usage_error("sboremove requires at least one argument.") unless @args;
   my %sbos = map { $_ => 1 } @args;
 
-  my @prelim_remove = get_full_queue($installed, @args);
-  my @remove;
-  if ($self->{compat}) {
-    my (@prelim_names, @compat_remove);
-    push @prelim_names, $_->{name} for @prelim_remove;
-    for my $cand (@installed) {
-      next unless $cand->{name} =~ m/-compat32$/;
-      if (in $cand->{name}, @args) {
-        push @compat_remove, $cand;
-        next;
-      }
-      my $testname = $cand->{name};
-      $testname =~ s/-compat32$//;
-      push @compat_remove, $cand if in $testname, @prelim_names;
-    }
-    @remove = @compat_remove;
-  } else {
-    @remove = @prelim_remove;
-  }
+  my @remove = get_full_queue($installed, @args);
 
   my @confirmed;
 
@@ -125,16 +107,10 @@ sub run {
     my @confirmed_names;
     push @confirmed_names, $_->{name} for @confirmed;
     my $check_name = $remove->{name};
-    # if compat32, check the full reverse for the base script
-    $check_name =~ s/-compat32$//;
     my @all_required_by = get_full_reverse($check_name, $installed, $required_by);
     my @required_by;
     for my $cand (@installed) {
       next unless in $cand->{name}, @all_required_by;
-      # ignore all non-compat32 items if compat32
-      if ($self->{compat}) {
-        next unless $cand->{name} =~ m/-compat32$/;
-      }
       # do not alert the user about being 'needed' by already-confirmed scripts
       push @required_by, $cand->{name} unless in $cand->{name}, @confirmed_names;
     }

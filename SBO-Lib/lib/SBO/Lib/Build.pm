@@ -937,7 +937,6 @@ in case of a mass or series rebuild. The rearranged queue is returned.
 sub rationalize_queue {
   script_error('rationalize_queue requires an argument.') unless @_ == 1;
   my $queue = shift;
-  # removing "sort" here would mean a very bad time with compat32
   my @queue = sort @{ $queue };
   my (%all_reqs, @have_requirements, @result_queue);
 
@@ -955,18 +954,11 @@ sub rationalize_queue {
     $all_reqs{$sbo} = \@reqs;
     push @have_requirements, $sbo;
   }
-  my $needs_compat = 1 if grep { /-compat32$/ } @have_requirements;
   SECOND: while (my $sbo = shift @have_requirements) {
     for my $check (@{$all_reqs{$sbo}}) {
       if (in $check, @have_requirements) {
         push @have_requirements, $sbo;
         next SECOND;
-      }
-      if ($needs_compat) {
-        if (in "$check-compat32", @have_requirements) {
-          push @have_requirements, $sbo;
-          next SECOND;
-        }
       }
     }
     push @result_queue, $sbo;
