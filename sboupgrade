@@ -402,7 +402,7 @@ if ($non_int and not $reverse and not $yes_really) {
 				}
 			}
 		}
-		$save_queue = merge_queues($save_queue, $upgrade_queue);
+		$save_queue = $upgrade_queue;
 		if ($extra_queue) {
 			%warnings = (%warnings, %extra_warnings);
 			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);

@@ -374,7 +374,7 @@ if (length $utemp) {
 			my ($extra_queue, %extra_warnings);
 			my $queue = get_build_queue([$sbo], \%warnings);
 			$build_queue = merge_queues($build_queue, $queue);
-			$save_queue = merge_queues($save_queue, $build_queue);
+			$save_queue = $build_queue;
 			# --reverse-rebuild with --reinstall; include the items in @sbos
 			if ($reverse_rebuild) {
 				($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
