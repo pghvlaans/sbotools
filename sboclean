@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ prompt usage_error script_error in show_version lint_sbo_config wrapsay :colors %config /;
+use SBO::Lib qw/ prompt usage_error script_error in_regexp show_version lint_sbo_config wrapsay :colors %config /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 use File::Path qw(remove_tree);
@@ -106,7 +106,7 @@ sub remove_stuff {
 	}
 	opendir(my $dh, $dir);
 	FIRST: while (my $ls = readdir $dh) {
-		next FIRST if in($ls => qw/ . .. /);
+		next FIRST if in_regexp($ls => qw/ . .. /);
 		rm_full("$dir/$ls");
 	}
 	return 1
@@ -126,12 +126,12 @@ if ($dist) {
 	my $distfiles = "$config{SBO_HOME}/distfiles";
 	opendir(my $dh, $distfiles);
 	FIRST: while (my $ls = readdir $dh) {
-		next FIRST if in($ls => qw/ . .. /);
+		next FIRST if in_regexp($ls => qw/ . .. /);
 		my $dir = "$distfiles/$ls";
 		if (-d $dir) {
 			opendir(my $dh2, $dir);
 			SECOND: while (my $ls2 = readdir $dh2) {
-				rm_full("$dir/$ls2", 1) unless in($ls2 => qw/ . .. /);
+				rm_full("$dir/$ls2", 1) unless in_regexp($ls2 => qw/ . .. /);
 				remove_tree($dir) unless -f "$dir/$ls2";
 			}
 		} elsif (-f $dir) {

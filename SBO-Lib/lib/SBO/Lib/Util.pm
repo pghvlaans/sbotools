@@ -104,6 +104,7 @@ our @EXPORT_OK = (
     get_slack_version_url
     idx
     in
+    in_regexp
     indent
     is_obsolete
     lint_sbo_config
@@ -715,10 +716,19 @@ sub idx {
 C<in()> looks for C<$needle> in C<@haystack>, and returns a true value if it
 was found, and a false value otherwise.
 
+C<in()> formerly matched C<Regexp>, but this was changed for performance reasons.
+Use C<in_regexp()> for the old functionality.
+
 =cut
 
 # Checks if the first argument equals any of the subsequent ones
 sub in {
+  my $first = shift;
+  for (@_) { return 1 if $first eq $_; }
+  return 0;
+}
+
+sub in_regexp {
   my ($first, @rest) = @_;
   foreach my $arg (@rest) {
     return 1 if ref $arg eq 'Regexp' and $first =~ $arg;
@@ -726,7 +736,6 @@ sub in {
   }
   return 0;
 }
-
 =head2 indent
 
   my $str = indent($indent, $text);

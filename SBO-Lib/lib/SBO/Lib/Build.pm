@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.8';
 
-use SBO::Lib::Util qw/ :config :const :times :colors idx prompt error_code script_error get_sbo_from_loc check_multilib on_blacklist open_fh open_read uniq save_options wrapsay in $userland_32 /;
+use SBO::Lib::Util qw/ :config :const :times :colors idx prompt error_code script_error get_sbo_from_loc check_multilib on_blacklist open_fh open_read uniq save_options wrapsay in in_regexp $userland_32 /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires get_reverse_reqs /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
@@ -496,7 +496,7 @@ sub get_src_dir {
   # scripts use either $TMP or /tmp/SBo
   if (opendir(my $tsbo_dh, $tmpd)) {
     FIRST: while (my $ls = readdir $tsbo_dh) {
-      next FIRST if in($ls => qw/ . .. /, qr/^package-/, @ls);
+      next FIRST if in_regexp($ls => qw/ . .. /, qr/^package-/, @ls);
       next FIRST unless -d "$tmpd/$ls";
 
       push @src_dirs, $ls;
@@ -672,7 +672,7 @@ sub perform_sbo {
   # the SlackBuild so that we can compare to a listing taken afterward.
   my @src_ls;
   if (opendir(my $tsbo_dh, $tmpd)) {
-    @src_ls = grep { ! in( $_ => qw/ . .. /) } readdir $tsbo_dh;
+    @src_ls = grep { ! in_regexp( $_ => qw/ . .. /) } readdir $tsbo_dh;
   }
 
   my ($cmd, %changes);
@@ -682,7 +682,7 @@ sub perform_sbo {
 
   if ($config{ETC_PROFILE} eq 'TRUE') {
     if (opendir(my $prof_dh, "/etc/profile.d")) {
-      my @profile_d = grep { ! in( $_ => qw/ . .. /) } readdir $prof_dh;
+      my @profile_d = grep { ! in_regexp( $_ => qw/ . .. /) } readdir $prof_dh;
       if (@profile_d) {
         for my $profile_script (@profile_d) {
           $cmd .= " . /etc/profile.d/$profile_script &&" if -x "/etc/profile.d/$profile_script" and $profile_script =~ m/\.sh$/;

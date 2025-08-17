@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Pungenday, Bureaucracy 9, 3191 YOLD" "" "sbotools 3.8"
+.TH SBO::Lib::Util 3 "Prickle-Prickle, Bureaucracy 10, 3191 YOLD" "" "sbotools 3.8"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -311,6 +311,9 @@ it was found, or \f(CW\*(C`undef\*(C'\fR if it was not found.
 .PP
 \&\f(CWin()\fR looks for \f(CW$needle\fR in \f(CW@haystack\fR, and returns a true value if it
 was found, and a false value otherwise.
+.PP
+\&\f(CWin()\fR formerly matched \f(CW\*(C`Regexp\*(C'\fR, but this was changed for performance reasons.
+Use \f(CWin_regexp()\fR for the old functionality.
 .SS indent
 .IX Subsection "indent"
 .Vb 1

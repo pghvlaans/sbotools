@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.8';
 
-use SBO::Lib::Util qw/ :config :const :colors error_code prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in slurp wrapsay /;
+use SBO::Lib::Util qw/ :config :const :colors error_code prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in in_regexp slurp wrapsay /;
 
 use Cwd;
 use File::Copy;
@@ -184,7 +184,7 @@ sub check_repo {
     my $is_empty;
     my $is_git_fetch;
     while (my $dir = readdir $repo_handle) {
-      last unless in($dir => qw/ . .. /);
+      last unless in_regexp($dir => qw/ . .. /);
       $is_empty = 1;
     }
     close($repo_handle);
@@ -288,7 +288,7 @@ sub generate_slackbuilds_txt {
   for my $cat (@categories) {
     opendir(my $cat_dh, "$repo_path/$cat") or return 0;
     while (my $package = readdir($cat_dh)) {
-      next if in($package => qw/ . .. /);
+      next if in_regexp($package => qw/ . .. /);
       next unless -f "$repo_path/$cat/$package/$package.info";
       print { $fh } "SLACKBUILD NAME: $package\n";
       print { $fh } "SLACKBUILD LOCATION: ./$cat/$package\n";
