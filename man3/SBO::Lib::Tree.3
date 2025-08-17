@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Tree 3"
-.TH SBO::Lib::Tree 3 "Pungenday, Bureaucracy 9, 3191 YOLD" "" "sbotools 3.8"
+.TH SBO::Lib::Tree 3 "Prickle-Prickle, Bureaucracy 10, 3191 YOLD" "" "sbotools 3.8"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -80,7 +80,7 @@ SBO::Lib::Tree \- Routines for interacting with a SlackBuilds.org tree.
 \&  my $available = get_all_available();
 .Ve
 .PP
-\&\f(CWget_all_available()\fR returns a hash of available scripts based on \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR
+\&\f(CWget_all_available()\fR returns an array of available scripts based on \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR
 and the contents of the \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR directory. This subroutine may be called
 in lieu of \f(CWget_sbo_locations()\fR near the start of the script.
 .SS get_orig_location

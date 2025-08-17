@@ -54,7 +54,7 @@ my $ran_locations = 0;
 
   my $available = get_all_available();
 
-C<get_all_available()> returns a hash of available scripts based on C<SLACKBUILDS.TXT>
+C<get_all_available()> returns an array of available scripts based on C<SLACKBUILDS.TXT>
 and the contents of the C<LOCAL_OVERRIDES> directory. This subroutine may be called
 in lieu of C<get_sbo_locations()> near the start of the script.
 
