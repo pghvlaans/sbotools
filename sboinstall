@@ -468,7 +468,7 @@ SANITY: for my $sbo (@$build_queue) {
 
 	if ($utemp and not defined get_sbo_location($sbo)) {
 		usage_error("Unable to locate $sbo and using a template.");
-	} elsif ($non_int and not $yes_really and get_sbo_location($sbo) and in($sbo, @sbos)) {
+	} elsif ($non_int and not $yes_really and not defined get_sbo_location($sbo) and in($sbo, @sbos)) {
 		usage_error("Unable to locate $sbo and using nointeractive.")
 	}
 }
