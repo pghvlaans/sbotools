@@ -363,7 +363,6 @@ been requested. Results will be the same for the C<compat32> version of the scri
 sub auto_reverse {
   script_error("auto_reverse requires an argument.") unless @_ == 1;
   my $sbo = shift;
-  $sbo =~ s/-compat32$//;
   return 1 if in($sbo, @auto_reverse);
   return 0;
 }
@@ -567,21 +566,11 @@ scripts to the results for the base script.
 sub get_optional {
   script_error("get_optional requires an argument.") unless @_ == 1;
   my $sbo = shift;
-  my $needs_compat;
-  if ($sbo =~ /-compat32$/) {
-    $needs_compat = 1;
-    $sbo =~ s/-compat32$//;
-  }
   my @optional;
   if (exists $optional{$sbo}) {
     push @optional, @{ $optional{$sbo} };
   }
-  if (@optional) {
-    if ($needs_compat) {
-      for my $item (@optional) { $item = "$item-compat32" unless $item =~ /-compat32$/; }
-    }
-    return @optional;
-  }
+  return @optional if @optional;
   return;
 }
 
@@ -989,7 +978,6 @@ be the same for the C<compat32> version of the script.
 sub on_blacklist {
   script_error("on_blacklist requires an argument.") unless @_ == 1;
   my $sbo = shift;
-  $sbo =~ s/-compat32$//;
   return 1 if in($sbo, @on_blacklist);
   return 0;
 }
@@ -1222,17 +1210,22 @@ sub read_hints{
   for (@listings) {
     my $item = $_;
     if ($item =~ m/^!/) {
+      next if $item =~ m/\s/;
       $item =~ s/!//;
-      push @on_blacklist, $item unless $item =~ m/\s/;
+      push @on_blacklist, $item;
+      push @on_blacklist, "$item-compat32";
     } elsif ($item =~ m/^~/) {
+      next if $item =~ m/\s/;
       $item =~ s/~//;
-      push @auto_reverse, $item unless $item =~ m/\s/;
+      push @auto_reverse, $item;
+      push @auto_reverse, "$item-compat32";
     } else {
       my @cand = split " ", $item;
       if (@cand gt 1) {
         my $has_optional = pop @cand;
         for (@cand) {
           push @{ $optional{$has_optional} }, $_ unless in($_, @{ $optional{$has_optional} });
+          push @{ $optional{"$has_optional-compat32"} }, "$_-compat32" unless in("$_-compat32", @{ $optional{"$has_optional-compat32"} });
         }
       }
     }
