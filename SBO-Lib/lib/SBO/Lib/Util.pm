@@ -573,9 +573,8 @@ sub get_optional {
     $sbo =~ s/-compat32$//;
   }
   my @optional;
-  for (keys %optional) {
-    next unless $_ eq $sbo;
-    push @optional, @{ $optional{$_} };
+  if (exists $optional{$sbo}) {
+    push @optional, @{ $optional{$sbo} };
   }
   if (@optional) {
     if ($needs_compat) {
