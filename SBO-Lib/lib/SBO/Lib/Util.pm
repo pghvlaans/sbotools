@@ -229,6 +229,10 @@ Times are adjusted in the C<reconcile_time()> subroutine before reporting.
 An array with blacklisted scripts and requests for optional dependencies and
 automatic reverse dependency rebuilds read in from C</etc/sbotools/sbotools.hints>.
 
+=head2 (@on_blacklist, @auto_reverse, %optional)
+
+These are populated by C<read_hints()> and used to determine hint status.
+
 =cut
 
 =head2 $obs_file
@@ -304,6 +308,7 @@ read_config();
 
 # The hints file should be read in at the start, and
 # only if editing the hints file thereafter.
+our (@on_blacklist, @auto_reverse, %optional);
 our @listings = read_hints();
 
 # A list of obsolete scripts for Slackware-current.
@@ -359,7 +364,7 @@ sub auto_reverse {
   script_error("auto_reverse requires an argument.") unless @_ == 1;
   my $sbo = shift;
   $sbo =~ s/-compat32$//;
-  return 1 if in("~$sbo", @listings);
+  return 1 if in($sbo, @auto_reverse);
   return 0;
 }
 
@@ -568,15 +573,11 @@ sub get_optional {
     $sbo =~ s/-compat32$//;
   }
   my @optional;
-  for my $entry (@listings) {
-    next unless $entry =~ m/\s$sbo$/;
-    next if $entry =~ m/^(!|~)/;
-    my $wanted = $entry;
-    $wanted =~ s/\s$sbo$//;
-    push @optional, split(" ", $wanted);
+  for (keys %optional) {
+    next unless $_ eq $sbo;
+    push @optional, @{ $optional{$_} };
   }
   if (@optional) {
-    @optional = uniq(@optional);
     if ($needs_compat) {
       for my $item (@optional) { $item = "$item-compat32" unless $item =~ /-compat32$/; }
     }
@@ -990,7 +991,7 @@ sub on_blacklist {
   script_error("on_blacklist requires an argument.") unless @_ == 1;
   my $sbo = shift;
   $sbo =~ s/-compat32$//;
-  return 1 if in("!$sbo", @listings);
+  return 1 if in($sbo, @on_blacklist);
   return 0;
 }
 
@@ -1200,19 +1201,44 @@ of optional dependency requests and blacklisted scripts. C<read_hints()> is used
 populate global array C<@listings>, and should only be called at the start and again
 when editing the hints file.
 
+C<@on_blacklist>, C<@auto_reverse> and C<%optional> are populated here and used by
+C<on_blacklist()>, C<auto_reverse()> and C<get_optional()> later.
+
 =cut
 
 sub read_hints{
   @listings = () if @listings;
+  splice @on_blacklist;
+  splice @auto_reverse;
+  %optional = ();
   if(-f "$hint_file") {
     my $contents = slurp("$hint_file");
     usage_error("read_hints: could not read existing $hint_file.") unless
       defined $contents;
     my @contents = split("\n", $contents);
     for my $entry (@contents) {
-      push @listings, $entry unless $entry =~ m/^(#|\s)/;
+      push @listings, $entry unless $entry =~ m/^(#|\s)/ or $entry =~ m/\s$/;
     }
   }
+  for (@listings) {
+    my $item = $_;
+    if ($item =~ m/^!/) {
+      $item =~ s/!//;
+      push @on_blacklist, $item unless $item =~ m/\s/;
+    } elsif ($item =~ m/^~/) {
+      $item =~ s/~//;
+      push @auto_reverse, $item unless $item =~ m/\s/;
+    } else {
+      my @cand = split " ", $item;
+      if (@cand gt 1) {
+        my $has_optional = pop @cand;
+        for (@cand) {
+          push @{ $optional{$has_optional} }, $_ unless in($_, @{ $optional{$has_optional} });
+        }
+      }
+    }
+  }
+
   push @listings, "NULL" unless @listings;
   return @listings;
 }

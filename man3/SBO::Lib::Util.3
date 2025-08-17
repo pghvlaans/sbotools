@@ -147,6 +147,10 @@ Times are adjusted in the \f(CWreconcile_time()\fR subroutine before reporting.
 .IX Subsection "@listings"
 An array with blacklisted scripts and requests for optional dependencies and
 automatic reverse dependency rebuilds read in from \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR.
+.ie n .SS "(@on_blacklist, @auto_reverse, %optional)"
+.el .SS "(@on_blacklist, \f(CW@auto_reverse\fP, \f(CW%optional\fP)"
+.IX Subsection "(@on_blacklist, @auto_reverse, %optional)"
+These are populated by \f(CWread_hints()\fR and used to determine hint status.
 .ie n .SS $obs_file
 .el .SS \f(CW$obs_file\fP
 .IX Subsection "$obs_file"
@@ -449,6 +453,9 @@ There is no useful return value.
 of optional dependency requests and blacklisted scripts. \f(CWread_hints()\fR is used to
 populate global array \f(CW@listings\fR, and should only be called at the start and again
 when editing the hints file.
+.PP
+\&\f(CW@on_blacklist\fR, \f(CW@auto_reverse\fR and \f(CW%optional\fR are populated here and used by
+\&\f(CWon_blacklist()\fR, \f(CWauto_reverse()\fR and \f(CWget_optional()\fR later.
 .SS reconcile_time
 .IX Subsection "reconcile_time"
 .Vb 1
