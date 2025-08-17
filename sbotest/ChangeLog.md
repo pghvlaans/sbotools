@@ -1,5 +1,8 @@
 ## ChangeLog.md
 
+#### Post-Release
+  * bin/test: Reflect changes in `get_all_available()` and use `in()`
+
 #### 1.1 - 2025-08-14
   * bin/test: Report test targets with failures in the build queue separately
   * bin/test: Add --archive-reverse
