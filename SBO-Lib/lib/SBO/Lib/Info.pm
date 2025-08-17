@@ -34,6 +34,9 @@ our %EXPORT_TAGS = (
   all => \@EXPORT_OK,
 );
 
+# values from info files are stored here
+my %store;
+
 =pod
 
 =encoding UTF-8
@@ -179,7 +182,8 @@ sub get_download_info {
   my $data = get_from_info(LOCATION => $location, GET => $key);
 
 C<get_from_info()> retrieves the information under C<$key> from the info file
-in C<$location>.
+in C<$location>. If the wanted information has already been found, it is returned
+immediately.
 
 =cut
 
@@ -193,11 +197,9 @@ sub get_from_info {
   unless ($args{LOCATION} && $args{GET}) {
     script_error('get_from_info requires LOCATION and GET.');
   }
-  state $store = {LOCATION => ['']};
-  my $sbo = get_sbo_from_loc($args{LOCATION});
-  return $store->{$args{GET}} if $store->{LOCATION}[0] eq $args{LOCATION};
-
+  return $store{$args{LOCATION}}->{$args{GET}} if exists $store{$args{LOCATION}}->{$args{GET}};
   # if we're here, we haven't read in the .info file yet.
+  my $sbo = get_sbo_from_loc($args{LOCATION});
   my $contents = slurp("$args{LOCATION}/$sbo.info");
   unless ($contents) {
     unless (-s "$args{LOCATION}/$sbo.info") {
@@ -214,27 +216,25 @@ sub get_from_info {
     script_error("Error when parsing file $sbo.info.") unless %parse;
   }
 
-  $store = {};
-  $store->{LOCATION} = [$args{LOCATION}];
-  foreach my $k (keys %parse) { $store->{$k} = $parse{$k}; }
+  foreach my $k (keys %parse) { $store{$args{LOCATION}}->{$k} = $parse{$k}; }
 
   # allow local overrides to get away with not having quite all the fields
   if (is_local($sbo)) {
     for my $key (qw/DOWNLOAD_x86_64 MD5SUM_x86_64 REQUIRES/) {
-      $store->{$key} //= ['']; # if they don't exist, treat them as empty
+      $store{$args{LOCATION}}->{$key} //= ['']; # if they don't exist, treat them as empty
     }
   }
   my @optional = get_optional($sbo);
   if (@optional) {
     for my $requested (@optional) {
-      if ($store->{REQUIRES}[0] eq '') {
-        $store->{REQUIRES}[0] = $requested;
+      if ($store{$args{LOCATION}}->{REQUIRES}[0] eq '') {
+        $store{$args{LOCATION}}->{REQUIRES}[0] = $requested;
       } else {
-        push @{ $store->{REQUIRES} }, $requested;
+        push @{ $store{$args{LOCATION}}->{REQUIRES} }, $requested;
       }
     }
   }
-  return $store->{$args{GET}};
+  return $store{$args{LOCATION}}->{$args{GET}};
 }
 
 =head2 get_orig_build_number

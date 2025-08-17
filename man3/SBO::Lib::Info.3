@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Info 3"
-.TH SBO::Lib::Info 3 "Pungenday, Bureaucracy 9, 3191 YOLD" "" "sbotools 3.8"
+.TH SBO::Lib::Info 3 "Prickle-Prickle, Bureaucracy 10, 3191 YOLD" "" "sbotools 3.8"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -119,7 +119,8 @@ corresponding value is the expected md5sum.
 .Ve
 .PP
 \&\f(CWget_from_info()\fR retrieves the information under \f(CW$key\fR from the info file
-in \f(CW$location\fR.
+in \f(CW$location\fR. If the wanted information has already been found, it is returned
+immediately.
 .SS get_orig_build_number
 .IX Subsection "get_orig_build_number"
 .Vb 1
