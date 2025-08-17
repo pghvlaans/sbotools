@@ -129,6 +129,17 @@ unless ($options_ok) {
 	usage_error "\nOne or more invalid options detected.";
 }
 
+# from here, only Build.pm uses ETC_PROFILE, PKG_DIR and LOG_DIR
+$config{NOCLEAN} = $noclean if $noclean;
+$config{DISTCLEAN} = $distclean if $distclean;
+$config{GPG} = $gpg if $gpg;
+$config{ETC_PROFILE} = $etc_profile if $etc_profile;
+$config{PKG_DIR} = $pkg_dir if $pkg_dir;
+$config{LOG_DIR} = $log_dir if $log_dir;
+$noclean = $noclean eq 'TRUE' ? 1 : 0;
+$distclean = $distclean eq 'TRUE' ? 1 : 0;
+$gpg = $gpg eq 'TRUE' ? 1 : 0;
+
 lint_sbo_config($self, %config);
 
 if (!@ARGV and not length $utemp and not $mass_rebuild and not $series_rebuild) { show_usage(); exit 1 }
@@ -148,45 +159,6 @@ if ($config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES}) {
 	}
 }
 
-# invalid parameters may have been passed from the command line
-if (defined $noclean) {
-	usage_error("You have provided an invalid value for -c|--noclean")
-		unless ($noclean =~ /^(TRUE|FALSE)$/);
-}
-
-if (defined $distclean) {
-	usage_error("You have provided an invalid value for -d|--distclean")
-		unless ($distclean =~ /^(TRUE|FALSE)$/);
-}
-
-if (defined $etc_profile) {
-	usage_error("You have provided an invalid value for -e|--etc-profile")
-		unless ($distclean =~ /^(TRUE|FALSE)$/);
-}
-
-if ($jobs) {
-	usage_error("You have provided an invalid value for -j|--jobs")
-		unless ($jobs =~ /^\d+$/ || $jobs eq 'FALSE');
-}
-
-if ($pkg_dir) {
-	usage_error("You have provided an invalid value for -k|--pkg-dir")
-		unless ($pkg_dir =~ /^(\/|FALSE$)/);
-}
-
-if ($log_dir) {
-	usage_error("You have provided an invalid value for -L|--log-dir")
-		unless ($log_dir =~ /^(\/|FALSE$)/);
-}
-
-$noclean = $noclean eq 'TRUE' ? 1 : 0;
-$distclean = $distclean eq 'TRUE' ? 1 : 0;
-$gpg = $gpg eq 'TRUE' ? 1 : 0;
-# from here, only Build.pm uses ETC_PROFILE, PKG_DIR and LOG_DIR
-$config{ETC_PROFILE} = $etc_profile if $etc_profile;
-$config{PKG_DIR} = $pkg_dir if $pkg_dir;
-$config{LOG_DIR} = $log_dir if $log_dir;
-
 if ($gpg) { verify_gpg(); }
 
 if ($compat32) {
@@ -196,42 +168,17 @@ if ($compat32) {
 	usage_error("compat32 is incompatible with use-template.") if $utemp;
 }
 
-if ($utemp and $mass_rebuild) {
-	usage_error("mass-rebuild is incompatible with use-template.");
-}
-
-if ($no_reqs and $mass_rebuild) {
-	usage_error("mass-rebuild is incompatible with norequirements.");
-}
-
-if ($reverse_rebuild and $mass_rebuild) {
-	usage_error("mass-rebuild is incompatible with reverse_rebuild.");
-}
-
-if ($utemp and $series_rebuild) {
-	usage_error("series-rebuild is incompatible with use-template.");
-}
-
-if ($no_reqs and $series_rebuild) {
-	usage_error("series-rebuild is incompatible with norequirements.");
-}
-
-if ($utemp and $reverse_rebuild) {
-	usage_error("reverse-rebuild is incompatible with use-template.");
-}
-
-if ($no_reqs and $reverse_rebuild) {
-	usage_error("reverse-rebuild is incompatible with norequirements.");
-}
-
-if ($series_rebuild and $mass_rebuild) {
-	usage_error("mass-rebuild is incompatible with series-rebuild.");
-}
+usage_error("mass-rebuild is incompatible with use-template.") if $utemp and $mass_rebuild;
+usage_error("mass-rebuild is incompatible with norequirements.") if $no_reqs and $mass_rebuild;
+usage_error("mass-rebuild is incompatible with reverse_rebuild.") if $reverse_rebuild and $mass_rebuild;
+usage_error("series-rebuild is incompatible with use-template.") if $utemp and $series_rebuild;
+usage_error("series-rebuild is incompatible with norequirements.") if $no_reqs and $series_rebuild;
+usage_error("reverse-rebuild is incompatible with use-template.") if $utemp and $reverse_rebuild;
+usage_error("reverse-rebuild is incompatible with norequirements.") if $no_reqs and $reverse_rebuild;
+usage_error("mass-rebuild is incompatible with series-rebuild.") if $series_rebuild and $mass_rebuild;
 
 $yes_really = 1 if $dry_run;
-if ($no_reqs and $yes_really) {
-	usage_error("norequirements is incompatible with batch and dry-run.");
-}
+usage_error("norequirements is incompatible with batch and dry-run.") if $no_reqs and $yes_really;
 $non_int = 1 if $yes_really;
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
@@ -472,7 +419,7 @@ for my $sbo (@$build_queue) {
 }
 
 # check for already-installeds and prompt for the rest
-my (@temp_queue, %commands, %options, %missing_user_group, @ignore_script);
+my (@temp_queue, %commands, %options, %missing_user_group);
 if (defined $template) {
 	%commands = %{ $template->{commands} };
 	%options = %{ $template->{options} };
@@ -492,9 +439,7 @@ FIRST: for my $sbo (@$build_queue) {
 		next FIRST;
 	}
 	$locations{$name} = get_sbo_location($sbo) unless $locations{$name};
-	# do not attempt compat32 builds if noarch or perl-based; catch
-	# ineligible scripts here, but skip them after checking for the base
-	# package
+	# do not attempt compat32 builds if noarch or perl-based
 	if ($name =~ /-compat32$/ and $locations{$name}) {
 		$only_64 = check_x64 $locations{$name};
 		$only_32 = check_x32 $locations{$name};
@@ -512,6 +457,10 @@ FIRST: for my $sbo (@$build_queue) {
 			close $fh;
 		}
 	}
+	if ($only_64) { wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32."; next FIRST; }
+	if ($only_32) { wrapsay_color $color_lesser, "$sbo is 32-bit only; skipping compat32."; next FIRST; }
+	if ($perl_ineligible) { wrapsay_color $color_lesser, "$sbo is Perl-based; skipping compat32."; next FIRST; }
+	if ($arch_ineligible) { wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32."; next FIRST; }
 
 	if ($inst_names{$name}) {
 		next FIRST if defined $warnings{$name} and $warnings{$name} eq 'nonexistent';
@@ -566,23 +515,6 @@ FIRST: for my $sbo (@$build_queue) {
 	push @see_readme, $sbo if defined $warnings{$name} and $warnings{$name} eq '%README%';
 
 	unless ($non_int) {
-		# actually skip ineligible compat32 builds here (interactive)
-		if ($only_64) {
-			wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32.";
-			next FIRST;
-		}
-		if ($only_32) {
-			wrapsay_color $color_lesser, "$sbo is 32-bit only; skipping compat32.";
-			next FIRST;
-		}
-		if ($perl_ineligible) {
-			wrapsay_color $color_lesser, "$sbo is Perl-based; skipping compat32.";
-			next FIRST;
-		}
-		if ($arch_ineligible) {
-			wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32.";
-			next FIRST;
-		}
 		my ($proceed, $cmds, $opts) = user_prompt($name, $locations{$name});
 		next FIRST unless $proceed;
 		push(@temp_queue, $name);
@@ -632,30 +564,6 @@ FIRST: for my $sbo (@$build_queue) {
 					}
 				}
 			}
-			# for dry-run, do not want to notify the user of %README%, missing user/group
-			# or saved build options unless the script will actually be built
-			if ($dry_run and ($perl_ineligible or $arch_ineligible or $only_64 or $only_32)) {
-				@see_readme = grep { !/^$sbo$/ } @see_readme;
-				push @ignore_script, $name;
-				push @ignore_script, $sbo;
-			}
-		}
-		# actually skip ineligible compat32 builds here (non-interactive)
-		if ($only_64) {
-			wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32.";
-			next FIRST;
-		}
-		if ($only_32) {
-			wrapsay_color $color_lesser, "$sbo is 32-bit only; skipping compat32.";
-			next FIRST;
-		}
-		if ($perl_ineligible) {
-			wrapsay_color $color_lesser, "$sbo is Perl-based; skipping compat32.";
-			next FIRST;
-		}
-		if ($arch_ineligible) {
-			wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32.";
-			next FIRST;
 		}
 		push(@temp_queue, $name);
 		say "\n$name$added" unless $dry_run;
@@ -671,9 +579,7 @@ if ($dry_run) {
 	}
 	if (%saved_options) {
 		wrapsay_color $color_notice, "\nSaved build options to be used:";
-		for my $item (keys %saved_options) {
-			say "  $item: $saved_options{$item}" unless in $item, @ignore_script;
-		}
+		for my $item (keys %saved_options) { say "  $item: $saved_options{$item}"; }
 	}
 }
 wrapsay "\nInstall queue: " . join(' ', @$build_queue);
@@ -686,13 +592,11 @@ if ($dry_run) {
 	my $usr_grp_missing;
 	if (%missing_user_group) {
 		for my $item (keys %missing_user_group) {
-			unless (in $item, @ignore_script) {
-				wrapsay_color $color_lesser, "\nA required user or group is missing for $item:", 1;
-				for my $cmd (@{ $missing_user_group{$item} }) { say $cmd; }
-				say "";
-				wrapsay_color $color_lesser, "Run these commands to install $item with --batch.";
-				$usr_grp_missing = 1;
-			}
+			wrapsay_color $color_lesser, "\nA required user or group is missing for $item:", 1;
+			for my $cmd (@{ $missing_user_group{$item} }) { say $cmd; }
+			say "";
+			wrapsay_color $color_lesser, "Run these commands to install $item with --batch.";
+			$usr_grp_missing = 1;
 		}
 	}
 	exit _ERR_USR_GRP if $usr_grp_missing;
