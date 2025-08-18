@@ -324,17 +324,16 @@ if ($non_int and not $reverse and not $yes_really) {
 		}
 		push @$queue, $sbo if $force;
 		$upgrade_queue = merge_queues($upgrade_queue, $queue);
-		# with --reverse-rebuild
-		if ($reverse) {
-			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, $sbo);
-		}
+	}
+	if ($reverse) {
+		($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @$upgrade_queue);
 		$save_queue = $upgrade_queue;
 		if ($extra_queue) {
 			%warnings = (%warnings, %extra_warnings);
 			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
 		}
+		$needs_rationalize = 1;
 	}
-	$needs_rationalize = 1 if $reverse;
 	# no --reverse-rebuild; trigger automatic rebuilds unless --no-install
 	# and put everything in the right order
 	unless ($no_install or $reverse) {
@@ -353,9 +352,7 @@ if ($non_int and not $reverse and not $yes_really) {
 # handle all automatic reverse dependency rebuilds here
 if (@needs_reverse and not $no_install and not $reverse) {
 	$needs_rationalize = 1;
-	my ($extra_queue, %extra_warnings);
-	for my $sbo (@needs_reverse) {
-		($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, $sbo);
+	my ($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @needs_reverse);
 		if ($extra_queue) {
 			%warnings = (%warnings, %extra_warnings);
 			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);

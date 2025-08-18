@@ -234,6 +234,16 @@ sub get_from_info {
       }
     }
   }
+  if ($store{$args{LOCATION}}->{REQUIRES}[0]) {
+    my @compat = @{ $store{$args{LOCATION}}->{REQUIRES} };
+    my $first = shift @compat;
+    $store{$args{LOCATION}}->{REQUIRES_C32}[0] = "$first-compat32";
+    for (@compat) { push @{ $store{$args{LOCATION}}->{REQUIRES_C32} }, "$_-compat32"; }
+    push @{ $store{$args{LOCATION}}->{REQUIRES_C32} }, $sbo;
+  } else {
+    $store{$args{LOCATION}}->{REQUIRES_C32}[0] = $sbo;
+  }
+
   return $store{$args{LOCATION}}->{$args{GET}};
 }
 
@@ -292,17 +302,9 @@ sub get_requires {
   my $sbo = shift;
   my $location = get_sbo_location($sbo);
   return undef unless $location;
-  my $is_compat = $sbo =~ m/-compat32$/;
-  my $info = get_from_info(LOCATION => $location, GET => 'REQUIRES');
-  my $alternate_info;
-  if ($is_compat) {
-    if (@$info[0]) {
-      push @$alternate_info, "$_-compat32" for (@$info);
-    }
-    $sbo =~ s/-compat32//;
-    push @$alternate_info, $sbo;
-  }
-  return $is_compat ? $alternate_info : $info;
+  my $targ = $sbo =~ m/-compat32$/ ? "REQUIRES_C32" : "REQUIRES";
+  my $info = get_from_info(LOCATION => $location, GET => $targ);
+  return $info;
 }
 
 =head2 get_reverse_reqs

@@ -184,7 +184,7 @@ $non_int = 1 if $yes_really;
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
 
-my (%warnings, $build_queue, $save_queue, $template, $needs_rationalize);
+my (%warnings, $build_queue, $save_queue, $template, $needs_rationalize, @needs_reverse);
 
 # if SBO_HOME/resume.temp exists, resume the mass rebuild
 my $mtemp = "$config{SBO_HOME}/mass_rebuild.temp";
@@ -284,18 +284,12 @@ if (length $utemp) {
 	}
 	unless ($mass_rebuild or $no_install) {
 		if ($requested_reinstall) {
-			my ($extra_queue, %extra_warnings, @needs_reverse);
+			my ($extra_queue, %extra_warnings);
 			for my $cand (@$build_queue) {
 				if (auto_reverse($cand)) {
 					push @needs_reverse, $cand;
 					wrapsay_color $color_notice, "Reverse dependency rebuild for $cand." unless $cand =~ m/-compat32/ and not $compat32;
 				}
-			}
-			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 0, @needs_reverse) if @needs_reverse;
-			$save_queue = $build_queue;
-			if ($extra_queue) {
-				$build_queue = merge_queues($build_queue, $extra_queue);
-				%warnings = (%warnings, %extra_warnings);
 			}
 		}
 	}
@@ -312,9 +306,8 @@ if (length $utemp) {
 			}
 		}
 		$save_queue = $build_queue;
-	# --reverse-rebuild, no --reinstall
-	} elsif ($reverse_rebuild and not $requested_reinstall) {
-		($build_queue, %warnings) = get_full_reverse_queue($self, 0, @sbos);
+	} elsif ($reverse_rebuild) {
+		($build_queue, %warnings) = get_full_reverse_queue($self, $requested_reinstall ? 1 : 0, @sbos);
 		exit 0 unless $build_queue;
 	} else {
 		for my $sbo (@sbos) {
@@ -323,32 +316,17 @@ if (length $utemp) {
 			my $queue = get_build_queue([$sbo], \%warnings);
 			$build_queue = merge_queues($build_queue, $queue);
 			$save_queue = $build_queue;
-			# --reverse-rebuild with --reinstall; include the items in @sbos
-			if ($reverse_rebuild) {
-				($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
-				if ($extra_queue) {
-					$build_queue = merge_queues($build_queue, $extra_queue);
-					%warnings = (%warnings, %extra_warnings);
-				}
-			}
 		}
 	}
 }
 
 # --reinstall, no --reverse-rebuild: trigger automatic rebuilds
-# and put everything in the right order.
 if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not $utemp and not $series_rebuild) {
 	$save_queue = $build_queue;
 	for my $sbo (@$build_queue) {
-		my ($extra_queue, %extra_warnings);
 		if (auto_reverse($sbo)) {
-			($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 1, $sbo);
+			push @needs_reverse, $sbo;
 			wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo." unless $sbo =~ m/-compat32/ and not $compat32;
-		}
-		if ($extra_queue) {
-			$needs_rationalize = 1;
-			$build_queue = merge_queues($build_queue, $extra_queue);
-			%warnings = (%warnings, %extra_warnings);
 		}
 	}
 }
@@ -369,7 +347,6 @@ $std_names{$_->{name}} = $_ for @$std_pkgs;
 # prepare a queue in case of mass_rebuild or series_rebuild
 if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 	$needs_rationalize = 1;
-	my @needs_reverse;
 	my $inst_sbos = get_installed_packages('SBO');
 	my %sbos_names;
 	$sbos_names{$_->{name}} = $_ for @$inst_sbos;
@@ -387,20 +364,22 @@ if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 		$build_queue = merge_queues($build_queue, $queue);
 		push @needs_reverse, $sbo if $series_rebuild and ($reverse_rebuild or auto_reverse($sbo));
 	}
-	if (@needs_reverse) {
-		my ($extra_queue, %extra_warnings) = get_full_reverse_queue($self, 0, @needs_reverse);
-		if ($extra_queue) {
-			$build_queue = merge_queues($build_queue, $extra_queue);
-			%warnings = (%warnings, %extra_warnings);
-		}
-	}
 	unless ($build_queue) {
 		usage_error("No SBo packages are installed. Exiting.") if $mass_rebuild;
 		usage_error("No SBo packages are installed from the $series_rebuild series. Exiting.");
 	}
 }
 
-# populate %locations and sanity check
+# Handle automatic reverse rebuilds now
+if (@needs_reverse) {
+	my ($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $requested_reinstall ? 1 : 0, @needs_reverse);
+	if ($extra_queue) {
+		$needs_rationalize = 1;
+		$build_queue = merge_queues($build_queue, $extra_queue);
+		%warnings = (%warnings, %extra_warnings);
+	}
+}
+
 SANITY: for my $sbo (@$build_queue) {
 	next SANITY if $inst_names{$sbo};
 
@@ -435,7 +414,7 @@ FIRST: for my $sbo (@$build_queue) {
 		$sbo =~ s/-compat32$//;
 	}
 	if ($std_names{$name} and $non_int) {
-		wrapsay "$sbo is not an SBo package. Skipping.";
+		wrapsay "$name is not an SBo package. Skipping.";
 		next FIRST;
 	}
 	$locations{$name} = get_sbo_location($sbo) unless $locations{$name};
