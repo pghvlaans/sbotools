@@ -30,6 +30,8 @@ our %EXPORT_TAGS = (
   all => \@EXPORT_OK,
 );
 
+my ($all_pkgs, $std_pkgs, $sbo_pkgs, $dirty_pkgs);
+
 =pod
 
 =encoding UTF-8
@@ -195,8 +197,14 @@ versions, full installed package names and creation times of the returned packag
 sub get_installed_packages {
   script_error('get_installed_packages requires an argument.') unless @_ == 1;
   my $filter = shift;
+  unless ($is_sbotest) {
+    return $all_pkgs if ($filter eq "ALL" and $all_pkgs);
+    return $std_pkgs if ($filter eq "STD" and $std_pkgs);
+    return $sbo_pkgs if ($filter eq "SBO" and $sbo_pkgs);
+    return $dirty_pkgs if ($filter eq "DIRTY" and $dirty_pkgs);
+  }
 
-  # Valid types: STD, SBO
+  # Valid types: STD, SBO, DIRTY
   my (@pkgs, %types);
   foreach my $pkg (glob("$pkg_db/*")) {
     $pkg =~ s!^\Q$pkg_db/\E!!;
@@ -209,11 +217,9 @@ sub get_installed_packages {
     $types{$name} = 'STD';
   }
 
-  # If we want all packages, let's just return them all
-  return [ map { +{ name => $_->{name}, version => $_->{version}, build=> $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg}, created => $_->{created} } } @pkgs ]
-    if $filter eq 'ALL';
+  $all_pkgs = [ map { +{ name => $_->{name}, version => $_->{version}, build=> $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg}, created => $_->{created} } } @pkgs ];
 
-  # Otherwise, SlackBuilds with locations can be marked with SBO, and packages with
+  # SlackBuilds with locations can be marked with SBO, and packages with
   # the _SBo tag but no location can be marked with DIRTY
   my @sbos = map { $_->{name} } grep { $_->{build} =~ m/_SBo(|compat32)$/ }
     @pkgs;
@@ -225,8 +231,20 @@ sub get_installed_packages {
       }
     }
   }
-  return [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg}, created => $_->{created} } }
-    grep { $types{$_->{name}} eq $filter } @pkgs ];
+
+  $std_pkgs = [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg}, created => $_->{created} } }
+    grep { $types{$_->{name}} eq "STD" } @pkgs ];
+
+  $sbo_pkgs = [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg}, created => $_->{created} } }
+    grep { $types{$_->{name}} eq "SBO" } @pkgs ];
+
+  $dirty_pkgs = [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg}, created => $_->{created} } }
+    grep { $types{$_->{name}} eq "DIRTY" } @pkgs ];
+
+return $all_pkgs if $filter eq "ALL";
+return $std_pkgs if $filter eq "STD";
+return $sbo_pkgs if $filter eq "SBO";
+return $dirty_pkgs if $filter eq "DIRTY";
 }
 
 =head2 get_local_outdated_versions

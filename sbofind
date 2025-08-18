@@ -257,18 +257,20 @@ sub first_level_reverse {
 
 my $notfound = 0;
 for my $search (@ARGV) {
-	@installed = @{ get_installed_packages('SBO') };
-	$installed_times = +{ map {; $_->{name}, $_->{created} } @installed };
-	$installed_vers = +{ map {; $_->{name}, $_->{version} } @installed };
-	@installed_std = @{ get_installed_packages('STD') };
-	$std_times = +{ map {; $_->{name}, $_->{created} } @installed_std };
-	$std_vers = +{ map {; $_->{name}, $_->{version} } @installed_std };
+	unless ($std_vers) {
+		@installed = @{ get_installed_packages('SBO') };
+		$installed_times = +{ map {; $_->{name}, $_->{created} } @installed };
+		$installed_vers = +{ map {; $_->{name}, $_->{version} } @installed };
+		@installed_std = @{ get_installed_packages('STD') };
+		$std_times = +{ map {; $_->{name}, $_->{created} } @installed_std };
+		$std_vers = +{ map {; $_->{name}, $_->{version} } @installed_std };
+	}
 
 	my $findings = perform_search($search);
 
 	# pretty formatting
 	if (exists $$findings[0]) {
-		reverse_queries();
+		reverse_queries() unless $all_fulldeps or $fulldeps;
 		for my $hash (@$findings) {
 			if ($notfound) { say ''; }
 			my $name = $hash->{name};
