@@ -17,3 +17,4 @@ Nothing else for now, but requests are welcome and will receive due consideratio
 * Performance improvements
   * Making queues, especially long ones
   * Calculating reverse dependencies
+* Proper dependency resolution for i?86 on x86_64 and -compat32

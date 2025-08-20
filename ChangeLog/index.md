@@ -7,7 +7,8 @@
   * *Build.pm*: Speed up rationalize_queue
   * *Util.pm*: Clean up hint reading; faster `in()`
   * *Info.pm*: Parse each *info* file only once
-  * Do not kludge compat32 dependency handling
+  * Do not kludge 32-bit on x86_64 and compat32 dependency handling
+  * *Pkgs.pm*: Generate installed package lists only once (unless running from *sbotest*)
 
 * 3.8 - 2025-08-14
   * Bugfix: For most compatibility builds and when running in a 32-bit userland reporting a 64-bit kernel, call SlackBuilds with setarch
