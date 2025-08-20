@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors auto_reverse check_x32 check_x64 check_multilib error_code get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay @concluded @reverse_concluded /;
+use SBO::Lib qw/ :config :const :colors auto_reverse check_x32 check_x64 check_multilib error_code get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in ineligible_compat is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay @concluded @reverse_concluded /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -80,12 +80,7 @@ EOF
 	return 1;
 }
 
-my $noclean = $config{NOCLEAN};
-my $distclean = $config{DISTCLEAN};
-my $jobs = $config{JOBS};
-my $gpg = $config{GPG_VERIFY};
-my $etc_profile = $config{ETC_PROFILE};
-my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $pkg_dir, $log_dir, $series_rebuild, $nocolor, $color);
+my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $noclean, $distclean, $pkg_dir, $log_dir, $etc_profile, $gpg, $series_rebuild, $jobs, $nocolor, $color);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -129,16 +124,13 @@ unless ($options_ok) {
 	usage_error "\nOne or more invalid options detected.";
 }
 
-# from here, only Build.pm uses ETC_PROFILE, PKG_DIR and LOG_DIR
 $config{NOCLEAN} = $noclean if $noclean;
 $config{DISTCLEAN} = $distclean if $distclean;
-$config{GPG} = $gpg if $gpg;
+$config{GPG_VERIFY} = $gpg if $gpg;
 $config{ETC_PROFILE} = $etc_profile if $etc_profile;
 $config{PKG_DIR} = $pkg_dir if $pkg_dir;
 $config{LOG_DIR} = $log_dir if $log_dir;
-$noclean = $noclean eq 'TRUE' ? 1 : 0;
-$distclean = $distclean eq 'TRUE' ? 1 : 0;
-$gpg = $gpg eq 'TRUE' ? 1 : 0;
+$config{JOBS} = $jobs if $jobs;
 
 lint_sbo_config($self, %config);
 
@@ -159,7 +151,7 @@ if ($config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES}) {
 	}
 }
 
-if ($gpg) { verify_gpg(); }
+if ($config{GPG_VERIFY} eq "TRUE") { verify_gpg(); }
 
 if ($compat32) {
 	usage_error("compat32 only works on x86_64.") unless $arch eq 'x86_64';
@@ -184,7 +176,6 @@ $non_int = 1 if $yes_really;
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
 
-my (%warnings, $build_queue, $save_queue, $template, $needs_rationalize, @needs_reverse);
 
 # if SBO_HOME/resume.temp exists, resume the mass rebuild
 my $mtemp = "$config{SBO_HOME}/mass_rebuild.temp";
@@ -204,66 +195,51 @@ my %locations = get_sbo_locations();
 # do not bother with its dependencies, etc.
 #
 # also check here for incompatible architecture
-if (@ARGV and $compat32) {
+if (@ARGV) {
 	for my $sbo (@ARGV) {
-		my ($perl_ineligible, $arch_ineligible, $only_64);
 		my $sbo_location = get_sbo_location($sbo);
-		if ($sbo_location) {
-			my $check_location = $sbo_location;
-			my $orig_location = get_orig_location($sbo);
-			$check_location = $orig_location if $orig_location;
-			$only_64 = check_x64 $check_location;
-			$perl_ineligible = 1 if $sbo =~ /^perl-/ or basename(dirname($check_location)) eq "perl";
-			unless ($perl_ineligible) {
-				my ($fh, $exit) = open_fh("$sbo_location/$sbo.SlackBuild", "<") if -f "$sbo_location/$sbo.SlackBuild";
-				unless ($exit) {
-					for my $line (<$fh>) {
-						$perl_ineligible = 1 if $line =~ /perl (Makefile|Build).PL/;
-						$arch_ineligible = 1 if $line =~ /ARCH=noarch/;
-					}
-					close $fh;
-				}
-			}
-			push @sbos, $sbo unless $perl_ineligible or $arch_ineligible or $only_64;
-			wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32." if $only_64;
-			wrapsay_color $color_lesser, "$sbo is Perl-based; skipping compat32." if $perl_ineligible;
-			wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32." if $arch_ineligible and not $perl_ineligible;
-		} else {
+		unless ($sbo_location) {
 			wrapsay_color $color_lesser, "$sbo not found; skipping.";
+			next;
 		}
-	}
-} elsif (@ARGV and not $arch =~ m/64/) {
-	for my $sbo (@ARGV) {
-		my $sbo_location = get_sbo_location($sbo);
-		if ($sbo_location) {
+		if ($compat32) {
+			if (my $msg = ineligible_compat $sbo_location) {
+				wrapsay_color $color_lesser, $msg;
+				next;
+			}
+		} elsif ($arch !~ /64/) {
 			if (check_x64 $sbo_location) {
 				wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping.";
-			} else {
-				push @sbos, $sbo;
+				next;
 			}
-		} else {
-			wrapsay_color $color_lesser, "$sbo not found; skipping.";
-		}
-	}
-} elsif (@ARGV and $arch =~ m/64/) {
-	for my $sbo (@ARGV) {
-		my $sbo_location = get_sbo_location($sbo);
-		if ($sbo_location) {
-			if (check_x32 $sbo_location and not check_multilib()) {
+		} elsif ($arch =~ /64/ and not check_multilib()) {
+			if (check_x32 $sbo_location) {
 				wrapsay_color $color_lesser, "$sbo is 32-bit only; skipping.";
-			} else {
-				push @sbos, $sbo;
+				next;
 			}
-		} else {
-			wrapsay_color $color_lesser, "$sbo not found; skipping.";
 		}
+		push @sbos, $sbo;
 	}
-} elsif (@ARGV) {
-	@sbos = @ARGV;
 }
 exit 0 if (@ARGV and not @sbos);
 @sbos = uniq @sbos;
+
 if ($compat32) { $_ .= "-compat32" for (@sbos); }
+
+# get lists of installed packages and perl modules from CPAN
+my $inst_pkgs = get_installed_packages('ALL');
+my $std_pkgs = get_installed_packages('STD');
+my ($pms, $defective);
+unless ($config{CPAN_IGNORE} eq "TRUE") {
+	($pms, $defective) = get_installed_cpans();
+	s/::/-/g for @$pms;
+	s/::/-/g for @$defective;
+}
+my (%inst_names, %std_names);
+$inst_names{$_->{name}} = $_ for @$inst_pkgs;
+$std_names{$_->{name}} = $_ for @$std_pkgs;
+
+my (%warnings, $build_queue, $template, $needs_rationalize, @needs_reverse);
 
 if (length $utemp) {
 	my $json = JSON::PP->new->latin1;
@@ -305,7 +281,6 @@ if (length $utemp) {
 				wrapsay "$cand is blacklisted. Skipping.";
 			}
 		}
-		$save_queue = $build_queue;
 	} elsif ($reverse_rebuild) {
 		($build_queue, %warnings) = get_full_reverse_queue($self, $requested_reinstall ? 1 : 0, @sbos);
 		exit 0 unless $build_queue;
@@ -315,14 +290,12 @@ if (length $utemp) {
 			my ($extra_queue, %extra_warnings);
 			my $queue = get_build_queue([$sbo], \%warnings);
 			$build_queue = merge_queues($build_queue, $queue);
-			$save_queue = $build_queue;
 		}
 	}
 }
 
 # --reinstall, no --reverse-rebuild: trigger automatic rebuilds
 if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not $utemp and not $series_rebuild) {
-	$save_queue = $build_queue;
 	for my $sbo (@$build_queue) {
 		if (auto_reverse($sbo)) {
 			push @needs_reverse, $sbo;
@@ -330,19 +303,6 @@ if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not 
 		}
 	}
 }
-
-# get lists of installed packages and perl modules from CPAN
-my $inst_pkgs = get_installed_packages('ALL');
-my $std_pkgs = get_installed_packages('STD');
-my ($pms, $defective);
-unless ($config{CPAN_IGNORE} eq "TRUE") {
-	($pms, $defective) = get_installed_cpans();
-	s/::/-/g for @$pms;
-	s/::/-/g for @$defective;
-}
-my (%inst_names, %std_names);
-$inst_names{$_->{name}} = $_ for @$inst_pkgs;
-$std_names{$_->{name}} = $_ for @$std_pkgs;
 
 # prepare a queue in case of mass_rebuild or series_rebuild
 if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
@@ -390,13 +350,6 @@ SANITY: for my $sbo (@$build_queue) {
 	}
 }
 
-# see what has been installed as part of a reverse
-# dependency queue
-my @reverses;
-for my $sbo (@$build_queue) {
-	push @reverses, $sbo unless in $sbo, @$save_queue;
-}
-
 # check for already-installeds and prompt for the rest
 my (@temp_queue, %commands, %options, %missing_user_group);
 if (defined $template) {
@@ -407,39 +360,20 @@ my $added = ' added to install queue.';
 my (@see_readme, %saved_options);
 $build_queue = rationalize_queue($build_queue) if $needs_rationalize;
 FIRST: for my $sbo (@$build_queue) {
-	my ($perl_ineligible, $arch_ineligible, $only_64, $only_32);
 	my $name = $sbo;
-	if ($sbo =~ /-compat32$/) {
-		next FIRST unless $utemp or $mass_rebuild or $series_rebuild or $compat32;
-		$sbo =~ s/-compat32$//;
+	if ($compat32) {
+		next FIRST unless $utemp or $requested_reinstall or not $inst_names{$sbo} or $sbo =~ /-compat32$/;
 	}
+	$sbo =~ s/-compat32$//;
 	if ($std_names{$name} and $non_int) {
 		wrapsay "$name is not an SBo package. Skipping.";
 		next FIRST;
 	}
 	$locations{$name} = get_sbo_location($sbo) unless $locations{$name};
-	# do not attempt compat32 builds if noarch or perl-based
 	if ($name =~ /-compat32$/ and $locations{$name}) {
-		$only_64 = check_x64 $locations{$name};
-		$only_32 = check_x32 $locations{$name};
-		my $check_location = $locations{$name};
-		my $orig_location = get_orig_location($name);
-		$check_location = $orig_location if $orig_location;
-		$perl_ineligible = 1 if $name =~ /^perl-/ or basename(dirname($check_location)) eq "perl";
-		unless ($perl_ineligible) {
-			my ($fh, $exit) = open_fh("$locations{$name}/$sbo.SlackBuild", "<") if -f "$locations{$name}/$sbo.SlackBuild";
-			next FIRST if $exit;
-			for my $line (<$fh>) {
-				$perl_ineligible = 1 if $line =~ /perl (Makefile|Build).PL/;
-				$arch_ineligible = 1 if $line =~ /ARCH=noarch/;
-			}
-			close $fh;
-		}
+		my $compat_fail_msg = ineligible_compat($locations{$name});
+		if ($compat_fail_msg) { wrapsay_color $color_lesser, $compat_fail_msg; next FIRST; }
 	}
-	if ($only_64) { wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32."; next FIRST; }
-	if ($only_32) { wrapsay_color $color_lesser, "$sbo is 32-bit only; skipping compat32."; next FIRST; }
-	if ($perl_ineligible) { wrapsay_color $color_lesser, "$sbo is Perl-based; skipping compat32."; next FIRST; }
-	if ($arch_ineligible) { wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32."; next FIRST; }
 
 	if ($inst_names{$name}) {
 		next FIRST if defined $warnings{$name} and $warnings{$name} eq 'nonexistent';
@@ -451,11 +385,8 @@ FIRST: for my $sbo (@$build_queue) {
 		if ($reinstall and $std_names{$name}) {
 			next FIRST unless prompt($color_warn, "Warning: $name is not an SBo package. Reinstall from SBo anyway?", default => 'no');
 		} elsif ($reinstall and not $non_int) {
-			if ($mass_rebuild or $reverse_rebuild or $series_rebuild) {
-				next FIRST unless prompt($color_notice, "Do you want to reinstall from SBo?", default => 'yes');
-			} else {
-				next FIRST unless prompt($color_notice, "Do you want to reinstall from SBo?", default => 'no');
-			}
+			my $default = ($mass_rebuild or $reverse_rebuild or $series_rebuild) ? "yes" : "no";
+			next FIRST unless prompt($color_notice, "Do you want to reinstall from SBo?", default => $default);
 		} elsif ($reinstall) {
 			say "Reinstalling." unless $dry_run;
 		} else {
@@ -607,11 +538,8 @@ my ($failures, $exit) = process_sbos(
 	TODO      => $build_queue,
 	CMDS      => \%commands,
 	OPTS      => \%options,
-	JOBS      => $jobs,
 	LOCATIONS => \%locations,
 	NOINSTALL => $no_install,
-	NOCLEAN   => $noclean,
-	DISTCLEAN => $distclean,
 	NON_INT   => $non_int,
 	MASS      => $mass_rebuild,
 );

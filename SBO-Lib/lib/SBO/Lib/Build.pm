@@ -75,7 +75,7 @@ SBO::Lib::Build - Routines for building Slackware packages from SlackBuilds.org.
 
   use SBO::Lib::Build qw/ perform_sbo /;
 
-  my ($foo, $bar, $exit) = perform_sbo(LOCATION => $location, ARCH => 'x86_64');
+  my ($foo, $bar, $exit) = perform_sbo(LOCATION => $location);
 
 =head1 VARIABLES
 
@@ -194,7 +194,6 @@ value is an error message; the second and third values are empty.
 sub do_slackbuild {
   my %args = (
     OPTS      => 0,
-    JOBS      => 0,
     LOCATION  => '',
     COMPAT32  => 0,
     @_
@@ -228,9 +227,7 @@ sub do_slackbuild {
   # setup and run the .SlackBuild itself
   my ($pkg, $src, $exit) = perform_sbo(
     OPTS => $args{OPTS},
-    JOBS => $args{JOBS},
     LOCATION => $location,
-    ARCH => $arch,
     C32 => $args{COMPAT32},
     X32 => $x32,
   );
@@ -642,7 +639,7 @@ sub merge_queues {
 
 =head2 perform_sbo
 
-  my ($pkg, $src, $exit) = perform_sbo(LOCATION => $location, ARCH => $arch);
+  my ($pkg, $src, $exit) = perform_sbo(LOCATION => $location);
 
 C<perform_sbo()> prepares and runs a SlackBuild. It returns the package name,
 an array with source directories and an exit code if successful. If unsuccessful,
@@ -654,15 +651,13 @@ the first value is instead an error message.
 sub perform_sbo {
   my %args = (
     OPTS      => 0,
-    JOBS      => 0,
     LOCATION  => '',
-    ARCH      => '',
     C32       => 0,
     X32       => 0,
     @_
   );
-  unless ($args{LOCATION} && $args{ARCH}) {
-    script_error('perform_sbo requires LOCATION and ARCH.');
+  unless ($args{LOCATION}) {
+    script_error('perform_sbo requires LOCATION.');
   }
 
   my $location = $args{LOCATION};
@@ -691,7 +686,7 @@ sub perform_sbo {
     }
   }
   my $use_setarch;
-  if ($args{ARCH} =~ m/64/ and ($args{C32} || $args{X32})) {
+  if ($arch =~ m/64/ and ($args{C32} || $args{X32})) {
     $use_setarch = 1;
     if ($args{X32}) {
       my ($fh, $exit) = open_read("$location/$sbo.SlackBuild");
@@ -708,14 +703,14 @@ sub perform_sbo {
     }
     $cmd .= ' . /etc/profile.d/32dev.sh &&';
   }
-  if ($args{JOBS} and $args{JOBS} ne 'FALSE') {
+  if ($config{JOBS} ne 'FALSE') {
     $changes{jobs} = 1;
   }
   if ($args{OPTS}) {
     save_options($sbo, $args{OPTS});
     $cmd .= " $args{OPTS}";
   }
-  $cmd .= " MAKEOPTS=\"-j$args{JOBS}\"" if $changes{jobs};
+  $cmd .= " MAKEOPTS=\"-j$config{JOBS}\"" if $changes{jobs};
 
   # set TMP/OUTPUT if set in the environment
   $cmd .= " TMP=$env_tmp" if $env_tmp;
@@ -773,11 +768,8 @@ sub process_sbos {
     TODO       => '',
     CMDS       => '',
     OPTS       => '',
-    JOBS       => 'FALSE',
     LOCATIONS  => '',
     NOINSTALL  => 0,
-    NOCLEAN    => 'FALSE',
-    DISTCLEAN  => 'FALSE',
     NON_INT    => 0,
     MASS       => 0,
     @_
@@ -786,7 +778,7 @@ sub process_sbos {
   my $cmds = $args{CMDS};
   my $opts = $args{OPTS};
   my $locs = $args{LOCATIONS};
-  my $jobs = $args{JOBS} =~ /^\d+$/ ? $args{JOBS} : 0;
+  my $jobs = $config{JOBS} ne "FALSE" ? $config{JOBS} : 0;
   my $mass = $args{MASS};
   @$todo >= 1 or script_error('process_sbos requires TODO.');
   my $mtemp_in = "$config{SBO_HOME}/mass_rebuild.temp";
@@ -839,7 +831,6 @@ sub process_sbos {
     my $compat32 = $sbo =~ /-compat32$/ ? 1 : 0;
     my ($version, $pkg, $src, $exit) = do_slackbuild(
       OPTS      => $options,
-      JOBS      => $jobs,
       LOCATION  => $$locs{$sbo},
       COMPAT32  => $compat32,
     );
@@ -890,10 +881,10 @@ sub process_sbos {
 
     do_upgradepkg($pkg) unless $args{NOINSTALL};
 
-    unless ($args{NOCLEAN}) {
+    unless ($config{NOCLEAN} eq "TRUE") {
       make_clean(SBO => $sbo, SRC => $src, VERSION => $version);
     }
-    if ($args{DISTCLEAN}) {
+    if ($config{DISTCLEAN} eq "TRUE") {
       make_distclean(
         SBO       => $sbo,
         SRC       => $src,
@@ -912,7 +903,7 @@ sub process_sbos {
       } else {
         warn_color $color_lesser, "$pkg left in $tmpd.";
       }
-    } elsif ($args{DISTCLEAN}) {
+    } elsif ($config{DISTCLEAN} eq "TRUE") {
       unlink $pkg;
     }
   }

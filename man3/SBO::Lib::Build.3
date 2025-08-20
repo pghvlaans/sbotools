@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Sweetmorn, Bureaucracy 7, 3191 YOLD" "" "sbotools 3.8"
+.TH SBO::Lib::Build 3 "Boomtime, Bureaucracy 13, 3191 YOLD" "" "sbotools 3.8"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -70,7 +70,7 @@ SBO::Lib::Build \- Routines for building Slackware packages from SlackBuilds.org
 .Vb 1
 \&  use SBO::Lib::Build qw/ perform_sbo /;
 \&
-\&  my ($foo, $bar, $exit) = perform_sbo(LOCATION => $location, ARCH => \*(Aqx86_64\*(Aq);
+\&  my ($foo, $bar, $exit) = perform_sbo(LOCATION => $location);
 .Ve
 .SH VARIABLES
 .IX Header "VARIABLES"
@@ -265,7 +265,7 @@ as an array reference.
 .SS perform_sbo
 .IX Subsection "perform_sbo"
 .Vb 1
-\&  my ($pkg, $src, $exit) = perform_sbo(LOCATION => $location, ARCH => $arch);
+\&  my ($pkg, $src, $exit) = perform_sbo(LOCATION => $location);
 .Ve
 .PP
 \&\f(CWperform_sbo()\fR prepares and runs a SlackBuild. It returns the package name,

@@ -180,7 +180,7 @@ sub get_installed_cpans {
 
 =head2 get_installed_packages
 
-  my @packages = @{ get_installed_packages($type) };
+  my @packages = @{ get_installed_packages($type, $clear) };
 
 C<get_installed_packages()> returns an array reference to a list of installed packages
 matching the specified C<$type>. The available types are C<STD> for non-SBo packages,
@@ -190,13 +190,17 @@ and C<ALL> for all.
 The returned array reference holds a list of hash references representing the names,
 versions, full installed package names and creation times of the returned packages.
 
+The default behavior is to retain the package lists for future calls; add a true value
+to the arguments to clear them instead. This is irrelevant when running C<sbotest>.
+
 =cut
 
 # pull an array of hashes, each hash containing the name and version of a
 # package currently installed. Gets filtered using STD, SBO, DIRTY or ALL.
 sub get_installed_packages {
-  script_error('get_installed_packages requires an argument.') unless @_ == 1;
-  my $filter = shift;
+  script_error('get_installed_packages requires at least one argument.') unless @_ ge 1;
+  my ($filter, $clear) = @_;
+  if ($clear) { $all_pkgs = ""; $std_pkgs = ""; $sbo_pkgs = ""; $dirty_pkgs = ""; }
   unless ($is_sbotest) {
     return $all_pkgs if ($filter eq "ALL" and $all_pkgs);
     return $std_pkgs if ($filter eq "STD" and $std_pkgs);

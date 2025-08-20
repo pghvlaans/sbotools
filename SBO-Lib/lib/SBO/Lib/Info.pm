@@ -12,6 +12,7 @@ use SBO::Lib::Util qw/ :config :const in get_sbo_from_loc get_optional open_read
 use SBO::Lib::Tree qw/ get_orig_location get_sbo_location is_local /;
 
 use Exporter 'import';
+use File::Basename;
 
 use sigtrap qw/ handler _caught_signal ABRT INT QUIT TERM /;
 
@@ -27,6 +28,7 @@ our @EXPORT_OK = qw{
   get_reverse_reqs
   get_sbo_build_number
   get_sbo_version
+  ineligible_compat
   parse_info
 };
 
@@ -238,10 +240,15 @@ sub get_from_info {
     my @compat = @{ $store{$args{LOCATION}}->{REQUIRES} };
     my $first = shift @compat;
     $store{$args{LOCATION}}->{REQUIRES_C32}[0] = "$first-compat32";
-    for (@compat) { push @{ $store{$args{LOCATION}}->{REQUIRES_C32} }, "$_-compat32"; }
+    $store{$args{LOCATION}}->{REQUIRES_X32}[0] = "$first-compat32";
+    for (@compat) {
+      push @{ $store{$args{LOCATION}}->{REQUIRES_C32} }, "$_-compat32";
+      push @{ $store{$args{LOCATION}}->{REQUIRES_X32} }, "$_-compat32";
+    }
     push @{ $store{$args{LOCATION}}->{REQUIRES_C32} }, $sbo;
   } else {
     $store{$args{LOCATION}}->{REQUIRES_C32}[0] = $sbo;
+    $store{$args{LOCATION}}->{REQUIRES_X32}[0] = '';
   }
 
   return $store{$args{LOCATION}}->{$args{GET}};
@@ -302,7 +309,11 @@ sub get_requires {
   my $sbo = shift;
   my $location = get_sbo_location($sbo);
   return undef unless $location;
-  my $targ = $sbo =~ m/-compat32$/ ? "REQUIRES_C32" : "REQUIRES";
+  my $targ = "REQUIRES";
+  if ($arch eq "x86_64") {
+    $targ = $sbo =~ m/-compat32$/ ? "REQUIRES_C32" :
+    (check_x32($location) ? "REQUIRES_X32" : $targ);
+  }
   my $info = get_from_info(LOCATION => $location, GET => $targ);
   return $info;
 }
@@ -376,6 +387,43 @@ sub get_sbo_version {
   script_error('get_sbo_version requires an argument.') unless @_ == 1;
   my $version = get_from_info(LOCATION => shift, GET => 'VERSION');
   return $version->[0];
+}
+
+=head2 ineligible_compat
+
+  my $msg = ineligible_compat($location);
+
+C<ineligible_compat()> takes a script's location and returns a diagnostic message if
+it is ineligible for a C<compat32> package. C<noarch>, Perl-based and one-architecture
+scripts are all ineligible.
+
+=cut
+
+sub ineligible_compat {
+  script_error("ineligible_compat requires an argument.") unless @_ == 1;
+  my $sbo_location = shift;
+  my $sbo = get_sbo_from_loc($sbo_location);
+  my ($perl_ineligible, $arch_ineligible, $only_64, $only_32);
+  my $orig_location = get_orig_location($sbo);
+  my $check_location = $orig_location ? $orig_location : $sbo_location;
+  $perl_ineligible = 1 if $sbo =~ /^perl-/ or basename(dirname($check_location)) eq "perl";
+  $only_64 = check_x64 $check_location;
+  $only_32 = check_x32 $check_location;
+  unless ($perl_ineligible or $only_64 or $only_32) {
+    my ($fh, $exit) = open_read("$sbo_location/$sbo.SlackBuild") if -f "$sbo_location/$sbo.SlackBuild";
+    unless ($exit) {
+      for my $line (<$fh>) {
+        $perl_ineligible = 1 if $line =~ /perl (Makefile|Build).PL/;
+        $arch_ineligible = 1 if $line =~ /ARCH=noarch/;
+      }
+      close $fh;
+    }
+  }
+  return unless $perl_ineligible or $arch_ineligible or $only_64 or $only_32;
+  return "$sbo is 64-bit only; skipping compat32." if $only_64;
+  return "$sbo is 32-bit only; skipping compat32." if $only_32;
+  return "$sbo is Perl-based; skipping compat32." if $perl_ineligible;
+  return "$sbo is a noarch script; skipping compat32." if $arch_ineligible;
 }
 
 =head2 parse_info

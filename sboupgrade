@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group in installed_solibs is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue solib_check verify_gpg %config show_version lint_sbo_config wrapsay @concluded @reverse_concluded /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group in ineligible_compat installed_solibs is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue solib_check verify_gpg %config show_version lint_sbo_config wrapsay @concluded @reverse_concluded /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -75,14 +75,7 @@ EOF
 	return 1;
 }
 
-my $noclean = $config{NOCLEAN};
-my $distclean = $config{DISTCLEAN};
-my $jobs = $config{JOBS};
-my $build_ignore = $config{BUILD_IGNORE};
-my $gpg = $config{GPG_VERIFY};
-my $strict_upgrades = $config{STRICT_UPGRADES};
-my $etc_profile = $config{ETC_PROFILE};
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $pkg_dir, $log_dir, $nocolor, $color, $socheck);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $socheck);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -129,16 +122,13 @@ unless ($options_ok) {
 $config{NOCLEAN} = $noclean if $noclean;
 $config{DISTCLEAN} = $distclean if $distclean;
 $config{BUILD_IGNORE} = $build_ignore if $build_ignore;
-$config{GPG} = $gpg if $gpg;
+$config{GPG_VERIFY} = $gpg if $gpg;
 $config{STRICT_UPGRADES} = $strict_upgrades if $strict_upgrades;
 $config{ETC_PROFILE} = $etc_profile if $etc_profile;
 $config{PKG_DIR} = $pkg_dir if $pkg_dir;
 $config{LOG_DIR} = $log_dir if $log_dir;
 $config{SO_CHECK} = $socheck if $socheck;
-$noclean = $noclean eq 'TRUE' ? 1 : 0;
-$distclean = $distclean eq 'TRUE' ? 1 : 0;
-$build_ignore = $build_ignore eq 'TRUE' ? 1 : 0;
-$gpg = $gpg eq 'TRUE' ? 1 : 0;
+$config{JOBS} = $jobs if $jobs;
 
 lint_sbo_config($self, %config);
 
@@ -162,7 +152,7 @@ usage_error("all is incompatible with compat32.") if $compat32 && $all;
 $yes_really = 1 if $dry_run;
 $non_int = 1 if $yes_really;
 
-if ($gpg) { verify_gpg(); }
+if ($config{GPG_VERIFY} eq "TRUE") { verify_gpg(); }
 
 # if we can't find SLACKBUILDS.TXT in $config{SBO_HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
@@ -172,7 +162,7 @@ my $updates;
 if ($all) {
 	slackbuilds_or_fetch();
 	wrapsay_color $color_notice, "Checking for updated SlackBuilds...";
-	if ($build_ignore) {
+	if ($config{BUILD_IGNORE} eq "TRUE") {
 		$updates = get_available_updates('VERS');
 	} else {
 		$updates = get_available_updates('BOTH');
@@ -189,62 +179,31 @@ my @sbos;
 # do not bother with its dependencies, etc.
 #
 # also check here for incompatible architecture
-if (@ARGV and $compat32) {
+if (@ARGV) {
 	for my $sbo (@ARGV) {
-		my ($perl_ineligible, $arch_ineligible, $only_64);
 		my $sbo_location = get_sbo_location($sbo);
-		if ($sbo_location) {
-			my $check_location = $sbo_location;
-			my $orig_location = get_orig_location($sbo);
-			$check_location = $orig_location if $orig_location;
-			$only_64 = check_x64 $check_location;
-			$perl_ineligible = 1 if $sbo =~ /^perl-/ or basename(dirname($check_location)) eq "perl";
-			unless ($perl_ineligible) {
-				my ($fh, $exit) = open_fh("$sbo_location/$sbo.SlackBuild", "<") if -f "$sbo_location/$sbo.SlackBuild";
-				unless ($exit) {
-					for my $line (<$fh>) {
-						$perl_ineligible = 1 if $line =~ /perl (Makefile|Build).PL/;
-						$arch_ineligible = 1 if $line =~ /ARCH=noarch/;
-					}
-					close $fh;
-				}
-			}
-			push @sbos, $sbo unless $perl_ineligible or $arch_ineligible or $only_64;
-			wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32." if $only_64;
-			wrapsay_color $color_lesser, "$sbo is Perl-based; skipping compat32." if $perl_ineligible;
-			wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32." if $arch_ineligible and not $perl_ineligible;
-		} else {
+		unless ($sbo_location) {
 			wrapsay_color $color_lesser, "$sbo not found; skipping.";
+			next;
 		}
-	}
-} elsif (@ARGV and not $arch =~ m/64/) {
-	for my $sbo (@ARGV) {
-		my $sbo_location = get_sbo_location($sbo);
-		if ($sbo_location) {
+		if ($compat32) {
+			if (my $msg = ineligible_compat $sbo_location) {
+				wrapsay_color $color_lesser, $msg;
+				next;
+			}
+		} elsif ($arch !~ /64/) {
 			if (check_x64 $sbo_location) {
 				wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping.";
-			} else {
-				push @sbos, $sbo;
+				next;
 			}
-		} else {
-			wrapsay_color $color_lesser, "$sbo not found; skipping.";
-		}
-	}
-} elsif (@ARGV and $arch =~ m/64/) {
-	for my $sbo (@ARGV) {
-		my $sbo_location = get_sbo_location($sbo);
-		if ($sbo_location) {
-			if (check_x32 $sbo_location and not check_multilib()) {
+		} elsif ($arch =~ /64/ and not check_multilib()) {
+			if (check_x32 $sbo_location) {
 				wrapsay_color $color_lesser, "$sbo is 32-bit only; skipping.";
-			} else {
-				push @sbos, $sbo;
+				next;
 			}
-		} else {
-			wrapsay_color $color_lesser, "$sbo not found; skipping.";
 		}
+		push @sbos, $sbo;
 	}
-} elsif (@ARGV) {
-	@sbos = @ARGV;
 }
 if (@ARGV and not @sbos) { exit 0; }
 @sbos = uniq @sbos;
@@ -262,7 +221,7 @@ my %inst_names;
 $inst_names{$_} = 1 for @$inst_names;
 my %updates;
 unless ($non_int and $force) {
-	if ($build_ignore) {
+	if ($config{BUILD_IGNORE} eq "TRUE") {
 		$updates = get_available_updates('VERS') unless defined $updates;
 	} else {
 		$updates = get_available_updates('BOTH') unless defined $updates;
@@ -276,10 +235,7 @@ unless ($config{CPAN_IGNORE} eq "TRUE") {
 	s/::/-/g for @$defective;
 }
 
-my $upgrade_queue = [];
-my @needs_reverse;
-my (%warnings, $save_queue);
-my $needs_rationalize;
+my ($upgrade_queue, %warnings, @needs_reverse, $needs_rationalize);
 
 # ensure that compat32 is picked up on the upgrade list
 if ($compat32) {
@@ -289,7 +245,6 @@ if ($compat32) {
 # doesn't matter what's updatable and what's not if force is specified,
 # but without force, we only want to update what there are updates for
 if ($non_int and not $reverse and not $yes_really) {
-	my ($extra_queue, %extra_warnings);
 	# --force, non-interactive
 	if ($force) {
 		for my $sbo (@sbos) {
@@ -309,11 +264,9 @@ if ($non_int and not $reverse and not $yes_really) {
 			}
 		}
 	}
-	$save_queue = $upgrade_queue;
 } else {
 	my @notified;
 	for my $sbo (@sbos) {
-		my ($extra_queue, %extra_warnings);
 		next if in @concluded, $sbo;
 		unless ($force_reqs or $force) {
 			next unless $updates{$sbo};
@@ -326,8 +279,7 @@ if ($non_int and not $reverse and not $yes_really) {
 		$upgrade_queue = merge_queues($upgrade_queue, $queue);
 	}
 	if ($reverse) {
-		($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @$upgrade_queue);
-		$save_queue = $upgrade_queue;
+		my ($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @$upgrade_queue);
 		if ($extra_queue) {
 			%warnings = (%warnings, %extra_warnings);
 			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
@@ -335,10 +287,7 @@ if ($non_int and not $reverse and not $yes_really) {
 		$needs_rationalize = 1;
 	}
 	# no --reverse-rebuild; trigger automatic rebuilds unless --no-install
-	# and put everything in the right order
 	unless ($no_install or $reverse) {
-		$save_queue = $upgrade_queue;
-		my ($extra_queue, %extra_warnings);
 		for my $sbo (@$upgrade_queue) {
 			if (auto_reverse($sbo)) {
 				push @needs_reverse, $sbo;
@@ -353,55 +302,31 @@ if ($non_int and not $reverse and not $yes_really) {
 if (@needs_reverse and not $no_install and not $reverse) {
 	$needs_rationalize = 1;
 	my ($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @needs_reverse);
-		if ($extra_queue) {
-			%warnings = (%warnings, %extra_warnings);
-			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
-		}
+	if ($extra_queue) {
+		%warnings = (%warnings, %extra_warnings);
+		$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
 	}
 }
 
 my $cqueue;
-
-# see what has been installed as part of a reverse
-# dependency queue
-my @reverses;
-for my $sbo (@$upgrade_queue) { push @reverses, $sbo unless in $sbo, @$save_queue; }
 
 # Get user input regarding upgrades
 my (@temp_queue, %commands, %options, %missing_user_group);
 my (@see_readme, %saved_options);
 $upgrade_queue = rationalize_queue($upgrade_queue) if $needs_rationalize;
 FIRST: for my $sbo (@$upgrade_queue) {
-	my ($perl_ineligible, $arch_ineligible, $only_64, $only_32);
 	next FIRST if $std_names{$sbo};
-	next FIRST if $sbo =~ /-compat32$/ and not ($all or $compat32);
 	my $name = $sbo;
-	$sbo =~ s/-compat32$//;
-	$locations{$name} = get_sbo_location($name) unless $locations{$name};
-	# do not attempt compat32 builds if noarch or perl-based; catch
-	# ineligible scripts here, but skip them after checking for the base
-	# package
-	if ($name =~ /-compat32$/ and $locations{$name}) {
-		$only_64 = check_x64 $locations{$name};
-		$only_32 = check_x32 $locations{$name};
-		my $check_location = $locations{$name};
-		my $orig_location = get_orig_location($name);
-		$check_location = $orig_location if $orig_location;
-		$perl_ineligible = 1 if $name =~ /^perl-/ or basename(dirname($check_location)) eq "perl";
-		unless ($perl_ineligible) {
-			my ($fh, $exit) = open_fh("$locations{$name}/$sbo.SlackBuild", "<") if -f "$locations{$name}/$sbo.SlackBuild";
-			next FIRST if $exit;
-			for my $line (<$fh>) {
-				$perl_ineligible = 1 if $line =~ /perl (Makefile|Build).PL/;
-				$arch_ineligible = 1 if $line =~ /ARCH=noarch/;
-			}
-			close $fh;
-		}
+	if ($compat32 and $sbo !~ /-compat32$/) {
+		next FIRST unless $updates{$sbo} or not $inst_names{$sbo};
 	}
-	if ($only_64) { wrapsay_color $color_lesser, "$sbo is 64-bit only; skipping compat32."; next FIRST; }
-	if ($only_32) { wrapsay_color $color_lesser, "$sbo is 32-bit only; skipping compat32."; next FIRST; }
-	if ($perl_ineligible) { wrapsay_color $color_lesser, "$sbo is Perl-based; skipping compat32."; next FIRST; }
-	if ($arch_ineligible) { wrapsay_color $color_lesser, "$sbo is a noarch script; skipping compat32."; next FIRST; }
+	$sbo =~ s/-compat32//;
+
+	$locations{$name} = get_sbo_location($name) unless $locations{$name};
+	if ($name =~ /-compat32$/ and $locations{$name}) {
+		my $compat_fail_msg = ineligible_compat($locations{$name});
+		if ($compat_fail_msg) { wrapsay_color $color_lesser, $compat_fail_msg; next FIRST; }
+	}
 
 	if (defined $warnings{$name} and $warnings{$name} eq 'nonexistent') {
 		next FIRST if is_obsolete($sbo);
@@ -533,11 +458,8 @@ my ($failures, $exit) = process_sbos(
 	TODO      => $upgrade_queue,
 	CMDS      => \%commands,
 	OPTS      => \%options,
-	JOBS      => $jobs,
 	LOCATIONS => \%locations,
 	NOINSTALL => $no_install,
-	NOCLEAN   => $noclean,
-	DISTCLEAN => $distclean,
 	NON_INT   => $non_int,
 );
 print_failures($failures);
@@ -545,7 +467,7 @@ print_failures($failures);
 if ($config{SO_CHECK} eq "TRUE" and @solib_search and not $no_install) {
 	print "\nChecking for broken shared object dependencies from this upgrade...";
 	my (@actionable, @log_output);
-	my @new_installed = @{ get_installed_packages("SBO") };
+	my @new_installed = @{ get_installed_packages("SBO", 1) };
 	my $installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @new_installed };
 	my $pkg_count = @new_installed;
 	my $count = 0;

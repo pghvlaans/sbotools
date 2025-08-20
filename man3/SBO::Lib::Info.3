@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Info 3"
-.TH SBO::Lib::Info 3 "Prickle-Prickle, Bureaucracy 10, 3191 YOLD" "" "sbotools 3.8"
+.TH SBO::Lib::Info 3 "Boomtime, Bureaucracy 13, 3191 YOLD" "" "sbotools 3.8"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -171,6 +171,15 @@ be a list of all installed scripts.
 .PP
 \&\f(CWget_sbo_version()\fR returns the version found in the info file in
 \&\f(CW$location\fR.
+.SS ineligible_compat
+.IX Subsection "ineligible_compat"
+.Vb 1
+\&  my $msg = ineligible_compat($location);
+.Ve
+.PP
+\&\f(CWineligible_compat()\fR takes a script\*(Aqs location and returns a diagnostic message if
+it is ineligible for a \f(CW\*(C`compat32\*(C'\fR package. \f(CW\*(C`noarch\*(C'\fR, Perl\-based and one\-architecture
+scripts are all ineligible.
 .SS parse_info
 .IX Subsection "parse_info"
 .Vb 1
