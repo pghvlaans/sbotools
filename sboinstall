@@ -202,7 +202,7 @@ if (@ARGV) {
 			wrapsay_color $color_lesser, "$sbo not found; skipping.";
 			next;
 		}
-		if ($compat32) {
+		if ($compat32 or $sbo =~ /-compat32$/) {
 			if (my $msg = ineligible_compat $sbo_location) {
 				wrapsay_color $color_lesser, $msg;
 				next;
@@ -224,7 +224,9 @@ if (@ARGV) {
 exit 0 if (@ARGV and not @sbos);
 @sbos = uniq @sbos;
 
-if ($compat32) { $_ .= "-compat32" for (@sbos); }
+if ($compat32) {
+	for my $sbo (@sbos) { $sbo = "$sbo-compat32" unless $sbo =~ /-compat32$/; }
+}
 
 # get lists of installed packages and perl modules from CPAN
 my $inst_pkgs = get_installed_packages('ALL');

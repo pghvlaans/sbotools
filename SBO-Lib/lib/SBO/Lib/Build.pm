@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '3.8';
 
-use SBO::Lib::Util qw/ :config :const :times :colors idx prompt error_code script_error get_sbo_from_loc check_multilib on_blacklist open_fh open_read uniq save_options wrapsay in in_regexp $userland_32 /;
+use SBO::Lib::Util qw/ :config :const :times :colors prompt error_code script_error get_sbo_from_loc check_multilib on_blacklist open_fh open_read uniq save_options wrapsay in in_regexp $userland_32 /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires get_reverse_reqs /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
@@ -34,7 +34,6 @@ our @EXPORT_OK = qw{
   do_slackbuild
   do_upgradepkg
   get_build_queue
-  get_dc_regex
   get_full_queue
   get_full_reverse
   get_full_reverse_queue
@@ -47,8 +46,6 @@ our @EXPORT_OK = qw{
   perform_sbo
   process_sbos
   rationalize_queue
-  revert_slackbuild
-  rewrite_slackbuild
   run_tee
 
   $tempdir
@@ -276,40 +273,6 @@ script exits with C<_ERR_CIRCULAR> if any are present.
 sub get_build_queue {
   script_error('get_build_queue requires two arguments.') unless @_ == 2;
   return [ _build_queue(@_) ];
-}
-
-=head2 get_dc_regex
-
-  my ($rx, $initial) = get_dc_regex($line);
-
-C<get_dc_regex()> creates a regular expression that should match the filename
-given a line with e.g. an untar command. This is returned together with the C<$initial>
-character, which starts the filename match.
-
-=cut
-
-# given a line that looks like it's decompressing something, try to return a
-# valid filename regex
-sub get_dc_regex {
-  my $line = shift;
-  # get rid of initial 'tar x'whatever stuff
-  $line =~ s/^.*(?<![a-z])(tar|p7zip|unzip|ar|rpm2cpio|sh)\s+[^\s]+\s+//;
-  # need to know preceeding character - should be safe to assume it's either
-  # a slash or a space
-  my $initial = $line =~ qr|/| ? '/' : ' ';
-  # get rid of initial path info
-  $line =~ s|^\$[^/]+/||;
-  # convert any instances of command substitution to [^-]+
-  $line =~ s/\$\([^)]+\)/[^-]+/g;
-  # convert any bash variables to [^-]+
-  $line =~ s/\$(\{|)[A-Za-z0-9_]+(}|)/[^-]+/g;
-  # get rid of anything excess at the end
-  $line =~ s/\s+.*$//;
-  # fix .?z* at the end
-  $line =~ s/\.\?z\*/\.[a-z]z.*/;
-  # return what's left as a regex
-  my $regex = qr/$initial$line/;
-  return $regex, $initial;
 }
 
 =head2 get_full_queue
@@ -670,8 +633,7 @@ sub perform_sbo {
     @src_ls = grep { ! in_regexp( $_ => qw/ . .. /) } readdir $tsbo_dh;
   }
 
-  my ($cmd, %changes);
-  # set any changes we need to make to the .SlackBuild, setup the command
+  my $cmd;
 
   $cmd = '';
 
@@ -686,7 +648,7 @@ sub perform_sbo {
     }
   }
   my $use_setarch;
-  if ($arch =~ m/64/ and ($args{C32} || $args{X32})) {
+  if ($arch eq "x86_64" and ($args{C32} || $args{X32})) {
     $use_setarch = 1;
     if ($args{X32}) {
       my ($fh, $exit) = open_read("$location/$sbo.SlackBuild");
@@ -703,14 +665,11 @@ sub perform_sbo {
     }
     $cmd .= ' . /etc/profile.d/32dev.sh &&';
   }
-  if ($config{JOBS} ne 'FALSE') {
-    $changes{jobs} = 1;
-  }
   if ($args{OPTS}) {
     save_options($sbo, $args{OPTS});
     $cmd .= " $args{OPTS}";
   }
-  $cmd .= " MAKEOPTS=\"-j$config{JOBS}\"" if $changes{jobs};
+  $cmd .= " MAKEFLAGS=\"\$MAKEFLAGS -j$config{JOBS}\"" if $config{JOBS} ne "FALSE";
 
   # set TMP/OUTPUT if set in the environment
   $cmd .= " TMP=$env_tmp" if $env_tmp;
@@ -719,16 +678,7 @@ sub perform_sbo {
   $cmd .= " setarch i686" if defined $userland_32 or defined $use_setarch;
   $cmd .= " /bin/bash $location/$sbo.SlackBuild";
 
-  # attempt to rewrite the slackbuild, or exit if we can't
-  my ($fail, $exit) = rewrite_slackbuild(
-    SBO => $sbo,
-    SLACKBUILD => "$location/$sbo.SlackBuild",
-    CHANGES => \%changes,
-    C32 => $args{C32},
-  );
-  return $fail, undef, $exit if $exit;
-
-  # run the slackbuild, grab its exit status, revert our changes
+  # run the slackbuild, grab its exit status
   my $cwd = getcwd();
   chdir $location;
   my $build_time = time();
@@ -741,9 +691,8 @@ sub perform_sbo {
   $total_build_time += $time_taken if $time_taken;
   chdir $cwd;
 
-  revert_slackbuild("$location/$sbo.SlackBuild");
   # return error now if the slackbuild didn't exit 0
-  return "$sbo.SlackBuild return non-zero.", undef, _ERR_BUILD if $ret != 0;
+  return "$sbo.SlackBuild returned non-zero.", undef, _ERR_BUILD if $ret != 0;
   my $pkg = get_pkg_name($out);
   return "$sbo.SlackBuild did not create a package.", undef, _ERR_BUILD unless defined $pkg;
   my $src = get_src_dir(@src_ls);
@@ -778,7 +727,6 @@ sub process_sbos {
   my $cmds = $args{CMDS};
   my $opts = $args{OPTS};
   my $locs = $args{LOCATIONS};
-  my $jobs = $config{JOBS} ne "FALSE" ? $config{JOBS} : 0;
   my $mass = $args{MASS};
   @$todo >= 1 or script_error('process_sbos requires TODO.');
   my $mtemp_in = "$config{SBO_HOME}/mass_rebuild.temp";
@@ -956,101 +904,6 @@ sub rationalize_queue {
   }
 
   return [ @result_queue ];
-}
-
-=head2 revert_slackbuild
-
-  revert_slackbuild($path);
-
-C<revert_slackbuild()> restores a SlackBuild rewritten by
-C<rewrite_slackbuild()>.
-
-There is no useful return value.
-
-=cut
-
-# move a backed-up .SlackBuild file back into place
-sub revert_slackbuild {
-  script_error('revert_slackbuild requires an argument.') unless @_ == 1;
-  my $slackbuild = shift;
-  if (-f "$slackbuild.orig") {
-    unlink $slackbuild if -f $slackbuild;
-    rename "$slackbuild.orig", $slackbuild;
-  }
-  return 1;
-}
-
-=head2 rewrite_slackbuild
-
-  my ($ret, $exit) = rewrite_slackbuild(%args);
-
-C<rewrite_slackbuild()>, when given an argument hash, copies the SlackBuild
-at C<$path> and rewrites it with the needed changes. The required arguments include
-C<SBO> (the name of the script), C<SLACKBUILD> (the location of the unaltered
-SlackBuild), C<CHANGES> (the required changes) and C<C32> (0 if the build is not
-compat32, and 1 if it is).
-
-On failure, an error message and the exit status are returned. On success, 1 and an exit
-status of 0 are returned.
-
-=cut
-
-# make a backup of the existent SlackBuild, and rewrite the original as needed
-sub rewrite_slackbuild {
-  my %args = (
-    SBO         => '',
-    SLACKBUILD  => '',
-    CHANGES     => {},
-    C32         => 0,
-    @_
-  );
-  $args{SLACKBUILD} or script_error('rewrite_slackbuild requires SLACKBUILD.');
-  my $slackbuild = $args{SLACKBUILD};
-  my $changes = $args{CHANGES};
-
-  # $status will be undefined if either the rename or the copy fails, otherwise it will be 1
-  my $status = eval {
-    rename($slackbuild, "$slackbuild.orig") or die "not ok";
-    copy("$slackbuild.orig", $slackbuild) or die "not ok";
-    1;
-  };
-  unless ($status) {
-    rename "$slackbuild.orig", $slackbuild unless -f $slackbuild;
-    return "Unable to backup $slackbuild to $slackbuild.orig.",
-      _ERR_OPENFH;
-  }
-
-  my $dc_regex = qr/(?<![a-z])(tar|p7zip|unzip|ar|rpm2cpio|sh)\s+/;
-  my $make_regex = qr/^\s*make\s*$/;
-  # tie the slackbuild, because this is the easiest way to handle this.
-  tie my @sb_file, 'Tie::File', $slackbuild;
-  # if we're dealing with a compat32, we need to change the tar line(s) so
-  # that the 32-bit source is untarred
-  if ($args{C32}) {
-    my $location = get_sbo_location($args{SBO});
-    my $downloads = get_sbo_downloads(
-      LOCATION => $location,
-      32 => 1,
-    );
-    my $fns = get_dl_fns([keys %$downloads]);
-    for my $line (@sb_file) {
-      if ($line =~ $dc_regex) {
-        my ($regex, $initial) = get_dc_regex($line);
-        for my $fn (@$fns) {
-          $fn = "$initial$fn";
-          $line =~ s/$regex/$fn/ if $fn =~ $regex;
-        }
-      }
-    }
-  }
-  for my $line (@sb_file) {
-    # then check for and apply any other %$changes
-    if (exists $changes->{jobs}) {
-      $line =~ s/make/make \$MAKEOPTS/ if $line =~ $make_regex;
-    }
-  }
-  untie @sb_file;
-  return 1;
 }
 
 =head2 run_tee

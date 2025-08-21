@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Boomtime, Bureaucracy 13, 3191 YOLD" "" "sbotools 3.8"
+.TH SBO::Lib::Build 3 "Pungenday, Bureaucracy 14, 3191 YOLD" "" "sbotools 3.8"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -161,15 +161,6 @@ prerequisites and \f(CW$sbo\fR in the correct build order.
 .PP
 \&\f(CW@checked\fR and \f(CW\*(C`our @concluded\*(C'\fR are used to check for circular dependencies; the
 script exits with \f(CW\*(C`_ERR_CIRCULAR\*(C'\fR if any are present.
-.SS get_dc_regex
-.IX Subsection "get_dc_regex"
-.Vb 1
-\&  my ($rx, $initial) = get_dc_regex($line);
-.Ve
-.PP
-\&\f(CWget_dc_regex()\fR creates a regular expression that should match the filename
-given a line with e.g. an untar command. This is returned together with the \f(CW$initial\fR
-character, which starts the filename match.
 .SS get_full_queue
 .IX Subsection "get_full_queue"
 .Vb 1
@@ -292,30 +283,6 @@ when a build fails.
 no script appears before any of its dependencies. Currently, this is only
 useful when an automatic reverse dependency rebuild has been triggered or
 in case of a mass or series rebuild. The rearranged queue is returned.
-.SS revert_slackbuild
-.IX Subsection "revert_slackbuild"
-.Vb 1
-\&  revert_slackbuild($path);
-.Ve
-.PP
-\&\f(CWrevert_slackbuild()\fR restores a SlackBuild rewritten by
-\&\f(CWrewrite_slackbuild()\fR.
-.PP
-There is no useful return value.
-.SS rewrite_slackbuild
-.IX Subsection "rewrite_slackbuild"
-.Vb 1
-\&  my ($ret, $exit) = rewrite_slackbuild(%args);
-.Ve
-.PP
-\&\f(CWrewrite_slackbuild()\fR, when given an argument hash, copies the SlackBuild
-at \f(CW$path\fR and rewrites it with the needed changes. The required arguments include
-\&\f(CW\*(C`SBO\*(C'\fR (the name of the script), \f(CW\*(C`SLACKBUILD\*(C'\fR (the location of the unaltered
-SlackBuild), \f(CW\*(C`CHANGES\*(C'\fR (the required changes) and \f(CW\*(C`C32\*(C'\fR (0 if the build is not
-compat32, and 1 if it is).
-.PP
-On failure, an error message and the exit status are returned. On success, 1 and an exit
-status of 0 are returned.
 .SS run_tee
 .IX Subsection "run_tee"
 .Vb 1

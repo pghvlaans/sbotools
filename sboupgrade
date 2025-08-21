@@ -186,7 +186,7 @@ if (@ARGV) {
 			wrapsay_color $color_lesser, "$sbo not found; skipping.";
 			next;
 		}
-		if ($compat32) {
+		if ($compat32 or $sbo =~ /-compat32$/) {
 			if (my $msg = ineligible_compat $sbo_location) {
 				wrapsay_color $color_lesser, $msg;
 				next;
