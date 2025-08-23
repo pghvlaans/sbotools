@@ -380,11 +380,27 @@ or
 .B
 -p|--compat32
 .RS
-Create a
+Create
 .I
 compat32
-package on multilib x86_64 systems. Any requested 64-bit only
-scripts are not queued, and 32-bit only scripts are built as-is.
+packages for each item in the queue on multilib x86_64 systems.
+Any requested 64-bit only scripts are not queued, and 32-bit
+only scripts are built as-is. To request both
+.I
+compat32
+and normal scripts, run
+.B
+sboupgrade
+without
+.B
+--compat32
+and append
+.I
+-compat32
+to the script name, e.g.
+.I
+libmodplug-compat32\fR\
+\&.
 .P
 This requires the
 .B
