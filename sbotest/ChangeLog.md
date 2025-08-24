@@ -9,6 +9,7 @@
   * bin/test: Replace get_arch(), which is no longer exported by SBO::Lib::Util
   * bin/{test,pull}: More consistent trailing newline
   * bin/test: Check for missing shared objects upon build failure if SO_CHECK is TRUE
+  * bin/test: Arrange the testing list in build order
 
 #### 1.0 - 2025-07-04
   * Initial release
