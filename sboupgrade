@@ -482,7 +482,7 @@ if ($config{SO_CHECK} eq "TRUE" and @solib_search and not $no_install) {
 		if (@actionable) {
 			wrapsay_color $color_lesser, "\nThe following packages may require rebuilding:", 1;
 			for my $sbo (sort @actionable) { print "  $sbo\n"; }
-			for my $sbo (sort @actionable) { push @log_output, "  $sbo:\n$old_libs{$installed_pkg->{$sbo}}\n"; }
+			for my $sbo (sort @actionable) { push @log_output, "$sbo:\n$old_libs{$installed_pkg->{$sbo}}\n"; }
 			my $logfile = '/var/log/sboupgrade-solibs.log';
 			unlink $logfile if -f $logfile;
 			my ($log_fh, $exit) = open_fh($logfile, '>');
