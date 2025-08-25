@@ -49,6 +49,7 @@ my @EXPORT_CONSTS = keys %$consts;
 my @EXPORT_CONFIG = qw{
   read_config
 
+  @auto_reverse
   $arch
   $conf_dir
   $conf_file
@@ -56,8 +57,10 @@ my @EXPORT_CONFIG = qw{
   $hint_file
   %config
   @listings
+  @on_blacklist
   $obs_file
   @obsolete
+  %optional
   $pkg_db
   $sbotest_compatible
   $script_db
@@ -231,7 +234,8 @@ automatic reverse dependency rebuilds read in from C</etc/sbotools/sbotools.hint
 
 =head2 (@on_blacklist, @auto_reverse, %optional)
 
-These are populated by C<read_hints()> and used to determine hint status.
+These exported variables are populated by C<read_hints()> and used to determine hint
+status.
 
 =cut
 

@@ -190,6 +190,28 @@ sub alter_designation {
 	}
 }
 
+sub invalid_prompt_input {
+	script_error("invalid_prompt_input requires two arguments.") unless @_ ge 2;
+	my ($sbo, @incoming) = @_;
+	if (grep { /-compat32$/ } @incoming) {
+		wrapsay("Separate -compat32 requests are not needed.", 1);
+		return 1;
+	}
+	if (grep { /\!/ } @incoming) {
+		wrapsay_color $color_lesser, "! cannot be used in optional dependency requests.", 1;
+		return 1;
+	}
+	if (in $sbo, @incoming) {
+		if ($clear) {
+			wrapsay_color $color_lesser, "Cannot clear $sbo from its own list.", 1;
+		} else {
+			wrapsay_color $color_lesser, "$sbo cannot be its own optional dependency.", 1;
+		}
+		return 1;
+	}
+	return 0;
+}
+
 sub make_query {
 	unless (@ARGV) { show_usage(); exit 0; }
 	my $made_output;
@@ -204,36 +226,25 @@ sub make_query {
 			$made_output = 1;
 		}
 		if (my @optionals = get_optional($sbo)) {
-			if (@optionals == 1) {
-				wrapsay_color $color_notice, "Optional dependency request for $sbo:";
-			} else {
-				wrapsay_color $color_notice, "Optional dependency requests for $sbo:";
-			}
+			my $word = @optionals == 1 ? "request" : "requests";
+			wrapsay_color $color_notice, "Optional dependency $word for $sbo:";
 			wrapsay(join(" ", @optionals));
 			$made_output = 1;
-		} else {
-			my @loclistings = @listings;
-			my @optional_for;
-			if (grep { /(^|\s)$sbo\s/ } @loclistings) {
-				FIRST: for my $hinted (@loclistings) {
-					next FIRST if $hinted =~ m/^(!|\s|#)/;
-					next FIRST if $hinted =~ m/\s$/;
-					next FIRST unless $hinted =~ m/(^|\s)$sbo\s/;
-					my @items = split(' ', $hinted);
-					my $result = pop @items;
-					push @optional_for, $result unless in $result, @optional_for;
-				}
-				if (@optional_for) {
-					$made_output = 1;
-					if (@optional_for == 1) {
-						my $requested = shift @optional_for;
-						wrapsay "$sbo is an optional dependency of $requested.";
-					} else {
-						wrapsay_color $color_notice, "The following scripts optionally depend on $sbo:";
-						@optional_for = sort @optional_for;
-						for my $result (@optional_for) { wrapsay "$result"; }
-					}
-				}
+		}
+		my @optional_for;
+		for my $has_optional (keys %optional) {
+			push @optional_for, $has_optional if in $sbo, @{ $optional{$has_optional} };
+		}
+		if (@optional_for) {
+			@optional_for = uniq @optional_for;
+			$made_output = 1;
+			if (@optional_for == 1) {
+				my $requested = shift @optional_for;
+				wrapsay "$sbo is an optional dependency of $requested.";
+			} else {
+				wrapsay_color $color_notice, "The following scripts optionally depend on $sbo:";
+				@optional_for = sort @optional_for;
+				for my $result (@optional_for) { wrapsay "$result"; }
 			}
 		}
 	}
@@ -256,38 +267,23 @@ sub prompt_queue {
 		# flags -co, -o, -O
 		unless ($replace_optional and $clear) {
 			if (@incoming = split(" ", prompt($color_notice, $message))) {
-				if (grep { /-compat32$/ } @incoming) {
-					wrapsay("Separate -compat32 requests are not needed.", 1);
+				if (invalid_prompt_input($sbo, @incoming)) {
 					prompt_queue($sbo);
 					return;
 				}
-				if (grep { /\!/ } @incoming) {
-					wrapsay_color $color_lesser, "! cannot be used in optional dependency requests.", 1;
-					prompt_queue($sbo);
-					return;
-				}
-				if (in $sbo, @incoming) {
-					if ($clear) {
-						wrapsay_color $color_lesser, "Cannot clear $sbo from its own list.", 1;
-					} else {
-						wrapsay_color $color_lesser, "$sbo cannot be its own optional dependency.", 1;
-					}
-					prompt_queue($sbo);
-					return;
-				}
-				my $is_needed;
 				# for -o and -co, don't attempt changes if unneeded
-				if ($clear) {
-					for my $item (@incoming) { $is_needed = 1 if in $item, @current; }
-				} elsif ($optional) {
-					for my $item (@incoming) { $is_needed = 1 unless in $item, @current; }
-				} else { $is_needed = 1; }
+				my $is_needed;
+				for my $item (@incoming) {
+					unless (($clear and not in $item, @current) or ($optional and not $clear and in $item, @current)) {
+						$is_needed = 1;
+						last;
+					}
+				}
 				if ($is_needed) {
-					write_optional($sbo, @incoming) if $is_needed;
+					write_optional($sbo, @incoming);
 				} else {
 					wrapsay "No changes to be made to $sbo; skipping.";
 				}
-				return;
 			} else {
 				say "Skipping.";
 				return;
@@ -308,22 +304,7 @@ sub prompt_queue {
 		# flags -o and -O, no existing entry
 		wrapsay("$sbo has no optional dependency requests.", 1);
 		if (@incoming = split(" ", prompt($color_notice, $message))) {
-			if (grep { /-compat32$/ } @incoming) {
-				wrapsay_color $color_lesser, "Separate -compat32 requests are not needed.", 1;
-				prompt_queue($sbo);
-				return;
-			}
-			if (grep { /\!/ } @incoming) {
-				wrapsay_color $color_lesser, "! cannot be used in optional dependency requests.", 1;
-				prompt_queue($sbo);
-				return;
-			}
-			if (grep { /^$sbo$/ } @incoming) {
-				if ($clear) {
-					wrapsay_color $color_lesser, "Cannot clear $sbo from its own list.", 1;
-				} else {
-					wrapsay_color $color_lesser, "$sbo cannot be its own optional dependency.", 1;
-				}
+			if (invalid_prompt_input($sbo, @incoming)) {
 				prompt_queue($sbo);
 				return;
 			}
@@ -339,9 +320,8 @@ sub prompt_queue {
 # Remove any line from sbotools.hints that isn't commented or whitespace-
 # initial.
 sub reset_all {
-	my @loclistings = @listings;
 	my @remaining;
-	unless (@loclistings) {
+	unless (@listings) {
 		wrapsay "No blacklist or optional dependency requests found.";
 		exit 0;
 	}
@@ -349,7 +329,7 @@ sub reset_all {
 	error_code("Failed to open $hint_file; exiting.", $rexit) if $rexit;
 	for my $line (<$rfh>) {
 		chomp(my $search = $line);
-		push @remaining, $line unless in $search, @loclistings;
+		push @remaining, $line unless in $search, @listings;
 	}
 	close $rfh;
 	my ($fh, $exit) = open_fh($hint_file, '>');
@@ -362,78 +342,46 @@ sub reset_all {
 # per script. If anything on the blacklist has requests, or if a script
 # in a list of optional dependencies is blacklisted, note that fact.
 sub show_list {
-	my @loclistings = @listings;
-	my $message = "The blacklist is empty and no optional dependency or reverse dependency rebuild requests could be identified.";
-	unless (@loclistings) {
-		wrapsay $message;
-		exit 0;
-	}
-	my (@candlist, @ineffectuals, @ineffectual_requests);
-	for my $listing (@loclistings) {
-		$listing =~ s/^(\!|~)//;
-		my @members = split(" ", $listing);
-		next unless @members;
-		for my $cand (@members) { push @candlist, $cand; }
-	}
-	unless (@candlist) {
-		wrapsay $message;
-		exit 0;
-	}
-	@candlist = uniq @candlist;
-	@candlist = sort @candlist;
-	my ($wrote_blacklist, $wrote_auto_reverse, $wrote_optional, @blacklisted, @has_auto_reverse);
-	for my $sbo (@candlist) {
-		if (on_blacklist($sbo)) {
-			push @blacklisted, $sbo unless in $sbo, @blacklisted;
-			$wrote_blacklist = 1;
+	my (@ineffectuals, @ineffectual_requests, $made_output);
+	if (@on_blacklist) {
+		my @display_blacklist = grep { !/-compat32$/ } @on_blacklist;
+		@display_blacklist = sort(uniq(@display_blacklist));
+		unless (@display_blacklist == 1) {
+			wrapsay_color $color_notice, "The following scripts are blacklisted:";
+			say $_ for (@display_blacklist);
+		} else {
+			my $result = shift @display_blacklist;
+			wrapsay "$result is blacklisted.";
 		}
-		if (auto_reverse($sbo)) {
-			push @has_auto_reverse, $sbo unless in $sbo, @has_auto_reverse;
-			$wrote_auto_reverse = 1;
-		}
+		$made_output = 1;
 	}
-	if (@blacklisted == 1) {
-		my $result = shift @blacklisted;
-		wrapsay "$result is blacklisted.";
-		$wrote_blacklist = 1;
-	} elsif (@blacklisted) {
-		wrapsay_color $color_notice, "The following scripts are blacklisted:";
-		for my $sbo (@blacklisted) {
-			say "$sbo";
+	if (@auto_reverse) {
+		print "\n" if $made_output;
+		my @display_auto_reverse = grep { !/-compat32$/ } @auto_reverse;
+		@display_auto_reverse = sort(uniq(@display_auto_reverse));
+		unless (@display_auto_reverse == 1) {
+			wrapsay_color $color_notice, "The following scripts have reverse dependency rebuilding:";
+			say $_ for (@display_auto_reverse);
+		} else {
+			my $result = shift @display_auto_reverse;
+			wrapsay "$result has reverse dependency rebuilding.";
 		}
-		$wrote_blacklist = 1;
+		$made_output = 1;
 	}
-	if (@has_auto_reverse == 1) {
-		say " " if $wrote_blacklist;
-		my $result = shift @has_auto_reverse;
-		wrapsay "$result has reverse dependency rebuilding.";
-		$wrote_auto_reverse = 1;
-	} elsif (@has_auto_reverse) {
-		say " " if $wrote_blacklist;
-		wrapsay_color $color_notice, "The following scripts have reverse dependency rebuilding:";
-		for my $sbo (@has_auto_reverse) {
-			say "$sbo";
-		}
-		$wrote_auto_reverse= 1;
+	for my $has_optional (sort(keys %optional)) {
+		next if $has_optional =~ /-compat32$/;
+		print "\n" if $made_output;
+		my @optional_array = @{ $optional{$has_optional} };
+		my $word = @optional_array == 1 ? "request" : "requests";
+		wrapsay_color $color_notice, "Optional dependency $word for $has_optional:";
+		wrapsay join " ", @optional_array;
+		$made_output = 1;
+		push @ineffectual_requests, $has_optional if on_blacklist($has_optional);
+		for (@optional_array) { push @ineffectuals, $_ if on_blacklist($_); }
 	}
-	for my $sbo (@candlist) {
-		if (my @optionals = get_optional($sbo)) {
-			say " " if $wrote_blacklist or $wrote_optional or $wrote_auto_reverse;
-			if (@optionals == 1) {
-				wrapsay_color $color_notice, "Optional dependency request for $sbo:";
-			} else {
-				wrapsay_color $color_notice, "Optional dependency requests for $sbo:";
-			}
-			wrapsay(join(" ", @optionals));
-			push @ineffectuals, $sbo if on_blacklist($sbo);
-			for my $request (@optionals) {
-				push @ineffectual_requests, $request if on_blacklist($request);
-			}
-			$wrote_optional = 1;
-		}
-	}
+
 	if (@ineffectuals) {
-		@ineffectuals = sort @ineffectuals;
+		@ineffectuals = uniq sort(@ineffectuals);
 		say " ";
 		wrapsay_color $color_lesser, "The following scripts have optional dependency requests, but are blacklisted:";
 		wrapsay(join("\n", @ineffectuals));
@@ -444,7 +392,7 @@ sub show_list {
 		wrapsay_color $color_lesser, "The following scripts are requested as optional dependencies, but are blacklisted:";
 		wrapsay(join("\n", @ineffectual_requests));
 	}
-	wrapsay $message unless $wrote_blacklist or $wrote_optional;
+	wrapsay "The blacklist is empty and no optional dependency or reverse dependency rebuild requests could be identified." unless $made_output;
 	exit 0;
 }
 
@@ -458,7 +406,6 @@ sub write_optional {
 	read_hints() if -f $hint_file;
 	system(qw/ touch /, $hint_file) unless -f $hint_file;
 	@operation = uniq @operation if @operation;
-	my @loclistings = @listings;
 	my ($rfh, $rexit) = open_read($hint_file);
 	error_code("Failed to open $hint_file; exiting.", $rexit) if $rexit;
 	my (@outgoing, $replaced);
@@ -468,21 +415,20 @@ sub write_optional {
 			for my $to_add (@operation) { push @current, $to_add; }
 			@operation = @current;
 		}
-		@operation = uniq @operation;
 		push @operation, $sbo;
 	}
+	@operation = uniq @operation;
 	wrapsay "Making changes for $sbo...";
 	# read the hints file one line at a time; whether (and how) the
 	# line is written back in to the file depends on the flags
 	FIRST: for my $line (<$rfh>) {
 		chomp(my $search = $line);
-		my $target = (in $search, @loclistings and $search =~ m/\s$sbo$/);
+		my $target = (in $search, @listings and $search =~ m/\s$sbo$/);
 		unless ($clear) {
 			# replace the first specification for $sbo, and then
 			# skip further instances (flags: -O, -o)
 			if ($target and not $replaced) {
-				push @outgoing, join(" ", @operation);
-				push @outgoing, "\n";
+				push @outgoing, join(" ", @operation), "\n";
 				$replaced = 1;
 			} elsif ($target) {
 				next FIRST;
@@ -504,11 +450,7 @@ sub write_optional {
 		}
 	}
 	# The simplest case of all is adding a completely new request.
-	unless ($clear or $replaced) {
-		my $new_line = join(" ",@operation);
-		$new_line = "$new_line\n";
-		push @outgoing, $new_line;
-	}
+	unless ($clear or $replaced) { push @outgoing, join(" ", @operation) . "\n"; }
 	close $rfh;
 	my ($fh, $exit) = open_fh($hint_file, '>');
 	error_code("Failed to open $hint_file; exiting.", $exit) if $exit;
