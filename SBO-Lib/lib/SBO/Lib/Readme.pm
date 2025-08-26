@@ -254,13 +254,14 @@ sub user_prompt {
   my $readme = 0;
   unless (defined $location) { usage_error("Unable to locate $sbo in the SlackBuilds.org tree."); }
   wrapsay_color $color_lesser, "\nFound $sbo in local overrides." if is_local($sbo);
-  if (-s "$location/README") {
-    $readme = get_readme_contents($location);
-    error_code("Unable to open README for $sbo; exiting.", _ERR_OPENFH) unless defined $readme;
+  $readme = get_readme_contents($location);
+  if (defined $readme) {
     print "\n". $readme;
     # check for user/group add commands, offer to run any found
     my $user_group = get_user_group($readme, $location);
     $cmds = ask_user_group($user_group, $readme) if $$user_group[0];
+  } elsif (-s "$location/README") {
+    error_code("Unable to open README for $sbo; exiting.", _ERR_OPENFH);
   } else {
     wrapsay_color $color_lesser, "\n$sbo has an empty or nonexistent README file.";
   }

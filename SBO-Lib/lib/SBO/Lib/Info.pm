@@ -410,7 +410,7 @@ sub ineligible_compat {
   $only_64 = check_x64 $check_location;
   $only_32 = check_x32 $check_location;
   unless ($perl_ineligible or $only_64 or $only_32) {
-    my ($fh, $exit) = open_read("$sbo_location/$sbo.SlackBuild") if -f "$sbo_location/$sbo.SlackBuild";
+    my ($fh, $exit) = open_read("$sbo_location/$sbo.SlackBuild");
     unless ($exit) {
       for my $line (<$fh>) {
         $perl_ineligible = 1 if $line =~ /perl (Makefile|Build).PL/;

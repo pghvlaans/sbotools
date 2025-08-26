@@ -1001,17 +1001,10 @@ is non-zero, it returns an error message rather than a file handle.
 # sub for opening files, second arg is like '<','>', etc
 sub open_fh {
   script_error('open_fh requires two arguments') unless @_ == 2;
-  unless ($_[1] eq '>') {
-    if ($< == 0) {
-      -f $_[0] or error_code("open_fh, $_[0] is not a file", _ERR_OPENFH);
-    } else {
-      -f $_[0] or error_code("$_[0] is not a file or the running user lacks permissions.\n\nTry running as root.", _ERR_OPENFH);
-    }
-  }
   my ($file, $op) = @_;
   my $fh;
   unless (open $fh, $op, $file) {
-    my $warn = "Unable to open $file.";
+    my $warn = $< == 0 ? "Unable to open $file." : "Unable to open $file or the running user lacks permissions.\n\nTry running as root.";
     my $exit = _ERR_OPENFH;
     return ($warn, $exit);
   }
@@ -1358,7 +1351,6 @@ The contents are then returned. On error, it returns C<undef>.
 
 sub slurp {
   my $fn = shift;
-  return undef unless -f $fn;
   my ($fh, $exit) = open_read($fn);
   return undef if $exit;
   local $/;

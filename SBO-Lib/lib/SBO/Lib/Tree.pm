@@ -122,7 +122,6 @@ sub get_sbo_locations {
   while (my $line = <$fh>) {
     my ($loc, $sbo) = $line =~ m!LOCATION:\s+\.(/[^/]+/([^/\n]+))$!
       or next;
-    next unless -f "$repo_path$loc/$sbo.info";
     $store{$sbo} = $repo_path . $loc;
     $orig{$sbo} = $store{$sbo};
     push @available, $sbo;

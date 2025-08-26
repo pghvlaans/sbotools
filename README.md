@@ -33,6 +33,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Pkgs.pm: Generate installed package lists only once (unless running from sbotest)
   * Build.pm: Remove obsolete subroutines
   * sbohints: Fix --query when a script both has optional dependencies and is an optional dependency; cleanup
+  * Remove selected file existence checks to reduce lag (on the first run, in particular)
 
 #### 3.8 - 2025-08-14
   * Bugfix: For most compatibility builds and when running in a 32-bit userland reporting a 64-bit kernel, call SlackBuilds with setarch
