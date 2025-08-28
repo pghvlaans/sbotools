@@ -11,11 +11,3 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 ## Prospective Features
 
 Nothing else for now, but requests are welcome and will receive due consideration.
-
-## Incoming for 3.8.1
-
-* Performance improvements
-  * Making queues, especially long ones
-  * Calculating reverse dependencies
-* Proper dependency resolution for i?86 on x86_64 and -compat32
-* Specify both normal and -compat32 builds in sboinstall and sboupgrade

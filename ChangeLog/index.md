@@ -1,5 +1,5 @@
 # ChangeLog
-* Post-Release
+* 3.8.1 - 2025-08-28
   * Replace most grep instances
   * Simplify location finding
   * *Info.pm*: Only attempt repairs on known-bad *info* files

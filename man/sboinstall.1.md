@@ -138,9 +138,11 @@ Do not reuse saved build options if running with **\--nointeractive**.
 
 **-p\|\--compat32**
 
-Create a *compat32* package on multilib x86_64 systems. Any requested
-64-bit only scripts are not queued, and 32-bit only scripts are built
-as-is.
+Create *compat32* packages for each item in the queue on multilib x86_64
+systems. Any requested 64-bit only scripts are not queued, and 32-bit
+only scripts are built as-is. To request both *compat32* and normal
+scripts, run **sboinstall** without **\--compat32** and append
+*-compat32* to the script name, e.g. *libmodplug-compat32*.
 
 This requires the **compat32-tools** package by Eric Hameleers. Please
 note that this operation is not necessarily foolproof, and is

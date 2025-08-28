@@ -193,7 +193,7 @@ If **numeric**, pass to **make** with the **-j** flag.
 
 If **FALSE**, use the default package directory of
 *SBO_HOME/tests/(timestamp)-tests*, e.g.
-*/usr/sbotest/tests/2025-05-31-16:27-tests*. If an **absolute path**,
+*/usr/sbotest/tests/2025-08-28-20:59-tests*. If an **absolute path**,
 save packages built during the test run a timestamp-designated directory
 under that path.
 
@@ -315,7 +315,7 @@ The default value is */usr/sbotest*.
 The default value is *SBO_HOME/tests*. Unless an **absolute path** is
 specified, packages built during the test run are saved to a
 timestamp-designated directory under that path, e.g.
-*/usr/sbotest/tests/2025-05-31-16:27-tests*.
+*/usr/sbotest/tests/2025-08-28-20:59-tests*.
 
 **LOG_DIR**
 
