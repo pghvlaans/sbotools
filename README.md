@@ -21,7 +21,7 @@ This repository is an **sbotools** revival, and was forked from the [pink-mist r
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
 ## Most Recent Changes
-#### Post-Release
+#### 3.8.1 - 2025-08-28
   * Replace most grep instances
   * Simplify location finding
   * Info.pm: Only attempt repairs on known-bad info files
@@ -34,33 +34,6 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Build.pm: Remove obsolete subroutines
   * sbohints: Fix --query when a script both has optional dependencies and is an optional dependency; cleanup
   * Remove selected file existence checks to reduce lag (on the first run, in particular)
-
-#### 3.8 - 2025-08-14
-  * Bugfix: For most compatibility builds and when running in a 32-bit userland reporting a 64-bit kernel, call SlackBuilds with setarch
-  * Repo.pm: Use --no-pager with git-log
-  * sboinstall, sboupgrade: Do not attempt compat32 builds for 64- and 32-bit only scripts
-  * sboinstall, sboupgrade: Filter ineligible compat32 scripts and unsupported or nonexistent scripts from the arguments
-  * Add setting NOWRAP to disable autowrapping sbotools output
-    * Thanks to shamefulCake1 for the request.
-  * Add sbotools color output, and a setting COLOR to enable it
-  * Add /etc/sbotools/sbotools.colors to customize colors
-  * Leave a trailing line more consistently
-  * Add --color and --nocolor options to all scripts except sboconfig
-    * Thanks to SCerovec for the suggestion.
-  * sboinstall: Report package installation time in the reinstall notification
-    * Thanks to shamefulCake1 for the request.
-  * sbofind: Report package installation status
-  * sbocheck: Attempt to report why scripts are out-of-tree
-  * Util.pm: Block /root, /home (and its top-level directories) and / as directory settings and for $TMP
-  * sbocheck: Optionally check all SBO packages for missing shared objects
-  * sboupgrade: Optionally check all SBO packages for relevant missing shared objects
-  * Add setting SO_CHECK to enable automatic shared object checks for sbocheck and sboupgrade
-  * sbocheck: Use --check-package to check a list of packages (SBO or otherwise) for missing shared objects
-  * Add Solibs.pm, a new module for performing shared object checks
-  * Bugfix: Improve interrupt behavior
-  * Bugfix: Fix rationalize_queue
-  * Readme.pm: General clean-up; account for no-README case and using previously-specified options without detected options
-  * sbocheck: Use --check-all-packages to check all packages (SBO or otherwise) for missing shared objects
 
 ## Previous Changes
 See [ChangeLog.md](https://github.com/pghvlaans/sbotools/blob/master/SBO-Lib/ChangeLog.md) for a record of changes from version 1.9 onward.

@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Pkgs 3"
-.TH SBO::Lib::Pkgs 3 "Sweetmorn, Bureaucracy 7, 3191 YOLD" "" "sbotools 3.8"
+.TH SBO::Lib::Pkgs 3 "Setting Orange, Bureaucracy 21, 3191 YOLD" "" "sbotools 3.8.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -107,7 +107,7 @@ SlackBuilds.
 .SS get_installed_packages
 .IX Subsection "get_installed_packages"
 .Vb 1
-\&  my @packages = @{ get_installed_packages($type) };
+\&  my @packages = @{ get_installed_packages($type, $clear) };
 .Ve
 .PP
 \&\f(CWget_installed_packages()\fR returns an array reference to a list of installed packages
@@ -117,6 +117,9 @@ and \f(CW\*(C`ALL\*(C'\fR for all.
 .PP
 The returned array reference holds a list of hash references representing the names,
 versions, full installed package names and creation times of the returned packages.
+.PP
+The default behavior is to retain the package lists for future calls; add a true value
+to the arguments to clear them instead. This is irrelevant when running \f(CW\*(C`sbotest\*(C'\fR.
 .SS get_local_outdated_versions
 .IX Subsection "get_local_outdated_versions"
 .Vb 1
