@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Tree 3"
-.TH SBO::Lib::Tree 3 "Boomtime, Bureaucracy 13, 3191 YOLD" "" "sbotools 3.8"
+.TH SBO::Lib::Tree 3 "Setting Orange, Bureaucracy 21, 3191 YOLD" "" "sbotools 3.8"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -77,7 +77,7 @@ SBO::Lib::Tree \- Routines for interacting with a SlackBuilds.org tree.
 .SS get_all_available
 .IX Subsection "get_all_available"
 .Vb 1
-\&  my $available = get_all_available();
+\&  my @available = get_all_available();
 .Ve
 .PP
 \&\f(CWget_all_available()\fR returns an array of available scripts based on \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR
