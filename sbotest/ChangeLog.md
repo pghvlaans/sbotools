@@ -5,6 +5,7 @@
   * bin/test: Arrange the testing list in build order
   * bin/test: Faster **\--dry-run**
   * bin/test: Cut out repetitive reverse queue calculations for archive rebuilds
+  * bin/test: Fix **\--single** with already-installed packages
 
 #### 1.1 - 2025-08-14
   * bin/test: Report test targets with failures in the build queue separately
