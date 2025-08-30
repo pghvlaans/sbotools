@@ -292,6 +292,16 @@ sub generate_slackbuilds_txt {
       next unless -f "$repo_path/$cat/$package/$package.info";
       print { $fh } "SLACKBUILD NAME: $package\n";
       print { $fh } "SLACKBUILD LOCATION: ./$cat/$package\n";
+      my ($sd_fh, $exit) = open_read("$repo_path/$cat/$package/slack-desc");
+      next if $exit;
+      while (<$sd_fh>) {
+        next unless $_ =~ /^$package:/;
+        chomp(my $disp = $_);
+        $disp =~ s/^$package: //;
+        print { $fh } "SLACKBUILD SHORT DESCRIPTION: $disp\n";
+        last;
+      }
+      close $sd_fh;
     }
     close $cat_dh;
   }

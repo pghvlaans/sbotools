@@ -30,8 +30,8 @@ a given name or names
 
 **sbofind** searches the names of all available SlackBuilds for one or
 more search terms. It reports back any SlackBuilds found along with
-path, version and installation status information. This is akin to
-running
+path, version, installation status information and a short description.
+This is akin to running
 
     cd /usr/ports; make search name=$search_term display=name,path
 

@@ -19,6 +19,7 @@ use sigtrap qw/ handler _caught_signal ABRT INT QUIT TERM /;
 our @EXPORT_OK = qw{
   get_all_available
   get_orig_location
+  get_sbo_description
   get_sbo_location
   get_sbo_locations
   is_local
@@ -47,7 +48,7 @@ SBO::Lib::Tree - Routines for interacting with a SlackBuilds.org tree.
 =cut
 
 # private variables needed by most subroutines
-my (%store, %local, %orig, @available);
+my (%store, %local, %orig, %descriptions, @available);
 my $ran_locations = 0;
 
 =head2 get_all_available
@@ -83,6 +84,25 @@ sub get_orig_location {
   return $orig{$sbo};
 }
 
+=head2 get_sbo_description
+
+  my $description = get_sbo_description($sbo);
+
+C<get_sbo_description()> returns the short description for C<$sbo>. Ensure that either
+C<get_sbo_locations()> or C<get_all_available()> is run before attempting
+C<get_sbo_description()>.
+
+=cut
+
+sub get_sbo_description {
+  script_error('get_sbo_description requires an argument.') unless @_ == 1;
+  script_error('get_sbo_locations or get_all_available must be run before get_sbo_description.') unless $ran_locations;
+  my $sbo = shift;
+  $sbo =~ s/-compat32$//;
+  return $descriptions{$sbo} if exists $descriptions{$sbo};
+  return undef;
+}
+
 =head2 get_sbo_location
 
   my $loc = get_sbo_location($sbo);
@@ -111,6 +131,8 @@ C<get_sbo_locations> finds all SlackBuilds in C<@sbos> and returns a hash matchi
 package name to its location. After C<get_sbo_locations()> has been run for the first time,
 it simply returns the hash again in subsequent calls.
 
+The descriptions hash is populated as well on the first run.
+
 =cut
 
 sub get_sbo_locations {
@@ -120,11 +142,13 @@ sub get_sbo_locations {
   error_code("Failed to open $slackbuilds_txt; exiting.", $exit) if $exit;
 
   while (my $line = <$fh>) {
-    my ($loc, $sbo) = $line =~ m!LOCATION:\s+\.(/[^/]+/([^/\n]+))$!
-      or next;
-    $store{$sbo} = $repo_path . $loc;
-    $orig{$sbo} = $store{$sbo};
-    push @available, $sbo;
+    if (my ($loc, $sbo) = $line =~ m!LOCATION:\s+\.(/[^/]+/([^/\n]+))$!) {
+      $store{$sbo} = $repo_path . $loc;
+      $orig{$sbo} = $store{$sbo};
+      push @available, $sbo;
+    } elsif (my ($pkg, $description) = $line =~ m/DESCRIPTION:\s([\S]+)\s\(([^\n]+)\)$/) {
+      $descriptions{$pkg} = $description;
+    }
   }
   close $fh;
 
@@ -136,6 +160,14 @@ sub get_sbo_locations {
       $store{$sbo} = $loc;
       $local{$sbo} = $local;
       push @available, $sbo unless in $sbo, @available;
+      my ($sd_fh, $sd_exit) = open_read("$loc/slack-desc");
+      next if $sd_exit;
+      while (<$sd_fh>) {
+        next unless my ($description) = $_ =~ m/$sbo:\s$sbo\s\(([^\n]+)\)$/;
+        $descriptions{$sbo} = $description;
+        last;
+      }
+      close $sd_fh;
     }
   }
 

@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_location get_sbo_version is_local on_blacklist build_cmp version_cmp :colors %config @concluded @reverse_concluded $slackbuilds_txt $repo_path @last_level_reverse $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local on_blacklist build_cmp version_cmp :colors %config @concluded @reverse_concluded $slackbuilds_txt $repo_path @last_level_reverse $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay /;
 use Cwd;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
@@ -288,6 +288,7 @@ for my $search (@ARGV) {
 			my $location = $hash->{location};
 			my $version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
 			my $sbo = $hash->{local} ? "Local: " : "SBo:   ";
+			my $description = get_sbo_description($name);
 			say "$sbo $name $version";
 			wrapsay_color $color_warn, "        blacklisted" if on_blacklist($name);
 			wrapsay_color $color_notice, "        $installed_vers->{$name} installed ($installed_times->{$name})" if $installed_times->{$name};
@@ -297,6 +298,7 @@ for my $search (@ARGV) {
 			wrapsay_color $color_lesser, "        CPAN" if in $name, @cpans;
 			wrapsay_color $color_lesser, "        CPAN, file(s) missing" if in $name, @defective_cpans;
 			say "Path:   $location";
+			say "Desc:   $description" if defined $description;
 			say "info:   ". get_file_contents("$location/$name.info") if $show_info;
 			say "README: ". get_file_contents("$location/README") if $show_readme;
 			say "Queue:  ". show_build_queue($name) if $show_queue;

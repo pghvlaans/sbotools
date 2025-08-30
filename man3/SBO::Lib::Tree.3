@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Tree 3"
-.TH SBO::Lib::Tree 3 "Setting Orange, Bureaucracy 21, 3191 YOLD" "" "sbotools 3.8.1"
+.TH SBO::Lib::Tree 3 "Boomtime, Bureaucracy 23, 3191 YOLD" "" "sbotools 3.8.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -92,6 +92,15 @@ in lieu of \f(CWget_sbo_locations()\fR near the start of the script.
 \&\f(CWget_orig_location()\fR returns the location in the SlackBuilds.org tree for the
 given \f(CW$sbo\fR. Ensure that either \f(CWget_sbo_locations()\fR or \f(CWget_all_available()\fR
 is run before attempting \f(CWget_orig_location()\fR.
+.SS get_sbo_description
+.IX Subsection "get_sbo_description"
+.Vb 1
+\&  my $description = get_sbo_description($sbo);
+.Ve
+.PP
+\&\f(CWget_sbo_description()\fR returns the short description for \f(CW$sbo\fR. Ensure that either
+\&\f(CWget_sbo_locations()\fR or \f(CWget_all_available()\fR is run before attempting
+\&\f(CWget_sbo_description()\fR.
 .SS get_sbo_location
 .IX Subsection "get_sbo_location"
 .Vb 1
@@ -110,6 +119,8 @@ or \f(CWget_all_available()\fR is run before attempting \f(CWget_sbo_location()\
 \&\f(CW\*(C`get_sbo_locations\*(C'\fR finds all SlackBuilds in \f(CW@sbos\fR and returns a hash matching each
 package name to its location. After \f(CWget_sbo_locations()\fR has been run for the first time,
 it simply returns the hash again in subsequent calls.
+.PP
+The descriptions hash is populated as well on the first run.
 .SS is_local
 .IX Subsection "is_local"
 .Vb 1
