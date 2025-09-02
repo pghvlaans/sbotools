@@ -16,6 +16,8 @@ _arguments -s \
     	   '(-i --interactive)'{-i,--interactive}'[Ask for confirmation for each item to be removed.]' \
 	   '(--nocolor)'{--nocolor}'[Disable sbotools color output.]:' \
 	   '(--color)'{--color}'[Enable sbotools color output.]:' \
+	   '(--nowrap)'{--nowrap}'[Disable sbotools word wrapping.]:' \
+	   '(--wrap)'{--wrap}'[Enable sbotools word wrapping.]:' \
     && return 0
 
 return 1

@@ -23,7 +23,7 @@ sub _parse_opts {
   my $class = shift;
   my @ARGS = @_;
 
-  my ($help, $vers, $alwaysask, $compat, $nocolor, $color);
+  my ($help, $vers, $alwaysask, $compat, $nocolor, $color, $nowrap, $wrap);
 
   $options_ok = GetOptionsFromArray(
     \@ARGS,
@@ -33,9 +33,11 @@ sub _parse_opts {
     'compat32|p'    => \$compat,
     'nocolor'       => \$nocolor,
     'color'         => \$color,
+    'nowrap'        => \$nowrap,
+    'wrap'          => \$wrap,
   );
 
-  return { help => $help, vers => $vers, alwaysask => $alwaysask, compat => $compat, nocolor => $nocolor, color => $color, args => \@ARGS, };
+  return { help => $help, vers => $vers, alwaysask => $alwaysask, compat => $compat, nocolor => $nocolor, color => $color, nowrap => $nowrap, wrap => $wrap args => \@ARGS, };
 }
 
 sub run {
@@ -48,6 +50,7 @@ sub run {
   }
   if ($self->{vers}) { $self->show_version(); return 0; }
   $config{COLOR} = $self->{color} ? 'TRUE' : 'FALSE' if $self->{color} xor $self->{nocolor};
+  $config{NOWRAP} = $self->{nowrap} ? 'TRUE' : 'FALSE' if $self->{wrap} xor $self->{nowrap};
   if (!@{ $self->{args} }) {
     $self->show_usage();
     usage_error "This is a root-only script." unless $< == 0;

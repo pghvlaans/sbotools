@@ -1,4 +1,4 @@
-_sbocheck() {
+_sbotool() {
   local i cur prev opts cmd
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
@@ -18,7 +18,7 @@ _sbocheck() {
 
   case "${cmd}" in
     sbocheck)
-      opts="-h -v -C -c -g -n -O -X --help --version --color --nocolor --wrap --nowrap --gpg-verify --obsolete-check --nopull --so-check --check-package --check-all-packages"
+      opts="-h -v --help --version"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
@@ -31,7 +31,7 @@ _sbocheck() {
 }
 
 if [[ "${BASH_VERSINFO[0]}" -eq 4 && "${BASH_VERSINFO[1]}" -ge 4 || "${BASH_VERSINFO[0]}" -gt 4 ]]; then
-    complete -F _sbocheck -o nosort -o bashdefault -o default sbocheck
+    complete -F _sbotool -o nosort -o bashdefault -o default sbotool
 else
-    complete -F _sbocheck -o bashdefault -o default sbocheck
+    complete -F _sbotool -o bashdefault -o default sbotool
 fi

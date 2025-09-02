@@ -79,7 +79,19 @@ sboupgrade(1)
 .RS
 Upgrade previously-installed SlackBuilds.
 .RE
-
+.P
+.B
+sbotool
+is a meta-tool providing a frontend based on
+.B
+dialog(1)\fR\
+\&. Many
+.B
+sbotools
+operations can be accomplished through this series of dynamic menus, though calling
+the commands individually from the command line provides superior efficiency and
+fine-tuned option control.
+.P
 By default,
 .B
 sboinstall(1)
@@ -101,7 +113,7 @@ passing
 .B
 --dry-run
 first, which prints the build queue with other information and exits.
-
+.P
 For details about all configuration options in
 .I
 sbotools.conf\fR\
@@ -158,8 +170,11 @@ sboconfig(1)
 or by editing
 .I
 /etc/sbotools/sbotools.conf\fR\
-\&.
-
+\&. The repositiory can also be fetched using
+.B
+sbotool
+if running as root.
+.P
 The default mirror depends on the running version of Slackware. Stable
 releases beyond Slackware 14.1 use the appropriate branch on
 .UR https://gitlab.com/SlackBuilds.org/slackbuilds/
@@ -171,7 +186,7 @@ with the
 .B
 current
 branch. Slackware 14.0 and 14.1 have default rsync mirrors.
-
+.P
 To use an rsync mirror with <rsync://slackbuilds.org/slackbuilds/*/>
 as the default, set
 .B
@@ -186,7 +201,7 @@ setting overrides the default mirror with a git or rsync URL, and
 .B
 GIT_BRANCH
 sets a custom git branch.
-
+.P
 To update the local repository, run
 .B
 sbocheck(1)\fR\
@@ -196,7 +211,7 @@ the
 .I
 _SBo
 tag.
-
+.P
 The simplest way to upgrade all eligible SlackBuilds is to run
 .RS
 
@@ -293,7 +308,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5)
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), dialog(1)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>

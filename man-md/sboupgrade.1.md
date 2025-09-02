@@ -25,7 +25,7 @@
 \
                [-fiopqrz] [--batch|--dry-run] --all|sbo_name (sbo_name)
 
-    sboupgrade [--color|--nocolor] \...
+    sboupgrade [--color|--nocolor] [--wrap|--nowrap] \...
 
 ## DESCRIPTION
 
@@ -253,6 +253,14 @@ Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors
 **\--nocolor**
 
 Turn off **sbotools** color output.
+
+**\--wrap**
+
+Turn on **sbotools** word wrapping (default).
+
+**\--nowrap**
+
+Turn off **sbotools** word wrapping.
 
 ## VARIABLES
 

@@ -13,6 +13,8 @@ _arguments \
     '(-)'{-X,--so-check}'[Check all _SBo packages for missing shared objects only.]:' \
     '(-)'{--nocolor}'[Disable sbotools color output.]:'\
     '(-)'{--color}'[Enable sbotools color output.]:'\
+    '(-)'{--nowrap}'[Disable sbotools word wrapping.]:'\
+    '(-)'{--wrap}'[Enable sbotools word wrapping.]:'\
     && return 0
 
 return 1

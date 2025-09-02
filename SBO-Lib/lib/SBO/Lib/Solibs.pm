@@ -461,6 +461,7 @@ sub update_known_solibs {
   script_error("Getting the ldconfig cache failed. Exiting.") unless @ld_lines;
   undef @native_libs;
   undef @x86_libs;
+  %old_libs = ();
   my $is_x86_64 = $arch eq "x86_64" ? 1 : 0;
   for my $line (@ld_lines) {
     next unless $line =~ m/^\s/;

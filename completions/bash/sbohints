@@ -20,7 +20,7 @@ _sbohints() {
 
   case "${cmd}" in
     sbohints)
-      opts="-h -v --help --version --color --nocolor -b -c -o -O -l -q -r --blacklist --optional --replace-optional --clear --list --query --reverse --reset $REPOLIST"
+      opts="-h -v --help --version --color --nocolor --wrap --nowrap -b -c -o -O -l -q -r --blacklist --optional --replace-optional --clear --list --query --reverse --reset $REPOLIST"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0

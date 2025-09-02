@@ -33,6 +33,8 @@ Options:
     version information.
   --(no)color:
     (do not) use sbotools color output.
+  --(no)wrap:
+    (do not) wrap sbotools output.
   -C|--check-all-packages:
     check all installed packages for missing shared objects.
   -c|--check-package:
@@ -49,9 +51,9 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $pkg_check, $full_check);
+my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $pkg_check, $full_check, $nowrap, $wrap);
 
-GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check);
+GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'nowrap' => \$nowrap, 'wrap' => \$wrap, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check);
 
 if ($help) {
 	show_usage();
@@ -60,6 +62,7 @@ if ($help) {
 }
 if ($vers) { show_version(); exit 0 }
 $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
+$config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $nowrap xor $wrap;
 if ($< != 0) { $config{GPG_VERIFY} = "FALSE"; }
 unless ($< == 0 or ($nopull and not $gpg) or $socheck or $pkg_check or $full_check) {
 	show_usage();

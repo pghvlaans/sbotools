@@ -10,7 +10,7 @@ sboremove [-h|-v]
 .P
 sboremove [-ap] sbo_name (sbo_name)
 .P
-sboremove [--color|--nocolor] ...
+sboremove [--color|--nocolor] [--wrap|--nowrap] ...
 .SH DESCRIPTION
 .P
 .B
@@ -119,6 +119,24 @@ Turn off
 .B
 sbotools
 color output.
+.RE
+.P
+.B
+--wrap
+.RS
+Turn on
+.B
+sbotools
+word wrapping (default).
+.RE
+.P
+.B
+--nowrap
+.RS
+Turn off
+.B
+sbotools
+word wrapping.
 .RE
 .SH EXIT CODES
 .P

@@ -5,10 +5,16 @@
 _arguments \
     '(-)'{-h,--help}'[Show help.]:' \
     '(-)'{-v,--version}'[Show version.]:' \
+    '(-)'{-C,--check-all-packages}'[Check all installed packages for missing shared objects only.]:' \
+    '(-)'{-c,--check-package}'[Check a list of package names for missing shared objects only.]:' \
     '(-)'{-g,--gpg-verify}'[Verify with gpg.]:' \
+    '(-)'{-O,--obsolete-check}'[In -current, download the obsolete scripts list.]:' \
     '(-)'{-n,--nopull}'[Check for updates without updating the tree.]:' \
-    '(-)'{--nocolor}'[Disable sbotools color output.]:' \
-    '(-)'{--color}'[Enable sbotools color output.]:' \
+    '(-)'{-X,--so-check}'[Check all _SBo packages for missing shared objects only.]:' \
+    '(-)'{--nocolor}'[Disable sbotools color output.]:'\
+    '(-)'{--color}'[Enable sbotools color output.]:'\
+    '(-)'{--nowrap}'[Disable sbotools word wrapping.]:'\
+    '(-)'{--wrap}'[Enable sbotools word wrapping.]:'\
     && return 0
 
 return 1

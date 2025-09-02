@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Info 3"
-.TH SBO::Lib::Info 3 "Setting Orange, Bureaucracy 21, 3191 YOLD" "" "sbotools 3.8.1"
+.TH SBO::Lib::Info 3 "Setting Orange, Bureaucracy 26, 3191 YOLD" "" "sbotools 3.8.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -90,6 +90,16 @@ SBO::Lib::Info \- Utilities to get data from SBo info files.
 .PP
 \&\f(CWcheck_x64()\fR returns a true value if the SlackBuild in \f(CW$location\fR considers
 32\-bit builds \f(CW\*(C`UNTESTED\*(C'\fR or \f(CW\*(C`UNSUPPORTED\*(C'\fR and false otherwise.
+.SS clear_info_store
+.IX Subsection "clear_info_store"
+.Vb 1
+\&  clear_info_store();
+.Ve
+.PP
+\&\f(CWclear_info_store()\fR clears the info store so that new values can be retrieved.
+Due to the potential performance impact, it should run only when operations must
+span changes to the local repository, which can happen in \f(CWsbotool(1)\fR. There
+is no useful return value.
 .SS fix_info
 .IX Subsection "fix_info"
 .Vb 1

@@ -5,10 +5,7 @@
 # sbohints
 # script to modify the blacklist and optional dependencies
 #
-# authors: Jacob Pipkin <j@dawnrazor.net>
-#          Luke Williams <xocel@iquidus.org>
-#          Andreas Guldstrand <andreas.guldstrand@gmail.com>
-# maintainer: K. Eugene Carlson <kvngncrlsn@gmail.com>
+# author: K. Eugene Carlson <kvngncrlsn@gmail.com>
 # license: MIT License
 
 use 5.16.0;
@@ -33,6 +30,8 @@ Options:
     version information.
   --(no)color:
     (do not) use sbotools color output.
+  --(no)wrap:
+    (do not) wrap sbotools output.
   -l|--list:
     show current blacklist and optional dependencies.
   -q|--query:
@@ -58,7 +57,7 @@ Options:
 EOF
 }
 
-my ($help, $version, $list, $reset, $reverse, $optional, $replace_optional, $blacklist, $clear, $query, $nocolor, $color);
+my ($help, $version, $list, $reset, $reverse, $optional, $replace_optional, $blacklist, $clear, $query, $nocolor, $color, $nowrap, $wrap);
 
 GetOptions(
 	'help|h'              => \$help,
@@ -73,6 +72,8 @@ GetOptions(
 	'blacklist|b'         => \$blacklist,
 	'nocolor'             => \$nocolor,
 	'color'               => \$color,
+	'nowrap'              => \$nowrap,
+	'wrap'                => \$wrap,
 );
 
 if ($help) {
@@ -82,6 +83,7 @@ if ($help) {
 }
 if ($version) { show_version(); exit 0; }
 $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
+$config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $wrap xor $nowrap;
 unless ($< == 0 or $list or $query) {
 	show_usage();
 	usage_error "\nNon-root users can call $label with -l, -q, -h and -v.";

@@ -11,6 +11,8 @@ _arguments \
     '(-)'{-v,--version}'[Show version]:' \
     '(-)'{--nocolor}'[Disable sbotools color output.]:' \
     '(-)'{--color}'[Enable sbotools color output.]:' \
+    '(-)'{--nowrap}'[Disable sbotools word wrapping.]:' \
+    '(-)'{--wrap}'[Enable sbotools word wrapping.]:' \
     - commands \
     '(-a --alwaysask)'{-a,--alwaysask}'[Always ask to remove requirements (even if required by installed packages).]' \
     '(-p --compat32)'{-p,--compat32}'[Remove compat32 scripts only.]' \

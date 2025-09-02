@@ -295,9 +295,11 @@ sub generate_slackbuilds_txt {
       my ($sd_fh, $exit) = open_read("$repo_path/$cat/$package/slack-desc");
       next if $exit;
       while (<$sd_fh>) {
-        next unless $_ =~ /^$package:/;
+        my $search_package = $package;
+        $search_package =~ s/\+/\\+/;
+        next unless $_ =~ /^$search_package:/;
         chomp(my $disp = $_);
-        $disp =~ s/^$package: //;
+        $disp =~ s/^$search_package: //;
         print { $fh } "SLACKBUILD SHORT DESCRIPTION: $disp\n";
         last;
       }

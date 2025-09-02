@@ -33,6 +33,8 @@ Options:
     version information.
   --(no)color:
     (do not) use sbotools color output.
+  --(no)wrap:
+    (do not) wrap sbotools output.
   -A|--all-reverse:
     show all reverse dependencies in the repo.
   -E|--exact-case:
@@ -53,6 +55,8 @@ Options:
     show any installed reverse dependencies.
   -T|--top-reverse
     show the last level of reverse dependencies.
+  --raw
+    print matching package names only, alphabetized.
 
 Examples:
   $label regedit
@@ -61,7 +65,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue, $all_reverse, $last_reverse, $first_reverse, $nocolor, $color);
+my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue, $all_reverse, $last_reverse, $first_reverse, $nocolor, $color, $raw, $nowrap, $wrap);
 
 GetOptions(
 	'help|h'    => \$help,
@@ -78,12 +82,16 @@ GetOptions(
 	'first-reverse|F' => \$first_reverse,
 	'nocolor' => \$nocolor,
 	'color' => \$color,
+	'raw' => \$raw,
+	'nowrap' => \$nowrap,
+	'wrap' => \$wrap,
 );
 
 if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
 
 $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
+$config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $color xor $nocolor;
 lint_sbo_config($self, %config);
 
 if (!@ARGV) { show_usage(); exit 1 }
@@ -96,6 +104,8 @@ my @available = get_all_available();
 my (@installed, $installed_times, $installed_vers, @installed_std, $std_times, $std_vers);
 # these will be used later in case of reverse dependency searches
 my ($available, $all_fulldeps, $installed, $fulldeps);
+# this is relevant only in --raw mode
+my @raw_printout;
 
 # get lists of installed and defective CPAN modules
 my (@cpans, @defective_cpans);
@@ -256,7 +266,7 @@ sub first_level_reverse {
 }
 
 my $notfound = 0;
-for my $search (@ARGV) {
+SEARCH: for my $search (@ARGV) {
 	unless ($std_vers) {
 		@installed = @{ get_installed_packages('SBO') };
 		$installed_times = +{ map {; $_->{name}, $_->{created} } @installed };
@@ -267,6 +277,12 @@ for my $search (@ARGV) {
 	}
 
 	my $findings = perform_search($search);
+
+	if ($raw) {
+		next SEARCH unless exists $$findings[0];
+		push @raw_printout, $_->{name} for @$findings;
+		next SEARCH;
+	}
 
 	# pretty formatting
 	if (exists $$findings[0]) {
@@ -316,4 +332,9 @@ for my $search (@ARGV) {
 	}
 }
 
-END { say "" if $notfound or $?; }
+if (@raw_printout) {
+	@raw_printout = sort(uniq(@raw_printout));
+	print join(" ", @raw_printout);
+}
+
+END { say "" if not $raw and ($notfound or $?); }

@@ -37,6 +37,8 @@ Options (defaults shown first where applicable):
     version information.
   --(no)color:
     (do not) use sbotools color output.
+  --(no)wrap:
+    (do not) wrap sbotools output.
   -c|--noclean (FALSE|TRUE):
     if TRUE, do not clean working directories after building.
   -D|--dry-run:
@@ -80,7 +82,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $noclean, $distclean, $pkg_dir, $log_dir, $etc_profile, $gpg, $series_rebuild, $jobs, $nocolor, $color);
+my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $noclean, $distclean, $pkg_dir, $log_dir, $etc_profile, $gpg, $series_rebuild, $jobs, $nocolor, $color, $wrap, $nowrap);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -106,6 +108,8 @@ my $options_ok = GetOptions(
 	'series-rebuild=s'  => \$series_rebuild,
 	'nocolor'           => \$nocolor,
 	'color'             => \$color,
+	'nowrap'            => \$nowrap,
+	'wrap'              => \$wrap,
 );
 
 if ($help) {
@@ -115,6 +119,7 @@ if ($help) {
 }
 if ($vers) { show_version(); exit 0; }
 $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
+$config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $wrap xor $nowrap;
 unless ($< == 0 or $dry_run) {
 	show_usage();
 	usage_error "\nNon-root users can call $self with -D, -v and -h.";

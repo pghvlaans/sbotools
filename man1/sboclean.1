@@ -12,7 +12,7 @@ sboclean [-h|-v]
 .P
 sboclean [-dwi] [-o ALL|package]
 .P
-sboclean [--color|--nocolor] ...
+sboclean [--color|--nocolor] [--wrap|--nowrap] ...
 .SH DESCRIPTION
 .P
 .B
@@ -159,6 +159,24 @@ Turn off
 .B
 sbotools
 color output.
+.RE
+.P
+.B
+--wrap
+.RS
+Turn on
+.B
+sbotools
+word wrapping (default).
+.RE
+.P
+.B
+--nowrap
+.RS
+Turn off
+.B
+sbotools
+word wrapping.
 .RE
 .SH EXIT CODES
 .P

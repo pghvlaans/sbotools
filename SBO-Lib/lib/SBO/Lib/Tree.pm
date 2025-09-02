@@ -23,6 +23,7 @@ our @EXPORT_OK = qw{
   get_sbo_location
   get_sbo_locations
   is_local
+  renew_sbo_locations
 };
 
 our %EXPORT_TAGS = (
@@ -62,7 +63,10 @@ in lieu of C<get_sbo_locations()> near the start of the script.
 =cut
 
 sub get_all_available {
-  return 0 unless -s $slackbuilds_txt;
+  unless (-s $slackbuilds_txt) {
+    $ran_locations = 1;
+    return 0;
+  }
   get_sbo_locations() unless $ran_locations;
   return @available;
 }
@@ -81,6 +85,7 @@ sub get_orig_location {
   script_error('get_orig_location requires an argument.') unless @_ == 1;
   script_error('get_sbo_locations or get_all_available must be run before get_orig_location.') unless $ran_locations;
   my $sbo = shift;
+  $sbo =~ s/-compat32//;
   return $orig{$sbo};
 }
 
@@ -191,6 +196,28 @@ sub is_local {
   # Make sure we have checked for the slackbuild in question:
   get_sbo_location($sbo);
   return !!$local{$sbo};
+}
+
+=head2 renew_sbo_locations
+
+  my %locations = renew_sbo_locations();
+
+C<renew_sbo_locations()> clears all location- and description-related hashes
+and the available script array. It then runs C<get_sbo_locations()> and returns
+the new locations hash.
+
+=cut
+
+sub renew_sbo_locations {
+  %store = ();
+  %local = ();
+  %orig = ();
+  %descriptions = ();
+  splice @available if @available;
+  $ran_locations = 0;
+
+  get_sbo_locations();
+  return %store;
 }
 
 =head1 EXIT CODES

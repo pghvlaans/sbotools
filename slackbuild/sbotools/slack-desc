@@ -10,8 +10,8 @@ sbotools: sbotools (ports-like interface to SlackBuilds.org)
 sbotools:
 sbotools: sbotools is a set of Perl scripts providing a ports-like automation
 sbotools: interface to SlackBuilds.org. Features include dependency handling,
-sbotools: using a custom git branch, generating 32-bit and compat32 builds on
-sbotools: multilib systems, batch mode, gpg verification and more.
+sbotools: using a custom git branch, generating 32-bit and compat32 builds,
+sbotools: batch mode, gpg verification, a dialog frontend and more.
 sbotools:
 sbotools: Homepage: https://pghvlaans.github.io/sbotools/
 sbotools: Original Author: Jacob Pipkin

@@ -20,6 +20,8 @@ _arguments -s \
 	   '(-)'{-v,--version}'[Show version information.]:' \
 	   '(-)'{--nocolor}'[Disable sbotools color output.]:' \
 	   '(-)'{--color}'[Enable sbotools color output.]:' \
+	   '(-)'{--nowrap}'[Disable sbotools word wrapping.]:' \
+	   '(-)'{--wrap}'[Enable sbotools word wrapping.]:' \
 	   - commands \
 	   '(-A --all-reverse)'{-A,--all-reverse}'[Show all reverse dependencies in the repo.]' \
 	   '(-E --exact-case)'{-E,--exact-case}'[Only exact matching (case-sensitive).]' \
@@ -31,6 +33,7 @@ _arguments -s \
 	   '(-r --readme)'{-r,--readme}'[Show the contents of the README file for each SlackBuild found.]' \
 	   '(-q --queue)'{-q,--queue}'[Show the build queue for each SlackBuild found.]' \
 	   '(-T --top-reverse)'{-T,--top-reverse}'[Show the last level of reverse dependencies.]' \
+	   '(--raw)'{--raw}'[Print a list of matching names only.]' \
 	   '(-)*:SBo SlackBuild:(${slackbuilds:|words})' \
     && return 0
 

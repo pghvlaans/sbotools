@@ -14,7 +14,7 @@ sbohints [-c] [-Obor] sbo_name (sbo_name)
 .P
 sbohints [-q] sbo_name (sbo_name)
 .P
-sbohints [--color|--nocolor] ...
+sbohints [--color|--nocolor] [--wrap|--nowrap] ...
 .SH DESCRIPTION
 .P
 .B
@@ -236,6 +236,24 @@ Turn off
 .B
 sbotools
 color output.
+.RE
+.P
+.B
+--wrap
+.RS
+Turn on
+.B
+sbotools
+word wrapping (default).
+.RE
+.P
+.B
+--nowrap
+.RS
+Turn off
+.B
+sbotools
+word wrapping.
 .RE
 .SH SBOTEST
 .B

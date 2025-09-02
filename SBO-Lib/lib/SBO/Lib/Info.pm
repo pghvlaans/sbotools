@@ -19,6 +19,7 @@ use sigtrap qw/ handler _caught_signal ABRT INT QUIT TERM /;
 our @EXPORT_OK = qw{
   check_x32
   check_x64
+  clear_info_store
   fix_info
   get_download_info
   get_from_info
@@ -89,6 +90,22 @@ sub check_x64 {
   my $location = shift;
   my $dl = get_from_info(LOCATION => $location, GET => 'DOWNLOAD');
   return $$dl[0] =~ /UN(SUPPOR|TES)TED/ ? 1 : 0;
+}
+
+=head2 clear_info_store
+
+  clear_info_store();
+
+C<clear_info_store()> clears the info store so that new values can be retrieved.
+Due to the potential performance impact, it should run only when operations must
+span changes to the local repository, which can happen in C<sbotool(1)>. There
+is no useful return value.
+
+=cut
+
+sub clear_info_store {
+  %store = ();
+  return;
 }
 
 =head2 fix_info

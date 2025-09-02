@@ -11,7 +11,7 @@ sboupgrade [-h|-v]
 sboupgrade [-SXcbde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-fiopqrz] [--batch|--dry-run] --all|sbo_name (sbo_name)
 .P
-sboupgrade [--color|--nocolor] ...
+sboupgrade [--color|--nocolor] [--wrap|--nowrap] ...
 .SH DESCRIPTION
 .P
 .B
@@ -623,6 +623,24 @@ Turn off
 .B
 sbotools
 color output.
+.RE
+.P
+.B
+--wrap
+.RS
+Turn on
+.B
+sbotools
+word wrapping (default).
+.RE
+.P
+.B
+--nowrap
+.RS
+Turn off
+.B
+sbotools
+word wrapping.
 .RE
 .SH VARIABLES
 .P

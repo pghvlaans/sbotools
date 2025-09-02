@@ -20,7 +20,7 @@ _sboupgrade() {
 
   case "${cmd}" in
     sboupgrade)
-      opts="-h -v -b -c -D -d -e -f -i -j -k -L -p -o -q -r -z -S -X --all --help --version --color --nocolor --build-ignore --noclean --compat32 --distclean --etc-profile --force --noinstall --jobs --pkg_dir --log-dir --norecall --nointeractive --force-reqs --reverse-rebuild --strict-upgrades --batch --dry-run --so-check $REPOLIST"
+      opts="-h -v -b -c -D -d -e -f -i -j -k -L -p -o -q -r -z -S -X --all --help --version --color --nocolor --wrap --nowrap --build-ignore --noclean --compat32 --distclean --etc-profile --force --noinstall --jobs --pkg_dir --log-dir --norecall --nointeractive --force-reqs --reverse-rebuild --strict-upgrades --batch --dry-run --so-check $REPOLIST"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
@@ -38,7 +38,7 @@ _sboupgrade() {
           COMPREPLY=( $(compgen -W "FALSE TRUE" -- "${cur}") )
           return 0
           ;;
-        -f|--force|-i|--noinstall|-r|--nointeractive|-z|--force-reqs|-q|--reverse-rebuild|-o|--norecall|--batch|-D|--dry-run|-p|--compat32|--color|--nocolor)
+        -f|--force|-i|--noinstall|-r|--nointeractive|-z|--force-reqs|-q|--reverse-rebuild|-o|--norecall|--batch|-D|--dry-run|-p|--compat32|--color|--nocolor|--wrap|--nowrap)
           COMPREPLY=( $(compgen -W "$REPOLIST" -- "${cur}") )
           return 0
           ;;

@@ -21,7 +21,7 @@ sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
 sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-Dioqr] [--create-template FILE] --series-rebuild SERIES
 .P
-sboinstall [--color|--nocolor] ...
+sboinstall [--color|--nocolor] [--wrap|--nowrap] ...
 .SH DESCRIPTION
 .P
 .B
@@ -705,6 +705,24 @@ Turn off
 .B
 sbotools
 color output.
+.RE
+.P
+.B
+--wrap
+.RS
+Turn on
+.B
+sbotools
+word wrapping (default).
+.RE
+.P
+.B
+--nowrap
+.RS
+Turn off
+.B
+sbotools
+word wrapping.
 .RE
 .SH VARIABLES
 .P

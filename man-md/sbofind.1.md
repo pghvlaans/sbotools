@@ -24,7 +24,9 @@ a given name or names
 
     sbofind [-AEFRTeiqrt] search_term (search_term)
 
-    sbofind [--color|--nocolor] \...
+    sbofind [--color|--nocolor] [--wrap|--nowrap] \...
+
+    sbofind [--raw] \...
 
 ## DESCRIPTION
 
@@ -92,6 +94,12 @@ Show the contents of the *README* file for each SlackBuild found.
 Show the top-level reverse dependencies, installed or not, for one or
 more scripts.
 
+**\--raw**
+
+Print a space-delineated list of matches in alphabetical order without a
+newline. All options not related to search results, such as
+**\--exact**, are effectively ignored.
+
 **-h\|\--help**
 
 Show help information.
@@ -107,6 +115,14 @@ Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors
 **\--nocolor**
 
 Turn off **sbotools** color output.
+
+**\--wrap**
+
+Turn on **sbotools** word wrapping (default).
+
+**\--nowrap**
+
+Turn off **sbotools** word wrapping.
 
 ## SBOTEST
 

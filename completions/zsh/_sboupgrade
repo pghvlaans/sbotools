@@ -11,6 +11,8 @@ _arguments -s -C \
 	   '(-)'{-v,--version}'[Show version information.]:' \
 	   '(-)'{--nocolor}'[Disable sbotools color output.]:' \
 	   '(-)'{--color}'[Enable sbotools color output.]:' \
+	   '(-)'{--nowrap}'[Disable sbotools word wrapping.]:' \
+	   '(-)'{--wrap}'[Enable sbotools word wrapping.]:' \
 	   - commands \
 	   '(${sboupdates})--all[Upgrade all from sbocheck.]' \
 	   '(-b --build-ignore)'{-b,--build-ignore}'[If TRUE, then only do upgrades if the version number differs.]:ignore build number?:((TRUE\:"Version upgrades only" FALSE\:"Script bump upgrades"))' \

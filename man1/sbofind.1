@@ -13,7 +13,9 @@ sbofind [-h|-v]
 .P
 sbofind [-AEFRTeiqrt] search_term (search_term)
 .P
-sbofind [--color|--nocolor] ...
+sbofind [--color|--nocolor] [--wrap|--nowrap] ...
+.P
+sbofind [--raw] ...
 .SH DESCRIPTION
 .P
 .B
@@ -135,6 +137,17 @@ for one or more scripts.
 .RE
 .P
 .B
+--raw
+.RS
+Print a space-delineated list of matches in alphabetical order
+without a newline. All options not related to search results,
+such as
+.B
+--exact\fR\
+\&, are effectively ignored.
+.RE
+.P
+.B
 -h|--help
 .RS
 Show help information.
@@ -165,6 +178,24 @@ Turn off
 .B
 sbotools
 color output.
+.RE
+.P
+.B
+--wrap
+.RS
+Turn on
+.B
+sbotools
+word wrapping (default).
+.RE
+.P
+.B
+--nowrap
+.RS
+Turn off
+.B
+sbotools
+word wrapping.
 .RE
 .SH SBOTEST
 .B

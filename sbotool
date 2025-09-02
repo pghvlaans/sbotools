@@ -1,0 +1,981 @@
+#!/usr/bin/perl
+# vim: ts=4:noet
+#
+# sbotool
+# a dialog-based front-end for sbotools
+#
+# author: K. Eugene Carlson <kvngncrlsn@gmail.com>
+# license: MIT License
+
+use strict;
+use warnings;
+
+use SBO::Lib qw/ :colors :config :const auto_reverse clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_reverse_reqs get_sbo_description get_sbo_location in in_regexp is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp solib_check uniq update_known_solibs @concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt /;
+
+use File::Basename;
+use File::Find;
+use File::Path qw/ remove_tree /;
+use File::Temp qw/ tempdir /;
+use Getopt::Long qw/ :config no_ignore_case_always /;
+
+my $self = basename $0;
+
+my ($help, $show_version);
+GetOptions( 'help|h' => \$help, 'version|v' => \$show_version, );
+if ($help) { show_usage(); exit 0; }
+if ($show_version) { show_version(); exit 0; }
+
+lint_sbo_config($self, %config);
+
+my $version = $SBO::Lib::VERSION;
+my $backtitle = "sbotools-$version";
+$backtitle = $< == 0 ? "$backtitle (root mode)" : "$backtitle (normal user mode)";
+my $dialog_prefix = "/usr/bin/dialog --keep-window --exit-label \"Back\" --backtitle \"$backtitle\"";
+system("$dialog_prefix --infobox \"Loading...\" 3 15");
+
+my $overrides_available = 1 if $config{LOCAL_OVERRIDES} ne "FALSE" and -d -w $config{LOCAL_OVERRIDES};
+
+my $wide = 85;
+my $normal = 75;
+my $narrow = 65;
+# Used below in calculate_height().
+my $max_height = 23;
+
+my $editor = $ENV{EDITOR};
+$editor = $ENV{VISUAL} unless $editor;
+# vi is in the POSIX standard and emacs, nano, etc. are not.
+# That's the only reason.
+$editor = "vi" unless $editor;
+
+my (@available, $available, $all_fulldeps, @installed, $inst_pkgs, $inst_vers, %inst_names, $inst_vers_std, %inst_names_std, $fulldeps, @installed_std, $updates, @update_names, @overrides);
+
+# Finding as much of this stuff as possible at the start
+# gets the cache going a little and makes navigation snappier
+# afterwards. "Loading..." takes less time after the first run.
+if (-s $slackbuilds_txt) {
+	@available = get_all_available();
+	$available = +{ map {; $_, $_ } @available };
+	for (@available) { push @overrides, $_ if is_local($_); }
+	$all_fulldeps = get_reverse_reqs($available);
+	@installed = @{ get_installed_packages('SBO') };
+	$inst_pkgs = +{ map {; $_->{name}, $_->{pkg} } @installed };
+	$inst_vers = +{ map {; $_->{name}, $_->{version} } @installed };
+	$inst_names{$_->{name}} = $_ for @installed;
+	$fulldeps = get_reverse_reqs($inst_pkgs);
+	@installed_std = @{ get_installed_packages('STD') };
+	$inst_names_std{$_->{name}} = $_ for @installed_std;
+	$inst_vers_std = +{ map {; $_->{name}, $_->{version} } @installed_std };
+	$updates = $config{BUILD_IGNORE} eq "TRUE" ? get_available_updates("VERS") : get_available_updates("BOTH");
+	if ($updates) {
+		for (@$updates) { push @update_names, $_->{name} unless on_blacklist $_->{name}; }
+	}
+}
+
+my $tempdir = tempdir(CLEANUP => 1, DIR => "/tmp");
+my $dialog_input = "$tempdir/dialog_input";
+my $dialog_output = "$tempdir/dialog_output";
+my $command_output = "$tempdir/command_output";
+
+display_main();
+
+# Once a script has been selected, build a menu of available
+# operations and carry out the user's choice.
+sub build_operations {
+	my $sbo = shift;
+	unlink $dialog_output;
+	splice @concluded;
+	splice @reverse_concluded;
+	unlink $command_output;
+	my $location = get_sbo_location($sbo);
+	my $sbo_version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
+	my $description = get_sbo_description($sbo);
+	my $msg = "$sbo $sbo_version\n$description";
+	$msg .= "\nFound in local overrides." if is_local($sbo);
+	$msg .= "\nBlacklisted." if on_blacklist($sbo);
+	$msg .= "\nInstalled. ($inst_vers->{$sbo})" if $inst_names{$sbo};
+	$msg .= "\nInstalled, non-SBo. ($inst_vers_std->{$sbo})" if $inst_names_std{$sbo};
+	$msg .= "\n\nRun as root for more functions." unless $< == 0;
+
+	my @installed_reverse = get_full_reverse($sbo, $inst_pkgs, $fulldeps);
+	my @available_reverse = get_full_reverse($sbo, $available, $all_fulldeps);
+
+	my @build_operations;
+	push @build_operations, "\"View File\" \"View any file in the script directory.\" \\";
+	push @build_operations, "\"RevDep (installed)\" \"Dependent packages on the system.\" \\" if @installed_reverse;
+	push @build_operations, "\"RevDep (all)\" \"All dependent packages in the repo.\" \\" if @available_reverse;
+	if (on_blacklist($sbo) or auto_reverse($sbo) or get_optional($sbo) and $< != 0) {
+		push @build_operations, "\"Hints\" \"View package hints.\" \\";
+	}
+	unless (on_blacklist($sbo)) {
+		push @build_operations, "\"Queue\" \"See the build queue.\" \\";
+		push @build_operations, "\"Dry Run (reverse rebuild)\" \"How reverse dependencies would be rebuilt.\" \\" if $inst_names{$sbo} and @installed_reverse;
+		unless ($inst_names_std{$sbo}) {
+			my $built_or_upgraded = "upgraded" if in $sbo, @update_names;
+			$built_or_upgraded = $inst_names{$sbo} ? "rebuilt" : "built" unless $built_or_upgraded;
+			push @build_operations, "\"Dry Run\" \"How this package would be $built_or_upgraded.\" \\";
+		}
+	}
+	push @build_operations, "\"Add to Local Overrides\" \"Make a local override copy for editing.\" \\" if $overrides_available and not is_local($sbo);
+	if (is_local($sbo) and $overrides_available) {
+		push @build_operations, "\"Edit Override File\" \"\\\$EDITOR, \\\$VISUAL or vi, in that order.\" \\",
+							"\"Remove from Overrides\" \"Delete this directory from Local Overrides.\" \\";
+	}
+	push @build_operations, "\"Shared Object Check\" \"Check for missing solib dependencies.\" \\" if $inst_names{$sbo} or $inst_names_std{$sbo};
+	push @build_operations, "\"Edit Hints\" \"Blacklist, auto-rebuild and dependencies.\" \\" if $< == 0;
+	if ($inst_names{$sbo} and $< == 0) {
+		push @build_operations, "\"Remove\" \"Remove with unneeded dependencies.\" \\",
+							"\"Reinstall\" \"Reinstall the package and its dependencies.\" \\";
+		if (in $sbo, @update_names) {
+			push @build_operations, "\"Upgrade\" \"Upgrade the package.\" \\";
+			push @build_operations, "\"Upgrade (reverse rebuild)\" \"Upgrade and rebuild rev. dep.\" \\" if @installed_reverse;
+		} else {
+			push @build_operations, "\"Reverse Rebuild\" \"Rebuild all reverse dependencies.\" \\" if @installed_reverse;
+		}
+	} elsif ($< == 0 and not $inst_names_std{$sbo}) {
+		push @build_operations, "\"Install\" \"Install the package.\" \\";
+	}
+	@build_operations = sort @build_operations;
+	push @build_operations, "\"\" \"\" \\", "\"Main\" \"Return to Main Menu\"";
+	my $build_operations = join "\n", @build_operations;
+	my $height = calculate_height($build_operations, $msg);
+
+	system("$dialog_prefix --title \"$sbo Operations\" --menu \"$msg\" $height $wide $height $build_operations 2> $dialog_output");
+	chomp(my $option = slurp $dialog_output);
+	return unless $option;
+
+	if ($option eq "Main") { display_main(); }
+
+	if ($option eq "Add to Local Overrides") {
+		unless (-l "$config{LOCAL_OVERRIDES}/$sbo" or -f "$config{LOCAL_OVERRIDES}/$sbo" or is_local $sbo) {
+			make_path("$config{LOCAL_OVERRIDES}") unless -d $config{LOCAL_OVERRIDES};
+			system("cp -r $location $config{LOCAL_OVERRIDES}") unless -l "$config{LOCAL_OVERRIDES}/$sbo" or -f "$config{LOCAL_OVERRIDES}/$sbo" or is_local $sbo;
+			clear_info_store();
+			new_package_information();
+		}
+		if (-l "$config{LOCAL_OVERRIDES}/$sbo" or -f "$config{LOCAL_OVERRIDES}/$sbo") {
+			$height = calculate_height("Non-directory\n\nAdd");
+			system("$dialog_prefix --ok-label \"Back\" --msgbox \"A non-directory exists at $config{LOCAL_OVERRIDES}/$sbo.\n\nRemove it before adding $sbo to Local Overrides.\" $height $normal");
+		}
+	}
+
+	if ($option eq "Dry Run" or $option eq "Dry Run (reverse rebuild)") {
+		unlink $command_output;
+		if ($option eq "Dry Run (reverse rebuild)") {
+			system("/usr/sbin/sboinstall --wrap --nocolor -D --reverse-rebuild $sbo > $command_output");
+		} else {
+			if (in $sbo, @update_names) {
+				system("/usr/sbin/sboupgrade --wrap --nocolor -D $sbo > $command_output");
+			} elsif ($inst_names{$sbo}) {
+				system("/usr/sbin/sboinstall --reinstall --wrap --nocolor -D $sbo > $command_output");
+			} else {
+				system("/usr/sbin/sboinstall --wrap --nocolor -D $sbo > $command_output");
+			}
+		}
+		my $check = slurp $command_output;
+		if ($check =~ /\w/) {
+			$height = calculate_height($check);
+			system("$dialog_prefix --title \"$sbo: Dry Run\" --textbox $command_output $height $normal");
+		}
+	}
+
+	if ($option eq "Edit Hints") { edit_hint($sbo); }
+
+	if ($option eq "Hints") {
+		unlink $command_output;
+		system("/usr/sbin/sbohints --wrap --nocolor -q $sbo > $command_output");
+		my $check = slurp $command_output;
+		if ($check =~ /\w/) {
+			$height = calculate_height($check);
+			system("$dialog_prefix --title \"$sbo: Hints\" --textbox $command_output $height $normal");
+		} else {
+			$height = calculate_height("No hints found.");
+			system("$dialog_prefix --ok-label \"Back\" --msgbox \"No hints found for $sbo.\" $height $normal");
+		}
+	}
+
+	if ($option eq "Install" or $option eq "Reinstall" or $option eq "Remove" or $option eq "Reverse Rebuild") {
+		my $cmd = "/usr/sbin/sboinstall";
+		$cmd .= " --reinstall" if $option eq "Reinstall";
+		$cmd .= " --reverse-rebuild" if $option eq "Reverse Rebuild";
+		$cmd .= " $sbo";
+		$cmd = $option eq "Remove" ? "/usr/sbin/sboremove $sbo" : $cmd;
+		run_command($cmd, $sbo);
+	}
+
+	if ($option eq "Queue") {
+		my ($queue, %warnings);
+		$queue = get_build_queue([$sbo], \%warnings);
+		my $disp_queue = join "\n", @$queue;
+		my $fh;
+		open $fh, ">", $dialog_output or exit _ERR_OPENFH;
+		print {$fh} $disp_queue;
+		close $fh;
+		$height = calculate_height($disp_queue);
+		system("$dialog_prefix --title \"$sbo: Queue\" --textbox $dialog_output $height $normal");
+	}
+
+	if ($option eq "Remove from Overrides") {
+		$height = calculate_height("Remove?");
+		my $res = system("$dialog_prefix --yesno \"Remove $sbo from the Local Overrides directory?\" $height $normal") == 0;
+		if ($res) {
+			remove_tree($location);
+			clear_info_store();
+			new_package_information();
+		}
+	}
+
+	if ($option eq "RevDep (all)") {
+		my $available_reverse = join "\n", @available_reverse;
+		my $fh;
+		open $fh, ">", $dialog_output or exit _ERR_OPENFH;
+		print {$fh} $available_reverse;
+		$height = calculate_height($available_reverse);
+		system("$dialog_prefix --title \"$sbo: Available Reverse Dependencies\" --textbox $dialog_output $height $normal");
+	}
+
+	if ($option eq "RevDep (installed)") {
+		my $installed_reverse = join "\n", @installed_reverse;
+		my $fh;
+		open $fh, ">", $dialog_output or exit _ERR_OPENFH;
+		print {$fh} $installed_reverse;
+		$height = calculate_height($installed_reverse);
+		system("$dialog_prefix --title \"$sbo: Installed Reverse Dependencies\" --textbox $dialog_output $height $normal");
+	}
+
+	if ($option eq "Shared Object Check") {
+		unless (solib_check($inst_pkgs->{$sbo})) {
+			my $height = calculate_height("Missing\n\n$old_libs{$inst_pkgs->{$sbo}}");
+			system("$dialog_prefix --ok-label \"Back\" --title \"$sbo: Shared Object Check\" --msgbox \"Missing shared objects found for $sbo:\n\n$old_libs{$inst_pkgs->{$sbo}}\" $height $normal");
+		} else {
+			my $height = calculate_height("NoMissing");
+			system("$dialog_prefix --ok-label \"Back\" --title \"$sbo: Shared Object Check\" --msgbox \"$sbo has no missing shared object dependencies.\" $height $normal");
+		}
+	}
+
+	if ($option =~ /^Upgrade/) {
+		my $cmd = "/usr/sbin/sboupgrade";
+		$cmd .= " --reverse-rebuild" if $option =~ /reverse rebuild/;
+		$cmd .= " $sbo";
+		run_command($cmd, $sbo);
+	}
+
+	if ($option eq "View File" or $option eq "Edit Override File") {
+		unlink $dialog_output;
+		my (@file_list, %file_locations, @display_list);
+		find({ wanted => sub { push @file_list, $_ if -T $_ }, no_chdir => 1 }, $location);
+		my $file_list = join "\n", @file_list;
+		$height = calculate_height($file_list, "Select a");
+		for (@file_list) {
+			my $base = basename $_;
+			$file_locations{$base} = $_;
+			push @display_list, "\"$base\" \"\"";
+		}
+		@display_list = sort @display_list;
+		my $display_list = join " ", @display_list;
+		system("$dialog_prefix --title \"$location\" --menu \"Select a text file to read it.\" $height $wide $height $display_list 2> $dialog_output");
+		chomp(my $file = slurp $dialog_output);
+		if ($option eq "View File" and $file =~ /\w/) {
+			chomp(my $file_text = slurp $file_locations{$file});
+			$height = calculate_height($file_text);
+			my $file_read_width = $file =~ /^README/ ? $normal : $wide;
+			system("$dialog_prefix --title $file --textbox $file_locations{$file} $height $file_read_width");
+		} elsif ($option eq "Edit Override File" and $file =~ /\w/) {
+			system("$editor $file_locations{$file}");
+			clear_info_store();
+			new_package_information();
+		}
+	}
+
+	build_operations($sbo);
+	return;
+}
+
+# Given a maximum of 23 (above), calculate an appropriate height for
+# a dialog window.
+sub calculate_height {
+	script_error("calculate_height requires at least one argument; exiting.") unless @_;
+	my ($contents, $msg) = @_;
+	my $height = $contents =~ tr/\n//;
+	$height += 1 unless $contents =~ m/\n$/;
+	if (defined $msg) {
+		$height += $msg =~ tr/\n//;
+		$height += 1 unless $msg =~ m/\n$/;
+	}
+	$height += 5; # 4 is an exact fit, but it's cramped at the bottom
+	return $height = $height > $max_height ? $max_height : $height;
+}
+
+# Given an array with SlackBuilds of interest, add descriptions,
+# sort and get user input.
+sub display_builds {
+	script_error("display_builds requires two arguments.") unless @_ > 1;
+	my ($label, @array_to_use) = @_;
+	my @for_dialog;
+	for my $sbo (@array_to_use) {
+		my $description = get_sbo_description($sbo);
+		$description = "(No Description)" unless defined $description;
+		$description =~ s/"/'/g;
+		$description = is_local($sbo) ? "(LOCAL) $description" : $description unless $label =~ /Overrides/;
+		if (in $sbo, @update_names) {
+			my $sbo_version = get_from_info(LOCATION => get_sbo_location($sbo), GET => 'VERSION')->[0];
+			my $upgrade_description = $inst_vers->{$sbo} eq $sbo_version ? "(build bump)" : "($inst_vers->{$sbo} > $sbo_version)";
+			$description = "$upgrade_description $description";
+		}
+		push @for_dialog, "\"$sbo\" \"$description\" \\";
+	}
+	@for_dialog = sort @for_dialog;
+	my $for_dialog = join "\n", @for_dialog;
+	my $height = calculate_height($for_dialog, "Select a SlackBuild");
+	my $fh;
+	open $fh, ">", $dialog_input or exit _ERR_OPENFH;
+	print {$fh} $for_dialog;
+	close $fh;
+	system("$dialog_prefix --title \"$label\" --menu \"Select a SlackBuild.\" $height $wide $height --file $dialog_input 2> $dialog_output");
+	chomp(my $option = slurp $dialog_output);
+	return unless $option;
+	build_operations($option);
+	display_builds($label, @array_to_use);
+	return;
+}
+
+# An interface for sboclean.
+sub display_clean_menu {
+	unlink $dialog_output;
+	my @clean_menu = ( "\"Distfiles\" \"Downloaded source files.\" \"off\" \\",
+						"\"Options\" \"Per-script build options.\" \"off\" \\",
+						"\"Working\" \"Working directories from package builds.\" \"off\"" );
+	my $clean_menu = join "\n", @clean_menu;
+	my $height = calculate_height($clean_menu, "At least one");
+	system("$dialog_prefix --title \"sboclean\" --checklist \"At least one option must be checked.\" $height $wide $height $clean_menu 2> $dialog_output");
+	chomp(my $options = slurp $dialog_output);
+	return unless $options =~ /\w/;
+	my @options = split " ", $options;
+	my $cmd = "/usr/sbin/sboclean";
+	$cmd .= " -d" if in "Distfiles", @options;
+	$cmd .= " -w" if in "Working", @options;
+	$cmd .= " -o" if in "Options", @options;
+	run_command($cmd);
+	return;
+}
+
+# Select and read a man page.
+sub display_man_pages {
+	unlink $dialog_output;
+	my @man_pages;
+	push @man_pages, "\"sbotools\" \"Executive summaries of all tools.\" \\",
+					"\"sbotool\" \"The man page for this utility.\" \\",
+					"\"sbocheck\" \"Keep the repo up-to-date and perform checks.\" \\",
+					"\"sboclean\" \"Remove sbotools-related cruft.\" \\",
+					"\"sboconfig\" \"A command line settings manager.\" \\",
+					"\"sbofind\" \"Search the local repository for SlackBuilds.\" \\",
+					"\"sbohints\" \"Query and modify per-script hints.\" \\",
+					"\"sboinstall\" \"Install SlackBuilds with their dependencies.\" \\",
+					"\"sboremove\" \"Interactively remove SlackBuilds.\" \\",
+					"\"sboupgrade\" \"Upgrade SBo SlackBuilds.\" \\",
+					"\"sbotools.colors\" \"Customize sbotools output colors.\" \\",
+					"\"sbotools.conf\" \"Set the configuration with this file.\" \\",
+					"\"sbotools.hints\" \"Set hints with this file.\"";
+	my $man_pages = join "\n", @man_pages;
+	my $msg = "Each of the scripts in sbotools can run independently from the command line.\n\nSee the man pages for further details.";
+	my $height = calculate_height($man_pages, $msg);
+	system("$dialog_prefix --title \"Man Pages\" --menu \"$msg\" $height $wide $height $man_pages 2> $dialog_output");
+	chomp(my $option = slurp $dialog_output);
+	return unless $option =~ /\w/;
+	system("man $option");
+	display_man_pages();
+	return;
+}
+
+# Setting up and displaying the main menu.
+sub display_main {
+	my @main_menu;
+	if ($< == 0) {
+		push @main_menu, "\"Settings\" \"View and edit sbotools settings.\" \\";
+	} else {
+		push @main_menu, "\"Settings\" \"View sbotools settings.\" \\";
+	}
+	push @main_menu, "\"Hints\" \"View per-script hints.\" \\" if $listings[0] ne "NULL";
+	push @main_menu, "\"Shared Objects\" \"Check for missing solib dependencies.\" \\",
+					"\"Man Pages\" \"Read sbotools-related man pages.\" \\";
+	if (-s $slackbuilds_txt) {
+		push @main_menu, "\"Browse Repository\" \"View scripts per-series.\" \\",
+						"\"Package Search\" \"Search for a package.\" \\";
+		push @main_menu, "\"Installed SBo Packages\" \"List installed SBo packages.\" \\",
+						"\"Rebuilds\" \"Mass and per-series rebuilds.\" \\" if keys %inst_names;
+		push @main_menu, "\"Upgradable SBo Packages\" \"Upgrades are available.\" \\" if @update_names;
+		push @main_menu, "\"Overrides\" \"View scripts in the overrides directory.\" \\" if @overrides;
+		if (@update_names) {
+			push @main_menu, "\"Upgrade All (dry run)\" \"How all upgrades would be done.\" \\";
+			push @main_menu, "\"Upgrade All\" \"Apply all available upgrades.\" \\" if $< == 0;
+		}
+	}
+	if ($< == 0) {
+		push @main_menu, "\"Fetch Repository\" \"Get or update the repository.\" \\",
+						"\"Clean sbotools Files\" \"Source, working directories and saved options.\" \\";
+	}
+	@main_menu = sort @main_menu;
+	push @main_menu, "\"\" \"\" \\", "\"Refresh\" \"Run in case of outside changes.\"";
+	my $main_menu = join "\n", @main_menu;
+	my $height;
+	my $msg = "Welcome to the sbotools front-end.";
+	unless (-s $slackbuilds_txt) {
+		if ($< == 0) {
+			$msg .= "\n\nSelect \\\"Fetch Repository\\\" to download a copy of the repo.";
+		} else {
+			$msg .= "\n\nRun as root and select \\\"Fetch Repository\\\" to download a copy of the repo.";
+		}
+		$height = calculate_height($main_menu, $msg);
+		system("$dialog_prefix --cancel-label \"Exit\" --title \"Main Menu\" --menu \"$msg\" $height $wide $height $main_menu 2> $dialog_output");
+	} else {
+		$msg .= " Navigate to a script for operations.";
+		$msg .= "\n\nRun as root for more options." unless $< == 0;
+		$height = calculate_height($main_menu, $msg);
+		system("$dialog_prefix --cancel-label \"Exit\" --title \"Main Menu\" --menu \"$msg\" $height $wide $height $main_menu 2> $dialog_output");
+	}
+	chomp(my $option = slurp $dialog_output);
+	exit 0 unless $option;
+
+	if ($option eq "Fetch Repository") {
+		system("clear");
+		my $fetch_res = system("/usr/sbin/sbocheck") == 0;
+		clear_info_store();
+		new_package_information() if $fetch_res;
+		prompt $color_notice, "Press ENTER to continue.";
+	}
+
+	if ($option eq "Hints") {
+		unlink $command_output;
+		system("/usr/sbin/sbohints --wrap --nocolor --list > $command_output");
+		my $hints_output = slurp $command_output;
+		$height = calculate_height($hints_output);
+		system("$dialog_prefix --title \"Per-Script Hints\" --textbox $command_output $height $normal");
+	}
+
+	if ($option eq "Refresh") {
+		$config{$_} = "FALSE" for (keys %config);
+		read_config();
+		lint_sbo_config($self, %config);
+		$repo_path = "$config{SBO_HOME}/repo";
+		$slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
+		if (-s $slackbuilds_txt) {
+			clear_info_store();
+			new_package_information();
+		}
+	}
+	if ($option eq "Shared Objects") {
+		unlink $dialog_output;
+		if (-s $slackbuilds_txt) {
+			$height = calculate_height("All Installed\nAll SBo", "Check missing");
+			system("$dialog_prefix --title \"Shared Object Checks\" --menu \"Check intalled packages for missing shared object dependencies.\" $height $normal $height \"All Installed\" \"Check all installed packages for missing solibs.\" \"All SBo\" \"Check all SBo packages for missing solibs.\" 2> $dialog_output");
+			chomp($option = slurp $dialog_output);
+			if ($option =~ /\w/) {
+				system("clear");
+				system("/usr/sbin/sbocheck -X") if $option eq "All SBo";
+				system("/usr/sbin/sbocheck -C") if $option eq "All Installed";
+				prompt $color_notice, "Press ENTER to continue.";
+			}
+		} else {
+			system("clear");
+			system("/usr/sbin/sbocheck -C");
+			prompt $color_notice, "Press ENTER to continue.";
+		}
+	}
+
+	if ($option eq "Upgrade All (dry run)") {
+		unlink $command_output;
+		system("/usr/sbin/sboupgrade --wrap --nocolor -D --all > $command_output");
+		my $dry_run_output = slurp $command_output;
+		$height = calculate_height($dry_run_output);
+		system("$dialog_prefix --title \"Upgrade All: Dry Run\" --textbox $command_output $height $normal");
+	}
+
+	if ($option eq "Browse Repository") { display_series(); }
+	if ($option eq "Clean sbotools Files") { display_clean_menu(); }
+	if ($option eq "Installed SBo Packages") { display_builds("Installed SBo SlackBuilds", keys %inst_names); }
+	if ($option eq "Man Pages") { display_man_pages(); }
+	if ($option eq "Overrides") { display_builds("SlackBuilds in Local Overrides", @overrides); }
+	if ($option eq "Package Search") { run_search(); }
+	if ($option eq "Rebuilds") { display_rebuild_menu(); }
+	if ($option eq "Settings") { display_settings(); }
+	if ($option eq "Upgradable SBo Packages") { display_builds("Upgradable SBo Packages", @update_names); }
+	if ($option eq "Upgrade All") { run_command("/usr/sbin/sboupgrade --nocolor --all"); }
+
+	display_main();
+	return;
+}
+
+# Perform a large-scale rebuild or dry run; for series,
+# show the number of packages installed first.
+sub display_rebuild_menu {
+	unlink $dialog_output;
+	unlink $command_output;
+	my @rebuild_menu;
+	push @rebuild_menu, "\"Mass Rebuild (dry run)\" \"Dry run for an all-SBo rebuild.\" \\",
+						"\"Series Rebuild (dry run)\" \"Dry run for a series rebuild.\" \\",
+						"\"Series Reverse (dry run)\" \"Dry run, series plus reverse dependencies.\" \\";
+	if ($< == 0) {
+		push @rebuild_menu, "\"Mass Rebuild\" \"Rebuild all SBo packages.\" \\",
+							"\"Series Rebuild\" \"Rebuild all packages in a series.\" \\",
+							"\"Series Reverse\" \"Rebuild a series, with reverse dependencies.\" \\";
+	}
+	@rebuild_menu = sort @rebuild_menu;
+	$rebuild_menu[-1] =~ s/\\$//;
+	my $rebuild_menu = join "\n", @rebuild_menu;
+	my $height = calculate_height($rebuild_menu, "Large-scale rebuilds");
+	system("$dialog_prefix --title \"Large-Scale Rebuilds\" --menu \"Rebuild all SBo packages, or everything in a series.\" $height $wide $height $rebuild_menu 2> $dialog_output");
+	chomp(my $option = slurp $dialog_output);
+	return unless $option =~ /\w/;
+
+	if ($option eq "Mass Rebuild (dry run)") {
+		system("/usr/sbin/sboinstall --wrap --nocolor --mass-rebuild -D > $command_output");
+		my $check = slurp $command_output;
+		if ($check =~ /\w/) {
+			$height = calculate_height($check);
+			system("$dialog_prefix --title \"Mass Rebuild Dry Run\" --textbox $command_output $height $normal");
+		}
+	}
+	if ($option eq "Mass Rebuild") { run_command("/usr/sbin/sboinstall --mass-rebuild"); }
+
+	if ($option =~ /^Series/) {
+		unlink $dialog_output;
+		unlink $command_output;
+		my (@active_series, @series_selection_menu, %package_counts);
+		for (keys %inst_names) {
+			my $loc = get_orig_location($_);
+			my $full_series = dirname($loc);
+			push @active_series, $full_series;
+			if (exists $package_counts{$full_series}) {
+				$package_counts{$full_series}++;
+			} else {
+				$package_counts{$full_series} = 1;
+			}
+		}
+		@active_series = sort(uniq(@active_series));
+		for (@active_series) {
+			my $base = basename $_;
+			push @series_selection_menu, "\"$base\" \"$package_counts{$_}\" \\";
+		}
+		$series_selection_menu[-1] =~ s/\\$//;
+		my $series_selection_menu = join "\n", @series_selection_menu;
+		$height = calculate_height($series_selection_menu, "The following");
+		system("$dialog_prefix --title \"$option\" --menu \"The following series have installed packages.\" $height $narrow $height $series_selection_menu 2> $dialog_output");
+		chomp(my $series_choice = slurp $dialog_output);
+		return unless $series_choice =~ /\w/;
+
+		if ($option =~ /dry run/) {
+			my $cmd = "/usr/sbin/sboinstall --wrap --nocolor -D";
+			$cmd .= $option =~ /Reverse/ ? " --reverse-rebuild --series-rebuild $series_choice" : " --series-rebuild $series_choice";
+			system("$cmd > $command_output");
+			my $check = slurp $command_output;
+			if ($check =~ /\w/) {
+				$height = calculate_height($check);
+				system("$dialog_prefix --title \"Series Rebuild Dry Run\" --textbox $command_output $height $wide");
+			}
+		}
+		if ($option eq "Series Rebuild") { run_command("/usr/sbin/sboinstall --series-rebuild $series_choice"); }
+		if ($option eq "Series Reverse") { run_command("/usr/sbin/sboinstall --reverse-rebuild --series-rebuild $series_choice"); }
+	}
+
+	display_rebuild_menu();
+	return;
+}
+
+# Show a list of available series, get user input and make an array of
+# included SlackBuilds.
+sub display_series {
+	unlink $dialog_input;
+	unlink $dialog_output;
+	my @series_display;
+	for (glob "$repo_path/*") {
+		next if in_regexp $_, qw/ . .. /;
+		next unless -d $_;
+		my $series = basename $_;
+		push @series_display, "\"$series\" \"$_\" \\";
+	}
+	display_main() unless @series_display;
+	@series_display = sort @series_display;
+	my $series_display = join "\n", @series_display;
+	my $height = calculate_height($series_display, "Choose a series");
+	my $series_fh;
+	open $series_fh, ">", $dialog_input or exit _ERR_OPENFH;
+	print {$series_fh} $series_display;
+
+	my (@for_dialog, @to_display);
+	system("$dialog_prefix --title \"Available Series\" --menu \"Choose a series.\" $height $wide $height --file $dialog_input 2> $dialog_output");
+	chomp(my $series = slurp $dialog_output);
+	display_main() unless $series;
+	for (@available) {
+		my $this_series = dirname(get_orig_location($_));
+		push @to_display, $_ if $this_series =~ m/\/$series$/;
+	}
+
+	display_builds("SlackBuilds in the $series series.", @to_display) if @to_display;
+	display_series();
+	return;
+}
+
+# It may be long, but explanations are good for clarity.
+sub display_settings {
+	unlink $dialog_output;
+	my @config_values;
+	my $msg = "See sbotools.conf(5) for explanations of the different values.\n\nAll defaults are FALSE except for SBO_HOME.";
+	$msg = "$msg\n\nSelect a setting to change it." if $< == 0;
+	push @config_values, "\"BUILD_IGNORE=$config{BUILD_IGNORE}\" \"Ignore build numbers?\" \\",
+						"\"CLASSIC=$config{CLASSIC}\" \"2.7-style output?\" \\",
+						"\"COLOR=$config{COLOR}\" \"sbotools color output?\" \\",
+						"\"CPAN_IGNORE=$config{CPAN_IGNORE}\" \"Ignore installed CPAN?\" \\",
+						"\"DISTCLEAN=$config{DISTCLEAN}\" \"Remove downloaded source?\" \\",
+						"\"ETC_PROFILE=$config{ETC_PROFILE}\" \"Source /etc/profile scripts?\" \\",
+						"\"GIT_BRANCH=$config{GIT_BRANCH}\" \"Git branch to use.\" \\",
+						"\"GPG_VERIFY=$config{GPG_VERIFY}\" \"Verify GPG?\" \\",
+						"\"JOBS=$config{JOBS}\" \"Number of jobs for make?\" \\",
+						"\"LOCAL_OVERRIDES=$config{LOCAL_OVERRIDES}\" \"Overrides directory?\" \\",
+						"\"LOG_DIR=$config{LOG_DIR}\" \"Save logs in a directory?\" \\",
+						"\"NOCLEAN=$config{NOCLEAN}\" \"Retain working directories?\" \\",
+						"\"NOWRAP=$config{NOWRAP}\" \"Turn off word wrapping?\" \\",
+						"\"OBSOLETE_CHECK=$config{OBSOLETE_CHECK}\" \"Download obsolete list?\" \\",
+						"\"PKG_DIR=$config{PKG_DIR}\" \"Save packages to a directory?\" \\",
+						"\"REPO=$config{REPO}\" \"Non-default repo to use?\" \\",
+						"\"RSYNC_DEFAULT=$config{RSYNC_DEFAULT}\" \"Default repo is rsync?\" \\",
+						"\"SBO_HOME=$config{SBO_HOME}\" \"Non-default sbotools directory?\" \\",
+						"\"SLACKWARE_VERSION=$config{SLACKWARE_VERSION}\" \"Spoof a Slackware version?\" \\",
+						"\"SO_CHECK=$config{SO_CHECK}\" \"Solib checks after fetch and upgrade?\" \\",
+						"\"STRICT_UPGRADES=$config{STRICT_UPGRADES}\" \"Ignore apparent downgrades?\"";
+	my $config_values = join "\n", @config_values;
+	my $height = calculate_height($config_values, $msg);
+	unless ($< == 0) {
+		system("$dialog_prefix --ok-label \"Back\" --no-cancel --title \"Settings List\" --menu \"$msg\" $height $wide $height $config_values");
+	} else {
+		system("$dialog_prefix --title \"Settings List\" --menu \"$msg\" $height $wide $height $config_values 2> $dialog_output");
+		chomp(my $option = slurp $dialog_output);
+		unless ($option =~ /\w/) {
+			return;
+		}
+		my ($explanation, $criterion, $flag);
+		if ($option =~ /^BUILD_IGNORE/) {
+			$explanation = "If TRUE, do not account for build number when doing upgrades.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "b";
+		}
+		if ($option =~ /^CLASSIC/) {
+			$explanation = "If TRUE, use version 2.7 messaging, rsync default repo and no color.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "C";
+		}
+		if ($option =~ /^COLOR/) {
+			$explanation = "If TRUE, sbotools will use color output for emphasis and readability.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "K";
+		}
+		if ($option =~ /^CPAN_IGNORE/) {
+			$explanation = "If TRUE, ignore installed CPAN packages when installing and upgrading.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "P";
+		}
+		if ($option =~ /^DISTCLEAN/) {
+			$explanation = "If TRUE, delete downloaded source and the package after building.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "d";
+		}
+		if ($option =~ /^ETC_PROFILE/) {
+			$explanation = "If TRUE, source all executable *.sh scripts in /etc/profile.d before building.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "e";
+		}
+		if ($option =~ /^GIT_BRANCH/) {
+			$explanation = "If TRUE, use a non-default git branch.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "B";
+		}
+		if ($option =~ /^GPG_VERIFY/) {
+			$explanation = "If TRUE, use GPG to verify the repository and the obsolete script list.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "g";
+		}
+		if ($option =~ /^JOBS/) {
+			$explanation = "If a NUMBER, use that many jobs with \"make\".";
+			$criterion = "A NUMBER or FALSE.";
+			$flag = "j";
+		}
+		if ($option =~ /^LOCAL_OVERRIDES/) {
+			$explanation = "If a PATH, use that directory for local overrides.\n\n/home/*, /root and / are not permitted.";
+			$criterion = "A PATH or FALSE.";
+			$flag = "o";
+		}
+		if ($option =~ /^LOG_DIR/) {
+			$explanation = "If a PATH, save logs in that directory; logs are otherwise not saved.\n\n/home/*, /root and / are not permitted.";
+			$criterion = "A PATH or FALSE.";
+			$flag = "L";
+		}
+		if ($option =~ /^NOCLEAN/) {
+			$explanation = "If TRUE, do not delete the working directory after building.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "c";
+		}
+		if ($option =~ /^NOWRAP/) {
+			$explanation = "If TRUE, suppress word wrapping in sbotools output.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "w";
+		}
+		if ($option =~ /^OBSOLETE_CHECK/) {
+			$explanation = "If TRUE, download the obsolete script list when fetching the repo.\n\nRelevant only on -current.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "O";
+		}
+		if ($option =~ /^PKG_DIR/) {
+			$explanation = "If a PATH, save built packages in that directory.\n\n/home/*, /root and / are not permitted.";
+			$criterion = "A PATH or FALSE.";
+			$flag = "p";
+		}
+		if ($option =~ /^REPO/) {
+			$explanation = "If a git or rsync URL, use that as the upstream repository.\n\nThe default is otherwise the SBO GitLab mirror, or Ponce's repo on -current.";
+			$criterion = "A git or rsync URL or FALSE.";
+			$flag = "r";
+		}
+		if ($option =~ /^RSYNC_DEFAULT/) {
+			$explanation = "If TRUE, use the SBO rsync server as the default.\n\nHas no effect on -current, or if REPO is set.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "R";
+		}
+		if ($option =~ /^SBO_HOME/) {
+			$explanation = "If a PATH, use that as the sbotools directory.\n\nThe default is /usr/sbo. /home/*, /root and / are not permitted.";
+			$criterion = "A PATH or FALSE.";
+			$flag = "s";
+		}
+		if ($option =~ /^SLACKWARE_VERSION/) {
+			$explanation = "If a SLACKWARE VERSION number, use the repo for that version.";
+			$criterion = "A SLACKWARE VERSION or FALSE.";
+			$flag = "V";
+		}
+		if ($option =~ /^SO_CHECK/) {
+			$explanation = "If TRUE, do a shared object check when checking for updates and after upgrades.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "X";
+		}
+		if ($option =~ /^STRICT_UPGRADES/) {
+			$explanation = "If TRUE, ignore apparent downgrades.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "S";
+		}
+		unlink $dialog_output;
+		edit_setting($option, $explanation, $criterion, $flag);
+		display_settings();
+	}
+	return;
+}
+
+# An interface for sbohints.
+sub edit_hint {
+	script_error("edit_hint requires an argument.") unless @_ == 1;
+	my $sbo = shift;
+	unlink $dialog_output;
+	unlink $command_output;
+	my @hint_menu;
+	my $blacklisted = on_blacklist($sbo);
+	my $is_auto = auto_reverse($sbo);
+	my $optional = get_optional($sbo);
+
+	if ($blacklisted) {
+		push @hint_menu, "\"Clear from Blacklist\" \"Add to queues normally.\" \\";
+	} else {
+		push @hint_menu, "\"Blacklist\" \"Do not add to queues.\" \\";
+	} 
+
+	if ($is_auto) {
+		push @hint_menu, "\"No Auto-Rebuilds\" \"Do not rebuild reverse dependencies.\" \\";
+	} else {
+		push @hint_menu, "\"Do Auto-Rebuilds\" \"Automatically rebuild reverse dependencies.\" \\";
+	}
+
+	push @hint_menu, "\"Add Optional Deps\" \"Add one or more optional dependencies.\" \\";
+	if ($optional) {
+		push @hint_menu, "\"Clear Optionals\" \"Clear one or more optional dependencies.\" \\",
+						"\"Clear all Optional\" \"Clear all optional dependencies.\" \\",
+					    "\"New Optional List\" \"Use a new optional dependency list.\" \\";
+	}	
+	if (($blacklisted and ($is_auto or $optional)) or ($is_auto and $optional)) {
+		push @hint_menu, "\"\" \"\" \\",
+						"\"Clear all Hints\" \"No hints for $sbo.\" \\" if $is_auto or $optional;
+	}
+
+	$hint_menu[-1] =~ s/\\$//;
+	my $hint_menu = join "\n", @hint_menu;
+	system("/usr/sbin/sbohints --wrap --nocolor --query $sbo > $command_output");
+	chomp(my $msg = slurp $command_output);
+	my $height = calculate_height($hint_menu, $msg);
+	system("$dialog_prefix --title \"$sbo: Hints\" --menu \"$msg\" $height $wide $height $hint_menu 2> $dialog_output");
+	chomp(my $option = slurp $dialog_output);
+	return unless $option =~ /\w/;
+
+	my @flags;
+
+	if ($option eq "Clear all Hints") {
+		push @flags, "cb" if $blacklisted;
+		push @flags, "cr" if $is_auto;
+		push @flags, "cO" if $optional;
+	}
+
+	push @flags, "cO" if $option eq "Clear all Optional";
+	push @flags, "cb" if $option eq "Clear from Blacklist";
+	push @flags, "co" if $option eq "Clear Optionals";
+	push @flags, "cr" if $option eq "No Auto-Rebuilds";
+	push @flags, "r" if $option eq "Do Auto-Rebuilds";
+	push @flags, "o" if $option eq "Add Optional Deps";
+	push @flags, "b" if $option eq "Blacklist";
+	push @flags, "O" if $option eq "New Optional List";
+
+	edit_hint($sbo) unless @flags;
+	for (@flags) {
+		system("clear");
+		my $res = system("/usr/sbin/sbohints -$_ $sbo") == 0;
+		if ($res) {
+			clear_info_store();
+			new_package_information();
+		}
+	}
+
+	edit_hint($sbo);
+	return;
+}
+
+sub edit_setting {
+	script_error("edit_setting requires four arguments.") unless @_ == 4;
+	my ($existing_setting, $explanation, $criterion, $flag) = @_;
+	my $height;
+	unlink $dialog_output;
+	my ($setting_name, $setting_content) = split "=", $existing_setting;
+	if ($criterion eq "TRUE or FALSE.") {
+		$height = calculate_height($existing_setting, "$explanation\n\n$criterion\n\nTrue\nFalse");
+		if ($existing_setting =~ /=FALSE$/) {
+			system("$dialog_prefix --title \"Settings Editor\" --radiolist \"$explanation\n\n$criterion\n\n$existing_setting\" $height $wide $height \"FALSE\" \"\" \"on\" \"TRUE\" \"\" \"\" 2> $dialog_output");
+		} else {
+			system("$dialog_prefix --title \"Settings Editor\" --radiolist \"$explanation\n\n$criterion\" $height $wide $height \"FALSE\" \"\" \"\" \"TRUE\" \"\" \"on\" 2> $dialog_output");
+		}
+	} else {
+		$height = calculate_height($existing_setting, "$explanation\n\n$criterion\n\nInput here");
+		system("$dialog_prefix --title \"Settings Editor\" --inputbox \"$explanation\n\n$criterion\n\n$existing_setting\" $height $wide \"$setting_content\" 2> $dialog_output");
+	}
+	chomp(my $option = slurp $dialog_output);
+	return unless $option =~ /\w/;
+	$option = "/usr/sbo" if $flag eq "s" and $option eq "FALSE";
+	system("clear");
+	my $res = system("/usr/sbin/sboconfig -$flag $option") == 0;
+	if ($res) {
+		clear_info_store();
+		new_package_information();
+		prompt $color_notice, "Press ENTER to continue.";
+		return;
+	}
+	edit_setting($existing_setting, $explanation, $criterion, $flag);
+	return;
+}
+
+# Run this whenever there have been changes to settings, hints,
+# local override contents or installed packages, and when the
+# repository is fetched.
+sub new_package_information {
+	splice @update_names;
+	splice @overrides;
+	$inst_pkgs = "";
+	%inst_names = ();
+	%inst_names_std = ();
+	$inst_vers = "";
+	$inst_vers_std = "";
+
+	@listings = read_hints();
+	$config{$_} = "FALSE" for (keys %config);
+	read_config();
+	lint_sbo_config($self, %config);
+	$repo_path = "$config{SBO_HOME}/repo";
+	$slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
+	return unless -s $slackbuilds_txt;
+	renew_sbo_locations();
+	@available = get_all_available();
+	update_known_solibs();
+
+	@installed = @{ get_installed_packages('SBO', 1) };
+	@installed_std = @{ get_installed_packages('STD') };
+	for (@available) { push @overrides, $_ if is_local($_); }
+	$inst_pkgs = +{ map {; $_->{name}, $_->{pkg} } @installed };
+	$inst_vers = +{ map {; $_->{name}, $_->{version} } @installed };
+	$inst_names{$_->{name}} = $_ for @installed;
+	$inst_names_std{$_->{name}} = $_ for @installed_std;
+	$inst_vers_std = +{ map {; $_->{name}, $_->{version} } @installed_std };
+	$fulldeps = get_reverse_reqs($inst_pkgs);
+	$updates = $config{BUILD_IGNORE} eq "TRUE" ? get_available_updates("VERS") : get_available_updates("BOTH");
+	if ($updates) {
+		for (@$updates) { push @update_names, $_->{name} unless on_blacklist $_->{name}; }
+	}
+}
+
+# A wrapper for running commands requiring user input.
+sub run_command {
+	script_error("run_command requires at least one argument.") unless @_;
+	my $cmd = shift;
+	my $sbo = shift;
+	my $height;
+	if ($cmd =~ /sbo(install|upgrade)/) {
+		my $batch_cmd = "$cmd --batch";
+		my $dry_run_cmd = "$batch_cmd --wrap --nocolor -D";
+		unlink $command_output;
+		system("$dry_run_cmd > $command_output");
+		chomp(my $dry_run_output = slurp $command_output);
+		$height = calculate_height($dry_run_output, "$cmd\n\nUse batch mode?\n\nDry Run:\n");
+		my $batch_res = system("$dialog_prefix --yesno \"$cmd\n\nUse batch mode?\n\nDry Run:\n$dry_run_output\" $height $wide") == 0;
+		$cmd = $batch_cmd if $batch_res;
+	}
+	if ($cmd =~ /sboclean/) {
+		$height = calculate_height("$cmd\n\nAsk to delete");
+		my $clean_res = system("$dialog_prefix --yesno \"$cmd\n\nAsk to delete files interactively?\" $height $normal") == 0;
+		$cmd .= " -i" if $clean_res;
+	}
+	$height = calculate_height("$cmd\n\nProceed");
+	my $res = system("$dialog_prefix --yesno \"$cmd\n\nProceed?\" $height $normal") == 0;
+	return unless $res;
+	system("clear");
+	system($cmd);
+	unless ($cmd =~ /sboclean/) {
+		new_package_information();
+		prompt $color_notice, "Press ENTER to continue.";
+	}
+	return;
+}
+
+sub run_search {
+	unlink $dialog_output;
+	unlink $command_output;
+	my $height = calculate_height("Search\nTerms");
+	system("$dialog_prefix --title \"Package Search\" --inputbox \"Enter any number of search terms, separated by spaces.\" $height $normal 2> $dialog_output");
+	chomp(my $option = slurp $dialog_output);
+	return unless $option =~ /\w/;
+	unlink $command_output;
+	system("/usr/sbin/sbofind --raw $option > $command_output");
+	my $search_result = slurp $command_output;
+	if ($search_result =~ /\w/) {
+		my @search_results = split " ", $search_result;
+		display_builds("Search Results", @search_results);
+	}
+	run_search();
+	return;
+}
+
+sub show_usage {
+	print <<"EOF";
+Usage: $self
+
+Options
+  -h|--help:
+    this screen.
+  -v|--version:
+    version information.
+
+$self is a dialog-based frontend for sbotools.
+
+The contents of the menus change based on available actions
+and user permissions.
+
+EOF
+	return 1;
+}
+
+END { unless ($help or $show_version) { remove_tree($tempdir) if -d $tempdir; system("clear"); } }
