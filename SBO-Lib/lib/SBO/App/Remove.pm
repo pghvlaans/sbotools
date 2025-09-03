@@ -37,7 +37,7 @@ sub _parse_opts {
     'wrap'          => \$wrap,
   );
 
-  return { help => $help, vers => $vers, alwaysask => $alwaysask, compat => $compat, nocolor => $nocolor, color => $color, nowrap => $nowrap, wrap => $wrap args => \@ARGS, };
+  return { help => $help, vers => $vers, alwaysask => $alwaysask, compat => $compat, nocolor => $nocolor, color => $color, nowrap => $nowrap, wrap => $wrap, args => \@ARGS, };
 }
 
 sub run {

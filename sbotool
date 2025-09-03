@@ -10,7 +10,7 @@
 use strict;
 use warnings;
 
-use SBO::Lib qw/ :colors :config :const auto_reverse clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_reverse_reqs get_sbo_description get_sbo_location in in_regexp is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp solib_check uniq update_known_solibs @concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt /;
+use SBO::Lib qw/ :colors :config :const auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_reverse_reqs get_sbo_description get_sbo_location in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp solib_check uniq update_known_solibs @concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt /;
 
 use File::Basename;
 use File::Find;
@@ -84,11 +84,21 @@ display_main();
 # operations and carry out the user's choice.
 sub build_operations {
 	my $sbo = shift;
+	my $is_compat_build = $sbo =~ /-compat32$/;
+	my $compat = $is_compat_build ? $sbo : "$sbo-compat32";
 	unlink $dialog_output;
 	splice @concluded;
 	splice @reverse_concluded;
 	unlink $command_output;
 	my $location = get_sbo_location($sbo);
+	my ($unsupported, $compat_possible);
+	if ($arch !~ /64/) {
+		$unsupported = check_x64 $location;
+	} elsif (check_multilib()) {
+		$compat_possible = 1 unless ineligible_compat $location;
+	} else {
+		$unsupported = check_x32 $location;
+	}
 	my $sbo_version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
 	my $description = get_sbo_description($sbo);
 	my $msg = "$sbo $sbo_version\n$description";
@@ -96,12 +106,17 @@ sub build_operations {
 	$msg .= "\nBlacklisted." if on_blacklist($sbo);
 	$msg .= "\nInstalled. ($inst_vers->{$sbo})" if $inst_names{$sbo};
 	$msg .= "\nInstalled, non-SBo. ($inst_vers_std->{$sbo})" if $inst_names_std{$sbo};
+	unless ($is_compat_build) {
+		$msg .= "\ncompat32 installed. ($inst_vers->{$compat})" if $inst_names{$compat};
+	}
+	$msg .= "\nUnsupported." if $unsupported;
 	$msg .= "\n\nRun as root for more functions." unless $< == 0;
 
 	my @installed_reverse = get_full_reverse($sbo, $inst_pkgs, $fulldeps);
 	my @available_reverse = get_full_reverse($sbo, $available, $all_fulldeps);
 
 	my @build_operations;
+	push @build_operations, "\"compat32\" \"Select -compat32 operations.\" \\" if $compat_possible and not $is_compat_build;
 	push @build_operations, "\"View File\" \"View any file in the script directory.\" \\";
 	push @build_operations, "\"RevDep (installed)\" \"Dependent packages on the system.\" \\" if @installed_reverse;
 	push @build_operations, "\"RevDep (all)\" \"All dependent packages in the repo.\" \\" if @available_reverse;
@@ -111,7 +126,7 @@ sub build_operations {
 	unless (on_blacklist($sbo)) {
 		push @build_operations, "\"Queue\" \"See the build queue.\" \\";
 		push @build_operations, "\"Dry Run (reverse rebuild)\" \"How reverse dependencies would be rebuilt.\" \\" if $inst_names{$sbo} and @installed_reverse;
-		unless ($inst_names_std{$sbo}) {
+		unless ($inst_names_std{$sbo} or $unsupported) {
 			my $built_or_upgraded = "upgraded" if in $sbo, @update_names;
 			$built_or_upgraded = $inst_names{$sbo} ? "rebuilt" : "built" unless $built_or_upgraded;
 			push @build_operations, "\"Dry Run\" \"How this package would be $built_or_upgraded.\" \\";
@@ -133,7 +148,7 @@ sub build_operations {
 		} else {
 			push @build_operations, "\"Reverse Rebuild\" \"Rebuild all reverse dependencies.\" \\" if @installed_reverse;
 		}
-	} elsif ($< == 0 and not $inst_names_std{$sbo}) {
+	} elsif ($< == 0 and not $inst_names_std{$sbo} and not $unsupported) {
 		push @build_operations, "\"Install\" \"Install the package.\" \\";
 	}
 	@build_operations = sort @build_operations;
@@ -146,6 +161,8 @@ sub build_operations {
 	return unless $option;
 
 	if ($option eq "Main") { display_main(); }
+
+	if ($option eq "compat32") { build_operations($compat); }
 
 	if ($option eq "Add to Local Overrides") {
 		unless (-l "$config{LOCAL_OVERRIDES}/$sbo" or -f "$config{LOCAL_OVERRIDES}/$sbo" or is_local $sbo) {
