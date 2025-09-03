@@ -233,7 +233,7 @@ sub build_operations {
 			for (@$queue) { push @disp_queue, $_ if get_sbo_location($_); }
 		} else {
 			for (@$queue) {
-				next if $_ =~ /-compat32/ and compat_ineligible $_;
+				next if $_ =~ /-compat32/ and ineligible_compat $_;
 				push @disp_queue, $_ if get_sbo_location($_);
 			}
 		}
