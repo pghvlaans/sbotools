@@ -7,7 +7,7 @@ sbotool
 .SH DESCRIPTION
 .B
 sbotool
-is a meta-tool added in version 3.9 providing a front-end to all of the
+is a meta-tool providing a front-end to all of the
 .B
 sbotools
 based on
@@ -29,11 +29,8 @@ Browse Repository
 or
 .B
 Package Search
-and choose from the list of options in the menu.
-.B
-Main Menu
-has options for large-scale upgrades, rebuilds and shared object dependency
-checks. Installed, upgradable and overriden scripts can be reached from
+and choose from the list of options in the menu. Installed, upgradable
+and override scripts can be reached from
 .B
 Installed SBo Packages\fR\
 \&,
@@ -44,11 +41,15 @@ and
 Overrides\fR\
 \&,
 respectively.
+.B
+Main Menu
+has options for large-scale upgrades, rebuilds and shared object dependency
+checks.
 .P
 .B
 sbotools
 calculates dependencies automatically, and individual scripts can be added
-to a blacklist or have optional dependencies specified using the script's
+to the blacklist or have optional dependencies specified using the script's
 .B
 Hints
 interface. Installations and upgrades can be performed either interactively
@@ -64,6 +65,24 @@ at
 .I
 /var/log/sbotools/script_name
 ahead of time.
+.P
+If packages (especially those marked
+.I
+_SBo\fR\
+\&) are installed, upgraded or removed, or if
+.B
+sbotools
+settings are changed from outside of
+.B
+sbotool
+while
+.B
+sbotool
+is running, use the
+.B
+Refresh
+option in the main menu to ensure that the output
+reflects these changes.
 .P
 Although most
 .B
@@ -123,24 +142,6 @@ values are documented in
 sbotools.conf(5)\fR\
 \&.
 .P
-If packages (especially those marked
-.I
-_SBo\fR\
-\&) are installed, upgraded or removed, or if
-.B
-sbotools
-settings are changed from outside of
-.B
-sbotool
-while
-.B
-sbotool
-is running, use the
-.B
-Refresh
-option in the main menu to ensure that the output
-reflects these changes.
-.P
 .B
 sbotool
 uses
@@ -150,7 +151,7 @@ for output. The color scheme and appearance can be
 changed using a
 .I
 dialogrc
-file. Set the 
+file. Set the
 .B
 DIALOGRC
 setting to an

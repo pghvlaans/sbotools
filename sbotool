@@ -32,7 +32,7 @@ my $backtitle = "sbotools-$version";
 $backtitle = $< == 0 ? "$backtitle (root mode)" : "$backtitle (normal user mode)";
 my $dialog_prefix;
 $dialog_prefix = "DIALOGRC=\"$config{DIALOGRC}\" " if ($config{DIALOGRC} ne "FALSE" and -s $config{DIALOGRC});
-$dialog_prefix .= "/usr/bin/dialog --keep-window --exit-label \"Back\" --backtitle \"$backtitle\"";
+$dialog_prefix .= "/usr/bin/dialog --keep-window --cancel-label \"Back\" --exit-label \"Back\" --backtitle \"$backtitle\"";
 system("$dialog_prefix --infobox \"Loading...\" 3 15");
 
 my $overrides_available = 1 if $config{LOCAL_OVERRIDES} ne "FALSE" and -d -w $config{LOCAL_OVERRIDES};
@@ -112,8 +112,12 @@ sub build_operations {
 	$msg .= "\nUnsupported." if $unsupported;
 	$msg .= "\n\nRun as root for more functions." unless $< == 0;
 
-	my @installed_reverse = get_full_reverse($sbo, $inst_pkgs, $fulldeps);
-	my @available_reverse = get_full_reverse($sbo, $available, $all_fulldeps);
+	my (@installed_reverse, @available_reverse, @pre_display);
+	@pre_display = get_full_reverse($sbo, $inst_pkgs, $fulldeps);
+	for (@pre_display) { push @installed_reverse, $_ if get_sbo_location($_); }
+	splice @pre_display;
+	@pre_display = get_full_reverse($sbo, $available, $all_fulldeps);
+	for (@pre_display) { push @available_reverse, $_ if get_sbo_location($_); }
 
 	my @build_operations;
 	push @build_operations, "\"compat32\" \"Select -compat32 operations.\" \\" if $compat_possible and not $is_compat_build;
@@ -224,13 +228,16 @@ sub build_operations {
 	if ($option eq "Queue") {
 		my ($queue, %warnings);
 		$queue = get_build_queue([$sbo], \%warnings);
-		my $disp_queue = join "\n", @$queue;
-		my $fh;
-		open $fh, ">", $dialog_output or exit _ERR_OPENFH;
-		print {$fh} $disp_queue;
-		close $fh;
-		$height = calculate_height($disp_queue);
-		system("$dialog_prefix --title \"$sbo: Queue\" --textbox $dialog_output $height $normal");
+		my @disp_queue;
+		unless ($is_compat_build) {
+			for (@$queue) { push @disp_queue, $_ if get_sbo_location($_); }
+		} else {
+			for (@$queue) {
+				next if $_ =~ /-compat32/ and compat_ineligible $_;
+				push @disp_queue, $_ if get_sbo_location($_);
+			}
+		}
+		display_builds("$sbo: Available Queue", @disp_queue);
 	}
 
 	if ($option eq "Remove from Overrides") {
@@ -243,23 +250,9 @@ sub build_operations {
 		}
 	}
 
-	if ($option eq "RevDep (all)") {
-		my $available_reverse = join "\n", @available_reverse;
-		my $fh;
-		open $fh, ">", $dialog_output or exit _ERR_OPENFH;
-		print {$fh} $available_reverse;
-		$height = calculate_height($available_reverse);
-		system("$dialog_prefix --title \"$sbo: Available Reverse Dependencies\" --textbox $dialog_output $height $normal");
-	}
+	if ($option eq "RevDep (all)") { display_builds("$sbo: Available Reverse Dependencies", @available_reverse); }
 
-	if ($option eq "RevDep (installed)") {
-		my $installed_reverse = join "\n", @installed_reverse;
-		my $fh;
-		open $fh, ">", $dialog_output or exit _ERR_OPENFH;
-		print {$fh} $installed_reverse;
-		$height = calculate_height($installed_reverse);
-		system("$dialog_prefix --title \"$sbo: Installed Reverse Dependencies\" --textbox $dialog_output $height $normal");
-	}
+	if ($option eq "RevDep (installed)") { display_builds("$sbo: Installed Reverse Dependencies", @installed_reverse); }
 
 	if ($option eq "Shared Object Check") {
 		unless (solib_check($inst_pkgs->{$sbo})) {
@@ -331,6 +324,7 @@ sub display_builds {
 	my ($label, @array_to_use) = @_;
 	my @for_dialog;
 	for my $sbo (@array_to_use) {
+		next unless get_sbo_location($sbo);
 		my $description = get_sbo_description($sbo);
 		$description = "(No Description)" unless defined $description;
 		$description =~ s/"/'/g;
@@ -342,7 +336,7 @@ sub display_builds {
 		}
 		push @for_dialog, "\"$sbo\" \"$description\" \\";
 	}
-	@for_dialog = sort @for_dialog;
+	@for_dialog = sort @for_dialog unless $label =~ /Available Queue$/;
 	my $for_dialog = join "\n", @for_dialog;
 	my $height = calculate_height($for_dialog, "Select a SlackBuild");
 	my $fh;
@@ -580,7 +574,7 @@ sub display_rebuild_menu {
 		$series_selection_menu[-1] =~ s/\\$//;
 		my $series_selection_menu = join "\n", @series_selection_menu;
 		$height = calculate_height($series_selection_menu, "The following");
-		system("$dialog_prefix --title \"$option\" --menu \"The following series have installed packages.\" $height $narrow $height $series_selection_menu 2> $dialog_output");
+		system("$dialog_prefix --cancel-label \"Cancel\" --title \"$option\" --menu \"The following series have installed packages.\" $height $narrow $height $series_selection_menu 2> $dialog_output");
 		chomp(my $series_choice = slurp $dialog_output);
 		return unless $series_choice =~ /\w/;
 
@@ -807,7 +801,7 @@ sub edit_hint {
 		push @hint_menu, "\"Clear from Blacklist\" \"Add to queues normally.\" \\";
 	} else {
 		push @hint_menu, "\"Blacklist\" \"Do not add to queues.\" \\";
-	} 
+	}
 
 	if ($is_auto) {
 		push @hint_menu, "\"No Auto-Rebuilds\" \"Do not rebuild reverse dependencies.\" \\";
@@ -820,7 +814,7 @@ sub edit_hint {
 		push @hint_menu, "\"Clear Optionals\" \"Clear one or more optional dependencies.\" \\",
 						"\"Clear all Optional\" \"Clear all optional dependencies.\" \\",
 					    "\"New Optional List\" \"Use a new optional dependency list.\" \\";
-	}	
+	}
 	if (($blacklisted and ($is_auto or $optional)) or ($is_auto and $optional)) {
 		push @hint_menu, "\"\" \"\" \\",
 						"\"Clear all Hints\" \"No hints for $sbo.\" \\" if $is_auto or $optional;
