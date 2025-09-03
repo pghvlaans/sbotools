@@ -30,7 +30,9 @@ lint_sbo_config($self, %config);
 my $version = $SBO::Lib::VERSION;
 my $backtitle = "sbotools-$version";
 $backtitle = $< == 0 ? "$backtitle (root mode)" : "$backtitle (normal user mode)";
-my $dialog_prefix = "/usr/bin/dialog --keep-window --exit-label \"Back\" --backtitle \"$backtitle\"";
+my $dialog_prefix;
+$dialog_prefix = "DIALOGRC=\"$config{DIALOGRC}\" " if ($config{DIALOGRC} ne "FALSE" and -s $config{DIALOGRC});
+$dialog_prefix .= "/usr/bin/dialog --keep-window --exit-label \"Back\" --backtitle \"$backtitle\"";
 system("$dialog_prefix --infobox \"Loading...\" 3 15");
 
 my $overrides_available = 1 if $config{LOCAL_OVERRIDES} ne "FALSE" and -d -w $config{LOCAL_OVERRIDES};
@@ -455,6 +457,9 @@ sub display_main {
 		$config{$_} = "FALSE" for (keys %config);
 		read_config();
 		lint_sbo_config($self, %config);
+		$dialog_prefix = "";
+		$dialog_prefix = "DIALOGRC=\"$config{DIALOGRC}\" " if ($config{DIALOGRC} ne "FALSE" and -s $config{DIALOGRC});
+		$dialog_prefix .= "/usr/bin/dialog --keep-window --exit-label \"Back\" --backtitle \"$backtitle\"";
 		$repo_path = "$config{SBO_HOME}/repo";
 		$slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
 		if (-s $slackbuilds_txt) {
@@ -624,6 +629,7 @@ sub display_settings {
 						"\"CLASSIC=$config{CLASSIC}\" \"2.7-style output?\" \\",
 						"\"COLOR=$config{COLOR}\" \"sbotools color output?\" \\",
 						"\"CPAN_IGNORE=$config{CPAN_IGNORE}\" \"Ignore installed CPAN?\" \\",
+						"\"DIALOGRC=$config{DIALOGRC}\" \"dialogrc file for sbotool?\" \\",
 						"\"DISTCLEAN=$config{DISTCLEAN}\" \"Remove downloaded source?\" \\",
 						"\"ETC_PROFILE=$config{ETC_PROFILE}\" \"Source /etc/profile scripts?\" \\",
 						"\"GIT_BRANCH=$config{GIT_BRANCH}\" \"Git branch to use.\" \\",
@@ -671,6 +677,11 @@ sub display_settings {
 			$explanation = "If TRUE, ignore installed CPAN packages when installing and upgrading.";
 			$criterion = "TRUE or FALSE.";
 			$flag = "P";
+		}
+		if ($option =~ /^DIALOGRC/) {
+			$explanation = "If a PATH, use that file as dialogrc for sbotool.";
+			$criterion = "A PATH or FALSE.";
+			$flag = "D";
 		}
 		if ($option =~ /^DISTCLEAN/) {
 			$explanation = "If TRUE, delete downloaded source and the package after building.";
@@ -886,6 +897,9 @@ sub new_package_information {
 	$config{$_} = "FALSE" for (keys %config);
 	read_config();
 	lint_sbo_config($self, %config);
+	$dialog_prefix = "";
+	$dialog_prefix = "DIALOGRC=\"$config{DIALOGRC}\" " if ($config{DIALOGRC} ne "FALSE" and -s $config{DIALOGRC});
+	$dialog_prefix .= "/usr/bin/dialog --keep-window --exit-label \"Back\" --backtitle \"$backtitle\"";
 	$repo_path = "$config{SBO_HOME}/repo";
 	$slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
 	return unless -s $slackbuilds_txt;

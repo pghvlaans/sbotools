@@ -14,6 +14,7 @@ _arguments \
     '(-b --build-ignore)'{-b,--build-ignore}'[If TRUE, then only do upgrades if the version number differs.]:ignore build number?:((TRUE\:"Version upgrades only" FALSE\:"Script bump upgrades"))' \
     '(-C --classic)'{-C,--classic}'[If TRUE, a more traditional sbotools look and feel; see the man pages before turning this on.]:use Classic Mode?:((TRUE\:"Classic Mode" FALSE\:"No Classic Mode"))' \
     '(-c --noclean)'{-c,--noclean}'[If TRUE, then do not clean working directories after build.]:clean work dirs?:((TRUE\:"Clean works directories" FALSE\:"Keep work directories"))' \
+    '(-D --dialogrc)'{-D,--dialogrc}'[File to use as dialogrc for sbotool.]:sbotool dialogrc location:_files -/' \
     '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code and the package after building.]:clean source and package?:((TRUE\:"Remove source and package" FALSE\:"Keep source and package"))' \
     '(-e --etc-profile)'{-e,--etc-profile}'[If TRUE, then source any *.sh executable scripts in /etc/profile.d before running each SlackBuild.]:source /etc/profile.d?:((TRUE\:"Source profile scripts" FALSE\:"Do not source profile scripts"))' \
     '(-g --gpg-verify)'{-g,--gpg-verify}'[If TRUE, then verify with gpg.]:use gpg?:((TRUE\:"Verify with gpg" FALSE\:"Do not verify"))' \

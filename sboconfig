@@ -54,6 +54,8 @@ Configuration options (defaults shown):
       CLASSIC: if TRUE, enable BUILD_IGNORE and RSYNC_DEFAULT and suppress extra sbotools output.
   -c|--noclean FALSE:
       NOCLEAN: if TRUE, do not clean up working directories after building by default.
+  -D|--dialogrc FALSE:
+      DIALOGRC: if a FILE, use it as dialogrc for sbotool.
   -d|--distclean FALSE:
       DISTCLEAN: if TRUE, clean the source and package archives by default after building.
   -e|--etc-profile FALSE:
@@ -169,14 +171,14 @@ unless ($is_sbotest) {
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'color|K=s', 'so-check|X=s');
+		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'dialogrc|D=s');
 } else {
 	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'sbo-archive|A=s');
+		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'sbo-archive|A=s,', 'dialogrc|D=s');
 }
 
 $options{list} = 1 if exists $options{'non-default'};
@@ -213,6 +215,7 @@ my %valid_confs = (
 	color               => 'COLOR',
 	nowrap              => 'NOWRAP',
 	'so-check'          => 'SO_CHECK',
+	'dialogrc'          => 'DIALOGRC',
 );
 $valid_confs{"sbo-archive"} = 'SBO_ARCHIVE' if $is_sbotest;
 
@@ -238,6 +241,7 @@ my %params = (
 	COLOR             => 'K|--color',
 	NOWRAP            => 'w|--nowrap',
 	SO_CHECK          => 'X|--so-check',
+	DIALOGRC          => 'D|--dialogrc',
 );
 $params{SBO_ARCHIVE} = 'A|--sbo-archive' if $is_sbotest;
 
@@ -399,6 +403,10 @@ sub interactive_menu {
 	NOWRAP: config_prompt("NOWRAP", "If TRUE, do not wrap sbotools output.", "TRUE or FALSE.", "TF");
 
 	SO_CHECK: config_prompt("SO_CHECK", "If TRUE, sbocheck and sboupgrade look for missing shared objects among SBo packages.", "TRUE or FALSE.", "TF");
+
+	DIALOGRC: unless ($is_sbotest) {
+		config_prompt("DIALOGRC", "If a FILE, use it as dialogrc when running sbotool.", "An absolute path or FALSE.", "PATH");
+	}
 
 	OBSOLETE_CHECK: config_prompt("OBSOLETE_CHECK", "If TRUE, sbocheck updates the obsolete script list from the sbotools home page.", "TRUE or FALSE.", "TF");
 

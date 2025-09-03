@@ -1,0 +1,194 @@
+.TH sbotools 1 "Setting Orange, Bureaucracy 21, 3191 YOLD" "sbotools 3.8.1" sbotool
+.SH NAME
+.P
+.B
+sbotool
+- front-end to sbotools
+.SH DESCRIPTION
+.B
+sbotool
+is a meta-tool added in version 3.9 providing a front-end to all of the
+.B
+sbotools
+based on
+.B
+dialog(1)\fR\
+\&. It can be run by root and non-root users. The contents of the menus
+are dynamic and reflect available and efficacious options.
+.B
+sbotool
+must be run as root (preferably in a login shell reached from e.g.
+.B
+su -\fR\
+\&) to perform package installations, upgrades and removals, and to
+fetch the repository.
+.P
+The basic workflow is straightforward: navigate to a script with
+.B
+Browse Repository
+or
+.B
+Package Search
+and choose from the list of options in the menu.
+.B
+Main Menu
+has options for large-scale upgrades, rebuilds and shared object dependency
+checks. Installed, upgradable and overriden scripts can be reached from
+.B
+Installed SBo Packages\fR\
+\&,
+.B
+Upgradable SBo Packages
+and
+.B
+Overrides\fR\
+\&,
+respectively.
+.P
+.B
+sbotools
+calculates dependencies automatically, and individual scripts can be added
+to a blacklist or have optional dependencies specified using the script's
+.B
+Hints
+interface. Installations and upgrades can be performed either interactively
+or non-interactively. If the non-interactive
+.I
+batch mode
+is chosen,
+.B
+sbotool
+displays a dry run on the final confirmation screen. To specify build options
+for a particular script, install interactively or write the options to a file
+at
+.I
+/var/log/sbotools/script_name
+ahead of time.
+.P
+Although most
+.B
+sbotools
+operations can be accomplished in
+.B
+sbotool\fR\
+\&, calling the scripts individually from the command line provides
+superior efficiency and fine-tuned option control to experienced users.
+See the
+.B
+Man Pages
+menu to read further user documentation.
+.SH STARTUP
+A copy of the
+.I
+SlackBuilds.org
+repository must be fetched when using
+.B
+sbotools
+for the first time, or when the
+.B
+sbotools
+directory has been changed. Run
+.B
+sbotool
+as root and select the
+.B
+Fetch Repository
+option. The local repository is saved to
+.I
+/usr/sbo/repo
+by default; the default upstream is the
+.I
+SlackBuilds.org
+.B
+GitLab
+mirror, or the
+.B
+Ponce repository
+for Slackware -current.
+.P
+.B
+sbotools
+has a number of potentially useful configuration
+settings, including the upstream repository, git branch
+and location. To make changes, run
+.B
+sbotool
+as root and enter the
+.B
+Settings
+menu. Select a setting from the list to see an
+explanation and enter a new value. All configuration
+values are documented in
+.B
+sbotools.conf(5)\fR\
+\&.
+.P
+If packages (especially those marked
+.I
+_SBo\fR\
+\&) are installed, upgraded or removed, or if
+.B
+sbotools
+settings are changed from outside of
+.B
+sbotool
+while
+.B
+sbotool
+is running, use the
+.B
+Refresh
+option in the main menu to ensure that the output
+reflects these changes.
+.P
+.B
+sbotool
+uses
+.B
+dialog(1)
+for output. The color scheme and appearance can be
+changed using a
+.I
+dialogrc
+file. Set the 
+.B
+DIALOGRC
+setting to an
+.B
+absolute file path
+to use an alternative
+.I
+dialogrc\fR\
+\&. See
+.I
+/etc/dialogrc
+for an example, or run
+.RS
+
+dialog --create-rc FILE
+
+
+.RE
+to generate a default
+.I
+dialogrc
+to modify.
+.SH BUGS
+.P
+None known. If found, Issues and Pull Requests to
+.UR https://github.com/pghvlaans/sbotools/
+.UE
+are always welcome.
+.SH SEE ALSO
+.P
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), dialog(1)
+.SH AUTHORS
+.P
+Jacob Pipkin <j@dawnrazor.net>
+.P
+Luke Williams <xocel@iquidus.org>
+.P
+Andreas Guldstrand <andreas.guldstrand@gmail.com>
+.SH MAINTAINER
+.P
+K. Eugene Carlson <kvngncrlsn@gmail.com>

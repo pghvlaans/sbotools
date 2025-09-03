@@ -193,7 +193,8 @@ C</usr/sbo> if still C<"FALSE">.
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
-C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<COLOR> and C<SO_CHECK>.
+C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<COLOR>, C<SO_CHECK> and
+C<DIALOGRC>.
 
 =head2 $download_time
 
@@ -301,6 +302,7 @@ our %config = (
   COLOR => 'FALSE',
   NOWRAP => 'FALSE',
   SO_CHECK => 'FALSE',
+  DIALOGRC => 'FALSE',
 );
 
 if (defined $is_sbotest) {

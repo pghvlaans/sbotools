@@ -46,6 +46,11 @@ for those who want it.
 If **TRUE**, install scripts even if they are already installed from the
 CPAN.
 
+**DIALOGRC=(FALSE\|/path)**
+
+If set to an **absolute path**, use that file as *dialogrc* when running
+[sbotool(1)](sbotool.1.md).
+
 **DISTCLEAN=(FALSE\|TRUE)**
 
 If **TRUE**, remove the package and source archives after building.
@@ -172,8 +177,8 @@ If set to **TRUE**, do not wrap **sbotools** output.
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
-[sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
+[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotool(1)](sbotool.1.md),
+[sbotools.colors(5)](sbotools.colors.5.md), [sbotools.hints(5)](sbotools.hints.5.md), dialog(1), gpg(1)
 
 ## AUTHORS
 

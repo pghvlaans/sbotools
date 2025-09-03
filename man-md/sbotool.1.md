@@ -1,0 +1,101 @@
+# sbotool
+
+[NAME](#name)\
+[DESCRIPTION](#description)\
+[STARTUP](#startup)\
+[BUGS](#bugs)\
+[SEE ALSO](#see-also)\
+[AUTHORS](#authors)\
+[MAINTAINER](#maintainer)
+
+------------------------------------------------------------------------
+
+## NAME
+
+**sbotool** - front-end to sbotools
+
+## DESCRIPTION
+
+**sbotool** is a meta-tool added in version 3.9 providing a front-end to
+all of the **sbotools** based on **dialog(1)**. It can be run by root
+and non-root users. The contents of the menus are dynamic and reflect
+available and efficacious options. **sbotool** must be run as root
+(preferably in a login shell reached from e.g. **su -**) to perform
+package installations, upgrades and removals, and to fetch the
+repository.
+
+The basic workflow is straightforward: navigate to a script with
+**Browse Repository** or **Package Search** and choose from the list of
+options in the menu. **Main Menu** has options for large-scale upgrades,
+rebuilds and shared object dependency checks. Installed, upgradable and
+overriden scripts can be reached from **Installed SBo Packages**,
+**Upgradable SBo Packages** and **Overrides**, respectively.
+
+**sbotools** calculates dependencies automatically, and individual
+scripts can be added to a blacklist or have optional dependencies
+specified using the script's **Hints** interface. Installations and
+upgrades can be performed either interactively or non-interactively. If
+the non-interactive *batch mode* is chosen, **sbotool** displays a dry
+run on the final confirmation screen. To specify build options for a
+particular script, install interactively or write the options to a file
+at */var/log/sbotools/script_name* ahead of time.
+
+Although most **sbotools** operations can be accomplished in
+**sbotool**, calling the scripts individually from the command line
+provides superior efficiency and fine-tuned option control to
+experienced users. See the **Man Pages** menu to read further user
+documentation.
+
+## STARTUP
+
+A copy of the *SlackBuilds.org* repository must be fetched when using
+**sbotools** for the first time, or when the **sbotools** directory has
+been changed. Run **sbotool** as root and select the **Fetch
+Repository** option. The local repository is saved to */usr/sbo/repo* by
+default; the default upstream is the *SlackBuilds.org* **GitLab**
+mirror, or the **Ponce repository** for Slackware -current.
+
+**sbotools** has a number of potentially useful configuration settings,
+including the upstream repository, git branch and location. To make
+changes, run **sbotool** as root and enter the **Settings** menu. Select
+a setting from the list to see an explanation and enter a new value. All
+configuration values are documented in [sbotools.conf(5)](sbotools.conf.5.md).
+
+If packages (especially those marked *\_SBo*) are installed, upgraded or
+removed, or if **sbotools** settings are changed from outside of
+**sbotool** while **sbotool** is running, use the **Refresh** option in
+the main menu to ensure that the output reflects these changes.
+
+**sbotool** uses **dialog(1)** for output. The color scheme and
+appearance can be changed using a *dialogrc* file. Set the **DIALOGRC**
+setting to an **absolute file path** to use an alternative *dialogrc*.
+See */etc/dialogrc* for an example, or run
+
+    dialog --create-rc FILE
+
+to generate a default *dialogrc* to modify.
+
+## BUGS
+
+None known. If found, Issues and Pull Requests to
+<https://github.com/pghvlaans/sbotools/> are always welcome.
+
+## SEE ALSO
+
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
+[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), sbotools(1),
+[sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), dialog(1)
+
+## AUTHORS
+
+Jacob Pipkin \<j (at) dawnrazor (dot) net\>
+
+Luke Williams \<xocel (at) iquidus (dot) org\>
+
+Andreas Guldstrand \<andreas (dot) guldstrand (at) gmail (dot) com\>
+
+## MAINTAINER
+
+K. Eugene Carlson \<kvngncrlsn (at) gmail (dot) com\>
+
+------------------------------------------------------------------------

@@ -18,7 +18,7 @@ _sboconfig() {
 
   case "${cmd}" in
     sboconfig)
-      opts="-h -v -l -n -B -b -C -c -d -e -g -j -K -L -P -p -s -O -o -V -r -R -S -w -X --help --version --list --non-default --reset --branch --build-ignore --classic --cpan-ignore --noclean --color --distclean --etc-profile --gpg-verify --jobs --log-dir --nowrap --obsolete-check --pkg-dir --sbo-home --local-overrides --slackware-version --repo --rsync --strict-upgrades --so-check"
+      opts="-h -v -l -n -B -b -C -c -D -d -e -g -j -K -L -P -p -s -O -o -V -r -R -S -w -X --help --version --list --non-default --reset --branch --build-ignore --classic --cpan-ignore --noclean --color --dialogrc --distclean --etc-profile --gpg-verify --jobs --log-dir --nowrap --obsolete-check --pkg-dir --sbo-home --local-overrides --slackware-version --repo --rsync --strict-upgrades --so-check"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
@@ -36,7 +36,7 @@ _sboconfig() {
           COMPREPLY=( $(compgen -W "FALSE TRUE" -- "${cur}") )
           return 0
           ;;
-        -p|--pkg-dir|-o|--local-overrides|-L|--log-dir)
+        -p|--pkg-dir|-o|--local-overrides|-L|--log-dir|-D|--dialogrc)
           COMPREPLY=( $(compgen -d -W "FALSE" -- "${cur}") )
           return 0
           ;;
