@@ -37,7 +37,7 @@ system("$dialog_prefix --infobox \"Loading...\" 3 15");
 my $overrides_available = 1 if $config{LOCAL_OVERRIDES} ne "FALSE" and -d -w $config{LOCAL_OVERRIDES};
 
 my $wide = 85;
-my $normal = 75;
+my $normal = 77;
 my $narrow = 65;
 # Used below in calculate_height().
 my $max_height = 23;
@@ -108,6 +108,7 @@ sub build_operations {
 	unless ($is_compat_build) {
 		$msg .= "\ncompat32 installed. ($inst_vers->{$compat})" if $inst_names{$compat};
 	}
+	$msg .= "\ncompat32 builds are unsupported by anyone in principle." if $is_compat_build;
 	$msg .= "\nUnsupported." if $unsupported;
 	$msg .= "\n\nRun as root for more functions." unless $< == 0;
 
@@ -289,7 +290,7 @@ sub build_operations {
 			chomp(my $file_text = slurp $file_locations{$file});
 			$height = calculate_height($file_text);
 			my $file_read_width = $file =~ /^README/ ? $normal : $wide;
-			system("$dialog_prefix --title $file --textbox $file_locations{$file} $height $file_read_width");
+			system("$dialog_prefix --title \"$file_locations{$file}\" --textbox $file_locations{$file} $height $file_read_width");
 		} elsif ($option eq "Edit Override File" and $file =~ /\w/) {
 			system("$editor $file_locations{$file}");
 			clear_info_store();
