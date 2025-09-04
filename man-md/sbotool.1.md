@@ -1,8 +1,10 @@
 # sbotool
 
 [NAME](#name)\
+[SYNOPSIS](#synopsis)\
 [DESCRIPTION](#description)\
 [STARTUP](#startup)\
+[OPTIONS](#options)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
@@ -13,6 +15,12 @@
 ## NAME
 
 **sbotool** - front-end to sbotools
+
+## SYNOPSIS
+
+    sbotool [-h|-v]
+
+    sbotool [-d FILE]
 
 ## DESCRIPTION
 
@@ -73,7 +81,23 @@ See */etc/dialogrc* for an example, or run
 
     dialog --create-rc FILE
 
-to generate a default *dialogrc* to modify.
+to generate a default *dialogrc* to modify. The **\--dialogrc** option
+can also specify a file at runtime.
+
+## OPTIONS
+
+**-d\|\--dialogrc (FILE)**
+
+Use this dialogrc file for the current run of **sbotool**. Overrides the
+**DIALOGRC** setting.
+
+**-h\|\--help**
+
+Show help information.
+
+**-v\|\--version**
+
+Show version information.
 
 ## BUGS
 

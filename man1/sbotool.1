@@ -4,6 +4,10 @@
 .B
 sbotool
 - front-end to sbotools
+.SH SYNOPSIS
+sbotool [-h|-v]
+
+sbotool [-d FILE]
 .SH DESCRIPTION
 .B
 sbotool
@@ -175,9 +179,35 @@ dialog --create-rc FILE
 to generate a default
 .I
 dialogrc
-to modify.
-.SH BUGS
+to modify. The
+.B
+--dialogrc
+option can also specify a file at runtime.
+.SH OPTIONS
+.B
+-d|--dialogrc (FILE)
+.RS
+Use this dialogrc file for the current run of
+.B
+sbotool\fR\
+\&. Overrides the
+.B
+DIALOGRC
+setting.
+.RE
 .P
+.B
+-h|--help
+.RS
+Show help information.
+.RE
+.P
+.B
+-v|--version
+.RS
+Show version information.
+.RE
+.SH BUGS
 None known. If found, Issues and Pull Requests to
 .UR https://github.com/pghvlaans/sbotools/
 .UE
