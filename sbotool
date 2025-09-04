@@ -10,7 +10,7 @@
 use strict;
 use warnings;
 
-use SBO::Lib qw/ :colors :config :const auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_reverse_reqs get_sbo_description get_sbo_location in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp solib_check uniq update_known_solibs @concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt /;
+use SBO::Lib qw/ :colors :config :const auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_reverse_reqs get_sbo_description get_sbo_location in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp solib_check uniq update_known_solibs @concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir /;
 
 use File::Basename;
 use File::Find;
@@ -79,10 +79,13 @@ if (-s $slackbuilds_txt) {
 	}
 }
 
-my $tempdir = tempdir(CLEANUP => 1, DIR => "/tmp");
-my $dialog_input = "$tempdir/dialog_input";
-my $dialog_output = "$tempdir/dialog_output";
-my $command_output = "$tempdir/command_output";
+# The temporary directory from Build.pm isn't needed; use
+# a different one.
+remove_tree($tempdir) if -d $tempdir;
+my $sbotool_tempdir = tempdir(CLEANUP => 1, DIR => "/tmp");
+my $dialog_input = "$sbotool_tempdir/dialog_input";
+my $dialog_output = "$sbotool_tempdir/dialog_output";
+my $command_output = "$sbotool_tempdir/command_output";
 
 display_main();
 
@@ -436,9 +439,11 @@ sub display_builds {
 # An interface for sboclean.
 sub display_clean_menu {
 	unlink $dialog_output;
-	my @clean_menu = ( "\"Distfiles\" \"Downloaded source files.\" \"off\" \\",
-						"\"Options\" \"Per-script build options.\" \"off\" \\",
-						"\"Working\" \"Working directories from package builds.\" \"off\"" );
+	my @clean_menu;
+	push @clean_menu, "\"Distfiles\" \"Downloaded source files.\" \"off\" \\" if glob("$config{SBO_HOME}/distfiles/*");
+	push @clean_menu, "\"Options\" \"Per-script build options.\" \"off\" \\" if glob("/var/log/sbotools/*");
+	push @clean_menu, "\"Working\" \"Working directories.\" \"off\" \\" if glob("$tmpd/*");
+	$clean_menu[-1] =~ s/\\$//;
 	my $clean_menu = join "\n", @clean_menu;
 	my $height = calculate_height($clean_menu, "At least one");
 	system("$dialog_prefix --title \"sboclean\" --checklist \"At least one option must be checked.\" $height $wide $height $clean_menu 2> $dialog_output");
@@ -447,8 +452,8 @@ sub display_clean_menu {
 	my @options = split " ", $options;
 	my $cmd = "/usr/sbin/sboclean";
 	$cmd .= " -d" if in "Distfiles", @options;
-	$cmd .= " -w" if in "Working", @options;
 	$cmd .= " -o" if in "Options", @options;
+	$cmd .= " -w" if in "Working", @options;
 	run_command($cmd);
 	return;
 }
@@ -518,14 +523,14 @@ sub display_main {
 		}
 	}
 	if ($< == 0) {
-		push @main_menu, "\"Fetch Repository\" \"Get or update the repository.\" \\",
-						"\"Clean sbotools Files\" \"Source, working directories and saved options.\" \\";
+		push @main_menu, "\"Fetch Repository\" \"Get or update the repository.\" \\";
+		push @main_menu, "\"Clean sbotools Files\" \"Source and saved options.\" \\" if glob("/var/log/sbotools/*") or glob("$config{SBO_HOME}/distfiles/*") or glob("$tmpd/*");
 	}
 	@main_menu = sort @main_menu;
 	push @main_menu, "\"\" \"\" \\", "\"Refresh\" \"Run in case of outside changes.\"";
 	my $main_menu = join "\n", @main_menu;
 	my $height;
-	my $msg = "Welcome to the sbotools front-end.";
+	my $msg = "Welcome to the sbotools TUI.";
 	unless (-s $slackbuilds_txt) {
 		if ($< == 0) {
 			$msg .= "\n\nSelect \\\"Fetch Repository\\\" to download a copy of the repo.";
@@ -1155,4 +1160,4 @@ EOF
 	return 1;
 }
 
-END { unless ($help or $show_version) { remove_tree($tempdir) if -d $tempdir; system("clear"); } }
+END { unless ($help or $show_version) { remove_tree($sbotool_tempdir) if -d $sbotool_tempdir; system("clear"); } }
