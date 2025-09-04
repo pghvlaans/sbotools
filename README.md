@@ -12,7 +12,7 @@ dependency rebuilds.
   * **sboremove**: Interactively remove installed SlackBuilds along with any unused dependencies.
   * **sboupgrade**: Upgrade previously-installed SlackBuilds.
 
-Features include dependency handling, using a custom git branch for the upstream repository, reverse dependency search and rebuild, batch mode, gpg verification and more. See **sbotools(1)** for a startup guide.
+Features include dependency handling, using a custom git branch for the upstream repository, reverse dependency search and rebuild, batch mode, gpg verification and more. See **sbotools(1)** or **sbotool(1)** for a startup guide.
 
 Script maintainers may be interested in the **[sbotest](https://github.com/pghvlaans/sbotest)** companion package for convenient reverse dependency build testing.
 
