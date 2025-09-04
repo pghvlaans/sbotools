@@ -83,6 +83,9 @@ display_main();
 # operations and carry out the user's choice.
 sub build_operations {
 	my $sbo = shift;
+	my $base_name = $sbo;
+	$base_name =~ s/-compat32$//;
+	my $options_file = "/var/log/sbotools/$base_name";
 	my $is_compat_build = $sbo =~ /-compat32$/;
 	my $compat = $is_compat_build ? $sbo : "$sbo-compat32";
 	unlink $dialog_output;
@@ -135,6 +138,15 @@ sub build_operations {
 			$built_or_upgraded = $inst_names{$sbo} ? "rebuilt" : "built" unless $built_or_upgraded;
 			push @build_operations, "\"Dry Run\" \"How this package would be $built_or_upgraded.\" \\";
 		}
+	}
+	if (-s $options_file) {
+		if ($< == 0) {
+			push @build_operations, "\"Edit Build Options\" \"Edit existing saved build options.\" \\";
+		} else {
+			push @build_operations, "\"View Build Options\" \"View saved build options.\" \\";
+		}
+	} else {
+		push @build_operations, "\"Add Build Options\" \"Save new build options.\" \\" if $< == 0;
 	}
 	push @build_operations, "\"Add to Local Overrides\" \"Make a local override copy for editing.\" \\" if $overrides_available and not is_local($sbo);
 	if (is_local($sbo) and $overrides_available) {
@@ -203,6 +215,36 @@ sub build_operations {
 
 	if ($option eq "Edit Hints") { edit_hint($sbo); }
 
+	if ($option eq "Edit Build Options" or $option eq "Add Build Options") {
+		unlink $dialog_output;
+		my $orig_options = slurp $options_file if -s $options_file;
+		my $remove;
+		if ($option =~ /^Edit/ and $orig_options) {
+			my $orig_options = slurp $options_file;
+			$height = calculate_height($orig_options, "Remove?\n\n");
+			$remove = system("$dialog_prefix --title \"$options_file\" --yesno \"Remove build options for $base_name?\n\n$orig_options\" $height $wide") == 0;
+			unlink $options_file if $remove;
+		}
+		unless ($remove) {
+			if ($orig_options) {
+				$height = calculate_height($orig_options, "Current\n\nInput here");
+				system("$dialog_prefix --title \"$sbo: $option\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE:\n\n$orig_options\" $height $wide 2> $dialog_output");
+			} else {
+				$height = calculate_height("Enter build\n\nInput here");
+				system("$dialog_prefix --title \"$sbo: $option\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE:\" $height $wide 2> $dialog_output");
+			}
+			chomp(my $new_options = slurp $dialog_output);
+			if ($new_options =~ /\w/) {
+				$height = calculate_height("success or fail");
+				unless (save_options($sbo, $new_options)) {
+					system("$dialog_prefix --title \"Failure\" --msgbox \"Saving options failed for $sbo.\" $height $normal");
+				} else {
+					system("$dialog_prefix --title \"Success\" --msgbox \"Saved build options for $sbo.\" $height $normal");
+				}
+			}
+		}
+	}
+
 	if ($option eq "Hints") {
 		unlink $command_output;
 		system("/usr/sbin/sbohints --wrap --nocolor -q $sbo > $command_output");
@@ -269,6 +311,12 @@ sub build_operations {
 		$cmd .= " --reverse-rebuild" if $option =~ /reverse rebuild/;
 		$cmd .= " $sbo";
 		run_command($cmd, $sbo);
+	}
+
+	if ($option eq "View Build Options" and -s $options_file) {
+		my $build_options = slurp $options_file;
+		$height = calculate_height($build_options, "Run as root\n\n");
+		system("$dialog_prefix --ok-label \"Back\" --title \"$sbo: Saved Build Options\" --msgbox \"Run as root to edit build options.\n\n$build_options\" $height $wide");
 	}
 
 	if ($option eq "View File" or $option eq "Edit Override File") {
@@ -343,7 +391,7 @@ sub display_builds {
 	open $fh, ">", $dialog_input or exit _ERR_OPENFH;
 	print {$fh} $for_dialog;
 	close $fh;
-	system("$dialog_prefix --title \"$label\" --menu \"Select a SlackBuild.\" $height $wide $height --file $dialog_input 2> $dialog_output");
+	system("$dialog_prefix --title \"$label\" --menu \"Select a SlackBuild for more options.\" $height $wide $height --file $dialog_input 2> $dialog_output");
 	chomp(my $option = slurp $dialog_output);
 	return unless $option;
 	build_operations($option);

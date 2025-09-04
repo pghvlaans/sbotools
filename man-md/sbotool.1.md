@@ -36,8 +36,9 @@ specified using the script's **Hints** interface. Installations and
 upgrades can be performed either interactively or non-interactively. If
 the non-interactive *batch mode* is chosen, **sbotool** displays a dry
 run on the final confirmation screen. To specify build options for a
-particular script, install interactively or write the options to a file
-at */var/log/sbotools/script_name* ahead of time.
+particular script, install interactively or use **Add Build Options**
+from the script menu screen ahead of time as root. Build options are
+saved in the */var/log/sbotools* directory for future use.
 
 If packages (especially those marked *\_SBo*) are installed, upgraded or
 removed, or if **sbotools** settings are changed from outside of
