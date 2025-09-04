@@ -901,7 +901,7 @@ sub display_user_lists {
 	my @lists_to_show;
 	push @lists_to_show, "\"Install\" \"Install the packages in the install list.\" \\" if @install_list;
 	push @lists_to_show, "\"Upgrade\" \"Upgrade the packages in the upgrade list.\" \\" if @upgrade_list;
-	push @lists_to_show, "\"Remove\" \"Install the packages in the remove list.\" \\" if @remove_list;
+	push @lists_to_show, "\"Remove\" \"Remove the packages in the remove list.\" \\" if @remove_list;
 	push @lists_to_show, "\"\" \"\" \\", "\"Clear\" \"Clear list contents.\"";
 	my $lists_menu = join "\n", @lists_to_show;
 	my $height = calculate_height($lists_menu, "Choose a list to implement\n");
