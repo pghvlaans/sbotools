@@ -62,8 +62,8 @@ dependencies.
 
 Upgrade previously-installed SlackBuilds.
 
-**sbotool** is a meta-tool providing a frontend based on **dialog(1)**.
-Many **sbotools** operations can be accomplished through this series of
+[sbotool(1)](sbotool.1.md) is a meta-tool providing a TUI based on **dialog(1)**.
+Most **sbotools** operations can be accomplished through this series of
 dynamic menus, though calling the commands individually from the command
 line provides superior efficiency and fine-tuned option control.
 
