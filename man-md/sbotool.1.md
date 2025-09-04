@@ -48,10 +48,14 @@ particular script, install interactively or use **Add Build Options**
 from the script menu screen ahead of time as root. Build options are
 saved in the */var/log/sbotools* directory for future use.
 
-If packages (especially those marked *\_SBo*) are installed, upgraded or
-removed, or if **sbotools** settings are changed from outside of
-**sbotool** while **sbotool** is running, use the **Refresh** option in
-the main menu to ensure that the output reflects these changes.
+Individual scripts can be added to lists for installation, upgrade and
+removal as the root user. These lists do not persist when **sbotool** is
+closed. List operations use dependency resolution.
+
+If a utility other than **sbotool** installs, removes or upgrades
+packages, or changes **sbotools** settings while **sbotool** is running,
+use the **Refresh** option in the main menu to ensure that the output
+reflects these changes.
 
 Although most **sbotools** operations can be accomplished in
 **sbotool**, calling the scripts individually from the command line

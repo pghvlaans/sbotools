@@ -55,6 +55,8 @@ $editor = "vi" unless $editor;
 
 my (@available, $available, $all_fulldeps, @installed, $inst_pkgs, $inst_vers, %inst_names, $inst_vers_std, %inst_names_std, $fulldeps, @installed_std, $updates, @update_names, @overrides);
 
+my (@install_list, @upgrade_list, @remove_list);
+
 # Finding as much of this stuff as possible at the start
 # gets the cache going a little and makes navigation snappier
 # afterwards. "Loading..." takes less time after the first run.
@@ -120,6 +122,9 @@ sub build_operations {
 	}
 	$msg .= "\ncompat32 builds are unsupported by anyone in principle." if $is_compat_build;
 	$msg .= "\nUnsupported." if $unsupported;
+	$msg .= "\nOn the install list." if in $sbo, @install_list;
+	$msg .= "\nOn the upgrade list." if in $sbo, @upgrade_list;
+	$msg .= "\nOn the remove list." if in $sbo, @remove_list;
 	$msg .= "\n\nRun as root for more functions." unless $< == 0;
 
 	my (@installed_reverse, @available_reverse, @pre_display);
@@ -162,17 +167,32 @@ sub build_operations {
 	}
 	push @build_operations, "\"Shared Object Check\" \"Check for missing solib dependencies.\" \\" if $inst_names{$sbo} or $inst_names_std{$sbo};
 	push @build_operations, "\"Edit Hints\" \"Blacklist, auto-rebuild and dependencies.\" \\" if $< == 0;
-	if ($inst_names{$sbo} and $< == 0) {
+	if ($inst_names{$sbo} and $< == 0 and not on_blacklist($sbo)) {
 		push @build_operations, "\"Remove\" \"Remove with unneeded dependencies.\" \\",
-							"\"Reinstall\" \"Reinstall the package and its dependencies.\" \\";
+								"\"Reinstall\" \"Reinstall the package and its dependencies.\" \\";
+		unless (in $sbo, @remove_list) {
+			push @build_operations, "\"Add to Removes\" \"Add to the remove list.\" \\";
+		} else {
+			push @build_operations, "\"Remove from Removes\" \"Remove from the remove list.\" \\";
+		}
 		if (in $sbo, @update_names) {
 			push @build_operations, "\"Upgrade\" \"Upgrade the package.\" \\";
+			unless (in $sbo, @upgrade_list) {
+				push @build_operations, "\"Add to Upgrades\" \"Add to the upgrade list.\" \\";
+			} else {
+				push @build_operations, "\"Remove from Upgrades\" \"Remove from the upgrade list.\" \\";
+			}
 			push @build_operations, "\"Upgrade (reverse rebuild)\" \"Upgrade and rebuild rev. dep.\" \\" if @installed_reverse;
 		} else {
 			push @build_operations, "\"Reverse Rebuild\" \"Rebuild all reverse dependencies.\" \\" if @installed_reverse;
 		}
-	} elsif ($< == 0 and not $inst_names_std{$sbo} and not $unsupported) {
+	} elsif ($< == 0 and not $inst_names_std{$sbo} and not $unsupported and not on_blacklist($sbo)) {
 		push @build_operations, "\"Install\" \"Install the package.\" \\";
+		unless (in $sbo, @install_list) {
+			push @build_operations, "\"Add to Installs\" \"Add to the install list.\" \\";
+		} else {
+			push @build_operations, "\"Remove from Installs\" \"Remove from the install list.\" \\";
+		}
 	}
 	@build_operations = sort @build_operations;
 	push @build_operations, "\"\" \"\" \\", "\"Main\" \"Return to Main Menu\"";
@@ -289,6 +309,13 @@ sub build_operations {
 		display_builds("$sbo: Available Queue", @disp_queue);
 	}
 
+	if ($option eq "Add to Installs") { push @install_list, $sbo; }
+	if ($option eq "Add to Upgrades") { push @upgrade_list, $sbo; }
+	if ($option eq "Add to Removes") { push @remove_list, $sbo; }
+	if ($option eq "Remove from Installs") { @install_list =  grep { !/^$sbo$/ } @install_list; }
+	if ($option eq "Remove from Upgrades") { @upgrade_list =  grep { !/^$sbo$/ } @upgrade_list; }
+	if ($option eq "Remove from Removes") { @remove_list = grep { !/^$sbo$/ } @remove_list; }
+
 	if ($option eq "Remove from Overrides") {
 		$height = calculate_height("Remove?");
 		my $res = system("$dialog_prefix --yesno \"Remove $sbo from the Local Overrides directory?\" $height $normal") == 0;
@@ -317,7 +344,7 @@ sub build_operations {
 		my $cmd = "/usr/sbin/sboupgrade";
 		$cmd .= " --reverse-rebuild" if $option =~ /reverse rebuild/;
 		$cmd .= " $sbo";
-		run_command($cmd, $sbo);
+		run_command($cmd);
 	}
 
 	if ($option eq "View Build Options" and -s $options_file) {
@@ -459,6 +486,19 @@ sub display_main {
 	my @main_menu;
 	if ($< == 0) {
 		push @main_menu, "\"Settings\" \"View and edit sbotools settings.\" \\";
+		my @list_message;
+		my $list_string;
+		push @list_message, "install" if @install_list;
+		push @list_message, "upgrade" if @upgrade_list;
+		push @list_message, "remove" if @remove_list;
+		if (@list_message == 3) {
+			$list_string = "install, upgrade or remove";
+		} elsif (@list_message == 2) {
+			$list_string = "$list_message[0] or $list_message[1]";
+		} elsif (@list_message == 1) {
+			$list_string = $list_message[0];
+		}
+		push @main_menu, "\"List Operations\" \"Act on the $list_string list.\" \\" if $list_string;
 	} else {
 		push @main_menu, "\"Settings\" \"View sbotools settings.\" \\";
 	}
@@ -563,6 +603,7 @@ sub display_main {
 	if ($option eq "Browse Repository") { display_series(); }
 	if ($option eq "Clean sbotools Files") { display_clean_menu(); }
 	if ($option eq "Installed SBo Packages") { display_builds("Installed SBo SlackBuilds", keys %inst_names); }
+	if ($option eq "List Operations") { display_user_lists(); }
 	if ($option eq "Man Pages") { display_man_pages(); }
 	if ($option eq "Overrides") { display_builds("SlackBuilds in Local Overrides", @overrides); }
 	if ($option eq "Package Search") { run_search(); }
@@ -841,6 +882,40 @@ sub display_settings {
 	return;
 }
 
+sub display_user_lists {
+	return unless @install_list or @upgrade_list or @remove_list;
+	unlink $dialog_output;
+	my @lists_to_show;
+	push @lists_to_show, "\"Install\" \"Install the packages in the install list.\" \\" if @install_list;
+	push @lists_to_show, "\"Upgrade\" \"Upgrade the packages in the upgrade list.\" \\" if @upgrade_list;
+	push @lists_to_show, "\"Remove\" \"Install the packages in the remove list.\"" if @remove_list;
+	$lists_to_show[-1] =~ s/\\$//;
+	my $lists_menu = join "\n", @lists_to_show;
+	my $height = calculate_height($lists_menu, "Choose a list to implement\n");
+	system("$dialog_prefix --title \"List Operations\" --menu \"Choose a list to implement.\" $height $normal $height $lists_menu 2> $dialog_output");
+	chomp(my $option = slurp $dialog_output);
+	return unless $option =~ /\w/;
+	if ($option eq "Install") {
+		my $installs = join " ", @install_list;
+		run_command("/usr/sbin/sboinstall $installs");
+		@install_list = grep { !$inst_names{$_} } @install_list;
+	}
+	if ($option eq "Upgrade") {
+		my $upgrades = join " ", @upgrade_list;
+		run_command("/usr/sbin/sboupgrade $upgrades");
+		@upgrade_list = grep { in $_, @update_names } @upgrade_list;
+	}
+
+	if ($option eq "Remove") {
+		my $removes = join " ", @remove_list;
+		run_command("/usr/sbin/sboremove $removes");
+		@remove_list = grep { !$inst_names{$_} } @remove_list;
+	}
+
+	display_user_lists();
+	return;
+}
+
 # An interface for sbohints.
 sub edit_hint {
 	script_error("edit_hint requires an argument.") unless @_ == 1;
@@ -992,7 +1067,6 @@ sub new_package_information {
 sub run_command {
 	script_error("run_command requires at least one argument.") unless @_;
 	my $cmd = shift;
-	my $sbo = shift;
 	my $height;
 	if ($cmd =~ /sbo(install|upgrade)/) {
 		my $batch_cmd = "$cmd --batch";

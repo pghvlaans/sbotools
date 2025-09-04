@@ -72,23 +72,25 @@ from the script menu screen ahead of time as root. Build options are saved in th
 /var/log/sbotools
 directory for future use.
 .P
-If packages (especially those marked
-.I
-_SBo\fR\
-\&) are installed, upgraded or removed, or if
-.B
-sbotools
-settings are changed from outside of
+Individual scripts can be added to lists for installation, upgrade and removal
+as the root user. These lists do not persist when
 .B
 sbotool
-while
+is closed. List operations use dependency resolution.
+.P
+If a utility other than
+.B
+sbotool
+installs, removes or upgrades packages, or changes
+.B
+sbotools
+settings while
 .B
 sbotool
 is running, use the
 .B
 Refresh
-option in the main menu to ensure that the output
-reflects these changes.
+option in the main menu to ensure that the output reflects these changes.
 .P
 Although most
 .B
