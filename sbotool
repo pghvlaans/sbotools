@@ -646,7 +646,20 @@ sub display_rebuild_menu {
 			system("$dialog_prefix --title \"Mass Rebuild Dry Run\" --textbox $command_output $height $normal");
 		}
 	}
-	if ($option eq "Mass Rebuild") { run_command("/usr/sbin/sboinstall --mass-rebuild"); }
+	if ($option eq "Mass Rebuild") {
+		$height = calculate_height("Picking up");
+		if (-s "$config{SBO_HOME}/resume.temp") {
+			my $resume_res = system("$dialog_prefix --title \"Mass Rebuild\" --yesno \"A previous mass rebuild failed. Pick up from the next script?\" $height $normal") == 0;
+			unless ($resume_res) {
+				system("$dialog_prefix --title \"Mass Rebuild\" --msgbox \"Delete the file at $config{SBO_HOME}/resume.temp to start over.\" $height $normal");
+				return;
+			}
+		}
+		run_command("/usr/sbin/sboinstall --mass-rebuild");
+		if (-s "$config{SBO_HOME}/resume.temp") {
+			system("$dialog_prefix --ok-label \"OK\" --title \"Mass Rebuild\" --msgbox \"The next mass rebuild attempt will start from after the failed script.\" $height $normal");
+		}
+	}
 
 	if ($option =~ /^Series/) {
 		unlink $dialog_output;
