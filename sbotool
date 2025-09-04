@@ -171,16 +171,16 @@ sub build_operations {
 		push @build_operations, "\"Remove\" \"Remove with unneeded dependencies.\" \\",
 								"\"Reinstall\" \"Reinstall the package and its dependencies.\" \\";
 		unless (in $sbo, @remove_list) {
-			push @build_operations, "\"Add to Removes\" \"Add to the remove list.\" \\";
+			push @build_operations, "\"Add to Remove List\" \"Designate for removal.\" \\";
 		} else {
-			push @build_operations, "\"Remove from Removes\" \"Remove from the remove list.\" \\";
+			push @build_operations, "\"Clear from Remove List\" \"Do not remove.\" \\";
 		}
 		if (in $sbo, @update_names) {
 			push @build_operations, "\"Upgrade\" \"Upgrade the package.\" \\";
 			unless (in $sbo, @upgrade_list) {
-				push @build_operations, "\"Add to Upgrades\" \"Add to the upgrade list.\" \\";
+				push @build_operations, "\"Add to Upgrade List\" \"Designate for upgrade.\" \\";
 			} else {
-				push @build_operations, "\"Remove from Upgrades\" \"Remove from the upgrade list.\" \\";
+				push @build_operations, "\"Clear from Upgrade List\" \"Do not upgrade.\" \\";
 			}
 			push @build_operations, "\"Upgrade (reverse rebuild)\" \"Upgrade and rebuild rev. dep.\" \\" if @installed_reverse;
 		} else {
@@ -189,9 +189,9 @@ sub build_operations {
 	} elsif ($< == 0 and not $inst_names_std{$sbo} and not $unsupported and not on_blacklist($sbo)) {
 		push @build_operations, "\"Install\" \"Install the package.\" \\";
 		unless (in $sbo, @install_list) {
-			push @build_operations, "\"Add to Installs\" \"Add to the install list.\" \\";
+			push @build_operations, "\"Add to Install List\" \"Designate for installation.\" \\";
 		} else {
-			push @build_operations, "\"Remove from Installs\" \"Remove from the install list.\" \\";
+			push @build_operations, "\"Clear from Install List\" \"Do not install.\" \\";
 		}
 	}
 	@build_operations = sort @build_operations;
@@ -309,12 +309,12 @@ sub build_operations {
 		display_builds("$sbo: Available Queue", @disp_queue);
 	}
 
-	if ($option eq "Add to Installs") { push @install_list, $sbo; }
-	if ($option eq "Add to Upgrades") { push @upgrade_list, $sbo; }
-	if ($option eq "Add to Removes") { push @remove_list, $sbo; }
-	if ($option eq "Remove from Installs") { @install_list =  grep { !/^$sbo$/ } @install_list; }
-	if ($option eq "Remove from Upgrades") { @upgrade_list =  grep { !/^$sbo$/ } @upgrade_list; }
-	if ($option eq "Remove from Removes") { @remove_list = grep { !/^$sbo$/ } @remove_list; }
+	if ($option eq "Add to Install List") { push @install_list, $sbo; }
+	if ($option eq "Add to Upgrade List") { push @upgrade_list, $sbo; }
+	if ($option eq "Add to Remove List") { push @remove_list, $sbo; }
+	if ($option eq "Clear from Install List") { @install_list =  grep { !/^$sbo$/ } @install_list; }
+	if ($option eq "Clear from Upgrade List") { @upgrade_list =  grep { !/^$sbo$/ } @upgrade_list; }
+	if ($option eq "Clear from Remove List") { @remove_list = grep { !/^$sbo$/ } @remove_list; }
 
 	if ($option eq "Remove from Overrides") {
 		$height = calculate_height("Remove?");
@@ -901,8 +901,8 @@ sub display_user_lists {
 	my @lists_to_show;
 	push @lists_to_show, "\"Install\" \"Install the packages in the install list.\" \\" if @install_list;
 	push @lists_to_show, "\"Upgrade\" \"Upgrade the packages in the upgrade list.\" \\" if @upgrade_list;
-	push @lists_to_show, "\"Remove\" \"Install the packages in the remove list.\"" if @remove_list;
-	$lists_to_show[-1] =~ s/\\$//;
+	push @lists_to_show, "\"Remove\" \"Install the packages in the remove list.\" \\" if @remove_list;
+	push @lists_to_show, "\"\" \"\" \\", "\"Clear\" \"Clear list contents.\"";
 	my $lists_menu = join "\n", @lists_to_show;
 	my $height = calculate_height($lists_menu, "Choose a list to implement\n");
 	system("$dialog_prefix --title \"List Operations\" --menu \"Choose a list to implement.\" $height $normal $height $lists_menu 2> $dialog_output");
@@ -911,18 +911,23 @@ sub display_user_lists {
 	if ($option eq "Install") {
 		my $installs = join " ", @install_list;
 		run_command("/usr/sbin/sboinstall $installs");
-		@install_list = grep { !$inst_names{$_} } @install_list;
 	}
 	if ($option eq "Upgrade") {
 		my $upgrades = join " ", @upgrade_list;
 		run_command("/usr/sbin/sboupgrade $upgrades");
-		@upgrade_list = grep { in $_, @update_names } @upgrade_list;
 	}
 
 	if ($option eq "Remove") {
 		my $removes = join " ", @remove_list;
 		run_command("/usr/sbin/sboremove $removes");
-		@remove_list = grep { !$inst_names{$_} } @remove_list;
+	}
+
+	if ($option eq "Clear") {
+		splice @install_list;
+		splice @upgrade_list;
+		splice @remove_list;
+		$height = calculate_height("Cleared");
+		system("$dialog_prefix --title \"List Operations\" --ok-label \"OK\" --msgbox \"List contents cleared.\" $height $narrow");
 	}
 
 	display_user_lists();
@@ -1074,6 +1079,9 @@ sub new_package_information {
 	if ($updates) {
 		for (@$updates) { push @update_names, $_->{name} unless on_blacklist $_->{name}; }
 	}
+	@install_list = grep { !$inst_names{$_} && ! on_blacklist($_) } @install_list;
+	@upgrade_list = grep { in $_, @update_names } @upgrade_list;
+	@remove_list = grep { $inst_names{$_} && ! on_blacklist($_) } @remove_list;
 }
 
 # A wrapper for running commands requiring user input.
