@@ -110,6 +110,9 @@ cd $PKG/usr/man/man1
 ln -s sbocheck.1 sbosnap.1
 )
 
+mkdir -p $PKG/usr/share/sbotools
+install -m 0644 contrib/* $PKG/usr/share/sbotools
+
 mkdir -p $PKG/etc/sbotools
 cp etc/obsolete $PKG/etc/sbotools/obsolete
 cp etc/sbotools.conf $PKG/etc/sbotools/sbotools.conf.new

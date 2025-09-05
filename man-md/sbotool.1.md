@@ -84,7 +84,7 @@ configuration values are documented in [sbotools.conf(5)](sbotools.conf.5.md).
 **sbotool** uses **dialog(1)** for output. The color scheme and
 appearance can be changed using a *dialogrc* file. Set the **DIALOGRC**
 setting to an **absolute file path** to use an alternative *dialogrc*.
-See */etc/dialogrc* for an example, or run
+See */etc/dialogrc* or */usr/share/sbotools* for an example, or run
 
     dialog --create-rc FILE
 
