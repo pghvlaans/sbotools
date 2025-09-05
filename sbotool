@@ -55,7 +55,7 @@ $editor = "vi" unless $editor;
 
 my (@available, $available, $all_fulldeps, @installed, $inst_pkgs, $inst_vers, %inst_names, $inst_vers_std, %inst_names_std, $fulldeps, @installed_std, $updates, @update_names, @overrides);
 
-my (@install_list, @upgrade_list, @remove_list);
+my (@install_list, @template_list, @upgrade_list, @remove_list);
 
 # Finding as much of this stuff as possible at the start
 # gets the cache going a little and makes navigation snappier
@@ -126,6 +126,7 @@ sub build_operations {
 	$msg .= "\ncompat32 builds are unsupported by anyone in principle." if $is_compat_build;
 	$msg .= "\nUnsupported." if $unsupported;
 	$msg .= "\nOn the install list." if in $sbo, @install_list;
+	$msg .= "\nOn the template list." if in $sbo, @template_list;
 	$msg .= "\nOn the upgrade list." if in $sbo, @upgrade_list;
 	$msg .= "\nOn the remove list." if in $sbo, @remove_list;
 	$msg .= "\n\nRun as root for more functions." unless $< == 0;
@@ -138,6 +139,11 @@ sub build_operations {
 	for (@pre_display) { push @available_reverse, $_ if get_sbo_location($_); }
 
 	my @build_operations;
+	if (in $sbo, @template_list) {
+		push @build_operations, "\"Clear from Template List\" \"Do not add to template.\" \\";
+	} else {
+		push @build_operations, "\"Add to Template List\" \"Designate for template creation.\" \\" unless on_blacklist($sbo) or $unsupported;
+	}
 	push @build_operations, "\"compat32\" \"Select -compat32 operations.\" \\" if $compat_possible and not $is_compat_build;
 	push @build_operations, "\"View File\" \"View any file in the script directory.\" \\";
 	push @build_operations, "\"RevDep (installed)\" \"Dependent packages on the system.\" \\" if @installed_reverse;
@@ -313,9 +319,11 @@ sub build_operations {
 	}
 
 	if ($option eq "Add to Install List") { push @install_list, $sbo; }
+	if ($option eq "Add to Template List") { push @template_list, $sbo; }
 	if ($option eq "Add to Upgrade List") { push @upgrade_list, $sbo; }
 	if ($option eq "Add to Remove List") { push @remove_list, $sbo; }
 	if ($option eq "Clear from Install List") { @install_list =  grep { !/^$sbo$/ } @install_list; }
+	if ($option eq "Clear from Template List") { @template_list =  grep { !/^$sbo$/ } @template_list; }
 	if ($option eq "Clear from Upgrade List") { @upgrade_list =  grep { !/^$sbo$/ } @upgrade_list; }
 	if ($option eq "Clear from Remove List") { @remove_list = grep { !/^$sbo$/ } @remove_list; }
 
@@ -491,22 +499,25 @@ sub display_main {
 	my @main_menu;
 	if ($< == 0) {
 		push @main_menu, "\"Settings\" \"View and edit sbotools settings.\" \\";
-		my @list_message;
-		my $list_string;
-		push @list_message, "install" if @install_list;
-		push @list_message, "upgrade" if @upgrade_list;
-		push @list_message, "remove" if @remove_list;
-		if (@list_message == 3) {
-			$list_string = "install, upgrade or remove";
-		} elsif (@list_message == 2) {
-			$list_string = "$list_message[0] or $list_message[1]";
-		} elsif (@list_message == 1) {
-			$list_string = $list_message[0];
-		}
-		push @main_menu, "\"List Operations\" \"Act on the $list_string list.\" \\" if $list_string;
 	} else {
 		push @main_menu, "\"Settings\" \"View sbotools settings.\" \\";
 	}
+	my @list_message;
+	my $list_string;
+	push @list_message, "install" if @install_list;
+	push @list_message, "make template" if @template_list;
+	push @list_message, "upgrade" if @upgrade_list;
+	push @list_message, "remove" if @remove_list;
+	if (@list_message == 4) {
+		$list_string = "install, make template, upgrade or remove";
+	} elsif (@list_message == 3) {
+		$list_string = "$list_message[0], $list_message[1] or $list_message[2]";
+	} elsif (@list_message == 2) {
+		$list_string = "$list_message[0] or $list_message[1]";
+	} elsif (@list_message == 1) {
+		$list_string = $list_message[0];
+	}
+	push @main_menu, "\"List Operations\" \"Act on the $list_string list.\" \\" if $list_string;
 	push @main_menu, "\"Hints\" \"View per-script hints.\" \\" if $listings[0] ne "NULL";
 	push @main_menu, "\"Shared Objects\" \"Check for missing solib dependencies.\" \\",
 					"\"Man Pages\" \"Read sbotools-related man pages.\" \\";
@@ -901,10 +912,11 @@ sub display_settings {
 }
 
 sub display_user_lists {
-	return unless @install_list or @upgrade_list or @remove_list;
+	return unless @install_list or @template_list or @upgrade_list or @remove_list;
 	unlink $dialog_output;
 	my @lists_to_show;
 	push @lists_to_show, "\"Install\" \"Install the packages in the install list.\" \\" if @install_list;
+	push @lists_to_show, "\"Template\" \"Create a template from the template list.\" \\" if @template_list;
 	push @lists_to_show, "\"Upgrade\" \"Upgrade the packages in the upgrade list.\" \\" if @upgrade_list;
 	push @lists_to_show, "\"Remove\" \"Remove the packages in the remove list.\" \\" if @remove_list;
 	push @lists_to_show, "\"\" \"\" \\", "\"Clear\" \"Clear list contents.\"";
@@ -917,6 +929,29 @@ sub display_user_lists {
 		my $installs = join " ", @install_list;
 		run_command("/usr/sbin/sboinstall $installs");
 	}
+
+	if ($option eq "Template") {
+		my $templates = join " ", @template_list;
+		my $out_file = "/tmp/sbotool.temp" unless -s "/tmp/sbotool.temp";
+		unless ($out_file) {
+			my $index = 0;
+			NEXT_FILE: while (1) {
+				$out_file = "/tmp/sbotool_$index.tmp" unless -s "/tmp/sbotool_$index.tmp";
+				last if $out_file;
+				$index++;
+				next NEXT_FILE;
+			}
+		}
+		run_command("/usr/sbin/sboinstall --template-only \"$out_file\" --reinstall $templates");
+		$height = calculate_height("Success or failure");
+		if (-s $out_file) {
+			system("$dialog_prefix --title \"List Operations\" --msgbox \"Template saved to $out_file. Clearing the list.\" $height $normal");
+			splice @template_list;
+		} else {
+			system("$dialog_prefix --title \"List Operations\" --msgbox \"Unable to save to $out_file.\" $height $normal");
+		}
+	}
+
 	if ($option eq "Upgrade") {
 		my $upgrades = join " ", @upgrade_list;
 		run_command("/usr/sbin/sboupgrade $upgrades");

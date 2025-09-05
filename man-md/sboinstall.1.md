@@ -22,17 +22,17 @@
     sboinstall [-h|-v]
 
     sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
-               [-DRiopr] [--batch|--dry-run] [--create-template FILE] \
+               [-DRiopr] [--batch|--dry-run] [--create-template|-t FILE] \
                sbo_name (sbo_name)
 
     sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
                [-Di] --use-template FILE
 
     sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
-               [-Dioqr] [--create-template FILE] --mass-rebuild
+               [-Dioqr] [--create-template|-t FILE] --mass-rebuild
 
     sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
-               [-Dioqr] [--create-template FILE] --series-rebuild SERIES
+               [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES
 
     sboinstall [--color|--nocolor] [--wrap|--nowrap] \...
 
@@ -72,9 +72,9 @@ or the md5sum check fails, a new download is attempted from
 Slackware 14.0 and Slackware 14.1.
 
 Root privileges are required to run **sboinstall** unless passing
-**\--dry-run**. If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, or if invalid options are specified, the
-script exits with a diagnostic message.
+**\--dry-run** or **\--template-only**. If an invalid configuration is
+detected in */etc/sbotools/sbotools.conf*, or if invalid options are
+specified, the script exits with a diagnostic message.
 
 ## OPTIONS
 
@@ -187,6 +187,13 @@ Bypass dependency resolution, but still show *README* and the user
 prompts before proceeding with the build.
 
 Incompatible with **\--batch**.
+
+**-t\|\--template-only FILE**
+
+Save a template to FILE, but do not attempt downloads or builds.
+Non-root users may call **sboinstall** with **\--template-only**.
+
+Incompatible with **\--create-template**.
 
 **\--reinstall**
 

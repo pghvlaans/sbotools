@@ -65,6 +65,8 @@ Options (defaults shown first where applicable):
     non-interactive; skips README and all prompts.
   -R|--norequirements:
     view the README but do not parse requirements, commands, or options.
+  -t|--template-only (FILE):
+    create a template, but do not download or install anything.
   --batch:
     like nointeractive, but calculates dependencies (use with caution)
   --reinstall:
@@ -82,7 +84,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $noclean, $distclean, $pkg_dir, $log_dir, $etc_profile, $gpg, $series_rebuild, $jobs, $nocolor, $color, $wrap, $nowrap);
+my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $noclean, $distclean, $pkg_dir, $log_dir, $etc_profile, $gpg, $series_rebuild, $jobs, $nocolor, $color, $wrap, $nowrap, $ctemp_only);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -110,19 +112,20 @@ my $options_ok = GetOptions(
 	'color'             => \$color,
 	'nowrap'            => \$nowrap,
 	'wrap'              => \$wrap,
+	'template-only|t=s' => \$ctemp_only,
 );
 
 if ($help) {
 	show_usage();
-	wrapsay "\nNon-root users can call $self with -D, -v and -h." unless $< == 0;
+	wrapsay "\nNon-root users can call $self with -D, -t, -v and -h." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0; }
 $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
 $config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $wrap xor $nowrap;
-unless ($< == 0 or $dry_run) {
+unless ($< == 0 or $dry_run or $ctemp_only) {
 	show_usage();
-	usage_error "\nNon-root users can call $self with -D, -v and -h.";
+	usage_error "\nNon-root users can call $self with -D, -t, -v and -h.";
 }
 unless ($options_ok) {
 	show_usage();
@@ -165,6 +168,7 @@ if ($compat32) {
 	usage_error("compat32 is incompatible with use-template.") if $utemp;
 }
 
+usage_error("template-only is incompatible with create-template.") if $ctemp_only and $ctemp;
 usage_error("mass-rebuild is incompatible with use-template.") if $utemp and $mass_rebuild;
 usage_error("mass-rebuild is incompatible with norequirements.") if $no_reqs and $mass_rebuild;
 usage_error("mass-rebuild is incompatible with reverse_rebuild.") if $reverse_rebuild and $mass_rebuild;
@@ -177,6 +181,7 @@ usage_error("mass-rebuild is incompatible with series-rebuild.") if $series_rebu
 $yes_really = 1 if $dry_run;
 usage_error("norequirements is incompatible with batch and dry-run.") if $no_reqs and $yes_really;
 $non_int = 1 if $yes_really;
+$ctemp = $ctemp_only if $ctemp_only;
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
@@ -540,6 +545,7 @@ if (defined $ctemp or $mass_rebuild) {
 	}
 	print "\nTemplate $ctemp saved.\n";
 }
+exit 0 if $ctemp_only;
 
 my ($failures, $exit) = process_sbos(
 	TODO      => $build_queue,

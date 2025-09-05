@@ -9,17 +9,17 @@ sboinstall
 sboinstall [-h|-v]
 .P
 sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
-           [-DRiopr] [--batch|--dry-run] [--create-template FILE] \\
+           [-DRiopr] [--batch|--dry-run] [--create-template|-t FILE] \\
            sbo_name (sbo_name)
 .P
 sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-Di] --use-template FILE
 .P
 sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
-           [-Dioqr] [--create-template FILE] --mass-rebuild
+           [-Dioqr] [--create-template|-t FILE] --mass-rebuild
 .P
 sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
-           [-Dioqr] [--create-template FILE] --series-rebuild SERIES
+           [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES
 .P
 sboinstall [--color|--nocolor] [--wrap|--nowrap] ...
 .SH DESCRIPTION
@@ -142,7 +142,10 @@ Root privileges are required to run
 sboinstall
 unless passing
 .B
---dry-run\fR\
+--dry-run
+or
+.B
+--template-only\fR\
 \&. If an invalid configuration is detected in
 .I
 /etc/sbotools/sbotools.conf\fR\
@@ -463,6 +466,23 @@ Incompatible with
 --batch\fR\
 \&.
 .RE
+.P
+.B
+-t|--template-only FILE
+.RS
+Save a template to FILE, but do not attempt downloads or builds. Non-root
+users may call
+.B
+sboinstall
+with
+.B
+--template-only\fR\
+\&.
+
+Incompatible with
+.B
+--create-template\fR\
+\&.
 .P
 .B
 --reinstall

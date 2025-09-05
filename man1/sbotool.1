@@ -73,7 +73,14 @@ from the script menu screen ahead of time as root. Build options are saved in th
 directory for future use.
 .P
 Individual scripts can be added to lists for installation, upgrade and removal
-as the root user. These lists do not persist when
+as the root user.
+Any user may add to the template list, which creates a
+.B
+sbotools
+template that can be implemented with
+.B
+sboinstall --use-template
+on another system. These lists do not persist when
 .B
 sbotool
 is closed. List operations use dependency resolution.

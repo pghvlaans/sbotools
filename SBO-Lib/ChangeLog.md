@@ -7,6 +7,7 @@
   * Added sbotool, a dialog-based front-end
   * Added a setting DIALOGRC to specify a dialogrc file for sbotool
     * Thanks to SCerovec for the suggestion
+  * sboinstall: Added --template-only to create a template without building
 
 #### 3.8.1 - 2025-08-28
   * Replace most grep instances
