@@ -74,13 +74,18 @@ directory for future use.
 .P
 Individual scripts can be added to lists for installation, upgrade and removal
 as the root user.
-Any user may add to the template list, which creates a
+Any user may add to the template list; the template produced can be implemented as root
+with
 .B
-sbotools
-template that can be implemented with
+sboinstall --use-template\fR\
+\&.
+Use
 .B
-sboinstall --use-template
-on another system. These lists do not persist when
+List Operations
+from
+.B
+Main Menu
+to do the chosen operation for the listed scripts. These lists do not persist when
 .B
 sbotool
 is closed. List operations use dependency resolution.
@@ -91,7 +96,7 @@ sbotool
 installs, removes or upgrades packages, or changes
 .B
 sbotools
-settings while
+settings, while
 .B
 sbotool
 is running, use the

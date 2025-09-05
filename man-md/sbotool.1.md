@@ -49,16 +49,16 @@ from the script menu screen ahead of time as root. Build options are
 saved in the */var/log/sbotools* directory for future use.
 
 Individual scripts can be added to lists for installation, upgrade and
-removal as the root user. Any user may add to the template list, which
-creates a **sbotools** template that can be implemented with
-**sboinstall \--use-template** on another system. These lists do not
-persist when **sbotool** is closed. List operations use dependency
-resolution.
+removal as the root user. Any user may add to the template list; the
+template produced can be implemented as root with **sboinstall
+\--use-template**. Use **List Operations** from **Main Menu** to do the
+chosen operation for the listed scripts. These lists do not persist when
+**sbotool** is closed. List operations use dependency resolution.
 
 If a utility other than **sbotool** installs, removes or upgrades
-packages, or changes **sbotools** settings while **sbotool** is running,
-use the **Refresh** option in the main menu to ensure that the output
-reflects these changes.
+packages, or changes **sbotools** settings, while **sbotool** is
+running, use the **Refresh** option in the main menu to ensure that the
+output reflects these changes.
 
 Although most **sbotools** operations can be accomplished in
 **sbotool**, calling the scripts individually from the command line
