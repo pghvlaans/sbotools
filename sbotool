@@ -447,10 +447,29 @@ sub display_builds {
 # An interface for sboclean.
 sub display_clean_menu {
 	unlink $dialog_output;
-	my @clean_menu;
-	push @clean_menu, "\"Distfiles\" \"Downloaded source files.\" \"off\" \\" if glob("$config{SBO_HOME}/distfiles/*");
-	push @clean_menu, "\"Options\" \"Per-script build options.\" \"off\" \\" if glob("/var/log/sbotools/*");
-	push @clean_menu, "\"Working\" \"Working directories.\" \"off\" \\" if glob("$tmpd/*");
+	my (@clean_menu, $has_distfiles, $has_options, $has_working);
+	if (-d "$config{SBO_HOME}/distfiles") {
+		opendir(my $handle, "$config{SBO_HOME}/distfiles");
+		while (my $dir = readdir $handle) {
+			unless (in_regexp($dir => qw/ . .. /)) { $has_distfiles = 1; last; }
+		}
+	}
+	if (-d "$tmpd") {
+		opendir(my $handle, $tmpd);
+		while (my $dir = readdir $handle) {
+			unless (in_regexp($dir => qw/ . .. /)) { $has_working = 1; last; }
+		}
+	}
+	if (-d "/var/log/sbotools") {
+		opendir(my $handle, "/var/log/sbotools");
+		while (my $dir = readdir $handle) {
+			unless (in_regexp($dir => qw/ . .. /)) { $has_options = 1; last; }
+		}
+	}
+
+	push @clean_menu, "\"Distfiles\" \"Downloaded source files.\" \"off\" \\" if $has_distfiles;
+	push @clean_menu, "\"Options\" \"Per-script build options.\" \"off\" \\" if $has_options;
+	push @clean_menu, "\"Working\" \"Working directories.\" \"off\" \\" if $has_working;
 	$clean_menu[-1] =~ s/\\$//;
 	my $clean_menu = join "\n", @clean_menu;
 	my $height = calculate_height($clean_menu, "At least one");
@@ -463,7 +482,7 @@ sub display_clean_menu {
 	$cmd .= " -o" if in "Options", @options;
 	$cmd .= " -w" if in "Working", @options;
 	run_command($cmd);
-	return;
+	display_main();
 }
 
 # Select and read a man page.
@@ -535,7 +554,36 @@ sub display_main {
 	}
 	if ($< == 0) {
 		push @main_menu, "\"Fetch Repository\" \"Get or update the repository.\" \\";
-		push @main_menu, "\"Clean sbotools Files\" \"Source and saved options.\" \\" if glob("/var/log/sbotools/*") or glob("$config{SBO_HOME}/distfiles/*") or glob("$tmpd/*");
+		my (@clean_string, $clean_msg, $has_distfiles, $has_options, $has_working);
+		if (-d "$config{SBO_HOME}/distfiles") {
+			opendir(my $handle, "$config{SBO_HOME}/distfiles");
+			while (my $dir = readdir $handle) {
+				unless (in_regexp($dir => qw/ . .. /)) { $has_distfiles = 1; last; }
+			}
+		}
+		if (-d "$tmpd") {
+			opendir(my $handle, $tmpd);
+			while (my $dir = readdir $handle) {
+				unless (in_regexp($dir => qw/ . .. /)) { $has_working = 1; last; }
+			}
+		}
+		if (-d "/var/log/sbotools") {
+			opendir(my $handle, "/var/log/sbotools");
+			while (my $dir = readdir $handle) {
+				unless (in_regexp($dir => qw/ . .. /)) { $has_options = 1; last; }
+			}
+		}
+		push @clean_string, "source" if $has_distfiles;
+		push @clean_string, "working directories" if $has_working;
+		push @clean_string, "build options" if $has_options;
+		if (@clean_string == 3) {
+			$clean_msg = "source, working directories and build options";
+		} elsif (@clean_string == 2) {
+			$clean_msg = "$clean_string[0] and $clean_string[1]";
+		} elsif (@clean_string == 1) {
+			$clean_msg = $clean_string[0];
+		}
+		push @main_menu, "\"Clean sbotools Files\" \"Saved $clean_msg.\" \\" if $clean_msg;
 	}
 	@main_menu = sort @main_menu;
 	push @main_menu, "\"\" \"\" \\", "\"Refresh\" \"Run in case of outside changes.\"";
