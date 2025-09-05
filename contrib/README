@@ -1,0 +1,10 @@
+/usr/share/sbotools
+
+This directory contains example dialogrc files for sbotool. Set DIALOGRC
+to an absolute file path (or pass one with the --dialogrc option) to use
+one.
+
+To share a dialogrc file of your own, fork the pghvlaans/sbotools
+repository, put it in ./contrib and make a Pull Request. Please use a
+descriptive file name, and feel free to leave your name or handle in a
+comment.
