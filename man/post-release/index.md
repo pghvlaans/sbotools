@@ -2,6 +2,8 @@ The pages here reflect post-release development. For the version 3.8.1 pages (20
 
 * [sbotools(1)](sbotools.1.md)
     * A summary man page with brief descriptions of the tools.
+* [sbotool(1)](sbotool.1.md)
+    * A TUI for **sbotools**.
 * [sbocheck(1)](sbocheck.1.md)
     * Fetch the latest version of the upstream SlackBuilds repository; check for version updates, build number changes and out-of-tree installed SlackBuilds. Perform shared object dependency checks.
 * [sboclean(1)](sboclean.1.md)

@@ -62,6 +62,11 @@ dependencies.
 
 Upgrade previously-installed SlackBuilds.
 
+[sbotool(1)](sbotool.1.md) is a meta-tool providing a TUI based on **dialog(1)**.
+Most **sbotools** operations can be accomplished through this series of
+dynamic menus, though calling the commands individually from the command
+line provides superior efficiency and fine-tuned option control.
+
 By default, [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md) give prompts before
 adding items to the build queue. These scripts have a **\--batch** flag
 available for non-interactive building with dependency resolution.
@@ -90,7 +95,8 @@ repository must be fetched with [sbocheck(1)](sbocheck.1.md):
 
 The local repository is saved to */usr/sbo/repo*. To use an alternative
 location, give an absolute file path to the **SBO_HOME** setting with
-[sboconfig(1)](sboconfig.1.md) or by editing */etc/sbotools/sbotools.conf*.
+[sboconfig(1)](sboconfig.1.md) or by editing */etc/sbotools/sbotools.conf*. The
+repositiory can also be fetched using **sbotool** if running as root.
 
 The default mirror depends on the running version of Slackware. Stable
 releases beyond Slackware 14.1 use the appropriate branch on
@@ -145,8 +151,8 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
-[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md),
+[sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), dialog(1)
 
 ## AUTHORS
 

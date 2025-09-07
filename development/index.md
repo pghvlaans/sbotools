@@ -10,8 +10,7 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 ## Prospective Features
 
-Nothing else for now, but requests are welcome and will receive due consideration.
-
 ## Incoming Features
 
 * `sbofind`, `sboremove`: Show the short descriptions, if available
+* `sbotool`: A dialog-based TUI
