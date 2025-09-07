@@ -22,7 +22,7 @@ a given name or names
 
     sbofind [-h|-v]
 
-    sbofind [-AEFRTeiqrt] search_term (search_term)
+    sbofind [-AEFRTdeiqrt] search_term (search_term)
 
     sbofind [--color|--nocolor] [--wrap|--nowrap] \...
 
@@ -33,7 +33,8 @@ a given name or names
 **sbofind** searches the names of all available SlackBuilds for one or
 more search terms. It reports back any SlackBuilds found along with
 path, version, installation status information and a short description.
-This is akin to running
+Use the **\--descriptions** option to search descriptions as well. This
+is akin to running
 
     cd /usr/ports; make search name=$search_term display=name,path
 

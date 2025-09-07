@@ -11,7 +11,7 @@ tree for a given name or names
 .P
 sbofind [-h|-v]
 .P
-sbofind [-AEFRTeiqrt] search_term (search_term)
+sbofind [-AEFRTdeiqrt] search_term (search_term)
 .P
 sbofind [--color|--nocolor] [--wrap|--nowrap] ...
 .P
@@ -23,7 +23,10 @@ sbofind
 searches the names of all available SlackBuilds for one or more
 search terms. It reports back any SlackBuilds found along
 with path, version, installation status information and a short
-description. This is akin to running
+description. Use the
+.B
+--descriptions
+option to search descriptions as well. This is akin to running
 .RS
 
 cd /usr/ports; make search name=$search_term display=name,path

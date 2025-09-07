@@ -207,15 +207,14 @@ sub build_operations {
 		}
 	}
 	@build_operations = sort @build_operations;
-	push @build_operations, "\"\" \"\" \\", "\"Main\" \"Return to Main Menu\"";
+	$build_operations[-1] =~ s/\\$//;
 	my $build_operations = join "\n", @build_operations;
 	my $height = calculate_height($build_operations, $msg);
 
-	system("$dialog_prefix --title \"$sbo Operations\" --menu \"$msg\" $height $wide $height $build_operations 2> $dialog_output");
+	my $main_res = system("$dialog_prefix --extra-button --extra-label \"Main\" --title \"$sbo Operations\" --menu \"$msg\" $height $wide $height $build_operations 2> $dialog_output") == 0;
 	chomp(my $option = slurp $dialog_output);
 	return unless $option;
-
-	if ($option eq "Main") { display_main(); }
+	display_main() unless $main_res;
 
 	if ($option eq "compat32") { build_operations($compat); }
 
@@ -1228,11 +1227,16 @@ sub run_search {
 	unlink $dialog_output;
 	unlink $command_output;
 	my $height = calculate_height("Search\nTerms");
-	system("$dialog_prefix --title \"Package Search\" --inputbox \"Enter any number of search terms, separated by spaces.\" $height $normal 2> $dialog_output");
+	my $ok_label = -s "$config{SBO_HOME}/TAGS.txt" ? "Name and Tag" : "Search";
+	my $normal_search = system("$dialog_prefix --ok-label \"$ok_label\" --extra-button --extra-label \"Include Desc.\" --title \"Package Search\" --inputbox \"Enter any number of search terms, separated by spaces.\" $height $normal 2> $dialog_output") == 0;
 	chomp(my $option = slurp $dialog_output);
 	return unless $option =~ /\w/;
 	unlink $command_output;
-	system("/usr/sbin/sbofind --raw $option > $command_output");
+	if ($normal_search) {
+		system("/usr/sbin/sbofind --raw -- $option > $command_output");
+	} else {
+		system("/usr/sbin/sbofind --raw -d -- $option > $command_output");
+	}
 	my $search_result = slurp $command_output;
 	if ($search_result =~ /\w/) {
 		my @search_results = split " ", $search_result;

@@ -39,6 +39,8 @@ Options:
     show all reverse dependencies in the repo.
   -E|--exact-case:
     only exact matching (case-sensitive).
+  -d|--descriptions:
+    return matches in descriptions.
   -e|--exact:
     only exact matching (case-insensitive).
   -F|--first-reverse:
@@ -65,11 +67,12 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue, $all_reverse, $last_reverse, $first_reverse, $nocolor, $color, $raw, $nowrap, $wrap);
+my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue, $all_reverse, $last_reverse, $first_reverse, $nocolor, $color, $raw, $nowrap, $wrap, $search_descriptions);
 
 GetOptions(
 	'help|h'    => \$help,
 	'version|v' => \$vers,
+	'd|descriptions' => \$search_descriptions,
 	'exact|e'   => \$search_exact,
 	'exact-case|E' => \$search_case,
 	'no-tags|t' => \$exclude_tags,
@@ -137,6 +140,12 @@ sub perform_search {
 					push @names, $1;
 				}
 			}
+		}
+	}
+
+	if ($search_descriptions) {
+		for (@available) {
+			push @names, $_ if get_sbo_description($_) =~ $search_name_re;
 		}
 	}
 
