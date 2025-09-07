@@ -206,6 +206,9 @@ sub build_operations {
 			push @build_operations, "\"Clear from Install List\" \"Do not install.\" \\";
 		}
 	}
+	if ($< == 0 and $inst_names_std{$sbo} and not $unsupported and not on_blacklist($sbo)) {
+		push @build_operations, "\"Replace\" \"Reinstall from SBo; batch unavailable.\" \\";
+	}
 	@build_operations = sort @build_operations;
 	$build_operations[-1] =~ s/\\$//;
 	my $build_operations = join "\n", @build_operations;
@@ -302,7 +305,7 @@ sub build_operations {
 		$cmd .= " --reverse-rebuild" if $option eq "Reverse Rebuild";
 		$cmd .= " $sbo";
 		$cmd = $option eq "Remove" ? "/usr/sbin/sboremove $sbo" : $cmd;
-		run_command($cmd, $sbo);
+		run_command($cmd);
 	}
 
 	if ($option eq "Queue") {
@@ -337,6 +340,11 @@ sub build_operations {
 			clear_info_store();
 			new_package_information();
 		}
+	}
+
+	if ($option eq "Replace") {
+		my $cmd = "/usr/bin/sboinstall --reinstall $sbo";
+		run_command($cmd, 1);
 	}
 
 	if ($option eq "RevDep (all)") { display_builds("$sbo: Available Reverse Dependencies", @available_reverse); }
@@ -1214,12 +1222,14 @@ sub new_package_information {
 	@remove_list = grep { $inst_names{$_} && ! on_blacklist($_) } @remove_list;
 }
 
-# A wrapper for running commands requiring user input.
+# A wrapper for running commands requiring user input;
+# pass any true value after the command to skip the
+# batch processing check for sboinstall and sboupgrade.
 sub run_command {
 	script_error("run_command requires at least one argument.") unless @_;
-	my $cmd = shift;
+	my ($cmd, $no_batch) = @_;
 	my $height;
-	if ($cmd =~ /sbo(install|upgrade)/) {
+	if ($cmd =~ /sbo(install|upgrade)/ and not defined $no_batch) {
 		my $batch_cmd = "$cmd --batch";
 		my $dry_run_cmd = "$batch_cmd --wrap --nocolor -D";
 		unlink $command_output;
