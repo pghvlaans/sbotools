@@ -492,8 +492,31 @@ sub display_clean_menu {
 	my @options = split " ", $options;
 	my $cmd = "/usr/sbin/sboclean";
 	$cmd .= " -d" if in "Distfiles", @options;
-	$cmd .= " -o" if in "Options", @options;
 	$cmd .= " -w" if in "Working", @options;
+	if (in "Options", @options) {
+		unlink $dialog_output;
+		my @with_options;
+		for (glob "/var/log/sbotools/*") {
+			next unless -T $_;
+			my $name = basename($_);
+			push @with_options, "\"$name\" \"\" \\";
+		}
+		unless (@with_options) {
+			$height = calculate_height("one line");
+			system("$dialog_prefix --title \"sboclean\" --msgbox \"No text files found in /var/log/sbotools.\" $height $normal");
+			return;
+		}
+		@with_options = sort @with_options;
+		push @with_options, "\"\" \"\" \\", "\"ALL\" \"Clear all saved options.\"" if @with_options > 1;
+		$with_options[-1] =~ s/\\$// if @with_options;
+		my $with_options = join "\n", @with_options;
+		$height = calculate_height($with_options, "Choose one");
+		system("$dialog_prefix --title \"sboclean\" --menu \"Choose one script for option clearning, or ALL.\" $height $normal $height $with_options 2> $dialog_output");
+		chomp(my $script_choice = slurp $dialog_output);
+		return unless $script_choice =~ /\w/;
+		$cmd .= " -o $script_choice";
+	}
+
 	run_command($cmd);
 	display_main();
 }
@@ -1206,7 +1229,7 @@ sub run_command {
 		my $batch_res = system("$dialog_prefix --yesno \"$cmd\n\nUse batch mode?\n\nDry Run:\n$dry_run_output\" $height $wide") == 0;
 		$cmd = $batch_cmd if $batch_res;
 	}
-	if ($cmd =~ /sboclean/) {
+	if ($cmd =~ /sboclean/ and $cmd =~ /(-d|-w|-o ALL)/) {
 		$height = calculate_height("$cmd\n\nAsk to delete");
 		my $clean_res = system("$dialog_prefix --yesno \"$cmd\n\nAsk to delete files interactively?\" $height $normal") == 0;
 		$cmd .= " -i" if $clean_res;
