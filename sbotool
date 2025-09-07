@@ -20,6 +20,8 @@ use Getopt::Long qw/ :config no_ignore_case_always /;
 
 my $self = basename $0;
 
+my $exit;
+exit _ERR_USAGE unless -x "/usr/bin/dialog";
 my ($help, $show_version, $dialogrc);
 GetOptions( 'help|h' => \$help, 'version|v' => \$show_version, 'dialogrc|d=s' => \$dialogrc);
 if ($help) { show_usage(); exit 0; }
@@ -37,7 +39,8 @@ if (defined $dialogrc and -s $dialogrc) {
 } else {
 	$dialog_prefix = ($config{DIALOGRC} ne "FALSE" and -s $config{DIALOGRC}) ? "DIALOGRC=\"$config{DIALOGRC}\" $dialog_prefix" : $dialog_prefix;
 }
-system("$dialog_prefix --infobox \"Loading...\" 3 15");
+my $save_dialogrc = $config{DIALOGRC};
+dialog_check();
 
 my $overrides_available = 1 if $config{LOCAL_OVERRIDES} ne "FALSE" and -d -w $config{LOCAL_OVERRIDES};
 
@@ -410,6 +413,17 @@ sub calculate_height {
 	return $height = $height > $max_height ? $max_height : $height;
 }
 
+# Ensure that a provided dialogrc file is not malformed.
+sub dialog_check {
+	unless(system("$dialog_prefix --infobox \"Checking dialogrc...\" 5 65 > /dev/null") == 0) {
+		system("dialog --msgbox \"The provided dialogrc is malformed. Using the system default.\" 6 65") unless $config{DIALOGRC} eq "FALSE";
+
+		$config{DIALOGRC} = "FALSE";
+		undef $dialogrc;
+		$dialog_prefix = $dialog_base;
+	}
+}
+
 # Given an array with SlackBuilds of interest, add descriptions,
 # sort and get user input.
 sub display_builds {
@@ -635,8 +649,11 @@ sub display_main {
 		if (-s $slackbuilds_txt) {
 			clear_info_store();
 			new_package_information();
+		} else {
+			dialog_check();
 		}
 	}
+
 	if ($option eq "Shared Objects") {
 		unlink $dialog_output;
 		if (-s $slackbuilds_txt) {
@@ -806,6 +823,7 @@ sub display_series {
 # It may be long, but explanations are good for clarity.
 sub display_settings {
 	unlink $dialog_output;
+	$config{DIALOGRC} = $save_dialogrc;
 	my @config_values;
 	my $msg = "See sbotools.conf(5) for explanations of the different values.\n\nAll defaults are FALSE except for SBO_HOME.";
 	$msg = "$msg\n\nSelect a setting to change it." if $< == 0;
@@ -1119,6 +1137,7 @@ sub edit_setting {
 	system("clear");
 	my $res = system("/usr/sbin/sboconfig -$flag $option") == 0;
 	if ($res) {
+		$save_dialogrc = $config{DIALOGRC} if $existing_setting =~ /^DIALOGRC=/;
 		clear_info_store();
 		new_package_information();
 		prompt $color_notice, "Press ENTER to continue.";
@@ -1146,6 +1165,7 @@ sub new_package_information {
 	lint_sbo_config($self, %config);
 	unless (defined $dialogrc and -s $dialogrc) {
 		$dialog_prefix = ($config{DIALOGRC} ne "FALSE" and -s $config{DIALOGRC}) ? "DIALOGRC=\"$config{DIALOGRC}\" $dialog_base" : $dialog_base;
+	dialog_check();
 	}
 	$repo_path = "$config{SBO_HOME}/repo";
 	$slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
@@ -1243,4 +1263,4 @@ EOF
 	return 1;
 }
 
-END { unless ($help or $show_version) { remove_tree($sbotool_tempdir) if -d $sbotool_tempdir; system("clear"); } }
+END { unless ($help or $show_version) { $exit = $?; remove_tree($sbotool_tempdir) if -d $sbotool_tempdir; system("clear"); exit $exit } }
