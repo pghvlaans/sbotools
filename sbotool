@@ -721,7 +721,7 @@ sub display_main {
 	if ($option eq "Rebuilds") { display_rebuild_menu(); }
 	if ($option eq "Settings") { display_settings(); }
 	if ($option eq "Upgradable SBo Packages") { display_builds("Upgradable SBo Packages", @update_names); }
-	if ($option eq "Upgrade All") { run_command("/usr/sbin/sboupgrade --nocolor --all"); }
+	if ($option eq "Upgrade All") { run_command("/usr/sbin/sboupgrade --all"); }
 
 	display_main();
 	return;
