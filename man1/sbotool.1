@@ -117,6 +117,21 @@ See the
 Man Pages
 menu to read further user documentation.
 .SH STARTUP
+Ensure that the terminal window is at least 80x25 characters to run
+.B
+sbotool\fR\
+\&. The
+.B
+lines
+and
+.B
+cols
+terminal capabilities are required;
+.B
+tput(1)
+can be used to check. This should not be a problem for any remotely
+modern terminal.
+.P
 A copy of the
 .I
 SlackBuilds.org
@@ -231,7 +246,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), dialog(1)
+sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), dialog(1), tput(1)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>
