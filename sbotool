@@ -1104,22 +1104,22 @@ sub edit_hint {
 	my $optional = get_optional($sbo);
 
 	if ($blacklisted) {
-		push @hint_menu, "\"Clear from Blacklist\" \"Add to queues normally.\" \\";
+		push @hint_menu, "\"Blacklist (clear)\" \"Add to queues normally.\" \\";
 	} else {
 		push @hint_menu, "\"Blacklist\" \"Do not add to queues.\" \\";
 	}
 
 	if ($is_auto) {
-		push @hint_menu, "\"No Auto-Rebuilds\" \"Do not rebuild reverse dependencies.\" \\";
+		push @hint_menu, "\"No Auto-Rebuilds\" \"Do not rebuild reverse deps.\" \\";
 	} else {
-		push @hint_menu, "\"Do Auto-Rebuilds\" \"Automatically rebuild reverse dependencies.\" \\";
+		push @hint_menu, "\"Do Auto-Rebuilds\" \"Auto-rebuild reverse deps.\" \\";
 	}
 
-	push @hint_menu, "\"Add Optional Deps\" \"Add one or more optional dependencies.\" \\";
+	push @hint_menu, "\"Add Optional Deps\" \"Add optional dependencies.\" \\";
 	if ($optional) {
-		push @hint_menu, "\"Clear Optionals\" \"Clear one or more optional dependencies.\" \\",
+		push @hint_menu, "\"Clear Optionals\" \"Clear optional dependencies.\" \\",
 						"\"Clear all Optional\" \"Clear all optional dependencies.\" \\",
-					    "\"New Optional List\" \"Use a new optional dependency list.\" \\";
+					    "\"New Optional List\" \"Replace the optional dependency list.\" \\";
 	}
 	if (($blacklisted and ($is_auto or $optional)) or ($is_auto and $optional)) {
 		push @hint_menu, "\"\" \"\" \\",
@@ -1131,7 +1131,9 @@ sub edit_hint {
 	system("/usr/sbin/sbohints --wrap --nocolor --query $sbo > $command_output");
 	chomp(my $msg = slurp $command_output);
 	my $height = calculate_height($hint_menu, $msg);
-	system("$dialog_prefix --title \"$sbo: Hints\" --menu \"$msg\" $height $wide $height $hint_menu 2> $dialog_output");
+	my $hint_menu_width = $wide;
+	$hint_menu_width = $normal < $wide ? $wide : $normal if $optional;
+	system("$dialog_prefix --title \"$sbo: Hints\" --menu \"$msg\" $height $hint_menu_width $height $hint_menu 2> $dialog_output");
 	chomp(my $option = slurp $dialog_output);
 	return unless $option =~ /\w/;
 
