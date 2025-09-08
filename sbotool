@@ -456,7 +456,7 @@ sub display_builds {
 		}
 		push @for_dialog, "\"$sbo\" \"$description\" \\";
 	}
-	@for_dialog = sort @for_dialog unless $label =~ /Available Queue$/;
+	@for_dialog = sort @for_dialog unless $label =~ /(Available Queue|Search Results)$/;
 	my $for_dialog = join "\n", @for_dialog;
 	my $fh;
 	open $fh, ">", $dialog_input or exit _ERR_OPENFH;
@@ -1296,7 +1296,18 @@ sub run_search {
 	}
 	my $search_result = slurp $command_output;
 	if ($search_result =~ /\w/) {
-		my @search_results = split " ", $search_result;
+		my @pre_search_results = split " ", $search_result;
+		@pre_search_results = sort @pre_search_results;
+		my @search_results;
+		for my $result (@pre_search_results) { push @search_results, $result if $option =~ /(^|\W)\Q$result\E(\W|$)/i; }
+		unless ($normal_search) {
+			RESULTS: for my $result (@pre_search_results) {
+				my @description = split " ", get_sbo_description($result);
+				for my $in_desc (@description) { push @search_results, $result if $option =~ /(^|\W)\Q$in_desc\E(\W|$)/i; next RESULTS; }
+			}
+		}
+		push @search_results, @pre_search_results;
+		@search_results = uniq @search_results;
 		display_builds("Search Results", @search_results);
 	}
 	run_search();

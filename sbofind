@@ -120,12 +120,14 @@ s/::/-/g for @$defective;
 sub perform_search {
 	script_error 'perform_search requires an argument.' unless @_ == 1;
 	my $search_arg = shift;
-	my ($search_tag_re, $search_name_re);
+	my ($search_tag_re, $search_desc_re, $search_name_re);
 	unless ($search_case) {
 		$search_tag_re  = $search_exact ? qr/^(\S+).*(:\s|,)\b\Q$search_arg\E\b(,|$)/i : qr/^(\S+):\s.*\Q$search_arg\E/i;
+		$search_desc_re = $search_exact ? qr/(\W|^)\Q$search_arg\E(\W|$)/i : qr/.*\Q$search_arg\E.*/i;
 		$search_name_re = $search_exact ? qr/^\Q$search_arg\E$/i : qr/.*\Q$search_arg\E.*/i;
 	} else {
 		$search_tag_re  = qr/^(\S+).*(:\s|,)\b\Q$search_arg\E\b(,|$)/;
+		$search_desc_re = qr/(^|\W)\Q$search_arg\E(\W|$)/;
 		$search_name_re = qr/^\Q$search_arg\E$/;
 	}
 
@@ -145,7 +147,7 @@ sub perform_search {
 
 	if ($search_descriptions) {
 		for (@available) {
-			push @names, $_ if get_sbo_description($_) =~ $search_name_re;
+			push @names, $_ if get_sbo_description($_) =~ $search_desc_re;
 		}
 	}
 
