@@ -1303,7 +1303,12 @@ sub run_search {
 		unless ($normal_search) {
 			RESULTS: for my $result (@pre_search_results) {
 				my @description = split " ", get_sbo_description($result);
-				for my $in_desc (@description) { push @search_results, $result if $option =~ /(^|\W)\Q$in_desc\E(\W|$)/i; next RESULTS; }
+				for my $in_desc (@description) {
+					if ($option =~ /(^|\W)\Q$in_desc\E(\W|$)/i) {
+						push @search_results, $result;
+						next RESULTS;
+					}
+				}
 			}
 		}
 		push @search_results, @pre_search_results;
