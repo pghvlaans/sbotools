@@ -34,9 +34,9 @@ installations, upgrades and removals, and to fetch the repository.
 The basic workflow is straightforward: navigate to a script with
 **Browse Repository** or **Package Search** and choose from the list of
 options in the menu. Installed, upgradable and override scripts can be
-reached from **Installed SBo Packages**, **Upgradable SBo Packages** and
-**Overrides**, respectively. **Main Menu** has options for large-scale
-upgrades, rebuilds and shared object dependency checks.
+reached from **Installed**, **Upgradable** and **Overrides**,
+respectively. **Main Menu** has options for large-scale upgrades,
+rebuilds and shared object dependency checks.
 
 **sbotools** calculates dependencies automatically, and individual
 scripts can be added to the blacklist or have optional dependencies
@@ -44,9 +44,9 @@ specified using the script's **Hints** interface. Installations and
 upgrades can be performed either interactively or non-interactively. If
 the non-interactive *batch mode* is chosen, **sbotool** displays a dry
 run on the final confirmation screen. To specify build options for a
-particular script, install interactively or use **Add Build Options**
-from the script menu screen ahead of time as root. Build options are
-saved in the */var/log/sbotools* directory for future use.
+particular script, install interactively or use **Build Options** from
+the script menu screen ahead of time as root. Build options are saved in
+the */var/log/sbotools* directory for future use.
 
 Individual scripts can be added to lists for installation, upgrade and
 removal as the root user. Any user may add to the template list; the
