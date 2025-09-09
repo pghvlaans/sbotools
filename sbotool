@@ -454,7 +454,7 @@ sub display_builds {
 			my $upgrade_description = $inst_vers->{$sbo} eq $sbo_version ? "(build bump)" : "($inst_vers->{$sbo} > $sbo_version)";
 			$description = "$upgrade_description $description";
 		}
-		push @for_dialog, "\"$sbo\" \"$description\" \\";
+		push @for_dialog, "\"$sbo\" \"$description\" \"$description\" \\";
 	}
 	@for_dialog = sort @for_dialog unless $label =~ /(Available Queue|Search Results)$/;
 	my $for_dialog = join "\n", @for_dialog;
@@ -462,8 +462,8 @@ sub display_builds {
 	open $fh, ">", $dialog_input or exit _ERR_OPENFH;
 	print {$fh} $for_dialog;
 	close $fh;
-	my $height = calculate_height($for_dialog, "Select a SlackBuild");
-	system("$dialog_prefix --title \"$label\" --menu \"Select a SlackBuild for more options.\" $height $wide $height --file $dialog_input 2> $dialog_output");
+	my $height = calculate_height($for_dialog, "Select a SlackBuild") - 1;
+	system("$dialog_prefix --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\" $height $wide $height --file $dialog_input 2> $dialog_output");
 	chomp(my $option = slurp $dialog_output);
 	return unless $option;
 	build_operations($option);
@@ -872,35 +872,35 @@ sub display_settings {
 	my @config_values;
 	my $msg = "See sbotools.conf(5) for explanations of the different values.\n\nAll defaults are FALSE except for SBO_HOME.";
 	$msg = "$msg\n\nSelect a setting to change it." if $< == 0;
-	push @config_values, "\"BUILD_IGNORE=$config{BUILD_IGNORE}\" \"\" \\",
-						"\"CLASSIC=$config{CLASSIC}\" \"\" \\",
-						"\"COLOR=$config{COLOR}\" \"\" \\",
-						"\"CPAN_IGNORE=$config{CPAN_IGNORE}\" \"\" \\",
-						"\"DIALOGRC=$config{DIALOGRC}\" \"\" \\",
-						"\"DISTCLEAN=$config{DISTCLEAN}\" \"\" \\",
-						"\"ETC_PROFILE=$config{ETC_PROFILE}\" \"\" \\",
-						"\"GIT_BRANCH=$config{GIT_BRANCH}\" \"\" \\",
-						"\"GPG_VERIFY=$config{GPG_VERIFY}\" \"\" \\",
-						"\"JOBS=$config{JOBS}\" \"\" \\",
-						"\"LOCAL_OVERRIDES=$config{LOCAL_OVERRIDES}\" \"\" \\",
-						"\"LOG_DIR=$config{LOG_DIR}\" \"\" \\",
-						"\"NOCLEAN=$config{NOCLEAN}\" \"\" \\",
-						"\"NOWRAP=$config{NOWRAP}\" \"\" \\",
-						"\"OBSOLETE_CHECK=$config{OBSOLETE_CHECK}\" \"\" \\",
-						"\"PKG_DIR=$config{PKG_DIR}\" \"\" \\",
-						"\"REPO=$config{REPO}\" \"\" \\",
-						"\"RSYNC_DEFAULT=$config{RSYNC_DEFAULT}\" \"\" \\",
-						"\"SBO_HOME=$config{SBO_HOME}\" \"\" \\",
-						"\"SLACKWARE_VERSION=$config{SLACKWARE_VERSION}\" \"\" \\",
-						"\"SO_CHECK=$config{SO_CHECK}\" \"\" \\",
-						"\"STRICT_UPGRADES=$config{STRICT_UPGRADES}\" \"\"";
+	push @config_values, "\"BUILD_IGNORE=$config{BUILD_IGNORE}\" \"\" \"If TRUE, ignore build numbers when upgrading.\" \\",
+						"\"CLASSIC=$config{CLASSIC}\" \"\" \"If TRUE, use 2.7-style output; No color, rsync default, ignore build number.\" \\",
+						"\"COLOR=$config{COLOR}\" \"\" \"If TRUE, use sbotools color output.\" \\",
+						"\"CPAN_IGNORE=$config{CPAN_IGNORE}\" \"\" \"If TRUE, ignore perl modules installed from the CPAN.\" \\",
+						"\"DIALOGRC=$config{DIALOGRC}\" \"\" \"If a file, use it as dialogrc for sbotool.\" \\",
+						"\"DISTCLEAN=$config{DISTCLEAN}\" \"\" \"If TRUE, remove the source and built package after building.\" \\",
+						"\"ETC_PROFILE=$config{ETC_PROFILE}\" \"\" \"If TRUE, source all executable *.sh in /etc/profile.d before building.\" \\",
+						"\"GIT_BRANCH=$config{GIT_BRANCH}\" \"\" \"Use this non-default branch for git repos.\" \\",
+						"\"GPG_VERIFY=$config{GPG_VERIFY}\" \"\" \"If TRUE, verify the repo with GPG after fetching.\" \\",
+						"\"JOBS=$config{JOBS}\" \"\" \"If a number, use this many jobs with make.\" \\",
+						"\"LOCAL_OVERRIDES=$config{LOCAL_OVERRIDES}\" \"\" \"Use this directory for local override scripts.\" \\",
+						"\"LOG_DIR=$config{LOG_DIR}\" \"\" \"If a directory, save build logs there. Logs are otherwise not saved.\" \\",
+						"\"NOCLEAN=$config{NOCLEAN}\" \"\" \"If TRUE, do not remove working directories after building.\" \\",
+						"\"NOWRAP=$config{NOWRAP}\" \"\" \"If TRUE, disable sbotools word wrapping.\" \\",
+						"\"OBSOLETE_CHECK=$config{OBSOLETE_CHECK}\" \"\" \"If TRUE, download the outdated script list when fetching the repo.\" \\",
+						"\"PKG_DIR=$config{PKG_DIR}\" \"\" \"If a directory, save built packages there.\" \\",
+						"\"REPO=$config{REPO}\" \"\" \"Use this non-default git or rsync repository.\" \\",
+						"\"RSYNC_DEFAULT=$config{RSYNC_DEFAULT}\" \"\" \"If TRUE, the default repository is rsync, not git. No effect on -current.\" \\",
+						"\"SBO_HOME=$config{SBO_HOME}\" \"\" \"Specify an sbotools directory (default /usr/sbo).\" \\",
+						"\"SLACKWARE_VERSION=$config{SLACKWARE_VERSION}\" \"\" \"Use this Slackware version to determine the default repo.\" \\",
+						"\"SO_CHECK=$config{SO_CHECK}\" \"\" \"If TRUE, do a solib check when fetching the repo and upgrading.\" \\",
+						"\"STRICT_UPGRADES=$config{STRICT_UPGRADES}\" \"\" \"If TRUE, ignore apparent downgrades.\"";
 	my $config_values = join "\n", @config_values;
-	my $height = calculate_height($config_values, $msg);
+	my $height = calculate_height($config_values, $msg) - 1;
 	my $res;
 	unless ($< == 0) {
-		$res = system("$dialog_prefix --ok-label \"Back\" --no-cancel --extra-button --extra-label \"Man Page\" --title \"Settings List\" --menu \"$msg\" $height $wide $height $config_values") == 0;
+		$res = system("$dialog_prefix --ok-label \"Back\" --no-cancel --extra-button --extra-label \"Man Page\" --title \"Settings List\" --item-help --menu \"$msg\" $height $wide $height $config_values") == 0;
 	} else {
-		$res = system("$dialog_prefix --title \"Settings List\" --extra-button --extra-label \"Man Page\" --menu \"$msg\" $height $wide $height $config_values 2> $dialog_output") == 0;
+		$res = system("$dialog_prefix --title \"Settings List\" --extra-button --extra-label \"Man Page\" --item-help --menu \"$msg\" $height $wide $height $config_values 2> $dialog_output") == 0;
 		chomp(my $option = slurp $dialog_output);
 		unless ($option =~ /\w/) {
 			display_main();
