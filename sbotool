@@ -43,10 +43,9 @@ my $save_dialogrc = $config{DIALOGRC};
 
 my $overrides_available = 1 if $config{LOCAL_OVERRIDES} ne "FALSE" and -d -w $config{LOCAL_OVERRIDES};
 
+my ($terminal_height, $terminal_width);
 my $max_width = 125;
-my $normal = 77; # The narrowest size that can properly display README.
-my $wide = 66; # This is recalculated in terminal_check() via calculate_height().
-my $narrow = 60; # For simple pop-ups.
+my ($normal, $wide, $narrow); # All set in terminal_check.
 terminal_check();
 dialog_check();
 
@@ -212,9 +211,8 @@ sub build_operations {
 	@build_operations = sort @build_operations;
 	$build_operations[-1] =~ s/\\$//;
 	my $build_operations = join "\n", @build_operations;
-	my $height = calculate_height($build_operations, $msg);
-
-	my $main_res = system("$dialog_prefix --extra-button --extra-label \"Main\" --title \"$sbo Operations\" --menu \"$msg\" $height $wide $height $build_operations 2> $dialog_output") == 0;
+	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", $build_operations, $msg);
+	my $main_res = system("$dialog_prefix --begin $begin_y $begin_x --extra-button --extra-label \"Main\" --title \"$sbo Operations\" --menu \"$msg\" $height $width $height $build_operations 2> $dialog_output") == 0;
 	chomp(my $option = slurp $dialog_output);
 	return unless $option;
 	display_main() unless $main_res;
@@ -229,8 +227,8 @@ sub build_operations {
 			new_package_information();
 		}
 		if (-l "$config{LOCAL_OVERRIDES}/$sbo" or -f "$config{LOCAL_OVERRIDES}/$sbo") {
-			$height = calculate_height("Non-directory\n\nAdd");
-			system("$dialog_prefix --ok-label \"Back\" --msgbox \"A non-directory exists at $config{LOCAL_OVERRIDES}/$sbo.\n\nRemove it before adding to Local Overrides.\" $height $wide");
+			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Non-directory\n\nAdd");
+			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --msgbox \"A non-directory exists at $config{LOCAL_OVERRIDES}/$sbo.\n\nRemove it before adding to Local Overrides.\" $height $width");
 		}
 	}
 
@@ -249,9 +247,8 @@ sub build_operations {
 		}
 		my $check = slurp $command_output;
 		if ($check =~ /\w/) {
-			$height = calculate_height($check);
-			my $dry_run_width = $normal < $wide ? $wide : $normal;
-			system("$dialog_prefix --title \"$sbo: Dry Run\" --textbox $command_output $height $dry_run_width");
+			($height, $width, $begin_y, $begin_x) = calculate_position("wide_cond", $check);
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"$sbo: Dry Run\" --textbox $command_output $height $width");
 		}
 	}
 
@@ -263,25 +260,25 @@ sub build_operations {
 		my $remove;
 		if ($orig_options) {
 			my $orig_options = slurp $options_file;
-			$height = calculate_height($orig_options, "Remove?\n\n");
-			$remove = system("$dialog_prefix --title \"$options_file\" --yesno \"Remove build options for $base_name?\n\n$orig_options\" $height $wide") == 0;
+			($height, $width, $begin_y, $begin_x) = calculate_position("wide", $orig_options, "Remove?\n\n");
+			$remove = system("$dialog_prefix --begin $begin_y $begin_x --title \"$options_file\" --yesno \"Remove build options for $base_name?\n\n$orig_options\" $height $width") == 0;
 			unlink $options_file if $remove;
 		}
 		unless ($remove) {
 			if ($orig_options) {
-				$height = calculate_height($orig_options, "Current\n\nInput here");
-				system("$dialog_prefix --title \"$sbo: $option\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE:\n\n$orig_options\" $height $wide 2> $dialog_output");
+				($height, $width, $begin_y, $begin_x) = calculate_position("wide", $orig_options, "Current\n\nInput here");
+				system("$dialog_prefix --begin $begin_y $begin_x --title \"$sbo: $option\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE:\n\n$orig_options\" $height $width 2> $dialog_output");
 			} else {
-				$height = calculate_height("Enter build\n\nInput here");
-				system("$dialog_prefix --title \"$sbo: $option\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE:\" $height $wide 2> $dialog_output");
+				($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Enter build\n\nInput here");
+				system("$dialog_prefix --begin $begin_y $begin_x --title \"$sbo: $option\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE:\" $height $width 2> $dialog_output");
 			}
 			chomp(my $new_options = slurp $dialog_output);
 			if ($new_options =~ /\w/) {
-				$height = calculate_height("success or fail");
+				($height, $width, $begin_y, $begin_x) = calculate_position("wide", "success or fail");
 				unless (save_options($sbo, $new_options)) {
-					system("$dialog_prefix --title \"Failure\" --msgbox \"Saving options failed for $sbo.\" $height $wide");
+					system("$dialog_prefix --begin $begin_y $begin_x --title \"Failure\" --msgbox \"Saving options failed for $sbo.\" $height $width");
 				} else {
-					system("$dialog_prefix --title \"Success\" --msgbox \"Saved build options for $sbo.\" $height $wide");
+					system("$dialog_prefix --begin $begin_y $begin_x --title \"Success\" --msgbox \"Saved build options for $sbo.\" $height $width");
 				}
 			}
 		}
@@ -292,11 +289,11 @@ sub build_operations {
 		system("/usr/sbin/sbohints --wrap --nocolor -q $sbo > $command_output");
 		my $check = slurp $command_output;
 		if ($check =~ /\w/) {
-			$height = calculate_height($check);
-			system("$dialog_prefix --title \"$sbo: Hints\" --textbox $command_output $height $wide");
+			($height, $width, $begin_y, $begin_x) = calculate_position("wide", $check);
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"$sbo: Hints\" --textbox $command_output $height $width");
 		} else {
-			$height = calculate_height("No hints found.");
-			system("$dialog_prefix --ok-label \"Back\" --msgbox \"No hints found for $sbo.\" $height $narrow");
+			($height, $width, $begin_y, $begin_x) = calculate_position("narrow", "No hints found");
+			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --msgbox \"No hints found for $sbo.\" $height $width");
 		}
 	}
 
@@ -334,8 +331,8 @@ sub build_operations {
 	if ($option eq "Remove List (-)") { @remove_list = grep { !/^$sbo$/ } @remove_list; }
 
 	if ($option eq "Remove Override") {
-		$height = calculate_height("Remove?");
-		my $res = system("$dialog_prefix --yesno \"Remove $sbo from the Local Overrides directory?\" $height $wide") == 0;
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Remove?");
+		my $res = system("$dialog_prefix --begin $begin_y $begin_x --yesno \"Remove $sbo from the Local Overrides directory?\" $height $width") == 0;
 		if ($res) {
 			remove_tree($location);
 			clear_info_store();
@@ -354,11 +351,11 @@ sub build_operations {
 
 	if ($option eq "Shared Objects") {
 		unless (solib_check($inst_pkgs->{$sbo})) {
-			my $height = calculate_height("Missing\n\n$old_libs{$inst_pkgs->{$sbo}}");
-			system("$dialog_prefix --ok-label \"Back\" --title \"$sbo: Shared Object Check\" --msgbox \"Missing shared objects found for $sbo:\n\n$old_libs{$inst_pkgs->{$sbo}}\" $height $wide");
+			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Missing\n\n$old_libs{$inst_pkgs->{$sbo}}");
+			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --title \"$sbo: Shared Object Check\" --msgbox \"Missing shared objects found for $sbo:\n\n$old_libs{$inst_pkgs->{$sbo}}\" $height $width");
 		} else {
-			my $height = calculate_height("NoMissing");
-			system("$dialog_prefix --ok-label \"Back\" --title \"$sbo: Shared Object Check\" --msgbox \"$sbo has no missing shared object dependencies.\" $height $wide");
+			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "NoMissing");
+			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --title \"$sbo: Shared Object Check\" --msgbox \"$sbo has no missing shared object dependencies.\" $height $width");
 		}
 	}
 
@@ -371,8 +368,8 @@ sub build_operations {
 
 	if ($option eq "Build Options" and -s $options_file and $< != 0) {
 		my $build_options = slurp $options_file;
-		$height = calculate_height($build_options, "Run as root\n\n");
-		system("$dialog_prefix --ok-label \"Back\" --title \"$sbo: Saved Build Options\" --msgbox \"Run as root to edit build options.\n\n$build_options\" $height $wide");
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $build_options, "Run as root\n\n");
+		system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --title \"$sbo: Saved Build Options\" --msgbox \"Run as root to edit build options.\n\n$build_options\" $height $width");
 	}
 
 	if ($option eq "View File" or $option eq "Edit Override") {
@@ -387,14 +384,14 @@ sub build_operations {
 		}
 		@display_list = sort @display_list;
 		my $display_list = join " ", @display_list;
-		$height = calculate_height($file_list, "Select a");
-		system("$dialog_prefix --title \"$location\" --menu \"Select a text file to read it.\" $height $wide $height $display_list 2> $dialog_output");
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $file_list, "Select a");
+		system("$dialog_prefix --begin $begin_y $begin_x --title \"$location\" --menu \"Select a text file to read it.\" $height $width $height $display_list 2> $dialog_output");
 		chomp(my $file = slurp $dialog_output);
 		if ($option eq "View File" and $file =~ /\w/) {
 			chomp(my $file_text = slurp $file_locations{$file});
-			$height = calculate_height($file_text);
-			my $file_read_width = $file =~ /^README/ ? $normal : $wide;
-			system("$dialog_prefix --title \"$file_locations{$file}\" --textbox $file_locations{$file} $height $file_read_width");
+			my $wanted = $file =~ /^README/ ? "normal" : "wide";
+			($height, $width, $begin_y, $begin_x) = calculate_position($wanted, $file_text);
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"$file_locations{$file}\" --textbox $file_locations{$file} $height $width");
 		} elsif ($option eq "Edit Override" and $file =~ /\w/) {
 			system("$editor $file_locations{$file}");
 			clear_info_store();
@@ -406,30 +403,54 @@ sub build_operations {
 	return;
 }
 
-# Given a maximum of 23 (above), calculate an appropriate height for
-# a dialog window.
-sub calculate_height {
-	script_error("calculate_height requires at least one argument; exiting.") unless @_;
+# Calculate an appropriate size and position for a dialog window based on
+# the dimensions of the terminal window and the contents.
+#
+# In case the difference between the rows in the terminal and the height
+# is odd, leave more space at the top. Horizontal space needs no adjustment
+# because the difference is always even.
+sub calculate_position {
+	script_error("calculate_position requires at least two arguments; exiting.") unless @_;
 
 	my $max_height = terminal_check();
 
+	my $wanted_width = shift;
 	my ($contents, $msg) = @_;
 	my $height = $contents =~ tr/\n//;
-	$height += 1 unless $contents =~ m/\n$/;
+	$height++ unless $contents =~ m/\n$/;
 	if (defined $msg) {
 		$height += $msg =~ tr/\n//;
-		$height += 1 unless $msg =~ m/\n$/;
+		$height++ unless $msg =~ m/\n$/;
 	}
-	$height += 5; # 4 is an exact fit, but it's cramped at the bottom
-	return $height = $height > $max_height ? $max_height : $height;
+	$height += 5;
+	$height = $height > $max_height ? $max_height : $height;
+
+	my $width;
+	if ($wanted_width eq "wide") {
+		$width = $wide;
+	} elsif ($wanted_width eq "normal") {
+		$width = $normal;
+	} elsif ($wanted_width eq "narrow") {
+		$width = $narrow;
+	} elsif ($wanted_width eq "wide_cond") {
+		$width = $normal < $wide ? $wide : $normal;
+	} elsif ($wanted_width eq "normal_cond") {
+		$width = $normal < $wide ? $normal : $wide;
+	}
+	script_error("Bad value of wanted_width passed to calculate_position.") unless defined $width;
+
+	my $begin_y = int(0.5 + ($terminal_height - $height) / 2);
+	my $begin_x = int(($terminal_width - $width) / 2);
+
+	return ($height, $width, $begin_y, $begin_x);
 }
 
 # Ensure that a provided dialogrc file is not malformed.
 sub dialog_check {
-	my $height = calculate_height("Checking...");
-	unless(system("$dialog_prefix --infobox \"Checking dialogrc...\" $height $narrow > /dev/null") == 0) {
-		my $bad_dialogrc_width = $normal < $wide ? $normal : $wide;
-		system("dialog --msgbox \"The provided dialogrc is malformed. Using the system default.\" $height $bad_dialogrc_width") unless $config{DIALOGRC} eq "FALSE";
+	my ($height, $width, $begin_y, $begin_x) = calculate_position("narrow", "Checking...");
+	unless(system("$dialog_prefix --begin $begin_y $begin_x --infobox \"Checking dialogrc...\" $height $width > /dev/null") == 0) {
+		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "Checking...");
+		system("dialog --begin $begin_y $begin_x --msgbox \"The provided dialogrc is malformed. Using the system default.\" $height $width") unless $config{DIALOGRC} eq "FALSE";
 
 		$config{DIALOGRC} = "FALSE";
 		undef $dialogrc;
@@ -462,8 +483,9 @@ sub display_builds {
 	open $fh, ">", $dialog_input or exit _ERR_OPENFH;
 	print {$fh} $for_dialog;
 	close $fh;
-	my $height = calculate_height($for_dialog, "Select a SlackBuild") - 1;
-	system("$dialog_prefix --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\" $height $wide $height --file $dialog_input 2> $dialog_output");
+	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", $for_dialog, "Select a SlackBuild");
+	$height--;
+	system("$dialog_prefix --begin $begin_y $begin_x --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\" $height $width $height --file $dialog_input 2> $dialog_output");
 	chomp(my $option = slurp $dialog_output);
 	return unless $option;
 	build_operations($option);
@@ -499,8 +521,8 @@ sub display_clean_menu {
 	push @clean_menu, "\"Working\" \"Working directories.\" \"off\" \\" if $has_working;
 	$clean_menu[-1] =~ s/\\$//;
 	my $clean_menu = join "\n", @clean_menu;
-	my $height = calculate_height($clean_menu, "At least one");
-	system("$dialog_prefix --title \"sboclean\" --checklist \"At least one option must be checked.\" $height $wide $height $clean_menu 2> $dialog_output");
+	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", $clean_menu, "At least one");
+	system("$dialog_prefix --begin $begin_y $begin_x --title \"sboclean\" --checklist \"At least one option must be checked.\" $height $width $height $clean_menu 2> $dialog_output");
 	chomp(my $options = slurp $dialog_output);
 	return unless $options =~ /\w/;
 	my @options = split " ", $options;
@@ -516,16 +538,16 @@ sub display_clean_menu {
 			push @with_options, "\"$name\" \"\" \\";
 		}
 		unless (@with_options) {
-			$height = calculate_height("one line");
-			system("$dialog_prefix --title \"sboclean\" --msgbox \"No text files found in /var/log/sbotools.\" $height $narrow");
+			($height, $width, $begin_y, $begin_x) = calculate_position("narrow", "one line");
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"sboclean\" --msgbox \"No text files found in /var/log/sbotools.\" $height $width");
 			return;
 		}
 		@with_options = sort @with_options;
 		push @with_options, "\"\" \"\" \\", "\"ALL\" \"Clear all saved options.\"" if @with_options > 1;
 		$with_options[-1] =~ s/\\$// if @with_options;
 		my $with_options = join "\n", @with_options;
-		$height = calculate_height($with_options, "Choose one");
-		system("$dialog_prefix --title \"sboclean\" --menu \"Choose one script for option clearning, or ALL.\" $height $wide $height $with_options 2> $dialog_output");
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $with_options, "Choose one");
+		system("$dialog_prefix --begin $begin_y $begin_x --title \"sboclean\" --menu \"Choose one script for option clearning, or ALL.\" $height $width $height $with_options 2> $dialog_output");
 		chomp(my $script_choice = slurp $dialog_output);
 		return unless $script_choice =~ /\w/;
 		$cmd .= " -o $script_choice";
@@ -554,8 +576,8 @@ sub display_man_pages {
 					"\"sbotools.hints\" \"Set hints with this file.\"";
 	my $man_pages = join "\n", @man_pages;
 	my $msg = "Each of the scripts in sbotools can run independently from the command line.\n\nSee the man pages for further details.";
-	my $height = calculate_height($man_pages, $msg);
-	system("$dialog_prefix --title \"Man Pages\" --menu \"$msg\" $height $wide $height $man_pages 2> $dialog_output");
+	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", $man_pages, $msg);
+	system("$dialog_prefix --begin $begin_y $begin_x --title \"Man Pages\" --menu \"$msg\" $height $width $height $man_pages 2> $dialog_output");
 	chomp(my $option = slurp $dialog_output);
 	return unless $option =~ /\w/;
 	system("man $option");
@@ -639,7 +661,7 @@ sub display_main {
 	@main_menu = sort @main_menu;
 	push @main_menu, "\"\" \"\" \\", "\"Refresh\" \"Run in case of outside changes.\"";
 	my $main_menu = join "\n", @main_menu;
-	my $height;
+	my ($height, $width, $begin_y, $begin_x);
 	my $msg = "Welcome to the sbotools TUI.";
 	unless (-s $slackbuilds_txt) {
 		if ($< == 0) {
@@ -647,13 +669,13 @@ sub display_main {
 		} else {
 			$msg .= "\n\nAs root, select \\\"Fetch Repository\\\" for a copy of the repo.";
 		}
-		$height = calculate_height($main_menu, $msg);
-		system("$dialog_prefix --cancel-label \"Exit\" --title \"Main Menu\" --menu \"$msg\" $height $wide $height $main_menu 2> $dialog_output");
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $main_menu, $msg);
+		system("$dialog_prefix --begin $begin_y $begin_x --cancel-label \"Exit\" --title \"Main Menu\" --menu \"$msg\" $height $width $height $main_menu 2> $dialog_output");
 	} else {
 		$msg .= " Navigate to scripts for actions.";
 		$msg .= "\n\nRun as root for more options." unless $< == 0;
-		$height = calculate_height($main_menu, $msg);
-		system("$dialog_prefix --cancel-label \"Exit\" --title \"Main Menu\" --menu \"$msg\" $height $wide $height $main_menu 2> $dialog_output");
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $main_menu, $msg);
+		system("$dialog_prefix --begin $begin_y $begin_x --cancel-label \"Exit\" --title \"Main Menu\" --menu \"$msg\" $height $width $height $main_menu 2> $dialog_output");
 	}
 	chomp(my $option = slurp $dialog_output);
 	exit 0 unless $option;
@@ -670,8 +692,8 @@ sub display_main {
 		unlink $command_output;
 		system("/usr/sbin/sbohints --wrap --nocolor --list > $command_output");
 		my $hints_output = slurp $command_output;
-		$height = calculate_height($hints_output);
-		system("$dialog_prefix --title \"Per-Script Hints\" --textbox $command_output $height $wide");
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $hints_output);
+		system("$dialog_prefix --begin $begin_y $begin_x --title \"Per-Script Hints\" --textbox $command_output $height $width");
 	}
 
 	if ($option eq "Refresh") {
@@ -694,8 +716,8 @@ sub display_main {
 	if ($option eq "Shared Objects") {
 		unlink $dialog_output;
 		if (-s $slackbuilds_txt) {
-			$height = calculate_height("All Installed\nAll SBo", "Check missing");
-			system("$dialog_prefix --title \"Shared Object Checks\" --menu \"Check intalled packages for missing shared object dependencies.\" $height $wide $height \"All Installed\" \"Check all installed packages for missing solibs.\" \"All SBo\" \"Check all SBo packages for missing solibs.\" 2> $dialog_output");
+			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "All Installed\nAll SBo", "Check missing");
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"Shared Object Checks\" --menu \"Check intalled packages for missing shared object dependencies.\" $height $width $height \"All Installed\" \"Check all installed packages for missing solibs.\" \"All SBo\" \"Check all SBo packages for missing solibs.\" 2> $dialog_output");
 			chomp($option = slurp $dialog_output);
 			if ($option =~ /\w/) {
 				system("clear");
@@ -714,9 +736,8 @@ sub display_main {
 		unlink $command_output;
 		system("/usr/sbin/sboupgrade --wrap --nocolor -D --all > $command_output");
 		my $dry_run_output = slurp $command_output;
-		$height = calculate_height($dry_run_output);
-		my $upgrade_all_width = $normal < $wide ? $wide : $normal;
-		system("$dialog_prefix --title \"Upgrade All: Dry Run\" --textbox $command_output $height $upgrade_all_width");
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide_cond", $dry_run_output);
+		system("$dialog_prefix --begin $begin_y $begin_x --title \"Upgrade All: Dry Run\" --textbox $command_output $height $width");
 	}
 
 	if ($option eq "Browse Repository") { display_series(); }
@@ -752,8 +773,8 @@ sub display_rebuild_menu {
 	@rebuild_menu = sort @rebuild_menu;
 	$rebuild_menu[-1] =~ s/\\$//;
 	my $rebuild_menu = join "\n", @rebuild_menu;
-	my $height = calculate_height($rebuild_menu, "Large-scale rebuilds");
-	system("$dialog_prefix --title \"Large-Scale Rebuilds\" --menu \"Rebuild all SBo packages, or everything in a series.\" $height $wide $height $rebuild_menu 2> $dialog_output");
+	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", $rebuild_menu, "Large-scale rebuilds");
+	system("$dialog_prefix --begin $begin_y $begin_x --title \"Large-Scale Rebuilds\" --menu \"Rebuild all SBo packages, or everything in a series.\" $height $width $height $rebuild_menu 2> $dialog_output");
 	chomp(my $option = slurp $dialog_output);
 	return unless $option =~ /\w/;
 
@@ -761,28 +782,24 @@ sub display_rebuild_menu {
 		system("/usr/sbin/sboinstall --wrap --nocolor --mass-rebuild -D > $command_output");
 		my $check = slurp $command_output;
 		if ($check =~ /\w/) {
-			$height = calculate_height($check);
-			my $mass_rebuild_width = $normal < $wide ? $wide : $normal;
-			system("$dialog_prefix --title \"Mass Rebuild Dry Run\" --textbox $command_output $height $mass_rebuild_width");
+			($height, $width, $begin_y, $begin_x) = calculate_position("wide_cond", $check);
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"Mass Rebuild Dry Run\" --textbox $command_output $height $width");
 		}
 	}
 	if ($option eq "Mass Rebuild") {
-		$height = calculate_height("Picking up");
-		my $fail_dialog_width = $normal < $wide ? $normal : $wide;
+		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "Picking up");
 		if (-s "$config{SBO_HOME}/resume.temp") {
-			my $resume_res = system("$dialog_prefix --title \"Mass Rebuild\" --yesno \"A previous mass rebuild failed. Pick up from the next script?\" $height $fail_dialog_width") == 0;
+			my $resume_res = system("$dialog_prefix --begin $begin_y $begin_x --title \"Mass Rebuild\" --yesno \"A previous mass rebuild failed. Pick up from the next script?\" $height $width") == 0;
 			unless ($resume_res) {
-				$height = calculate_height("Picking up");
-				$fail_dialog_width = $normal < $wide ? $normal : $wide;
-				system("$dialog_prefix --title \"Mass Rebuild\" --msgbox \"Delete the file at $config{SBO_HOME}/resume.temp to start over.\" $height $fail_dialog_width");
+				($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "Picking up");
+				system("$dialog_prefix --begin $begin_y $begin_x --title \"Mass Rebuild\" --msgbox \"Delete the file at $config{SBO_HOME}/resume.temp to start over.\" $height $width");
 				return;
 			}
 		}
 		run_command("/usr/sbin/sboinstall --mass-rebuild");
 		if (-s "$config{SBO_HOME}/resume.temp") {
-			$height = calculate_height("Picking up");
-			my $unfinished_dialog_width = $normal < $wide ? $normal : $wide;
-			system("$dialog_prefix --ok-label \"OK\" --title \"Mass Rebuild\" --msgbox \"The next mass rebuild attempt will start from after the failed script.\" $height $unfinished_dialog_width");
+			($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "Picking up");
+			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"OK\" --title \"Mass Rebuild\" --msgbox \"The next mass rebuild attempt will start from after the failed script.\" $height $width");
 		}
 	}
 
@@ -807,8 +824,8 @@ sub display_rebuild_menu {
 		}
 		$series_selection_menu[-1] =~ s/\\$//;
 		my $series_selection_menu = join "\n", @series_selection_menu;
-		$height = calculate_height($series_selection_menu, "The following");
-		system("$dialog_prefix --cancel-label \"Cancel\" --title \"$option\" --menu \"The following series have installed packages.\" $height $narrow $height $series_selection_menu 2> $dialog_output");
+		($height, $width, $begin_y, $begin_x) = calculate_position("narrow", $series_selection_menu, "The following");
+		system("$dialog_prefix --begin $begin_y $begin_x --cancel-label \"Cancel\" --title \"$option\" --menu \"The following series have installed packages.\" $height $width $height $series_selection_menu 2> $dialog_output");
 		chomp(my $series_choice = slurp $dialog_output);
 		return unless $series_choice =~ /\w/;
 
@@ -818,9 +835,8 @@ sub display_rebuild_menu {
 			system("$cmd > $command_output");
 			my $check = slurp $command_output;
 			if ($check =~ /\w/) {
-				$height = calculate_height($check);
-				my $series_rebuild_width = $normal < $wide ? $wide : $normal;
-				system("$dialog_prefix --title \"Series Rebuild Dry Run\" --textbox $command_output $height $series_rebuild_width");
+				($height, $width, $begin_y, $begin_x) = calculate_position("wide_cond", $check);
+				system("$dialog_prefix --begin $begin_y $begin_x --title \"Series Rebuild Dry Run\" --textbox $command_output $height $width");
 			}
 		}
 		if ($option eq "Series Rebuild") { run_command("/usr/sbin/sboinstall --series-rebuild $series_choice"); }
@@ -846,13 +862,13 @@ sub display_series {
 	display_main() unless @series_display;
 	@series_display = sort @series_display;
 	my $series_display = join "\n", @series_display;
-	my $height = calculate_height($series_display, "Choose a series");
 	my $series_fh;
 	open $series_fh, ">", $dialog_input or exit _ERR_OPENFH;
 	print {$series_fh} $series_display;
 
-	my (@for_dialog, @to_display);
-	system("$dialog_prefix --title \"Available Series\" --menu \"Choose a series.\" $height $wide $height --file $dialog_input 2> $dialog_output");
+	my @to_display;
+	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", $series_display, "Choose a series");
+	system("$dialog_prefix --begin $begin_y $begin_x --title \"Available Series\" --menu \"Choose a series.\" $height $width $height --file $dialog_input 2> $dialog_output");
 	chomp(my $series = slurp $dialog_output);
 	display_main() unless $series;
 	for (@available) {
@@ -895,12 +911,13 @@ sub display_settings {
 						"\"SO_CHECK=$config{SO_CHECK}\" \"\" \"If TRUE, do a solib check when fetching the repo and upgrading.\" \\",
 						"\"STRICT_UPGRADES=$config{STRICT_UPGRADES}\" \"\" \"If TRUE, ignore apparent downgrades.\"";
 	my $config_values = join "\n", @config_values;
-	my $height = calculate_height($config_values, $msg) - 1;
+	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", $config_values, $msg);
+	$height--;
 	my $res;
 	unless ($< == 0) {
-		$res = system("$dialog_prefix --ok-label \"Back\" --no-cancel --extra-button --extra-label \"Man Page\" --title \"Settings List\" --item-help --menu \"$msg\" $height $wide $height $config_values") == 0;
+		$res = system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --no-cancel --extra-button --extra-label \"Man Page\" --title \"Settings List\" --item-help --menu \"$msg\" $height $width $height $config_values") == 0;
 	} else {
-		$res = system("$dialog_prefix --title \"Settings List\" --extra-button --extra-label \"Man Page\" --item-help --menu \"$msg\" $height $wide $height $config_values 2> $dialog_output") == 0;
+		$res = system("$dialog_prefix --begin $begin_y $begin_x --title \"Settings List\" --extra-button --extra-label \"Man Page\" --item-help --menu \"$msg\" $height $width $height $config_values 2> $dialog_output") == 0;
 		chomp(my $option = slurp $dialog_output);
 		unless ($option =~ /\w/) {
 			display_main();
@@ -1038,8 +1055,8 @@ sub display_user_lists {
 	push @lists_to_show, "\"Remove\" \"Remove the packages in the remove list.\" \\" if @remove_list;
 	push @lists_to_show, "\"\" \"\" \\", "\"Clear\" \"Clear list contents.\"";
 	my $lists_menu = join "\n", @lists_to_show;
-	my $height = calculate_height($lists_menu, "Choose a list to implement\n");
-	system("$dialog_prefix --title \"List Operations\" --menu \"Choose a list to implement.\" $height $wide $height $lists_menu 2> $dialog_output");
+	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", $lists_menu, "Choose a list to implement\n");
+	system("$dialog_prefix --begin $begin_y $begin_x --title \"List Operations\" --menu \"Choose a list to implement.\" $height $width $height $lists_menu 2> $dialog_output");
 	chomp(my $option = slurp $dialog_output);
 	return unless $option =~ /\w/;
 	if ($option eq "Install") {
@@ -1060,12 +1077,12 @@ sub display_user_lists {
 			}
 		}
 		run_command("/usr/sbin/sboinstall --template-only \"$out_file\" --reinstall $templates");
-		$height = calculate_height("Success or failure");
+		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "Success or failure");
 		if (-s $out_file) {
-			system("$dialog_prefix --title \"List Operations\" --msgbox \"Template saved to $out_file. Clearing the list.\" $height $normal");
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"List Operations\" --msgbox \"Template saved to $out_file. Clearing the list.\" $height $width");
 			splice @template_list;
 		} else {
-			system("$dialog_prefix --title \"List Operations\" --msgbox \"Unable to save to $out_file.\" $height $normal");
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"List Operations\" --msgbox \"Unable to save to $out_file.\" $height $width");
 		}
 	}
 
@@ -1084,8 +1101,8 @@ sub display_user_lists {
 		splice @upgrade_list;
 		splice @remove_list;
 		splice @template_list;
-		$height = calculate_height("Cleared");
-		system("$dialog_prefix --title \"List Operations\" --ok-label \"OK\" --msgbox \"List contents cleared.\" $height $narrow");
+		($height, $width, $begin_y, $begin_x) = calculate_position("narrow", "Cleared");
+		system("$dialog_prefix --begin $begin_y $begin_x --title \"List Operations\" --ok-label \"OK\" --msgbox \"List contents cleared.\" $height $width");
 	}
 
 	display_user_lists();
@@ -1130,10 +1147,9 @@ sub edit_hint {
 	my $hint_menu = join "\n", @hint_menu;
 	system("/usr/sbin/sbohints --wrap --nocolor --query $sbo > $command_output");
 	chomp(my $msg = slurp $command_output);
-	my $height = calculate_height($hint_menu, $msg);
-	my $hint_menu_width = $wide;
-	$hint_menu_width = $normal < $wide ? $wide : $normal if $optional;
-	system("$dialog_prefix --title \"$sbo: Hints\" --menu \"$msg\" $height $hint_menu_width $height $hint_menu 2> $dialog_output");
+	my $wanted = $optional ? "wide_cond" : "wide";
+	my ($height, $width, $begin_y, $begin_x) = calculate_position($wanted, $hint_menu, $msg);
+	system("$dialog_prefix --begin $begin_y $begin_x --title \"$sbo: Hints\" --menu \"$msg\" $height $width $height $hint_menu 2> $dialog_output");
 	chomp(my $option = slurp $dialog_output);
 	return unless $option =~ /\w/;
 
@@ -1171,19 +1187,19 @@ sub edit_hint {
 sub edit_setting {
 	script_error("edit_setting requires four arguments.") unless @_ == 4;
 	my ($existing_setting, $explanation, $criterion, $flag) = @_;
-	my $height;
+	my ($height, $width, $begin_y, $begin_x);
 	unlink $dialog_output;
 	my ($setting_name, $setting_content) = split "=", $existing_setting;
 	if ($criterion eq "TRUE or FALSE.") {
-		$height = calculate_height($existing_setting, "$explanation\n\n$criterion\n\nTrue\nFalse");
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $existing_setting, "$explanation\n\n$criterion\n\nTrue\nFalse");
 		if ($existing_setting =~ /=FALSE$/) {
-			system("$dialog_prefix --title \"Settings Editor\" --radiolist \"$explanation\n\n$criterion\n\n$existing_setting\" $height $wide $height \"FALSE\" \"\" \"on\" \"TRUE\" \"\" \"\" 2> $dialog_output");
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"Settings Editor\" --radiolist \"$explanation\n\n$criterion\n\n$existing_setting\" $height $width $height \"FALSE\" \"\" \"on\" \"TRUE\" \"\" \"\" 2> $dialog_output");
 		} else {
-			system("$dialog_prefix --title \"Settings Editor\" --radiolist \"$explanation\n\n$criterion\" $height $wide $height \"FALSE\" \"\" \"\" \"TRUE\" \"\" \"on\" 2> $dialog_output");
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"Settings Editor\" --radiolist \"$explanation\n\n$criterion\" $height $width $height \"FALSE\" \"\" \"\" \"TRUE\" \"\" \"on\" 2> $dialog_output");
 		}
 	} else {
-		$height = calculate_height($existing_setting, "$explanation\n\n$criterion\n\nInput here");
-		system("$dialog_prefix --title \"Settings Editor\" --inputbox \"$explanation\n\n$criterion\n\n$existing_setting\" $height $wide \"$setting_content\" 2> $dialog_output");
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $existing_setting, "$explanation\n\n$criterion\n\nInput here");
+		system("$dialog_prefix --begin $begin_y $begin_x --title \"Settings Editor\" --inputbox \"$explanation\n\n$criterion\n\n$existing_setting\" $height $width \"$setting_content\" 2> $dialog_output");
 	}
 	chomp(my $option = slurp $dialog_output);
 	return unless $option =~ /\w/;
@@ -1219,7 +1235,7 @@ sub new_package_information {
 	lint_sbo_config($self, %config);
 	unless (defined $dialogrc and -s $dialogrc) {
 		$dialog_prefix = ($config{DIALOGRC} ne "FALSE" and -s $config{DIALOGRC}) ? "DIALOGRC=\"$config{DIALOGRC}\" $dialog_base" : $dialog_base;
-	dialog_check();
+		dialog_check();
 	}
 	$repo_path = "$config{SBO_HOME}/repo";
 	$slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
@@ -1252,24 +1268,24 @@ sub new_package_information {
 sub run_command {
 	script_error("run_command requires at least one argument.") unless @_;
 	my ($cmd, $no_batch) = @_;
-	my $height;
+	my ($height, $width, $begin_y, $begin_x);
 	if ($cmd =~ /sbo(install|upgrade)/ and not defined $no_batch) {
 		my $batch_cmd = "$cmd --batch";
 		my $dry_run_cmd = "$batch_cmd --wrap --nocolor -D";
 		unlink $command_output;
 		system("$dry_run_cmd > $command_output");
 		chomp(my $dry_run_output = slurp $command_output);
-		$height = calculate_height($dry_run_output, "$cmd\n\nUse batch mode?\n\nDry Run:\n");
-		my $batch_res = system("$dialog_prefix --yesno \"$cmd\n\nUse batch mode?\n\nDry Run:\n$dry_run_output\" $height $wide") == 0;
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $dry_run_output, "$cmd\n\nUse batch mode?\n\nDry Run:\n");
+		my $batch_res = system("$dialog_prefix --begin $begin_y $begin_x --yesno \"$cmd\n\nUse batch mode?\n\nDry Run:\n$dry_run_output\" $height $width") == 0;
 		$cmd = $batch_cmd if $batch_res;
 	}
 	if ($cmd =~ /sboclean/ and $cmd =~ /(-d|-w|-o ALL)/) {
-		$height = calculate_height("$cmd\n\nAsk to delete");
-		my $clean_res = system("$dialog_prefix --yesno \"$cmd\n\nAsk to delete files interactively?\" $height $normal") == 0;
+		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "$cmd\n\nAsk to delete");
+		my $clean_res = system("$dialog_prefix --begin $begin_y $begin_x --yesno \"$cmd\n\nAsk to delete files interactively?\" $height $width") == 0;
 		$cmd .= " -i" if $clean_res;
 	}
-	$height = calculate_height("$cmd\n\nProceed");
-	my $res = system("$dialog_prefix --yesno \"$cmd\n\nProceed?\" $height $normal") == 0;
+	($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "$cmd\n\nProceed");
+	my $res = system("$dialog_prefix --begin $begin_y $begin_x --yesno \"$cmd\n\nProceed?\" $height $width") == 0;
 	return unless $res;
 	system("clear");
 	system($cmd);
@@ -1283,9 +1299,9 @@ sub run_command {
 sub run_search {
 	unlink $dialog_output;
 	unlink $command_output;
-	my $height = calculate_height("Search\nTerms");
 	my $ok_label = -s "$config{SBO_HOME}/TAGS.txt" ? "Name and Tag" : "Search";
-	my $normal_search = system("$dialog_prefix --ok-label \"$ok_label\" --extra-button --extra-label \"Include Desc.\" --title \"Package Search\" --inputbox \"Enter any number of search terms, separated by spaces.\" $height $wide 2> $dialog_output") == 0;
+	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Search\nTerms");
+	my $normal_search = system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"$ok_label\" --extra-button --extra-label \"Include Desc.\" --title \"Package Search\" --inputbox \"Enter any number of search terms, separated by spaces.\" $height $width 2> $dialog_output") == 0;
 	chomp(my $option = slurp $dialog_output);
 	return unless $option =~ /\w/;
 	unlink $command_output;
@@ -1343,8 +1359,9 @@ EOF
 }
 
 # Ensure that the terminal is at least 80x25, and adjust the
-# height and width variables. $wide is set and a reasonable
-# maximum height is returned.
+# height and width variables. Box widths, $terminal_height and
+# $terminal_width are all set here; a sensible maximum height
+# is returned.
 sub terminal_check {
 	chomp(my $lines = `tput lines`);
 	chomp(my $columns = `tput cols`);
@@ -1360,9 +1377,14 @@ sub terminal_check {
 		terminal_check();
 	}
 
-	my $max_height = $lines % 2 ? $lines - 7 : $lines - 6;
-	$wide = $columns % 2 ? $columns - 15 : $columns - 14;
+	$terminal_height = $lines;
+	$terminal_width = $columns;
+	my $max_height = $terminal_height - 6;
+	$wide = $terminal_width - 14; # Effective minimum of 66.
 	$wide = $wide < $max_width ? $wide : $max_width;
+	$normal = 78; # Value for even number of columns; 77 is the README minimum with shadow.
+	$narrow = 60;
+	for ($normal, $narrow) { $_ -= $terminal_width % 2; }
 	return $max_height;
 }
 
