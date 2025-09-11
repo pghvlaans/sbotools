@@ -48,6 +48,7 @@ my $max_width = 125;
 my ($normal, $wide, $narrow); # All set in terminal_check.
 terminal_check();
 dialog_check();
+system("$dialog_prefix --infobox \"Loading...\" 3 15");
 
 my $editor = $ENV{EDITOR};
 $editor = $ENV{VISUAL} unless $editor;
@@ -915,18 +916,20 @@ sub display_settings {
 	$height--;
 	my $res;
 	unless ($< == 0) {
-		$res = system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --no-cancel --extra-button --extra-label \"Man Page\" --title \"Settings List\" --item-help --menu \"$msg\" $height $width $height $config_values") == 0;
+		$res = system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --no-cancel --extra-button --extra-label \"Man Page\" --title \"Settings List\" --item-help --menu \"$msg\" $height $width $height $config_values 2> $dialog_output") == 0;
 	} else {
 		$res = system("$dialog_prefix --begin $begin_y $begin_x --title \"Settings List\" --extra-button --extra-label \"Man Page\" --item-help --menu \"$msg\" $height $width $height $config_values 2> $dialog_output") == 0;
-		chomp(my $option = slurp $dialog_output);
-		unless ($option =~ /\w/) {
-			display_main();
-		}
-		unless ($res) {
-			system("clear");
-			system("man sbotools.conf");
-			display_settings();
-		}
+	}
+	chomp(my $option = slurp $dialog_output);
+	unless ($option =~ /\w/) {
+		display_main();
+	}
+	unless ($res) {
+		system("clear");
+		system("man sbotools.conf");
+		display_settings();
+	}
+	if ($< == 0) {
 		my ($explanation, $criterion, $flag);
 		if ($option =~ /^BUILD_IGNORE/) {
 			$explanation = "If TRUE, do not account for build number when doing upgrades.";
@@ -1207,9 +1210,9 @@ sub edit_setting {
 	system("clear");
 	my $res = system("/usr/sbin/sboconfig -$flag $option") == 0;
 	if ($res) {
-		$save_dialogrc = $config{DIALOGRC} if $existing_setting =~ /^DIALOGRC=/;
 		clear_info_store();
 		new_package_information();
+		$save_dialogrc = $config{DIALOGRC} if $existing_setting =~ /^DIALOGRC=/;
 		prompt $color_notice, "Press ENTER to continue.";
 		return;
 	}
