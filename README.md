@@ -30,6 +30,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
     * Thanks to SCerovec for the suggestion
   * sboinstall: Added --template-only to create a template without building
   * sbofind: Add --raw (matches only) and --descriptions (also search descriptions)
+  * Repo.pm: Always generate SLACKBUILDS.TXT on 14.0 and 14.1.
 
 #### 3.8.1 - 2025-08-28
   * Replace most grep instances

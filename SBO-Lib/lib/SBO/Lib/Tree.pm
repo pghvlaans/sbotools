@@ -151,7 +151,7 @@ sub get_sbo_locations {
       $store{$sbo} = $repo_path . $loc;
       $orig{$sbo} = $store{$sbo};
       push @available, $sbo;
-    } elsif (my ($pkg, $description) = $line =~ m/DESCRIPTION:\s([\S]+)\s\(([^\n]+)\)$/) {
+    } elsif (my ($pkg, $description) = $line =~ m/DESCRIPTION:\s+([\S]+)\s+\(([^\n]+)\)$/) {
       $descriptions{$pkg} = $description;
     }
   }

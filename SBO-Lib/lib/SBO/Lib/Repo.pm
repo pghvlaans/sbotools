@@ -269,8 +269,12 @@ sub check_repo {
   my $bool = generate_slackbuilds_txt();
 
 C<generate_slackbuilds_txt()> generates a minimal C<SLACKBUILDS.TXT> for
-repositories that do not include this file. If the file cannot be opened for
-write, it returns a false value. Otherwise, it returns a true value.
+repositories that do not include this file. The file is also generated
+under Slackware 14.0 and 14.1, which contain an absent SlackBuild and can
+thereby cause unexpected failures.
+
+If the file cannot be opened for write, it returns a false value. Otherwise,
+it returns a true value.
 
 =cut
 
@@ -295,12 +299,10 @@ sub generate_slackbuilds_txt {
       my ($sd_fh, $exit) = open_read("$repo_path/$cat/$package/slack-desc");
       next if $exit;
       while (<$sd_fh>) {
-        my $search_package = $package;
-        $search_package =~ s/\+/\\+/;
-        next unless $_ =~ /^$search_package:/;
+        next unless $_ =~ /^\Q$package\E:/;
         chomp(my $disp = $_);
-        $disp =~ s/^$search_package: //;
-        print { $fh } "SLACKBUILD SHORT DESCRIPTION: $disp\n";
+        $disp =~ s/^\Q$package\E:[^(]*//;
+        print { $fh } "SLACKBUILD SHORT DESCRIPTION: $package $disp\n";
         last;
       }
       close $sd_fh;
@@ -476,7 +478,7 @@ sub pull_sbo_tree {
     $res = git_sbo_tree($url);
     if ($res == 0) {
       if (prompt($color_lesser, "Sync from $url failed. Retry?", default => 'no')) {
-        generate_slackbuilds_txt() unless -s $slackbuilds_txt;
+        generate_slackbuilds_txt() unless -s $slackbuilds_txt or versioncmp($sw_version, "14.1") != 1;
         return pull_sbo_tree();
       }
     }
@@ -486,7 +488,7 @@ sub pull_sbo_tree {
 
   my $wanted = sub { chown 0, 0, $File::Find::name; };
   find($wanted, $repo_path) if -d $repo_path;
-  if ($res and not -s $slackbuilds_txt) {
+  if ($res and (versioncmp($sw_version, "14.1") != 1 or not -s $slackbuilds_txt)) {
     generate_slackbuilds_txt();
   }
   if ($config{OBSOLETE_CHECK} eq "TRUE") {

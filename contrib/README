@@ -2,7 +2,8 @@
 
 This directory contains example dialogrc files for sbotool. Set DIALOGRC
 to an absolute file path (or pass one with the --dialogrc option) to use
-one.
+one. The files here have been verified to work with the latest stable
+Slackware release, currently 15.0.
 
 To share a dialogrc file of your own, fork the pghvlaans/sbotools
 repository, put it in ./contrib and make a Pull Request. Please use a

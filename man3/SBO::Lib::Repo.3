@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Repo 3"
-.TH SBO::Lib::Repo 3 "Setting Orange, Bureaucracy 21, 3191 YOLD" "" "sbotools 3.8.1"
+.TH SBO::Lib::Repo 3 "Sweetmorn, Bureaucracy 37, 3191 YOLD" "" "sbotools 3.8.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -145,8 +145,12 @@ value on success. Creation failure results in a usage error.
 .Ve
 .PP
 \&\f(CWgenerate_slackbuilds_txt()\fR generates a minimal \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR for
-repositories that do not include this file. If the file cannot be opened for
-write, it returns a false value. Otherwise, it returns a true value.
+repositories that do not include this file. The file is also generated
+under Slackware 14.0 and 14.1, which contain an absent SlackBuild and can
+thereby cause unexpected failures.
+.PP
+If the file cannot be opened for write, it returns a false value. Otherwise,
+it returns a true value.
 .SS get_obsolete
 .IX Subsection "get_obsolete"
 .Vb 1
