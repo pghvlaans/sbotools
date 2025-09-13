@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Setting Orange, Bureaucracy 21, 3191 YOLD" "" "sbotools 3.8.1"
+.TH SBO::Lib::Util 3 "Sweetmorn, Bureaucracy 37, 3191 YOLD" "" "sbotools 3.8.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -108,7 +108,8 @@ they change according to the configuration. \f(CW\*(C`SBO_HOME\*(C'\fR is change
 The supported keys are: \f(CW\*(C`NOCLEAN\*(C'\fR, \f(CW\*(C`DISTCLEAN\*(C'\fR, \f(CW\*(C`JOBS\*(C'\fR, \f(CW\*(C`PKG_DIR\*(C'\fR,
 \&\f(CW\*(C`SBO_HOME\*(C'\fR, \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR, \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR, \f(CW\*(C`REPO\*(C'\fR, \f(CW\*(C`BUILD_IGNORE\*(C'\fR,
 \&\f(CW\*(C`GPG_VERIFY\*(C'\fR, \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR, \f(CW\*(C`STRICT_UPGRADES\*(C'\fR, \f(CW\*(C`GIT_BRANCH\*(C'\fR, \f(CW\*(C`CLASSIC\*(C'\fR,
-\&\f(CW\*(C`CPAN_IGNORE\*(C'\fR, \f(CW\*(C`ETC_PROFILE\*(C'\fR, \f(CW\*(C`LOG_DIR\*(C'\fR, \f(CW\*(C`NOWRAP\*(C'\fR, \f(CW\*(C`COLOR\*(C'\fR and \f(CW\*(C`SO_CHECK\*(C'\fR.
+\&\f(CW\*(C`CPAN_IGNORE\*(C'\fR, \f(CW\*(C`ETC_PROFILE\*(C'\fR, \f(CW\*(C`LOG_DIR\*(C'\fR, \f(CW\*(C`NOWRAP\*(C'\fR, \f(CW\*(C`COLOR\*(C'\fR, \f(CW\*(C`SO_CHECK\*(C'\fR and
+\&\f(CW\*(C`DIALOGRC\*(C'\fR.
 .ie n .SS $download_time
 .el .SS \f(CW$download_time\fP
 .IX Subsection "$download_time"
@@ -119,10 +120,10 @@ displayed when all builds are complete.
 .IX Subsection "$hint_file"
 A file, \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR by default, containing blacklisted scripts,
 optional script dependencies and automatic revese dependency rebuild requests.
-.ie n .SS $is_sbotest
-.el .SS \f(CW$is_sbotest\fP
-.IX Subsection "$is_sbotest"
-This shared variable indicates a run from \f(CW\*(C`sbotest\*(C'\fR.
+.ie n .SS "($is_sbotest, $is_sbotool)"
+.el .SS "($is_sbotest, \f(CW$is_sbotool\fP)"
+.IX Subsection "($is_sbotest, $is_sbotool)"
+This shared variable indicate runs from \f(CW\*(C`sbotest\*(C'\fR and \f(CW\*(C`sbotool\*(C'\fR, respectively.
 .ie n .SS $sbotest_compatible
 .el .SS \f(CW$sbotest_compatible\fP
 .IX Subsection "$sbotest_compatible"

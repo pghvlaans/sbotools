@@ -19,9 +19,10 @@ use File::Temp qw/ tempdir /;
 use Getopt::Long qw/ :config no_ignore_case_always /;
 
 my $self = basename $0;
+$is_sbotool = 1;
 
 my $exit;
-exit _ERR_USAGE unless -x "/usr/bin/dialog";
+usage_error("dialog is not installed.") unless -x "/usr/bin/dialog";
 my ($help, $show_version, $dialogrc);
 GetOptions( 'help|h' => \$help, 'version|v' => \$show_version, 'dialogrc|d=s' => \$dialogrc);
 if ($help) { show_usage(); exit 0; }
@@ -481,7 +482,7 @@ sub display_builds {
 	@for_dialog = sort @for_dialog unless $label =~ /(Available Queue|Search Results)$/;
 	my $for_dialog = join "\n", @for_dialog;
 	my $fh;
-	open $fh, ">", $dialog_input or exit _ERR_OPENFH;
+	open $fh, ">", $dialog_input or error_code("Failed to open $dialog_input for write.", _ERR_OPENFH);
 	print {$fh} $for_dialog;
 	close $fh;
 	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", $for_dialog, "Select a SlackBuild");
@@ -864,7 +865,7 @@ sub display_series {
 	@series_display = sort @series_display;
 	my $series_display = join "\n", @series_display;
 	my $series_fh;
-	open $series_fh, ">", $dialog_input or exit _ERR_OPENFH;
+	open $series_fh, ">", $dialog_input or error_code("Failed to open $dialog_input for write.", _ERR_OPENFH);
 	print {$series_fh} $series_display;
 
 	my @to_display;

@@ -66,6 +66,7 @@ my @EXPORT_CONFIG = qw{
   $sbotest_compatible
   $script_db
   $is_sbotest
+  $is_sbotool
   $userland_32
 };
 
@@ -206,9 +207,9 @@ displayed when all builds are complete.
 A file, C</etc/sbotools/sbotools.hints> by default, containing blacklisted scripts,
 optional script dependencies and automatic revese dependency rebuild requests.
 
-=head2 $is_sbotest
+=head2 ($is_sbotest, $is_sbotool)
 
-This shared variable indicates a run from C<sbotest>.
+This shared variable indicate runs from C<sbotest> and C<sbotool>, respectively.
 
 =head2 $sbotest_compatible
 
@@ -271,6 +272,7 @@ our $script_db = '/var/log/scripts';
 # global config variables
 my $req_dir = $ENV{SBOTOOLS_CONF_DIR};
 our $conf_dir = defined $req_dir ? $req_dir : '/etc/sbotools';
+our $is_sbotool;
 our $is_sbotest = $ENV{SBOTEST_MODE};
 my $dir_check_var = "\$SBOTOOLS_CONF_DIR";
 $dir_check_var .= " and \$SBOTEST_CONF_DIR" if defined $is_sbotest;
@@ -472,6 +474,10 @@ respectively.
 sub error_code {
   script_error("error_code requires two arguments.") unless @_ == 2;
   my $msg = shift;
+  if (defined $is_sbotool) {
+    system("/usr/bin/dialog --ok-label \"Exit\" --msgbox \"$msg\" 0 0");
+    exit shift;
+  }
   unless ($config{NOWRAP} eq 'TRUE') {
     $columns = 73;
     if ($config{COLOR} eq 'TRUE') {
@@ -1311,12 +1317,20 @@ codes, use C<error_code()>.
 # subroutine for throwing internal script errors
 sub script_error {
   if (@_) {
+    if (defined $is_sbotool) {
+      system("/usr/bin/dialog --ok-label \"Exit\" --msgbox \"A fatal script error has occurred:\n$_[0]\nExiting.\" 0 0");
+      exit _ERR_USAGE;
+    }
     if ($config{COLOR} eq 'TRUE') {
       warn color($color_warn). "A fatal script error has occurred:\n$_[0]\nExiting.\n";
     } else {
       warn "A fatal script error has occurred:\n$_[0]\nExiting.\n";
     }
   } else {
+    if (defined $is_sbotool) {
+      system("/usr/bin/dialog --ok-label \"Exit\" --msgbox \"A fatal script error has occurred. Exiting.\" 0 0");
+      exit _ERR_USAGE;
+    }
     if ($config{COLOR} eq 'TRUE') {
       warn color($color_warn). "A fatal script error has occurred. Exiting.\n";
     } else {
@@ -1408,6 +1422,11 @@ error codes, use C<error_code()>.
 # subroutine for usage errors
 sub usage_error {
   my $msg = shift;
+  if (defined $is_sbotool) {
+    system("/usr/bin/dialog --ok-label \"Exit\" --msgbox \"$msg\" 0 0");
+    exit _ERR_USAGE;
+  }
+
   unless ($config{NOWRAP} eq 'TRUE') {
     $columns = 73;
     if ($config{COLOR} eq 'TRUE') {
