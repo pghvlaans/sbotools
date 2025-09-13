@@ -225,6 +225,8 @@ value.
 wrapped at 72 characters and the script exits with the specified error code.
 There is no useful return value.
 .PP
+\&\f(CWdialog(1)\fR displays the message when running \f(CW\*(C`sbotool\*(C'\fR.
+.PP
 For _ERR_USAGE and _ERR_SCRIPT, use \f(CWusage_error()\fR and \f(CWscript_error()\fR,
 respectively.
 .SS get_arch
@@ -496,6 +498,8 @@ If a \f(CW$msg\fR was supplied, it instead prints:
 \&  Exiting.
 .Ve
 .PP
+\&\f(CWdialog(1)\fR displays \f(CW$msg\fR when running \f(CW\*(C`sbotools\*(C'\fR.
+.PP
 There is no useful return value. For _ERR_USAGE, use \f(CWusage_error()\fR. For other error
 codes, use \f(CWerror_code()\fR.
 .SS show_version
@@ -540,6 +544,8 @@ list in the same order.
 .PP
 \&\f(CWusage_error()\fR warns and exits with code _ERR_USAGE, printing \f(CW$msg\fR to STDERR.
 Error messages wrap at 72 characters.
+.PP
+\&\f(CWdialog(1)\fR displays \f(CW$msg\fR when running \f(CW\*(C`sbotools\*(C'\fR.
 .PP
 There is no useful return value. For _ERR_SCRIPT, use \f(CWscript_error()\fR; for other
 error codes, use \f(CWerror_code()\fR.
@@ -609,7 +615,7 @@ The sbotools share the following exit codes:
 .Ve
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
-\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBTerm::ANSIColor\fR\|(3)
+\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBdialog\fR\|(1), \fBTerm::ANSIColor\fR\|(3)
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with

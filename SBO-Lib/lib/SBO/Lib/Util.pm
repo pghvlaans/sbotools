@@ -466,6 +466,8 @@ C<error_code()> takes a message and an error code. The message is displayed
 wrapped at 72 characters and the script exits with the specified error code.
 There is no useful return value.
 
+C<dialog(1)> displays the message when running C<sbotool>.
+
 For _ERR_USAGE and _ERR_SCRIPT, use C<usage_error()> and C<script_error()>,
 respectively.
 
@@ -474,8 +476,8 @@ respectively.
 sub error_code {
   script_error("error_code requires two arguments.") unless @_ == 2;
   my $msg = shift;
-  if (defined $is_sbotool) {
-    system("/usr/bin/dialog --ok-label \"Exit\" --msgbox \"$msg\" 0 0");
+  if (defined $is_sbotool and -x "/usr/bin/dialog") {
+    system("/usr/bin/dialog --title \"Error\" --ok-label \"Exit\" --msgbox \"$msg\" 0 0");
     exit shift;
   }
   unless ($config{NOWRAP} eq 'TRUE') {
@@ -1309,6 +1311,8 @@ If a $msg was supplied, it instead prints:
   $msg.
   Exiting.
 
+C<dialog(1)> displays $msg when running C<sbotools>.
+
 There is no useful return value. For _ERR_USAGE, use C<usage_error()>. For other error
 codes, use C<error_code()>.
 
@@ -1317,8 +1321,8 @@ codes, use C<error_code()>.
 # subroutine for throwing internal script errors
 sub script_error {
   if (@_) {
-    if (defined $is_sbotool) {
-      system("/usr/bin/dialog --ok-label \"Exit\" --msgbox \"A fatal script error has occurred:\n$_[0]\nExiting.\" 0 0");
+    if (defined $is_sbotool and -x "/usr/bin/dialog") {
+      system("/usr/bin/dialog --title \"Error\" --ok-label \"Exit\" --msgbox \"A fatal script error has occurred:\n$_[0]\nExiting.\" 0 0");
       exit _ERR_USAGE;
     }
     if ($config{COLOR} eq 'TRUE') {
@@ -1327,8 +1331,8 @@ sub script_error {
       warn "A fatal script error has occurred:\n$_[0]\nExiting.\n";
     }
   } else {
-    if (defined $is_sbotool) {
-      system("/usr/bin/dialog --ok-label \"Exit\" --msgbox \"A fatal script error has occurred. Exiting.\" 0 0");
+    if (defined $is_sbotool and -x "/usr/bin/dialog") {
+      system("/usr/bin/dialog --title \"Error\" --ok-label \"Exit\" --msgbox \"A fatal script error has occurred. Exiting.\" 0 0");
       exit _ERR_USAGE;
     }
     if ($config{COLOR} eq 'TRUE') {
@@ -1414,6 +1418,8 @@ sub uniq {
 C<usage_error()> warns and exits with code _ERR_USAGE, printing C<$msg> to STDERR.
 Error messages wrap at 72 characters.
 
+C<dialog(1)> displays $msg when running C<sbotools>.
+
 There is no useful return value. For _ERR_SCRIPT, use C<script_error()>; for other
 error codes, use C<error_code()>.
 
@@ -1422,8 +1428,8 @@ error codes, use C<error_code()>.
 # subroutine for usage errors
 sub usage_error {
   my $msg = shift;
-  if (defined $is_sbotool) {
-    system("/usr/bin/dialog --ok-label \"Exit\" --msgbox \"$msg\" 0 0");
+  if (defined $is_sbotool and -x "/usr/bin/dialog") {
+    system("/usr/bin/dialog --title \"Error\" --ok-label \"Exit\" --msgbox \"$msg\" 0 0");
     exit _ERR_USAGE;
   }
 
@@ -1581,7 +1587,7 @@ The sbotools share the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), Term::ANSIColor(3)
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), dialog(1), Term::ANSIColor(3)
 
 =head1 AUTHORS
 
