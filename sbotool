@@ -182,7 +182,7 @@ sub build_operations {
 	push @build_operations, "\"Edit Hints\" \"Blacklist, auto-rebuild and dependencies.\" \\" if $< == 0;
 	if ($inst_names{$sbo} and $< == 0 and not on_blacklist($sbo)) {
 		push @build_operations, "\"Remove\" \"Remove with unneeded dependencies.\" \\",
-								"\"Reinstall\" \"Reinstall, package and dependencies.\" \\";
+								"\"Reinstall\" \"Reinstall package and deps (optional).\" \\";
 		unless (in $sbo, @remove_list) {
 			push @build_operations, "\"Remove List (+)\" \"Add to the Remove List.\" \\";
 		} else {
@@ -300,7 +300,27 @@ sub build_operations {
 	}
 
 	if ($option eq "Install" or $option eq "Reinstall" or $option eq "Remove" or $option eq "Reverse Rebuild") {
+		unlink $dialog_output;
 		my $cmd = "/usr/sbin/sboinstall";
+		if ($option eq "Reinstall") {
+			my ($queue, %warnings);
+			$queue = get_build_queue([$sbo], \%warnings);
+			my @disp_queue;
+			unless ($is_compat_build) {
+				for (@$queue) { push @disp_queue, $_ if get_sbo_location($_) and $_ ne $sbo; }
+			} else {
+				for (@$queue) {
+					next if $_ =~ /-compat32/ and ineligible_compat $_;
+					push @disp_queue, $_ if get_sbo_location($_) and $_ ne $sbo;
+				}
+			}
+			if (@disp_queue) {
+				my $disp_queue = join "\n", @disp_queue;
+				($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Reinstall deps?\n\n", $disp_queue);
+				my $reqs_res = system("$dialog_prefix --title \"Reinstalling $sbo\" --yesno \"Also reinstall dependencies?\n\n$disp_queue\" $height $width") == 0;
+				$cmd .= " --norequirements" unless $reqs_res;
+			}
+		}
 		$cmd .= " --reinstall" if $option eq "Reinstall";
 		$cmd .= " --reverse-rebuild" if $option eq "Reverse Rebuild";
 		$cmd .= " $sbo";
@@ -441,7 +461,12 @@ sub calculate_position {
 	}
 	script_error("Bad value of wanted_width passed to calculate_position.") unless defined $width;
 
-	my $begin_y = int(0.5 + ($terminal_height - $height) / 2);
+	my $begin_y;
+	if ($height < $max_height) {
+		$begin_y = int(($terminal_height - $height) / 2);
+	} else {
+		$begin_y = int(0.5 + ($terminal_height - $height) / 2);
+	}
 	my $begin_x = int(($terminal_width - $width) / 2);
 
 	return ($height, $width, $begin_y, $begin_x);
