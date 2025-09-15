@@ -9,6 +9,7 @@
   * *sboinstall*: Added **\--template-only** to create a template without building
   * *sbofind*: Add **\--raw** (matches only) and **\--descriptions** (also search descriptions)
   * *Repo.pm*: Always generate `SLACKBUILDS.TXT` on 14.0 and 14.1.
+  * *sboinstall*: **\--norequirements** is compatible with **\--batch** and **\--dry-run**
 
 
 * 3.8.1 - 2025-08-28

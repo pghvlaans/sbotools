@@ -162,8 +162,7 @@ build queue also includes any missing dependencies for those scripts.
 With **\--compat32**, rebuild only installed *compat32* reverse
 dependencies.
 
-Incompatible with **\--norequirements**, **\--use-template** and
-**\--mass-rebuild**.
+Incompatible with **\--use-template** and **\--mass-rebuild**.
 
 **-r\|\--nointeractive**
 
@@ -185,8 +184,6 @@ Overriden by **\--batch**.
 
 Bypass dependency resolution, but still show *README* and the user
 prompts before proceeding with the build.
-
-Incompatible with **\--batch**.
 
 **-t\|\--template-only FILE**
 
@@ -267,8 +264,7 @@ scripts is not advised. Consider running **sboinstall** with
 **\--dry-run** first, which prints the **\--batch** build queue and
 exits, to verify the upcoming operation.
 
-Incompatible with **\--norequirements** and overrides
-**\--nointeractive**.
+Overrides **\--nointeractive**.
 
 **-h\|\--help**
 
