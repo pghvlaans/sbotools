@@ -178,7 +178,7 @@ unless ($is_sbotest) {
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'sbo-archive|A=s,', 'dialogrc|D=s');
+		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'sbo-archive|A=s', 'dialogrc|D=s');
 }
 
 $options{list} = 1 if exists $options{'non-default'};
