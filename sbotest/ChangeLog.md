@@ -1,5 +1,8 @@
 ## ChangeLog.md
 
+#### 1.1.2 - 2025-09-19
+  * bin/test: Fix **\--single** with already-installed scripts
+
 #### 1.1.1 - 2025-08-28
   * bin/test: Reflect changes in `get_all_available()` and use `in()`
   * bin/test: Arrange the testing list in build order

@@ -22,11 +22,13 @@ This file has been installed to `/etc/sbotools/obsolete` since `sbotools-3.6`. I
 
 * [sbotools-3.8.1.tar.gz](sbotools-3.8.1.tar.gz) ([asc](sbotools-3.8.1.tar.gz.asc))
     * md5sum: `0e0e11a51f2b97cdb6aff7cd43e787f1`
-* [sbotest-1.1.1.tar.gz](sbotest-1.1.1.tar.gz) ([asc](sbotest-1.1.1.tar.gz.asc))
-    * md5sum: `eb9601620d14b32ab3a2f9ba8ab029a0`
+* [sbotest-1.1.2.tar.gz](sbotest-1.1.2.tar.gz) ([asc](sbotest-1.1.2.tar.gz.asc))
+    * md5sum: `a2f5692d75e00f5a8555dc373a84b7bc`
 
 ## Older Releases
 
+* [sbotest-1.1.1.tar.gz](sbotest-1.1.1.tar.gz) ([asc](sbotest-1.1.1.tar.gz.asc))
+    * md5sum: `eb9601620d14b32ab3a2f9ba8ab029a0`
 * [sbotools-3.8.tar.gz](sbotools-3.8.tar.gz) ([asc](sbotools-3.8.tar.gz.asc))
     * md5sum: `170fee87b395e61042c581312518d6dc`
 * [sbotest-1.1.tar.gz](sbotest-1.1.tar.gz) ([asc](sbotest-1.1.tar.gz.asc))
