@@ -521,7 +521,7 @@ sub display_builds {
 	chomp(my $option = slurp $dialog_output);
 	return unless $option;
 	unless ($res) {
-		run_search(@array_to_use);
+		run_search($label, @array_to_use);
 	} else {
 		build_operations($option);
 	}
@@ -1335,13 +1335,19 @@ sub run_command {
 	return;
 }
 
-# Optionally, pass an array to filter results from that array.
+# Optionally, pass a label and an array to filter results from
+# that array.
 sub run_search {
 	unlink $dialog_output;
 	unlink $command_output;
+	my $passed_label = shift;
+	my $new_label;
+	if (defined $passed_label) {
+		$new_label = $passed_label =~ /Filtered\)$/ ? $passed_label : "$passed_label (Filtered)";
+	}
 	my @to_search = @_;
-	my $title = @to_search ? "Filter Build List" : "Package Search";
-	my $result_title = @to_search ? "Filtered List" : "Search Results";
+	my $title = @to_search ? "Filter $passed_label" : "Package Search";
+	my $result_title = @to_search ? $new_label : "Search Results";
 	my $ok_label = -s "$config{SBO_HOME}/TAGS.txt" ? "Name and Tag" : "Search";
 	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Search\nTerms");
 	my $normal_search = system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"$ok_label\" --extra-button --extra-label \"Include Desc.\" --title \"$title\" --inputbox \"Enter any number of search terms, separated by spaces.\" $height $width 2> $dialog_output") == 0;
@@ -1377,7 +1383,11 @@ sub run_search {
 		}
 		display_builds($result_title, @search_results) if @search_results;
 	}
-	run_search(@to_search);
+	if (@to_search) {
+		run_search($passed_label, @to_search);
+	} else {
+		run_search();
+	}
 	return;
 }
 
