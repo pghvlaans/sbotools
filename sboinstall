@@ -178,6 +178,7 @@ usage_error("reverse-rebuild is incompatible with use-template.") if $utemp and 
 usage_error("reverse-rebuild is incompatible with norequirements.") if $no_reqs and $reverse_rebuild;
 usage_error("mass-rebuild is incompatible with series-rebuild.") if $series_rebuild and $mass_rebuild;
 
+my $true_non_int = $non_int;
 $yes_really = 1 if $dry_run;
 $non_int = 1 if $yes_really;
 $ctemp = $ctemp_only if $ctemp_only;
@@ -283,7 +284,7 @@ if (length $utemp) {
 # the --mass-rebuild queue is handled later
 } elsif (not $mass_rebuild and not $series_rebuild) {
 	# noninteractive and no requirements
-	if (not $reverse_rebuild and ($no_reqs or $non_int)) {
+	if (not $reverse_rebuild and ($no_reqs or $true_non_int)) {
 		my $interim_queue = \@sbos;
 		for my $cand (@$interim_queue) {
 			unless (on_blacklist($cand)) {
