@@ -164,10 +164,10 @@ sub alter_designation {
 		# designation for $sbo
 		if ($blacklist) {
 			wrapsay "Clearing $sbo from the blacklist...";
-			for my $line (<$rfh>) { push @incoming, $line unless $line =~ m/^\!$sbo$/; }
+			for my $line (<$rfh>) { push @incoming, $line unless $line =~ m/^\!\Q$sbo\E$/; }
 		} else {
 			wrapsay "Clearing reverse dependency rebuild request for $sbo...";
-			for my $line (<$rfh>) { push @incoming, $line unless $line =~ m/^\~$sbo$/; }
+			for my $line (<$rfh>) { push @incoming, $line unless $line =~ m/^\~\Q$sbo\E$/; }
 		}
 		close $rfh;
 		my ($fh, $exit) = open_fh($hint_file, ">");
@@ -425,7 +425,7 @@ sub write_optional {
 	# line is written back in to the file depends on the flags
 	FIRST: for my $line (<$rfh>) {
 		chomp(my $search = $line);
-		my $target = (in $search, @listings and $search =~ m/\s$sbo$/);
+		my $target = (in $search, @listings and $search =~ m/\s\Q$sbo\E$/);
 		unless ($clear) {
 			# replace the first specification for $sbo, and then
 			# skip further instances (flags: -O, -o)
@@ -445,8 +445,8 @@ sub write_optional {
 			# clear the requested scripts from any specification for
 			# $sbo (flag: -co)
 			if ($target) {
-				for my $to_clear (@operation) { $line =~ s/(?<=^)$to_clear\s//g; }
-				for my $to_clear (@operation) { $line =~ s/(?<=\s)$to_clear\s//g; }
+				for my $to_clear (@operation) { $line =~ s/(?<=^)\Q$to_clear\E\s//g; }
+				for my $to_clear (@operation) { $line =~ s/(?<=\s)\Q$to_clear\E\s//g; }
 			}
 			push @outgoing, $line;
 		}
