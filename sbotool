@@ -512,10 +512,14 @@ sub display_builds {
 	close $fh;
 	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", $for_dialog, "Select a SlackBuild");
 	$height--;
-	system("$dialog_prefix --begin $begin_y $begin_x --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\" $height $width $height --file $dialog_input 2> $dialog_output");
+	my $res = system("$dialog_prefix --begin $begin_y $begin_x --extra-button --extra-label \"Filter\" --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\" $height $width $height --file $dialog_input 2> $dialog_output") == 0;
 	chomp(my $option = slurp $dialog_output);
 	return unless $option;
-	build_operations($option);
+	unless ($res) {
+		run_search(@array_to_use);
+	} else {
+		build_operations($option);
+	}
 	display_builds($label, @array_to_use);
 	return;
 }
@@ -1326,12 +1330,16 @@ sub run_command {
 	return;
 }
 
+# Optionally, pass an array to filter results from that array.
 sub run_search {
 	unlink $dialog_output;
 	unlink $command_output;
+	my @to_search = @_;
+	my $title = @to_search ? "Filter Build List" : "Package Search";
+	my $result_title = @to_search ? "Filtered List" : "Search Results";
 	my $ok_label = -s "$config{SBO_HOME}/TAGS.txt" ? "Name and Tag" : "Search";
 	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Search\nTerms");
-	my $normal_search = system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"$ok_label\" --extra-button --extra-label \"Include Desc.\" --title \"Package Search\" --inputbox \"Enter any number of search terms, separated by spaces.\" $height $width 2> $dialog_output") == 0;
+	my $normal_search = system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"$ok_label\" --extra-button --extra-label \"Include Desc.\" --title \"$title\" --inputbox \"Enter any number of search terms, separated by spaces.\" $height $width 2> $dialog_output") == 0;
 	chomp(my $option = slurp $dialog_output);
 	return unless $option =~ /\w/;
 	unlink $command_output;
@@ -1359,9 +1367,12 @@ sub run_search {
 		}
 		push @search_results, @pre_search_results;
 		@search_results = uniq @search_results;
-		display_builds("Search Results", @search_results);
+		if (@to_search) {
+			@search_results = grep { in $_, @to_search } @search_results;
+		}
+		display_builds($result_title, @search_results) if @search_results;
 	}
-	run_search();
+	run_search(@to_search);
 	return;
 }
 
