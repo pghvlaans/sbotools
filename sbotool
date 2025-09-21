@@ -347,10 +347,10 @@ sub build_operations {
 	if ($option eq "Template List (+)") { push @template_list, $sbo; }
 	if ($option eq "Upgrade List (+)") { push @upgrade_list, $sbo; }
 	if ($option eq "Remove List (+)") { push @remove_list, $sbo; }
-	if ($option eq "Install List (-)") { @install_list =  grep { !/^$sbo$/ } @install_list; }
-	if ($option eq "Template List (-)") { @template_list =  grep { !/^$sbo$/ } @template_list; }
-	if ($option eq "Upgrade List (-)") { @upgrade_list =  grep { !/^$sbo$/ } @upgrade_list; }
-	if ($option eq "Remove List (-)") { @remove_list = grep { !/^$sbo$/ } @remove_list; }
+	if ($option eq "Install List (-)") { @install_list =  grep { !/^\Q$sbo\E$/ } @install_list; }
+	if ($option eq "Template List (-)") { @template_list =  grep { !/^\Q$sbo\E$/ } @template_list; }
+	if ($option eq "Upgrade List (-)") { @upgrade_list =  grep { !/^\Q$sbo\E$/ } @upgrade_list; }
+	if ($option eq "Remove List (-)") { @remove_list = grep { !/^\Q$sbo\E$/ } @remove_list; }
 
 	if ($option eq "Remove Override") {
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Remove?");
@@ -1201,7 +1201,7 @@ sub edit_hint {
 	}
 
 	push @flags, "cO" if $option eq "Clear all Optional";
-	push @flags, "cb" if $option eq "Clear from Blacklist";
+	push @flags, "cb" if $option eq "Blacklist (clear)";
 	push @flags, "co" if $option eq "Clear Optionals";
 	push @flags, "cr" if $option eq "No Auto-Rebuilds";
 	push @flags, "r" if $option eq "Do Auto-Rebuilds";
