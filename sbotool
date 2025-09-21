@@ -504,7 +504,7 @@ sub display_builds {
 		}
 		push @for_dialog, "\"$sbo\" \"$description\" \"$description\" \\";
 	}
-	@for_dialog = sort @for_dialog unless $label =~ /(Available Queue|Search Results)$/;
+	@for_dialog = sort @for_dialog unless $label =~ /(Available Queue|Search Results|Filtered\))$/;
 	my $for_dialog = join "\n", @for_dialog;
 	my $fh;
 	open $fh, ">", $dialog_input or error_code("Failed to open $dialog_input for write.", _ERR_OPENFH);
@@ -913,7 +913,7 @@ sub display_series {
 		push @to_display, $_ if $this_series =~ m/\/$series$/;
 	}
 
-	display_builds("SlackBuilds in the $series series.", @to_display) if @to_display;
+	display_builds("SlackBuilds in $series", @to_display) if @to_display;
 	display_series();
 	return;
 }
