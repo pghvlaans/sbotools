@@ -24,6 +24,8 @@ our @EXPORT_OK = qw{
   get_sbo_locations
   is_local
   renew_sbo_locations
+
+  $descriptions_generated
 };
 
 our %EXPORT_TAGS = (
@@ -51,6 +53,8 @@ SBO::Lib::Tree - Routines for interacting with a SlackBuilds.org tree.
 # private variables needed by most subroutines
 my (%store, %local, %orig, %descriptions, @available);
 my $ran_locations = 0;
+# indicates whether SLACKBUILDS.TXT has description lines
+our $descriptions_generated = 0;
 
 =head2 get_all_available
 
@@ -152,6 +156,7 @@ sub get_sbo_locations {
       $orig{$sbo} = $store{$sbo};
       push @available, $sbo;
     } elsif (my ($pkg, $description) = $line =~ m/DESCRIPTION:\s+([\S]+)\s+\(([^\n]+)\)$/) {
+      $descriptions_generated = 1;
       $descriptions{$pkg} = $description;
     }
   }
@@ -215,6 +220,7 @@ sub renew_sbo_locations {
   %descriptions = ();
   splice @available if @available;
   $ran_locations = 0;
+  $descriptions_generated = 0;
 
   get_sbo_locations();
   return %store;

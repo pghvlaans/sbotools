@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local on_blacklist build_cmp version_cmp :colors %config @concluded @reverse_concluded $slackbuilds_txt $repo_path @last_level_reverse $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local on_blacklist build_cmp version_cmp :colors %config @concluded @reverse_concluded $slackbuilds_txt $repo_path @last_level_reverse $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay $descriptions_generated /;
 use Cwd;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
@@ -336,7 +336,8 @@ SEARCH: for my $search (@ARGV) {
 			say '';
 			$notfound = 0;
 		}
-		wrapsay "Warning: Local overrides directory $config{LOCAL_OVERRIDES} does not exist.\n" if $config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES};
+		wrapsay_color $color_lesser, "Warning: Local overrides directory $config{LOCAL_OVERRIDES} does not exist.", 1 if $config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES};
+		wrapsay_color $color_lesser, "Run sbocheck to generate descriptions.", 1 unless $descriptions_generated;
 	} else {
 		wrapsay_color $color_lesser, "Nothing found for search term: $search";
 		$notfound = 1;
