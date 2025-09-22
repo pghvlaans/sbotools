@@ -10,7 +10,7 @@
 use strict;
 use warnings;
 
-use SBO::Lib qw/ :colors :config :const auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_reverse_reqs get_sbo_description get_sbo_location in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp solib_check uniq update_known_solibs @concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated /;
+use SBO::Lib qw/ :colors :config :const auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_readme_contents get_reverse_reqs get_sbo_description get_sbo_location in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp solib_check uniq update_known_solibs @concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated /;
 
 use File::Basename;
 use File::Find;
@@ -256,26 +256,45 @@ sub build_operations {
 
 	if ($option eq "Edit Hints") { edit_hint($sbo); }
 
-	if ($option eq "Build Options") {
+	if ($option eq "Build Options" and $< != 0) {
+		my $build_options = slurp $options_file if -s $options_file;
+		if ($build_options) {
+			($height, $width, $begin_y, $begin_x) = calculate_position("wide", $build_options, "Run as root\n\n");
+			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --title \"$sbo: Saved Build Options\" --msgbox \"Run as root to edit build options.\n\n$build_options\" $height $width");
+		}
+	}
+
+	if ($option eq "Build Options" and $< == 0) {
 		unlink $dialog_output;
 		my $orig_options = slurp $options_file if -s $options_file;
-		my $remove;
+		my $no_remove = 1;
 		if ($orig_options) {
 			my $orig_options = slurp $options_file;
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide", $orig_options, "Remove?\n\n");
-			$remove = system("$dialog_prefix --begin $begin_y $begin_x --title \"$options_file\" --yesno \"Remove build options for $base_name?\n\n$orig_options\" $height $width") == 0;
-			unlink $options_file if $remove;
+			$no_remove = system("$dialog_prefix --begin $begin_y $begin_x --yes-label \"Edit\" --no-label \"Clear\" --title \"$options_file\" --yesno \"Edit or clear build options for $base_name?\n\n$orig_options\" $height $width") == 0;
+			unless ($no_remove) {
+				unlink $options_file;
+				($height, $width, $begin_y, $begin_x) = calculate_position("narrow", "Options cleared");
+				system("$dialog_prefix --begin $begin_y $begin_x --msgbox \"Cleared options for $sbo.\" $height $width") unless -s $options_file;
+			}
 		}
-		unless ($remove) {
+		if ($no_remove) {
+			BACK: my $edit_res;
 			if ($orig_options) {
-				($height, $width, $begin_y, $begin_x) = calculate_position("wide", $orig_options, "Current\n\nInput here");
-				system("$dialog_prefix --begin $begin_y $begin_x --title \"$sbo: $option\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE:\n\n$orig_options\" $height $width 2> $dialog_output");
+				($height, $width, $begin_y, $begin_x) = calculate_position("wide", $orig_options, "Current\n\nInput here\n\nLeave blank");
+				$edit_res = system("$dialog_prefix --begin $begin_y $begin_x --cancel-label \"README\" --title \"$sbo: Build Options\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE.\n\n$orig_options\n\nLeave blank to retain existing options.\" $height $width \"$orig_options\" 2> $dialog_output") == 0;
 			} else {
-				($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Enter build\n\nInput here");
-				system("$dialog_prefix --begin $begin_y $begin_x --title \"$sbo: $option\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE:\" $height $width 2> $dialog_output");
+				($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Enter build\n\nInput here\n\nLeave blank.");
+				$edit_res = system("$dialog_prefix --begin $begin_y $begin_x --cancel-label \"README\" --title \"$sbo: Build Options\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE.\n\nLeave blank to go back.\" $height $width 2> $dialog_output") == 0;
 			}
 			chomp(my $new_options = slurp $dialog_output);
-			if ($new_options =~ /\w/) {
+			unless ($edit_res) {
+				my $readme = get_readme_contents($location);
+				($height, $width, $begin_y, $begin_x) = calculate_position("normal", $readme);
+				system("$dialog_prefix --ok-label \"Back\" --begin $begin_y $begin_x --title \"$sbo: README\" --msgbox \"$readme\" $height $width");
+				goto BACK;
+			}
+			if ($new_options =~ /\w/ and $new_options ne $orig_options) {
 				($height, $width, $begin_y, $begin_x) = calculate_position("wide", "success or fail");
 				unless (save_options($sbo, $new_options)) {
 					system("$dialog_prefix --begin $begin_y $begin_x --title \"Failure\" --msgbox \"Saving options failed for $sbo.\" $height $width");
@@ -386,12 +405,6 @@ sub build_operations {
 		$cmd .= " --reverse-rebuild" if $option =~ /reverse rebuild/;
 		$cmd .= " $sbo";
 		run_command($cmd);
-	}
-
-	if ($option eq "Build Options" and -s $options_file and $< != 0) {
-		my $build_options = slurp $options_file;
-		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $build_options, "Run as root\n\n");
-		system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --title \"$sbo: Saved Build Options\" --msgbox \"Run as root to edit build options.\n\n$build_options\" $height $width");
 	}
 
 	if ($option eq "View File" or $option eq "Edit Override") {
