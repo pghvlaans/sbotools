@@ -119,6 +119,9 @@ sub build_operations {
 	}
 	my $sbo_version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
 	my $description = get_sbo_description($sbo);
+	$description = "(No Description)" unless defined $description;
+	$description =~ s/"/'/g;
+	$description =~ s/\$/\\\$/g;
 	my $msg = "$sbo $sbo_version\n$description";
 	$msg .= "\nFound in local overrides." if is_local($sbo);
 	$msg .= "\nBlacklisted." if on_blacklist($sbo);
