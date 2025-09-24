@@ -45,6 +45,10 @@ the build process from setting the queue through post-build cleaning.
 C<Download.pm> downloads, verifies and symlinks any needed source files before building the
 queue begins.
 
+=head2 SBO::Lib::Help
+
+C<Help.pm> has variables with text for the built-in sbotool(1) documentation.
+
 =head2 SBO::Lib::Info
 
 C<Info.pm> sanitizes and parses C<info> files; the information returned is used in version
@@ -109,11 +113,12 @@ SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3),
 =cut
 
 use SBO::Lib::Util qw/ :all /;
+use SBO::Lib::Help qw/ :all /;
 use SBO::Lib::Info qw/ :all /;
 use SBO::Lib::Repo qw/ :all /;
 use SBO::Lib::Tree qw/ :all /;
 use SBO::Lib::Pkgs qw/ :all /;
-use SBO::Lib::Build qw/:all /;
+use SBO::Lib::Build qw/ :all /;
 use SBO::Lib::Readme qw/ :all /;
 use SBO::Lib::Download qw/ :all /;
 use SBO::Lib::Solibs qw/ :all /;
@@ -122,6 +127,7 @@ use Exporter 'import';
 
 our @EXPORT_OK = (
 	@SBO::Lib::Util::EXPORT_OK,
+	@SBO::Lib::Help::EXPORT_OK,
 	@SBO::Lib::Info::EXPORT_OK,
 	@SBO::Lib::Repo::EXPORT_OK,
 	@SBO::Lib::Tree::EXPORT_OK,
@@ -135,6 +141,7 @@ our @EXPORT_OK = (
 our %EXPORT_TAGS = (
 	all => \@EXPORT_OK,
 	util => \@SBO::Lib::Util::EXPORT_OK,
+	help => \@SBO::Lib::Help::EXPORT_OK,
 	info => \@SBO::Lib::Info::EXPORT_OK,
 	repo => \@SBO::Lib::Repo::EXPORT_OK,
 	tree => \@SBO::Lib::Tree::EXPORT_OK,

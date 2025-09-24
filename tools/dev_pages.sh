@@ -22,7 +22,7 @@ version=$(grep '^our $VERSION' SBO-Lib/lib/SBO/Lib.pm | grep -Eo '[0-9]+(\.[0-9R
 datestring="$(ddate +"%{%A, %B %d%}, %Y YOLD%N - %H")"
 cd SBO-Lib/lib || exit
 if [[ $1 = '--all' ]]; then
-  for item in Build Download Info Pkgs Readme Repo Solibs Tree Util ; do
+  for item in Build Download Help Info Pkgs Readme Repo Solibs Tree Util ; do
     pod2man -r "" -c "sbotools $version" -d "$datestring" SBO/Lib/$item.pm ../../man3/SBO::Lib::$item.3
   done
   pod2man -r "" -c "sbotools $version" -d "$datestring" SBO/Lib.pm ../../man3/SBO::Lib.3

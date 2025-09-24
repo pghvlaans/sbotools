@@ -3,7 +3,7 @@
 .P
 .B
 sbotool
-- front-end to sbotools
+- text user interface to sbotools
 .SH SYNOPSIS
 sbotool [-h|-v]
 
@@ -11,7 +11,7 @@ sbotool [-d FILE]
 .SH DESCRIPTION
 .B
 sbotool
-is a meta-tool providing a front-end to all of the
+is a meta-tool providing a TUI to all of the
 .B
 sbotools
 based on
@@ -25,7 +25,13 @@ must be run as root (preferably in a login shell reached from e.g.
 .B
 su -\fR\
 \&) to perform package installations, upgrades and removals, and to
-fetch the repository.
+fetch the repository. Use the
+.B
+Help
+buttons in
+.B
+sbotool
+for more information about individual menus.
 .P
 The basic workflow is straightforward: navigate to a script with
 .B
@@ -60,11 +66,11 @@ interface. Installations and upgrades can be performed either interactively
 or non-interactively. If the non-interactive
 .I
 batch mode
-is chosen,
+can be offered,
 .B
 sbotool
-displays a dry run on the final confirmation screen. To specify build options
-for a particular script, install interactively or use
+displays a dry run on the confirmation screen. To specify build options for a
+particular script, install interactively or use
 .B
 Build Options
 from the script menu screen ahead of time as root. Build options are saved in the
@@ -90,16 +96,13 @@ to do the chosen operation for the listed scripts. These lists do not persist wh
 sbotool
 is closed. List operations use dependency resolution.
 .P
-If a utility other than
-.B
-sbotool
-installs, removes or upgrades packages, or changes
+If package operations are performed or
 .B
 sbotools
-settings, while
+settings are changed from outside of
 .B
 sbotool
-is running, use the
+while the program is running, use the
 .B
 Refresh
 option in the main menu to ensure that the output reflects these changes.

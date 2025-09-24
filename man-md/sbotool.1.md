@@ -14,7 +14,7 @@
 
 ## NAME
 
-**sbotool** - front-end to sbotools
+**sbotool** - text user interface to sbotools
 
 ## SYNOPSIS
 
@@ -24,12 +24,13 @@
 
 ## DESCRIPTION
 
-**sbotool** is a meta-tool providing a front-end to all of the
-**sbotools** based on **dialog(1)**. It can be run by root and non-root
-users. The contents of the menus are dynamic and reflect available and
-efficacious options. **sbotool** must be run as root (preferably in a
-login shell reached from e.g. **su -**) to perform package
-installations, upgrades and removals, and to fetch the repository.
+**sbotool** is a meta-tool providing a TUI to all of the **sbotools**
+based on **dialog(1)**. It can be run by root and non-root users. The
+contents of the menus are dynamic and reflect available and efficacious
+options. **sbotool** must be run as root (preferably in a login shell
+reached from e.g. **su -**) to perform package installations, upgrades
+and removals, and to fetch the repository. Use the **Help** buttons in
+**sbotool** for more information about individual menus.
 
 The basic workflow is straightforward: navigate to a script with
 **Browse Repository** or **Package Search** and choose from the list of
@@ -42,8 +43,8 @@ rebuilds and shared object dependency checks.
 scripts can be added to the blacklist or have optional dependencies
 specified using the script's **Hints** interface. Installations and
 upgrades can be performed either interactively or non-interactively. If
-the non-interactive *batch mode* is chosen, **sbotool** displays a dry
-run on the final confirmation screen. To specify build options for a
+the non-interactive *batch mode* can be offered, **sbotool** displays a
+dry run on the confirmation screen. To specify build options for a
 particular script, install interactively or use **Build Options** from
 the script menu screen ahead of time as root. Build options are saved in
 the */var/log/sbotools* directory for future use.
@@ -55,10 +56,10 @@ template produced can be implemented as root with **sboinstall
 chosen operation for the listed scripts. These lists do not persist when
 **sbotool** is closed. List operations use dependency resolution.
 
-If a utility other than **sbotool** installs, removes or upgrades
-packages, or changes **sbotools** settings, while **sbotool** is
-running, use the **Refresh** option in the main menu to ensure that the
-output reflects these changes.
+If package operations are performed or **sbotools** settings are changed
+from outside of **sbotool** while the program is running, use the
+**Refresh** option in the main menu to ensure that the output reflects
+these changes.
 
 Although most **sbotools** operations can be accomplished in
 **sbotool**, calling the scripts individually from the command line

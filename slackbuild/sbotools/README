@@ -8,9 +8,9 @@ batch modes, gpg verification, optional build logging, checks for
 missing shared object dependencies, and more.
 
 Most sbotools operations can be accomplished using sbotool, a meta-
-tool providing a dialog-based frontend with dynamic menus. Running
-the tools individually from the command line provides superior
-option control and efficiency, however.
+tool providing a dialog TUI with dynamic menus. Running the tools
+individually from the command line provides superior option control and
+efficiency, however.
 
 Each included tool has a man page. See sbotools(1) for executive
 summaries and a startup guide. The modules are documented in man 3.

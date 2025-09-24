@@ -13,6 +13,7 @@
   * sboinstall: --norequirements is compatible with --batch and --dry-run
   * Added diagnostic message for missing script descriptions
   * Bugfix: sbohints properly acts on scripts with regex special characters in the name
+  * Added Help.pm, which contains sbotool help messages
 
 #### 3.8.1 - 2025-08-28
   * Replace most grep instances

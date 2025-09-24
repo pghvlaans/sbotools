@@ -4,8 +4,8 @@
 
 Jacob Pipkin is the original author of all of the sbotools except for
 sboremove and sbohints. For all the changes that have been made, the
-look-and-feel of sbotools is still remarkably similar to his initial
-commit in 2012.
+look-and-feel of the traditional sbotools CLI is still remarkably
+similar to his initial commit in 2012.
 
 Luke Williams made important contributions to early sbotools, most
 notably writing the original sboremove. He also wrote code allowing
