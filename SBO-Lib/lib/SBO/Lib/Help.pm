@@ -33,8 +33,9 @@ our $help_batch = 'Batch Mode - Help
 
 Running an installation or upgrade in batch mode applies any saved build
 options automatically and adds all needed items to the build queue
-without prompting. It is a good idea to read the dry run output before
-selecting "Yes" here.
+without prompting. The dry run is also displayed on the last
+confimation screen if "Yes" is selected; reading it before starting a
+batch operation is adivsed.
 
 Selecting "No" installs or upgrades the scripts interactively. The user
 is prompted for the following at the command line:

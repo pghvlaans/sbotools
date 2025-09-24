@@ -1378,12 +1378,13 @@ sub run_command {
 	script_error("run_command requires at least one argument.") unless @_;
 	my ($cmd, $no_batch) = @_;
 	my ($height, $width, $begin_y, $begin_x, $res, $output);
+	my $dry_run_output;
 	if ($cmd =~ /sbo(install|upgrade)/ and not defined $no_batch) {
 		my $batch_cmd = "$cmd --batch";
 		my $dry_run_cmd = "$batch_cmd --wrap --nocolor -D";
 		unlink $command_output;
 		system("$dry_run_cmd > $command_output");
-		chomp(my $dry_run_output = slurp $command_output);
+		chomp($dry_run_output = slurp $command_output);
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $dry_run_output, "$cmd\n\nUse batch mode?\n\nDry Run:\n");
 		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yesno \"$cmd\n\nUse batch mode?\n\nDry Run:\n$dry_run_output\" $height $width", $help_batch);
 		$cmd = $batch_cmd if $res == $code_dialog_ok;
@@ -1393,11 +1394,15 @@ sub run_command {
 		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --yesno \"$cmd\n\nAsk to delete files interactively?\" $height $width");
 		$cmd .= " -i" if $res == $code_dialog_ok;
 	}
-	($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "$cmd\n\nProceed");
 	if ($cmd =~ /sboremove/) {
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --yesno \"$cmd\n\nProceed?\" $height $width");
-	} else {
+		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "$cmd\n\nProceed");
 		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yesno \"$cmd\n\nProceed?\" $height $width", $help_sboremove);
+	} elsif (defined $dry_run_output and $res == $code_dialog_ok) {
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $dry_run_output, "Proceed?\n\n$cmd\n\nDry Run:\n");
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --yesno \"$cmd\n\nProceed?\n\nDry Run:\n$dry_run_output\" $height $width");
+	} else {
+		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "$cmd\n\nProceed");
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --yesno \"$cmd\n\nProceed?\" $height $width");
 	}
 	return unless $res == $code_dialog_ok;
 	system("clear");
