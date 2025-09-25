@@ -34,10 +34,10 @@ and removals, and to fetch the repository. Use the **Help** buttons in
 
 The basic workflow is straightforward: navigate to a script with
 **Browse Repository** or **Package Search** and choose from the list of
-options in the menu. Installed, upgradable and override scripts can be
-reached from **Installed**, **Upgradable** and **Overrides**,
-respectively. **Main Menu** has options for large-scale upgrades,
-rebuilds and shared object dependency checks.
+options in the **Operations** menu. Installed, upgradable and override
+scripts can be reached from **Installed**, **Upgradable** and
+**Overrides**, respectively. **Main Menu** has options for large-scale
+upgrades, rebuilds and shared object dependency checks.
 
 **sbotools** calculates dependencies automatically, and individual
 scripts can be added to the blacklist or have optional dependencies

@@ -11,34 +11,34 @@ our $VERSION = '3.8.1';
 use Exporter 'import';
 
 our @EXPORT_OK = qw{
-  $help_batch
-  $help_builds
-  $help_clean
-  $help_hints
-  $help_lists
-  $help_main
-  $help_operations
-  $help_options
-  $help_rebuilds
-  $help_sboremove
-  $help_search
-  $help_solibs
+  @help_batch
+  @help_builds
+  @help_clean
+  @help_hints
+  @help_lists
+  @help_main
+  @help_operations
+  @help_options
+  @help_rebuilds
+  @help_sboremove
+  @help_search
+  @help_solibs
 };
 
 our %EXPORT_TAGS = (
   all => \@EXPORT_OK,
 );
 
-our $help_batch = 'Batch Mode - Help
+our @help_batch = ('Batch Mode - Help',
 
-Running an installation or upgrade in batch mode applies any saved build
+'Running an installation or upgrade in batch mode applies any saved build
 options automatically and adds all needed items to the build queue
 without prompting. The dry run is also displayed on the last
 confimation screen if "Yes" is selected; reading it before starting a
 batch operation is adivsed.
 
-Selecting "No" installs or upgrades the scripts interactively. The user
-is prompted for the following at the command line:
+Selecting "No" installs or upgrades the SlackBuilds interactively. The
+user is prompted for the following at the command line:
 
   * Adding items to the build queue
   * Applying saved build options or adding new ones (if applicable)
@@ -49,18 +49,18 @@ to deal with such packages, use "Replace" from the "Operations" screen
 or run interactively.
 
 Batch mode does not add missing users and groups; add them manually or
-run interactively for a prompt.';
+run interactively for a prompt.');
 
-our $help_builds = 'Build Lists - Help
+our @help_builds = ('Build Lists - Help',
 
-Select a script from this screen to see its "Operations" menu. Use the
-"Filter" button to search within the results. 
+'Select a SlackBuild from this screen to see its "Operations" menu. Use
+the "Filter" button to search within the results.
 
-"Filter" appears only for lists of more than one script.';
+"Filter" appears only for lists of more than one SlackBuild.');
 
-our $help_clean = 'sboclean - Help
+our @help_clean = ('sboclean - Help',
 
-This menu interfaces with sboclean(1); three separate categories are
+'This menu interfaces with sboclean(1); three separate categories are
 available to the root user for cleaning. Only applicable categories
 are shown.
 
@@ -74,7 +74,7 @@ sbotools DISTCLEAN setting to TRUE to delete source upon building.
 2. Options
 
 Build options are retained in "/var/log/sbotools" as per-script files.
-A second dialog will appear with a list of scripts that have saved
+A second dialog will appear with a list of SlackBuilds that have saved
 options; choose one or more of these to remove the files (or "ALL" for
 all saved options).
 
@@ -83,69 +83,71 @@ all saved options).
 "/tmp/SBo" is the default working directory; extracted source and
 package directories are stored here. $TMP is used instead if it is set
 in the user environment. Please note that everything in $TMP is deleted
-if this option is used.';
+if this option is used.');
 
-our $help_hints = 'Hints - Help
+our @help_hints = ('Hints - Help',
 
-sbotools recognizes three kinds of per-script hints. The root user can
+'sbotools recognizes three kinds of per-script hints. The root user can
 add, modify and clear hints via the "Edit Hints" menu in the
-"Operations" dialog for each script.
+"Operations" dialog for each SlackBuild.
 
 1. Blacklist
 
-Blacklisted scripts are not added to build queues, and sbotool does not
-report them in the "Upgradable" list.
+Blacklisted SlackBuilds are not added to build queues, and sbotool does
+not report them in the "Upgradable" list.
 
 2. Auto-Rebuilds
 
 If auto-rebuilding is turned on, offer to rebuild all reverse
-dependencies of the script when it is upgraded or otherwise rebuilt.
+dependencies of the SlackBuild when it is upgraded or otherwise rebuilt.
 
 3. Optional Dependencies
 
 A list of extra dependencies can be specified on a per-script basis.
 The following dependency-related options may appear in "Edit Hints":
 
-  Add Optional Deps:  Add one or more scripts to the list of optional
-                      dependencies.
-  Clear Optionals:    Remove one or more scripts from an existing list.
-  Clear all Optional: Remove the entire list of scripts.
+  Add Optional Deps:  Add one or more SlackBuilds to the list of
+                      optional dependencies.
+  Clear Optionals:    Remove one or more SlackBuilds from an existing
+                      list.
+  Clear all Optional: Remove the entire list of SlackBuilds.
   New Optional List:  Replace an existing list with a new one.
 
-Please note that compat32 scripts share hints with the corresponding
-base script.';
+Please note that compat32 builds share hints with the corresponding
+base SlackBuild.');
 
-our $help_lists = 'List Operations - Help
+our @help_lists = ('List Operations - Help',
 
-Root users can place scripts on the Install, Upgrade and Remove lists.
-All users can place scripts on the Template list. List operations use
-dependency resolution.
+'Root users can place SlackBuilds on the Install, Upgrade and Remove
+lists.  All users can place SlackBuilds on the Template list. List
+operations use dependency resolution.
 
-  * Install:  Build and install the scripts on the list.
-  * Upgrade:  Upgrade the scripts on the list to the available version.
-  * Remove:   Interactively remove listed scripts with unneeded
+  * Install:  Build and install the SlackBuilds on the list.
+  * Upgrade:  Upgrade the SlackBuilds on the list to the available
+              version.
+  * Remove:   Interactively remove listed SlackBuilds with unneeded
               dependencies.
-  * Template: Make a template to install the scripts with
+  * Template: Make a template to install the SlackBuilds with
               "sboinstall --use-template" later.
 
 Empty lists do not appear in the options. Use "Clear" to empty all of
-the lists.';
+the lists.');
 
-our $help_main = 'Main Menu - Help
+our @help_main = ('Main Menu - Help',
 
-sbotool is a TUI to sbotools, a set of Perl scripts providing a Ports-
+'sbotool is a TUI to sbotools, a set of Perl scripts providing a Ports-
 like interface to SlackBuilds.org. Although most sbotools functions can
 be accomplished here, users are invited to view the man pages for the
-individual scripts to call them independently as well.
+individual tools to call them independently as well.
 
 All sbotool menus are dynamic, and reflect available and potentially
 effective operations. The following options can appear in Main Menu:
 
 * Browse Repository
     View available SlackBuilds by series. Select a SlackBuild to see its
-    "Operations" menu, which has per-script options information. As in
-    all lists of SlackBuilds, use the "Filter" button to search within
-    the list.
+    "Operations" menu, which has per-script options and information. As
+    in all lists of SlackBuilds, use the "Filter" button to search
+    within the list.
 
 * Clean sbotools Files
     Root only. Clean downloaded source, working directories or saved
@@ -160,7 +162,7 @@ effective operations. The following options can appear in Main Menu:
 
 * Hints
     See active per-script hints. Root users can add, clear and edit
-    hints for a script by navigating to its "Operations" menu.
+    hints for a SlackBuild by navigating to its "Operations" menu.
 
 * Installed
     View, search and select in-tree SlackBuilds installed with the
@@ -196,7 +198,7 @@ effective operations. The following options can appear in Main Menu:
 * Settings
     View the current sbotools settings and see explanations of each one.
     As root, change any setting.
- 
+
 * Shared Objects
     Perform a shared object dependency check on all _SBo packages or all
     installed packages.
@@ -208,11 +210,11 @@ effective operations. The following options can appear in Main Menu:
     Perform a dry run of all available upgrades.
 
 * Upgrade All
-    Root only. Perform all available upgrades.';
+    Root only. Perform all available upgrades.');
 
-our $help_operations = 'Script Operations - Help
+our @help_operations = ('Script Operations - Help',
 
-Each available SlackBuild has an Operations menu, which is the main
+'Each available SlackBuild has an Operations menu, which is the main
 point of contact for script information and actions. Use the "Main"
 button to return to Main Menu.
 
@@ -220,7 +222,7 @@ The options displayed depend on the running user; ineffective actions
 are ignored:
 
 * Add Override
-    Available if the running user has write permissions to the local
+    Available if the running user has write permissions for the local
     overrides directory. Copy the SlackBuild directory into overrides
     to make local changes.
 
@@ -253,7 +255,7 @@ are ignored:
 * Install List (+/-)
     Root only. Add (or remove) the SlackBuild from the Install list. Use
     the "List Operations" screen from "Main Menu" to implement the list.
-    
+
 * Queue
     View, search and select from the build queue for the SlackBuild.
     The queue is calculated automatically and respects per-script hints.
@@ -269,9 +271,9 @@ are ignored:
 * Remove List (+/-)
     Root only. Add (or remove) the SlackBuild from the Remove list. Use
     the "List Operations" screen from "Main Menu" to implement the list.
-    
+
 * Remove Override
-    Available only if the running user has write permissions in the
+    Available only if the running user has write permissions for the
     local overrides directory. Remove the SlackBuild from local
     overrides by deleting its override directory.
 
@@ -319,29 +321,28 @@ are ignored:
 * compat32
     Display the Operations menu for the -compat32 version of the
     SlackBuild. This appears only on multilib-capable systems. Perl-
-    based, noarch and single-architecture scripts are ineligible.';
+    based, noarch and single-architecture scripts are ineligible.');
 
-our $help_options = 'Build Options - Help
+our @help_options = ('Build Options - Help',
 
-Build options for individual scripts are saved to files in the
+'Build options for individual SlackBuilds are saved to files in the
 "/var/log/sbotools" directory. They can be added or edited by installing
 or upgrading packages interactively.
 
 Alternatively, the root user can use the "Edit Hints" menu from the
 "Operations" dialog for each script. Simply edit the build option input
 line after specifying "Edit" or "Clear". The "README" button displays
-the README file for the script. If the input line is left blank, the
+the README file for the SlackBuild. If the input line is left blank, the
 current options are retained.
 
 Build options can also be removed via "Clean sbotools Files" in "Main
 Menu".
 
-Please note that separate build options for compat32 scripts are
-unsupported.';
+Please note that separate build options for compat32 are unsupported.');
 
-our $help_rebuilds = 'Large-Scale Rebuilds - Help
+our @help_rebuilds = ('Large-Scale Rebuilds - Help',
 
-Use this menu as root to carry out large-scale rebuilds of packages
+'Use this menu as root to carry out large-scale rebuilds of packages
 saved with the "_SBo" and "_SBocompat32" tags. Only dry runs are
 available to non-root users.
 
@@ -355,7 +356,7 @@ Rebuild every SBo package installed to the system, accounting for new
 dependencies, saved build options and per-script hints. If the queue
 fails for any reason, a template file named "resume.temp" is saved
 to the sbotools directory (/usr/sbo by default). sbotool offers to pick
-up the mass rebuild from the script after the one that failed if the
+up the mass rebuild from the SlackBuild after the one that failed if the
 file is present.
 
 2. Series Rebuild
@@ -367,27 +368,27 @@ are displayed.
 3. Series Reverse
 
 Like Series Rebuild, but also rebuild any reverse dependencies
-installed to the system.';
+installed to the system.');
 
-our $help_sboremove = 'sboremobe - Help
+our @help_sboremove = ('sboremove - Help',
 
-sboremove removes one or more packages and any of their unneeded
+'sboremove removes one or more packages and any of their unneeded
 dependencies. The user is prompted before any package is designated for
-removal, and before the final remove operation.';
+removal, and before the final remove operation.');
 
-our $help_search = 'Package Search - Help
+our @help_search = ('Package Search - Help',
 
-Use this screen to search for scripts by name. To include description
-strings as well, use the "Include Desc" button. Exact word matches are
-listed first, followed by other matches. Select a script from the list
-of results to see its Operations menu.
+'Use this screen to search for SlackBuilds by name. To include
+description strings as well, use the "Include Desc" button. Exact word
+matches are listed first, followed by other matches. Select a script
+from the list of results to see its Operations menu.
 
 Script results lists can be refined further using the "Filter" button,
-which applies an additional search to the list.';
+which applies an additional search to the list.');
 
-our $help_solibs = 'Shared Object Checks - Help
+our @help_solibs = ('Shared Object Checks - Help',
 
-Root and non-root users can perform per-package checks for missing
+'Root and non-root users can perform per-package checks for missing
 shared object dependencies (often called "solibs"). A log is saved to
 "/var/log/sbocheck-so-check.log" if running as root.
 
@@ -406,7 +407,7 @@ outright, especially for repackages from binary.
 
 The shared object check itself is written in perl. Its interaction with
 binaries on the system is limited to reading ELF headers. Neither ldd(1)
-nor readelf(1) is called at any point.';
+nor readelf(1) is called at any point.');
 
 =pod
 
@@ -421,10 +422,16 @@ SBO::Lib::Help - internal documentation for sbotool
   use SBO::Lib::Help qw/ :all /;
   use SBO::Lib qw/ :help /;
 
+  my $help_title = $help_main[0];
+  my $help_text = $help_main[1];
+
 =head1 DESCRIPTION
 
-This module exports variables that populate the C<Help> messages in C<sbotool(1)>. If edits
-are needed, please ensure that all lines end at 72 characters.
+This module exports variables that populate the C<Help> messages in C<sbotool(1)>. The messages
+themselves are arrays, with the first element being the title of the Help screen and the second
+being the body text.
+
+If edits are needed, please ensure that lines in the body text do not exceed 72 characters.
 
 =head1 SEE ALSO
 

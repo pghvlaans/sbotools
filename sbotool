@@ -94,7 +94,9 @@ if (-s $slackbuilds_txt) {
 
 # The temporary directory from Build.pm isn't needed; use
 # a different one.
-remove_tree($tempdir) if -d $tempdir;
+if ($< == 0) {
+	remove_tree($tempdir) if -d $tempdir;
+}
 my $sbotool_tempdir = tempdir(CLEANUP => 1, DIR => "/tmp");
 my $dialog_input = "$sbotool_tempdir/dialog_input";
 my $dialog_output = "$sbotool_tempdir/dialog_output";
@@ -106,9 +108,10 @@ display_main();
 # Once a script has been selected, build a menu of available
 # operations and carry out the user's choice.
 sub build_operations {
-	script_error("build_operations requires an argument.") unless @_ == 1;
+	script_error("build_operations requires at least one argument.") unless @_ >= 1;
 	my ($height, $width, $begin_y, $begin_x, $res, $output);
 	my $sbo = shift;
+	my $display_extras = shift;
 	my $base_name = $sbo;
 	$base_name =~ s/-compat32$//;
 	my $options_file = "/var/log/sbotools/$base_name";
@@ -147,6 +150,7 @@ sub build_operations {
 	$msg .= "\nOn the template list." if in $sbo, @template_list;
 	$msg .= "\nOn the upgrade list." if in $sbo, @upgrade_list;
 	$msg .= "\nOn the remove list." if in $sbo, @remove_list;
+	$msg .= "\n\nAdditional options." if defined $display_extras;
 	$msg .= "\n\nRun as root for more functions." unless $< == 0;
 
 	my (@installed_reverse, @available_reverse, @pre_display);
@@ -157,7 +161,7 @@ sub build_operations {
 	@pre_display = get_full_reverse($sbo, $available, $all_fulldeps);
 	for (@pre_display) { push @available_reverse, $_ if get_sbo_location($_); }
 
-	my @build_operations;
+	my (@build_operations, @more_info);
 	if (in $sbo, @template_list) {
 		push @build_operations, "\"Template List (-)\" \"Clear from the Template List.\" \\";
 	} else {
@@ -165,17 +169,23 @@ sub build_operations {
 	}
 	push @build_operations, "\"compat32\" \"Select -compat32 operations.\" \\" if $compat_possible and not $is_compat_build;
 	push @build_operations, "\"View File\" \"View any file in the script directory.\" \\";
-	push @build_operations, "\"RevDep (installed)\" \"Dependent packages on the system.\" \\" if @installed_reverse;
-	push @build_operations, "\"RevDep (all)\" \"All dependent packages in the repo.\" \\" if @available_reverse;
+	push @more_info, "\"RevDep (installed)\" \"Dependent packages on the system.\" \\" if @installed_reverse;
+	push @more_info, "\"RevDep (all)\" \"All dependent packages in the repo.\" \\" if @available_reverse;
 	if (on_blacklist($sbo) or auto_reverse($sbo) or get_optional($sbo) and $< != 0) {
 		push @build_operations, "\"Hints\" \"View package hints.\" \\";
 	}
 	unless (on_blacklist($sbo)) {
-		push @build_operations, "\"Queue\" \"Select from the build queue.\" \\";
-		push @build_operations, "\"Dry Run (reverse)\" \"How reverse deps would be rebuilt.\" \\" if $inst_names{$sbo} and @installed_reverse;
+		push @more_info, "\"Queue\" \"Select from the build queue.\" \\";
+		push @more_info, "\"Dry Run (reverse)\" \"How reverse deps would be rebuilt.\" \\" if $inst_names{$sbo} and @installed_reverse;
 		unless ($inst_names_std{$sbo} or $unsupported) {
-			my $built_or_upgraded = "upgraded" if in $sbo, @update_names;
-			$built_or_upgraded = $inst_names{$sbo} ? "rebuilt" : "built" unless $built_or_upgraded;
+			my $built_or_upgraded;
+			if (in $sbo, @update_names) {
+				$built_or_upgraded = "upgraded";
+			} elsif ($inst_names{$sbo}) {
+				$built_or_upgraded = "rebuilt";
+			} else {
+				$built_or_upgraded = "built";
+			}
 			push @build_operations, "\"Dry Run\" \"How this package would be $built_or_upgraded.\" \\";
 		}
 	}
@@ -193,7 +203,7 @@ sub build_operations {
 		push @build_operations, "\"Edit Override\" \"\\\$EDITOR, \\\$VISUAL or vi, in that order.\" \\",
 							"\"Remove Override\" \"Delete the script from local overrides.\" \\";
 	}
-	push @build_operations, "\"Shared Objects\" \"Check for missing solib dependencies.\" \\" if $inst_names{$sbo} or $inst_names_std{$sbo};
+	push @more_info, "\"Shared Objects\" \"Check for missing solib dependencies.\" \\" if $inst_names{$sbo} or $inst_names_std{$sbo};
 	push @build_operations, "\"Edit Hints\" \"Blacklist, auto-rebuild and dependencies.\" \\" if $< == 0;
 	if ($inst_names{$sbo} and $< == 0 and not on_blacklist($sbo)) {
 		push @build_operations, "\"Remove\" \"Remove with unneeded dependencies.\" \\",
@@ -225,16 +235,25 @@ sub build_operations {
 	if ($< == 0 and $inst_names_std{$sbo} and not $unsupported and not on_blacklist($sbo)) {
 		push @build_operations, "\"Replace\" \"Reinstall from SBo; batch unavailable.\" \\";
 	}
+	push @build_operations, "\"more\" \"Other SlackBuild information.\" \\" if @more_info;
 	@build_operations = sort @build_operations;
 	$build_operations[-1] =~ s/\\$//;
-	my $build_operations = join "\n", @build_operations;
+	my $build_operations;
+	if (defined $display_extras and @more_info) {
+		@more_info = sort @more_info;
+		$more_info[-1] =~ s/\\$//;
+		$build_operations = join "\n", @more_info;
+	} else {
+		$build_operations = join "\n", @build_operations;
+	}
 	($height, $width, $begin_y, $begin_x) = calculate_position("wide", $build_operations, $msg);
-	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --extra-button --extra-label \"Main\" --title \"$sbo Operations\" --menu \"$msg\" $height $width $height $build_operations", $help_operations);
+	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --extra-button --extra-label \"Main\" --title \"$sbo Operations\" --menu \"$msg\" $height $width $height $build_operations", @help_operations);
 	return if $res == $code_dialog_cancel or $res == $code_dialog_error;
 	display_main() if $res == $code_dialog_extra;
 	my $option = $output;
 	return unless $option;
 
+	if ($option eq "more") { build_operations($sbo, 1); }
 	if ($option eq "compat32") { build_operations($compat); }
 
 	if ($option eq "Add Override") {
@@ -276,26 +295,26 @@ sub build_operations {
 		my $build_options = slurp $options_file if -s $options_file;
 		if ($build_options) {
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide", $build_options, "Run as root\n\n");
-			system("DIALOG_CANCEL=$code_dialog_help $dialog_prefix --begin $begin_y $begin_x --help-button --ok-label \"Back\" --title \"$sbo: Saved Build Options\" --msgbox \"Run as root to edit build options.\n\n$build_options\" $height $width", $help_options);
+			system("DIALOG_CANCEL=$code_dialog_help $dialog_prefix --begin $begin_y $begin_x --help-button --ok-label \"Back\" --title \"$sbo: Saved Build Options\" --msgbox \"Run as root to edit build options.\n\n$build_options\" $height $width", @help_options);
 		}
 	}
 
 	if ($option eq "Build Options" and $< == 0) {
 		my $orig_options = slurp $options_file if -s $options_file;
+		$orig_options =~ s/"/\\\"/g if defined $orig_options;
 		my $no_remove;
 		if ($orig_options) {
-			my $orig_options = slurp $options_file;
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide", $orig_options, "Remove?\n\n");
-			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yes-label \"Edit\" --no-label \"Back\" --extra-button --extra-label \"Clear\" --title \"$options_file\" --yesno \"Edit or clear build options for $base_name?\n\n$orig_options\" $height $width", $help_options);
+			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yes-label \"Edit\" --no-label \"Back\" --extra-button --extra-label \"Clear\" --title \"$options_file\" --yesno \"Edit or clear build options for $base_name?\n\n$orig_options\" $height $width", @help_options);
 			$no_remove = $res;
 			if ($no_remove == $code_dialog_extra) {
 				unlink $options_file;
 				($height, $width, $begin_y, $begin_x) = calculate_position("narrow", "Options cleared");
 				system("$dialog_prefix --begin $begin_y $begin_x --msgbox \"Cleared options for $sbo.\" $height $width") unless -s $options_file;
-				build_operations($sbo);
+				build_operations($sbo, $display_extras);
 				return;
 			} elsif ($no_remove == $code_dialog_cancel) {
-				build_operations($sbo);
+				build_operations($sbo, $display_extras);
 				return;
 			}
 		}
@@ -304,13 +323,16 @@ sub build_operations {
 			BACK: my $edit_res;
 			if (defined $disp_options) {
 				($height, $width, $begin_y, $begin_x) = calculate_position("wide", $orig_options, "Current\n\nInput here\n\nLeave blank");
-				($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --extra-button --extra-label \"README\" --title \"$sbo: Build Options\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE.\n\n$orig_options\n\nLeave blank to retain existing options.\" $height $width \"$disp_options\"", $help_options);
+				($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --extra-button --extra-label \"README\" --title \"$sbo: Build Options\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE.\n\n$orig_options\n\nLeave blank to retain existing options.\" $height $width \"$disp_options\"", @help_options);
 			} else {
 				($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Enter build\n\nInput here");
-				($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --extra-button --extra-label \"README\" --title \"$sbo: Build Options\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE.\" $height $width", $help_options);
+				($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --extra-button --extra-label \"README\" --title \"$sbo: Build Options\" --inputbox \"Enter build options for $sbo in the form VAR=VALUE.\" $height $width", @help_options);
 			}
 			my $new_options = $output;
-			$disp_options = $new_options =~ /\w/ ? $new_options : $disp_options;
+			if ($new_options =~ /\w/) {
+				$disp_options = $new_options;
+				$disp_options =~ s/"/\\\"/g;
+			}
 			if ($res == $code_dialog_extra) {
 				my $readme = get_readme_contents($location);
 				($height, $width, $begin_y, $begin_x) = calculate_position("normal", $readme);
@@ -334,10 +356,10 @@ sub build_operations {
 		my $check = slurp $command_output;
 		if ($check =~ /\w/) {
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide", $check);
-			do_dialog("DIALOG_CANCEL=$code_dialog_help $dialog_prefix --help-button --begin $begin_y $begin_x --title \"$sbo: Hints\" --textbox $command_output $height $width", $help_hints);
+			do_dialog("DIALOG_CANCEL=$code_dialog_help $dialog_prefix --help-button --begin $begin_y $begin_x --title \"$sbo: Hints\" --textbox $command_output $height $width", @help_hints);
 		} else {
 			($height, $width, $begin_y, $begin_x) = calculate_position("narrow", "No hints found");
-			do_dialog("DIALOG_CANCEL=$code_dialog_help $dialog_prefix --help-button --begin $begin_y $begin_x --ok-label \"Back\" --msgbox \"No hints found for $sbo.\" $height $width", $help_hints);
+			do_dialog("DIALOG_CANCEL=$code_dialog_help $dialog_prefix --help-button --begin $begin_y $begin_x --ok-label \"Back\" --msgbox \"No hints found for $sbo.\" $height $width", @help_hints);
 		}
 	}
 
@@ -457,7 +479,7 @@ sub build_operations {
 		}
 	}
 
-	build_operations($sbo);
+	build_operations($sbo, $display_extras);
 	return;
 }
 
@@ -554,10 +576,10 @@ sub display_builds {
 	$height--;
 	my $do_filter;
 	if (@array_to_use > 1) {
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --extra-button --extra-label \"Filter\" --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\" $height $width $height --file $dialog_input", $help_builds);
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --extra-button --extra-label \"Filter\" --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\" $height $width $height --file $dialog_input", @help_builds);
 		$do_filter = 1 if $res == $code_dialog_extra;
 	} else {
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\" $height $width $height --file $dialog_input", $help_builds);
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\" $height $width $height --file $dialog_input", @help_builds);
 	}
 	my $option = $output;
 	return unless $option;
@@ -599,7 +621,7 @@ sub display_clean_menu {
 	$clean_menu[-1] =~ s/\\$//;
 	my $clean_menu = join "\n", @clean_menu;
 	($height, $width, $begin_y, $begin_x) = calculate_position("wide", $clean_menu, "At least one");
-	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --title \"sboclean\" --checklist \"At least one option must be checked.\" $height $width $height $clean_menu", $help_clean);
+	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --title \"sboclean\" --checklist \"At least one option must be checked.\" $height $width $height $clean_menu", @help_clean);
 	return if $res == $code_dialog_cancel or $res == $code_dialog_error;
 	my $options = $output;
 	return unless $options =~ /\w/;
@@ -748,13 +770,13 @@ sub display_main {
 			$msg .= "\n\nAs root, select \\\"Fetch Repository\\\" for a copy of the repo.";
 		}
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $main_menu, $msg);
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --cancel-label \"Exit\" --title \"Main Menu\" --menu \"$msg\" $height $width $height $main_menu", $help_main);
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --cancel-label \"Exit\" --title \"Main Menu\" --menu \"$msg\" $height $width $height $main_menu", @help_main);
 	} else {
 		$msg .= " Navigate to scripts for actions.";
 		$msg .= "\n\nFetch the repository to generate descriptions." unless $descriptions_generated;
 		$msg .= "\n\nRun as root for more options." unless $< == 0;
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $main_menu, $msg);
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --cancel-label \"Exit\" --title \"Main Menu\" --menu \"$msg\" $height $width $height $main_menu", $help_main);
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --cancel-label \"Exit\" --title \"Main Menu\" --menu \"$msg\" $height $width $height $main_menu", @help_main);
 	}
 	exit 0 if $res == $code_dialog_cancel or $res == $code_dialog_error;
 	my $option = $output;
@@ -773,7 +795,7 @@ sub display_main {
 		system("/usr/sbin/sbohints --wrap --nocolor --list > $command_output");
 		my $hints_output = slurp $command_output;
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $hints_output);
-		do_dialog("DIALOG_CANCEL=$code_dialog_help $dialog_prefix --begin $begin_y $begin_x --help-button --title \"Per-Script Hints\" --textbox $command_output $height $width", $help_hints);
+		do_dialog("DIALOG_CANCEL=$code_dialog_help $dialog_prefix --begin $begin_y $begin_x --help-button --title \"Per-Script Hints\" --textbox $command_output $height $width", @help_hints);
 	}
 
 	if ($option eq "Refresh") {
@@ -796,7 +818,7 @@ sub display_main {
 	if ($option eq "Shared Objects") {
 		if (-s $slackbuilds_txt) {
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "All Installed\nAll SBo", "Check missing");
-			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Shared Object Checks\" --help-button --menu \"Check intalled packages for missing shared object dependencies.\" $height $width $height \"All Installed\" \"Check all installed packages for missing solibs.\" \"All SBo\" \"Check all SBo packages for missing solibs.\"", $help_solibs);
+			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Shared Object Checks\" --help-button --menu \"Check intalled packages for missing shared object dependencies.\" $height $width $height \"All Installed\" \"Check all installed packages for missing solibs.\" \"All SBo\" \"Check all SBo packages for missing solibs.\"", @help_solibs);
 			display_main() if $res == $code_dialog_cancel or $res == $code_dialog_error;
 			my $so_option = $output;
 			if ($option =~ /\w/) {
@@ -854,7 +876,7 @@ sub display_rebuild_menu {
 	$rebuild_menu[-1] =~ s/\\$//;
 	my $rebuild_menu = join "\n", @rebuild_menu;
 	($height, $width, $begin_y, $begin_x) = calculate_position("wide", $rebuild_menu, "Large-scale rebuilds");
-	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --title \"Large-Scale Rebuilds\" --menu \"Rebuild all SBo packages, or everything in a series.\" $height $width $height $rebuild_menu", $help_rebuilds);
+	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --title \"Large-Scale Rebuilds\" --menu \"Rebuild all SBo packages, or everything in a series.\" $height $width $height $rebuild_menu", @help_rebuilds);
 	return if $res == $code_dialog_cancel or $res == $code_dialog_error;
 	my $option = $output;
 
@@ -1133,7 +1155,7 @@ sub display_user_lists {
 	push @lists_to_show, "\"\" \"\" \\", "\"Clear\" \"Clear list contents.\"";
 	my $lists_menu = join "\n", @lists_to_show;
 	($height, $width, $begin_y, $begin_x) = calculate_position("wide", $lists_menu, "Choose a list to implement\n");
-	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --title \"List Operations\" --menu \"Choose a list to implement.\" $height $width $height $lists_menu", $help_lists);
+	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --title \"List Operations\" --menu \"Choose a list to implement.\" $height $width $height $lists_menu", @help_lists);
 	return if $res == $code_dialog_cancel or $res == $code_dialog_error;
 	my $option = $output;
 	unless ($option =~ /\w/) { display_user_lists(); return; }
@@ -1192,23 +1214,51 @@ sub display_user_lists {
 # if a Help menu should be displayed.
 #
 # The first variable (mandatory) is the dialog command;
-# the second is a help string.
+# the second is an array imported from Help.pm.
 sub do_dialog {
 	script_error("do_dialog requires at least one argument.") unless @_ > 0;
-	my ($command, $help_text) = @_;
+	my ($command, @help_text) = @_;
 	unlink $dialog_output;
 	unlink $dialog_exit;
 
+	$command =~ s/--begin/--help-status --begin/g if @help_text and $command =~ /--(inputbox|checklist)/;
 	system("$command 2> $dialog_output ; echo \$? > $dialog_exit");
 	chomp(my $res = slurp $dialog_exit);
 	chomp(my $output = slurp $dialog_output);
 
-	if (defined $help_text) {
+	if (@help_text) {
+		my $help_title = $help_text[0];
+		my $help_text = $help_text[1];
 		while ($res == $code_dialog_help or $res == $code_dialog_item_help) {
+			# Preserve contents of inputbox and checklist after Help
+			if ($command =~ /--inputbox/) {
+				$output =~ s/^HELP//g;
+				$output =~ s/"/\\\"/g;
+				my @command = split " ", $command;
+				while (@command > 1) {
+					last if $command[-1] =~ /\d+/ and $command[-2] =~ /\d+/;
+					pop @command;
+				}
+				$command = join " ", @command;
+				$command .= " \"$output\"";
+			}
+			if ($command =~ /--checklist/) {
+				$output =~ s/^HELP//g;
+				$command =~ s/"on"/"off"/g;
+				my @output = split " ", $output;
+				shift @output; # The option under the cursor follows HELP
+				my @command = split "\n", $command;
+				for my $on (@output) {
+					for my $item (@command) {
+						$item =~ s/"off"/"on"/g if $item =~ /"$on"/;
+					}
+				}
+				$command = join "\n", @command;
+			}
 			unlink $dialog_output;
 			unlink $dialog_exit;
 			my ($height, $width, $begin_y, $begin_x) = calculate_position("normal", $help_text);
-			system("$dialog_prefix --no-collapse --begin $begin_y $begin_x --msgbox \'$help_text\' $height $width");
+			system("$dialog_prefix --no-collapse --begin $begin_y $begin_x --title \"$help_title\" --ok-label \"Back\" --msgbox \'$help_text\' $height $width");
 			system("$command 2> $dialog_output ; echo \$? > $dialog_exit");
 			chomp($res = slurp $dialog_exit);
 			chomp($output = slurp $dialog_output);
@@ -1258,7 +1308,7 @@ sub edit_hint {
 	chomp(my $msg = slurp $command_output);
 	my $wanted = $optional ? "wide_cond" : "wide";
 	($height, $width, $begin_y, $begin_x) = calculate_position($wanted, $hint_menu, $msg);
-	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --title \"$sbo: Hints\" --menu \"$msg\" $height $width $height $hint_menu", $help_hints);
+	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --title \"$sbo: Hints\" --menu \"$msg\" $height $width $height $hint_menu", @help_hints);
 	return if $res == $code_dialog_cancel or $res == $code_dialog_error;
 	my $option = $output;
 	return unless $option =~ /\w/;
@@ -1294,6 +1344,9 @@ sub edit_hint {
 	return;
 }
 
+# Accessed only from display_settings(). Get user
+# input, change the relevant setting and refresh
+# sbotool.
 sub edit_setting {
 	script_error("edit_setting requires four arguments.") unless @_ == 4;
 	my ($existing_setting, $explanation, $criterion, $flag) = @_;
@@ -1378,7 +1431,7 @@ sub run_command {
 	script_error("run_command requires at least one argument.") unless @_;
 	my ($cmd, $no_batch) = @_;
 	my ($height, $width, $begin_y, $begin_x, $res, $output);
-	my $dry_run_output;
+	my ($dry_run_output, $batch_res);
 	if ($cmd =~ /sbo(install|upgrade)/ and not defined $no_batch) {
 		my $batch_cmd = "$cmd --batch";
 		my $dry_run_cmd = "$batch_cmd --wrap --nocolor -D";
@@ -1386,8 +1439,9 @@ sub run_command {
 		system("$dry_run_cmd > $command_output");
 		chomp($dry_run_output = slurp $command_output);
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $dry_run_output, "$cmd\n\nUse batch mode?\n\nDry Run:\n");
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yesno \"$cmd\n\nUse batch mode?\n\nDry Run:\n$dry_run_output\" $height $width", $help_batch);
-		$cmd = $batch_cmd if $res == $code_dialog_ok;
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yesno \"$cmd\n\nUse batch mode?\n\nDry Run:\n$dry_run_output\" $height $width", @help_batch);
+		$batch_res = $res == $code_dialog_ok;
+		$cmd = $batch_cmd if $batch_res;
 	}
 	if ($cmd =~ /sboclean/ and $cmd =~ /(-d|-w|-o ALL)/) {
 		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "$cmd\n\nAsk to delete");
@@ -1396,8 +1450,8 @@ sub run_command {
 	}
 	if ($cmd =~ /sboremove/) {
 		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "$cmd\n\nProceed");
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yesno \"$cmd\n\nProceed?\" $height $width", $help_sboremove);
-	} elsif (defined $dry_run_output and $res == $code_dialog_ok) {
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yesno \"$cmd\n\nProceed?\" $height $width", @help_sboremove);
+	} elsif (defined $dry_run_output and $batch_res) {
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $dry_run_output, "Proceed?\n\n$cmd\n\nDry Run:\n");
 		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --yesno \"$cmd\n\nProceed?\n\nDry Run:\n$dry_run_output\" $height $width");
 	} else {
@@ -1428,7 +1482,7 @@ sub run_search {
 	my $result_title = @to_search ? $new_label : "Search Results";
 	my $ok_label = -s "$config{SBO_HOME}/TAGS.txt" ? "Name and Tag" : "Search";
 	my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Search\nTerms");
-	my ($normal_search, $option) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --ok-label \"$ok_label\" --extra-button --extra-label \"Include Desc.\" --title \"$title\" --inputbox \"Enter any number of search terms, separated by spaces.\" $height $width", $help_search);
+	my ($normal_search, $option) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --ok-label \"$ok_label\" --extra-button --extra-label \"Include Desc.\" --title \"$title\" --inputbox \"Enter any number of search terms, separated by spaces.\" $height $width", @help_search);
 	return unless $option =~ /\w/;
 	unlink $command_output;
 	if ($normal_search == $code_dialog_ok) {
