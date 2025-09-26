@@ -159,7 +159,7 @@ if ($config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES}) {
 	}
 }
 
-if ($config{GPG_VERIFY} eq "TRUE") { verify_gpg(); }
+if ($config{GPG_VERIFY} eq "TRUE" and not ($dry_run and $< != 0)) { verify_gpg(); }
 
 if ($compat32) {
 	usage_error("compat32 only works on x86_64.") unless $arch eq 'x86_64';

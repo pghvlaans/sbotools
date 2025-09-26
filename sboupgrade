@@ -157,7 +157,7 @@ usage_error("all is incompatible with compat32.") if $compat32 && $all;
 $yes_really = 1 if $dry_run;
 $non_int = 1 if $yes_really;
 
-if ($config{GPG_VERIFY} eq "TRUE") { verify_gpg(); }
+if ($config{GPG_VERIFY} eq "TRUE" and not ($dry_run and $< != 0)) { verify_gpg(); }
 
 # if we can't find SLACKBUILDS.TXT in $config{SBO_HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
