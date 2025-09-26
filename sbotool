@@ -192,13 +192,17 @@ sub build_operations {
 			if ($inst_names{$sbo}) {
 				push @list_menu_tag, "remove", "template";
 				push @list_menu_tag, "upgrade" if in $sbo, @update_names;
-			} else {
+			} elsif (not $inst_names_std{$sbo}) {
 				push @list_menu_tag, "install", "template";
+			} else {
+				push @list_menu_tag, "template";
 			}
 		}
-		@list_menu_tag = uniq @list_menu_tag;
-		my $list_menu_tag = @list_menu_tag == 4 ? "For list operations." : "For " . join(", ", @list_menu_tag) . ".";
-		push @build_operations, "\"Lists\" \"$list_menu_tag\" \\";
+		if (@list_menu_tag) {
+			@list_menu_tag = uniq @list_menu_tag;
+			my $list_menu_tag = @list_menu_tag == 4 ? "For list operations." : "For " . join(", ", @list_menu_tag) . ".";
+			push @build_operations, "\"Lists\" \"$list_menu_tag\" \\";
+		}
 	} else {
 		if (in $sbo, @template_list) {
 			push @build_operations, "\"Template List (-)\" \"Clear from the Template List.\" \\";
@@ -450,7 +454,7 @@ sub build_operations {
 		$lists[-1] =~ s/\\$//;
 		my $lists = join "\n", @lists;
 		my $list_option;
-		($height, $width, $begin_x, $begin_y) = calculate_position("wide", $lists, "Choose one or more options.");
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $lists, "Choose one or more options.");
 		($res, $list_option) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"$sbo: List Management\" --checklist \"Choose one or more options.\" $height $width $height $lists", @help_list_mgmt);
 		if ($res == $code_dialog_cancel or $res == $code_dialog_error) {
 			build_operations($sbo, $display_extras);
