@@ -202,6 +202,7 @@ effective operations. The following options can appear in Main Menu:
 
 * Package Search
     Search available SlackBuilds by name and (optionally) description.
+    If TAGS.txt is present, tags are searched as well.
 
 * Rebuilds
     Perform (or, for non-root users, do dry runs) of large-scale

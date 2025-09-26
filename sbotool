@@ -258,7 +258,11 @@ sub build_operations {
 			push @more_info, "\"Upgrade (reverse rebuild)\" \"Upgrade and rebuild reverse deps.\" \\" if @installed_reverse;
 		} else {
 			push @more_info, "\"Reverse Rebuild\" \"Rebuild all reverse deps.\" \\" if @installed_reverse;
-			push @build_operations,	"\"Reinstall\" \"Reinstall package and deps (optional).\" \\";
+			if (@disp_queue) {
+				push @build_operations,	"\"Reinstall\" \"Reinstall package and deps (optional).\" \\";
+			} else {
+				push @build_operations,	"\"Reinstall\" \"Reinstall package.\" \\";
+			}
 		}
 	} elsif ($< == 0 and not $inst_names_std{$sbo} and not $unsupported and not on_blacklist($sbo)) {
 		push @build_operations, "\"Install\" \"Install the package.\" \\";
@@ -496,7 +500,7 @@ sub build_operations {
 	if ($option eq "Shared Objects") {
 		unless (solib_check($inst_pkgs->{$sbo})) {
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Missing\n\n$old_libs{$inst_pkgs->{$sbo}}");
-			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --title \"$sbo: Shared Object Check\" --msgbox \"Missing shared objects found for $sbo:\n\n$old_libs{$inst_pkgs->{$sbo}}\" $height $width");
+			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --no-collapse --title \"$sbo: Shared Object Check\" --msgbox \"Missing shared objects found for $sbo:\n\n$old_libs{$inst_pkgs->{$sbo}}\" $height $width");
 		} else {
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "NoMissing");
 			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --title \"$sbo: Shared Object Check\" --msgbox \"$sbo has no missing shared object dependencies.\" $height $width");
@@ -781,8 +785,12 @@ sub display_main {
 	push @main_menu, "\"Shared Objects\" \"Check for missing solib dependencies.\" \\",
 					"\"Man Pages\" \"Read sbotools-related man pages.\" \\";
 	if (-s $slackbuilds_txt) {
-		push @main_menu, "\"Browse Repository\" \"View scripts by series.\" \\",
-						"\"Package Search\" \"Search for a package.\" \\";
+		push @main_menu, "\"Browse Repository\" \"View scripts by series.\" \\";
+		if (-s "$config{SBO_HOME}/repo/TAGS.txt") {
+			push @main_menu, "\"Package Search\" \"Search by name, tag and description.\" \\";
+		} else {
+			push @main_menu, "\"Package Search\" \"Search by name and description.\" \\";
+		}
 		push @main_menu, "\"Installed\" \"List installed SBo packages.\" \\",
 						"\"Rebuilds\" \"Mass and per-series rebuilds.\" \\" if keys %inst_names;
 		push @main_menu, "\"Upgradable\" \"Upgrades are available.\" \\" if @update_names;
