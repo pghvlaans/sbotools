@@ -667,6 +667,7 @@ C<FALSE> or the lockfile is removed.
 
 sub verify_rsync {
   script_error('verify_rsync requires an argument.') unless @_ == 1;
+  my $cwd = getcwd();
   my $fullcheck = shift;
   my $rsync_lock = "$config{SBO_HOME}/.rsync.lock";
   if (-f $rsync_lock and not $fullcheck) {
@@ -719,6 +720,7 @@ sub verify_rsync {
         $next = 1 if $word eq "ERRSIG";
       }
       my $newkey = retrieve_key($fingerprint);
+      chdir $cwd;
       return verify_rsync($fullcheck) if $newkey;
     }
     # REVKEYSIG: warning and exit
@@ -768,6 +770,7 @@ sub verify_rsync {
     if ($res) {
       # All is well, so release the lock, if any.
       unlink($rsync_lock) if -f $rsync_lock;
+      chdir $cwd;
       return $res;
     } else {
       system(qw/ touch /, $rsync_lock);
@@ -778,6 +781,7 @@ sub verify_rsync {
     system(qw/ touch /, $rsync_lock);
     error_code("\nThe contents of CHECKSUMS.md5 have been altered. Please run sbocheck.\n\nExiting.", _ERR_MD5SUM) unless $checksum_asc_ok;
   }
+  chdir $cwd;
   return 1;
 }
 
@@ -792,6 +796,7 @@ C<sboinstall(1)>, C<sboupgrade(1)> and C<sbocheck(1)>.
 =cut
 
 sub verify_gpg {
+  my $cwd = getcwd();
   my $url = $config{REPO};
   if ($url eq 'FALSE') {
     $url = get_slack_version_url();
@@ -806,8 +811,10 @@ sub verify_gpg {
       $branch =~ s|.*/||s;
       $branch =~ s|\n||s;
     }
-    return verify_git_commit($branch) if $branch;
-    usage_error("$repo_path appears to be neither a git nor an rsync mirror.\n\nPlease check your REPO, VERSION and RSYNC_DEFAULT settings. Exiting.");
+    usage_error("$repo_path appears to be neither a git nor an rsync mirror.\n\nPlease check your REPO, VERSION and RSYNC_DEFAULT settings. Exiting.") unless $branch;
+    my $git_result = verify_git_commit($branch);
+    chdir $cwd;
+    return $git_result;
   }
 }
 
