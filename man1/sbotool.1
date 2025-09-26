@@ -17,23 +17,22 @@ sbotools
 based on
 .B
 dialog(1)\fR\
-\&. It can be run by root and non-root users. The contents of the menus
-are dynamic and reflect available and efficacious options.
+\&. It can be run by root and non-root users.
 .B
 sbotool
 must be run as root (preferably in a login shell reached from e.g.
 .B
 su -\fR\
 \&) to perform package installations, upgrades and removals, and to
-fetch the repository. Use the
+fetch the repository.
+.P
+The contents of all menus are dynamic and reflect available and
+efficacious options. Use the
 .B
 Help
-buttons in
-.B
-sbotool
-for more information about individual menus.
+buttons for more information about individual menu screens.
 .P
-The basic workflow is straightforward: navigate to a script with
+The basic workflow is straightforward: Navigate to a SlackBuild with
 .B
 Browse Repository
 or
@@ -42,8 +41,7 @@ Package Search
 and choose from the list of options in the
 .B
 Operations
-menu. Installed, upgradable
-and override scripts can be reached from
+menu. Installed, upgradable and override scripts can be reached from
 .B
 Installed\fR\
 \&,
@@ -53,18 +51,55 @@ and
 .B
 Overrides\fR\
 \&,
-respectively.
+respectively. A number of actions beyond basic package management are
+available from
 .B
-Main Menu
-has options for large-scale upgrades, rebuilds and shared object dependency
-checks.
+Operations\fR\
+\&; see
+.B
+Help
+for details.
+.P
+For system-wide actions, see
+.B
+Main Menu\fR\
+\&. Use
+.B
+Fetch Repository
+to get or update a copy of the
+.B
+SlackBuilds.org
+repo, or
+.B
+Settings
+to view and edit
+.B
+sbotools
+settings.
+Large-scale upgrades, rebuilds and shared object checks can also be done here.
+To act on the
+.B
+Install\fR\
+\&,
+.B
+Upgrade\fR\
+\&,
+.B
+Remove
+or
+.B
+Template
+lists, use the
+.B
+List Operations
+menu screen.
 .P
 .B
 sbotools
 calculates dependencies automatically, and individual scripts can be added
 to the blacklist or have optional dependencies specified using the script's
 .B
-Hints
+Edit Hints
 interface. Installations and upgrades can be performed either interactively
 or non-interactively. If the non-interactive
 .I
@@ -76,39 +111,24 @@ displays a dry run on the confirmation screen. To specify build options for a
 particular script, install interactively or use
 .B
 Build Options
-from the script menu screen ahead of time as root. Build options are saved in the
-.I
-/var/log/sbotools
-directory for future use.
-.P
-Individual scripts can be added to lists for installation, upgrade and removal
-as the root user.
-Any user may add to the template list; the template produced can be implemented as root
-with
+from the
 .B
-sboinstall --use-template\fR\
-\&.
-Use
-.B
-List Operations
-from
-.B
-Main Menu
-to do the chosen operation for the listed scripts. These lists do not persist when
-.B
-sbotool
-is closed. List operations use dependency resolution.
+Operations
+menu ahead of time as root.
 .P
 If package operations are performed or
 .B
 sbotools
-settings are changed from outside of
+settings are changed from outside of the running
 .B
 sbotool
-while the program is running, use the
+instance, use the
 .B
 Refresh
-option in the main menu to ensure that the output reflects these changes.
+option in
+.B
+Main Menu
+to ensure that the output reflects these changes.
 .P
 Although most
 .B
@@ -139,7 +159,7 @@ can be used to check. This should not be a problem for any remotely
 modern terminal.
 .P
 A copy of the
-.I
+.B
 SlackBuilds.org
 repository must be fetched when using
 .B
@@ -157,7 +177,7 @@ option. The local repository is saved to
 .I
 /usr/sbo/repo
 by default; the default upstream is the
-.I
+.B
 SlackBuilds.org
 .B
 GitLab

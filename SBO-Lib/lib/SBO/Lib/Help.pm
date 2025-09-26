@@ -15,6 +15,7 @@ our @EXPORT_OK = qw{
   @help_builds
   @help_clean
   @help_hints
+  @help_list_mgmt
   @help_lists
   @help_main
   @help_operations
@@ -115,6 +116,22 @@ The following dependency-related options may appear in "Edit Hints":
 
 Please note that compat32 builds share hints with the corresponding
 base SlackBuild.');
+
+our @help_list_mgmt = ('List Management - Help',
+
+'Use this screen to add or remove the SlackBuild from one or more of
+these lists:
+
+  * Install:  Build and install the SlackBuilds on the list.
+  * Upgrade:  Upgrade the SlackBuilds on the list to the available
+              version.
+  * Remove:   Interactively remove listed SlackBuilds with unneeded
+              dependencies.
+  * Template: Make a template to install the SlackBuilds with
+              "sboinstall --use-template" later.
+
+Only applicable lists appear in the options. Use the "List Operations"
+screen from Main Menu to implement or clear the lists.');
 
 our @help_lists = ('List Operations - Help',
 
@@ -219,12 +236,10 @@ point of contact for script information and actions. Use the "Main"
 button to return to Main Menu.
 
 The options displayed depend on the running user; ineffective actions
-are ignored:
+are ignored. If the number of available options is high, less-common
+options appear in a second menu that can be reached from "more".
 
-* Add Override
-    Available if the running user has write permissions for the local
-    overrides directory. Copy the SlackBuild directory into overrides
-    to make local changes.
+These options are always displayed in the first menu if available:
 
 * Build Options
     As a non-root user, view saved build options for this SlackBuild. As
@@ -234,17 +249,13 @@ are ignored:
     See how this SlackBuild would be installed (or reinstalled) with
     batch processing.
 
-* Dry Run (reverse)
-    See how this SlackBuild and its reverse dependencies would be
-    reinstalled with batch processing.
-
 * Edit Hints
     Root only. Add, edit or remove hints for this SlackBuild.
 
 * Edit Override
     Available for SlackBuilds in local overrides, provided that the
-    running user has write permissions. The text editor priority list is
-    $EDITOR, $VISUAL and vi.
+    running user has write permissions. Edit any text file in the
+    directory. The text editor priority list is $EDITOR, $VISUAL and vi.
 
 * Hints
     Non-root users. View active hints for this SlackBuild.
@@ -252,13 +263,10 @@ are ignored:
 * Install
     Root only. Install the SlackBuild!
 
-* Install List (+/-)
-    Root only. Add (or remove) the SlackBuild from the Install list. Use
-    the "List Operations" screen from "Main Menu" to implement the list.
-
-* Queue
-    View, search and select from the build queue for the SlackBuild.
-    The queue is calculated automatically and respects per-script hints.
+* Lists
+    Root only. Add or remove the SlackBuild from lists for
+    installation, upgrade, removal or template-making. The lists can be
+    implemented using the "List Operations" screen from Main Menu.
 
 * Reinstall
     Root only. Reinstall the SlackBuild. Optionally, reinstall its
@@ -268,27 +276,55 @@ are ignored:
     Root only. Interactively remove the SlackBuild and any of its
     unneeded dependencies.
 
-* Remove List (+/-)
-    Root only. Add (or remove) the SlackBuild from the Remove list. Use
-    the "List Operations" screen from "Main Menu" to implement the list.
+* Replace
+    Root only. If the SlackBuild is available in the repository but
+    installed under a tag other than "_SBo" or "_SBocompat32", reinstall
+    from the repository.
+
+* RevDep (installed)
+    View, search and select from installed reverse dependencies of this
+    SlackBuild.
+
+* Template List (+/-)
+    Non-root only. Add (or remove) the SlackBuild from the Template
+    list. Use the "List Operations" screen from Main Menu to implement
+    the list. The saved template can be installed later with
+    "sboinstall --use-template".
+
+* Upgrade
+    Root only. Upgrade the SlackBuild to the available version.
+
+* View File
+    Read any text file in the SlackBuild directory.
+
+* more
+    View a second menu with less-common options. Appears only if there
+    are at least nine available options.
+
+The remaining options can appear in the second menu:
+
+* Add Override
+    Available if the running user has write permissions for the local
+    overrides directory. Copy the SlackBuild directory into overrides
+    to make local changes.
+
+* Dry Run (reverse)
+    See how this SlackBuild and its reverse dependencies would be
+    reinstalled with batch processing.
+
+* Queue
+    View, search and select from the build queue for the SlackBuild,
+    provided that it has available dependencies. The queue is calculated
+    automatically and respects per-script hints.
 
 * Remove Override
     Available only if the running user has write permissions for the
     local overrides directory. Remove the SlackBuild from local
     overrides by deleting its override directory.
 
-* Replace
-    Root only. If the SlackBuild is available in the repository but
-    installed under a tag other than "_SBo" or "_SBocompat32", reinstall
-    from the repository.
-
 * RevDep (all)
     View, search and select from all available reverse dependencies of
     this SlackBuild.
-
-* RevDep (installed)
-    View, search and select from installed reverse dependencies of this
-    SlackBuild.
 
 * Reverse Rebuild
     Root only. Rebuild all installed reverse dependencies for this
@@ -298,30 +334,17 @@ are ignored:
     Check this installed SlackBuild for missing shared object
     dependencies.
 
-* Template List (+/-)
-    Add (or remove) the SlackBuild from the Template list. Use the "List
-    Operations" screen from "Main Menu" to implement the list. The saved
-    template can be installed later with "sboinstall --use-template".
-
-* Upgrade
-    Root only. Upgrade the SlackBuild to the available version.
-
 * Upgrade (reverse rebuild)
     Root only. Upgrade the SlackBuild to the available version and
     rebuild any installed reverse dependencies. This can be done
     automatically by turning on the Auto-Rebuild hint.
 
-* Upgrade List (+/-)
-    Root only. Add (or remove) the SlackBuild from the Upgrade list. Use
-    the "List Operations" screen from "Main Menu" to implement the list.
-
-* View File
-    Read any text file in the SlackBuild directory.
-
 * compat32
     Display the Operations menu for the -compat32 version of the
     SlackBuild. This appears only on multilib-capable systems. Perl-
-    based, noarch and single-architecture scripts are ineligible.');
+    based, noarch and single-architecture scripts are ineligible.
+    compat32 appears in the first window if the -compat32 package is
+    installed.');
 
 our @help_options = ('Build Options - Help',
 
@@ -379,9 +402,9 @@ removal, and before the final remove operation.');
 our @help_search = ('Package Search - Help',
 
 'Use this screen to search for SlackBuilds by name. To include
-description strings as well, use the "Include Desc" button. Exact word
-matches are listed first, followed by other matches. Select a script
-from the list of results to see its Operations menu.
+description strings as well, use the "Desc" button. Exact word matches
+are listed first, followed by other matches. Select a script from the
+list of results to see its Operations menu.
 
 Script results lists can be refined further using the "Filter" button,
 which applies an additional search to the list.');
