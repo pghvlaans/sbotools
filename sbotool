@@ -531,13 +531,13 @@ sub build_operations {
 		@display_list = sort @display_list;
 		my $display_list = join " ", @display_list;
 		FILES: ($height, $width, $begin_y, $begin_x) = calculate_position("wide", $file_list, "Select a");
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"$location\" --menu \"Select a text file to read it.\" $height $width $height $display_list");
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"View File\" --menu \"Select a text file to read it.\" $height $width $height $display_list");
 		my $file = $output;
 		if ($option eq "View File" and $file =~ /\w/) {
 			chomp(my $file_text = slurp $file_locations{$file});
 			my $wanted = $file =~ /^README/ ? "normal" : "wide";
 			($height, $width, $begin_y, $begin_x) = calculate_position($wanted, $file_text);
-			system("$dialog_prefix --begin $begin_y $begin_x --title \"$file_locations{$file}\" --textbox $file_locations{$file} $height $width");
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"$file\" --textbox $file_locations{$file} $height $width");
 			goto FILES;
 		} elsif ($option eq "Edit Override" and $file =~ /\w/) {
 			system("$editor $file_locations{$file}");
