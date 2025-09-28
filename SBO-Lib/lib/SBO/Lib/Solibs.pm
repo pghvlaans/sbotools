@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '3.8.1';
+our $VERSION = '4.0_RC';
 
 use SBO::Lib::Util qw/ :config :const in uniq error_code script_error /;
 

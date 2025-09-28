@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Tree 3"
-.TH SBO::Lib::Tree 3 "Boomtime, Bureaucracy 23, 3191 YOLD" "" "sbotools 3.8.1"
+.TH SBO::Lib::Tree 3 "Sweetmorn, Bureaucracy 52, 3191 YOLD" "" "sbotools 4.0_RC"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -130,6 +130,15 @@ The descriptions hash is populated as well on the first run.
 \&\f(CWis_local()\fR checks whether the given \f(CW$sbo\fR (or, for \f(CW\*(C`compat32\*(C'\fR, the base script)
 is in the \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR directory. The return value is true if it is, and false
 if it is not.
+.SS renew_sbo_locations
+.IX Subsection "renew_sbo_locations"
+.Vb 1
+\&  my %locations = renew_sbo_locations();
+.Ve
+.PP
+\&\f(CWrenew_sbo_locations()\fR clears all location\- and description\-related hashes
+and the available script array. It then runs \f(CWget_sbo_locations()\fR and returns
+the new locations hash.
 .SH "EXIT CODES"
 .IX Header "EXIT CODES"
 Tree.pm subroutines can return the following exit code:

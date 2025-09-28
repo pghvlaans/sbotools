@@ -39,6 +39,7 @@ update_perl="
 	SBO-Lib/lib/SBO/Lib/Download.pm
 	SBO-Lib/lib/SBO/Lib/Build.pm
   SBO-Lib/lib/SBO/Lib/Solibs.pm
+  SBO-Lib/lib/SBO/Lib/Help.pm
   SBO-Lib/lib/SBO/App.pm
   SBO-Lib/lib/SBO/App/Remove.pm
 "
