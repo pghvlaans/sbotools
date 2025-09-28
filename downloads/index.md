@@ -2,6 +2,19 @@
 
 SlackBuilds for **[sbotools](https://slackbuilds.org/repository/15.0/system/sbotools/)** and **[sbotest](https://slackbuilds.org/repository/15.0/system/sbotest/)** are available on SlackBuilds.org.
 
+## sbotools-4.0 Release Candidate
+
+There will be at least one release candidate before `sbotools-4.0`. The most important change is the introduction of `sbotool`, a text user interface.
+
+* [sbotools-4.0_RC.tar.gz](sbotools-4.0_RC.tar.gz) ([asc](sbotools-4.0_RC.tar.gz.asc))
+    * md5sum: `28018c1e2a047dbb03dd4ad462c552a1`
+
+Use this archive to build and install `sbotools-4.0_RC`; the tag is `_pghv`, which can be changed.
+
+* [sbotools-4.0_RC.tar](sbotools-4.0_RC.tar) ([asc](sbotools-4.0_RC.tar.asc))
+    * md5sum: `abdef92cdd500c632fd3787bc67ce8c1`
+
+
 ## Notes
 
 This fork of `sbotools` was briefly available as `sbotools3` in late 2024. Any `sbotools3` users are advised to uninstall `sbotools3` before installing `sbotools`.
