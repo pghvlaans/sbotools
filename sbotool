@@ -1627,9 +1627,9 @@ Options
   -v|--version:
     version information.
   -d|--dialogrc FILE:
-    a dialogrc file to use; overrides the DIALOGRC setting
+    a dialogrc file to use; overrides the DIALOGRC setting.
 
-$self is a dialog-based frontend for sbotools.
+$self is a dialog-based text user interface for sbotools.
 
 The contents of the menus change based on available actions
 and user permissions.

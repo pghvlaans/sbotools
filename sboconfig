@@ -47,21 +47,21 @@ Options:
 
 Configuration options (defaults shown):
   -B|--branch FALSE:
-      GIT_BRANCH: the name of a git branch to use, or FALSE for the Slackware version default.
+      GIT_BRANCH: git branch to use, or FALSE for the OS version default.
   -b|--build-ignore FALSE:
-      BUILD_IGNORE: if TRUE, only attempt to upgrade if the version number is different.
+      BUILD_IGNORE: if TRUE, only attempt upgrades if the version differs.
   -C|--classic FALSE:
-      CLASSIC: if TRUE, enable BUILD_IGNORE and RSYNC_DEFAULT and suppress extra sbotools output.
+      CLASSIC: if TRUE, BUILD_IGNORE and RSYNC_DEFAULT; use 2.7 output.
   -c|--noclean FALSE:
-      NOCLEAN: if TRUE, do not clean up working directories after building by default.
+      NOCLEAN: if TRUE, do not clean working directories after building.
   -D|--dialogrc FALSE:
       DIALOGRC: if a FILE, use it as dialogrc for sbotool.
   -d|--distclean FALSE:
-      DISTCLEAN: if TRUE, clean the source and package archives by default after building.
+      DISTCLEAN: if TRUE, clean source and package archives after building.
   -e|--etc-profile FALSE:
-      ETC_PROFILE: if TRUE, source executable scripts in /etc/profile.d before building.
+      ETC_PROFILE: if TRUE, source executable scripts in /etc/profile.d.
   -g|--gpg-verify FALSE:
-      GPG_VERIFY: verify the repo with gnupg
+      GPG_VERIFY: verify the repo with gnupg.
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
   -K|--color FALSE:
@@ -69,13 +69,13 @@ Configuration options (defaults shown):
   -L|--log-dir FALSE:
       LOG_DIR: if an absolute path, save a log file here after each build.
   -P|--cpan-ignore FALSE:
-      CPAN_IGNORE: install scripts even if they have been installed from the CPAN.
+      CPAN_IGNORE: install scripts even if they are installed from the CPAN.
   -p|--pkg-dir FALSE:
       PKG_DIR: set a directory to store packages in.
   -s|--sbo-home /usr/sbo:
       SBO_HOME: set the SBo directory.
   -O|--obsolete-check FALSE:
-      OBSOLETE_CHECK: for Slackware -current, download the obsolete scripts list with sbocheck.
+      OBSOLETE_CHECK: for -current, download obsolete list with sbocheck.
   -o|--local-overrides FALSE:
       LOCAL_OVERRIDES: a directory containing local overrides.
   -V|--slackware-version FALSE:
@@ -85,11 +85,11 @@ Configuration options (defaults shown):
   -R|--rsync FALSE:
       RSYNC_DEFAULT: default mirrors (other than for -current) are rsync.
   -S|--strict-upgrades FALSE:
-      STRICT_UPGRADES: only upgrade when the version or build number is higher.
+      STRICT_UPGRADES: only upgrade when the version or build is higher.
   -w|--nowrap FALSE:
       NOWRAP: do not automatically wrap sbotools output.
   -X|--so-check FALSE:
-      SO_CHECK: check for missing .so dependencies when running sbocheck and sboupgrade.
+      SO_CHECK: check for .so dependencies after sbocheck and sboupgrade.
 
 Use $label without options for an interactive menu.
 EOF
@@ -117,17 +117,17 @@ Configuration options (defaults shown):
   -A|--sbo-archive /usr/sbotest/archive:
       SBO_ARCHIVE: the directory for package reuse.
   -B|--branch FALSE:
-      GIT_BRANCH: the name of a git branch to use, or FALSE for the Slackware version default.
+      GIT_BRANCH: git branch to use, or FALSE for the OS version default.
   -C|--classic FALSE:
-      CLASSIC: if TRUE, enable BUILD_IGNORE and RSYNC_DEFAULT and suppress extra sbotools output.
+      CLASSIC: if TRUE, BUILD_IGNORE and RSYNC_DEFAULT; use 2.7 output.
   -c|--noclean FALSE:
-      NOCLEAN: if TRUE, do not clean up working directories after building by default.
+      NOCLEAN: if TRUE, do not clean working directories after building.
   -d|--distclean FALSE:
-      DISTCLEAN: if TRUE, clean the source and package archives by default after building.
+      DISTCLEAN: if TRUE, clean source and package archives after building.
   -e|--etc-profile TRUE:
-      ETC_PROFILE: if FALSE, do not source executable scripts in /etc/profile.d before building.
+      ETC_PROFILE: if FALSE, do not source executables in /etc/profile.d.
   -g|--gpg-verify FALSE:
-      GPG_VERIFY: verify the repo with gnupg
+      GPG_VERIFY: verify the repo with gnupg.
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
   -K|--color FALSE:
@@ -135,13 +135,13 @@ Configuration options (defaults shown):
   -L|--log-dir /usr/sbotest/logs:
       LOG_DIR: if an absolute path, save a log file here after each build.
   -P|--cpan-ignore TRUE:
-      CPAN_IGNORE: install scripts even if they have been installed from the CPAN.
+      CPAN_IGNORE: install scripts even if they are installed from the CPAN.
   -p|--pkg-dir /usr/sbotest/tests:
       PKG_DIR: set a directory to store packages in.
   -s|--sbo-home /usr/sbotest:
       SBO_HOME: set the SBo directory.
   -O|--obsolete-check FALSE:
-      OBSOLETE_CHECK: for Slackware -current, download the obsolete scripts list with sbocheck.
+      OBSOLETE_CHECK: for -current, download obsolete list with sbocheck.
   -o|--local-overrides FALSE:
       LOCAL_OVERRIDES: a directory containing local overrides.
   -V|--slackware-version FALSE:
@@ -151,7 +151,8 @@ Configuration options (defaults shown):
   -R|--rsync FALSE:
       RSYNC_DEFAULT: default mirrors (other than for -current) are rsync.
   -S|--strict-upgrades FALSE:
-      STRICT_UPGRADES: with --archive-rebuild, only delete when the version or build number is lower.
+      STRICT_UPGRADES: with --archive-rebuild, only delete when version or
+      build is lower.
   -w|--nowrap FALSE:
       NOWRAP: do not automatically wrap sbotest output.
   -X|--so-check FALSE:

@@ -36,6 +36,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Bugfix: sbohints properly acts on scripts with regex special characters in the name
   * Added Help.pm, which contains sbotool help messages
   * Bugfix: Skip GPG verification for --dry-run and --template-only when not root
+  * All scripts: --help descriptions fit in an 80x25 terminal window.
 
 #### 3.8.1 - 2025-08-28
   * Replace most grep instances

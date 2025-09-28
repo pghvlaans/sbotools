@@ -38,17 +38,17 @@ Options (defaults shown first where applicable):
   --all
     this flag will upgrade everything reported by sbocheck(1).
   --batch:
-    like nointeractive, but calculates dependencies (use with caution)
+    like nointeractive, but calculates dependencies (use with caution).
   -b|--build-ignore (FALSE|TRUE):
-    if TRUE, only offer to upgrade on version changes (not build number changes).
+    if TRUE, only offer to upgrade on version changes.
   -c|--noclean (FALSE|TRUE):
     if TRUE, do not clean working directories after building.
   -D|--dry-run:
     show the potential queue and exit
   -d|--distclean (FALSE|TRUE):
-    if TRUE, delete downloaded source archives and the completed package after building.
+    if TRUE, delete downloaded source archives and the completed package.
   -e|--etc-profile (FALSE|TRUE):
-    if TRUE, source all executable *.sh scripts in /etc/profile.d before building.
+    if TRUE, source all executable *.sh scripts in /etc/profile.d.
   -f|--force:
     force an upgrade, even if the version and build number are the same.
   -i|--noinstall:

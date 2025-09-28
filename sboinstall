@@ -44,9 +44,9 @@ Options (defaults shown first where applicable):
   -D|--dry-run:
     show the potential queue and exit
   -d|--distclean (FALSE|TRUE):
-    if TRUE, delete downloaded source archives and the completed package after building.
+    if TRUE, delete downloaded source archives and the completed package.
   -e|--etc-profile (FALSE|TRUE):
-    if TRUE, source all executable *.sh scripts in /etc/profile.d before building.
+    if TRUE, source executable *.sh scripts in /etc/profile.d.
   -i|--noinstall:
     do not run installpkg after building.
   -j|--jobs (FALSE|#):
@@ -74,8 +74,8 @@ Options (defaults shown first where applicable):
   --create-template (FILE):
     create a template with specified requirements, commands, and options.
   --use-template (FILE):
-    use a template created by --create-template to install requirements with
-    specified commands and options.
+    use a template created by --create-template to install requirements
+    with specified commands and options.
   --mass-rebuild:
     rebuild all installed SlackBuilds at the available version.
   --series-rebuild (SERIES):
