@@ -255,7 +255,7 @@ sub build_operations {
 		push @build_operations, "\"Remove\" \"Remove with unneeded dependencies.\" \\";
 		if (in $sbo, @update_names) {
 			push @build_operations, "\"Upgrade\" \"Upgrade the package.\" \\";
-			push @more_info, "\"Upgrade (reverse rebuild)\" \"Upgrade and rebuild reverse deps.\" \\" if @installed_reverse;
+			push @more_info, "\"Upgrade (reverse)\" \"Upgrade and rebuild reverse deps.\" \\" if @installed_reverse;
 		} else {
 			push @more_info, "\"Reverse Rebuild\" \"Rebuild all reverse deps.\" \\" if @installed_reverse;
 			if (@disp_queue) {
@@ -512,7 +512,7 @@ sub build_operations {
 
 	if ($option =~ /^Upgrade/) {
 		my $cmd = "/usr/sbin/sboupgrade";
-		$cmd .= " --reverse-rebuild" if $option =~ /reverse rebuild/;
+		$cmd .= " --reverse-rebuild" if $option =~ /reverse/;
 		$cmd .= " $sbo";
 		run_command($cmd);
 	}
