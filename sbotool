@@ -141,7 +141,12 @@ sub build_operations {
 	my $msg = "$sbo $sbo_version\n$description";
 	$msg .= "\nFound in local overrides." if is_local($sbo);
 	$msg .= "\nBlacklisted." if on_blacklist($sbo);
-	$msg .= "\nInstalled. ($inst_vers->{$sbo})" if $inst_names{$sbo};
+	if (in $sbo, @update_names) {
+		$msg .= "\nUpgradable. ";
+		$msg .= $inst_vers->{$sbo} eq $sbo_version ? "(build bump)" : "($inst_vers->{$sbo} > $sbo_version)";
+	} else {
+		$msg .= "\nInstalled. ($inst_vers->{$sbo})" if $inst_names{$sbo};
+	}
 	$msg .= "\nInstalled, non-SBo. ($inst_vers_std->{$sbo})" if $inst_names_std{$sbo};
 	unless ($is_compat_build) {
 		$msg .= "\ncompat32 installed. ($inst_vers->{$compat})" if $inst_names{$compat};
@@ -485,6 +490,11 @@ sub build_operations {
 			remove_tree($location);
 			clear_info_store();
 			new_package_information();
+			$location = get_sbo_location($sbo);
+			unless ($location) {
+				($height, $width, $begin_y, $begin_x) = calculate_position("wide", "No longer");
+				($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --msgbox \"$sbo is no longer available.\" $height $width");
+			}
 		}
 	}
 
