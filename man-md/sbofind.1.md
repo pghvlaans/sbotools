@@ -54,6 +54,10 @@ exits with a diagnostic message.
 Show all reverse dependencies in the repository for each SlackBuild
 found.
 
+**-d\|\--descriptions**
+
+Search for SlackBuilds by short description in addition to name and tag.
+
 **-E\|\--exact-case**
 
 Exact matching only (case-sensitive).

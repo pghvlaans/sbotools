@@ -20,13 +20,13 @@
 
     sboclean [-h|-v]
 
-    sboclean [-dwi] [-o ALL|package]
+    sboclean [-dwi] [-o ALL|package \...]
 
     sboclean [--color|--nocolor] [--wrap|--nowrap] \...
 
 ## DESCRIPTION
 
-**sboclean** is used to clean files left by **sbotools**, including:
+**sboclean** removes files left by **sbotools**, including:
 
 • saved build options in */var/log/sbotools*
 

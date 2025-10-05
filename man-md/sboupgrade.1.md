@@ -29,7 +29,7 @@
 
 ## DESCRIPTION
 
-**sboupgrade** is used to upgrade SlackBuilds. If the
+**sboupgrade** builds and upgrades SlackBuilds. If the
 **\--nointeractive** flag is not present, **sboupgrade** pulls the list
 of requirements from the *info* file for any specified SlackBuild. This
 is a recursive operation over all dependencies. **sboupgrade** offers to

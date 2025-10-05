@@ -23,7 +23,7 @@ sbocheck
 updates or fetches a copy of the
 .B
 SlackBuilds.org
-tree, checks for available upgrades, and reports what it finds.
+tree, checks for available upgrades and reports what it finds.
 If
 .B
 OBSOLETE_CHECK
@@ -36,7 +36,7 @@ TRUE\fR\
 is downloaded from
 .UR https://pghvlaans.github.io/sbotools
 .UE
-when running Slackware -current (see
+if running Slackware -current (see
 .B
 sboconfig(1)
 or
@@ -124,14 +124,9 @@ SO_CHECK
 to
 .B
 TRUE\fR\
-\&. Use the
-.B
---check-package
-option to check only a list of packages.
-.B
---check-all-packages
-checks all packages installed to the system. Please note that scripts repackaging from binary
-packages occasionally trigger false positives. Such packages generally do not require rebuilds.
+\&.
+Please note that scripts repackaging from binary packages occasionally trigger
+false positives. Such packages generally do not require rebuilds.
 .P
 To check for updated SlackBuilds without updating the SlackBuilds
 tree, pass

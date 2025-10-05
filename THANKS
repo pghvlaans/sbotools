@@ -3,9 +3,9 @@
                                **********
 
 Jacob Pipkin is the original author of all of the sbotools except for
-sboremove and sbohints. For all the changes that have been made, the
-look-and-feel of the traditional sbotools CLI is still remarkably
-similar to his initial commit in 2012.
+sboremove, sbohints and sbotool. For all the changes that have been
+made, the look-and-feel of the traditional sbotools CLI is still
+remarkably similar to his initial commit in 2012.
 
 Luke Williams made important contributions to early sbotools, most
 notably writing the original sboremove. He also wrote code allowing
@@ -34,6 +34,10 @@ GPG verification and non-root permission for the less-destructive
 parts of sbotools were his ideas. He also suggested changing to the
 MIT License and has provided other useful feedback.
 
+SCerovec has provided useful suggestions and advice about the visual
+side of sbotools, particularly during the addition of color output and
+the early development of the sbotool interface.
+
 Matteo Bernardini's fork of the SlackBuilds.org repository has been a
 valuable resource for maintaining the /etc/sbotools/obsolete file.
 
@@ -60,7 +64,6 @@ na3i09 (reported a compat32 sboremove bug)
 penduin (reported a Slackware -current version bug)
 qunying (requested build number upgrade notification)
 Sammyboy (reported a kernel version number bug)
-SCerovec (suggested color command line options and DIALOGRC)
 STDOUBT (reported a version parse bug)
 shamefulCake1 (requested NOWRAP and installation time reporting)
 travis-82 (requested tree download progress output)
