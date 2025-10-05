@@ -38,15 +38,15 @@
 
 ## DESCRIPTION
 
-**sboinstall** builds and installs SlackBuilds. If the
-**\--nointeractive** flag is not present, **sboinstall** pulls the list
-of requirements from the *info* file for any specified SlackBuild. This
-is a recursive operation over all dependencies. **sboinstall** offers to
-install any non-installed dependencies in the build queue, taking the
-hints in [sbotools.hints(5)](sbotools.hints.5.md) into account. In case of
-**\--reinstall**, scripts with automatic reverse dependency rebuilds
-have their reverse dependencies rebuilt as well. The script exits with
-an error message if circular dependencies are detected.
+**sboinstall** builds and installs SlackBuilds. If neither
+**\--nointeractive** nor **\--norequirements** is used, **sboinstall**
+pulls the list of requirements from the *info* file for any specified
+SlackBuild. This is a recursive operation over all dependencies.
+**sboinstall** offers to install any non-installed dependencies in the
+build queue, taking the hints in [sbotools.hints(5)](sbotools.hints.5.md) into account. In
+case of **\--reinstall**, scripts with automatic reverse dependency
+rebuilds have their reverse dependencies rebuilt as well. The script
+exits with an error message if circular dependencies are detected.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
 **sboinstall** offers to run them prior to building if any of the

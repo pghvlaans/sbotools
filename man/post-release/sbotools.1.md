@@ -58,14 +58,15 @@ and create or build from templates.
 Interactively remove installed SlackBuilds along with any unused
 dependencies.
 
+[sbotool(1)](sbotool.1.md)
+
+Perform most **sbotools** operations from this TUI with dynamic
+**dialog(1)** menus. Calling the commands individually provides superior
+efficiency and option control.
+
 [sboupgrade(1)](sboupgrade.1.md)
 
 Upgrade previously-installed SlackBuilds.
-
-[sbotool(1)](sbotool.1.md) is a meta-tool providing a TUI based on **dialog(1)**.
-Most **sbotools** operations can be accomplished through this series of
-dynamic menus, though calling the commands individually from the command
-line provides superior efficiency and fine-tuned option control.
 
 By default, [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md) give prompts before
 adding items to the build queue. These scripts have a **\--batch** flag
