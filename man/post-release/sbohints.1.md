@@ -31,8 +31,8 @@
 
 ## DESCRIPTION
 
-**sbohints** is a script for querying and editing script-specific hints
-in [sbotools.hints(5)](sbotools.hints.5.md). Three kinds of hints are recognized:
+**sbohints** queries and edits script-specific hints in
+[sbotools.hints(5)](sbotools.hints.5.md). Three kinds of hints are recognized:
 
 • blacklist
 

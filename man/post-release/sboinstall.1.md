@@ -38,7 +38,7 @@
 
 ## DESCRIPTION
 
-**sboinstall** is used to install SlackBuilds. If the
+**sboinstall** builds and installs SlackBuilds. If the
 **\--nointeractive** flag is not present, **sboinstall** pulls the list
 of requirements from the *info* file for any specified SlackBuild. This
 is a recursive operation over all dependencies. **sboinstall** offers to

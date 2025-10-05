@@ -30,10 +30,10 @@ updates
 ## DESCRIPTION
 
 **sbocheck** updates or fetches a copy of the **SlackBuilds.org** tree,
-checks for available upgrades, and reports what it finds. If
+checks for available upgrades and reports what it finds. If
 **OBSOLETE_CHECK** is **TRUE**, an updated copy of the script list at
 **/etc/sbotools/obsolete** is downloaded from
-<https://pghvlaans.github.io/sbotools> when running Slackware -current
+<https://pghvlaans.github.io/sbotools> if running Slackware -current
 (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
 SlackBuilds with differing build numbers are reported separately, as are
@@ -57,9 +57,7 @@ in-tree *\_SBo* packages, use the **\--so-check** option. Each affected
 package is logged to */var/log/sbocheck-solibs.log* with a list of
 missing shared objects and the files that have first-order dependencies
 on them. This can be done automatically on every **sbocheck** run by
-setting **SO_CHECK** to **TRUE**. Use the **\--check-package** option to
-check only a list of packages. **\--check-all-packages** checks all
-packages installed to the system. Please note that scripts repackaging
+setting **SO_CHECK** to **TRUE**. Please note that scripts repackaging
 from binary packages occasionally trigger false positives. Such packages
 generally do not require rebuilds.
 
