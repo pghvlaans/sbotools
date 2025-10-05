@@ -6,7 +6,7 @@
 
 A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
-For online man pages and executive summaries of all commands, see [man](/sbotools/man/). Installation notes and release tarballs are available at [Downloads](/sbotools/downloads/). A record of changes to **sbotools-3.x** and **sbotools** back to version 1.9 can be found in [ChangeLog](/sbotools/ChangeLog/). [Development](/sbotools/development/) has links to **sbotools**-related repositories and information about future plans. Script maintainers may be interested in the **[sbotest](/sbotools/sbotest/)** companion package for convenient reverse dependency build testing.
+For online man pages and executive summaries of all commands, see [man](/sbotools/man/). Installation notes and release tarballs are available at [Downloads](/sbotools/downloads/). A record of changes back to version 1.9 can be found in [ChangeLog](/sbotools/ChangeLog/). [Development](/sbotools/development/) has links to **sbotools**-related repositories and information about future plans. Script maintainers may be interested in the **[sbotest](/sbotools/sbotest/)** companion package for convenient reverse dependency build testing.
 
 SlackBuilds for **[sbotools](https://slackbuilds.org/repository/15.0/system/sbotools/)** and **[sbotest](https://slackbuilds.org/repository/15.0/system/sbotest/)** are available on SlackBuilds.org.
 
@@ -18,12 +18,12 @@ To verify commits (excluding resolved PR, which are verified with GitHub's key),
 
 ## Why a Fork?
 
-The previous **sbotools** repository had gone without commits for a number of years. During this time, the default URL for release Slackware beyond 14.2 became unusable, and building compat32 and 32-bit packages on multilib systems stopped working for nearly all SBo SlackBuilds. Both of these issues have been fixed in **sbotools-3.x**.
+The previous **sbotools** repository had gone without commits for a number of years. During this time, the default URL for release Slackware beyond 14.2 became unusable, and building compat32 and 32-bit packages on multilib systems stopped working for nearly all SBo SlackBuilds. Both of these issues have been fixed.
 
 Nonetheless, this repository was originally a simple fork adding a feature: Saving previously-used build options to be shown to the user when installing a SlackBuild again. In that spirit, the main focus of this fork of **sbotools** has been to implement new functionality, some of which was originally planned by Andreas Guldstrand.
 
 ## What's New, Compared to Version 2.7?
-**sbotools-3.x** is Slackware 15.0-compatible. While [ChangeLog](/sbotools/ChangeLog/) has a more complete list of changes, here are some of the highlights:
+**sbotools** is Slackware 15.0-compatible. While [ChangeLog](/sbotools/ChangeLog/) has a more complete list of changes, here are some of the highlights:
 
 * Blacklist and request optional dependencies with `sbotools.hints` and/or `sbohints`
 * Use a customizable git branch to clone the local repository
