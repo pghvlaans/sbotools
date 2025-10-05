@@ -41,11 +41,11 @@ is akin to running
 on a FreeBSD system. If the repository includes a *TAGS.txt* file, these
 tags are searched to generate additional results.
 
-Non-root users can call **sbofind** with any flags. **sbofind** issues a
-warning if the directory specified with **LOCAL_OVERRIDES** does not
-exist (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). If an invalid
-configuration is detected in */etc/sbotools/sbotools.conf*, the script
-exits with a diagnostic message.
+**sbofind** issues a warning if the directory specified with
+**LOCAL_OVERRIDES** does not exist (see [sboconfig(1)](sboconfig.1.md) or
+[sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
+message.
 
 ## OPTIONS
 
