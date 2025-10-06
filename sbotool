@@ -998,6 +998,7 @@ sub display_rebuild_menu {
 		my (@active_series, @series_selection_menu, %package_counts);
 		for (keys %inst_names) {
 			my $loc = get_orig_location($_);
+			next unless $loc;
 			my $full_series = dirname($loc);
 			push @active_series, $full_series;
 			if (exists $package_counts{$full_series}) {
@@ -1061,7 +1062,9 @@ sub display_series {
 	display_main() if $res == $code_dialog_cancel or $res == $code_dialog_error;
 	my $series = $output;
 	for (@available) {
-		my $this_series = dirname(get_orig_location($_));
+		my $orig_location = get_orig_location($_);
+		next unless $orig_location;
+		my $this_series = dirname($orig_location);
 		push @to_display, $_ if $this_series =~ m/\/$series$/;
 	}
 
