@@ -22,27 +22,30 @@ a given name or names
 
     sbofind [-h|-v]
 
-    sbofind [-AEFRTeiqrt] search_term (search_term)
+    sbofind [-AEFRTdeiqrt] search_term (search_term)
 
-    sbofind [--color|--nocolor] \...
+    sbofind [--color|--nocolor] [--wrap|--nowrap] \...
+
+    sbofind [--raw] \...
 
 ## DESCRIPTION
 
 **sbofind** searches the names of all available SlackBuilds for one or
 more search terms. It reports back any SlackBuilds found along with
-path, version and installation status information. This is akin to
-running
+path, version, installation status information and a short description.
+Use the **\--descriptions** option to search descriptions as well. This
+is akin to running
 
     cd /usr/ports; make search name=$search_term display=name,path
 
 on a FreeBSD system. If the repository includes a *TAGS.txt* file, these
 tags are searched to generate additional results.
 
-Non-root users can call **sbofind** with any flags. **sbofind** issues a
-warning if the directory specified with **LOCAL_OVERRIDES** does not
-exist (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). If an invalid
-configuration is detected in */etc/sbotools/sbotools.conf*, the script
-exits with a diagnostic message.
+**sbofind** issues a warning if the directory specified with
+**LOCAL_OVERRIDES** does not exist (see [sboconfig(1)](sboconfig.1.md) or
+[sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
+message.
 
 ## OPTIONS
 
@@ -50,6 +53,10 @@ exits with a diagnostic message.
 
 Show all reverse dependencies in the repository for each SlackBuild
 found.
+
+**-d\|\--descriptions**
+
+Search for SlackBuilds by short description in addition to name and tag.
 
 **-E\|\--exact-case**
 
@@ -92,6 +99,12 @@ Show the contents of the *README* file for each SlackBuild found.
 Show the top-level reverse dependencies, installed or not, for one or
 more scripts.
 
+**\--raw**
+
+Print a space-delineated list of matches in alphabetical order without a
+newline. All options not related to search results, such as
+**\--exact**, are effectively ignored.
+
 **-h\|\--help**
 
 Show help information.
@@ -107,6 +120,14 @@ Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors
 **\--nocolor**
 
 Turn off **sbotools** color output.
+
+**\--wrap**
+
+Turn on **sbotools** word wrapping (default).
+
+**\--nowrap**
+
+Turn off **sbotools** word wrapping.
 
 ## SBOTEST
 
@@ -134,8 +155,8 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md),
-[sbotools.hints(5)](sbotools.hints.5.md)
+[sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
+[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 

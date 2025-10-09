@@ -22,31 +22,31 @@
     sboinstall [-h|-v]
 
     sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
-               [-DRiopr] [--batch|--dry-run] [--create-template FILE] \
+               [-DRiopr] [--batch|--dry-run] [--create-template|-t FILE] \
                sbo_name (sbo_name)
 
     sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
                [-Di] --use-template FILE
 
     sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
-               [-Dioqr] [--create-template FILE] --mass-rebuild
+               [-Dioqr] [--create-template|-t FILE] --mass-rebuild
 
     sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
-               [-Dioqr] [--create-template FILE] --series-rebuild SERIES
+               [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES
 
-    sboinstall [--color|--nocolor] \...
+    sboinstall [--color|--nocolor] [--wrap|--nowrap] \...
 
 ## DESCRIPTION
 
-**sboinstall** is used to install SlackBuilds. If the
-**\--nointeractive** flag is not present, **sboinstall** pulls the list
-of requirements from the *info* file for any specified SlackBuild. This
-is a recursive operation over all dependencies. **sboinstall** offers to
-install any non-installed dependencies in the build queue, taking the
-hints in [sbotools.hints(5)](sbotools.hints.5.md) into account. In case of
-**\--reinstall**, scripts with automatic reverse dependency rebuilds
-have their reverse dependencies rebuilt as well. The script exits with
-an error message if circular dependencies are detected.
+**sboinstall** builds and installs SlackBuilds. If neither
+**\--nointeractive** nor **\--norequirements** is used, **sboinstall**
+pulls the list of requirements from the *info* file for any specified
+SlackBuild. This is a recursive operation over all dependencies.
+**sboinstall** offers to install any non-installed dependencies in the
+build queue, taking the hints in [sbotools.hints(5)](sbotools.hints.5.md) into account. In
+case of **\--reinstall**, scripts with automatic reverse dependency
+rebuilds have their reverse dependencies rebuilt as well. The script
+exits with an error message if circular dependencies are detected.
 
 *README* files are parsed for **groupadd** and **useradd** commands, and
 **sboinstall** offers to run them prior to building if any of the
@@ -72,9 +72,9 @@ or the md5sum check fails, a new download is attempted from
 Slackware 14.0 and Slackware 14.1.
 
 Root privileges are required to run **sboinstall** unless passing
-**\--dry-run**. If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, or if invalid options are specified, the
-script exits with a diagnostic message.
+**\--dry-run** or **\--template-only**. If an invalid configuration is
+detected in */etc/sbotools/sbotools.conf*, or if invalid options are
+specified, the script exits with a diagnostic message.
 
 ## OPTIONS
 
@@ -162,8 +162,7 @@ build queue also includes any missing dependencies for those scripts.
 With **\--compat32**, rebuild only installed *compat32* reverse
 dependencies.
 
-Incompatible with **\--norequirements**, **\--use-template** and
-**\--mass-rebuild**.
+Incompatible with **\--use-template** and **\--mass-rebuild**.
 
 **-r\|\--nointeractive**
 
@@ -186,7 +185,12 @@ Overriden by **\--batch**.
 Bypass dependency resolution, but still show *README* and the user
 prompts before proceeding with the build.
 
-Incompatible with **\--batch**.
+**-t\|\--template-only FILE**
+
+Save a template to FILE, but do not attempt downloads or builds.
+Non-root users may call **sboinstall** with **\--template-only**.
+
+Incompatible with **\--create-template**.
 
 **\--reinstall**
 
@@ -260,8 +264,7 @@ scripts is not advised. Consider running **sboinstall** with
 **\--dry-run** first, which prints the **\--batch** build queue and
 exits, to verify the upcoming operation.
 
-Incompatible with **\--norequirements** and overrides
-**\--nointeractive**.
+Overrides **\--nointeractive**.
 
 **-h\|\--help**
 
@@ -278,6 +281,14 @@ Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors
 **\--nocolor**
 
 Turn off **sbotools** color output.
+
+**\--wrap**
+
+Turn on **sbotools** word wrapping (default).
+
+**\--nowrap**
+
+Turn off **sbotools** word wrapping.
 
 ## VARIABLES
 
@@ -368,8 +379,8 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md),
-[sbotools.hints(5)](sbotools.hints.5.md), gpg(1), setarch(1)
+[sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
+[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1), setarch(1)
 
 ## AUTHORS
 

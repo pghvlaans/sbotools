@@ -20,13 +20,13 @@
 
     sboclean [-h|-v]
 
-    sboclean [-dwi] [-o ALL|package]
+    sboclean [-dwi] [-o ALL|package \...]
 
-    sboclean [--color|--nocolor] \...
+    sboclean [--color|--nocolor] [--wrap|--nowrap] \...
 
 ## DESCRIPTION
 
-**sboclean** is used to clean files left by **sbotools**, including:
+**sboclean** removes files left by **sbotools**, including:
 
 • saved build options in */var/log/sbotools*
 
@@ -85,6 +85,14 @@ Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors
 
 Turn off **sbotools** color output.
 
+**\--wrap**
+
+Turn on **sbotools** word wrapping (default).
+
+**\--nowrap**
+
+Turn off **sbotools** word wrapping.
+
 ## EXIT CODES
 
 **sboclean** can exit with the following codes:
@@ -103,8 +111,8 @@ None known. If found, Issues and Pull Requests to
 ## SEE ALSO
 
 [sbocheck(1)](sbocheck.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md),
-[sbotools.hints(5)](sbotools.hints.5.md)
+[sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
+[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 
