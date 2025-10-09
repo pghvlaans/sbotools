@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '4.0_RC';
+our $VERSION = '4.0';
 
 use SBO::Lib::Util qw/ :config :const :times :colors prompt error_code script_error get_sbo_from_loc check_multilib on_blacklist open_fh open_read uniq save_options wrapsay in in_regexp $userland_32 /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
