@@ -30,22 +30,25 @@ our %EXPORT_TAGS = (
   all => \@EXPORT_OK,
 );
 
-our @help_batch = ('Batch Mode - Help',
+our @help_batch = ('Installation - Help',
 
-'Running an installation or upgrade in batch mode applies any saved build
+'Building queues can be done in either Batch or Interactive mode.
+
+Running an installation or upgrade in Batch mode applies any saved build
 options automatically and adds all needed items to the build queue
 without prompting. The dry run is also displayed on the last
-confimation screen if "Yes" is selected; reading it before starting a
+confimation screen if "Batch" is selected; reading it before starting a
 batch operation is adivsed.
 
-Selecting "No" installs or upgrades the SlackBuilds interactively. The
-user is prompted for the following at the command line:
+Selecting "Interactive" installs or upgrades the SlackBuilds
+interactively. The user is prompted for the following at the command
+line:
 
   * Adding items to the build queue
   * Applying saved build options or adding new ones (if applicable)
   * Adding missing users and groups
 
-Packages without the "_SBo" tag are skipped automatically in batch mode;
+Packages without the "_SBo" tag are skipped automatically in Batch mode;
 to deal with such packages, use "Replace" from the "Operations" screen
 or run interactively.
 

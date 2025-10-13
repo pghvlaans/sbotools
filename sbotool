@@ -1544,10 +1544,10 @@ sub run_command {
 		unlink $command_output;
 		system("$dry_run_cmd > $command_output");
 		chomp($dry_run_output = slurp $command_output);
-		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $dry_run_output, "$cmd\n\nUse batch mode?\n\nDry Run:\n");
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yesno \"$cmd\n\nUse batch mode?\n\nDry Run:\n$dry_run_output\" $height $width", @help_batch);
-		$batch_res = $res == $code_dialog_ok;
-		$cmd = $batch_cmd if $batch_res;
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide_cond", $dry_run_output, "$cmd\n\nUse batch mode?\n\nUse interactive mode?\n\nDry Run:\n");
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yes-label \"Batch\" --extra-button --extra-label \"Interactive\" --no-label \"Back\" --title \"Building the Queue\" --yesno \"$cmd\n\nSelect \"Interactive\" to approve the queue manually.\n\nSelect \"Batch\" to build the queue automatically.\n\nDry Run:\n$dry_run_output\" $height $width", @help_batch);
+		return if $res == $code_dialog_cancel or $res == $code_dialog_error;
+		$cmd = $batch_cmd if $res == $code_dialog_ok;
 	}
 	if ($cmd =~ /sboclean/ and $cmd =~ /(-d|-w|-o ALL)/) {
 		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "$cmd\n\nAsk to delete");
