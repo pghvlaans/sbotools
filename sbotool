@@ -1547,22 +1547,23 @@ sub run_command {
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide_cond", $dry_run_output, "$cmd\n\nUse batch mode?\n\nUse interactive mode?\n\nDry Run:\n");
 		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yes-label \"Batch\" --extra-button --extra-label \"Interactive\" --no-label \"Back\" --title \"Building the Queue\" --yesno \"$cmd\n\nSelect \"Interactive\" to approve the queue manually.\n\nSelect \"Batch\" to build the queue automatically.\n\nDry Run:\n$dry_run_output\" $height $width", @help_batch);
 		return if $res == $code_dialog_cancel or $res == $code_dialog_error;
-		$cmd = $batch_cmd if $res == $code_dialog_ok;
+		if ($res == $code_dialog_ok) { $cmd = $batch_cmd; $batch_res = 1; }
 	}
 	if ($cmd =~ /sboclean/ and $cmd =~ /(-d|-w|-o ALL)/) {
 		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "$cmd\n\nAsk to delete");
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --yesno \"$cmd\n\nAsk to delete files interactively?\" $height $width");
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Clean sbotools Files\" --yesno \"$cmd\n\nAsk to delete files interactively?\" $height $width");
 		$cmd .= " -i" if $res == $code_dialog_ok;
 	}
 	if ($cmd =~ /sboremove/) {
 		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "$cmd\n\nProceed");
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yesno \"$cmd\n\nProceed?\" $height $width", @help_sboremove);
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Interactive Package Removal\" --help-button --yesno \"$cmd\n\nProceed?\" $height $width", @help_sboremove);
 	} elsif (defined $dry_run_output and $batch_res) {
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $dry_run_output, "Proceed?\n\n$cmd\n\nDry Run:\n");
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --yesno \"$cmd\n\nProceed?\n\nDry Run:\n$dry_run_output\" $height $width");
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Final Confirmation\" --yesno \"$cmd\n\nProceed?\n\nDry Run:\n$dry_run_output\" $height $width");
 	} else {
+		my $title = ($cmd =~ /sboclean/ and not $cmd =~ /-i/) ? "Final Confirmation" : "Confirmation";
 		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "$cmd\n\nProceed");
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --yesno \"$cmd\n\nProceed?\" $height $width");
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"$title\" --yesno \"$cmd\n\nProceed?\" $height $width");
 	}
 	return unless $res == $code_dialog_ok;
 	system("clear");
