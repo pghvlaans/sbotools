@@ -417,7 +417,8 @@ our @help_solibs = ('Shared Object Checks - Help',
 
 'Root and non-root users can perform per-package checks for missing
 shared object dependencies (often called "solibs"). A log is saved to
-"/var/log/sbocheck-so-check.log" if running as root.
+"/var/log/sbocheck-so-check.log" if running as root, or to "/tmp"
+otherwise.
 
 If a package is missing a first-order solib dependency, the package
 name, missing library or libraries and affected files are logged like

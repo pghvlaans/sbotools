@@ -25,6 +25,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbotool: Clarified the batch installation prompt.
     * Thanks to SCerovec for the feedback.
   * sbotool: Titles for command confirmation windows.
+  * sbocheck: Write a log to /tmp for non-root shared object checks.
 
 #### 4.0 - 2025-10-09
   * sbofind, sboremove: Display the short description, if available

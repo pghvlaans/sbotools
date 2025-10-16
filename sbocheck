@@ -92,7 +92,7 @@ if ($obsolete_check) {
 update_tree() unless $nopull or $socheck or $pkg_check or $full_check;
 if ((($nopull or $socheck) and slackbuilds_or_fetch()) or $pkg_check or $full_check) {
 	wrapsay_color $color_notice, "Not updating the SlackBuilds tree...";
-	wrapsay_color $color_notice, "Not writing log files..." unless $< == 0;
+	wrapsay_color $color_notice, "Not writing log files..." unless $< == 0 or $socheck or $pkg_check or $full_check;
 }
 get_all_available();
 
@@ -291,15 +291,16 @@ sub print_output {
 	my $logfile = shift;
 	my @listing = @_;
 	my $message = "";
+	my $non_root_write = ($logfile eq '/tmp/sbocheck-solibs.log' and (-w '/tmp' and (-w $logfile or not -f $logfile)));
 	if($logfile eq '/var/log/sbocheck.log') {
 		if ($config{CLASSIC} ne "TRUE") { $message="\tNo version updates available."; }
 		else { $message="\nNo version updates available.\n"; }
 	}
 	if($logfile eq '/var/log/sbocheck-bumps.log') { $message="\tNo build numbers differ."; }
 	if($logfile eq '/var/log/sbocheck-out-of-tree.log') { $message="\tNo out-of-tree _SBo builds."; }
-	if($logfile eq '/var/log/sbocheck-solibs.log') { $message="\tNo missing shared objects."; }
+	if($logfile eq '/var/log/sbocheck-solibs.log' or $logfile eq '/tmp/sbocheck-solibs.log') { $message="\tNo missing shared objects."; }
 	if (@listing) {
-		if ($config{CLASSIC} ne "TRUE" and $< == 0) { print_color $color_notice; print "\tSee $logfile.\n\n"; print_color $color_default; }
+		if ($config{CLASSIC} ne "TRUE" and ($< == 0 or $non_root_write)) { print_color $color_notice; print "\tSee $logfile.\n\n"; print_color $color_default; }
 		else { print "\n\n"; }
 		if ($config{SO_CHECK} eq "TRUE" or $socheck or $pkg_check) {
 			for my $listing (@listing) {
@@ -307,9 +308,9 @@ sub print_output {
 				$print_line =~ s/\:$//;
 				say $print_line;
 			}
-			if ($logfile eq '/var/log/sbocheck-solibs.log') {
+			if ($logfile eq '/var/log/sbocheck-solibs.log' or $logfile eq '/tmp/sbocheck-solibs.log') {
 				wrapsay_color $color_lesser, "\nBinary repackages generally do not require rebuilds.";
-				wrapsay "Run as root and see $logfile for a breakdown of missing shared objects." if $< != 0;
+				wrapsay_color $color_lesser, "Run as root and see /var/log/sbocheck-solibs.log for a breakdown of missing shared objects." if $< != 0 and not $non_root_write;
 			} else {
 				print "\n";
 			}
@@ -318,7 +319,7 @@ sub print_output {
 			print "\n" unless $logfile eq '/var/log/sbocheck-out-of-tree.log';
 		}
 		# root can save a log of available updates
-		if ($< == 0) {
+		if ($< == 0 or $non_root_write) {
 			unlink $logfile if -f $logfile;
 			my ($log_fh, $exit) = open_fh($logfile, '>');
 			# non-fatal
@@ -348,7 +349,8 @@ unless ($socheck or $pkg_check or $full_check) {
 }
 if ($socheck or $config{SO_CHECK} eq "TRUE" or $pkg_check or $full_check) {
 	my @to_rebuild = evaluate_solibs();
-	print_output('/var/log/sbocheck-solibs.log', @to_rebuild);
+	my $check_log = $< == 0 ? '/var/log/sbocheck-solibs.log' : '/tmp/sbocheck-solibs.log';
+	print_output($check_log, @to_rebuild);
 }
 wrapsay "\nWarning: Local overrides directory $config{LOCAL_OVERRIDES} does not exist." if $config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES};
 

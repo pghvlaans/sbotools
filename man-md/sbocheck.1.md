@@ -54,7 +54,8 @@ Upgrades to Slackware and third-party packages occasionally cause
 breakage due to **\*.so** version differences. To check for missing
 first-order shared object (solib) dependencies among all installed
 in-tree *\_SBo* packages, use the **\--so-check** option. Each affected
-package is logged to */var/log/sbocheck-solibs.log* with a list of
+package is logged to */var/log/sbocheck-solibs.log* if running as root,
+or */tmp/sbocheck-solibs.log* otherwise. This log contains a list of
 missing shared objects and the files that have first-order dependencies
 on them. This can be done automatically on every **sbocheck** run by
 setting **SO_CHECK** to **TRUE**. Please note that scripts repackaging

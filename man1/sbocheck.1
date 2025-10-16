@@ -113,8 +113,11 @@ packages, use the
 option. Each affected package is logged to
 .I
 /var/log/sbocheck-solibs.log
-with a list of missing shared objects and the files that have first-order dependencies
-on them. This can be done automatically on every
+if running as root, or
+.I
+/tmp/sbocheck-solibs.log
+otherwise. This log contains a list of missing shared objects and the files that have
+first-order dependencies on them. This can be done automatically on every
 .B
 sbocheck
 run
