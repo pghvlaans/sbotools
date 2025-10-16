@@ -17,6 +17,7 @@ use File::Find;
 use File::Path qw/ remove_tree /;
 use File::Temp qw/ tempdir /;
 use Getopt::Long qw/ :config no_ignore_case_always /;
+use Time::HiRes qw/ time /;
 
 my $self = basename $0;
 $is_sbotool = 1;
@@ -66,9 +67,9 @@ $editor = $ENV{VISUAL} unless $editor;
 # That's the only reason.
 $editor = "vi" unless $editor;
 
-my (@available, $available, $all_fulldeps, @installed, $inst_pkgs, $inst_vers, %inst_names, $inst_vers_std, %inst_names_std, $fulldeps, @installed_std, $updates, @update_names, @overrides);
+my (@available, $available, $all_fulldeps, @installed, $inst_pkgs, $inst_vers, %inst_names, $inst_pkgs_std, $inst_vers_std, %inst_names_std, $fulldeps, @installed_std, $updates, @update_names, @overrides);
 
-my (@install_list, @template_list, @upgrade_list, @remove_list);
+my (@install_list, @template_list, @upgrade_list, @remove_list, @solibs_missing);
 
 # Finding as much of this stuff as possible at the start
 # gets the cache going a little and makes navigation snappier
@@ -84,6 +85,7 @@ if (-s $slackbuilds_txt) {
 	$inst_names{$_->{name}} = $_ for @installed;
 	$fulldeps = get_reverse_reqs($inst_pkgs);
 	@installed_std = @{ get_installed_packages('STD') };
+	$inst_pkgs_std = +{ map {; $_->{name}, $_->{pkg} } @installed_std };
 	$inst_names_std{$_->{name}} = $_ for @installed_std;
 	$inst_vers_std = +{ map {; $_->{name}, $_->{version} } @installed_std };
 	$updates = $config{BUILD_IGNORE} eq "TRUE" ? get_available_updates("VERS") : get_available_updates("BOTH");
@@ -508,9 +510,11 @@ sub build_operations {
 	if ($option eq "RevDep (installed)") { display_builds("$sbo: Installed Reverse Dependencies", @installed_reverse); }
 
 	if ($option eq "Shared Objects") {
-		unless (solib_check($inst_pkgs->{$sbo})) {
+		my $solib_check_pkg = $inst_names{$sbo} ? $inst_pkgs->{$sbo} : $inst_pkgs_std->{$sbo};
+		unless (solib_check($solib_check_pkg)) {
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Missing\n\n$old_libs{$inst_pkgs->{$sbo}}");
 			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --no-collapse --title \"$sbo: Shared Object Check\" --msgbox \"Missing shared objects found for $sbo:\n\n$old_libs{$inst_pkgs->{$sbo}}\" $height $width");
+			push @solibs_missing, $sbo unless in $sbo, @solibs_missing;
 		} else {
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "NoMissing");
 			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --title \"$sbo: Shared Object Check\" --msgbox \"$sbo has no missing shared object dependencies.\" $height $width");
@@ -792,6 +796,7 @@ sub display_main {
 	}
 	push @main_menu, "\"List Operations\" \"Act on the $list_string list.\" \\" if $list_string;
 	push @main_menu, "\"Hints\" \"View per-script hints.\" \\" if $listings[0] ne "NULL";
+	push @main_menu, "\"Missing Solibs\" \"Packages with known-missing solibs.\" \\" if @solibs_missing;
 	push @main_menu, "\"Shared Objects\" \"Check for missing solib dependencies.\" \\",
 					"\"Man Pages\" \"Read sbotools-related man pages.\" \\";
 	if (-s $slackbuilds_txt) {
@@ -908,9 +913,12 @@ sub display_main {
 			display_main() if $res == $code_dialog_cancel or $res == $code_dialog_error;
 			my $so_option = $output;
 			if ($option =~ /\w/) {
+				my $log_file = $< == 0 ? '/var/log/sbocheck-solibs.log' : '/tmp/sbocheck-solibs.log';
+				my $command_time = time();
 				system("clear");
 				system("/usr/sbin/sbocheck -X") if $so_option eq "All SBo";
 				system("/usr/sbin/sbocheck -C") if $so_option eq "All Installed";
+				parse_solib_log($log_file, $command_time);
 				prompt $color_notice, "Press ENTER to continue.";
 			}
 		} else { # All-package checks can be done in all cases.
@@ -933,6 +941,7 @@ sub display_main {
 	if ($option eq "Installed") { display_builds("Installed SBo SlackBuilds", keys %inst_names); }
 	if ($option eq "List Operations") { display_user_lists(); }
 	if ($option eq "Man Pages") { display_man_pages(); }
+	if ($option eq "Missing Solibs") { display_builds("SlackBuilds with Known Missing Solib Dependencies", @solibs_missing); }
 	if ($option eq "Overrides") { display_builds("SlackBuilds in Local Overrides", @overrides); }
 	if ($option eq "Package Search") { run_search(); }
 	if ($option eq "Rebuilds") { display_rebuild_menu(); }
@@ -1516,6 +1525,7 @@ sub new_package_information {
 	@installed_std = @{ get_installed_packages('STD') };
 	for (@available) { push @overrides, $_ if is_local($_); }
 	$inst_pkgs = +{ map {; $_->{name}, $_->{pkg} } @installed };
+	$inst_pkgs_std = +{ map {; $_->{name}, $_->{pkg} } @installed_std };
 	$inst_vers = +{ map {; $_->{name}, $_->{version} } @installed };
 	$inst_names{$_->{name}} = $_ for @installed;
 	$inst_names_std{$_->{name}} = $_ for @installed_std;
@@ -1528,6 +1538,41 @@ sub new_package_information {
 	@install_list = grep { !$inst_names{$_} && ! on_blacklist($_) } @install_list;
 	@upgrade_list = grep { in $_, @update_names } @upgrade_list;
 	@remove_list = grep { $inst_names{$_} && ! on_blacklist($_) } @remove_list;
+
+	my @new_solibs_missing;
+	for (@solibs_missing) {
+		next unless $inst_names{$_} or $inst_names_std{$_};
+		my $solib_check_pkg = $inst_names{$_} ? $inst_pkgs->{$_} : $inst_pkgs_std->{$_};
+		push @new_solibs_missing, $_ unless solib_check($solib_check_pkg);
+	}
+	splice @solibs_missing;
+	if (@new_solibs_missing) {
+		@new_solibs_missing = uniq @new_solibs_missing;
+		@solibs_missing = @new_solibs_missing;
+	}
+}
+
+# Parse sbocheck solib log files and add relevant packages
+# to the @solibs_missing array.
+sub parse_solib_log {
+	script_error("parse_solib_log requires two arguments.") unless @_ == 2;
+	my ($logfile, $command_time) = @_;
+	return unless -s $logfile;
+	return unless (stat $logfile)[10] > $command_time;
+	update_known_solibs();
+	chomp(my $log = slurp $logfile);
+	my @log = split "\n", $log;
+	for (@log) {
+		next unless $_ =~ /^\w/;
+		my $pkg_name = (split " ", $_)[0];
+		next unless get_sbo_location($pkg_name);
+		unless (in $pkg_name, @solibs_missing) {
+			next unless $inst_names{$pkg_name} or $inst_names_std{$pkg_name};
+			my $solib_check_pkg = $inst_names{$pkg_name} ? $inst_pkgs->{$pkg_name} : $inst_pkgs_std->{$pkg_name};
+			push @solibs_missing, $pkg_name unless solib_check($solib_check_pkg);
+		}
+	}
+	return;
 }
 
 # A wrapper for running commands requiring user input;
@@ -1566,8 +1611,10 @@ sub run_command {
 		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"$title\" --yesno \"$cmd\n\nProceed?\" $height $width");
 	}
 	return unless $res == $code_dialog_ok;
+	my $command_time = time();
 	system("clear");
 	system($cmd);
+	parse_solib_log("/var/log/sboupgrade-solibs.log", $command_time) if $cmd =~ /sboupgrade/;
 	unless ($cmd =~ /sboclean/) {
 		new_package_information();
 		prompt $color_notice, "Press ENTER to continue.";

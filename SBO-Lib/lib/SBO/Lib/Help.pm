@@ -198,6 +198,10 @@ effective operations. The following options can appear in Main Menu:
     View sbotools-related man pages. They cover the individual tools
     and configuration files.
 
+* Missing Solibs
+    View, search and select SlackBuilds that have been found to have
+    missing first-order shared object dependencies.
+
 * Overrides
     View, search and select SlackBuilds in the local overrides
     directory. The LOCAL_OVERRIDES setting determines the location of
@@ -222,7 +226,8 @@ effective operations. The following options can appear in Main Menu:
 
 * Shared Objects
     Perform a shared object dependency check on all _SBo packages or all
-    installed packages.
+    installed packages. SlackBuilds with missing dependencies can be
+    selected from "Missing Solibs" afterwards.
 
 * Upgradable
     View, search and select from a list of upgradable SlackBuilds.
