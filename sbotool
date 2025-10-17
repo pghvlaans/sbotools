@@ -640,6 +640,7 @@ sub display_builds {
 		$description = "(No Description)" unless defined $description;
 		$description =~ s/"/'/g;
 		$description = is_local($sbo) ? "(LOCAL) $description" : $description unless $label =~ /Overrides/;
+		$description = $inst_names_std{$sbo} ? "(NON-SBO) $description" : $description;
 		if (in $sbo, @update_names) {
 			my $sbo_version = get_from_info(LOCATION => get_sbo_location($sbo), GET => 'VERSION')->[0];
 			my $upgrade_description = $inst_vers->{$sbo} eq $sbo_version ? "(build bump)" : "($inst_vers->{$sbo} > $sbo_version)";
@@ -799,6 +800,7 @@ sub display_main {
 	push @main_menu, "\"Missing Solibs\" \"Packages with known-missing solibs.\" \\" if @solibs_missing;
 	push @main_menu, "\"Shared Objects\" \"Check for missing solib dependencies.\" \\",
 					"\"Man Pages\" \"Read sbotools-related man pages.\" \\";
+	my @for_installed_list;
 	if (-s $slackbuilds_txt) {
 		push @main_menu, "\"Browse Repository\" \"View scripts by series.\" \\";
 		if (-s "$config{SBO_HOME}/repo/TAGS.txt") {
@@ -806,8 +808,12 @@ sub display_main {
 		} else {
 			push @main_menu, "\"Package Search\" \"Search by name and description.\" \\";
 		}
+		@for_installed_list = keys %inst_names if keys %inst_names;
+		for (keys %inst_names_std) {
+			push @for_installed_list, $_ if get_sbo_location($_);
+		}
 		push @main_menu, "\"Installed\" \"List installed SBo packages.\" \\",
-						"\"Rebuilds\" \"Mass and per-series rebuilds.\" \\" if keys %inst_names;
+						"\"Rebuilds\" \"Mass and per-series rebuilds.\" \\" if @for_installed_list;
 		push @main_menu, "\"Upgradable\" \"Upgrades are available.\" \\" if @update_names;
 		push @main_menu, "\"Overrides\" \"View scripts in local overrides.\" \\" if @overrides;
 		if (@update_names) {
@@ -938,7 +944,7 @@ sub display_main {
 
 	if ($option eq "Browse Repository") { display_series(); }
 	if ($option eq "Clean sbotools Files") { display_clean_menu(); }
-	if ($option eq "Installed") { display_builds("Installed SBo SlackBuilds", keys %inst_names); }
+	if ($option eq "Installed") { display_builds("Installed SBo SlackBuilds", @for_installed_list); }
 	if ($option eq "List Operations") { display_user_lists(); }
 	if ($option eq "Man Pages") { display_man_pages(); }
 	if ($option eq "Missing Solibs") { display_builds("SlackBuilds with Known Missing Solib Dependencies", @solibs_missing); }

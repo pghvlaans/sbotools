@@ -185,8 +185,9 @@ effective operations. The following options can appear in Main Menu:
     hints for a SlackBuild by navigating to its "Operations" menu.
 
 * Installed
-    View, search and select in-tree SlackBuilds installed with the
-    "_SBo" or "_SBocompat32" tags.
+    View, search and select installed in-tree SlackBuilds. Such
+    packages installed without the "_SBo" or "_SBocompat32" tag are
+    marked with "(NON-SBO)".
 
 * List Operations
     SlackBuilds can be added to the Install, Upgrade, Remove and

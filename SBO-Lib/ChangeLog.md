@@ -6,6 +6,7 @@
   * sbotool: Titles for command confirmation windows.
   * sbocheck: Write a log to /tmp for non-root shared object checks.
   * sbotool: Added a script selection menu for SlackBuilds with missing solib dependencies.
+  * sbotool: List and mark non-SBo installations in the "Installed" menu.
 
 #### 4.0 - 2025-10-09
   * sbofind, sboremove: Display the short description, if available
