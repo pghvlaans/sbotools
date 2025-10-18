@@ -10,4 +10,4 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 ## Prospective Features
 
-Nothing else for now, but requests will be considered.
+* Detect needed Python rebuilds with `sbocheck`

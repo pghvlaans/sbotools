@@ -21,6 +21,7 @@ Nonetheless, this repository was originally a simple fork adding a feature: Savi
 ## What's New, Compared to Version 2.7?
 **sbotools** is Slackware 15.0-compatible. While [ChangeLog](/sbotools/ChangeLog/) has a more complete list of changes, here are some of the highlights:
 
+* Run `sbotool` for a dialog-based interface
 * Blacklist and request optional dependencies with `sbotools.hints` and/or `sbohints`
 * Use a customizable git branch to clone the local repository
 * New git-based default URLs, with the option to use default rsync URLs instead
