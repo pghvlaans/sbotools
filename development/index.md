@@ -10,4 +10,8 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 ## Prospective Features
 
-* Detect needed Python rebuilds with `sbocheck`
+* Give the option to access the sbotool Settings menu with bare sboconfig.
+
+## Incoming
+
+* perl, python and ruby compatibility checks for installed packages.

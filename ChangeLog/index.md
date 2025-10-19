@@ -1,11 +1,14 @@
 # ChangeLog
 * Post-Release
-  * *sbotool*: Clarified the batch installation prompt.
+  * *sbotool*: Clarified the batch installation prompt
     * Thanks to SCerovec for the feedback.
-  * *sbotool*: Titles for command confirmation windows.
-  * *sbocheck*: Write a log to */tmp* for non-root shared object checks.
-  * *sbotool*: Added a script selection menu for SlackBuilds with missing solib dependencies.
-  * *sbotool*: List and mark non-SBo installations in the "Installed" menu.
+  * *sbotool*: Titles for command confirmation windows
+  * *sbocheck*: Write a log to */tmp* for non-root shared object checks
+  * *sbotool*: Added a script selection menu for SlackBuilds with missing solib dependencies
+  * *sbotool*: List and mark non-SBo installations in the "Installed" menu
+  * *sbocheck*: Use **\--perl**, **\--python** and/or **\--ruby** to check compatibility for all SBO packages
+    * Thanks to fourtysixandtwo for the suggestion.
+  * *sbotool*: Incorporate the perl, python and ruby checks
 
 * 4.0 - 2025-10-09
   * *sbofind*, *sboremove*: Display the short description, if available
