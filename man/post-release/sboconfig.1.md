@@ -33,9 +33,9 @@
 ## DESCRIPTION
 
 **sboconfig** is a front-end for managing **sbotools** configuration
-options. Using **sboconfig** without any flags starts an interactive
-menu to specify settings; all options are accompanied by an explanatory
-message, and no changes are applied without user confirmation.
+options. Using **sboconfig** without any flags enters the **Settings**
+menu within **sbotool**, provided that **dialog(1)** is installed. If
+running as root, settings changes can be done from here.
 
 The [sbotools.conf(5)](sbotools.conf.5.md) file can also be manually edited; any fields
 not relevant to **sbotools** configuration are ignored. To use a
@@ -254,6 +254,8 @@ Defaults to */usr/sbotest/tests*.
 
 Defaults to */usr/sbotest*.
 
+Running **sbotest config** without options is ineffective.
+
 ## EXIT CODES
 
 **sboconfig** can exit with the following codes:
@@ -273,7 +275,7 @@ None known. If found, Issues and Pull Requests to
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md),
 [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotool(1)](sbotool.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
-[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), dialog(1) gpg(1)
+[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), dialog(1), gpg(1)
 
 ## AUTHORS
 

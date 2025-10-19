@@ -20,7 +20,7 @@
 
     sbotool [-h|-v]
 
-    sbotool [-d FILE]
+    sbotool [-d FILE] [--config]
 
 ## DESCRIPTION
 
@@ -99,6 +99,11 @@ to generate a default *dialogrc* to modify. The **\--dialogrc** option
 can also specify a file at runtime.
 
 ## OPTIONS
+
+**\--config**
+
+Enter the **Settings** menu directly. **sboconfig** calls **sbotool**
+with this option when run without flags.
 
 **-d\|\--dialogrc (FILE)**
 

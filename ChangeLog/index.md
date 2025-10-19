@@ -9,6 +9,8 @@
   * *sbocheck*: Use **\--perl**, **\--python** and/or **\--ruby** to check compatibility for all SBO packages
     * Thanks to fourtysixandtwo for the suggestion.
   * *sbotool*: Incorporate the perl, python and ruby checks
+  * *sboconfig*: Replace the interactive questionnaire with the *sbotool* "Settings" menu
+    * Thanks to SCerovec for the suggestion.
 
 * 4.0 - 2025-10-09
   * *sbofind*, *sboremove*: Display the short description, if available
