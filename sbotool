@@ -880,10 +880,14 @@ sub display_main {
 	display_main() unless $option;
 
 	if ($option eq "Fetch Repository") {
+		my $fetch_time = time();
 		system("clear");
 		my $fetch_res = system("/usr/sbin/sbocheck") == 0;
 		clear_info_store();
-		new_package_information() if $fetch_res;
+		if ($fetch_res) {
+			new_package_information();
+			parse_solib_log("/var/log/sbocheck-solibs.log", $fetch_time);
+		}
 		prompt $color_notice, "Press ENTER to continue.";
 	}
 
