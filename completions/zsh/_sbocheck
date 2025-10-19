@@ -11,6 +11,9 @@ _arguments \
     '(-)'{-O,--obsolete-check}'[In -current, download the obsolete scripts list.]:' \
     '(-)'{-n,--nopull}'[Check for updates without updating the tree.]:' \
     '(-)'{-X,--so-check}'[Check all _SBo packages for missing shared objects only.]:' \
+    '(-)'{--perl}'[Check all _SB packages for perl compatibility.]:'\
+    '(-)'{--python}'[Check all _SB packages for python compatibility.]:'\
+    '(-)'{--ruby}'[Check all _SB packages for ruby compatibility.]:'\
     '(-)'{--nocolor}'[Disable sbotools color output.]:'\
     '(-)'{--color}'[Enable sbotools color output.]:'\
     '(-)'{--nowrap}'[Disable sbotools word wrapping.]:'\

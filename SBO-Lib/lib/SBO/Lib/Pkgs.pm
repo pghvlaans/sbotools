@@ -24,6 +24,8 @@ our @EXPORT_OK = qw{
   get_installed_packages
   get_local_outdated_versions
   get_removed_builds
+
+  $perl_inst
 };
 
 our %EXPORT_TAGS = (
@@ -31,6 +33,7 @@ our %EXPORT_TAGS = (
 );
 
 my ($all_pkgs, $std_pkgs, $sbo_pkgs, $dirty_pkgs);
+our $perl_inst;
 
 =pod
 
@@ -45,6 +48,17 @@ SBO::Lib::Pkgs - Routines for interacting with the Slackware package database.
   use SBO::Lib::Pkgs qw/ get_installed_packages /;
 
   my @installed_sbos = get_installed_packages('SBO');
+
+=head1 VARIABLES
+
+=cut
+
+=head2 $perl_inst
+
+This exported variable gives the installation time of the system C<perl> package.
+It is populated when calling C<get_installed_packages()> for the first time.
+
+=cut
 
 =head1 SUBROUTINES
 
@@ -217,6 +231,8 @@ sub get_installed_packages {
     my $numbuild = $build;
     $numbuild =~ s/_SBo(|compat32)$//g ;
     my $created = strftime "%F, %H:%M:%S", localtime((stat "$pkg_db/$pkg")[10]);
+    # Get the installation time for the perl package here
+    $perl_inst = (stat "$pkg_db/$pkg")[10] if $name eq "perl";
     push @pkgs, { name => $name, version => $version, build => $build, numbuild => $numbuild, pkg => $pkg, created => $created };
     $types{$name} = 'STD';
   }

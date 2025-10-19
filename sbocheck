@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree build_cmp get_all_available get_available_updates get_installed_packages get_removed_builds get_obsolete script_error open_fh in is_local is_obsolete show_version get_local_outdated_versions on_blacklist open_read solib_check $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors %old_libs %config /;
+use SBO::Lib qw/ update_tree build_cmp get_all_available get_available_updates get_installed_packages get_removed_builds get_obsolete script_error open_fh in is_local is_obsolete show_version get_local_outdated_versions on_blacklist open_read series_check solib_check $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors %old_libs %config /;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 use File::Basename;
 use List::Util 'max';
@@ -47,28 +47,35 @@ Options:
     run without updating the tree.
   -X|--so-check:
     check for missing shared objects only, all SBO packages.
+  --perl:
+    check all SBo packages for perl incompatibility.
+  --python:
+    check all SBo packages for python incompatibility.
+  --ruby
+    check all SBo packages for ruby incompatibility.
 EOF
 	return 1;
 }
 
-my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $pkg_check, $full_check, $nowrap, $wrap);
+my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $pkg_check, $full_check, $nowrap, $wrap, $perl, $python, $ruby);
 
-GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'nowrap' => \$nowrap, 'wrap' => \$wrap, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check);
+GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'nowrap' => \$nowrap, 'wrap' => \$wrap, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check, 'perl' => \$perl, 'python' => \$python, 'ruby' => \$ruby);
 
 if ($help) {
 	show_usage();
-	wrapsay "\nNon-root users can call $self with -C -c, -n, -X, -h and -v." unless $< == 0;
+	wrapsay "\nNon-root users can call $self with -C -c, -n, -X, --perl, --python, --ruby, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
 $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
 $config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $nowrap xor $wrap;
 if ($< != 0) { $config{GPG_VERIFY} = "FALSE"; }
-unless ($< == 0 or ($nopull and not $gpg) or $socheck or $pkg_check or $full_check) {
+unless ($< == 0 or ($nopull and not $gpg) or $socheck or $pkg_check or $full_check or $perl or $python or $ruby) {
 	show_usage();
-	usage_error "Non-root users can call $self with -C, -c, -n, -X, -h and -v." unless $< == 0;
+	usage_error "Non-root users can call $self with -C, -c, -n, -X, --perl, --python, --ruby, -h and -v." unless $< == 0;
 }
 
+usage_error "perl, python and ruby cannot be used until the repository has been fetched." if ($perl or $python or $ruby) and not -f $slackbuilds_txt;
 usage_error "obsolete-check is incompatible with nopull." if $nopull and $obsolete_check;
 usage_error "so-check, check-all-packages and check-package are incompatible with each other." if ($socheck and $pkg_check) or ($socheck and $full_check) or ($pkg_check and $full_check);
 usage_error "pkg-check requires a list of packages." if $pkg_check and not @ARGV;
@@ -89,12 +96,51 @@ if ($obsolete_check) {
 	exit 0;
 }
 
-update_tree() unless $nopull or $socheck or $pkg_check or $full_check;
-if ((($nopull or $socheck) and slackbuilds_or_fetch()) or $pkg_check or $full_check) {
+my $auto_series = ($config{SO_CHECK} eq "TRUE" and not ($perl or $ruby or $python));
+
+update_tree() unless $nopull or $socheck or $pkg_check or $full_check or $perl or $python or $ruby;
+if ((($nopull or $socheck) and slackbuilds_or_fetch()) or $pkg_check or $full_check or $perl or $python or $ruby) {
 	wrapsay_color $color_notice, "Not updating the SlackBuilds tree...";
-	wrapsay_color $color_notice, "Not writing log files..." unless $< == 0 or $socheck or $pkg_check or $full_check;
+	wrapsay_color $color_notice, "Not writing log files..." unless $< == 0 or $socheck or $pkg_check or $full_check or $perl or $python or $ruby or $auto_series;
 }
 get_all_available();
+
+my (@bad_perl, @bad_python, @bad_ruby);
+
+# check for and display packages that appear to be incompatible with
+# system perl, python or ruby
+sub evaluate_series {
+	script_error("evaluate_series requires --perl, --python or --ruby.") unless $perl or $python or $ruby or $auto_series;
+	my @installed = @{ get_installed_packages("SBO") };
+	my $installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @installed };
+	my $installed_vers = +{ map {; $_->{name}, $_->{version} } @installed };
+	my $pkg_count = @installed;
+	my @series_to_check;
+
+	if ($auto_series) {
+		push @series_to_check, "perl", "python", "ruby";
+	} else {
+		push @series_to_check, "perl" if $perl;
+		push @series_to_check, "python" if $python;
+		push @series_to_check, "ruby" if $ruby;
+	}
+
+	my $msg = "Checking SBo packages for system incompatibility...";
+	print "\n$msg";
+	my $count = 0;
+	return unless $pkg_count;
+	$| = 1;
+	for my $sbo (keys %$installed_pkg) {
+		$count++;
+		print "\r$msg ($count / $pkg_count)";
+		my @results = series_check($installed_pkg->{$sbo}, @series_to_check);
+		push @bad_perl, "$sbo $installed_vers->{$sbo}" unless $results[0];
+		push @bad_python, "$sbo $installed_vers->{$sbo}" unless $results[1];
+		push @bad_ruby, "$sbo $installed_vers->{$sbo}" unless $results[2];
+	}
+	$| = 0;
+	print "\n";
+}
 
 # check for and display missing shared objects
 sub evaluate_solibs {
@@ -291,29 +337,55 @@ sub print_output {
 	my $logfile = shift;
 	my @listing = @_;
 	my $message = "";
-	my $non_root_write = ($logfile eq '/tmp/sbocheck-solibs.log' and (-w '/tmp' and (-w $logfile or not -f $logfile)));
+	my $non_root_write = ($logfile =~ /^\/tmp\// and (-w '/tmp' and (-w $logfile or not -f $logfile)));
 	if($logfile eq '/var/log/sbocheck.log') {
 		if ($config{CLASSIC} ne "TRUE") { $message="\tNo version updates available."; }
 		else { $message="\nNo version updates available.\n"; }
 	}
 	if($logfile eq '/var/log/sbocheck-bumps.log') { $message="\tNo build numbers differ."; }
 	if($logfile eq '/var/log/sbocheck-out-of-tree.log') { $message="\tNo out-of-tree _SBo builds."; }
-	if($logfile eq '/var/log/sbocheck-solibs.log' or $logfile eq '/tmp/sbocheck-solibs.log') { $message="\tNo missing shared objects."; }
+	if($logfile =~ /solibs/) { $message="\tNo missing shared objects."; }
+	if($logfile =~ /perl/) {
+		print "Checked for perl incompatibility.";
+		$message="\tNo perl-incompatible packages.";
+	}
+	if($logfile =~ /python/) {
+		print "Checked for python incompatibility.";
+		$message="\tNo python-incompatible packages.";
+	}
+	if($logfile =~ /ruby/) {
+		print "Checked for ruby incompatibility.";
+		$message="\tNo ruby-incompatible packages.";
+	}
 	if (@listing) {
 		if ($config{CLASSIC} ne "TRUE" and ($< == 0 or $non_root_write)) { print_color $color_notice; print "\tSee $logfile.\n\n"; print_color $color_default; }
 		else { print "\n\n"; }
-		if ($config{SO_CHECK} eq "TRUE" or $socheck or $pkg_check) {
+		if ($logfile =~ /solibs/) {
 			for my $listing (@listing) {
 				my $print_line = (split "\n", $listing)[0];
 				$print_line =~ s/\:$//;
 				say $print_line;
 			}
-			if ($logfile eq '/var/log/sbocheck-solibs.log' or $logfile eq '/tmp/sbocheck-solibs.log') {
-				wrapsay_color $color_lesser, "\nBinary repackages generally do not require rebuilds.";
-				wrapsay_color $color_lesser, "Run as root and see /var/log/sbocheck-solibs.log for a breakdown of missing shared objects." if $< != 0 and not $non_root_write;
-			} else {
+			wrapsay_color $color_lesser, "\nBinary repackages generally do not require rebuilds.";
+			wrapsay_color $color_lesser, "Run as root and see /var/log/sbocheck-solibs.log for a breakdown of missing shared objects." if $< != 0 and not $non_root_write;
+		} elsif ($logfile =~ /perl/) {
+				wrapsay_color $color_lesser, "Built before system perl was installed:";
 				print "\n";
-			}
+				say $_ for @listing;
+				print "\n";
+				wrapsay_color $color_lesser, "Run as root and see /var/log/sbocheck-perl.log to save a log." if $< != 0 and not $non_root_write;
+		} elsif ($logfile =~ /python/) {
+				wrapsay_color $color_lesser, "Built against the wrong python major version:";
+				print "\n";
+				say $_ for @listing;
+				print "\n";
+				wrapsay_color $color_lesser, "Run as root and see /var/log/sbocheck-python.log to save a log." if $< != 0 and not $non_root_write;
+		} elsif ($logfile =~ /ruby/) {
+				wrapsay_color $color_lesser, "Built against the wrong ruby major version:";
+				print "\n";
+				say $_ for @listing;
+				print "\n";
+				wrapsay_color $color_lesser, "Run as root and see /var/log/sbocheck-ruby.log to save a log." if $< != 0 and not $non_root_write;
 		} else {
 			say $_ for @listing;
 			print "\n" unless $logfile eq '/var/log/sbocheck-out-of-tree.log';
@@ -337,7 +409,7 @@ sub print_output {
 	return 1;
 }
 
-unless ($socheck or $pkg_check or $full_check) {
+unless ($socheck or $pkg_check or $full_check or $perl or $python or $ruby) {
 	my @listing = get_update_list('VERS');
 	print_output('/var/log/sbocheck.log', @listing);
 	if ($config{CLASSIC} ne "TRUE") {
@@ -347,11 +419,19 @@ unless ($socheck or $pkg_check or $full_check) {
 		print_output('/var/log/sbocheck-out-of-tree.log', @removed);
 	}
 }
-if ($socheck or $config{SO_CHECK} eq "TRUE" or $pkg_check or $full_check) {
+if ($socheck or ($config{SO_CHECK} eq "TRUE" and not ($perl or $python or $ruby)) or $pkg_check or $full_check) {
 	my @to_rebuild = evaluate_solibs();
 	my $check_log = $< == 0 ? '/var/log/sbocheck-solibs.log' : '/tmp/sbocheck-solibs.log';
 	print_output($check_log, @to_rebuild);
 }
+if ($perl or $python or $ruby or $auto_series) {
+	evaluate_series();
+	my $check_log_prefix = $< == 0 ? '/var/log/sbocheck' : '/tmp/sbocheck';
+	print_output("$check_log_prefix-perl.log", @bad_perl) if $perl or $auto_series;
+	print_output("$check_log_prefix-python.log", @bad_python) if $python or $auto_series;
+	print_output("$check_log_prefix-ruby.log", @bad_ruby) if $ruby or $auto_series;
+}
+
 wrapsay "\nWarning: Local overrides directory $config{LOCAL_OVERRIDES} does not exist." if $config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES};
 
 END { say ""; }

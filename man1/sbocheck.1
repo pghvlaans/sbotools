@@ -11,7 +11,7 @@ tree and check for updates
 .P
 sbocheck [-h|-v]
 .P
-sbocheck [-COXgn]
+sbocheck [-COXgn] [--perl] [--python] [--ruby]
 .P
 sbocheck [-c] package [package]
 .P
@@ -300,6 +300,55 @@ tree. The
 .B
 --nopull
 flag can be used without root privileges, but no log is kept.
+.RE
+.P
+.B
+--perl
+.RS
+Check all installed
+.I
+_SBo
+packages for incompatible perl-based shared objects; that is, those built
+prior to the installation of the system
+.B
+perl
+package. Results are saved to
+.I
+sbocheck-perl.log\fR\
+\&.
+.RE
+.P
+.B
+--python
+.RS
+Check all installed
+.I
+_SBo
+packages for
+.I
+site-packages
+directories built against the wrong major version, e.g.
+.B
+python-3.12\fR\
+\&. Results are saved to
+.I
+sbocheck-python.log\fR\
+\&.
+.RE
+.P
+.B
+--ruby
+.RS
+Check all installed
+.I
+_SBo
+packages for gems built against the wrong major version, e.g.
+.B
+ruby-3.4.*\fR\
+\&. Results are saved to
+.I
+sbocheck-ruby.log\fR\
+\&.
 .RE
 .P
 .B

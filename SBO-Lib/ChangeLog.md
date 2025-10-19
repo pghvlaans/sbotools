@@ -1,12 +1,15 @@
 # sbotools
 
 #### Post-Release
-  * sbotool: Clarified the batch installation prompt.
+  * sbotool: Clarified the batch installation prompt
     * Thanks to SCerovec for the feedback.
-  * sbotool: Titles for command confirmation windows.
-  * sbocheck: Write a log to /tmp for non-root shared object checks.
-  * sbotool: Added a script selection menu for SlackBuilds with missing solib dependencies.
-  * sbotool: List and mark non-SBo installations in the "Installed" menu.
+  * sbotool: Titles for command confirmation windows
+  * sbocheck: Write a log to /tmp for non-root shared object checks
+  * sbotool: Added a script selection menu for SlackBuilds with missing solib dependencies
+  * sbotool: List and mark non-SBo installations in the "Installed" menu
+  * sbocheck: Use --perl, --python and/or --ruby to check compatibility for all SBO packages
+    * Thanks to fourtysixandtwo for the suggestion.
+  * sbotool: Incorporate the perl, python and ruby checks
 
 #### 4.0 - 2025-10-09
   * sbofind, sboremove: Display the short description, if available
@@ -14,7 +17,7 @@
   * All scripts except sboconfig: Use --wrap and --nowrap to turn word wrapping on and off
   * Added sbotool, a dialog-based front-end
   * Added a setting DIALOGRC to specify a dialogrc file for sbotool
-    * Thanks to SCerovec for the suggestion
+    * Thanks to SCerovec for the suggestion.
   * sboinstall: Added --template-only to create a template without building
   * sbofind: Add --raw (matches only) and --descriptions (also search descriptions)
   * Repo.pm: Always generate SLACKBUILDS.TXT on 14.0 and 14.1.

@@ -58,13 +58,13 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Solibs 3"
-.TH SBO::Lib::Solibs 3 "Boomtime, Bureaucracy 63, 3191 YOLD" "" "sbotools 4.0"
+.TH SBO::Lib::Solibs 3 "Boomtime, Bureaucracy 73, 3191 YOLD" "" "sbotools 4.0"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
 .nh
 .SH NAME
-SBO::Lib::Solibs \- Routines for evaluating ELF binaries
+SBO::Lib::Solibs \- Routines for evaluating ELF binaries and checking compatibility
 .SH SYNOPSIS
 .IX Header "SYNOPSIS"
 .Vb 1
@@ -122,6 +122,20 @@ shared object dependencies that do not exist on the system under an \f(CW\*(C`rp
 .PP
 \&\f(CWinstalled_solibs()\fR takes the name of a package file. It returns an array of
 shared object names that are installed as files or symlinks, or 0 if none exist.
+.SS series_check
+.IX Subsection "series_check"
+.Vb 1
+\&  my @series_good = series_check($pkg, @series);
+.Ve
+.PP
+\&\f(CWseries_check()\fR takes the name of a package file and an array with one or more checks
+to perform. Available checks include \f(CW\*(C`perl\*(C'\fR, \f(CW\*(C`python\*(C'\fR and \f(CW\*(C`ruby\*(C'\fR at this time. \f(CW\*(C`python\*(C'\fR
+and \f(CW\*(C`ruby\*(C'\fR are judged to be incompatible if files associated with the wrong major version
+(e.g. \f(CW\*(C`python\-3.12\*(C'\fR or \f(CW\*(C`ruby\-3.4*\*(C'\fR) are included. \f(CW\*(C`perl\*(C'\fR packages are flagged if any
+library in \f(CW\*(C`/usr/lib*/perl*\*(C'\fR was built before the system \f(CW\*(C`perl\*(C'\fR package was installed.
+.PP
+The subroutine returns an array with results for the three checks in alphabetical order,
+with 1 indicating apparent compatibility and 0 indicating apparent incompatibility.
 .SS solib_check
 .IX Subsection "solib_check"
 .Vb 1

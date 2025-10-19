@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Pkgs 3"
-.TH SBO::Lib::Pkgs 3 "Boomtime, Bureaucracy 63, 3191 YOLD" "" "sbotools 4.0"
+.TH SBO::Lib::Pkgs 3 "Boomtime, Bureaucracy 73, 3191 YOLD" "" "sbotools 4.0"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -72,6 +72,13 @@ SBO::Lib::Pkgs \- Routines for interacting with the Slackware package database.
 \&
 \&  my @installed_sbos = get_installed_packages(\*(AqSBO\*(Aq);
 .Ve
+.SH VARIABLES
+.IX Header "VARIABLES"
+.ie n .SS $perl_inst
+.el .SS \f(CW$perl_inst\fP
+.IX Subsection "$perl_inst"
+This exported variable gives the installation time of the system \f(CW\*(C`perl\*(C'\fR package.
+It is populated when calling \f(CWget_installed_packages()\fR for the first time.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS get_available_updates

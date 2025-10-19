@@ -208,9 +208,24 @@ effective operations. The following options can appear in Main Menu:
     directory. The LOCAL_OVERRIDES setting determines the location of
     the directory.
 
+* Package Checks
+    Perform a shared object dependency check on all _SBo packages or all
+    installed packages. _SBo packages cna additionally be checked for
+    perl, python and ruby incompatibilities. SlackBuilds with problems
+    can be selected from "Missing Solibs", "Perl", "Python" or "Ruby"
+    afterwards.
+
 * Package Search
     Search available SlackBuilds by name and (optionally) description.
     If TAGS.txt is present, tags are searched as well.
+
+* Perl
+    View, search and select SlackBuilds found to be potentially
+    incompatible with system perl.
+
+* Python
+    View, search and select SlackBuilds that were built against the
+    wrong major python version.
 
 * Rebuilds
     Perform (or, for non-root users, do dry runs) of large-scale
@@ -221,14 +236,13 @@ effective operations. The following options can appear in Main Menu:
     outside of an sbotool instance while it is running, use this option
     to ensure that output is up-to-date.
 
+* Ruby
+    View, search and select SlackBuilds that were built against the
+    wrong major ruby version.
+
 * Settings
     View the current sbotools settings and see explanations of each one.
     As root, change any setting.
-
-* Shared Objects
-    Perform a shared object dependency check on all _SBo packages or all
-    installed packages. SlackBuilds with missing dependencies can be
-    selected from "Missing Solibs" afterwards.
 
 * Upgradable
     View, search and select from a list of upgradable SlackBuilds.
@@ -322,6 +336,10 @@ The remaining options can appear in the second menu:
     See how this SlackBuild and its reverse dependencies would be
     reinstalled with batch processing.
 
+* Package Check
+    Check this installed SlackBuild for missing shared object
+    dependencies and perl, python and ruby incompatibility.
+
 * Queue
     View, search and select from the build queue for the SlackBuild,
     provided that it has available dependencies. The queue is calculated
@@ -339,10 +357,6 @@ The remaining options can appear in the second menu:
 * Reverse Rebuild
     Root only. Rebuild all installed reverse dependencies for this
     SlackBuild.
-
-* Shared Objects
-    Check this installed SlackBuild for missing shared object
-    dependencies.
 
 * Upgrade (reverse rebuild)
     Root only. Upgrade the SlackBuild to the available version and

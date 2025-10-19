@@ -68,6 +68,9 @@ my @EXPORT_CONFIG = qw{
   $is_sbotest
   $is_sbotool
   $userland_32
+  $py3ver
+  $py2ver
+  $rubyver
 };
 
 my @EXPORT_TIME = qw{
@@ -257,6 +260,21 @@ interact with C<@obsolete> directly; in other situations, make a copy.
 
 =cut
 
+=head2 ($py3ver, $py2ver)
+
+These exported variables contain the major system C<python2> and C<python3> versions
+in the form e.g. C<python3.12>. If C<python3> is not installed, C<$py3ver> is equal to
+C<$py2ver>.
+
+=cut
+
+=head2 $rubyver
+
+This exported variable contains the major system C<ruby> version, e.g. C<3.4.0> for
+C<ruby-3.4.6>.
+
+=cut
+
 =head2 $userland_32
 
 C<get_arch()> defines this variable when running in a 32-bit userland on a 64-bit
@@ -355,6 +373,25 @@ our $color_warn = "red bold";
 get_colors();
 
 usage_error("Forbidden value of \$TMP: $ENV{TMP}\n") if defined $ENV{TMP} and dangerous_directory($ENV{TMP});
+
+our $py2ver = `python2 --version 2>&1`;
+if ($py2ver) {
+  $py2ver =~ s/(\s|\.\d+$)//g;
+  $py2ver = lc $py2ver;
+}
+our $py3ver = `python3 --version`;
+if ($py3ver) {
+  $py3ver =~ s/(\s|\.\d+$)//g;
+  $py3ver = lc $py3ver;
+} else {
+  $py3ver = $py2ver;
+}
+
+our $rubyver = `ruby --version`;
+if ($rubyver) {
+  $rubyver = (split " ", $rubyver)[1];
+  $rubyver =~ s/\.\w+$/\.0/g;
+}
 
 =head1 SUBROUTINES
 

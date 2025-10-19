@@ -21,7 +21,7 @@ updates
 
     sbocheck [-h|-v]
 
-    sbocheck [-COXgn]
+    sbocheck [-COXgn] [--perl] [--python] [--ruby]
 
     sbocheck [-c] package [package]
 
@@ -116,6 +116,24 @@ Incompatible with **\--nopull**.
 Check for updated SlackBuilds without updating the SlackBuilds tree. The
 **\--nopull** flag can be used without root privileges, but no log is
 kept.
+
+**\--perl**
+
+Check all installed *\_SBo* packages for incompatible perl-based shared
+objects; that is, those built prior to the installation of the system
+**perl** package. Results are saved to *sbocheck-perl.log*.
+
+**\--python**
+
+Check all installed *\_SBo* packages for *site-packages* directories
+built against the wrong major version, e.g. **python-3.12**. Results are
+saved to *sbocheck-python.log*.
+
+**\--ruby**
+
+Check all installed *\_SBo* packages for gems built against the wrong
+major version, e.g. **ruby-3.4.\***. Results are saved to
+*sbocheck-ruby.log*.
 
 **-X\|\--so-check**
 

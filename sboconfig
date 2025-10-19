@@ -403,7 +403,7 @@ sub interactive_menu {
 
 	NOWRAP: config_prompt("NOWRAP", "If TRUE, do not wrap sbotools output.", "TRUE or FALSE.", "TF");
 
-	SO_CHECK: config_prompt("SO_CHECK", "If TRUE, sbocheck and sboupgrade look for missing shared objects among SBo packages.", "TRUE or FALSE.", "TF");
+	SO_CHECK: config_prompt("SO_CHECK", "If TRUE, sbocheck and sboupgrade look for missing shared objects among SBo packages. Also, check for perl, python and ruby compatibility after sbocheck.", "TRUE or FALSE.", "TF");
 
 	DIALOGRC: unless ($is_sbotest) {
 		config_prompt("DIALOGRC", "If a FILE, use it as dialogrc when running sbotool.", "An absolute path or FALSE.", "PATH");

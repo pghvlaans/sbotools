@@ -144,6 +144,11 @@ and **-c** can be used without a local copy of the repository. Checks of
 **sbocheck** and [sboupgrade(1)](sboupgrade.1.md) when the **SO_CHECK** setting is
 **TRUE**.
 
+Use **sbocheck** with the **\--perl**, **\--python** and **\--ruby**
+options to check for incompatible *SBo* packages. This is done
+automatically when running **sbocheck** if the **SO_CHECK** setting is
+**TRUE**.
+
 ## BUGS
 
 None known. If found, Issues and Pull Requests to

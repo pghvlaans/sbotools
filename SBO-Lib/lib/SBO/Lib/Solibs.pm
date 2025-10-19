@@ -9,6 +9,7 @@ use warnings;
 our $VERSION = '4.0';
 
 use SBO::Lib::Util qw/ :config :const in uniq error_code script_error /;
+use SBO::Lib::Pkgs qw/ $perl_inst /;
 
 use Exporter 'import';
 use File::Basename;
@@ -19,6 +20,7 @@ our @EXPORT_OK = qw{
   decimalize
   elf_links
   installed_solibs
+  series_check
   solib_check
   update_known_solibs
 
@@ -37,7 +39,7 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Solibs - Routines for evaluating ELF binaries
+SBO::Lib::Solibs - Routines for evaluating ELF binaries and checking compatibility
 
 =head1 SYNOPSIS
 
@@ -331,6 +333,68 @@ sub installed_solibs {
   return @pkg_solibs;
 }
 
+=head2 series_check
+
+  my @series_good = series_check($pkg, @series);
+
+C<series_check()> takes the name of a package file and an array with one or more checks
+to perform. Available checks include C<perl>, C<python> and C<ruby> at this time. C<python>
+and C<ruby> are judged to be incompatible if files associated with the wrong major version
+(e.g. C<python-3.12> or C<ruby-3.4*>) are included. C<perl> packages are flagged if any
+library in C</usr/lib*/perl*> was built before the system C<perl> package was installed.
+
+The subroutine returns an array with results for the three checks in alphabetical order,
+with 1 indicating apparent compatibility and 0 indicating apparent incompatibility.
+
+=cut
+
+sub series_check {
+  script_error("series_check requires at least two arguments.") unless @_ >= 2;
+  my ($pkg, @series) = @_;
+  my $perl_check = in "perl", @series;
+  my $python_check = in "python", @series;
+  my $ruby_check = in "ruby", @series;
+  my $good_perl = 1;
+  my $good_python = 1;
+  my $good_ruby = 1;
+  my $exit = open(my $fh, "<", "$pkg_db/$pkg") == 0;
+  error_code("Opening $pkg_db/$pkg failed.", _ERR_OPENFH) if $exit;
+  my ($start_reading, @file_list);
+  for my $line (<$fh>) {
+    $start_reading = 1 if $line eq "./\n";
+    next unless defined $start_reading;
+    chomp($line);
+
+    if ($python_check) {
+      if ($good_python and $line =~ /\/python\d+\.\d+\/site-packages\//) {
+        $good_python = 0 unless $line =~ /\/($py2ver|$py3ver)\/site-packages\// or $line =~ /^opt\//;
+      }
+    }
+
+    if ($ruby_check) {
+      if ($good_ruby and $line =~ /\/ruby\/gems\/\w/) {
+        $good_ruby = 0 unless $line =~ /\/ruby\/gems\/$rubyver\// or $line =~ /^opt\//;
+      }
+    }
+
+    # The only truly reliable way to check for perl incompatibility
+    # is to attempt to load the .so file. This is a security risk a la
+    # ldd, so instead check whether the file was created after the
+    # current perl package was installed.
+    if ($perl_check) {
+      next unless $good_perl;
+      next unless $line =~ /\/lib(|64)\/perl/;
+      next unless $line =~ /\/auto\//;
+      next unless $line =~ /\.so$/;
+      next if $line =~ /^opt\//;
+      next unless -f "/$line";
+      my $lib_time = (stat "/$line")[10];
+      $good_perl = 0 if $lib_time < $perl_inst;
+    }
+  }
+  return ($good_perl, $good_python, $good_ruby);
+}
+
 =head2 solib_check
 
   my $solibs_good = solib_check($pkg);
@@ -348,7 +412,7 @@ C<solib_check()> judiciously.
 =cut
 
 sub solib_check {
-  script_error("solib_check requires at least one argument.") unless @_ ge 1;
+  script_error("solib_check requires at least one argument.") unless @_ >= 1;
   my ($pkg, @search) = @_;
   my $is_x86_64 = $arch eq "x86_64" ? 1 : 0;
   update_known_solibs() unless @native_libs;

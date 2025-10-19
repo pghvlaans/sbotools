@@ -10,7 +10,7 @@
 use strict;
 use warnings;
 
-use SBO::Lib qw/ :colors :config :const :help auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_readme_contents get_reverse_reqs get_sbo_description get_sbo_location in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp solib_check uniq update_known_solibs @concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated /;
+use SBO::Lib qw/ :colors :config :const :help auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_readme_contents get_reverse_reqs get_sbo_description get_sbo_location in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp series_check solib_check uniq update_known_solibs @concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated /;
 
 use File::Basename;
 use File::Find;
@@ -69,7 +69,8 @@ $editor = "vi" unless $editor;
 
 my (@available, $available, $all_fulldeps, @installed, $inst_pkgs, $inst_vers, %inst_names, $inst_pkgs_std, $inst_vers_std, %inst_names_std, $fulldeps, @installed_std, $updates, @update_names, @overrides);
 
-my (@install_list, @template_list, @upgrade_list, @remove_list, @solibs_missing);
+my (@install_list, @template_list, @upgrade_list, @remove_list);
+my (@solibs_missing, @incompatible_perl, @incompatible_python, @incompatible_ruby);
 
 # Finding as much of this stuff as possible at the start
 # gets the cache going a little and makes navigation snappier
@@ -256,7 +257,7 @@ sub build_operations {
 		push @build_operations, "\"Edit Override\" \"\\\$EDITOR, \\\$VISUAL or vi, in that order.\" \\";
 		push @more_info, "\"Remove Override\" \"Delete the script from local overrides.\" \\";
 	}
-	push @more_info, "\"Shared Objects\" \"Check for missing solib dependencies.\" \\" if $inst_names{$sbo} or $inst_names_std{$sbo};
+	push @more_info, "\"Package Check\" \"Check solibs, perl, python and ruby.\" \\" if $inst_names{$sbo} or $inst_names_std{$sbo};
 	push @build_operations, "\"Edit Hints\" \"Blacklist, auto-rebuild and dependencies.\" \\" if $< == 0;
 	if ($inst_names{$sbo} and $< == 0 and not on_blacklist($sbo)) {
 		push @build_operations, "\"Remove\" \"Remove with unneeded dependencies.\" \\";
@@ -482,6 +483,32 @@ sub build_operations {
 		if (in "Remove List (-)", @list_options) { @remove_list = grep { !/^\Q$sbo\E$/ } @remove_list; }
 	}
 
+	if ($option eq "Package Check") {
+		my $solib_check_pkg = $inst_names{$sbo} ? $inst_pkgs->{$sbo} : $inst_pkgs_std->{$sbo};
+		my $msg;
+		unless (solib_check($solib_check_pkg)) {
+			$msg .= "Missing shared objects found for $sbo:\n\n$old_libs{$solib_check_pkg}";
+			push @solibs_missing, $sbo unless in $sbo, @solibs_missing;
+		} else {
+			$msg .= "No missing shared objects found.";
+		}
+		my @series_check_res = series_check($solib_check_pkg, "perl", "python", "ruby");
+		unless ($series_check_res[0]) {
+			$msg .= "\n\nProbably incompatible with system perl.";
+			push @incompatible_perl, $sbo unless in $sbo, @incompatible_perl;
+		}
+		unless ($series_check_res[1]) {
+			$msg .= "\n\nIncompatible with system python.";
+			push @incompatible_python, $sbo unless in $sbo, @incompatible_python;
+		}
+		unless ($series_check_res[2]) {
+			$msg .= "\n\nIncompatible with system ruby.";
+			push @incompatible_ruby, $sbo unless in $sbo, @incompatible_ruby;
+		}
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $msg);
+		system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --no-collapse --title \"$sbo: Package Check\" --msgbox \"$msg\" $height $width");
+	}
+
 	# The Queue option does not appear if it is a queue of one.
 	if ($option eq "Queue") { display_builds("$sbo: Available Queue", @disp_queue); }
 
@@ -508,18 +535,6 @@ sub build_operations {
 	if ($option eq "RevDep (all)") { display_builds("$sbo: Available Reverse Dependencies", @available_reverse); }
 
 	if ($option eq "RevDep (installed)") { display_builds("$sbo: Installed Reverse Dependencies", @installed_reverse); }
-
-	if ($option eq "Shared Objects") {
-		my $solib_check_pkg = $inst_names{$sbo} ? $inst_pkgs->{$sbo} : $inst_pkgs_std->{$sbo};
-		unless (solib_check($solib_check_pkg)) {
-			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "Missing\n\n$old_libs{$inst_pkgs->{$sbo}}");
-			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --no-collapse --title \"$sbo: Shared Object Check\" --msgbox \"Missing shared objects found for $sbo:\n\n$old_libs{$inst_pkgs->{$sbo}}\" $height $width");
-			push @solibs_missing, $sbo unless in $sbo, @solibs_missing;
-		} else {
-			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "NoMissing");
-			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --title \"$sbo: Shared Object Check\" --msgbox \"$sbo has no missing shared object dependencies.\" $height $width");
-		}
-	}
 
 	if ($option eq "Template List (+)") { push @template_list, $sbo; }
 	if ($option eq "Template List (-)") { @template_list = grep { !/^\Q$sbo\E$/ } @template_list; }
@@ -798,8 +813,10 @@ sub display_main {
 	push @main_menu, "\"List Operations\" \"Act on the $list_string list.\" \\" if $list_string;
 	push @main_menu, "\"Hints\" \"View per-script hints.\" \\" if $listings[0] ne "NULL";
 	push @main_menu, "\"Missing Solibs\" \"Packages with known-missing solibs.\" \\" if @solibs_missing;
-	push @main_menu, "\"Shared Objects\" \"Check for missing solib dependencies.\" \\",
-					"\"Man Pages\" \"Read sbotools-related man pages.\" \\";
+	push @main_menu, "\"Perl\" \"Incompatible perl packages.\" \\" if @incompatible_perl;
+	push @main_menu, "\"Python\" \"Incompatible python packages.\" \\" if @incompatible_python;
+	push @main_menu, "\"Ruby\" \"Incompatible ruby packages.\" \\" if @incompatible_ruby;
+	push @main_menu, "\"Man Pages\" \"Read sbotools-related man pages.\" \\";
 	my @for_installed_list;
 	if (-s $slackbuilds_txt) {
 		push @main_menu, "\"Browse Repository\" \"View scripts by series.\" \\";
@@ -820,6 +837,9 @@ sub display_main {
 			push @main_menu, "\"Upgrade All (dry run)\" \"How all upgrades would be done.\" \\";
 			push @main_menu, "\"Upgrade All\" \"Apply all available upgrades.\" \\" if $< == 0;
 		}
+		push @main_menu, "\"Package Checks\" \"Solibs, perl, python and ruby checks.\" \\";
+	} else {
+		push @main_menu, "\"Package Checks\" \"Missing solib dependency checks.\" \\";
 	}
 	if ($< == 0) {
 		push @main_menu, "\"Fetch Repository\" \"Get or update the repository.\" \\";
@@ -887,6 +907,9 @@ sub display_main {
 		if ($fetch_res) {
 			new_package_information();
 			parse_solib_log("/var/log/sbocheck-solibs.log", $fetch_time);
+			parse_solib_log("/var/log/sbocheck-perl.log", $fetch_time);
+			parse_solib_log("/var/log/sbocheck-python.log", $fetch_time);
+			parse_solib_log("/var/log/sbocheck-ruby.log", $fetch_time);
 		}
 		prompt $color_notice, "Press ENTER to continue.";
 	}
@@ -916,19 +939,22 @@ sub display_main {
 		}
 	}
 
-	if ($option eq "Shared Objects") {
+	if ($option eq "Package Checks") {
 		if (-s $slackbuilds_txt) {
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "All Installed\nAll SBo", "Check missing");
-			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Shared Object Checks\" --menu \"Check intalled packages for missing shared object dependencies.\" $height $width $height \"All Installed\" \"Check all installed packages for missing solibs.\" \"All SBo\" \"Check all SBo packages for missing solibs.\"", @help_solibs);
+			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Package Checks\" --menu \"Check intalled packages for missing shared object\ndependencies and perl, python or ruby incompatibility.\" $height $width $height \"All Installed\" \"All installed: missing solibs.\" \"All SBo\" \"All SBo: solibs, perl, python and ruby.\"", @help_solibs);
 			display_main() if $res == $code_dialog_cancel or $res == $code_dialog_error;
 			my $so_option = $output;
 			if ($option =~ /\w/) {
-				my $log_file = $< == 0 ? '/var/log/sbocheck-solibs.log' : '/tmp/sbocheck-solibs.log';
+				my $log_dir = $< == 0 ? '/var/log' : '/tmp';
 				my $command_time = time();
 				system("clear");
-				system("/usr/sbin/sbocheck -X") if $so_option eq "All SBo";
+				system("/usr/sbin/sbocheck -X --perl --python --ruby") if $so_option eq "All SBo";
 				system("/usr/sbin/sbocheck -C") if $so_option eq "All Installed";
-				parse_solib_log($log_file, $command_time);
+				parse_solib_log("$log_dir/sbocheck-solibs.log", $command_time);
+				parse_solib_log("$log_dir/sbocheck-perl.log", $command_time);
+				parse_solib_log("$log_dir/sbocheck-python.log", $command_time);
+				parse_solib_log("$log_dir/sbocheck-ruby.log", $command_time);
 				prompt $color_notice, "Press ENTER to continue.";
 			}
 		} else { # All-package checks can be done in all cases.
@@ -952,9 +978,12 @@ sub display_main {
 	if ($option eq "List Operations") { display_user_lists(); }
 	if ($option eq "Man Pages") { display_man_pages(); }
 	if ($option eq "Missing Solibs") { display_builds("SlackBuilds with Known Missing Solib Dependencies", @solibs_missing); }
+	if ($option eq "Perl") { display_builds("SlackBuilds with Apparent Perl Incompatibilities", @incompatible_perl); }
+	if ($option eq "Python") { display_builds("SlackBuilds Built Against the Wrong Python", @incompatible_python); }
 	if ($option eq "Overrides") { display_builds("SlackBuilds in Local Overrides", @overrides); }
 	if ($option eq "Package Search") { run_search(); }
 	if ($option eq "Rebuilds") { display_rebuild_menu(); }
+	if ($option eq "Ruby") { display_builds("SlackBuilds Built Against the Wrong Ruby", @incompatible_ruby); }
 	if ($option eq "Settings") { display_settings(); }
 	if ($option eq "Upgradable") { display_builds("Upgradable SBo Packages", @update_names); }
 	if ($option eq "Upgrade All") { run_command("/usr/sbin/sboupgrade --all"); }
@@ -1122,7 +1151,7 @@ sub display_settings {
 						"\"RSYNC_DEFAULT=$config{RSYNC_DEFAULT}\" \"\" \"If TRUE, the default repository is rsync, not git. No effect on -current.\" \\",
 						"\"SBO_HOME=$config{SBO_HOME}\" \"\" \"Specify an sbotools directory (default /usr/sbo).\" \\",
 						"\"SLACKWARE_VERSION=$config{SLACKWARE_VERSION}\" \"\" \"Use this Slackware version to determine the default repo.\" \\",
-						"\"SO_CHECK=$config{SO_CHECK}\" \"\" \"If TRUE, do a solib check when fetching the repo and upgrading.\" \\",
+						"\"SO_CHECK=$config{SO_CHECK}\" \"\" \"If TRUE, do a solib/perl/python/ruby check on fetch and upgrade.\" \\",
 						"\"STRICT_UPGRADES=$config{STRICT_UPGRADES}\" \"\" \"If TRUE, ignore apparent downgrades.\"";
 	my $config_values = join "\n", @config_values;
 	($height, $width, $begin_y, $begin_x) = calculate_position("wide", $config_values, $msg);
@@ -1242,7 +1271,7 @@ sub display_settings {
 			$flag = "V";
 		}
 		if ($option =~ /^SO_CHECK/) {
-			$explanation = "If TRUE, do a shared object check when checking for updates\nand after upgrades.";
+			$explanation = "If TRUE, do a shared object check when checking for updates\nand after upgrades.\n\nFrom sbocheck, also search for incompatible perl, python and\nruby _SBo packages.";
 			$criterion = "TRUE or FALSE.";
 			$flag = "X";
 		}
@@ -1550,9 +1579,9 @@ sub new_package_information {
 	@remove_list = grep { $inst_names{$_} && ! on_blacklist($_) } @remove_list;
 
 	my @new_solibs_missing;
+	my $solib_check_pkg = $inst_names{$_} ? $inst_pkgs->{$_} : $inst_pkgs_std->{$_};
 	for (@solibs_missing) {
 		next unless $inst_names{$_} or $inst_names_std{$_};
-		my $solib_check_pkg = $inst_names{$_} ? $inst_pkgs->{$_} : $inst_pkgs_std->{$_};
 		push @new_solibs_missing, $_ unless solib_check($solib_check_pkg);
 	}
 	splice @solibs_missing;
@@ -1560,26 +1589,73 @@ sub new_package_information {
 		@new_solibs_missing = uniq @new_solibs_missing;
 		@solibs_missing = @new_solibs_missing;
 	}
+	my @new_perl;
+	for (@incompatible_perl) {
+		next unless $inst_names{$_} or $inst_names_std{$_};
+		push @new_perl, $_ unless (series_check($solib_check_pkg, "perl"))[0];
+	}
+	splice @incompatible_perl;
+	if (@new_perl) {
+		@new_perl = uniq @new_perl;
+		@incompatible_perl = @new_perl;
+	}
+	my @new_python;
+	for (@incompatible_python) {
+		next unless $inst_names{$_} or $inst_names_std{$_};
+		push @new_python, $_ unless (series_check($solib_check_pkg, "python"))[1];
+	}
+	splice @incompatible_python;
+	if (@new_python) {
+		@new_python = uniq @new_python;
+		@incompatible_python = @new_python;
+	}
+	my @new_ruby;
+	for (@incompatible_ruby) {
+		next unless $inst_names{$_} or $inst_names_std{$_};
+		push @new_ruby, $_ unless (series_check($solib_check_pkg, "ruby"))[2];
+	}
+	splice @incompatible_ruby;
+	if (@new_ruby) {
+		@new_ruby = uniq @new_ruby;
+		@incompatible_ruby = @new_ruby;
+	}
 }
 
-# Parse sbocheck solib log files and add relevant packages
-# to the @solibs_missing array.
+# Parse sbocheck log files and add relevant packages to the
+# @solibs_missing and @incompatible_* lists.
 sub parse_solib_log {
 	script_error("parse_solib_log requires two arguments.") unless @_ == 2;
 	my ($logfile, $command_time) = @_;
 	return unless -s $logfile;
 	return unless (stat $logfile)[10] > $command_time;
-	update_known_solibs();
+	update_known_solibs() if $logfile =~ /solibs/;
 	chomp(my $log = slurp $logfile);
 	my @log = split "\n", $log;
 	for (@log) {
 		next unless $_ =~ /^\w/;
 		my $pkg_name = (split " ", $_)[0];
 		next unless get_sbo_location($pkg_name);
-		unless (in $pkg_name, @solibs_missing) {
-			next unless $inst_names{$pkg_name} or $inst_names_std{$pkg_name};
-			my $solib_check_pkg = $inst_names{$pkg_name} ? $inst_pkgs->{$pkg_name} : $inst_pkgs_std->{$pkg_name};
-			push @solibs_missing, $pkg_name unless solib_check($solib_check_pkg);
+		my $solib_check_pkg = $inst_names{$pkg_name} ? $inst_pkgs->{$pkg_name} : $inst_pkgs_std->{$pkg_name};
+		if ($logfile =~ /solibs/) {
+			unless (in $pkg_name, @solibs_missing) {
+				next unless $inst_names{$pkg_name} or $inst_names_std{$pkg_name};
+				push @solibs_missing, $pkg_name unless solib_check($solib_check_pkg);
+			}
+		} elsif ($logfile =~ /perl/) {
+			unless (in $pkg_name, @incompatible_perl) {
+				next unless $inst_names{$pkg_name} or $inst_names_std{$pkg_name};
+				push @incompatible_perl, $pkg_name unless (series_check($solib_check_pkg, "perl"))[0];
+			}
+		} elsif ($logfile =~ /python/) {
+			unless (in $pkg_name, @incompatible_python) {
+				next unless $inst_names{$pkg_name} or $inst_names_std{$pkg_name};
+				push @incompatible_python, $pkg_name unless (series_check($solib_check_pkg, "python"))[1];
+			}
+		} elsif ($logfile =~ /ruby/) {
+			unless (in $pkg_name, @incompatible_ruby) {
+				next unless $inst_names{$pkg_name} or $inst_names_std{$pkg_name};
+				push @incompatible_python, $pkg_name unless (series_check($solib_check_pkg, "ruby"))[2];
+			}
 		}
 	}
 	return;
