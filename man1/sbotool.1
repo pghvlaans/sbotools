@@ -7,7 +7,7 @@ sbotool
 .SH SYNOPSIS
 sbotool [-h|-v]
 
-sbotool [-d FILE]
+sbotool [-d FILE] [--config]
 .SH DESCRIPTION
 .B
 sbotool
@@ -242,6 +242,21 @@ to modify. The
 --dialogrc
 option can also specify a file at runtime.
 .SH OPTIONS
+.B
+--config
+.RS
+Enter the
+.B
+Settings
+menu directly.
+.B
+sboconfig
+calls
+.B
+sbotool
+with this option when run without flags.
+.RE
+.P
 .B
 -d|--dialogrc (FILE)
 .RS

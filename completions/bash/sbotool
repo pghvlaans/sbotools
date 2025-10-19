@@ -9,7 +9,7 @@ _sbotool() {
   for i in ${COMP_WORDS[@]} ; do
     case "${cmd},${i}" in
       ",$1")
-        cmd="sbocheck"
+        cmd="sbotool"
         ;;
       *)
         ;;
@@ -18,7 +18,7 @@ _sbotool() {
 
   case "${cmd}" in
     sbocheck)
-      opts="-h -v --help --version"
+      opts="-d -h -v --dialogrc --config --help --version"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0

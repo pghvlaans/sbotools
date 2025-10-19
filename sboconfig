@@ -91,7 +91,7 @@ Configuration options (defaults shown):
   -X|--so-check FALSE:
       SO_CHECK: check for .so dependencies after sbocheck and sboupgrade.
 
-Use $label without options for an interactive menu.
+Use $label without options for a dialog menu.
 EOF
 	return 1;
 }
@@ -157,8 +157,6 @@ Configuration options (defaults shown):
       NOWRAP: do not automatically wrap sbotest output.
   -X|--so-check FALSE:
       SO_CHECK: check for missing .so dependencies when running sbocheck.
-
-Use $label without options for an interactive menu.
 EOF
 	return 1;
 }
@@ -189,7 +187,7 @@ if ($options{help}) {
 	exit 0;
 }
 if ($options{version}) { show_version(); exit 0 }
-unless ($< == 0 or $options{list}) {
+unless ($< == 0 or $options{list} or $all_clear) {
 	show_usage();
 	usage_error "\nNon-root users can call $label with -l, -n, -h and -v.";
 }
@@ -300,9 +298,10 @@ if (exists $options{reset} and $is_sbotest) {
 	$changes{'CPAN_IGNORE'} = 'TRUE';
 }
 
-if ($all_clear) {
-	interactive_menu();
-} elsif (not %options) {
+if ($all_clear and not $is_sbotest) {
+	system('/usr/sbin/sbotool --config');
+	exit;
+} elsif (not %options or $all_clear) {
 	show_usage();
 	exit 1;
 }
@@ -310,160 +309,6 @@ if ($all_clear) {
 lint_sbo_config($self, %changes);
 
 my $change_requested;
-
-# subroutine for prompting the user; takes configuration name,
-# description, valid setting description and validation type.
-sub config_prompt {
-	script_error("config_prompt requires at least four arguments.") unless @_ >= 4;
-	my ($config_name, $description, $validity_description, $validator) = @_;
-	my $user_input;
-	wrapsay_color $color_notice, "\n$config_name", 1;
-	wrapsay "$description\n\n$validity_description";
-	chomp($user_input = prompt($color_notice, "\tCurrent value is $config{$config_name}: "));
-	return 0 unless $user_input;
-	if ($validator) {
-		if (validate_choice($config_name, $user_input, $validator)) {
-			$change_requested = 1;
-		} else {
-			config_prompt($config_name, $description, $validity_description, $validator);
-		}
-	} else {
-		$change_requested = 1;
-		$changes{$config_name} = $user_input;
-	}
-}
-
-# subroutine for validating the user's choice
-sub validate_choice {
-	script_error("validate choice requires three options.") unless @_ == 3;
-	my ($config_name, $requested_change, $validator) = @_;
-	$changes{$config_name} = $requested_change;
-	my $failed;
-	if ($validator eq "TF") {
-		unless ($changes{$config_name} =~ /^(TRUE|FALSE)$/) {
-			say "\nUse TRUE or FALSE for $config_name.";
-			$failed = 1;
-		}
-	} elsif ($validator eq "PATH") {
-		unless ($changes{$config_name} =~ qr#^(/|FALSE$)#) {
-			say "\nUse an absolute path or FALSE for $config_name.";
-			$failed = 1;
-		}
-	} elsif ($validator eq "NUM") {
-		unless ($changes{$config_name} =~ /^(\d+|FALSE)$/) {
-			say "\nUse a number or FALSE for $config_name.";
-			$failed = 1;
-		}
-	} elsif ($validator eq "SWVER") {
-		unless ($changes{$config_name} =~ m/^(\d+\.\d+(|\+)|FALSE|current)$/) {
-			wrapsay "\nUse #.#, #.#+ or current for $config_name.";
-			$failed = 1;
-		}
-	}
-	if ($failed) {
-		undef $changes{$config_name};
-		return 0;
-	}
-	return 1;
-}
-
-# use an interactive settings menu if sboconfig is passed without
-# options; might be educational for new users
-sub interactive_menu {
-	unless (prompt($color_default, "$label\n\nThis is the $label interactive menu. Use prompts to set configuration values?", default => 'yes')) {
-		say "Exiting without changes.";
-		exit 0;
-	}
-	wrapsay "All settings are case-sensitive. Enter an empty value to skip any setting. You will have a chance to confirm your settings at the end.";
-
-	# here, give the following values:
-	#
-	# name of setting
-	# description
-	# description of a valid setting
-	# validator, being "TF", "NUM", "PATH", "SWVER" or 0 for no validation
-	CLASSIC: config_prompt("CLASSIC", "If TRUE, enable BUILD_IGNORE and RSYNC_DEFAULT; disable build increment and out-of-tree output for sbocheck; disable displaying saved build options. This is a more traditional look-and-feel.", "TRUE or FALSE.", "TF");
-
-	DISTCLEAN: config_prompt("DISTCLEAN", "If TRUE, remove the source code and compiled package after building.", "TRUE or FALSE.", "TF");
-
-	JOBS: config_prompt("JOBS", "If a number, use with -j in MAKEOPTS.", "A number or FALSE.", "NUM");
-
-	NOCLEAN: config_prompt("NOCLEAN", "If TRUE, do not clean working directories after building.", "TRUE or FALSE.", "TF");
-
-	GIT_BRANCH: config_prompt("GIT_BRANCH", "If set to a branch name, use a custom git branch for the SBo repository. Has no effect on rsync mirrors.", "Branch name or FALSE.", 0);
-
-	GPG_VERIFY: config_prompt("GPG_VERIFY", "If TRUE, perform gpg verification.", "TRUE or FALSE.", "TF");
-
-	# CLASSIC turns this on automatically at runtime; not applicable to sbotest
-	BUILD_IGNORE: if ((not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') and not $is_sbotest) {
-		config_prompt("BUILD_IGNORE", "If TRUE, do upgrades only if the version number differs.", "TRUE or FALSE.", "TF");
-	}
-
-	CPAN_IGNORE: config_prompt("CPAN_IGNORE", "If TRUE, install scripts even if they are installed from the CPAN.", "TRUE or FALSE.", "TF");
-
-	NOWRAP: config_prompt("NOWRAP", "If TRUE, do not wrap sbotools output.", "TRUE or FALSE.", "TF");
-
-	SO_CHECK: config_prompt("SO_CHECK", "If TRUE, sbocheck and sboupgrade look for missing shared objects among SBo packages. Also, check for perl, python and ruby compatibility after sbocheck.", "TRUE or FALSE.", "TF");
-
-	DIALOGRC: unless ($is_sbotest) {
-		config_prompt("DIALOGRC", "If a FILE, use it as dialogrc when running sbotool.", "An absolute path or FALSE.", "PATH");
-	}
-
-	OBSOLETE_CHECK: config_prompt("OBSOLETE_CHECK", "If TRUE, sbocheck updates the obsolete script list from the sbotools home page.", "TRUE or FALSE.", "TF");
-
-	PKG_DIR: config_prompt("PKG_DIR", "If set to an absolute path, store newly-built packages there regardless of DISTCLEAN.", "An absolute path or FALSE.", "PATH");
-
-	ETC_PROFILE: config_prompt("ETC_PROFILE", "If TRUE, source executable *.sh scripts in /etc/profile.d before building.", "TRUE or FALSE.", "TF");
-
-	SBO_HOME: config_prompt("SBO_HOME", "If set to an absolute path, this is where the SlackBuilds.org tree will live.", "An absolute path or FALSE.", "PATH");
-
-	# sbotest only
-	SBO_ARCHIVE: config_prompt("SBO_ARCHIVE", "If set to an absolute path, this is where archived packages will live.", "An absolute path or FALSE.", "PATH") if $is_sbotest;
-
-	LOG_DIR: config_prompt("LOG_DIR", "If set to an absolute path, save a log file for each build here.", "An absolute path or FALSE.", "PATH");
-
-	LOCAL_OVERRIDES: config_prompt("LOCAL_OVERRIDES", "If set to an absolute path, any directory name in the top level under that path matching a SlackBuild name will be used in preference to the main repository. Personalized builds can be stored here.", "An absolute path or FALSE.", "PATH");
-
-	STRICT_UPGRADES: config_prompt("STRICT_UPGRADES", "If TRUE, only perform upgrades when the incoming version or build number is higher. This has no effect on scripts in the local overrides directory.", "TRUE or FALSE.", "TF");
-
-	SLACKWARE_VERSION: config_prompt("SLACKWARE_VERSION", "If set to a version specification (e.g. 14.2, 15.0+ or current), force the use of the SBo repository for that version.", "Use #.#, #.#+, current or FALSE.", "SWVER");
-
-	REPO: config_prompt("REPO", "If set to a URL, use this as the upstream SBo repository. Git and rsync repositories only.", "A URL or FALSE.", 0);
-
-	# CLASSIC turns this off automatically at runtime; not applicable to sbotest
-	COLOR: if ((not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') and not $is_sbotest) {
-		config_prompt("COLOR", "If TRUE, turn on sbotools color output.", "TRUE or FALSE.", "TF");
-	}
-
-	# CLASSIC turns this on automatically at runtime
-	RSYNC_DEFAULT: if (not defined $changes{CLASSIC} and $config{CLASSIC} ne 'TRUE') {
-		config_prompt("RSYNC_DEFAULT", "If TRUE, the default mirror will be rsync except for Slackware -current. Please note that REPO overrides this setting.", "TRUE or FALSE.", "TF");
-	}
-
-	if ($change_requested) {
-		wrapsay "\nDone. The following settings have been specified:", 1;
-		for my $item (keys %valid_confs) {
-			my $title = $valid_confs{$item};
-			my $spacer = "\t\t";
-			$spacer = "\t\t\t" if $title eq "JOBS" or $title eq "REPO";
-			$spacer = "\t" if $title eq "SLACKWARE_VERSION" or $title eq "LOCAL_OVERRIDES" or $title eq "STRICT_UPGRADES" or $title eq "OBSOLETE_CHECK" or $title eq "SBO_ARCHIVE";
-			say "\t$title:$spacer$changes{$title}" if defined $changes{$title};
-		}
-
-		unless (prompt($color_lesser, "\nWrite these settings to $conf_file?", default => 'yes')) {
-			if (prompt($color_notice, "Start this menu over?", default => 'no')) {
-				undef %changes;
-				interactive_menu();
-			} else {
-				say "Exiting without changes.";
-				exit 0;
-			}
-		}
-	} else {
-		say "\nNo settings were specified. Exiting.";
-		exit 0;
-	}
-}
 
 sub config_write {
 	script_error('config_write requires at least two arguments.') unless @_ >= 2;

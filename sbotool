@@ -24,8 +24,8 @@ $is_sbotool = 1;
 
 my $exit;
 usage_error("dialog is not installed.") unless -x "/usr/bin/dialog";
-my ($help, $show_version, $dialogrc);
-GetOptions( 'help|h' => \$help, 'version|v' => \$show_version, 'dialogrc|d=s' => \$dialogrc);
+my ($help, $show_version, $dialogrc, $config_menu);
+GetOptions( 'help|h' => \$help, 'version|v' => \$show_version, 'dialogrc|d=s' => \$dialogrc, 'config' => \$config_menu);
 if ($help) { show_usage(); exit 0; }
 if ($show_version) { show_version(); exit 0; }
 
@@ -106,7 +106,11 @@ my $dialog_output = "$sbotool_tempdir/dialog_output";
 my $dialog_exit = "$sbotool_tempdir/dialog_exit";
 my $command_output = "$sbotool_tempdir/command_output";
 
-display_main();
+unless ($config_menu) {
+	display_main();
+} else {
+	display_settings();
+}
 
 # Once a script has been selected, build a menu of available
 # operations and carry out the user's choice. Accepts the name
@@ -1156,12 +1160,17 @@ sub display_settings {
 	my $config_values = join "\n", @config_values;
 	($height, $width, $begin_y, $begin_x) = calculate_position("wide", $config_values, $msg);
 	$height--;
+	my $cancel_label = $config_menu ? "Exit" : "Back";
 	unless ($< == 0) {
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --no-cancel --extra-button --extra-label \"Man Page\" --title \"Settings List\" --item-help --menu \"$msg\" $height $width $height $config_values");
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --ok-label \"$cancel_label\" --no-cancel --extra-button --extra-label \"Man Page\" --title \"Settings List\" --item-help --menu \"$msg\" $height $width $height $config_values");
 	} else {
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Settings List\" --extra-button --extra-label \"Man Page\" --item-help --menu \"$msg\" $height $width $height $config_values");
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Settings List\" --extra-button --extra-label \"Man Page\" --cancel-label \"$cancel_label\" --item-help --menu \"$msg\" $height $width $height $config_values");
 	}
-	display_main() if $res == $code_dialog_cancel or $res == $code_dialog_error;
+	unless ($config_menu) {
+		display_main() if $res == $code_dialog_cancel or $res == $code_dialog_error;
+	} else {
+		exit if $res == $code_dialog_cancel or $res == $code_dialog_error;
+	}
 	if ($res == $code_dialog_extra) {
 		system("clear");
 		system("man sbotools.conf");
@@ -1283,7 +1292,11 @@ sub display_settings {
 		edit_setting($option, $explanation, $criterion, $flag);
 		display_settings();
 	}
-	return;
+	unless ($config_menu) {
+		return;
+	} else {
+		exit;
+	}
 }
 
 # Act on one of the sbotool-internal lists, or clear them all.
@@ -1773,6 +1786,8 @@ Options
     this screen.
   -v|--version:
     version information.
+  --config
+    access the sbotools settings menu only.
   -d|--dialogrc FILE:
     a dialogrc file to use; overrides the DIALOGRC setting.
 

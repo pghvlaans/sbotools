@@ -28,10 +28,17 @@ sbotools
 configuration options. Using
 .B
 sboconfig
-without any flags starts an interactive menu
-to specify settings; all options are accompanied by
-an explanatory message, and no changes are applied
-without user confirmation.
+without any flags enters the
+.B
+Settings
+menu within
+.B
+sbotool\fR\
+\&, provided that
+.B
+dialog(1)
+is installed. If running as root, settings changes
+can be done from here.
 .P
 The
 .B
@@ -652,6 +659,11 @@ Defaults to
 /usr/sbotest\fR\
 \&.
 .RE
+.P
+Running
+.B
+sbotest config
+without options is ineffective.
 .SH EXIT CODES
 .P
 .B
@@ -681,7 +693,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sbotool(1), sboupgrade(1), sbotool(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), dialog(1) gpg(1)
+sbocheck(1), sboclean(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sbotool(1), sboupgrade(1), sbotool(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), dialog(1), gpg(1)
 .SH AUTHORS
 .P
 Jacob Pipkin <j@dawnrazor.net>
