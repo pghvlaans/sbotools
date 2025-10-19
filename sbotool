@@ -1592,9 +1592,9 @@ sub new_package_information {
 	@remove_list = grep { $inst_names{$_} && ! on_blacklist($_) } @remove_list;
 
 	my @new_solibs_missing;
-	my $solib_check_pkg = $inst_names{$_} ? $inst_pkgs->{$_} : $inst_pkgs_std->{$_};
 	for (@solibs_missing) {
 		next unless $inst_names{$_} or $inst_names_std{$_};
+		my $solib_check_pkg = $inst_names{$_} ? $inst_pkgs->{$_} : $inst_pkgs_std->{$_};
 		push @new_solibs_missing, $_ unless solib_check($solib_check_pkg);
 	}
 	splice @solibs_missing;
@@ -1605,6 +1605,7 @@ sub new_package_information {
 	my @new_perl;
 	for (@incompatible_perl) {
 		next unless $inst_names{$_} or $inst_names_std{$_};
+		my $solib_check_pkg = $inst_names{$_} ? $inst_pkgs->{$_} : $inst_pkgs_std->{$_};
 		push @new_perl, $_ unless (series_check($solib_check_pkg, "perl"))[0];
 	}
 	splice @incompatible_perl;
@@ -1615,6 +1616,7 @@ sub new_package_information {
 	my @new_python;
 	for (@incompatible_python) {
 		next unless $inst_names{$_} or $inst_names_std{$_};
+		my $solib_check_pkg = $inst_names{$_} ? $inst_pkgs->{$_} : $inst_pkgs_std->{$_};
 		push @new_python, $_ unless (series_check($solib_check_pkg, "python"))[1];
 	}
 	splice @incompatible_python;
@@ -1625,6 +1627,7 @@ sub new_package_information {
 	my @new_ruby;
 	for (@incompatible_ruby) {
 		next unless $inst_names{$_} or $inst_names_std{$_};
+		my $solib_check_pkg = $inst_names{$_} ? $inst_pkgs->{$_} : $inst_pkgs_std->{$_};
 		push @new_ruby, $_ unless (series_check($solib_check_pkg, "ruby"))[2];
 	}
 	splice @incompatible_ruby;
@@ -1713,9 +1716,9 @@ sub run_command {
 	my $command_time = time();
 	system("clear");
 	system($cmd);
-	parse_solib_log("/var/log/sboupgrade-solibs.log", $command_time) if $cmd =~ /sboupgrade/;
 	unless ($cmd =~ /sboclean/) {
 		new_package_information();
+		parse_solib_log("/var/log/sboupgrade-solibs.log", $command_time) if $cmd =~ /sboupgrade/;
 		prompt $color_notice, "Press ENTER to continue.";
 	}
 	return;

@@ -57,6 +57,8 @@ EOF
 	return 1;
 }
 
+my $line_needed = 1;
+
 my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $pkg_check, $full_check, $nowrap, $wrap, $perl, $python, $ruby);
 
 GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'nowrap' => \$nowrap, 'wrap' => \$wrap, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check, 'perl' => \$perl, 'python' => \$python, 'ruby' => \$ruby);
@@ -335,6 +337,7 @@ sub get_update_list {
 # print a list
 sub print_output {
 	my $logfile = shift;
+	$line_needed = 0;
 	my @listing = @_;
 	my $message = "";
 	my $non_root_write = ($logfile =~ /^\/tmp\// and (-w '/tmp' and (-w $logfile or not -f $logfile)));
@@ -361,6 +364,7 @@ sub print_output {
 		if ($config{CLASSIC} ne "TRUE" and ($< == 0 or $non_root_write)) { print_color $color_notice; print "\tSee $logfile.\n\n"; print_color $color_default; }
 		else { print "\n\n"; }
 		if ($logfile =~ /solibs/) {
+			$line_needed = 1;
 			for my $listing (@listing) {
 				my $print_line = (split "\n", $listing)[0];
 				$print_line =~ s/\:$//;
@@ -388,7 +392,7 @@ sub print_output {
 				wrapsay_color $color_lesser, "Run as root and see /var/log/sbocheck-ruby.log to save a log." if $< != 0 and not $non_root_write;
 		} else {
 			say $_ for @listing;
-			print "\n" unless $logfile eq '/var/log/sbocheck-out-of-tree.log';
+			print "\n";
 		}
 		# root can save a log of available updates
 		if ($< == 0 or $non_root_write) {
@@ -404,6 +408,7 @@ sub print_output {
 			}
 		}
 	} else {
+		$line_needed = 1;
 		wrapsay_color $color_notice, $message;
 	}
 	return 1;
@@ -434,4 +439,4 @@ if ($perl or $python or $ruby or $auto_series) {
 
 wrapsay "\nWarning: Local overrides directory $config{LOCAL_OVERRIDES} does not exist." if $config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES};
 
-END { say ""; }
+END { say "" if $line_needed; }
