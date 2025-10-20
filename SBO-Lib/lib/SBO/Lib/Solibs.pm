@@ -109,6 +109,9 @@ our %old_libs;
 our %per_cand;
 our %x86_per_cand;
 
+my $is_perl = 0;
+my (@check_perl, @ran_solib_check);
+
 =head1 SUBROUTINES
 
 =head2 decimalize
@@ -290,6 +293,8 @@ sub elf_links {
   my $elf_return_value = $is_32 ? -1 : 1;
   close $fh;
   undef $fh;
+  my $core_rpath = $is_32 ? "/usr/lib/perl5/CORE" : "/usr/lib64/perl5/CORE";
+  $is_perl = (in $core_rpath, @cand_rpaths or in "libperl.so", @cand_libs);
   return $elf_return_value, @cand_libs;
 }
 
@@ -351,12 +356,16 @@ with 1 indicating apparent compatibility and 0 indicating apparent incompatibili
 sub series_check {
   script_error("series_check requires at least two arguments.") unless @_ >= 2;
   my ($pkg, @series) = @_;
+  return (1, 1, 1) if $pkg =~ /^perl-5/;
   my $perl_check = in "perl", @series;
   my $python_check = in "python", @series;
   my $ruby_check = in "ruby", @series;
   my $good_perl = 1;
   my $good_python = 1;
   my $good_ruby = 1;
+  if ($perl_check) {
+    solib_check($pkg) unless in $pkg, @ran_solib_check;
+  }
   my $exit = open(my $fh, "<", "$pkg_db/$pkg") == 0;
   error_code("Opening $pkg_db/$pkg failed.", _ERR_OPENFH) if $exit;
   my ($start_reading, @file_list);
@@ -378,17 +387,18 @@ sub series_check {
     }
 
     # The only truly reliable way to check for perl incompatibility
-    # is to attempt to load the .so file. This is a security risk a la
-    # ldd, so instead check whether the file was created after the
-    # current perl package was installed.
+    # is to attempt to load. This is a security risk a la ldd, so
+    # instead check whether the file was built after the current
+    # perl package was installed.
     if ($perl_check) {
       next unless $good_perl;
-      next unless $line =~ /\/lib(|64)\/perl/;
-      next unless $line =~ /\/auto\//;
-      next unless $line =~ /\.so$/;
-      next if $line =~ /^opt\//;
-      next unless -f "/$line";
-      my $lib_time = (stat "/$line")[10];
+      unless (in $pkg, @check_perl) {
+        next unless $line =~ /\/lib(|64)\/perl/;
+        next unless $line =~ /\.so$/;
+        next if $line =~ /^opt\//;
+      }
+      next unless -x -B -f "/$line";
+      my $lib_time = (stat "/$line")[9];
       $good_perl = 0 if $lib_time < $perl_inst;
     }
   }
@@ -413,7 +423,9 @@ C<solib_check()> judiciously.
 
 sub solib_check {
   script_error("solib_check requires at least one argument.") unless @_ >= 1;
+  $is_perl = 0;
   my ($pkg, @search) = @_;
+  push @ran_solib_check, $pkg;
   my $is_x86_64 = $arch eq "x86_64" ? 1 : 0;
   update_known_solibs() unless @native_libs;
   my $exit = open(my $fh, "<", "$pkg_db/$pkg") == 0;
@@ -438,6 +450,7 @@ sub solib_check {
       push @shared, @cands;
     }
   }
+  push @check_perl, $pkg if $is_perl;
   return 1 unless @shared or @x86_shared;
   for my $cand (uniq sort @shared) {
     if (@search) { next unless in $cand, @search; }
@@ -525,6 +538,8 @@ sub update_known_solibs {
   script_error("Getting the ldconfig cache failed. Exiting.") unless @ld_lines;
   undef @native_libs;
   undef @x86_libs;
+  splice @check_perl;
+  splice @ran_solib_check;
   %old_libs = ();
   my $is_x86_64 = $arch eq "x86_64" ? 1 : 0;
   for my $line (@ld_lines) {
