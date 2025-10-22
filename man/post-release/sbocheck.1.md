@@ -21,7 +21,7 @@ updates
 
     sbocheck [-h|-v]
 
-    sbocheck [-COXgn] [--perl] [--python] [--ruby]
+    sbocheck [-COXgn] [-t all,python,ruby,solibs]
 
     sbocheck [-c] package [package]
 
@@ -62,6 +62,11 @@ setting **SO_CHECK** to **TRUE**. Please note that scripts repackaging
 from binary packages occasionally trigger false positives. Such packages
 generally do not require rebuilds.
 
+Use **\--type** with any package-checking option to specify package
+tests to run in a comma-separated list. The supported values are
+currently **solibs** (default for no specification), **python**,
+**ruby** and **all**.
+
 To check for updated SlackBuilds without updating the SlackBuilds tree,
 pass the **\--nopull** option. **sbocheck** performs **gpg(1)**
 verification upon pulling the tree if **GPG_VERIFY** is **TRUE** (see
@@ -75,11 +80,11 @@ in **sbotools-3.3**, is a compatibility symlink to **sbocheck**.
 
 Non-root users can only call **sbocheck** with the **\--nopull**,
 **\--so-check**, **\--check-package**, **\--check-all-packages**,
-**\--help** and **\--version** flags. **sbocheck** issues a warning if
-the directory specified with **LOCAL_OVERRIDES** does not exist (see
-[sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration
-is detected in */etc/sbotools/sbotools.conf*, the script exits with a
-diagnostic message.
+**\--type**, **\--help** and **\--version** flags. **sbocheck** issues a
+warning if the directory specified with **LOCAL_OVERRIDES** does not
+exist (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). If an invalid
+configuration is detected in */etc/sbotools/sbotools.conf*, the script
+exits with a diagnostic message.
 
 ## OPTIONS
 
@@ -88,14 +93,16 @@ diagnostic message.
 Check every package on the system, *\_SBo* or otherwise, for missing
 shared objects. This option is usable even when there is no local copy
 of the repository. Incompatible with **\--so-check** and
-**\--check-package**.
+**\--check-package**. **solibs** are checked by default; use **\--type**
+to specify other tests.
 
 **-c\|\--check-package**
 
 Check one or more package names for missing shared objects; the packages
 need not be tagged with *\_SBo*. This option is usable even when there
 is no local copy of the repository. Incompatible with **\--so-check**
-and **\--check-all-packages**.
+and **\--check-all-packages**. **solibs** are checked by default; use
+**\--type** to specify other tests.
 
 **-g\|\--gpg-verify**
 
@@ -117,31 +124,35 @@ Check for updated SlackBuilds without updating the SlackBuilds tree. The
 **\--nopull** flag can be used without root privileges, but no log is
 kept.
 
-**\--perl**
+**-t\|\--type**
 
-Check all installed *\_SBo* packages for incompatible perl-based shared
-objects; that is, those built prior to the installation of the system
-**perl** package. Results are saved to *sbocheck-perl.log*.
+In combination with **\--so-check**, **\--check-all-packages** or
+**\--pkg-check**, run the specified package checks in a comma-separated
+list. Supported checks include:
 
-**\--python**
+**solibs** - The default option; using a package checking option without
+**\--type** runs this test.
 
-Check all installed *\_SBo* packages for *site-packages* directories
-built against the wrong major version, e.g. **python-3.12**. Results are
-saved to *sbocheck-python.log*.
+**python** - Check for *site-packages* irectories built against the
+wrong major version, e.g. **python-3.12**. Results are saved to
+*sbocheck-python.log*.
 
-**\--ruby**
+**ruby** - Check for gems built against the wrong major version, e.g.
+**ruby-3.4**. Results are saved to *sbocheck-ruby.log*.
 
-Check all installed *\_SBo* packages for gems built against the wrong
-major version, e.g. **ruby-3.4.\***. Results are saved to
-*sbocheck-ruby.log*.
+**all** - run all supported package checks.
+
+Using **\--type** without another package checking option checks all
+installed **\_SBo** packages.
 
 **-X\|\--so-check**
 
-Check all installed *\_SBo* packages for missing shared object
-dependencies; no other operations are performed. To do this
-automatically every time **sbocheck** is run, set **SO_CHECK** to
-**TRUE** (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). Incompatible
-with **\--check-package** and **\--check-all-packages**.
+Run package checks on all installed *\_SBo* packages; no other
+operations are performed. **solibs** are checked by default; use
+**\--type** to specify other tests. To do this automatically every time
+**sbocheck** is run, set **SO_CHECK** to **TRUE** (see [sboconfig(1)](sboconfig.1.md)
+or [sbotools.conf(5)](sbotools.conf.5.md)). Incompatible with **\--check-package** and
+**\--check-all-packages**.
 
 **-h\|\--help**
 
