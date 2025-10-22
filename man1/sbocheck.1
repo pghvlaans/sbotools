@@ -11,7 +11,7 @@ tree and check for updates
 .P
 sbocheck [-h|-v]
 .P
-sbocheck [-COXgn] [--perl] [--python] [--ruby]
+sbocheck [-COXgn] [-t all,python,ruby,solibs]
 .P
 sbocheck [-c] package [package]
 .P
@@ -131,6 +131,24 @@ TRUE\fR\
 Please note that scripts repackaging from binary packages occasionally trigger
 false positives. Such packages generally do not require rebuilds.
 .P
+Use
+.B
+--type
+with any package-checking option to specify package tests to run in a comma-separated
+list. The supported values are currently
+.B
+solibs
+(default for no specification),
+.B
+python\fR\
+\&,
+.B
+ruby
+and
+.B
+all\fR\
+\&.
+.P
 To check for updated SlackBuilds without updating the SlackBuilds
 tree, pass
 the
@@ -194,6 +212,9 @@ with the
 --check-all-packages\fR\
 \&,
 .B
+--type\fR\
+\&,
+.B
 --help
 and
 .B
@@ -231,6 +252,12 @@ and
 .B
 --check-package\fR\
 \&.
+.B
+solibs
+are checked by default; use
+.B
+--type
+to specify other tests.
 .RE
 .P
 .B
@@ -248,6 +275,12 @@ and
 .B
 --check-all-packages\fR\
 \&.
+.B
+solibs
+are checked by default; use
+.B
+--type
+to specify other tests.
 .RE
 .P
 .B
@@ -303,62 +336,78 @@ flag can be used without root privileges, but no log is kept.
 .RE
 .P
 .B
---perl
+-t|--type
 .RS
-Check all installed
-.I
-_SBo
-packages for incompatible perl-based shared objects; that is, those built
-prior to the installation of the system
+In combination with
 .B
-perl
-package. Results are saved to
-.I
-sbocheck-perl.log\fR\
-\&.
-.RE
+--so-check\fR\
+\&,
+.B
+--check-all-packages
+or
+.B
+--pkg-check\fR\
+\&, run the specified package checks in a comma-separated list.
+Supported checks include:
 .P
 .B
---python
-.RS
-Check all installed
-.I
-_SBo
-packages for
+solibs
+- The default option; using a package checking option without
+.B
+--type
+runs this test.
+.P
+.B
+python
+- Check for
 .I
 site-packages
-directories built against the wrong major version, e.g.
+irectories built against the wrong major version, e.g.
 .B
 python-3.12\fR\
 \&. Results are saved to
 .I
 sbocheck-python.log\fR\
 \&.
-.RE
 .P
 .B
---ruby
-.RS
-Check all installed
-.I
-_SBo
-packages for gems built against the wrong major version, e.g.
+ruby
+- Check for
+gems built against the wrong major version, e.g.
 .B
-ruby-3.4.*\fR\
+ruby-3.4\fR\
 \&. Results are saved to
 .I
 sbocheck-ruby.log\fR\
 \&.
+.P
+.B
+all
+- run all supported package checks.
+.P
+Using
+.B
+--type
+without another package checking option checks all installed
+.B
+_SBo
+packages.
 .RE
 .P
 .B
 -X|--so-check
 .RS
-Check all installed
+Run package checks on all installed
 .I
 _SBo
-packages for missing shared object dependencies; no other operations are
-performed. To do this automatically every time
+packages; no other operations are performed.
+.B
+solibs
+are checked by default; use
+.B
+--type
+to specify other tests. To do this automatically
+every time
 .B
 sbocheck
 is run, set

@@ -211,17 +211,12 @@ effective operations. The following options can appear in Main Menu:
 * Package Checks
     Perform a shared object dependency check on all _SBo packages or all
     installed packages. _SBo packages cna additionally be checked for
-    perl, python and ruby incompatibilities. SlackBuilds with problems
-    can be selected from "Missing Solibs", "Perl", "Python" or "Ruby"
-    afterwards.
+    python and ruby incompatibilities. SlackBuilds with problems can be
+    selected from "Missing Solibs", "Python" or "Ruby" afterwards.
 
 * Package Search
     Search available SlackBuilds by name and (optionally) description.
     If TAGS.txt is present, tags are searched as well.
-
-* Perl
-    View, search and select SlackBuilds found to be potentially
-    incompatible with system perl.
 
 * Python
     View, search and select SlackBuilds that were built against the
@@ -338,7 +333,7 @@ The remaining options can appear in the second menu:
 
 * Package Check
     Check this installed SlackBuild for missing shared object
-    dependencies and perl, python and ruby incompatibility.
+    dependencies and python and ruby incompatibility.
 
 * Queue
     View, search and select from the build queue for the SlackBuild,
@@ -436,9 +431,10 @@ which applies an additional search to the list.');
 our @help_solibs = ('Shared Object Checks - Help',
 
 'Root and non-root users can perform per-package checks for missing
-shared object dependencies (often called "solibs"). A log is saved to
-"/var/log/sbocheck-so-check.log" if running as root, or to "/tmp"
-otherwise.
+shared object dependencies (often called "solibs"), and python and
+ruby incompatibilities. Logs are saved to "sbocheck-solibs.log",
+"sbocheck-python.log" and "sbocheck-ruby.log", respectively. The
+directory is "/var/log" if running as root, and "/tmp" otherwise.
 
 If a package is missing a first-order solib dependency, the package
 name, missing library or libraries and affected files are logged like
@@ -455,7 +451,10 @@ outright, especially for repackages from binary.
 
 The shared object check itself is written in perl. Its interaction with
 binaries on the system is limited to reading ELF headers. Neither ldd(1)
-nor readelf(1) is called at any point.');
+nor readelf(1) is called at any point.
+
+The other logs list the name and version of any packages that were built
+against the wrong major version.');
 
 =pod
 

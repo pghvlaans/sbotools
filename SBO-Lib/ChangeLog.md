@@ -7,8 +7,9 @@
   * sbocheck: Write a log to /tmp for non-root shared object checks
   * sbotool: Added a script selection menu for SlackBuilds with missing solib dependencies
   * sbotool: List and mark non-SBo installations in the "Installed" menu
-  * sbocheck: Use --perl, --python and/or --ruby to check compatibility for all SBO packages
+  * sbocheck: Add --types to choose one or more package check types: solibs (default), python, ruby or all
     * Thanks to fourtysixandtwo for the suggestion.
+    * Coming next version: perl
   * sbotool: Incorporate the perl, python and ruby checks
   * sboconfig: Replace the interactive questionnaire with the sbotool Settings menu
     * Thanks to SCerovec for the suggestion.
