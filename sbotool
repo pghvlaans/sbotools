@@ -261,7 +261,7 @@ sub build_operations {
 		push @build_operations, "\"Edit Override\" \"\\\$EDITOR, \\\$VISUAL or vi, in that order.\" \\";
 		push @more_info, "\"Remove Override\" \"Delete the script from local overrides.\" \\";
 	}
-	push @more_info, "\"Package Check\" \"Check solibs, python and ruby.\" \\" if $inst_names{$sbo} or $inst_names_std{$sbo};
+	push @more_info, "\"Package Tests\" \"Check solibs, python and ruby.\" \\" if $inst_names{$sbo} or $inst_names_std{$sbo};
 	push @build_operations, "\"Edit Hints\" \"Blacklist, auto-rebuild and dependencies.\" \\" if $< == 0;
 	if ($inst_names{$sbo} and $< == 0 and not on_blacklist($sbo)) {
 		push @build_operations, "\"Remove\" \"Remove with unneeded dependencies.\" \\";
@@ -487,7 +487,7 @@ sub build_operations {
 		if (in "Remove List (-)", @list_options) { @remove_list = grep { !/^\Q$sbo\E$/ } @remove_list; }
 	}
 
-	if ($option eq "Package Check") {
+	if ($option eq "Package Tests") {
 		my $solib_check_pkg = $inst_names{$sbo} ? $inst_pkgs->{$sbo} : $inst_pkgs_std->{$sbo};
 		my $msg;
 		unless (solib_check($solib_check_pkg)) {
@@ -506,7 +506,7 @@ sub build_operations {
 			push @incompatible_ruby, $sbo unless in $sbo, @incompatible_ruby;
 		}
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $msg);
-		system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --no-collapse --title \"$sbo: Package Check\" --msgbox \"$msg\" $height $width");
+		system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --no-collapse --title \"$sbo: Package Tests\" --msgbox \"$msg\" $height $width");
 	}
 
 	# The Queue option does not appear if it is a queue of one.
@@ -816,6 +816,7 @@ sub display_main {
 	push @main_menu, "\"Python\" \"Incompatible python packages.\" \\" if @incompatible_python;
 	push @main_menu, "\"Ruby\" \"Incompatible ruby packages.\" \\" if @incompatible_ruby;
 	push @main_menu, "\"Man Pages\" \"Read sbotools-related man pages.\" \\";
+	push @main_menu, "\"Package Tests\" \"Solibs, python and ruby checks.\" \\";
 	my @for_installed_list;
 	if (-s $slackbuilds_txt) {
 		push @main_menu, "\"Browse Repository\" \"View scripts by series.\" \\";
@@ -836,9 +837,6 @@ sub display_main {
 			push @main_menu, "\"Upgrade All (dry run)\" \"How all upgrades would be done.\" \\";
 			push @main_menu, "\"Upgrade All\" \"Apply all available upgrades.\" \\" if $< == 0;
 		}
-		push @main_menu, "\"Package Checks\" \"Solibs, python and ruby checks.\" \\";
-	} else {
-		push @main_menu, "\"Package Checks\" \"Missing solib dependency checks.\" \\";
 	}
 	if ($< == 0) {
 		push @main_menu, "\"Fetch Repository\" \"Get or update the repository.\" \\";
@@ -937,10 +935,10 @@ sub display_main {
 		}
 	}
 
-	if ($option eq "Package Checks") {
+	if ($option eq "Package Tests") {
 		if (-s $slackbuilds_txt) {
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "All Installed\nAll SBo", "Check missing");
-			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Package Checks\" --menu \"Check intalled packages for missing shared object\ndependencies and python or ruby incompatibility.\" $height $width $height \"All Installed\" \"All installed: solibs, python and ruby.\" \"All SBo\" \"All SBo: solibs, python and ruby.\"", @help_solibs);
+			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Package Tests\" --menu \"Check intalled packages for missing shared object\ndependencies and python or ruby incompatibility.\" $height $width $height \"All Installed\" \"All installed: solibs, python and ruby.\" \"All SBo\" \"All SBo: solibs, python and ruby.\"", @help_solibs);
 			display_main() if $res == $code_dialog_cancel or $res == $code_dialog_error;
 			my $so_option = $output;
 			if ($option =~ /\w/) {

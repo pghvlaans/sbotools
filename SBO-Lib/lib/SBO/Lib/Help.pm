@@ -208,15 +208,16 @@ effective operations. The following options can appear in Main Menu:
     directory. The LOCAL_OVERRIDES setting determines the location of
     the directory.
 
-* Package Checks
-    Perform a shared object dependency check on all _SBo packages or all
-    installed packages. _SBo packages cna additionally be checked for
-    python and ruby incompatibilities. SlackBuilds with problems can be
-    selected from "Missing Solibs", "Python" or "Ruby" afterwards.
-
 * Package Search
     Search available SlackBuilds by name and (optionally) description.
     If TAGS.txt is present, tags are searched as well.
+
+* Package Tests
+    Perform a shared object dependency check on all _SBo packages or all
+    installed packages. Packages are additionally checked for python and
+    incompatibilities. Further tests, including perl, will likely arrive
+    in future versions. SlackBuilds with problems can be selected from
+    "Missing Solibs", "Python" or "Ruby" afterwards.
 
 * Python
     View, search and select SlackBuilds that were built against the
@@ -331,7 +332,7 @@ The remaining options can appear in the second menu:
     See how this SlackBuild and its reverse dependencies would be
     reinstalled with batch processing.
 
-* Package Check
+* Package Tests
     Check this installed SlackBuild for missing shared object
     dependencies and python and ruby incompatibility.
 
@@ -428,7 +429,7 @@ list of results to see its Operations menu.
 Script results lists can be refined further using the "Filter" button,
 which applies an additional search to the list.');
 
-our @help_solibs = ('Shared Object Checks - Help',
+our @help_solibs = ('Package Tests - Help',
 
 'Root and non-root users can perform per-package checks for missing
 shared object dependencies (often called "solibs"), and python and
