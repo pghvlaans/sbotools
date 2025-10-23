@@ -19,7 +19,7 @@ sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-Dioqr] [--create-template|-t FILE] --mass-rebuild
 .P
 sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
-           [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES
+           [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES,...
 .P
 sboinstall [--color|--nocolor] [--wrap|--nowrap] ...
 .SH DESCRIPTION
@@ -593,7 +593,8 @@ _SBo
 SlackBuilds from the
 .B
 SERIES
-series. In combination with
+series. Use a comma-separated list to specify multiple series. In
+combination with
 .B
 --reverse-rebuild\fR\
 \&, rebuild and reinstall reverse dependencies of these scripts

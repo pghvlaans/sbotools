@@ -32,7 +32,7 @@
                [-Dioqr] [--create-template|-t FILE] --mass-rebuild
 
     sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
-               [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES
+               [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES,\...
 
     sboinstall [--color|--nocolor] [--wrap|--nowrap] \...
 
@@ -236,10 +236,11 @@ mass rebuild restarts from the script after the script that failed when
 **\--series-rebuild (SERIES)**
 
 Generate build queues, rebuild and reinstall all in-tree *\_SBo*
-SlackBuilds from the **SERIES** series. In combination with
-**\--reverse-rebuild**, rebuild and reinstall reverse dependencies of
-these scripts as well. This is most potentially useful on Slackware
--current for the **python**, **perl**, **ruby** and **haskell** series.
+SlackBuilds from the **SERIES** series. Use a comma-separated list to
+specify multiple series. In combination with **\--reverse-rebuild**,
+rebuild and reinstall reverse dependencies of these scripts as well.
+This is most potentially useful on Slackware -current for the
+**python**, **perl**, **ruby** and **haskell** series.
 
 In combination with **\--nointeractive** and **\--batch**, saved build
 options are reused automatically.

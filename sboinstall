@@ -79,7 +79,7 @@ Options (defaults shown first where applicable):
   --mass-rebuild:
     rebuild all installed SlackBuilds at the available version.
   --series-rebuild (SERIES):
-    rebuild all installed SlackBuilds of a series at the available version.
+    rebuild all installed SlackBuilds in one or more series (comma-separated)
 EOF
 	return 1;
 }
@@ -186,7 +186,6 @@ $ctemp = $ctemp_only if $ctemp_only;
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
-
 
 # if SBO_HOME/resume.temp exists, resume the mass rebuild
 my $mtemp = "$config{SBO_HOME}/mass_rebuild.temp";
@@ -320,18 +319,19 @@ if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not 
 # prepare a queue in case of mass_rebuild or series_rebuild
 if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 	$needs_rationalize = 1;
+	my @series_rebuild = split ",", $series_rebuild if $series_rebuild;
 	my $inst_sbos = get_installed_packages('SBO');
 	my %sbos_names;
 	$sbos_names{$_->{name}} = $_ for @$inst_sbos;
 	for my $sbo (%sbos_names) {
 		my $name = $sbos_names{$sbo}{name};
 		next unless $name;
-		if ($series_rebuild) {
+		if (@series_rebuild) {
 			my $location = get_sbo_location($sbo);
 			my $check_location = get_orig_location($sbo);
 			$location = $check_location if $check_location;
 			my $series = basename(dirname($location));
-			next if $series ne $series_rebuild;
+			next unless in $series, @series_rebuild;
 		}
 		my $queue = get_build_queue([$name], \%warnings);
 		$build_queue = merge_queues($build_queue, $queue);
