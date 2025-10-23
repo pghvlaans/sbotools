@@ -1004,7 +1004,7 @@ sub display_rebuild_menu {
 	$rebuild_menu[-1] =~ s/\\$//;
 	my $rebuild_menu = join "\n", @rebuild_menu;
 	($height, $width, $begin_y, $begin_x) = calculate_position("wide", $rebuild_menu, "Large-scale rebuilds");
-	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Large-Scale Rebuilds\" --menu \"Rebuild all SBo packages, or everything in a series.\" $height $width $height $rebuild_menu", @help_rebuilds);
+	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Large-Scale Rebuilds\" --menu \"Rebuild all SBo packages, or everything in one or more series.\" $height $width $height $rebuild_menu", @help_rebuilds);
 	return if $res == $code_dialog_cancel or $res == $code_dialog_error;
 	my $option = $output;
 
@@ -1052,14 +1052,17 @@ sub display_rebuild_menu {
 		@active_series = sort(uniq(@active_series));
 		for (@active_series) {
 			my $base = basename $_;
-			push @series_selection_menu, "\"$base\" \"$package_counts{$_}\" \\";
+			push @series_selection_menu, "\"$base\" \"$package_counts{$_}\" \"off\" \\";
 		}
 		$series_selection_menu[-1] =~ s/\\$//;
 		my $series_selection_menu = join "\n", @series_selection_menu;
-		($height, $width, $begin_y, $begin_x) = calculate_position("narrow", $series_selection_menu, "The following");
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --cancel-label \"Cancel\" --title \"$option\" --menu \"The following series have installed packages.\" $height $width $height $series_selection_menu");
+		($height, $width, $begin_y, $begin_x) = calculate_position("narrow", $series_selection_menu, "The following\n\nAt least");
+		SELECT_SERIES: ($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --cancel-label \"Cancel\" --title \"$option\" --checklist \"The following series have installed packages.\n\nSelect at least one.\" $height $width $height $series_selection_menu");
 		return if $res == $code_dialog_cancel or $res == $code_dialog_error;
 		my $series_choice = $output;
+		goto SELECT_SERIES unless $series_choice =~ /\w/;
+		$series_choice =~ s/\n/\,/g;
+		$series_choice =~ s/\,$//g;
 
 		if ($option =~ /dry run/) {
 			my $cmd = "/usr/sbin/sboinstall --wrap --nocolor -D";

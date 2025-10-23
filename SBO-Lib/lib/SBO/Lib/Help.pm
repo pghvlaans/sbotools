@@ -404,9 +404,9 @@ file is present.
 
 2. Series Rebuild
 
-Rebuild every package in a given series and their dependencies. Choose
-a series from the list to proceed; only series with installed packages
-are displayed.
+Rebuild every package in one or more series and their dependencies.
+Choose series from the list to proceed; only series with installed
+packages are displayed.
 
 3. Series Reverse
 
