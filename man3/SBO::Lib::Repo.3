@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Repo 3"
-.TH SBO::Lib::Repo 3 "Boomtime, Bureaucracy 63, 3191 YOLD" "" "sbotools 4.0"
+.TH SBO::Lib::Repo 3 "Boomtime, The Aftermath 5, 3191 YOLD - Maladay" "" "sbotools 4.0"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -278,7 +278,8 @@ runs \f(CWgpg(1)\fR verification. It is exportable, and is currently used in
 .PP
 \&\f(CW\*(C`gnupg\*(C'\fR output is saved to \f(CW$key_log\fR, and the output of
 \&\f(CW\*(C`gpg \-\-no\-batch \-\-search\-keys\*(C'\fR is displayed with a prompt to ensure
-that the user can trust the key.
+that the user can trust the key. The script exits with \f(CW\*(C`_ERR_GPG\*(C'\fR if
+the download is declined.
 .SH "EXIT CODES"
 .IX Header "EXIT CODES"
 Repo.pm subroutines can return the following exit codes:

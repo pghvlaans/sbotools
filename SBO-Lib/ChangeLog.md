@@ -4,8 +4,8 @@
   * sbotool: Clarified the batch installation prompt
     * Thanks to SCerovec for the feedback.
   * sbotool: Titles for command confirmation windows
-  * sbocheck: Write a log to /tmp for non-root shared object checks
-  * sbotool: Added a script selection menu for SlackBuilds with missing solib dependencies
+  * sbocheck: Write a log to /tmp for non-root package tests
+  * sbotool: Added a script selection menus for SlackBuilds that failed package tests
   * sbotool: List and mark non-SBo installations in the "Installed" menu
   * sbocheck: Add --types to choose one or more package check types: solibs (default), python, ruby or all
     * Thanks to fourtysixandtwo for the suggestion.
@@ -15,6 +15,7 @@
     * Thanks to SCerovec for the suggestion.
   * sboinstall, sbotool: Use a comma-separated list to specify multiple series for --series-rebuild
   * sbocheck: Exit with invalid options
+  * Repo.pm: Exit when the user declines a pubkey download
 
 #### 4.0 - 2025-10-09
   * sbofind, sboremove: Display the short description, if available

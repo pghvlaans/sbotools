@@ -884,7 +884,8 @@ C<hkp://keyserver.ubuntu.com:80> and add it to the keyring.
 
 C<gnupg> output is saved to C<$key_log>, and the output of
 C<gpg --no-batch --search-keys> is displayed with a prompt to ensure
-that the user can trust the key.
+that the user can trust the key. The script exits with C<_ERR_GPG> if
+the download is declined.
 
 =cut
 
@@ -915,7 +916,7 @@ sub retrieve_key {
   } else {
     close STDERR;
     open STDERR, '>&', \*OLDERR;
-    return 0;
+    error_code("GPG verification is not possible without this public key.", _ERR_GPG);
   }
 }
 
