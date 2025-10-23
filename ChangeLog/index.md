@@ -12,6 +12,7 @@
   * *sbotool*: Incorporate the python and ruby checks
   * *sboconfig*: Replace the interactive questionnaire with the *sbotool* "Settings" menu
     * Thanks to SCerovec for the suggestion.
+  * *sboinstall*: Use a comma-separated list to specify multiple series for **\--series-rebuild**
 
 * 4.0 - 2025-10-09
   * *sbofind*, *sboremove*: Display the short description, if available
