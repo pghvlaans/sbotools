@@ -62,7 +62,7 @@ my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $p
 
 my @valid_types = ("solibs", "python", "ruby");
 
-GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'nowrap' => \$nowrap, 'wrap' => \$wrap, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check, 't|type=s' => \$type);
+my $options_ok = GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'nowrap' => \$nowrap, 'wrap' => \$wrap, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check, 't|type=s' => \$type);
 
 if ($help) {
 	show_usage();
@@ -73,6 +73,10 @@ if ($vers) { show_version(); exit 0 }
 $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
 $config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $nowrap xor $wrap;
 if ($< != 0) { $config{GPG_VERIFY} = "FALSE"; }
+unless ($options_ok) {
+	show_usage();
+	usage_error "\nOne or more invalid options detected.";
+}
 
 if ($type) {
 	$socheck = ($socheck or $pkg_check or $full_check) ? $socheck : 1;
