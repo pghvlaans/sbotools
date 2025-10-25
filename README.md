@@ -38,6 +38,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbocheck: Exit with invalid options
   * Repo.pm: Exit when the user declines a pubkey download
   * Removed broken symlinks from t/
+  * sboupgrade: Match sbocheck solib log formatting
 
 #### 4.0 - 2025-10-09
   * sbofind, sboremove: Display the short description, if available
