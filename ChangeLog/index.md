@@ -4,7 +4,7 @@
     * Thanks to SCerovec for the feedback.
   * *sbotool*: Titles for command confirmation windows
   * *sbocheck*: Write a log to */tmp* for non-root shared object checks
-  * *sbotool*: Added a script selection menu for SlackBuilds with missing solib dependencies
+  * *sbotool*: Added a script selection menus for SlackBuilds that failed package tests
   * *sbotool*: List and mark non-SBo installations in the "Installed" menu
   * *sbocheck*: Add **\--types** to choose one or more package checks: **solibs** (default), **python**, **ruby** or **all**
     * Thanks to fourtysixandtwo for the suggestion.
@@ -12,7 +12,10 @@
   * *sbotool*: Incorporate the python and ruby checks
   * *sboconfig*: Replace the interactive questionnaire with the *sbotool* "Settings" menu
     * Thanks to SCerovec for the suggestion.
-  * *sboinstall*: Use a comma-separated list to specify multiple series for **\--series-rebuild**
+  * *sboinstall*, *sbotool*: Use a comma-separated list to specify multiple series for **\--series-rebuild**
+  * *sbocheck*: Exit with invalid options
+  * *Repo.pm*: Exit when the user declines a pubkey download
+  * Removed broken symlinks from `t/`
 
 * 4.0 - 2025-10-09
   * *sbofind*, *sboremove*: Display the short description, if available
