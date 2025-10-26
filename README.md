@@ -40,6 +40,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Removed broken symlinks from t/
   * sboupgrade: Match sbocheck solib log formatting
   * sbotool: Add a button to delete local override files
+  * sbotool: Offer to create a non-existent overrides directory after setting it
 
 #### 4.0 - 2025-10-09
   * sbofind, sboremove: Display the short description, if available

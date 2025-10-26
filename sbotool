@@ -14,7 +14,7 @@ use SBO::Lib qw/ :colors :config :const :help auto_reverse check_multilib check_
 
 use File::Basename;
 use File::Find;
-use File::Path qw/ remove_tree /;
+use File::Path qw/ make_path remove_tree /;
 use File::Temp qw/ tempdir /;
 use Getopt::Long qw/ :config no_ignore_case_always /;
 use Time::HiRes qw/ time /;
@@ -1555,6 +1555,15 @@ sub edit_setting {
 		new_package_information();
 		$save_dialogrc = $config{DIALOGRC} if $existing_setting =~ /^DIALOGRC=/;
 		prompt $color_notice, "Press ENTER to continue.";
+		if ($setting_name eq "LOCAL_OVERRIDES" and $option ne "FALSE") {
+			unless (-d $option) {
+				($height, $width, $begin_y, $begin_x) = calculate_position("wide", "The specified local overrides directory does not exist:\n\n$option\n\ncreate?");
+				($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"New Overrides Directory\" --yesno \"The specified local overrides directory does not exist:\n\n  $option\n\nCreate it?\" $height $width");
+				if ($res == $code_dialog_ok) {
+					make_path($option) unless -d $option;
+				}
+			}
+		}
 		return;
 	}
 	edit_setting($existing_setting, $explanation, $criterion, $flag);
