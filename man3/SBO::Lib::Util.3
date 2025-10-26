@@ -178,8 +178,9 @@ in the form e.g. \f(CW\*(C`python3.12\*(C'\fR. If \f(CW\*(C`python3\*(C'\fR is n
 .ie n .SS $rubyver
 .el .SS \f(CW$rubyver\fP
 .IX Subsection "$rubyver"
-This exported variable contains the major system \f(CW\*(C`ruby\*(C'\fR version, e.g. \f(CW3.4.0\fR for
-\&\f(CW\*(C`ruby\-3.4.6\*(C'\fR.
+This exported variable contains the major system \f(CW\*(C`ruby\*(C'\fR version. The correct value of
+the major version is calculated in \f(CWget_installed_packages()\fR from \f(CWSBO::Lib::Pkgs(3)\fR,
+e.g. \f(CW\*(C`ruby\-3.4.0\*(C'\fR for \f(CW\*(C`ruby\-3.4.6\*(C'\fR.
 .ie n .SS $userland_32
 .el .SS \f(CW$userland_32\fP
 .IX Subsection "$userland_32"

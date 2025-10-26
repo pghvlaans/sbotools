@@ -382,6 +382,7 @@ sub series_check {
 
     if ($ruby_check) {
       if ($good_ruby and $line =~ /\/ruby\/gems\/\w/) {
+        $good_ruby = 0 unless defined $rubyver;
         $good_ruby = 0 unless $line =~ /\/ruby\/gems\/$rubyver\// or $line =~ /^opt\//;
       }
     }

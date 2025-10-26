@@ -195,6 +195,9 @@ versions, full installed package names and creation times of the returned packag
 The default behavior is to retain the package lists for future calls; add a true value
 to the arguments to clear them instead. This is irrelevant when running C<sbotest>.
 
+The C<$rubyver> variable from C<SBO::Lib::Util(3)> is set here when the C<ruby> package
+is evaluated.
+
 =cut
 
 # pull an array of hashes, each hash containing the name and version of a
@@ -216,6 +219,19 @@ sub get_installed_packages {
     $pkg =~ s!^\Q$pkg_db/\E!!;
     my ($name, $version, $build) = $pkg =~ m#^([^/]+)-([^-]+)-[^-]+-([^-]+)$#
       or next;
+    # Get the appropriate ruby target version here.
+    if ($name eq "ruby") {
+      my $fh;
+      # non-fatal
+      if (open $fh, "<", "$pkg_db/$pkg") {
+        for (<$fh>) {
+          next unless $_ =~ /^usr\/include\/ruby-/;
+          ($rubyver) = $_ =~ m/^usr\/include\/ruby-(\d+\.\d+\.\d+)\/$/;
+          last;
+        }
+        close $fh;
+      }
+    }
     my $numbuild = $build;
     $numbuild =~ s/_SBo(|compat32)$//g ;
     my $created = strftime "%F, %H:%M:%S", localtime((stat "$pkg_db/$pkg")[10]);

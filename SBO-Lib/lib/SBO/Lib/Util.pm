@@ -279,8 +279,9 @@ C<$py2ver>.
 
 =head2 $rubyver
 
-This exported variable contains the major system C<ruby> version, e.g. C<3.4.0> for
-C<ruby-3.4.6>.
+This exported variable contains the major system C<ruby> version. The correct value of
+the major version is calculated in C<get_installed_packages()> from C<SBO::Lib::Pkgs(3)>,
+e.g. C<ruby-3.4.0> for C<ruby-3.4.6>.
 
 =cut
 
@@ -383,25 +384,23 @@ get_colors();
 
 usage_error("Forbidden value of \$TMP: $ENV{TMP}\n") if defined $ENV{TMP} and dangerous_directory($ENV{TMP});
 
-our $py2ver = `python2 --version 2>&1`;
-if ($py2ver) {
-  $py2ver =~ s/(\s|\.\d+$)//g;
-  $py2ver = lc $py2ver;
-}
-our $py3ver = `python3 --version`;
-if ($py3ver) {
+our (@py_installed, @py_missing);
+our $py3ver = `python3 --version` if -x "/usr/bin/python3";
+if (defined $py3ver) {
   $py3ver =~ s/(\s|\.\d+$)//g;
   $py3ver = lc $py3ver;
-} else {
-  $py3ver = $py2ver;
+  push @py_installed, $py3ver;
 }
-our @py_installed = ($py2ver, $py3ver);
-our @py_missing;
+our $py2ver = `python2 --version 2>&1` if -x "/usr/bin/python2";
+if (defined $py2ver) {
+  $py2ver =~ s/(\s|\.\d+$)//g;
+  $py2ver = lc $py2ver;
+  push @py_installed, $py2ver;
+}
 
-our $rubyver = `ruby --version`;
-if ($rubyver) {
-  $rubyver = (split " ", $rubyver)[1];
-  $rubyver =~ s/\.\w+$/\.0/g;
+our $rubyver = `ruby --version` if -x "/usr/bin/ruby";
+if (defined $rubyver) {
+  $rubyver = (split " ", $rubyver)[1]; # get_installed_packages() fixes the major version.
 }
 
 =head1 SUBROUTINES
