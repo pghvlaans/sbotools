@@ -148,7 +148,7 @@ Options (defaults shown first where applicable):
   -v|--version:
     version information.
   -a|--alwaysask:
-    always ask to remove, even if required by other packages on system.
+    always ask to remove, even if required by other installed packages.
   -p|--compat32:
     remove compat32 scripts.
 

@@ -68,7 +68,7 @@ Options (defaults shown first where applicable):
   -t|--template-only (FILE):
     create a template, but do not download or install anything.
   --batch:
-    like nointeractive, but calculates dependencies (use with caution)
+    like nointeractive, but calculates dependencies (use with caution).
   --reinstall:
     ask to reinstall any installed packages in the requirements list.
   --create-template (FILE):
@@ -79,7 +79,7 @@ Options (defaults shown first where applicable):
   --mass-rebuild:
     rebuild all installed SlackBuilds at the available version.
   --series-rebuild (SERIES):
-    rebuild all installed SlackBuilds in one or more series (comma-separated)
+    rebuild all installed SlackBuilds in one or more series (comma-separated).
 EOF
 	return 1;
 }

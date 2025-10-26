@@ -36,7 +36,7 @@ Options (defaults shown first where applicable):
   --(no)wrap:
     (do not) wrap sbotools output.
   --all
-    this flag will upgrade everything reported by sbocheck(1).
+    this flag upgrades everything reported by sbocheck(1).
   --batch:
     like nointeractive, but calculates dependencies (use with caution).
   -b|--build-ignore (FALSE|TRUE):
