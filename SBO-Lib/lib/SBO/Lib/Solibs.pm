@@ -339,7 +339,7 @@ sub installed_solibs {
 C<series_check()> takes the name of a package file and an array with one or more checks
 to perform. Available checks include C<python> and C<ruby> at this time. C<python> and
 C<ruby> are judged to be incompatible if files associated with the wrong major version
-(e.g. C<python-3.12> or C<ruby-3.4*>) are included.
+(e.g. C<python-3.12> or C<ruby-3.4*>) are included. Files in C</opt> are ignored.
 
 The subroutine returns an array with results for the checks in alphabetical order, with
 1 indicating apparent compatibility and 0 indicating apparent incompatibility.
@@ -363,7 +363,20 @@ sub series_check {
 
     if ($python_check) {
       if ($good_python and $line =~ /\/python\d+\.\d+\/site-packages\//) {
-        $good_python = 0 unless $line =~ /\/($py2ver|$py3ver)\/site-packages\// or $line =~ /^opt\//;
+        next if $line =~ /^opt\//;
+        my ($sought_python) = $line =~ m/\/(python\d+\.\d+)\/site-packages\//;
+        next if in $sought_python, @py_installed;
+        if (in $sought_python, @py_missing) {
+          $good_python = 0;
+          next;
+        }
+        if (-x "/usr/bin/$sought_python") {
+          push @py_installed, $sought_python;
+          next;
+        } else {
+          push @py_missing, $sought_python;
+        }
+        $good_python = 0;
       }
     }
 
@@ -506,6 +519,8 @@ sub update_known_solibs {
   script_error("Getting the ldconfig cache failed. Exiting.") unless @ld_lines;
   undef @native_libs;
   undef @x86_libs;
+  splice @py_installed;
+  splice @py_missing;
   %old_libs = ();
   my $is_x86_64 = $arch eq "x86_64" ? 1 : 0;
   for my $line (@ld_lines) {

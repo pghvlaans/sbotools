@@ -69,6 +69,8 @@ my @EXPORT_CONFIG = qw{
   $is_sbotool
   $userland_32
   $py3ver
+  @py_installed
+  @py_missing
   $py2ver
   $rubyver
 };
@@ -260,6 +262,13 @@ interact with C<@obsolete> directly; in other situations, make a copy.
 
 =cut
 
+=head2 (@py_installed, @py_missing)
+
+These exported arrays contain C<python> versions that are installed and needed but
+missing, respectively.
+
+=cut
+
 =head2 ($py3ver, $py2ver)
 
 These exported variables contain the major system C<python2> and C<python3> versions
@@ -386,6 +395,8 @@ if ($py3ver) {
 } else {
   $py3ver = $py2ver;
 }
+our @py_installed = ($py2ver, $py3ver);
+our @py_missing;
 
 our $rubyver = `ruby --version`;
 if ($rubyver) {
