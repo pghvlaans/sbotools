@@ -1564,6 +1564,7 @@ sub edit_setting {
 				}
 			}
 		}
+		$overrides_available = ($config{LOCAL_OVERRIDES} ne "FALSE" and -d -w $config{LOCAL_OVERRIDES});
 		return;
 	}
 	edit_setting($existing_setting, $explanation, $criterion, $flag);
@@ -1598,6 +1599,7 @@ sub new_package_information {
 	renew_sbo_locations();
 	@available = get_all_available();
 	update_known_solibs();
+	$overrides_available = ($config{LOCAL_OVERRIDES} ne "FALSE" and -d -w $config{LOCAL_OVERRIDES});
 
 	@installed = @{ get_installed_packages('SBO', 1) };
 	@installed_std = @{ get_installed_packages('STD') };
