@@ -548,8 +548,11 @@ sub build_operations {
 
 	# Text files in the SlackBuild directory.
 	if ($option eq "View File" or $option eq "Edit Override") {
-		unlink $dialog_output;
 		my (@file_list, %file_locations, @display_list);
+		FILES: splice @file_list;
+		splice @display_list;
+		%file_locations = ();
+		unlink $dialog_output;
 		find({ wanted => sub { push @file_list, $_ if -T $_ }, no_chdir => 1 }, $location);
 		my $file_list = join "\n", @file_list;
 		for (@file_list) {
@@ -559,8 +562,12 @@ sub build_operations {
 		}
 		@display_list = sort @display_list;
 		my $display_list = join " ", @display_list;
-		FILES: ($height, $width, $begin_y, $begin_x) = calculate_position("wide", $file_list, "Select a");
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"View File\" --menu \"Select a text file to read it.\" $height $width $height $display_list");
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $file_list, "Select a");
+		if ($option eq "View File") {
+			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"View File\" --menu \"Select a text file to read it.\" $height $width $height $display_list");
+		} else {
+			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --extra-button --extra-label \"Delete\" --title \"Edit File\" --menu \"Select a text file to edit it.\" $height $width $height $display_list");
+		}
 		my $file = $output;
 		if ($option eq "View File" and $file =~ /\w/) {
 			chomp(my $file_text = slurp $file_locations{$file});
@@ -569,9 +576,26 @@ sub build_operations {
 			system("$dialog_prefix --begin $begin_y $begin_x --title \"$file\" --textbox $file_locations{$file} $height $width");
 			goto FILES;
 		} elsif ($option eq "Edit Override" and $file =~ /\w/) {
+			unless (-w $file_locations{$file}) {
+				($height, $width, $begin_y, $begin_x) = calculate_position("narrow", "no write\nselect");
+				system("$dialog_prefix --begin $begin_y $begin_x --title \"$file\" --msgbox \"No write permissions.\n\nSelect another file.\" $height $width");
+				goto FILES;
+			}
+			if ($res == $code_dialog_extra) {
+				if ($file eq "$base_name.info") {
+					($height, $width, $begin_y, $begin_x) = calculate_position("narrow", "needed\nuse");
+					system("$dialog_prefix --begin $begin_y $begin_x --title \"$file\" --msgbox \"$file cannot be deleted here.\n\nUse Remove Override.\" $height $width");
+					goto FILES;
+				}
+				($height, $width, $begin_y, $begin_x) = calculate_position("narrow", "delete?");
+				($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"$file\" --yesno \"Really delete $file?\" $height $width");
+				unlink $file_locations{$file} if $res == $code_dialog_ok;
+				goto FILES;
+			}
 			system("$editor $file_locations{$file}");
 			clear_info_store();
 			new_package_information();
+			goto FILES;
 		}
 	}
 
