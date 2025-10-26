@@ -1715,7 +1715,8 @@ sub run_command {
 			if ($res == $code_dialog_ok) { $cmd = $batch_cmd; $batch_res = 1; }
 		} else {
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide_cond", "missing\n\nrun or continue\n\n$dry_run_output");
-			system("$dialog_prefix --begin $begin_y $begin_x --title \"User or Group Missing\" --msgbox \"Batch mode is unavailable due to missing users or groups.\n\nRun the commands manually or continue for interactive mode.\n\n$dry_run_output\" $height $width");
+			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"User or Group Missing\" --yesno \"Batch Mode is unavailable due to missing users or groups.\n\nContinue for Interactive Mode, which provides a prompt to add them?\n\n$dry_run_output\" $height $width");
+			return unless $res == $code_dialog_ok;
 		}
 	} elsif ($cmd =~ /sbo(install|upgrade)/ and not defined $no_batch) {
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide", "LOCAL_OVERRIDES\n\nLO\n\nunavailable");
