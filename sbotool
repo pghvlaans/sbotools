@@ -10,7 +10,7 @@
 use strict;
 use warnings;
 
-use SBO::Lib qw/ :colors :config :const :help auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_readme_contents get_reverse_reqs get_sbo_description get_sbo_location in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp series_check solib_check uniq update_known_solibs @concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated /;
+use SBO::Lib qw/ :colors :config :const :help auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_readme_contents get_reverse_reqs get_sbo_description get_sbo_location get_slack_version in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp series_check solib_check uniq update_known_solibs version_cmp @concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated /;
 
 use File::Basename;
 use File::Find;
@@ -1697,16 +1697,29 @@ sub run_command {
 	my ($cmd, $no_batch) = @_;
 	my ($height, $width, $begin_y, $begin_x, $res, $output);
 	my ($dry_run_output, $batch_res);
-	if ($cmd =~ /sbo(install|upgrade)/ and not defined $no_batch) {
+	my $overrides_ok = ($config{LOCAL_OVERRIDES} eq "FALSE" or -d $config{LOCAL_OVERRIDES});
+	if ($cmd =~ /sbo(install|upgrade)/ and not defined $no_batch and $overrides_ok) {
 		my $batch_cmd = "$cmd --batch";
 		my $dry_run_cmd = "$batch_cmd --wrap --nocolor -D";
 		unlink $command_output;
 		system("$dry_run_cmd > $command_output");
 		chomp($dry_run_output = slurp $command_output);
-		($height, $width, $begin_y, $begin_x) = calculate_position("wide_cond", $dry_run_output, "$cmd\n\nUse batch mode?\n\nUse interactive mode?\n\nDry Run:\n");
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yes-label \"Batch\" --extra-button --extra-label \"Interactive\" --no-label \"Back\" --title \"Building the Queue\" --yesno \"$cmd\n\nSelect \"Interactive\" to approve the queue manually.\n\nSelect \"Batch\" to build the queue automatically.\n\nDry Run:\n$dry_run_output\" $height $width", @help_batch);
-		return if $res == $code_dialog_cancel or $res == $code_dialog_error;
-		if ($res == $code_dialog_ok) { $cmd = $batch_cmd; $batch_res = 1; }
+		unless ($dry_run_output =~ /with --batch.$/) {
+			($height, $width, $begin_y, $begin_x) = calculate_position("wide_cond", $dry_run_output, "$cmd\n\nUse batch mode?\n\nUse interactive mode?\n\nDry Run:\n");
+			if (version_cmp(get_slack_version(), "15.0") < 0) {
+				($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --extra-button --extra-label \"Interactive\" --no-label \"Back\" --title \"Building the Queue\" --yesno \"$cmd\n\nSelect \"Interactive\" to approve the queue manually.\n\nSelect \"OK\" to build the queue automatically.\n\nDry Run:\n$dry_run_output\" $height $width", @help_batch);
+			} else {
+				($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yes-label \"Batch\" --extra-button --extra-label \"Interactive\" --no-label \"Back\" --title \"Building the Queue\" --yesno \"$cmd\n\nSelect \"Interactive\" to approve the queue manually.\n\nSelect \"Batch\" to build the queue automatically.\n\nDry Run:\n$dry_run_output\" $height $width", @help_batch);
+			}
+			return if $res == $code_dialog_cancel or $res == $code_dialog_error;
+			if ($res == $code_dialog_ok) { $cmd = $batch_cmd; $batch_res = 1; }
+		} else {
+			($height, $width, $begin_y, $begin_x) = calculate_position("wide_cond", "missing\n\nrun or continue\n\n$dry_run_output");
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"User or Group Missing\" --msgbox \"Batch mode is unavailable due to missing users or groups.\n\nRun the commands manually or continue for interactive mode.\n\n$dry_run_output\" $height $width");
+		}
+	} elsif ($cmd =~ /sbo(install|upgrade)/ and not defined $no_batch) {
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", "LOCAL_OVERRIDES\n\nLO\n\nunavailable");
+		system("$dialog_prefix --begin $begin_y $begin_x --title \"Overrides Directory Missing\" --msgbox \"LOCAL_OVERRIDES is defined, but the directory does not exist:\n\n  $config{LOCAL_OVERRIDES}\n\nBatch mode is unavailable.\" $height $width");
 	}
 	if ($cmd =~ /sboclean/ and $cmd =~ /(-d|-w|-o ALL)/) {
 		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "$cmd\n\nAsk to delete");
