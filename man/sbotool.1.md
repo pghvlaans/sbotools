@@ -20,7 +20,7 @@
 
     sbotool [-h|-v]
 
-    sbotool [-d FILE]
+    sbotool [-d FILE] [--config]
 
 ## DESCRIPTION
 
@@ -44,7 +44,7 @@ management are available from **Operations**; see **Help** for details.
 For system-wide actions, see **Main Menu**. Use **Fetch Repository** to
 get or update a copy of the **SlackBuilds.org** repo, or **Settings** to
 view and edit **sbotools** settings. Large-scale upgrades, rebuilds and
-shared object checks can also be done here. To act on the **Install**,
+package tests can also be done here. To act on the **Install**,
 **Upgrade**, **Remove** or **Template** lists, use the **List
 Operations** menu screen.
 
@@ -99,6 +99,11 @@ to generate a default *dialogrc* to modify. The **\--dialogrc** option
 can also specify a file at runtime.
 
 ## OPTIONS
+
+**\--config**
+
+Enter the **Settings** menu directly. **sboconfig** calls **sbotool**
+with this option when run without flags.
 
 **-d\|\--dialogrc (FILE)**
 

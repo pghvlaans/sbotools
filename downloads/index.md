@@ -10,6 +10,10 @@ This fork of `sbotools` was briefly available as `sbotools3` in late 2024. Any `
 
 Use the key from the homepage (updated 2024-12-15) to verify downloads with gpg.
 
+## Deprecation Notice
+
+Support for Slackware 14.0, 14.1 and 14.2 will be dropped in `sbotools-4.1`.
+
 ## Obsolete Builds List
 
 This file has been installed to `/etc/sbotools/obsolete` since `sbotools-3.6`. It contains a list of scripts that have been added to Slackware -current under different names, or are unneeded build dependencies in Slackware -current. It will be updated as needed.
@@ -20,13 +24,15 @@ This file has been installed to `/etc/sbotools/obsolete` since `sbotools-3.6`. I
 
 ## Current Releases
 
-* [sbotools-4.0.tar.gz](sbotools-4.0.tar.gz) ([asc](sbotools-4.0.tar.gz.asc))
-    * md5sum: `f83a564b9862c5a9cc43cbf2545bce70`
+* [sbotools-4.0.1.tar.gz](sbotools-4.0.1.tar.gz) ([asc](sbotools-4.0.1.tar.gz.asc))
+    * md5sum: `7409d2b66badc71fb422a65bcba633f7`
 * [sbotest-1.1.2.tar.gz](sbotest-1.1.2.tar.gz) ([asc](sbotest-1.1.2.tar.gz.asc))
     * md5sum: `a2f5692d75e00f5a8555dc373a84b7bc`
 
 ## Older Releases
 
+* [sbotools-4.0.tar.gz](sbotools-4.0.tar.gz) ([asc](sbotools-4.0.tar.gz.asc))
+    * md5sum: `f83a564b9862c5a9cc43cbf2545bce70`
 * [sbotools-3.8.1.tar.gz](sbotools-3.8.1.tar.gz) ([asc](sbotools-3.8.1.tar.gz.asc))
     * md5sum: `0e0e11a51f2b97cdb6aff7cd43e787f1`
 * [sbotest-1.1.1.tar.gz](sbotest-1.1.1.tar.gz) ([asc](sbotest-1.1.1.tar.gz.asc))

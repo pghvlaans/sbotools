@@ -1,11 +1,11 @@
-The pages here reflect post-release development. For the version 4.0 pages (2025-10-09), see [man](/sbotools/man/).
+The pages here reflect post-release development. For the version 4.0.1 pages (2025-10-27), see [man](/sbotools/man/).
 
 * [sbotools(1)](sbotools.1.md)
     * A summary man page with brief descriptions of the tools.
 * [sbotool(1)](sbotool.1.md)
     * A TUI for **sbotools**.
 * [sbocheck(1)](sbocheck.1.md)
-    * Fetch the latest version of the upstream SlackBuilds repository; check for version updates, build number changes and out-of-tree installed SlackBuilds. Perform shared object dependency checks.
+    * Fetch the latest version of the upstream SlackBuilds repository; check for version updates, build number changes and out-of-tree installed SlackBuilds. Perform package tests.
 * [sboclean(1)](sboclean.1.md)
     * Remove cruft by cleaning source archives, build directories and saved build options.
 * [sboconfig(1)](sboconfig.1.md)

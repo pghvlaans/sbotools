@@ -12,6 +12,10 @@ SlackBuilds for **[sbotools](https://slackbuilds.org/repository/15.0/system/sbot
 
 To verify commits (excluding resolved PR, which are verified with GitHub's key), use [GPG_KEY](/sbotools/downloads/GPG_KEY). Key updated 2024-12-15.
 
+## Deprecation Notice
+
+Support for Slackware 14.0, 14.1 and 14.2 will be dropped in `sbotools-4.1`.A pre-built `sbotools-4.0.1` package for these versions will be made available at that time.
+
 ## Why a Fork?
 
 The previous **sbotools** repository had gone without commits for a number of years. During this time, the default URL for release Slackware beyond 14.2 became unusable, and building compat32 and 32-bit packages on multilib systems stopped working for nearly all SBo SlackBuilds. Both of these issues have been fixed.

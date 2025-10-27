@@ -14,4 +14,4 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 ## Incoming
 
-* perl, python and ruby compatibility checks for installed packages.
+* perl compatibility checks for installed packages.
