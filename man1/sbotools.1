@@ -142,6 +142,13 @@ interested in the
 .B
 sbotest
 companion package.
+.P
+.B
+sbotools
+currently supports Slackware 15.0 and beyond. For Slackware 14.0, 14.1 and 14.2, install
+.B
+sbotools-4.0.1
+at the latest.
 .SH STARTUP
 When using
 .B
@@ -176,7 +183,7 @@ sbotool
 if running as root.
 .P
 The default mirror depends on the running version of Slackware. Stable
-releases beyond Slackware 14.1 use the appropriate branch on
+releases use the appropriate branch on
 .UR https://gitlab.com/SlackBuilds.org/slackbuilds/
 .UE
 and -current uses
@@ -185,7 +192,7 @@ and -current uses
 with the
 .B
 current
-branch. Slackware 14.0 and 14.1 have default rsync mirrors.
+branch.
 .P
 To use an rsync mirror with <rsync://slackbuilds.org/slackbuilds/*/>
 as the default, set

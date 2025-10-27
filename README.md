@@ -20,7 +20,14 @@ This repository is an **sbotools** revival, and was forked from the [pink-mist r
 
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
+## Slackware Support
+
+**sbotools** currently supports Slackware 15.0 and beyond. For Slackware 14.0, 14.1 and 14.2, install`sbotools-4.0.1` at the latest.
+
 ## Most Recent Changes
+#### Post-Release
+  * Drop support for Slackware 14.0, 14.1 and 14.2
+
 #### 4.0.1 - 2025-10-27
   * sbotool: Clarified the batch installation prompt
     * Thanks to SCerovec for the feedback.

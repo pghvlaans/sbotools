@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Repo 3"
-.TH SBO::Lib::Repo 3 "Setting Orange, The Aftermath 8, 3191 YOLD" "" "sbotools 4.0.1"
+.TH SBO::Lib::Repo 3 "Sweetmorn, The Aftermath 9, 3191 YOLD" "" "sbotools 4.0.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -145,9 +145,7 @@ value on success. Creation failure results in a usage error.
 .Ve
 .PP
 \&\f(CWgenerate_slackbuilds_txt()\fR generates a minimal \f(CW\*(C`SLACKBUILDS.TXT\*(C'\fR for
-repositories that do not include this file. The file is also generated
-under Slackware 14.0 and 14.1, which contain an absent SlackBuild and can
-thereby cause unexpected failures.
+repositories that do not include this file.
 .PP
 If the file cannot be opened for write, it returns a false value. Otherwise,
 it returns a true value.
@@ -234,9 +232,6 @@ before any update proceeds.
 .PP
 \&\f(CWverify_git_commit()\fR attempts to verify the GPG signature of the most
 recent git commit, if any.
-.PP
-Git commit verification is unavailable for Slackware 14.0 and Slackware 14.1.
-A user prompt for continuation appears if \f(CW\*(C`GPG_VERIFY\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR.
 .SS verify_rsync
 .IX Subsection "verify_rsync"
 .Vb 1

@@ -294,8 +294,8 @@ kernel.
 
 our $arch = get_arch();
 
-our $pkg_db = '/var/log/packages';
-our $script_db = '/var/log/scripts';
+our $pkg_db = '/var/lib/pkgtools/packages';
+our $script_db = '/var/lib/pkgtools/scripts';
 
 # global config variables
 my $req_dir = $ENV{SBOTOOLS_CONF_DIR};
@@ -651,12 +651,8 @@ sub get_sbo_from_loc {
 }
 
 # %supported maps what's in /etc/slackware-version to an https URL, or to an
-# rsync URL if RSYNC_DEFAULT is true. Git commit verification is unavailable
-# prior to Slackware 14.2, so prior versions have rsync as well.
+# rsync URL if RSYNC_DEFAULT is true.
 my %supported = (
-  '14.0' => 'rsync://slackbuilds.org/slackbuilds/14.0/',
-  '14.1' => 'rsync://slackbuilds.org/slackbuilds/14.1/',
-  '14.2' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
   '15.0' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
   '15.0+' => 'https://github.com/Ponce/slackbuilds.git',
   '15.1' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
@@ -666,9 +662,6 @@ my %supported = (
 
 if ($config{RSYNC_DEFAULT} eq 'TRUE') {
   %supported = (
-    '14.0' => 'rsync://slackbuilds.org/slackbuilds/14.0/',
-    '14.1' => 'rsync://slackbuilds.org/slackbuilds/14.1/',
-    '14.2' => 'rsync://slackbuilds.org/slackbuilds/14.2/',
     '15.0' => 'rsync://slackbuilds.org/slackbuilds/15.0/',
     '15.0+' => 'https://github.com/Ponce/slackbuilds.git',
     '15.1' => 'rsync://slackbuilds.org/slackbuilds/15.1/',
@@ -678,9 +671,6 @@ if ($config{RSYNC_DEFAULT} eq 'TRUE') {
 }
 
 my %branch = (
-  '14.0' => '14.0',
-  '14.1' => '14.1',
-  '14.2' => '14.2',
   '15.0' => '15.0',
   '15.1' => '15.1',
 );
@@ -719,6 +709,8 @@ sub get_slack_version {
     close $fh;
     $version = ($line =~ /\s+(\d+[^\s]+)$/)[0];
   }
+  usage_error("\n$version is no longer supported. Use sbotools-4.0.1.\n" .
+    "Alternatively, set SLACKWARE_VERSION to 15.0 or greater.") if $version =~ /^14\./;
   usage_error("\nThe running or configured Slackware version is unsupported: $version\n" .
     "Consider running \"sboconfig -r $supported{current}\" to use a repository for -current.")
     unless $supported{$version};

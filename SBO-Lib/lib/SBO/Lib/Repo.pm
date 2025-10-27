@@ -206,8 +206,6 @@ sub check_repo {
         last if $extra_dir;
       }
       for my $cat (@categories) {
-        # The gis category was added in 14.1.
-        next if $cat eq "gis";
         $incomplete = 1 unless in $cat, @found_dirs;
         last if $incomplete;
       }
@@ -269,9 +267,7 @@ sub check_repo {
   my $bool = generate_slackbuilds_txt();
 
 C<generate_slackbuilds_txt()> generates a minimal C<SLACKBUILDS.TXT> for
-repositories that do not include this file. The file is also generated
-under Slackware 14.0 and 14.1, which contain an absent SlackBuild and can
-thereby cause unexpected failures.
+repositories that do not include this file.
 
 If the file cannot be opened for write, it returns a false value. Otherwise,
 it returns a true value.
@@ -478,7 +474,7 @@ sub pull_sbo_tree {
     $res = git_sbo_tree($url);
     if ($res == 0) {
       if (prompt($color_lesser, "Sync from $url failed. Retry?", default => 'no')) {
-        generate_slackbuilds_txt() unless -s $slackbuilds_txt or versioncmp($sw_version, "14.1") != 1;
+        generate_slackbuilds_txt() unless -s $slackbuilds_txt;
         return pull_sbo_tree();
       }
     }
@@ -488,7 +484,7 @@ sub pull_sbo_tree {
 
   my $wanted = sub { chown 0, 0, $File::Find::name; };
   find($wanted, $repo_path) if -d $repo_path;
-  if ($res and (versioncmp($sw_version, "14.1") != 1 or not -s $slackbuilds_txt)) {
+  if ($res and not -s $slackbuilds_txt) {
     generate_slackbuilds_txt();
   }
   if ($config{OBSOLETE_CHECK} eq "TRUE") {
@@ -513,10 +509,7 @@ sub rsync_sbo_tree {
   script_error('rsync_sbo_tree requires an argument.') unless @_ == 1;
   my $url = shift;
   $url .= '/' unless $url =~ m!/$!; # make sure $url ends with /
-  my @info;
-  # only Slackware versions above 14.1 have an rsync that supports --info=progress2
-  if (versioncmp(get_slack_version(), '14.1') == 1) { @info = ('--info=progress2'); }
-  my @args = ('rsync', @info, '-a', '--delete', $url);
+  my @args = ('rsync', '--info=progress2', '-a', '--delete', $url);
   my $res = system(@args, $repo_path) == 0;
   if ($config{GPG_VERIFY} eq "TRUE") {
     return 0 unless $res;
@@ -584,21 +577,10 @@ sub update_tree {
 C<verify_git_commit()> attempts to verify the GPG signature of the most
 recent git commit, if any.
 
-Git commit verification is unavailable for Slackware 14.0 and Slackware 14.1.
-A user prompt for continuation appears if C<GPG_VERIFY> is C<TRUE>.
-
 =cut
 
 sub verify_git_commit {
   script_error('verify_git_commit requires an argument.') unless @_ == 1;
-  # verifying git commits is only supported for 14.2 onwards
-  if (versioncmp(get_slack_version(), '14.1') != 1) {
-    if (prompt($color_warn, "Git verification is unsupported for Slackware 14.0 and 14.1. Proceed anyway?", default => 'no')) {
-      return 1;
-    } else {
-      usage_error("Exiting. Consider using rsync or change GPG_VERIFY to FALSE.");
-    }
-  }
   my $branch = shift;
   my $res;
   {
@@ -683,25 +665,8 @@ sub verify_rsync {
   {
     open OLDERR, '>&', \*STDERR;
     open STDERR, '>', $gpg_log;
-    if (versioncmp(get_slack_version(), '14.0') == 1) {
-      $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw/ --verify CHECKSUMS.md5.asc /) == 0;
-      wrapsay_color $color_notice, "CHECKSUMS.md5.asc verified. See $gpg_log." if $checksum_asc_ok;
-    } else {
-      # CHECKSUMS.md5.asc is unsigned in the 14.0 repository; check all .asc files
-      wrapsay_color $color_notice, "\nChecking .asc files...";
-      $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw! --verify system/sbotools.tar.gz.asc !) == 0;
-      if ($checksum_asc_ok) {
-        my @ascs = split(' ', `find . -name "*.asc"`);
-        for my $asc (@ascs) {
-          my $ascres = system(qw/ gpg --verify /, $asc) == 0;
-          unless ($ascres) {
-            $checksum_asc_ok = 0;
-            last;
-          }
-        }
-      }
-      wrapsay_color $color_notice, ".asc files verified. See $gpg_log." if $checksum_asc_ok;
-    }
+    $checksum_asc_ok = system(qw/ gpg --status-file /, $tempfile, qw/ --verify CHECKSUMS.md5.asc /) == 0;
+    wrapsay_color $color_notice, "CHECKSUMS.md5.asc verified. See $gpg_log." if $checksum_asc_ok;
     close STDERR;
     open STDERR, '>&', \*OLDERR;
   }
@@ -744,29 +709,7 @@ sub verify_rsync {
       }
     }
     chdir $repo_path or return 0;
-    # --ignore-missing is only available in 14.2 onwards.
-    if(versioncmp(get_slack_version(), '14.1') == 1) {
-      $res = system("tail +13 CHECKSUMS.md5 | md5sum -c --ignore-missing --quiet -") == 0;
-    } else {
-      # Disregard missing files in 14.0 and 14.1 as well.
-      my $md5temp = "$repo_path/CHECKSUMS.temp.md5";
-      unlink $md5temp if -f $md5temp;
-      my ($temp_fh, $exit) = open_fh($md5temp, '>');
-      return 0 if $exit;
-      my @checksum_lines = split('\n', slurp("CHECKSUMS.md5"));
-      for my $checksum_line (@checksum_lines){
-        my $checksum_file = $checksum_line;
-        $checksum_file =~ s/^.*\s//s;
-        print { $temp_fh } "$checksum_line\n" if -f $checksum_file;
-      }
-      close $temp_fh;
-      if (-f $md5temp) {
-        $res = system(qw/ md5sum -c --quiet /, $md5temp) == 0;
-        unlink $md5temp;
-      } else {
-        $res = 0;
-      }
-    }
+    $res = system("tail +13 CHECKSUMS.md5 | md5sum -c --ignore-missing --quiet -") == 0;
     if ($res) {
       # All is well, so release the lock, if any.
       unlink($rsync_lock) if -f $rsync_lock;

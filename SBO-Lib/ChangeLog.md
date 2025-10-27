@@ -1,5 +1,8 @@
 # sbotools
 
+#### Post-Release
+  * Drop support for Slackware 14.0, 14.1 and 14.2
+
 #### 4.0.1 - 2025-10-27
   * sbotool: Clarified the batch installation prompt
     * Thanks to SCerovec for the feedback.
