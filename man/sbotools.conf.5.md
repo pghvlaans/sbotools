@@ -66,8 +66,7 @@ repository (and, if applicable, */etc/sbotools/obsolete*) when running
 [sbocheck(1)](sbocheck.1.md), [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md). Missing public
 keys are detected, and a download from
 [keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 is offered if
-available. Only rsync repositories can be verified on Slackware 14.0 and
-Slackware 14.1.
+available.
 
 **JOBS=(FALSE\|#)**
 
@@ -154,10 +153,9 @@ incompatible **python** and **ruby** *\_SBo* packages.
 If set to a git or rsync **URL**, use that repository instead of the
 **sbotools** default for your **SLACKWARE_VERSION**. The default
 repositories are under rsync://slackbuilds.org/slackbuilds if
-**RSYNC_DEFAULT** is **TRUE** and for Slackware versions prior to 14.2,
-and <https://gitlab.com/SlackBuilds.org> otherwise. The repository must
-be laid out in the same manner as one found at
-<https://git.slackbuilds.org/slackbuilds> such that SlackBuild
+**RSYNC_DEFAULT** is **TRUE**, and <https://gitlab.com/SlackBuilds.org>
+otherwise. The repository must be laid out in the same manner as one
+found at <https://git.slackbuilds.org/slackbuilds> such that SlackBuild
 directories are under the category directories.
 
 **RSYNC_DEFAULT=(FALSE\|TRUE)**

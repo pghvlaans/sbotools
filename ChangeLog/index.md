@@ -1,4 +1,7 @@
 # ChangeLog
+* Post-Release
+  * Drop support for Slackware 14.0, 14.1 and 14.2
+
 * 4.0.1 - 2025-10-27
   * *sbotool*: Clarified the batch installation prompt
     * Thanks to SCerovec for the feedback.
@@ -37,7 +40,6 @@
   * Added *Help.pm*, which contains *sbotool* help messages
   * Bugfix: Skip GPG verification for **\--dry-run** and **\--template-only** when not root
   * All scripts: **\--help** descriptions fit in an 80x25 terminal window.
-
 
 * 3.8.1 - 2025-08-28
   * Replace most grep instances
