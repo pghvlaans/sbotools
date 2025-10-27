@@ -53,7 +53,11 @@ to deal with such packages, use "Replace" from the "Operations" screen
 or run interactively.
 
 Batch mode does not add missing users and groups; add them manually or
-run interactively for a prompt.');
+run interactively for a prompt.
+
+Batch mode is unavailable if a directory is specified by the
+LOCAL_OVERRIDES directory and does not exist, and if one or more scripts
+in the queue is missing a user or group.');
 
 our @help_builds = ('Build Lists - Help',
 
