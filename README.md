@@ -21,7 +21,7 @@ This repository is an **sbotools** revival, and was forked from the [pink-mist r
 To make **sbotools** packages from the master branch, see [sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild). For release **sbotools**, a SlackBuild is [available](https://slackbuilds.org/repository/15.0/system/sbotools/) at SlackBuilds.org.
 
 ## Most Recent Changes
-#### Post-Release
+#### 4.0.1 - 2025-10-27
   * sbotool: Clarified the batch installation prompt
     * Thanks to SCerovec for the feedback.
   * sbotool: Titles for command confirmation windows

@@ -1,6 +1,6 @@
 # sbotools
 
-#### Post-Release
+#### 4.0.1 - 2025-10-27
   * sbotool: Clarified the batch installation prompt
     * Thanks to SCerovec for the feedback.
   * sbotool: Titles for command confirmation windows
