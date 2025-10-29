@@ -21,7 +21,7 @@ updates
 
     sbocheck [-h|-v]
 
-    sbocheck [-COXgn] [-t all,python,ruby,solibs]
+    sbocheck [-COXgn] [-t all,perl,python,ruby,solibs]
 
     sbocheck [-c] package [package]
 
@@ -72,8 +72,7 @@ pass the **\--nopull** option. **sbocheck** performs **gpg(1)**
 verification upon pulling the tree if **GPG_VERIFY** is **TRUE** (see
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). The **\--gpg-verify** option
 has the same effect. Passing both **\--gpg-verify** and **\--nopull**
-verifies the repo in-place without fetching. Only rsync repositories can
-be verified on Slackware 14.0 and Slackware 14.1.
+verifies the repo in-place without fetching.
 
 Please note that **sbosnap**, which was removed as an independent script
 in **sbotools-3.3**, is a compatibility symlink to **sbocheck**.
@@ -108,8 +107,7 @@ and **\--check-all-packages**. **solibs** are checked by default; use
 
 Use **gpg(1)** to verify the fetched repository, even if **GPG_VERIFY**
 is **FALSE**. When called with **\--nopull**, verify the repo without
-fetching. Only rsync repositories can be verified on Slackware 14.0 and
-Slackware 14.1.
+fetching.
 
 **-O\|\--obsolete-check**
 
@@ -132,6 +130,14 @@ list. Supported checks include:
 
 **solibs** - The default option; using a package checking option without
 **\--type** runs this test.
+
+**perl** - Check for incompatible perl-based shared objects and binaries
+based on timestamps. In addition to the currently-installed system
+**perl** package, the first build dates for major **perl** versions on
+Slackware (see */etc/sbotools/perl_vers*) and installation dates for
+previously-installed **perl** packages are used to avoid false positives
+for stock and built packages, respectively. Results are saved to
+*sbocheck-perl.log*.
 
 **python** - Check for *site-packages* irectories built against the
 wrong major version, e.g. **python-3.12**. Results are saved to

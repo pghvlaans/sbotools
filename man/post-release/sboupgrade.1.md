@@ -60,8 +60,7 @@ or the md5sum check fails, a new download is attempted from
 flag may be passed to upgrade all eligible SlackBuilds simultaneously.
 
 **sboupgrade** verifies the local repository with **gpg(1)** if
-**GPG_VERIFY** is **TRUE**. Only rsync repositories can be verified on
-Slackware 14.0 and Slackware 14.1.
+**GPG_VERIFY** is **TRUE**.
 
 Package upgrades occasionally cause breakage due to **\*.so** version
 differences. To check for missing first-order shared object (solib)

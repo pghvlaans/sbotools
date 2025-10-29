@@ -10,7 +10,7 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 ## Prospective Features
 
-* Give the option to access the sbotool Settings menu with bare sboconfig.
+Nothing else at the moment, but requests will be considered.
 
 ## Incoming
 

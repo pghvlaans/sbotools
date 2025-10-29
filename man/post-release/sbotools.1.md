@@ -87,6 +87,9 @@ Those who wish to use **sbotools** for testing scripts and reverse
 dependencies in a clean build environment may be interested in the
 **sbotest** companion package.
 
+**sbotools** currently supports Slackware 15.0 and beyond. For Slackware
+14.0, 14.1 and 14.2, install **sbotools-4.0.1** at the latest.
+
 ## STARTUP
 
 When using **sbotools** for the first time, a copy of the SlackBuilds
@@ -100,10 +103,9 @@ location, give an absolute file path to the **SBO_HOME** setting with
 repositiory can also be fetched using **sbotool** if running as root.
 
 The default mirror depends on the running version of Slackware. Stable
-releases beyond Slackware 14.1 use the appropriate branch on
+releases use the appropriate branch on
 <https://gitlab.com/SlackBuilds.org/slackbuilds/> and -current uses
 <https://github.com/Ponce/slackbuilds/> with the **current** branch.
-Slackware 14.0 and 14.1 have default rsync mirrors.
 
 To use an rsync mirror with \<rsync://slackbuilds.org/slackbuilds/\*/\>
 as the default, set **RSYNC_DEFAULT** to **TRUE**. The **REPO** setting
