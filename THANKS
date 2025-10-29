@@ -41,6 +41,10 @@ the early development of the sbotool interface.
 Matteo Bernardini's fork of the SlackBuilds.org repository has been a
 valuable resource for maintaining the /etc/sbotools/obsolete file.
 
+Build dates for major perl versions, which are needed for the perl
+package test, would not have been retrievable without the Cumulative
+Archive, established by Eric Hameleers and extended by Darren Austin.
+
 Finally, a good number of users have made valuable reports and feature
 requests over the years, both before and after this sbotools repository
 was forked:
