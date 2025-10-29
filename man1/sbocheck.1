@@ -11,7 +11,7 @@ tree and check for updates
 .P
 sbocheck [-h|-v]
 .P
-sbocheck [-COXgn] [-t all,python,ruby,solibs]
+sbocheck [-COXgn] [-t all,perl,python,ruby,solibs]
 .P
 sbocheck [-c] package [package]
 .P
@@ -354,6 +354,27 @@ solibs
 .B
 --type
 runs this test.
+.P
+.B
+perl
+- Check for incompatible perl-based shared objects and binaries
+based on timestamps. In addition to the currently-installed system
+.B
+perl
+package, the first build dates for major
+.B
+perl
+versions on Slackware (see
+.I
+/etc/sbotools/perl_vers\fR\
+\&) and installation dates for previously-installed
+.B
+perl
+packages are used to avoid false positives for stock and built
+packages, respectively. Results are saved to
+.I
+sbocheck-perl.log\fR\
+\&.
 .P
 .B
 python

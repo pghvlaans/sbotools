@@ -21,7 +21,7 @@ updates
 
     sbocheck [-h|-v]
 
-    sbocheck [-COXgn] [-t all,python,ruby,solibs]
+    sbocheck [-COXgn] [-t all,perl,python,ruby,solibs]
 
     sbocheck [-c] package [package]
 
@@ -130,6 +130,14 @@ list. Supported checks include:
 
 **solibs** - The default option; using a package checking option without
 **\--type** runs this test.
+
+**perl** - Check for incompatible perl-based shared objects and binaries
+based on timestamps. In addition to the currently-installed system
+**perl** package, the first build dates for major **perl** versions on
+Slackware (see */etc/sbotools/perl_vers*) and installation dates for
+previously-installed **perl** packages are used to avoid false positives
+for stock and built packages, respectively. Results are saved to
+*sbocheck-perl.log*.
 
 **python** - Check for *site-packages* irectories built against the
 wrong major version, e.g. **python-3.12**. Results are saved to

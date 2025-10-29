@@ -146,7 +146,7 @@ for that version of Slackware rather than the one specified in
 If set to **TRUE**, check for missing first-order shared object (solib)
 dependencies among *\_SBo* packages when running [sbocheck(1)](sbocheck.1.md) and
 [sboupgrade(1)](sboupgrade.1.md). Additionally, [sbocheck(1)](sbocheck.1.md) searches for
-incompatible **python** and **ruby** *\_SBo* packages.
+incompatible **perl**, **python** and **ruby** *\_SBo* packages.
 
 **REPO=(FALSE\|url\|/path)**
 

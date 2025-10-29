@@ -24,6 +24,7 @@ our @EXPORT_OK = qw{
   get_installed_packages
   get_local_outdated_versions
   get_removed_builds
+  $inst_perl_pkg_time
 };
 
 our %EXPORT_TAGS = (
@@ -31,6 +32,7 @@ our %EXPORT_TAGS = (
 );
 
 my ($all_pkgs, $std_pkgs, $sbo_pkgs, $dirty_pkgs);
+our $inst_perl_pkg_time;
 
 =pod
 
@@ -45,6 +47,14 @@ SBO::Lib::Pkgs - Routines for interacting with the Slackware package database.
   use SBO::Lib::Pkgs qw/ get_installed_packages /;
 
   my @installed_sbos = get_installed_packages('SBO');
+
+=cut
+
+=head1 VARIABLES
+
+  $inst_perl_pkg_time
+
+The timestamp for the installation of the system C<perl> package.
 
 =cut
 
@@ -196,7 +206,7 @@ The default behavior is to retain the package lists for future calls; add a true
 to the arguments to clear them instead. This is irrelevant when running C<sbotest>.
 
 The C<$rubyver> variable from C<SBO::Lib::Util(3)> is set here when the C<ruby> package
-is evaluated.
+is evaluated. The C<perl> installation time is also found.
 
 =cut
 
@@ -219,7 +229,7 @@ sub get_installed_packages {
     $pkg =~ s!^\Q$pkg_db/\E!!;
     my ($name, $version, $build) = $pkg =~ m#^([^/]+)-([^-]+)-[^-]+-([^-]+)$#
       or next;
-    # Get the appropriate ruby target version here.
+    # Get the appropriate ruby target version and perl installation time here.
     if ($name eq "ruby") {
       my $fh;
       # non-fatal
@@ -231,6 +241,9 @@ sub get_installed_packages {
         }
         close $fh;
       }
+    }
+    if ($name eq "perl") {
+      $inst_perl_pkg_time = (stat "$pkg_db/$pkg")[9];
     }
     my $numbuild = $build;
     $numbuild =~ s/_SBo(|compat32)$//g ;

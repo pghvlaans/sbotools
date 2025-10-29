@@ -63,6 +63,7 @@ my @EXPORT_CONFIG = qw{
   @obsolete
   %optional
   $pkg_db
+  $rem_pkg_db
   $sbotest_compatible
   $script_db
   $is_sbotest
@@ -295,6 +296,7 @@ kernel.
 our $arch = get_arch();
 
 our $pkg_db = '/var/lib/pkgtools/packages';
+our $rem_pkg_db = '/var/lib/pkgtools/removed_packages';
 our $script_db = '/var/lib/pkgtools/scripts';
 
 # global config variables

@@ -211,7 +211,8 @@ scripts in the local overrides directory.
 **SO_CHECK**: If set to **TRUE**, check for missing first-order shared
 object (solib) dependencies among *\_SBo* packages when running
 [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md). Additionally, [sbocheck(1)](sbocheck.1.md)
-searches for incompatible **python** and **ruby** *\_SBo* packages.
+searches for incompatible **perl**, **python** and **ruby** *\_SBo*
+packages.
 
 **-h\|\--help**
 

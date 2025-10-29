@@ -52,7 +52,7 @@ dchmelik (reported diligently on sbocheck problems, provided feedback)
 dcjud (requested an installable sbotools.conf)
 drbeco (requested a blacklist and strict version-up)
 fourtysixandtwo (feedback about the overzealous 'missing' script prompt;
-                 suggested the sbocheck --python check)
+                 suggested the sbocheck python test)
 Geremias (originally reported the info parse bug before version 3.3)
 hackedhead (requested installation templates and sboupgrade --all)
 iluvatar1 (reported an .info parse bug)

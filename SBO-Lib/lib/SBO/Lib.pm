@@ -73,7 +73,7 @@ repository, as well as GPG verification and key addition.
 =head2 SBO::Lib::Solibs
 
 C<Solibs.pm> contains variables and subroutines related to checking packages for missing
-shared object dependencies, as well as for C<python> and C<ruby> incompatibility.
+shared object dependencies, as well as for C<perl>, C<python> and C<ruby> incompatibility.
 
 =head2 SBO::Lib::Tree
 

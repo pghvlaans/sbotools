@@ -219,9 +219,15 @@ effective operations. The following options can appear in Main Menu:
 * Package Tests
     Perform a shared object dependency check on all _SBo packages or all
     installed packages. Packages are additionally checked for python and
-    incompatibilities. Further tests, including perl, will likely arrive
-    in future versions. SlackBuilds with problems can be selected from
-    "Missing Solibs", "Python" or "Ruby" afterwards.
+    incompatibilities. Further tests may appear in future versions.
+    SlackBuilds with problems can be selected from "Missing Solibs",
+    "Perl", "Python" or "Ruby" afterwards.
+
+* Perl
+    View, search and select SlackBuilds that were apparently built
+    against the wrong major perl version. Please note that missing
+    perl packages in "/var/lib/pkgtools/removed_packages" may lead to
+    false positives.
 
 * Python
     View, search and select SlackBuilds that were built against the
@@ -338,7 +344,7 @@ The remaining options can appear in the second menu:
 
 * Package Tests
     Check this installed SlackBuild for missing shared object
-    dependencies and python and ruby incompatibility.
+    dependencies and perl, python and ruby incompatibility.
 
 * Queue
     View, search and select from the build queue for the SlackBuild,
@@ -436,10 +442,11 @@ which applies an additional search to the list.');
 our @help_solibs = ('Package Tests - Help',
 
 'Root and non-root users can perform per-package checks for missing
-shared object dependencies (often called "solibs"), and python and
+shared object dependencies (often called "solibs"), and perl, python and
 ruby incompatibilities. Logs are saved to "sbocheck-solibs.log",
-"sbocheck-python.log" and "sbocheck-ruby.log", respectively. The
-directory is "/var/log" if running as root, and "/tmp" otherwise.
+"sbocheck-perl.log", "sbocheck-python.log" and "sbocheck-ruby.log",
+respectively. The directory is "/var/log" if running as root, and "/tmp"
+otherwise.
 
 If a package is missing a first-order solib dependency, the package
 name, missing library or libraries and affected files are logged like

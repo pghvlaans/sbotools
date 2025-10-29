@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Pkgs 3"
-.TH SBO::Lib::Pkgs 3 "Setting Orange, The Aftermath 8, 3191 YOLD" "" "sbotools 4.0.1"
+.TH SBO::Lib::Pkgs 3 "Pungenday, The Aftermath 11, 3191 YOLD" "" "sbotools 4.0.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -72,6 +72,13 @@ SBO::Lib::Pkgs \- Routines for interacting with the Slackware package database.
 \&
 \&  my @installed_sbos = get_installed_packages(\*(AqSBO\*(Aq);
 .Ve
+.SH VARIABLES
+.IX Header "VARIABLES"
+.Vb 1
+\&  $inst_perl_pkg_time
+.Ve
+.PP
+The timestamp for the installation of the system \f(CW\*(C`perl\*(C'\fR package.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS get_available_updates
@@ -122,7 +129,7 @@ The default behavior is to retain the package lists for future calls; add a true
 to the arguments to clear them instead. This is irrelevant when running \f(CW\*(C`sbotest\*(C'\fR.
 .PP
 The \f(CW$rubyver\fR variable from \f(CWSBO::Lib::Util(3)\fR is set here when the \f(CW\*(C`ruby\*(C'\fR package
-is evaluated.
+is evaluated. The \f(CW\*(C`perl\*(C'\fR installation time is also found.
 .SS get_local_outdated_versions
 .IX Subsection "get_local_outdated_versions"
 .Vb 1
