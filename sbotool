@@ -500,6 +500,7 @@ sub build_operations {
 		unless ($series_check_res[0]) {
 			$msg .= "\n\nIncompatible with system perl.";
 			push @incompatible_perl, $sbo unless in $sbo, @incompatible_perl;
+		}
 		unless ($series_check_res[1]) {
 			$msg .= "\n\nIncompatible with system python.";
 			push @incompatible_python, $sbo unless in $sbo, @incompatible_python;
