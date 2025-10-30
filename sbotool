@@ -1642,7 +1642,7 @@ sub new_package_information {
 	for (@incompatible_perl) {
 		next unless $inst_names{$_} or $inst_names_std{$_};
 		my $solib_check_pkg = $inst_names{$_} ? $inst_pkgs->{$_} : $inst_pkgs_std->{$_};
-		push @new_perl, $_ unless (series_check($solib_check_pkg, "perl"))[1];
+		push @new_perl, $_ unless (series_check($solib_check_pkg, "perl"))[0];
 	}
 	splice @incompatible_perl;
 	if (@new_perl) {
@@ -1679,7 +1679,7 @@ sub parse_solib_log {
 	script_error("parse_solib_log requires two arguments.") unless @_ == 2;
 	my ($logfile, $command_time) = @_;
 	return unless -s $logfile;
-	return unless (stat $logfile)[10] > $command_time;
+	return if (stat $logfile)[10] < $command_time;
 	update_known_solibs() if $logfile =~ /solibs/;
 	chomp(my $log = slurp $logfile);
 	my @log = split "\n", $log;
