@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Solibs 3"
-.TH SBO::Lib::Solibs 3 "Setting Orange, The Aftermath 8, 3191 YOLD" "" "sbotools 4.0.1"
+.TH SBO::Lib::Solibs 3 "Prickle-Prickle, The Aftermath 12, 3191 YOLD" "" "sbotools 4.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -114,6 +114,16 @@ used, returning a decimal string.
 returns 0 if not. Otherwise, it reads entries according to the \fBelf\fR\|(5) specification and
 returns 1 for a 64\-bit ELF file, \-1 for a 32\-bit ELF file and an array of first\-order
 shared object dependencies that do not exist on the system under an \f(CW\*(C`rpath\*(C'\fR or \f(CW\*(C`runpath\*(C'\fR.
+.SS get_perl_times
+.IX Subsection "get_perl_times"
+.Vb 1
+\&  get_perl_times();
+.Ve
+.PP
+\&\f(CWget_perl_times()\fR determines the installed major \f(CW\*(C`perl\*(C'\fR version, installation
+times for removed \f(CW\*(C`perl\*(C'\fR packges and the date at which the installed major version
+was first built for the running Slackware architecture (if available). These values
+are used to perform the \f(CW\*(C`perl\*(C'\fR package test.
 .SS installed_solibs
 .IX Subsection "installed_solibs"
 .Vb 1
@@ -129,9 +139,18 @@ shared object names that are installed as files or symlinks, or 0 if none exist.
 .Ve
 .PP
 \&\f(CWseries_check()\fR takes the name of a package file and an array with one or more checks
-to perform. Available checks include \f(CW\*(C`python\*(C'\fR and \f(CW\*(C`ruby\*(C'\fR at this time. \f(CW\*(C`python\*(C'\fR and
-\&\f(CW\*(C`ruby\*(C'\fR are judged to be incompatible if files associated with the wrong major version
-(e.g. \f(CW\*(C`python\-3.12\*(C'\fR or \f(CW\*(C`ruby\-3.4*\*(C'\fR) are included. Files in \f(CW\*(C`/opt\*(C'\fR are ignored.
+to perform. Available checks include \f(CW\*(C`perl\*(C'\fR, \f(CW\*(C`python\*(C'\fR and \f(CW\*(C`ruby\*(C'\fR at this time.
+.PP
+Likely stock packages (i.e., untagged packages) are judged to be incompatible with system
+\&\f(CW\*(C`perl\*(C'\fR if they are older than the first \f(CW\*(C`/usr/bin/perl*\*(C'\fR binary of the installed major
+version added to Slackware. The relevant timestamps are stored in \f(CW\*(C`/etc/sbotools/perl_vers\*(C'\fR.
+Other packages are compared with the earliest installation date of the installed major version,
+or the binary timestamp if unavailable.
+.PP
+\&\f(CW\*(C`python\*(C'\fR and \f(CW\*(C`ruby\*(C'\fR are judged to be incompatible if files associated with the wrong
+major version (e.g. \f(CW\*(C`python\-3.12\*(C'\fR or \f(CW\*(C`ruby\-3.4*\*(C'\fR) are included.
+.PP
+Files in \f(CW\*(C`/opt\*(C'\fR are ignored.
 .PP
 The subroutine returns an array with results for the checks in alphabetical order, with
 1 indicating apparent compatibility and 0 indicating apparent incompatibility.

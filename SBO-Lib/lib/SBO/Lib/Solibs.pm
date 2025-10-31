@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '4.0.1';
+our $VERSION = '4.1';
 
 use SBO::Lib::Util qw/ :config :const in uniq error_code script_error slurp /;
 use SBO::Lib::Pkgs qw/ $inst_perl_pkg_time /;
