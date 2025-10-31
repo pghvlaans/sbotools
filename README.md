@@ -22,12 +22,15 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 
 ## Slackware Support
 
-**sbotools** currently supports Slackware 15.0 and beyond. For Slackware 14.0, 14.1 and 14.2, install`sbotools-4.0.1` at the latest.
+**sbotools** currently supports Slackware 15.0 and beyond. For Slackware 14.0, 14.1 and 14.2, install `sbotools-4.0.2` at the latest.
 
 ## Most Recent Changes
 #### Post-Release
   * Drop support for Slackware 14.0, 14.1 and 14.2
   * sbocheck, sbotool: Add a perl package compatibility test
+
+#### 4.0.2 - 2025-10-31
+  * sbotool: Package test fixes
 
 #### 4.0.1 - 2025-10-27
   * sbotool: Clarified the batch installation prompt
