@@ -49,12 +49,12 @@ sed_file() {
 
 for i in $(ls man1); do
 	old_version="$(awk -F\" 'NR==1 {print $4}' man1/$i | awk '{print $2}')"
-	sed_file man1/$i "s/$old_version/$version/g"
+	sed_file man1/$i "s/\"sbotools $old_version\"/\"sbotools $version\"/g"
 done
 
 for i in $(ls man5); do
 	old_version="$(awk -F\" 'NR==1 {print $4}' man5/$i | awk '{print $2}')"
-	sed_file man5/$i "s/$old_version/$version/g"
+	sed_file man5/$i "s/\"sbotools $old_version\"/\"sbotools $version\"/g"
 done
 
 if [[ "$?" == "0" ]]; then
