@@ -701,7 +701,8 @@ sub display_builds {
 	$height--;
 	my $do_filter;
 	if ($label =~ /(Missing|Perl|Python|Ruby)/ and $< == 0) {
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --extra-button --extra-label \"Reinst.All\" --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\" $height $width $height --file $dialog_input", @help_builds_fail_menu);
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $for_dialog, "Select a SlackBuild\n\nuse");
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --extra-button --extra-label \"Reinstall\" --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\n\nUse Reinstall to reinstall everything on the list.\" $height $width $height --file $dialog_input", @help_builds_fail_menu);
 		if ($res == $code_dialog_extra) {
 			my $cmd = "/usr/sbin/sboinstall --reinstall";
 			my $need_dependency_prompt = 0;
