@@ -20,8 +20,8 @@ Support for Slackware 14.0, 14.1 and 14.2 will be dropped in `sbotools-4.1`.
 This file has been installed to `/etc/sbotools/obsolete` since `sbotools-3.6`. It contains a list of scripts that have been added to Slackware -current under different names, or are unneeded build dependencies in Slackware -current. It will be updated as needed.
 
 * [obsolete](obsolete) ([asc](obsolete.asc))
-    * md5sum: `f69af147c6d2d4f072b7adfd5e403269`
-    * Updated 2025-10-09.
+    * md5sum: `bb77166c0e5e7ef3e56192f7949db934`
+    * Updated 2025-10-31.
 
 ## Perl Build History
 
