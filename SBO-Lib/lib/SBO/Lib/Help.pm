@@ -70,10 +70,7 @@ the "Filter" button to search within the results.
 our @help_builds_fail_menu = ('Build Lists - Help',
 
 'Select a SlackBuild from this screen to see its "Operations" menu. Use
-the "Reinst.All" button to reinstall all packages on the list.
-
-The "Filter" button does not appear on lists related to package test
-failures.');
+the "Reinstall" button to reinstall all packages on the list.');
 
 our @help_clean = ('sboclean - Help',
 

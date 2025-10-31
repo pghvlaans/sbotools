@@ -490,6 +490,7 @@ sub build_operations {
 	if ($option eq "Package Tests") {
 		my $solib_check_pkg = $inst_names{$sbo} ? $inst_pkgs->{$sbo} : $inst_pkgs_std->{$sbo};
 		my $msg;
+		my $compatibility_ok = 1;
 		unless (solib_check($solib_check_pkg)) {
 			$msg .= "Missing shared objects found for $sbo:\n\n$old_libs{$solib_check_pkg}";
 			push @solibs_missing, $sbo unless in $sbo, @solibs_missing;
@@ -498,17 +499,21 @@ sub build_operations {
 		}
 		my @series_check_res = series_check($solib_check_pkg, "perl", "python", "ruby");
 		unless ($series_check_res[0]) {
+			$compatibility_ok = 0;
 			$msg .= "\n\nIncompatible with system perl.";
 			push @incompatible_perl, $sbo unless in $sbo, @incompatible_perl;
 		}
 		unless ($series_check_res[1]) {
+			$compatibility_ok = 0;
 			$msg .= "\n\nIncompatible with system python.";
 			push @incompatible_python, $sbo unless in $sbo, @incompatible_python;
 		}
 		unless ($series_check_res[2]) {
+			$compatibility_ok = 0;
 			$msg .= "\n\nIncompatible with system ruby.";
 			push @incompatible_ruby, $sbo unless in $sbo, @incompatible_ruby;
 		}
+		$msg .= "\n\nTests passed for perl, python and ruby." if $compatibility_ok;
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $msg);
 		system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"Back\" --no-collapse --title \"$sbo: Package Tests\" --msgbox \"$msg\" $height $width");
 	}
