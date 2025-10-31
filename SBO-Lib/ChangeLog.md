@@ -1,5 +1,8 @@
 # sbotools
 
+#### 4.0.2 - 2025-10-31
+  * sbotool: Package test fixes
+
 #### 4.0.1 - 2025-10-27
   * sbotool: Clarified the batch installation prompt
     * Thanks to SCerovec for the feedback.

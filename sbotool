@@ -1634,7 +1634,7 @@ sub new_package_information {
 	for (@incompatible_python) {
 		next unless $inst_names{$_} or $inst_names_std{$_};
 		my $solib_check_pkg = $inst_names{$_} ? $inst_pkgs->{$_} : $inst_pkgs_std->{$_};
-		push @new_python, $_ unless (series_check($solib_check_pkg, "python"))[1];
+		push @new_python, $_ unless (series_check($solib_check_pkg, "python"))[0];
 	}
 	splice @incompatible_python;
 	if (@new_python) {
@@ -1645,7 +1645,7 @@ sub new_package_information {
 	for (@incompatible_ruby) {
 		next unless $inst_names{$_} or $inst_names_std{$_};
 		my $solib_check_pkg = $inst_names{$_} ? $inst_pkgs->{$_} : $inst_pkgs_std->{$_};
-		push @new_ruby, $_ unless (series_check($solib_check_pkg, "ruby"))[2];
+		push @new_ruby, $_ unless (series_check($solib_check_pkg, "ruby"))[1];
 	}
 	splice @incompatible_ruby;
 	if (@new_ruby) {
@@ -1660,7 +1660,7 @@ sub parse_solib_log {
 	script_error("parse_solib_log requires two arguments.") unless @_ == 2;
 	my ($logfile, $command_time) = @_;
 	return unless -s $logfile;
-	return unless (stat $logfile)[10] > $command_time;
+	return if (stat $logfile)[10] < $command_time;
 	update_known_solibs() if $logfile =~ /solibs/;
 	chomp(my $log = slurp $logfile);
 	my @log = split "\n", $log;
@@ -1677,12 +1677,12 @@ sub parse_solib_log {
 		} elsif ($logfile =~ /python/) {
 			unless (in $pkg_name, @incompatible_python) {
 				next unless $inst_names{$pkg_name} or $inst_names_std{$pkg_name};
-				push @incompatible_python, $pkg_name unless (series_check($solib_check_pkg, "python"))[1];
+				push @incompatible_python, $pkg_name unless (series_check($solib_check_pkg, "python"))[0];
 			}
 		} elsif ($logfile =~ /ruby/) {
 			unless (in $pkg_name, @incompatible_ruby) {
 				next unless $inst_names{$pkg_name} or $inst_names_std{$pkg_name};
-				push @incompatible_python, $pkg_name unless (series_check($solib_check_pkg, "ruby"))[2];
+				push @incompatible_ruby, $pkg_name unless (series_check($solib_check_pkg, "ruby"))[1];
 			}
 		}
 	}
