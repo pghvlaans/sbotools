@@ -14,6 +14,13 @@ Use the key from the homepage (updated 2024-12-15) to verify downloads with gpg.
 
 Support for Slackware 14.0, 14.1 and 14.2 will be dropped in `sbotools-4.1`.
 
+## Current Releases
+
+* [sbotools-4.0.1.tar.gz](sbotools-4.0.1.tar.gz) ([asc](sbotools-4.0.1.tar.gz.asc))
+    * md5sum: `7409d2b66badc71fb422a65bcba633f7`
+* [sbotest-1.1.2.tar.gz](sbotest-1.1.2.tar.gz) ([asc](sbotest-1.1.2.tar.gz.asc))
+    * md5sum: `a2f5692d75e00f5a8555dc373a84b7bc`
+
 ## Obsolete Builds List
 
 This file has been installed to `/etc/sbotools/obsolete` since `sbotools-3.6`. It contains a list of scripts that have been added to Slackware -current under different names, or are unneeded build dependencies in Slackware -current. It will be updated as needed.
@@ -22,12 +29,14 @@ This file has been installed to `/etc/sbotools/obsolete` since `sbotools-3.6`. I
     * md5sum: `f69af147c6d2d4f072b7adfd5e403269`
     * Updated 2025-10-09.
 
-## Current Releases
+## Perl Build History
 
-* [sbotools-4.0.1.tar.gz](sbotools-4.0.1.tar.gz) ([asc](sbotools-4.0.1.tar.gz.asc))
-    * md5sum: `7409d2b66badc71fb422a65bcba633f7`
-* [sbotest-1.1.2.tar.gz](sbotest-1.1.2.tar.gz) ([asc](sbotest-1.1.2.tar.gz.asc))
-    * md5sum: `a2f5692d75e00f5a8555dc373a84b7bc`
+This file, introduced in `sbotools-4.1`, has a list of first-build times for major perl versions in Slackware, sourced mostly from the Slackware Cumulative Archive. Slackware ARM and 32-bit Slackware have relatively limited coverage; if you have access to older packages for these architectures (or know where to find them), please consider contacting the maintainer.
+
+* [perl_vers](perl_vers) ([asc](perl_vers.asc))
+    * md5sum: `114bda4a9b18467fc763fc797f37ca06`
+    * Updated 2025-10-29.
+    * Most recent version: 5.42 (x86_64, i\*86, aarch64).
 
 ## Older Releases
 
