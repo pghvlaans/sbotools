@@ -21,7 +21,7 @@ updates
 
     sbocheck [-h|-v]
 
-    sbocheck [-COXgn] [-t all,python,ruby,solibs]
+    sbocheck [-COXgn] [-t all,perl,python,ruby,solibs]
 
     sbocheck [-c] package [package]
 
@@ -31,8 +31,9 @@ updates
 
 **sbocheck** updates or fetches a copy of the **SlackBuilds.org** tree,
 checks for available upgrades and reports what it finds. If
-**OBSOLETE_CHECK** is **TRUE**, an updated copy of the script list at
-**/etc/sbotools/obsolete** is downloaded from
+**OBSOLETE_CHECK** is **TRUE**, updated copies of the script list at
+**/etc/sbotools/obsolete** and the perl version history file at
+**/etc/sbotools/perl_vers** are downloaded from
 <https://pghvlaans.github.io/sbotools> if running Slackware -current
 (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
@@ -112,9 +113,10 @@ fetching.
 **-O\|\--obsolete-check**
 
 If running Slackware -current, download a copy of the obsolete script
-list from <https://pghvlaans.github.io/sbotools> and verify with gpg(1)
-if **GPG_VERIFY** is **TRUE** or **\--gpg-verify** is passed.
-Incompatible with **\--nopull**.
+list and the perl version history file from
+<https://pghvlaans.github.io/sbotools> and verify with gpg(1) if
+**GPG_VERIFY** is **TRUE** or **\--gpg-verify** is passed. Incompatible
+with **\--nopull**.
 
 **-n\|\--nopull**
 
@@ -130,6 +132,14 @@ list. Supported checks include:
 
 **solibs** - The default option; using a package checking option without
 **\--type** runs this test.
+
+**perl** - Check for incompatible perl-based shared objects and binaries
+based on timestamps. In addition to the currently-installed system
+**perl** package, the first build dates for major **perl** versions on
+Slackware (see */etc/sbotools/perl_vers*) and installation dates for
+previously-installed **perl** packages are used to avoid false positives
+for stock and built packages, respectively. Results are saved to
+*sbocheck-perl.log*.
 
 **python** - Check for *site-packages* irectories built against the
 wrong major version, e.g. **python-3.12**. Results are saved to

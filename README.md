@@ -12,9 +12,9 @@ SlackBuilds for **[sbotools](https://slackbuilds.org/repository/15.0/system/sbot
 
 To verify commits (excluding resolved PR, which are verified with GitHub's key), use [GPG_KEY](/sbotools/downloads/GPG_KEY). Key updated 2024-12-15.
 
-## Deprecation Notice
+## Slackware Support
 
-Support for Slackware 14.0, 14.1 and 14.2 will be dropped in `sbotools-4.1`.A pre-built `sbotools-4.0.1` package for these versions will be made available at that time.
+**sbotools** supports Slackware 15.0 and beyond. Users of 14.0, 14.1 and 14.2 are advised to install `sbotools-4.0.2`, available at [Downloads](/sbotools/downloads/).
 
 ## Why a Fork?
 
@@ -26,6 +26,7 @@ Nonetheless, this repository was originally a simple fork adding a feature: Savi
 **sbotools** is Slackware 15.0-compatible. While [ChangeLog](/sbotools/ChangeLog/) has a more complete list of changes, here are some of the highlights:
 
 * Run `sbotool` for a dialog-based interface
+* Test installed packages for missing shared objects and perl/python/ruby compatibility
 * Blacklist and request optional dependencies with `sbotools.hints` and/or `sbohints`
 * Use a customizable git branch to clone the local repository
 * New git-based default URLs, with the option to use default rsync URLs instead

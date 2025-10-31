@@ -6,8 +6,8 @@ Use the key from the homepage (updated 2024-12-15) to verify downloads with gpg.
 
 ## Current Releases
 
-* [sbotools-4.0.2.tar.gz](sbotools-4.0.2.tar.gz) ([asc](sbotools-4.0.2.tar.gz.asc))
-    * md5sum: `0f1c692f399ca4a2fcf7d2d06ca3db83`
+* [sbotools-4.1.tar.gz](sbotools-4.1.tar.gz) ([asc](sbotools-4.1.tar.gz.asc))
+    * md5sum: `a3469845f65f28e5b80eb0d68e988ac6`
 * [sbotest-1.1.2.tar.gz](sbotest-1.1.2.tar.gz) ([asc](sbotest-1.1.2.tar.gz.asc))
     * md5sum: `a2f5692d75e00f5a8555dc373a84b7bc`
 
@@ -28,7 +28,7 @@ This file, introduced in `sbotools-4.1`, has a list of first-build times for maj
     * Updated 2025-10-29.
     * Most recent version: 5.42 (x86_64, i\*86, aarch64).
 
-## Support
+## Slackware Support
 
 `sbotools` currently supports Slackware 15.0 and beyond. The most recent version supporting 14.0, 14.1 and 14.2 is `sbotools-4.0.2`, packaged here for convenience:
 
@@ -41,6 +41,8 @@ This file, introduced in `sbotools-4.1`, has a list of first-build times for maj
 
 ## Older Releases
 
+* [sbotools-4.0.2.tar.gz](sbotools-4.0.2.tar.gz) ([asc](sbotools-4.0.2.tar.gz.asc))
+    * md5sum: `0f1c692f399ca4a2fcf7d2d06ca3db83`
 * [sbotools-4.0.1.tar.gz](sbotools-4.0.1.tar.gz) ([asc](sbotools-4.0.1.tar.gz.asc))
     * md5sum: `7409d2b66badc71fb422a65bcba633f7`
 * [sbotools-4.0.tar.gz](sbotools-4.0.tar.gz) ([asc](sbotools-4.0.tar.gz.asc))

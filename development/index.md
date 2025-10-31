@@ -12,6 +12,8 @@ A separate repository called [sbotools-git-slackbuild](https://github.com/pghvla
 
 Nothing else at the moment, but requests will be considered.
 
-## Incoming
+Proposals for new package tests are particularly welcome. Here are some considerations, subject to change:
 
-* perl compatibility checks for installed packages.
+  * Only run-time dependencies will get tests.
+  * Failures should not be detectable by any already-included test.
+  * A decent number of scripts must be affected.
