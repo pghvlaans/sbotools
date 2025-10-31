@@ -187,7 +187,7 @@ sub build_operations {
 			next unless my $dep_loc = get_sbo_location($_);
 			next if $_ =~ /-compat32/ and ineligible_compat $dep_loc;
 			push @disp_queue, $_ if $_ ne $sbo;
-	}
+		}
 	}
 
 	# @build_operations is for the first menu; @more_info is for the second.
@@ -700,7 +700,39 @@ sub display_builds {
 	($height, $width, $begin_y, $begin_x) = calculate_position("wide", $for_dialog, "Select a SlackBuild");
 	$height--;
 	my $do_filter;
-	if (@array_to_use > 1) {
+	if ($label =~ /(Missing|Perl|Python|Ruby)/ and $< == 0) {
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --extra-button --extra-label \"Reinst.All\" --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\" $height $width $height --file $dialog_input", @help_builds_fail_menu);
+		if ($res == $code_dialog_extra) {
+			my $cmd = "/usr/sbin/sboinstall --reinstall";
+			my $need_dependency_prompt = 0;
+			for my $missing (@array_to_use) {
+				splice @concluded;
+				my ($queue, %warnings);
+				$queue = get_build_queue([$missing], \%warnings);
+				my @disp_queue;
+				unless ($missing =~ /compat32$/) {
+					for (@$queue) { push @disp_queue, $_ if get_sbo_location($_) and $_ ne $missing; }
+				} else {
+					for (@$queue) {
+						next unless my $dep_loc = get_sbo_location($_);
+						next if $_ =~ /-compat32/ and ineligible_compat $dep_loc;
+						push @disp_queue, $_ if $_ ne $missing;
+					}
+				}
+				if (@disp_queue) {
+					$need_dependency_prompt = 1;
+					last;
+				}
+			}
+			if ($need_dependency_prompt) {
+				($height, $width, $begin_y, $begin_x) = calculate_position("narrow", "Dependencies?");
+				($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Rebuild Dependencies?\" --yesno \"Also rebuild dependencies?\" $height $width");
+				$cmd .= " --norequirements" unless $res == $code_dialog_ok;
+			}
+			run_command("$cmd @array_to_use");
+			return;
+		}
+	} elsif (@array_to_use > 1) {
 		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --extra-button --extra-label \"Filter\" --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\" $height $width $height --file $dialog_input", @help_builds);
 		# Run a secondary search on the results if the user presses the
 		# "Filter" button.
