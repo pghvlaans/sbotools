@@ -32,7 +32,7 @@ This file, introduced in `sbotools-4.1`, has a list of first-build times for maj
 
 `sbotools` currently supports Slackware 15.0 and beyond. The most recent version supporting 14.0, 14.1 and 14.2 is `sbotools-4.0.2`, packaged here for convenience:
 
-* [sbotools-4.0.2-noarch-1_pghv.tgz](sbotools-4.0.2-noarch-1_pghv.tgz) ([asc](sbotools-4.0.2-noarch_1_pghv.tgz))
+* [sbotools-4.0.2-noarch-1_pghv.tgz](sbotools-4.0.2-noarch-1_pghv.tgz) ([asc](sbotools-4.0.2-noarch_1_pghv.tgz.asc))
     * md5sum: `14dd545426037a124f1aca56201d1bc9`
 
 ## Configuration Note
