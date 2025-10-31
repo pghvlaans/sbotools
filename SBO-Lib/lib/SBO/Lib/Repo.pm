@@ -11,6 +11,7 @@ our $VERSION = '4.0.1';
 use SBO::Lib::Util qw/ :config :const :colors error_code prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in in_regexp slurp wrapsay /;
 
 use Cwd;
+use File::Basename;
 use File::Copy;
 use File::Find;
 use File::Path qw/ make_path remove_tree /;
@@ -29,6 +30,7 @@ our @EXPORT_OK = qw{
   rsync_sbo_tree
   slackbuilds_or_fetch
   update_tree
+  verify_file
   verify_gpg
 
   $distfiles
@@ -66,12 +68,8 @@ downloaded sources are kept.
 =head2 $gpg_log
 
 C<$gpg_log> defaults to C</usr/sbo/gpg.log>, and it is where the output
-of the most recent C<gnupg> verification is kept.
-
-=head2 $gpg_obsolete_log
-
-C<$gpg_obsolete_log> defaults to C</usr/sbo/gpg-obsolete.log>, and it is where the output
-of the most recent C<gnupg> verification for the obsolete script list is kept.
+of the most recent C<gnupg> verification for the repository is kept. Other
+C<gnupg> logs are saved under C</usr/sbo/file_name_here.asc.log>.
 
 =head2 $repo_path
 
@@ -92,7 +90,6 @@ C<$repo_path> proceeds without prompting.
 our $distfiles = "$config{SBO_HOME}/distfiles";
 our $repo_path = "$config{SBO_HOME}/repo";
 our $gpg_log = "$config{SBO_HOME}/gpg.log";
-our $gpg_obsolete_log = "$config{SBO_HOME}/gpg-obsolete.log";
 our $slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
 
 =head1 SUBROUTINES
@@ -315,35 +312,41 @@ sub generate_slackbuilds_txt {
 
 C<get_obsolete()> downloads a file from the C<sbotools> home page listing scripts that are
 known to have been added to Slackware -current under different names, or to be obsolete
-out-of-tree build dependencies. It is saved to C</etc/sbotools/obsolete>. C<gnupg> verification
-is performed if C<GPG_VERIFY> is C<TRUE>. There is no useful return value.
+out-of-tree build dependencies. It is saved to C</etc/sbotools/obsolete>. The C<perl> build
+history file, C</etc/sbotools/perl_vers>, is downloaded as well.
+
+C<gnupg> verification is performed if C<GPG_VERIFY> is C<TRUE>. There is no useful return
+value.
 
 =cut
 
 sub get_obsolete {
   my $cwd = getcwd();
-  my $link = "https://pghvlaans.github.io/sbotools/downloads/obsolete";
-  my $link_asc = "$link.asc";
-  my $obs_asc = "$obs_file.asc";
+  my $link = "https://pghvlaans.github.io/sbotools/downloads/";
   if (-d "$conf_dir") {
-    chdir $conf_dir;
-    move($obs_file, "$obs_file.bk") if -f $obs_file;
-    wrapsay "\nDownloading the obsolete script list from $link...\n";
-    unless (system('wget', '--tries=5', $link) == 0) {
-      move("$obs_file.bk", $obs_file) if -f "$obs_file.bk";
-    } else {
-      unlink "$obs_file.bk" if -f "$obs_file.bk";
-    }
-    if ($config{GPG_VERIFY} eq "TRUE") {
-      unlink $obs_asc if -f $obs_asc;
-      unless (system('wget', '--tries=5', $link_asc) == 0) {
+    for my $file ($obs_file, $perl_file) {
+      chdir $conf_dir;
+      move($file, "$file.bk") if -f $file;
+      my $dl_link = $link . basename($file);
+      wrapsay "\nDownloading $file from $dl_link...\n";
+      unless (system('wget', '--tries=5', $dl_link) == 0) {
+        move("$file.bk", $file) if -f "$file.bk";
+      } else {
+        unlink "$file.bk" if -f "$file.bk";
+      }
+      if ($config{GPG_VERIFY} eq "TRUE") {
+        my $file_asc = $file . ".asc";
+        my $link_asc = $dl_link . ".asc";
+        unlink $file_asc if -f $file_asc;
+        unless (system('wget', '--tries=5', $link_asc) == 0) {
+          chdir $cwd;
+          error_code("$link_asc could not be downloaded.", _ERR_DOWNLOAD);
+        }
         chdir $cwd;
-        error_code("$obs_asc could not be downloaded.", _ERR_DOWNLOAD);
+        verify_file($file_asc);
       }
       chdir $cwd;
-      verify_obsolete();
     }
-    chdir $cwd;
   }
   return;
 }
@@ -761,27 +764,29 @@ sub verify_gpg {
   }
 }
 
-=head2 verify_obsolete
+=head2 verify_file
 
-  verify_obsolete();
+  verify_file($asc);
 
-C<verify_obsolete()> runs C<gnupg> verification on a newly-downloaded
-C</etc/sbotools/obsolete> file. There is no useful return value.
+C<verify_file()> runs C<gnupg> verification, taking an C<asc> file as the only
+argument. There is no useful return value.
 
 =cut
 
-sub verify_obsolete {
+sub verify_file {
+  script_error("verify_file requires an argument.") unless @_ == 1;
   my $gpg_ok;
-  my $obs_asc = "$obs_file.asc";
+  my $asc = shift;
+  my $log = $config{SBO_HOME} . "/" . basename($asc) . ".log";
   my ($fh, $tempfile) = tempfile(DIR => "$config{SBO_HOME}");
-  unlink $gpg_obsolete_log if -f $gpg_obsolete_log;
+  unlink $log if -f $log;
   open OLDERR, '>&', \*STDERR;
-  open STDERR, '>', $gpg_obsolete_log;
-  $gpg_ok = (system('gpg', '--status-file', $tempfile, '--verify', $obs_asc) == 0);
+  open STDERR, '>', $log;
+  $gpg_ok = (system('gpg', '--status-file', $tempfile, '--verify', $asc) == 0);
   close STDERR;
   open STDERR, '>&', \*OLDERR;
   if ($gpg_ok) {
-    wrapsay "$obs_asc verified. See $gpg_obsolete_log.";
+    wrapsay "$asc verified. See $log.";
     close $fh;
     unlink $tempfile if -f $tempfile;
     return;
@@ -801,7 +806,7 @@ sub verify_obsolete {
       $next = 1 if $word eq "ERRSIG";
     }
     my $newkey = retrieve_key($fingerprint);
-    return verify_obsolete() if $newkey;
+    return verify_file($asc) if $newkey;
   }
   # REVKEYSIG: warning and exit
   if (grep(/REVKEYSIG/, @raw)) {

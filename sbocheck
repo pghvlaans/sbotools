@@ -42,7 +42,7 @@ Options:
   -g|--gpg-verify:
     perform gpg verification.
   -O|--obsolete-check:
-    download an updated list of obsolete scripts.
+    download updated obsolete script list and perl version history.
   -n|--nopull:
     run without updating the tree.
   -t|--type:

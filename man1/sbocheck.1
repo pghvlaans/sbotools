@@ -30,10 +30,13 @@ OBSOLETE_CHECK
 is
 .B
 TRUE\fR\
-\&, an updated copy of the script list at
+\&, updated copies of the script list at
 .B
 /etc/sbotools/obsolete
-is downloaded from
+and the perl version history file at
+.B
+/etc/sbotools/perl_vers
+are downloaded from
 .UR https://pghvlaans.github.io/sbotools
 .UE
 if running Slackware -current (see
@@ -304,7 +307,7 @@ FALSE\fR\
 -O|--obsolete-check
 .RS
 If running Slackware -current, download a copy of the obsolete script list
-from
+and the perl version history file from
 .UR https://pghvlaans.github.io/sbotools
 .UE
 and verify with gpg(1) if

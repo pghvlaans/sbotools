@@ -110,10 +110,11 @@ may differ when running some SlackBuilds unless **LOG_DIR** is
 
 **OBSOLETE_CHECK=(FALSE\|TRUE)**
 
-If **TRUE**, download an updated copy of the obsolete script list to
-*/etc/sbotools/obsolete* from the **sbotools** home page at
-<https://pghvlaans.github.io/sbotools> when running [sbocheck(1)](sbocheck.1.md) in
-Slackware -current.
+If **TRUE**, download updated copies of the obsolete script list and the
+perl version history file to */etc/sbotools/obsolete* and
+*/etc/sbotools/perl_vers*, respectively, from the **sbotools** home page
+at <https://pghvlaans.github.io/sbotools> when running [sbocheck(1)](sbocheck.1.md)
+in Slackware -current.
 
 **PKG_DIR=(FALSE\|/path)**
 

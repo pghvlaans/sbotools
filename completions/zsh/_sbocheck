@@ -8,7 +8,7 @@ _arguments \
     '(-)'{-C,--check-all-packages}'[Check all installed packages for missing shared objects only.]:' \
     '(-)'{-c,--check-package}'[Check a list of package names for missing shared objects only.]:' \
     '(-)'{-g,--gpg-verify}'[Verify with gpg.]:' \
-    '(-)'{-O,--obsolete-check}'[In -current, download the obsolete scripts list.]:' \
+    '(-)'{-O,--obsolete-check}'[In -current, download the obsolete scripts list and perl version history file.]:' \
     '(-)'{-n,--nopull}'[Check for updates without updating the tree.]:' \
     '(-)'{-X,--so-check}'[Check all _SBo packages for missing shared objects only.]:' \
     '(-)'{-t, --type}'[Choose package check types (comma-separated): solibs (default), perl, python, ruby, all]:'\

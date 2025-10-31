@@ -62,6 +62,7 @@ my @EXPORT_CONFIG = qw{
   $obs_file
   @obsolete
   %optional
+  $perl_file
   $pkg_db
   $rem_pkg_db
   $sbotest_compatible
@@ -263,6 +264,12 @@ interact with C<@obsolete> directly; in other situations, make a copy.
 
 =cut
 
+=head2 $perl_file
+
+This file contains build timestamps for the introduction of major perl versions
+into Slackware. It is used by C<Solibs.pm> during the C<perl> package test. It is
+located at C</etc/sbotools/perl_vers> by default.
+
 =head2 (@py_installed, @py_missing)
 
 These exported arrays contain C<python> versions that are installed and needed but
@@ -311,6 +318,7 @@ my $filebase = defined $is_sbotest ? "sbotest" : "sbotools";
 our $conf_file = "$conf_dir/$filebase.conf";
 our $hint_file = "$conf_dir/$filebase.hints";
 our $obs_file = "$conf_dir/obsolete";
+our $perl_file = "$conf_dir/perl_vers";
 our $color_file = "$conf_dir/$filebase.colors";
 our %config = (
   CLASSIC => 'FALSE',

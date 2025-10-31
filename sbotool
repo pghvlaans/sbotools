@@ -1174,7 +1174,7 @@ sub display_settings {
 						"\"LOG_DIR=$config{LOG_DIR}\" \"\" \"If a directory, save build logs there. Logs are otherwise not saved.\" \\",
 						"\"NOCLEAN=$config{NOCLEAN}\" \"\" \"If TRUE, do not remove working directories after building.\" \\",
 						"\"NOWRAP=$config{NOWRAP}\" \"\" \"If TRUE, disable sbotools word wrapping.\" \\",
-						"\"OBSOLETE_CHECK=$config{OBSOLETE_CHECK}\" \"\" \"If TRUE, download the outdated script list when fetching the repo.\" \\",
+						"\"OBSOLETE_CHECK=$config{OBSOLETE_CHECK}\" \"\" \"If TRUE, download the outdated script list and perl history on repo fetch.\" \\",
 						"\"PKG_DIR=$config{PKG_DIR}\" \"\" \"If a directory, save built packages there.\" \\",
 						"\"REPO=$config{REPO}\" \"\" \"Use this non-default git or rsync repository.\" \\",
 						"\"RSYNC_DEFAULT=$config{RSYNC_DEFAULT}\" \"\" \"If TRUE, the default repository is rsync, not git. No effect on -current.\" \\",
@@ -1275,7 +1275,7 @@ sub display_settings {
 			$flag = "w";
 		}
 		if ($option =~ /^OBSOLETE_CHECK/) {
-			$explanation = "If TRUE, download the obsolete script list when fetching the\nrepo.\n\nRelevant only on -current.";
+			$explanation = "If TRUE, download the obsolete script list and perl version\nhistory upon repo fetch.\n\nRelevant only on -current.";
 			$criterion = "TRUE or FALSE.";
 			$flag = "O";
 		}
