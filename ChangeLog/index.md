@@ -2,6 +2,10 @@
 * Post-Release
   * Drop support for Slackware 14.0, 14.1 and 14.2
   * *sbocheck*, *sbotool*: Add a **perl** package compatibility test
+  * *sbocheck*: **\--obsolete-check** also downloads the perl version history file
+
+* 4.0.2 - 2025-10-31
+  * *sbotool*: Package test fixes
 
 * 4.0.1 - 2025-10-27
   * *sbotool*: Clarified the batch installation prompt
