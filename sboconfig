@@ -75,7 +75,7 @@ Configuration options (defaults shown):
   -s|--sbo-home /usr/sbo:
       SBO_HOME: set the SBo directory.
   -O|--obsolete-check FALSE:
-      OBSOLETE_CHECK: for -current, download obsolete list with sbocheck.
+      OBSOLETE_CHECK: -current: sbocheck gets obsolete list and perl history.
   -o|--local-overrides FALSE:
       LOCAL_OVERRIDES: a directory containing local overrides.
   -V|--slackware-version FALSE:
@@ -141,7 +141,7 @@ Configuration options (defaults shown):
   -s|--sbo-home /usr/sbotest:
       SBO_HOME: set the SBo directory.
   -O|--obsolete-check FALSE:
-      OBSOLETE_CHECK: for -current, download obsolete list with sbocheck.
+      OBSOLETE_CHECK: -current: sbocheck gets obsolete list and perl history.
   -o|--local-overrides FALSE:
       LOCAL_OVERRIDES: a directory containing local overrides.
   -V|--slackware-version FALSE:
