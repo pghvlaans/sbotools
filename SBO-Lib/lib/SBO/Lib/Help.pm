@@ -224,10 +224,10 @@ effective operations. The following options can appear in Main Menu:
 
 * Package Tests
     Perform a shared object dependency check on all _SBo packages or all
-    installed packages. Packages are additionally checked for python and
-    incompatibilities. Further tests may appear in future versions.
-    SlackBuilds with problems can be selected from "Missing Solibs",
-    "Perl", "Python" or "Ruby" afterwards.
+    installed packages. Packages are additionally checked for perl,
+    python and ruby incompatibilities. Further tests may appear in
+    future versions. SlackBuilds with problems can be selected from
+    "Missing Solibs", "Perl", "Python" or "Ruby" afterwards.
 
 * Perl
     View, search and select SlackBuilds that were apparently built
