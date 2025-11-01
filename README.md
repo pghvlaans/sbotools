@@ -1,6 +1,6 @@
 # sbotools
 
-**sbotools** is a set of Perl scripts providing a ports-like automation interface to [SlackBuilds.org](https://slackbuilds.org). Features include dependency handling, using a custom git branch, generating 32-bit and compat32 builds on multilib systems, reverse dependency search and rebuild, batch mode, gpg verification and more.
+**sbotools** is a set of Perl scripts providing a ports-like automation interface to [SlackBuilds.org](https://slackbuilds.org). Features include dependency handling, using a custom git branch, generating 32-bit and compat32 builds on multilib systems, reverse dependency search and rebuild, batch mode, gpg verification, package testing and more.
 
 [This repository](https://github.com/pghvlaans/sbotools/) is an **sbotools** revival, and was forked from the [pink-mist repository](https://github.com/pghvlaans/pink-mist/sbotools/), which covered development from version 0.1 through version 2.7.
 
@@ -37,6 +37,5 @@ Nonetheless, this repository was originally a simple fork adding a feature: Savi
 * Use `--dry-run` and `--batch` to test and install build queues non-interactively
 * Rebuild all `SBo` scripts with `--mass-rebuild`, or individual series with `--series-rebuild`
 * Optional build log capabilities
-* Optional shared object dependency checking
 
 Those who prefer a more traditional **sbotools** experience can use the **CLASSIC** metasetting to disable most new on-screen messaging and lock other settings to version 2.7 behavior. [sbotools2](https://git.server.ky/slackcoder/sbotools2/about/), a Slackware 15.0-compatible **sbotools-2.7** maintenance fork by Slack Coder, may also be of interest.
