@@ -1,5 +1,9 @@
 # sbotools
 
+#### Post-Release
+  * sboupgrade: --nowrap properly disables sbotools wrapping
+    * Thanks to leoctrl for the report.
+
 #### 4.1 - 2025-10-31
   * Drop support for Slackware 14.0, 14.1 and 14.2
   * sbocheck, sbotool: Add a perl package compatibility test

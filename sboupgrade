@@ -103,7 +103,7 @@ my $options_ok = GetOptions(
 	'nocolor'           => \$nocolor,
 	'color'             => \$color,
 	'so-check|X=s'      => \$socheck,
-	'nowrap'            => \$nocolor,
+	'nowrap'            => \$nowrap,
 	'wrap'              => \$wrap,
 );
 
