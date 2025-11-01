@@ -281,7 +281,8 @@ sub get_build_queue {
 
 C<get_full_queue()> takes a list of installed SlackBuilds and an array
 of SlackBuilds to check. It returns a list of the checked SlackBuilds and
-their dependencies in reverse build order.
+their dependencies in reverse build order such that no SlackBuild appears
+after any of its dependencies.
 
 =cut
 
@@ -292,9 +293,10 @@ sub get_full_queue {
   my %warnings;
   for my $sbo (@sbos) {
     my $queue = get_build_queue([$sbo], \%warnings);
-    @$queue = reverse @$queue;
     $revdep_queue = merge_queues($revdep_queue, $queue);
   }
+  $revdep_queue = rationalize_queue($revdep_queue);
+  @$revdep_queue = reverse @$revdep_queue;
 
   return map {; +{
       name => $_,

@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Prickle-Prickle, The Aftermath 12, 3191 YOLD" "" "sbotools 4.1"
+.TH SBO::Lib::Build 3 "Sweetmorn, The Aftermath 14, 3191 YOLD" "" "sbotools 4.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -169,7 +169,8 @@ script exits with \f(CW\*(C`_ERR_CIRCULAR\*(C'\fR if any are present.
 .PP
 \&\f(CWget_full_queue()\fR takes a list of installed SlackBuilds and an array
 of SlackBuilds to check. It returns a list of the checked SlackBuilds and
-their dependencies in reverse build order.
+their dependencies in reverse build order such that no SlackBuild appears
+after any of its dependencies.
 .SS get_full_reverse
 .IX Subsection "get_full_reverse"
 .Vb 1
