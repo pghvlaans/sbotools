@@ -1,5 +1,8 @@
 ## ChangeLog.md
 
+#### Post-Release
+  * bin/test: Use the perl, python and ruby package tests in case of failure
+
 #### 1.1.2 - 2025-09-19
   * bin/test: Fix **\--single** with already-installed scripts
 

@@ -10,12 +10,12 @@ The [ChangeLog](ChangeLog.md) has a record of changes since the initial release.
 
 ## Getting sbotest
 
-A SlackBuild for **sbotest** is [available](https://slackbuilds.org/repository/15.0/system/sbotest/) on **SlackBuilds.org**. **sbotest** requires **sbotools-3.8.1** or above and **sbo-maintainer-tools**.
+A SlackBuild for **sbotest** is [available](https://slackbuilds.org/repository/15.0/system/sbotest/) on **SlackBuilds.org**. The most recent version of **sbotest** requires **sbotools-3.8.1** or above and **sbo-maintainer-tools**.
 
 **sbotest** and **sbotools** source archives can be found at [Downloads](https://pghvlaans.github.io/sbotools/downloads/).
 
 To use a development version:
-* Use **[sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild/)** to upgrade **sbotools** to version `20250828-f76ca27` at the oldest.
+* Use **[sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild/)** to upgrade **sbotools** to version `20251102-8250110` at the oldest.
 * Clone the **sbotest** repository.
 * Run `./tools/source_to_slackbuild.sh` from the root of the local repository.
 * Run the SlackBuild in `slackbuild/sbotest`.
