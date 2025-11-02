@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Pkgs 3"
-.TH SBO::Lib::Pkgs 3 "Prickle-Prickle, The Aftermath 12, 3191 YOLD" "" "sbotools 4.1"
+.TH SBO::Lib::Pkgs 3 "Sweetmorn, The Aftermath 14, 3191 YOLD" "" "sbotools 4.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -74,11 +74,14 @@ SBO::Lib::Pkgs \- Routines for interacting with the Slackware package database.
 .Ve
 .SH VARIABLES
 .IX Header "VARIABLES"
-.Vb 1
-\&  $inst_perl_pkg_time
-.Ve
-.PP
-The timestamp for the installation of the system \f(CW\*(C`perl\*(C'\fR package.
+.ie n .SS $perl_pkg
+.el .SS \f(CW$perl_pkg\fP
+.IX Subsection "$perl_pkg"
+The file name of the installed \f(CW\*(C`perl\*(C'\fR package.
+.ie n .SS $ruby_pkg
+.el .SS \f(CW$ruby_pkg\fP
+.IX Subsection "$ruby_pkg"
+The file name of the installed \f(CW\*(C`ruby\*(C'\fR package.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS get_available_updates
@@ -128,8 +131,7 @@ versions, full installed package names and creation times of the returned packag
 The default behavior is to retain the package lists for future calls; add a true value
 to the arguments to clear them instead. This is irrelevant when running \f(CW\*(C`sbotest\*(C'\fR.
 .PP
-The \f(CW$rubyver\fR variable from \f(CWSBO::Lib::Util(3)\fR is set here when the \f(CW\*(C`ruby\*(C'\fR package
-is evaluated. The \f(CW\*(C`perl\*(C'\fR installation time is also found.
+The \f(CW\*(C`perl\*(C'\fR and \f(CW\*(C`ruby\*(C'\fR package file names are found at this time.
 .SS get_local_outdated_versions
 .IX Subsection "get_local_outdated_versions"
 .Vb 1

@@ -9,7 +9,7 @@ use warnings;
 our $VERSION = '4.1';
 
 use SBO::Lib::Util qw/ :config :const in uniq error_code script_error slurp /;
-use SBO::Lib::Pkgs qw/ $inst_perl_pkg_time /;
+use SBO::Lib::Pkgs qw/ $perl_pkg $ruby_pkg /;
 
 use Exporter 'import';
 use File::Basename;
@@ -116,10 +116,12 @@ $perl_arch = ($perl_arch =~ /86$/) ? "x86" : "arm" unless $is_x86_64;
 my $ran_solibs = 0;
 my ($check_perl, @check_perl);
 
-# determine relevant perl binary origin times; package origin
-# times are checked in Pkgs.pm
-my ($inst_perl_bin_time, $perl_major_bin_time, $perl_major_pkg_time, $perl_major);
+# determine relevant perl binary origin times
+my ($inst_perl_pkg_time, $inst_perl_bin_time, $perl_major_bin_time, $perl_major_pkg_time, $perl_major);
 my (%removed_perls, @removed_perls);
+
+my (@py_installed, @py_missing);
+my $rubyver;
 
 =head1 SUBROUTINES
 
@@ -305,23 +307,24 @@ sub elf_links {
   return $elf_return_value, @cand_libs;
 }
 
-=head2 get_perl_times
+=head2 initialize_perl
 
-  get_perl_times();
+  initialize_perl();
 
-C<get_perl_times()> determines the installed major C<perl> version, installation
-times for removed C<perl> packges and the date at which the installed major version
-was first built for the running Slackware architecture (if available). These values
-are used to perform the C<perl> package test.
+C<initialize_perl()> determines the installed major C<perl> version, installation
+times for installed and removed C<perl> packages and the date at which the installed
+major version was first built for the running Slackware architecture (if available).
+These values are used to perform the C<perl> package test. There is no useful return value.
 
 =cut
 
-sub get_perl_times {
+sub initialize_perl {
   undef $inst_perl_bin_time;
   undef $perl_major_bin_time;
   undef $perl_major_pkg_time;
   splice @removed_perls;
   %removed_perls = ();
+  $inst_perl_pkg_time = (stat "$pkg_db/$perl_pkg")[9];
   my $perl_bin = "/usr/bin/" . readlink "/usr/bin/perl";
   $inst_perl_bin_time = (stat($perl_bin))[9];
   $perl_major = $perl_bin;
@@ -336,6 +339,56 @@ sub get_perl_times {
     my $rem_timestamp = (stat($_))[9];
     push @removed_perls, $rem_timestamp;
     $removed_perls{$rem_timestamp} = $_;
+  }
+}
+
+=head2 initialize_python
+
+  initialize_python();
+
+C<initialize_python()> determines the default installed C<python2> and C<python3>
+versions in the form e.g. C<python3.12>. There is no useful return value.
+
+=cut
+
+sub initialize_python {
+  splice @py_installed;
+  splice @py_missing;
+  my $py3ver = `python3 --version` if -x "/usr/bin/python3";
+  if (defined $py3ver) {
+    $py3ver =~ s/(\s|\.\d+$)//g;
+    $py3ver = lc $py3ver;
+    push @py_installed, $py3ver;
+  }
+  my $py2ver = `python2 --version 2>&1` if -x "/usr/bin/python2";
+  if (defined $py2ver) {
+    $py2ver =~ s/(\s|\.\d+$)//g;
+    $py2ver = lc $py2ver;
+    push @py_installed, $py2ver;
+  }
+}
+
+=head2 initialize_ruby
+
+  initialize_ruby();
+
+C<initialize_ruby()> determines the correct major version for C<ruby> based
+on the C</usr/include/ruby-*> directory. There is no useful return value.
+
+=cut
+
+sub initialize_ruby {
+  if ($ruby_pkg) {
+    my $fh;
+    # non-fatal
+    if (open $fh, "<", "$pkg_db/$ruby_pkg") {
+      for (<$fh>) {
+        next unless $_ =~ /^usr\/include\/ruby-/;
+        ($rubyver) = $_ =~ m/^usr\/include\/ruby-(\d+\.\d+\.\d+)\/$/;
+        last;
+      }
+      close $fh;
+    }
   }
 }
 
@@ -405,6 +458,7 @@ The subroutine returns an array with results for the checks in alphabetical orde
 sub series_check {
   script_error("series_check requires at least two arguments.") unless @_ >= 2;
   my ($pkg, @series) = @_;
+  update_known_solibs() unless @native_libs;
   my $perl_check = in "perl", @series;
   my $python_check = in "python", @series;
   my $ruby_check = in "ruby", @series;
@@ -444,7 +498,10 @@ sub series_check {
 
     if ($ruby_check) {
       if ($good_ruby and $line =~ /\/ruby\/gems\/\w/) {
-        $good_ruby = 0 unless defined $rubyver;
+        unless (defined $rubyver) {
+          $good_ruby = 0;
+          next;
+        }
         $good_ruby = 0 unless $line =~ /\/ruby\/gems\/$rubyver\// or $line =~ /^opt\//;
       }
     }
@@ -608,20 +665,24 @@ C<update_known_solibs()> takes no arguments. It uses the C<--print-cache> option
 C<ldconfig(1)> to generate an array of existent known shared objects, C<@native_libs>. On
 C<x86_64> systems, it generates C<@x86_libs> as well, an array with 32-bit shared objects.
 
+The C<initialize_*()> subroutines for the additional package tests are called at this time.
+
 The script exits in case of C<ldcdonfig> failure. There is no useful return value.
 
 =cut
 
 sub update_known_solibs {
-  my @ld_lines = split "\n", `/sbin/ldconfig --print-cache`;
-  script_error("Getting the ldconfig cache failed. Exiting.") unless @ld_lines;
   undef @native_libs;
   undef @x86_libs;
   undef $ran_solibs;
   splice @py_installed;
   splice @py_missing;
-  get_perl_times();
+  initialize_perl();
+  initialize_python();
+  initialize_ruby();
   %old_libs = ();
+  my @ld_lines = split "\n", `/sbin/ldconfig --print-cache`;
+  script_error("Getting the ldconfig cache failed. Exiting.") unless @ld_lines;
   for my $line (@ld_lines) {
     next unless $line =~ m/^\s/;
     my @item = split " ", $line;

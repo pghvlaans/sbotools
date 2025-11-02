@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Solibs 3"
-.TH SBO::Lib::Solibs 3 "Prickle-Prickle, The Aftermath 12, 3191 YOLD" "" "sbotools 4.1"
+.TH SBO::Lib::Solibs 3 "Sweetmorn, The Aftermath 14, 3191 YOLD" "" "sbotools 4.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -114,16 +114,32 @@ used, returning a decimal string.
 returns 0 if not. Otherwise, it reads entries according to the \fBelf\fR\|(5) specification and
 returns 1 for a 64\-bit ELF file, \-1 for a 32\-bit ELF file and an array of first\-order
 shared object dependencies that do not exist on the system under an \f(CW\*(C`rpath\*(C'\fR or \f(CW\*(C`runpath\*(C'\fR.
-.SS get_perl_times
-.IX Subsection "get_perl_times"
+.SS initialize_perl
+.IX Subsection "initialize_perl"
 .Vb 1
-\&  get_perl_times();
+\&  initialize_perl();
 .Ve
 .PP
-\&\f(CWget_perl_times()\fR determines the installed major \f(CW\*(C`perl\*(C'\fR version, installation
-times for removed \f(CW\*(C`perl\*(C'\fR packges and the date at which the installed major version
-was first built for the running Slackware architecture (if available). These values
-are used to perform the \f(CW\*(C`perl\*(C'\fR package test.
+\&\f(CWinitialize_perl()\fR determines the installed major \f(CW\*(C`perl\*(C'\fR version, installation
+times for installed and removed \f(CW\*(C`perl\*(C'\fR packages and the date at which the installed
+major version was first built for the running Slackware architecture (if available).
+These values are used to perform the \f(CW\*(C`perl\*(C'\fR package test. There is no useful return value.
+.SS initialize_python
+.IX Subsection "initialize_python"
+.Vb 1
+\&  initialize_python();
+.Ve
+.PP
+\&\f(CWinitialize_python()\fR determines the default installed \f(CW\*(C`python2\*(C'\fR and \f(CW\*(C`python3\*(C'\fR
+versions in the form e.g. \f(CW\*(C`python3.12\*(C'\fR. There is no useful return value.
+.SS initialize_ruby
+.IX Subsection "initialize_ruby"
+.Vb 1
+\&  initialize_ruby();
+.Ve
+.PP
+\&\f(CWinitialize_ruby()\fR determines the correct major version for \f(CW\*(C`ruby\*(C'\fR based
+on the \f(CW\*(C`/usr/include/ruby\-*\*(C'\fR directory. There is no useful return value.
 .SS installed_solibs
 .IX Subsection "installed_solibs"
 .Vb 1
@@ -194,6 +210,8 @@ This subroutine is not exported.
 \&\f(CWupdate_known_solibs()\fR takes no arguments. It uses the \f(CW\*(C`\-\-print\-cache\*(C'\fR option of
 \&\f(CWldconfig(1)\fR to generate an array of existent known shared objects, \f(CW@native_libs\fR. On
 \&\f(CW\*(C`x86_64\*(C'\fR systems, it generates \f(CW@x86_libs\fR as well, an array with 32\-bit shared objects.
+.PP
+The \f(CW\*(C`initialize_*()\*(C'\fR subroutines for the additional package tests are called at this time.
 .PP
 The script exits in case of \f(CW\*(C`ldcdonfig\*(C'\fR failure. There is no useful return value.
 .SH "EXIT CODES"

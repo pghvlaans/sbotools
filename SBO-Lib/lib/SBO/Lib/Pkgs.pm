@@ -24,7 +24,8 @@ our @EXPORT_OK = qw{
   get_installed_packages
   get_local_outdated_versions
   get_removed_builds
-  $inst_perl_pkg_time
+  $perl_pkg
+  $ruby_pkg
 };
 
 our %EXPORT_TAGS = (
@@ -32,7 +33,7 @@ our %EXPORT_TAGS = (
 );
 
 my ($all_pkgs, $std_pkgs, $sbo_pkgs, $dirty_pkgs);
-our $inst_perl_pkg_time;
+our ($perl_pkg, $ruby_pkg);
 
 =pod
 
@@ -52,9 +53,17 @@ SBO::Lib::Pkgs - Routines for interacting with the Slackware package database.
 
 =head1 VARIABLES
 
-  $inst_perl_pkg_time
+=cut
 
-The timestamp for the installation of the system C<perl> package.
+=head2 $perl_pkg
+
+The file name of the installed C<perl> package.
+
+=cut
+
+=head2 $ruby_pkg
+
+The file name of the installed C<ruby> package.
 
 =cut
 
@@ -205,8 +214,7 @@ versions, full installed package names and creation times of the returned packag
 The default behavior is to retain the package lists for future calls; add a true value
 to the arguments to clear them instead. This is irrelevant when running C<sbotest>.
 
-The C<$rubyver> variable from C<SBO::Lib::Util(3)> is set here when the C<ruby> package
-is evaluated. The C<perl> installation time is also found.
+The C<perl> and C<ruby> package file names are found at this time.
 
 =cut
 
@@ -229,22 +237,8 @@ sub get_installed_packages {
     $pkg =~ s!^\Q$pkg_db/\E!!;
     my ($name, $version, $build) = $pkg =~ m#^([^/]+)-([^-]+)-[^-]+-([^-]+)$#
       or next;
-    # Get the appropriate ruby target version and perl installation time here.
-    if ($name eq "ruby") {
-      my $fh;
-      # non-fatal
-      if (open $fh, "<", "$pkg_db/$pkg") {
-        for (<$fh>) {
-          next unless $_ =~ /^usr\/include\/ruby-/;
-          ($rubyver) = $_ =~ m/^usr\/include\/ruby-(\d+\.\d+\.\d+)\/$/;
-          last;
-        }
-        close $fh;
-      }
-    }
-    if ($name eq "perl") {
-      $inst_perl_pkg_time = (stat "$pkg_db/$pkg")[9];
-    }
+    $perl_pkg = $pkg if $name eq "perl";
+    $ruby_pkg = $pkg if $name eq "ruby";
     my $numbuild = $build;
     $numbuild =~ s/_SBo(|compat32)$//g ;
     my $created = strftime "%F, %H:%M:%S", localtime((stat "$pkg_db/$pkg")[10]);

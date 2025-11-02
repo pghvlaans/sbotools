@@ -70,11 +70,8 @@ my @EXPORT_CONFIG = qw{
   $is_sbotest
   $is_sbotool
   $userland_32
-  $py3ver
   @py_installed
   @py_missing
-  $py2ver
-  $rubyver
 };
 
 my @EXPORT_TIME = qw{
@@ -270,27 +267,6 @@ This file contains build timestamps for the introduction of major perl versions
 into Slackware. It is used by C<Solibs.pm> during the C<perl> package test. It is
 located at C</etc/sbotools/perl_vers> by default.
 
-=head2 (@py_installed, @py_missing)
-
-These exported arrays contain C<python> versions that are installed and needed but
-missing, respectively.
-
-=cut
-
-=head2 ($py3ver, $py2ver)
-
-These exported variables contain the major system C<python2> and C<python3> versions
-in the form e.g. C<python3.12>. If C<python3> is not installed, C<$py3ver> is equal to
-C<$py2ver>.
-
-=cut
-
-=head2 $rubyver
-
-This exported variable contains the major system C<ruby> version. The correct value of
-the major version is calculated in C<get_installed_packages()> from C<SBO::Lib::Pkgs(3)>,
-e.g. C<ruby-3.4.0> for C<ruby-3.4.6>.
-
 =cut
 
 =head2 $userland_32
@@ -393,25 +369,6 @@ our $color_warn = "red bold";
 get_colors();
 
 usage_error("Forbidden value of \$TMP: $ENV{TMP}\n") if defined $ENV{TMP} and dangerous_directory($ENV{TMP});
-
-our (@py_installed, @py_missing);
-our $py3ver = `python3 --version` if -x "/usr/bin/python3";
-if (defined $py3ver) {
-  $py3ver =~ s/(\s|\.\d+$)//g;
-  $py3ver = lc $py3ver;
-  push @py_installed, $py3ver;
-}
-our $py2ver = `python2 --version 2>&1` if -x "/usr/bin/python2";
-if (defined $py2ver) {
-  $py2ver =~ s/(\s|\.\d+$)//g;
-  $py2ver = lc $py2ver;
-  push @py_installed, $py2ver;
-}
-
-our $rubyver = `ruby --version` if -x "/usr/bin/ruby";
-if (defined $rubyver) {
-  $rubyver = (split " ", $rubyver)[1]; # get_installed_packages() fixes the major version.
-}
 
 =head1 SUBROUTINES
 

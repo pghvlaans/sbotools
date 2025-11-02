@@ -29,6 +29,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboupgrade: --nowrap properly disables sbotools wrapping
     * Thanks to leoctrl for the report.
   * sboremove: Fix dependency ordering when running on multiple scripts
+  * Solibs.pm: Figure out perl, python and ruby information only when tests are to be run
 
 #### 4.1 - 2025-10-31
   * Drop support for Slackware 14.0, 14.1 and 14.2
