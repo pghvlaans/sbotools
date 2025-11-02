@@ -12,6 +12,7 @@ package SBO::Lib::Util;
 #% SBOTEST V1 COMPAT %
 #% SBOTEST V1.0.1 COMPAT %
 #% SBOTEST V1.1.1 COMPAT %
+#% SBOTEST V1.2 COMPAT %
 
 use 5.016;
 use strict;
