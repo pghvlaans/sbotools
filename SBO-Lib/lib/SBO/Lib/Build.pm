@@ -295,7 +295,6 @@ sub get_full_queue {
     my $queue = get_build_queue([$sbo], \%warnings);
     $revdep_queue = merge_queues($revdep_queue, $queue);
   }
-  $revdep_queue = rationalize_queue($revdep_queue);
   @$revdep_queue = reverse @$revdep_queue;
 
   return map {; +{
