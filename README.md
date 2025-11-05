@@ -30,6 +30,8 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
     * Thanks to leoctrl for the report.
   * sboremove: Fix dependency ordering when running on multiple scripts
   * Solibs.pm: Figure out perl, python and ruby information only when tests are to be run
+  * sboinstall: --noinstall can build any installed package if --reinstall is used
+  * sboinstall, sboupgrade: Better on-screen messages with --noinstall
 
 #### 4.1 - 2025-10-31
   * Drop support for Slackware 14.0, 14.1 and 14.2

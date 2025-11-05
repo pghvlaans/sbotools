@@ -368,7 +368,11 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		push(@temp_queue, $name);
 		$commands{$name} = $cmds;
 		$options{$name} = $opts;
-		say "$name added to upgrade queue.";
+		unless ($no_install) {
+			say "$name added to upgrade queue.";
+		} else {
+			say "$name added to build queue.";
+		}
 	} else {
 		# for --batch, check for existing user and group, exiting
 		# with a message if not
@@ -412,7 +416,11 @@ FIRST: for my $sbo (@$upgrade_queue) {
 			}
 		}
 		push(@temp_queue, $name);
-		say "\n$name added to upgrade queue." unless $dry_run;
+		unless ($no_install) {
+			say "\n$name added to upgrade queue." unless $dry_run;
+		} else {
+			say "\n$name added to build queue." unless $dry_run;
+		}
 	}
 }
 @$upgrade_queue = @temp_queue;
@@ -428,11 +436,17 @@ if ($dry_run) {
 		for my $item (keys %saved_options) { say "  $item: $saved_options{$item}"; }
 	}
 }
-wrapsay "\nUpgrade queue: ". join(' ', @$upgrade_queue);
+unless ($no_install) {
+	wrapsay "\nUpgrade queue: ". join(' ', @$upgrade_queue);
+} else {
+	wrapsay "\nBuild queue: ". join(' ', @$upgrade_queue);
+}
 unless ($non_int) {
+	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
 	exit 0 unless prompt($color_notice, "\nAre you sure you wish to continue?", default => 'yes');
 }
 if ($dry_run) {
+	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
 	my $usr_grp_missing;
 	if (%missing_user_group) {
 		for my $item (keys %missing_user_group) {

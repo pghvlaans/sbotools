@@ -369,7 +369,7 @@ if (defined $template) {
 	%commands = %{ $template->{commands} };
 	%options = %{ $template->{options} };
 }
-my $added = ' added to install queue.';
+my $added = $no_install ? ' added to build queue.' : ' added to install queue.';
 my (@see_readme, %saved_options);
 $build_queue = rationalize_queue($build_queue) if $needs_rationalize;
 FIRST: for my $sbo (@$build_queue) {
@@ -378,7 +378,7 @@ FIRST: for my $sbo (@$build_queue) {
 		next FIRST unless $utemp or $requested_reinstall or not $inst_names{$sbo} or $sbo =~ /-compat32$/;
 	}
 	$sbo =~ s/-compat32$//;
-	if ($std_names{$name} and $non_int) {
+	if ($std_names{$name} and $non_int and not $no_install) {
 		wrapsay "$name is not an SBo package. Skipping.";
 		next FIRST;
 	}
@@ -395,13 +395,17 @@ FIRST: for my $sbo (@$build_queue) {
 		say $inst_msg;
 		# always warn with default "no" for reinstall if the package is
 		# installed non-SBo and it exists in the tree
-		if ($reinstall and $std_names{$name}) {
+		if ($reinstall and $std_names{$name} and not $no_install) {
 			next FIRST unless prompt($color_warn, "Warning: $name is not an SBo package. Reinstall from SBo anyway?", default => 'no');
-		} elsif ($reinstall and not $non_int) {
+		} elsif ($reinstall and not $non_int and not $no_install) {
 			my $default = ($mass_rebuild or $reverse_rebuild or $series_rebuild) ? "yes" : "no";
 			next FIRST unless prompt($color_notice, "Do you want to reinstall from SBo?", default => $default);
-		} elsif ($reinstall) {
-			say "Reinstalling." unless $dry_run;
+		} elsif ($reinstall and not $dry_run) {
+			unless ($no_install) {
+				say "Reinstalling.";
+			} else {
+				say "Building, but not installing.";
+			}
 		} else {
 			next FIRST;
 		}
@@ -412,7 +416,11 @@ FIRST: for my $sbo (@$build_queue) {
 			for my $pm (@$pms) {
 				if ($pm =~ /^$pm_name$/i) {
 					say "$sbo installed via the CPAN.";
-					next FIRST;
+					unless ($no_install) {
+						next FIRST;
+					} else {
+						say "Building, but not installing." unless $dry_run;
+					}
 				}
 			}
 			for my $pm (@$defective) {
@@ -505,13 +513,19 @@ if ($dry_run) {
 		for my $item (keys %saved_options) { say "  $item: $saved_options{$item}"; }
 	}
 }
-wrapsay "\nInstall queue: " . join(' ', @$build_queue);
+unless ($no_install) {
+	wrapsay "\nInstall queue: " . join(' ', @$build_queue);
+} else {
+	wrapsay "\nBuild queue: " . join(' ', @$build_queue);
+}
 unless ($non_int) {
+	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
 	unless (prompt($color_notice, "\nAre you sure you wish to continue?", default => 'yes')) {
 		exit 0;
 	}
 }
 if ($dry_run) {
+	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
 	my $usr_grp_missing;
 	if (%missing_user_group) {
 		for my $item (keys %missing_user_group) {
