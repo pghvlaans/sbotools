@@ -37,6 +37,8 @@
     sbotest [-Al /path|FALSE] [-SX TRUE|FALSE] [-j #|FALSE] \
             [-D] --archive-reverse
 
+        sbotest [-Al /path|FALSE] [-SX TRUE|FALSE] [-j #|FALSE] \\   [--no-archive|--archive-force] --test-everything
+
 ## DISCLAIMER
 
 **sbotest** is designed and intended to run in a clean build-testing
@@ -80,6 +82,12 @@ and **\--archive-force** below. Any packages that are not required for
 the following build are removed afterwards. Packages without the *\_SBo*
 tag are unaffected, and no package that is already installed when
 **sbotest** starts can be removed or reinstalled.
+
+For a full-repository test, run **sbotest** with the
+**\--test-everything** option. This will build and test all packages
+that are available, supported, not on the blacklist or up-to-date in the
+archive. Reverse rebuilds are performed when rebuilding archived
+packages.
 
 Packages in the archive with missed rebuilds may lack required shared
 object dependencies, which can in turn cause builds to fail. To check
@@ -223,6 +231,18 @@ If **TRUE**, delete only mismatched packages with lower version or build
 numbers when running **\--archive-rebuild** or **\--archive-reverse**.
 If **FALSE**, delete all mismatched packages from the archive. Overrides
 the setting in */etc/sbotest/sbotest.conf*.
+
+**\--test-everything**
+
+Perform a full-repository test, respecting the blacklist. All packages
+are rebuilt, except for those that are unsupported or archived and
+up-to-date. Unless running with **\--no-archive**, ensure that the
+package archive directory exists before running.
+
+Please note that archived reverse dependencies of outdated packages are
+rebuilt regardless of whether they are up-to-date.
+
+Incompatible with **\--single** and **\--archive-force**.
 
 **-X\|\--so-check**
 
