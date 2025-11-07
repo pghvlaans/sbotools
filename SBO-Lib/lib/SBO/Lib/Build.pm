@@ -868,40 +868,64 @@ sub process_sbos {
   my $queue = rationalize_queue($queue)
 
 C<rationalize_queue()> takes a build queue and rearranges it such that
-no script appears before any of its dependencies. Currently, this is only
-useful when an automatic reverse dependency rebuild has been triggered or
-in case of a mass or series rebuild. The rearranged queue is returned.
+no script appears before any of its dependencies. The order is predictable
+given the scripts included and favors keeping dependency chains together
+beyond the first level; this makes output and build orders more intuitive,
+while also reducing the number of package installations and removals during
+large-scale sbotest operations.
+
+Currently, this is only useful when the queue has been constructed with
+reference to reverse dependencies, or, in the case of C<sbotest>, a full
+repository test or archive rebuild is needed.
+
+The rearranged queue is returned.
 
 =cut
 
 sub rationalize_queue {
   script_error('rationalize_queue requires an argument.') unless @_ == 1;
-  my $queue = shift;
-  my @queue = sort @{ $queue };
-  my (%all_reqs, @have_requirements, @result_queue);
+  my $preliminary_queue = shift;
+  my @preliminary_queue = sort @{ $preliminary_queue };
+  my (@queue, %queued, %pushed, %any_reqs, %reqs, @result_queue);
 
-  FIRST: while (my $sbo = shift @queue) {
+  for my $sbo (@preliminary_queue) {
     my $requirements = get_requires($sbo);
     unless (defined $requirements) {
       push @result_queue, $sbo;
-      next FIRST;
+      next;
     }
     my @reqs = @{ $requirements };
     unless ($reqs[0]) {
       push @result_queue, $sbo;
-      next FIRST;
+      next;
     }
-    $all_reqs{$sbo} = \@reqs;
-    push @have_requirements, $sbo;
+    $any_reqs{$sbo} = \@reqs;
+    $reqs{$sbo}->{$_} = 1 for (@reqs);
+    push @queue, $sbo;
   }
-  SECOND: while (my $sbo = shift @have_requirements) {
-    for my $check (@{$all_reqs{$sbo}}) {
-      if (in $check, @have_requirements) {
-        push @have_requirements, $sbo;
-        next SECOND;
+  $queued{$_} = 1 for (@queue);
+  FIRST: while (my $sbo = shift @queue) {
+    if (exists $any_reqs{$sbo}) {
+      for my $check (@{$any_reqs{$sbo}}) {
+        if (not exists $pushed{$check} and exists $queued{$check}) {
+          push @queue, $sbo;
+          next FIRST;
+        }
       }
     }
     push @result_queue, $sbo;
+    $pushed{$sbo} = 1;
+    if (@queue) {
+      my @new_queue;
+      SECOND: while (my $cand = shift @queue) {
+        if (exists $reqs{$cand}->{$sbo}) {
+          unshift @new_queue, $cand;
+        } else {
+          push @new_queue, $cand;
+        }
+      }
+      @queue = @new_queue;
+    }
   }
 
   return [ @result_queue ];

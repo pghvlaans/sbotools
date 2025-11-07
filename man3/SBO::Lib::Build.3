@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Sweetmorn, The Aftermath 14, 3191 YOLD" "" "sbotools 4.1"
+.TH SBO::Lib::Build 3 "Sweetmorn, The Aftermath 19, 3191 YOLD" "" "sbotools 4.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -281,9 +281,17 @@ when a build fails.
 .Ve
 .PP
 \&\f(CWrationalize_queue()\fR takes a build queue and rearranges it such that
-no script appears before any of its dependencies. Currently, this is only
-useful when an automatic reverse dependency rebuild has been triggered or
-in case of a mass or series rebuild. The rearranged queue is returned.
+no script appears before any of its dependencies. The order is predictable
+given the scripts included and favors keeping dependency chains together
+beyond the first level; this makes output and build orders more intuitive,
+while also reducing the number of package installations and removals during
+large\-scale sbotest operations.
+.PP
+Currently, this is only useful when the queue has been constructed with
+reference to reverse dependencies, or, in the case of \f(CW\*(C`sbotest\*(C'\fR, a full
+repository test or archive rebuild is needed.
+.PP
+The rearranged queue is returned.
 .SS run_tee
 .IX Subsection "run_tee"
 .Vb 1
