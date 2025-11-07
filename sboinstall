@@ -400,11 +400,11 @@ FIRST: for my $sbo (@$build_queue) {
 		} elsif ($reinstall and not $non_int and not $no_install) {
 			my $default = ($mass_rebuild or $reverse_rebuild or $series_rebuild) ? "yes" : "no";
 			next FIRST unless prompt($color_notice, "Do you want to reinstall from SBo?", default => $default);
-		} elsif ($reinstall and not $dry_run) {
+		} elsif ($reinstall) {
 			unless ($no_install) {
-				say "Reinstalling.";
+				say "Reinstalling." unless $dry_run;
 			} else {
-				say "Building, but not installing.";
+				say "Building, but not installing." unless $dry_run;
 			}
 		} else {
 			next FIRST;
