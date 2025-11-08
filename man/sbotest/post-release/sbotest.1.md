@@ -37,7 +37,8 @@
     sbotest [-Al /path|FALSE] [-SX TRUE|FALSE] [-j #|FALSE] \
             [-D] --archive-reverse
 
-        sbotest [-Al /path|FALSE] [-SX TRUE|FALSE] [-j #|FALSE] \\   [--no-archive|--archive-force] --test-everything
+    sbotest [-Al /path|FALSE] [-SX TRUE|FALSE] [-j #|FALSE] \
+            [--no-archive|--archive-force] --test-everything
 
 ## DISCLAIMER
 
@@ -64,16 +65,18 @@ details.
 Called without options, **sbotest** builds any requested SlackBuilds
 with their first level of reverse dependencies. Use **sbotest find
 \--first-reverse** or pass **\--dry-run** for a list of scripts that
-would be tested, if compatible. To test all reverse dependencies of the
-requested scripts, use the **\--full-reverse** option; **\--single**
-tests no reverse dependencies. Please note that already-installed
-scripts can be tested only with **\--single**; the existing package on
-the system is not replaced.
+would be tested. To test all reverse dependencies of the requested
+scripts, use the **\--full-reverse** option; **\--single** tests no
+reverse dependencies. Please note that already-installed scripts can be
+tested only with **\--single**; the existing package on the system is
+not replaced.
 
-Each test target has a separate testing workflow. First, dependencies
-saved to the **SBO_ARCHIVE** directory (default */usr/sbotest/archive*)
-are installed to save time; see **CONFIGURATION** below for details. Any
-missing users and groups are added, and [sboinstall(1)](sboinstall.1.md) is called.
+Each test target has a separate testing workflow. **sbotest** attempts
+to minimize package installations and removals during the test run when
+ordering the testing queue. First, dependencies saved to the
+**SBO_ARCHIVE** directory (default */usr/sbotest/archive*) are installed
+to save time; see **CONFIGURATION** below for details. Any missing users
+and groups are added, and [sboinstall(1)](sboinstall.1.md) is called.
 
 Newly-built packages are saved to a timestamp-appended **PKG_DIR**. By
 default, any dependencies (not test targets) built are saved to
@@ -85,8 +88,8 @@ tag are unaffected, and no package that is already installed when
 
 For a full-repository test, run **sbotest** with the
 **\--test-everything** option. This will build and test all packages
-that are available, supported, not on the blacklist or up-to-date in the
-archive. Reverse rebuilds are performed when rebuilding archived
+that are available, supported, and not on the blacklist or up-to-date in
+the archive. Reverse rebuilds are performed when rebuilding archived
 packages.
 
 Packages in the archive with missed rebuilds may lack required shared
