@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Sweetmorn, The Aftermath 19, 3191 YOLD" "" "sbotools 4.1"
+.TH SBO::Lib::Build 3 "Pungenday, The Aftermath 21, 3191 YOLD" "" "sbotools 4.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -282,14 +282,17 @@ when a build fails.
 .PP
 \&\f(CWrationalize_queue()\fR takes a build queue and rearranges it such that
 no script appears before any of its dependencies. The order is predictable
-given the scripts included and favors keeping dependency chains together
-beyond the first level; this makes output and build orders more intuitive,
-while also reducing the number of package installations and removals during
-large\-scale sbotest operations.
+given the scripts included and favors keeping dependency chains together,
+especially beyond the first level; this makes output and build orders more
+intuitive.
 .PP
 Currently, this is only useful when the queue has been constructed with
 reference to reverse dependencies, or, in the case of \f(CW\*(C`sbotest\*(C'\fR, a full
 repository test or archive rebuild is needed.
+.PP
+\&\f(CW\*(C`sbotest\*(C'\fR has a separate subroutine that reduces the number of expected
+package installations and removals during test runs. Intuitiveness is not
+to be expected in \f(CW\*(C`sbotest\*(C'\fR queues.
 .PP
 The rearranged queue is returned.
 .SS run_tee

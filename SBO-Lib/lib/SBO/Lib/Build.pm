@@ -869,14 +869,17 @@ sub process_sbos {
 
 C<rationalize_queue()> takes a build queue and rearranges it such that
 no script appears before any of its dependencies. The order is predictable
-given the scripts included and favors keeping dependency chains together
-beyond the first level; this makes output and build orders more intuitive,
-while also reducing the number of package installations and removals during
-large-scale sbotest operations.
+given the scripts included and favors keeping dependency chains together,
+especially beyond the first level; this makes output and build orders more
+intuitive.
 
 Currently, this is only useful when the queue has been constructed with
 reference to reverse dependencies, or, in the case of C<sbotest>, a full
 repository test or archive rebuild is needed.
+
+C<sbotest> has a separate subroutine that reduces the number of expected
+package installations and removals during test runs. Intuitiveness is not
+to be expected in C<sbotest> queues.
 
 The rearranged queue is returned.
 
@@ -895,15 +898,33 @@ sub rationalize_queue {
       next;
     }
     my @reqs = @{ $requirements };
-    unless ($reqs[0]) {
+    splice @concluded;
+    my %warnings;
+    my $sbo_queue = get_build_queue([$sbo], \%warnings);
+    pop @$sbo_queue;
+    unless (@$sbo_queue) {
       push @result_queue, $sbo;
       next;
     }
-    $any_reqs{$sbo} = \@reqs;
-    $reqs{$sbo}->{$_} = 1 for (@reqs);
+    $reqs{$sbo}->{$_} = 1 for (@$sbo_queue);
+    $any_reqs{$sbo} = \@$sbo_queue;
     push @queue, $sbo;
   }
   $queued{$_} = 1 for (@queue);
+  return [ @result_queue ] unless @queue;
+
+  for my $no_reqs (@result_queue) {
+    my @new_queue;
+    while (my $sbo = shift @queue) {
+      if (exists $reqs{$sbo}->{$no_reqs}) {
+        unshift @new_queue, $sbo;
+      } else {
+        push @new_queue, $sbo;
+      }
+    }
+    @queue = @new_queue;
+  }
+
   FIRST: while (my $sbo = shift @queue) {
     if (exists $any_reqs{$sbo}) {
       for my $check (@{$any_reqs{$sbo}}) {
@@ -917,7 +938,7 @@ sub rationalize_queue {
     $pushed{$sbo} = 1;
     if (@queue) {
       my @new_queue;
-      SECOND: while (my $cand = shift @queue) {
+      while (my $cand = shift @queue) {
         if (exists $reqs{$cand}->{$sbo}) {
           unshift @new_queue, $cand;
         } else {
