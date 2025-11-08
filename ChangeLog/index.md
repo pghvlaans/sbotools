@@ -7,6 +7,7 @@
   * *sboinstall*: **\--noinstall** can build any installed package if **\--reinstall** is used
   * *sboinstall*, *sboupgrade*: Better on-screen messages with **\--noinstall**
   * *Build.pm*: Better maintain dependency chains beyond the first level in rationalize_queue()
+  * *Build.pm*: rationalize_queue() deals with the entire build queue for each script
 
 * 4.1 - 2025-10-31
   * Drop support for Slackware 14.0, 14.1 and 14.2
