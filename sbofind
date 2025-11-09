@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local on_blacklist build_cmp version_cmp :colors %config @concluded @reverse_concluded $slackbuilds_txt $repo_path @last_level_reverse $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay $descriptions_generated /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local on_blacklist build_cmp version_cmp :colors %config $slackbuilds_txt $repo_path @last_level_reverse @reverse_concluded $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay $descriptions_generated /;
 use Cwd;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
@@ -212,7 +212,6 @@ sub reverse_queries {
 # clear the shared completion arrays before performing dependency and
 # reverse dependency calculations
 sub splice_arrays {
-	splice @concluded;
 	splice @reverse_concluded;
 	splice @last_level_reverse;
 }
@@ -229,8 +228,7 @@ sub get_file_contents {
 # get build queue and return it as a single line.
 sub show_build_queue {
 	script_error('show_build_queue requires an argument.') unless @_ == 1;
-	splice_arrays();
-	my $queue = get_build_queue([shift], {});
+	my $queue = get_build_queue([shift]);
 	return join(" ", @$queue);
 }
 

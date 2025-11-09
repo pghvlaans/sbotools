@@ -34,6 +34,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboinstall, sboupgrade: Better on-screen messages with --noinstall
   * Build.pm: Better maintain dependency chains in rationalize_queue()
   * Build.pm: rationalize_queue() deals with the entire build queue for each script
+  * Build.pm: Share warnings and completed build queues
 
 #### 4.1 - 2025-10-31
   * Drop support for Slackware 14.0, 14.1 and 14.2

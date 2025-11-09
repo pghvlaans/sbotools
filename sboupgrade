@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group in ineligible_compat installed_solibs is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue solib_check verify_gpg %config show_version lint_sbo_config wrapsay @concluded @reverse_concluded /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group in ineligible_compat installed_solibs is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue solib_check verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -240,7 +240,7 @@ unless ($config{CPAN_IGNORE} eq "TRUE") {
 	s/::/-/g for @$defective;
 }
 
-my ($upgrade_queue, %warnings, @needs_reverse, $needs_rationalize);
+my ($upgrade_queue, @needs_reverse, $needs_rationalize);
 
 # ensure that compat32 is picked up on the upgrade list
 if ($compat32) {
@@ -272,11 +272,11 @@ if ($non_int and not $reverse and not $yes_really) {
 } else {
 	my @notified;
 	for my $sbo (@sbos) {
-		next if in @concluded, $sbo;
+		next if exists $concluded{$sbo};
 		unless ($force_reqs or $force) {
 			next unless $updates{$sbo};
 		}
-		my $queue = get_build_queue([$sbo], \%warnings);
+		my $queue = get_build_queue([$sbo]);
 		unless ($force_reqs) {
 			@$queue = grep { !$inst_names{$_} or $updates{$_} } @$queue;
 		}
@@ -284,9 +284,8 @@ if ($non_int and not $reverse and not $yes_really) {
 		$upgrade_queue = merge_queues($upgrade_queue, $queue);
 	}
 	if ($reverse) {
-		my ($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @$upgrade_queue);
+		my $extra_queue = get_full_reverse_queue($self, $updates, @$upgrade_queue);
 		if ($extra_queue) {
-			%warnings = (%warnings, %extra_warnings);
 			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
 		}
 		$needs_rationalize = 1;
@@ -306,9 +305,8 @@ if ($non_int and not $reverse and not $yes_really) {
 # handle all automatic reverse dependency rebuilds here
 if (@needs_reverse and not $no_install and not $reverse) {
 	$needs_rationalize = 1;
-	my ($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $updates, @needs_reverse);
+	my $extra_queue = get_full_reverse_queue($self, $updates, @needs_reverse);
 	if ($extra_queue) {
-		%warnings = (%warnings, %extra_warnings);
 		$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
 	}
 }

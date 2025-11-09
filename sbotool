@@ -10,7 +10,7 @@
 use strict;
 use warnings;
 
-use SBO::Lib qw/ :colors :config :const :help auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_readme_contents get_reverse_reqs get_sbo_description get_sbo_location get_slack_version in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp series_check solib_check uniq update_known_solibs @concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated /;
+use SBO::Lib qw/ :colors :config :const :help auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_readme_contents get_reverse_reqs get_sbo_description get_sbo_location get_slack_version in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp series_check solib_check uniq update_known_solibs %concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated %warnings /;
 
 use File::Basename;
 use File::Find;
@@ -125,7 +125,6 @@ sub build_operations {
 	my $options_file = "/var/log/sbotools/$base_name";
 	my $is_compat_build = $sbo =~ /-compat32$/;
 	my $compat = $is_compat_build ? $sbo : "$sbo-compat32";
-	splice @concluded;
 	splice @reverse_concluded;
 	unlink $command_output;
 	# In-tree SlackBuilds only.
@@ -176,9 +175,7 @@ sub build_operations {
 	@pre_display = get_full_reverse($sbo, $available, $all_fulldeps);
 	for (@pre_display) { push @available_reverse, $_ if get_sbo_location($_); }
 
-	splice @concluded;
-	my ($queue, %warnings);
-	$queue = get_build_queue([$sbo], \%warnings);
+	my $queue = get_build_queue([$sbo]);
 	my @disp_queue;
 	unless ($is_compat_build) {
 		for (@$queue) { push @disp_queue, $_ if get_sbo_location($_) and $_ ne $sbo; }
@@ -713,9 +710,7 @@ sub display_builds {
 			my $cmd = "/usr/sbin/sboinstall --reinstall";
 			my $need_dependency_prompt = 0;
 			for my $missing (@array_to_use) {
-				splice @concluded;
-				my ($queue, %warnings);
-				$queue = get_build_queue([$missing], \%warnings);
+				my $queue = get_build_queue([$missing]);
 				my @disp_queue;
 				unless ($missing =~ /compat32$/) {
 					for (@$queue) { push @disp_queue, $_ if get_sbo_location($_) and $_ ne $missing; }
@@ -1632,6 +1627,9 @@ sub new_package_information {
 	$inst_vers = "";
 	$inst_vers_std = "";
 
+	%concluded = ();
+	%warnings = ();
+	splice @reverse_concluded;
 	@listings = read_hints();
 	$config{$_} = "FALSE" for (keys %config);
 	read_config();

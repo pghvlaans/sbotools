@@ -52,8 +52,9 @@ our @EXPORT_OK = qw{
   $tmpd
   $env_tmp
   @last_level_reverse
-  @concluded
+  %concluded
   @reverse_concluded
+  %warnings
 };
 
 our %EXPORT_TAGS = (
@@ -76,13 +77,12 @@ SBO::Lib::Build - Routines for building Slackware packages from SlackBuilds.org.
 
 =head1 VARIABLES
 
-=head2 @concluded
+=head2 %concluded
 
-This is a shared array that tracks scripts with verified
-completable build queues; it is used by C<get_build_queue()> to check for
-circular dependencies. Note that C<@concluded> is cleared
-by C<sbofind> and C<sboremove> between results, and by C<sboinstall> when
-running with C<mass-rebuild> or C<series-rebuild>.
+This is a shared hash that contains already-calculated build queues.
+It is used by C<get_build_queue()> to reduce wasted time and check for
+circular dependencies. Note that C<%concluded> is cleared
+by C<sbotool> when using the C<Refresh> button.
 
 =head2 $env_tmp
 
@@ -94,8 +94,7 @@ set.
 This is a shared array that tracks scripts with verified
 reverse dependency chains; it is used by C<get_full_reverse()> to check for
 circular reverse dependencies. Note that C<@reverse_concluded> is cleared
-by C<sbofind> and C<sboremove> between results, and by C<sboinstall> when
-running with C<mass-rebuild> or C<series-rebuild>.
+by C<sbofind>, C<sboremove> and C<sbotool> between results.
 
 =head2 $tempdir
 
@@ -118,6 +117,11 @@ This is a shared, non-exportable array that contains hashes with the source
 files needed by each script in the queue. Each hash drops out of the array
 when its corresponding script has been built.
 
+=head2 %warnings
+
+This is a shared hash that contains per-script warnings. Possible warnings
+currently include C<%README%> and C<nonexistent>.
+
 =cut
 
 # get $TMP from the env, if defined - we use two variables here because there
@@ -130,9 +134,10 @@ make_path($tmpd) unless -d $tmpd;
 our $tempdir;
 $tempdir = tempdir(CLEANUP => 1, DIR => $tmpd) if $< == 0;
 
-# this array tracks scripts that have verified completable build queues; it is
-# used to check for circular dependencies
-our @concluded;
+# this hash contains already-calculated build queues
+our %concluded;
+# this array is used to check for circular dependencies in reverse queue
+# calculations
 our @reverse_concluded;
 
 # this array keeps track of files needed by subsequent scripts
@@ -140,6 +145,9 @@ our @upcoming;
 
 # this array retains last-level reverse dependencies found by get_full_reverse
 our @last_level_reverse;
+
+# a universal warnings hash; warnings currently include README and nonexistence
+our %warnings;
 
 =head1 SUBROUTINES
 
@@ -260,18 +268,18 @@ sub do_upgradepkg {
 
 =head2 get_build_queue
 
-  my @queue = @{ get_build_queue($sbo, my $warnings, my @checked) };
+  my @queue = @{ get_build_queue($sbo, my @checked) };
 
-C<get_build_queue()> gets the prerequisites for C<$sbo>, updating the
+C<get_build_queue()> gets the prerequisites for C<$sbo>, updating the shared
 C<$warnings> hash reference with any C<%README%> encountered. It returns the
 prerequisites and C<$sbo> in the correct build order.
 
-C<@checked> and C<our @concluded> are used to check for circular dependencies; the
+C<@checked> and C<our %concluded> are used to check for circular dependencies; the
 script exits with C<_ERR_CIRCULAR> if any are present.
 =cut
 
 sub get_build_queue {
-  script_error('get_build_queue requires two arguments.') unless @_ == 2;
+  script_error('get_build_queue requires an argument.') unless @_ == 1;
   return [ _build_queue(@_) ];
 }
 
@@ -290,9 +298,8 @@ sub get_full_queue {
   my ($installed, @sbos) = @_;
 
   my $revdep_queue = [];
-  my %warnings;
   for my $sbo (@sbos) {
-    my $queue = get_build_queue([$sbo], \%warnings);
+    my $queue = get_build_queue([$sbo]);
     $revdep_queue = merge_queues($revdep_queue, $queue);
   }
   @$revdep_queue = reverse @$revdep_queue;
@@ -335,11 +342,10 @@ sub get_full_reverse {
   if (@sublist) {
     for my $revdep (@sublist) {
       next if in $revdep, @reverse_concluded;
-      my %warnings;
       # The first two conditions are prone to false positives if a script
       # and its dependency share a listed dependency; get_build_queue
       # makes certain in these cases.
-      if (in $revdep, @checked and in $revdep, get_build_queue([$sbo], \%warnings)) {
+      if (in $revdep, @checked and in $revdep, get_build_queue([$sbo])) {
         error_code("Circular dependency for $revdep detected. Exiting.", _ERR_CIRCULAR);
       }
       push @checked, $revdep;
@@ -359,14 +365,13 @@ sub get_full_reverse {
 
 =head2 get_full_reverse_queue
 
-  my (@reverse_queue, %warnings) = get_full_reverse_queue($from, $updates, $sbo ...)
-  my (@reverse_queue, %warnings) = get_full_reverse_queue($from, $self_include, $sbo ...)
+  my (@reverse_queue) = get_full_reverse_queue($from, $updates, $sbo ...)
+  my (@reverse_queue) = get_full_reverse_queue($from, $self_include, $sbo ...)
 
 C<get_full_reverse_queue()> takes the name of the script it is called from and any number
 of SlackBuilds. The second variable is the list of available upgrades (if called from
 B<sboupgrade(1)>), any true value if called from B<sboinstall(1) --reinstall> and a
-false value otherwise. The subroutine returns a queue for a reverse dependency rebuild
-and a warnings hash.
+false value otherwise. The subroutine returns a queue for a reverse dependency rebuild.
 
 =cut
 
@@ -383,12 +388,12 @@ sub get_full_reverse_queue {
   my $installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
   my $fulldeps = get_reverse_reqs($installed);
 
-  my ($return_queue, %warnings);
+  my $return_queue;
   REVERSE: for my $sbo (@_) {
     # if called from sboinstall --reverse-rebuild without --reinstall,
     # need to skip dependees of other requested scripts
     if ($from eq "sboinstall" and not $self_include) {
-      my $check_queue = get_build_queue([$sbo], \%warnings);
+      my $check_queue = get_build_queue([$sbo]);
       @$check_queue = grep { !/^$sbo$/ } @$check_queue;
       for my $sbo2 (@_) { next REVERSE if in $sbo2, @$check_queue; }
     }
@@ -396,7 +401,7 @@ sub get_full_reverse_queue {
     my @full_reverse = get_full_reverse($sbo, $installed, $fulldeps);
     if (@full_reverse) {
       for my $revdep (@full_reverse) {
-        my $queue = get_build_queue([$revdep], \%warnings);
+        my $queue = get_build_queue([$revdep]);
         # for sboinstall, install items not in the reverse queue only
         # if missing; for sboupgrade, upgrade items not in the reverse
         # queue if upgradable.
@@ -420,7 +425,7 @@ sub get_full_reverse_queue {
     }
     $return_queue = merge_queues($return_queue, $interim_queue) if $interim_queue;
   }
-  return ($return_queue, %warnings) if $return_queue;
+  return $return_queue if $return_queue;
   return 0;
 }
 
@@ -898,9 +903,7 @@ sub rationalize_queue {
       next;
     }
     my @reqs = @{ $requirements };
-    splice @concluded;
-    my %warnings;
-    my $sbo_queue = get_build_queue([$sbo], \%warnings);
+    my $sbo_queue = get_build_queue([$sbo]);
     pop @$sbo_queue;
     unless (@$sbo_queue) {
       push @result_queue, $sbo;
@@ -1072,29 +1075,31 @@ sub _time_restart {
 }
 
 sub _build_queue {
-  my ($sbos, $warnings, @checked) = @_;
+  my ($sbos, @checked) = @_;
   my @queue;
   for my $cand (@$sbos) { push @queue, $cand unless on_blacklist($cand); }
   my @result;
 
   while (my $sbo = shift @queue) {
     next if $sbo eq "%README%";
-    next if in $sbo, @concluded;
+    if (exists $concluded{$sbo} or exists $warnings{$sbo}) {
+      push @result, @{$concluded{$sbo}}, $sbo unless exists $warnings{$sbo} and $warnings{$sbo} eq "nonexistent";
+      next;
+    }
     if (in $sbo, @checked) {
       error_code("Circular dependencies for $sbo detected. Exiting.", _ERR_CIRCULAR);
     }
     push @checked, $sbo;
     my $reqs = get_requires($sbo);
     if (defined $reqs) {
-      push @result, _build_queue($reqs, $warnings, @checked);
-      push @concluded, $sbo;
+      my @sbo_result = _build_queue($reqs, @checked);
+      push @result, @sbo_result;
+      $concluded{$sbo} = \@sbo_result;
       foreach my $req (@$reqs) {
-        $warnings->{$sbo}="%README%" if $req eq "%README%";
+        $warnings{$sbo}="%README%" if $req eq "%README%";
       }
-    }
-    else {
-      push @concluded, $sbo;
-      $warnings->{$sbo} = "nonexistent";
+    } else {
+      $warnings{$sbo} = "nonexistent";
     }
     push @result, $sbo;
   }

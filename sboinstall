@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors auto_reverse check_x32 check_x64 check_multilib error_code get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in ineligible_compat is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay @concluded @reverse_concluded /;
+use SBO::Lib qw/ :config :const :colors auto_reverse check_x32 check_x64 check_multilib error_code get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in ineligible_compat is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_exist user_prompt verify_gpg lint_sbo_config wrapsay %concluded %warnings /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -251,7 +251,7 @@ my (%inst_names, %std_names);
 $inst_names{$_->{name}} = $_ for @$inst_pkgs;
 $std_names{$_->{name}} = $_ for @$std_pkgs;
 
-my (%warnings, $build_queue, $template, $needs_rationalize, @needs_reverse);
+my ($build_queue, $template, $needs_rationalize, @needs_reverse);
 
 if (length $utemp) {
 	my $json = JSON::PP->new->latin1;
@@ -272,7 +272,7 @@ if (length $utemp) {
 	}
 	unless ($mass_rebuild or $no_install) {
 		if ($requested_reinstall) {
-			my ($extra_queue, %extra_warnings);
+			my $extra_queue;
 			for my $cand (@$build_queue) {
 				if (auto_reverse($cand)) {
 					push @needs_reverse, $cand;
@@ -294,13 +294,12 @@ if (length $utemp) {
 			}
 		}
 	} elsif ($reverse_rebuild) {
-		($build_queue, %warnings) = get_full_reverse_queue($self, $requested_reinstall ? 1 : 0, @sbos);
+		$build_queue = get_full_reverse_queue($self, $requested_reinstall ? 1 : 0, @sbos);
 		exit 0 unless $build_queue;
 	} else {
 		for my $sbo (@sbos) {
-			next if in $sbo, @concluded;
-			my ($extra_queue, %extra_warnings);
-			my $queue = get_build_queue([$sbo], \%warnings);
+			my $extra_queue;
+			my $queue = get_build_queue([$sbo]);
 			$build_queue = merge_queues($build_queue, $queue);
 		}
 	}
@@ -333,7 +332,7 @@ if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 			my $series = basename(dirname($location));
 			next unless in $series, @series_rebuild;
 		}
-		my $queue = get_build_queue([$name], \%warnings);
+		my $queue = get_build_queue([$name]);
 		$build_queue = merge_queues($build_queue, $queue);
 		push @needs_reverse, $sbo if $series_rebuild and ($reverse_rebuild or auto_reverse($sbo));
 	}
@@ -345,11 +344,10 @@ if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 
 # Handle automatic reverse rebuilds now
 if (@needs_reverse) {
-	my ($extra_queue, %extra_warnings) = get_full_reverse_queue($self, $requested_reinstall ? 1 : 0, @needs_reverse);
+	my $extra_queue = get_full_reverse_queue($self, $requested_reinstall ? 1 : 0, @needs_reverse);
 	if ($extra_queue) {
 		$needs_rationalize = 1;
 		$build_queue = merge_queues($build_queue, $extra_queue);
-		%warnings = (%warnings, %extra_warnings);
 	}
 }
 

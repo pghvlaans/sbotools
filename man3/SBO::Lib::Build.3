@@ -74,14 +74,13 @@ SBO::Lib::Build \- Routines for building Slackware packages from SlackBuilds.org
 .Ve
 .SH VARIABLES
 .IX Header "VARIABLES"
-.ie n .SS @concluded
-.el .SS \f(CW@concluded\fP
-.IX Subsection "@concluded"
-This is a shared array that tracks scripts with verified
-completable build queues; it is used by \f(CWget_build_queue()\fR to check for
-circular dependencies. Note that \f(CW@concluded\fR is cleared
-by \f(CW\*(C`sbofind\*(C'\fR and \f(CW\*(C`sboremove\*(C'\fR between results, and by \f(CW\*(C`sboinstall\*(C'\fR when
-running with \f(CW\*(C`mass\-rebuild\*(C'\fR or \f(CW\*(C`series\-rebuild\*(C'\fR.
+.ie n .SS %concluded
+.el .SS \f(CW%concluded\fP
+.IX Subsection "%concluded"
+This is a shared hash that contains already\-calculated build queues.
+It is used by \f(CWget_build_queue()\fR to reduce wasted time and check for
+circular dependencies. Note that \f(CW%concluded\fR is cleared
+by \f(CW\*(C`sbotool\*(C'\fR when using the \f(CW\*(C`Refresh\*(C'\fR button.
 .ie n .SS $env_tmp
 .el .SS \f(CW$env_tmp\fP
 .IX Subsection "$env_tmp"
@@ -93,8 +92,7 @@ set.
 This is a shared array that tracks scripts with verified
 reverse dependency chains; it is used by \f(CWget_full_reverse()\fR to check for
 circular reverse dependencies. Note that \f(CW@reverse_concluded\fR is cleared
-by \f(CW\*(C`sbofind\*(C'\fR and \f(CW\*(C`sboremove\*(C'\fR between results, and by \f(CW\*(C`sboinstall\*(C'\fR when
-running with \f(CW\*(C`mass\-rebuild\*(C'\fR or \f(CW\*(C`series\-rebuild\*(C'\fR.
+by \f(CW\*(C`sbofind\*(C'\fR, \f(CW\*(C`sboremove\*(C'\fR and \f(CW\*(C`sbotool\*(C'\fR between results.
 .ie n .SS $tempdir
 .el .SS \f(CW$tempdir\fP
 .IX Subsection "$tempdir"
@@ -116,6 +114,11 @@ by \f(CW\*(C`sbofind\*(C'\fR with \f(CW\*(C`all\-reverse\*(C'\fR and \f(CW\*(C`t
 This is a shared, non\-exportable array that contains hashes with the source
 files needed by each script in the queue. Each hash drops out of the array
 when its corresponding script has been built.
+.ie n .SS %warnings
+.el .SS \f(CW%warnings\fP
+.IX Subsection "%warnings"
+This is a shared hash that contains per\-script warnings. Possible warnings
+currently include \f(CW\*(C`%README%\*(C'\fR and \f(CW\*(C`nonexistent\*(C'\fR.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS do_convertpkg
@@ -152,14 +155,14 @@ There is no useful return value.
 .SS get_build_queue
 .IX Subsection "get_build_queue"
 .Vb 1
-\&  my @queue = @{ get_build_queue($sbo, my $warnings, my @checked) };
+\&  my @queue = @{ get_build_queue($sbo, my @checked) };
 .Ve
 .PP
-\&\f(CWget_build_queue()\fR gets the prerequisites for \f(CW$sbo\fR, updating the
+\&\f(CWget_build_queue()\fR gets the prerequisites for \f(CW$sbo\fR, updating the shared
 \&\f(CW$warnings\fR hash reference with any \f(CW\*(C`%README%\*(C'\fR encountered. It returns the
 prerequisites and \f(CW$sbo\fR in the correct build order.
 .PP
-\&\f(CW@checked\fR and \f(CW\*(C`our @concluded\*(C'\fR are used to check for circular dependencies; the
+\&\f(CW@checked\fR and \f(CW\*(C`our %concluded\*(C'\fR are used to check for circular dependencies; the
 script exits with \f(CW\*(C`_ERR_CIRCULAR\*(C'\fR if any are present.
 .SS get_full_queue
 .IX Subsection "get_full_queue"
@@ -189,15 +192,14 @@ If any circular reverse dependencies are found, the script exits with \f(CW\*(C`
 .SS get_full_reverse_queue
 .IX Subsection "get_full_reverse_queue"
 .Vb 2
-\&  my (@reverse_queue, %warnings) = get_full_reverse_queue($from, $updates, $sbo ...)
-\&  my (@reverse_queue, %warnings) = get_full_reverse_queue($from, $self_include, $sbo ...)
+\&  my (@reverse_queue) = get_full_reverse_queue($from, $updates, $sbo ...)
+\&  my (@reverse_queue) = get_full_reverse_queue($from, $self_include, $sbo ...)
 .Ve
 .PP
 \&\f(CWget_full_reverse_queue()\fR takes the name of the script it is called from and any number
 of SlackBuilds. The second variable is the list of available upgrades (if called from
 \&\fBsboupgrade\|(1)\fR), any true value if called from \fBsboinstall\|(1) \-\-reinstall\fR and a
-false value otherwise. The subroutine returns a queue for a reverse dependency rebuild
-and a warnings hash.
+false value otherwise. The subroutine returns a queue for a reverse dependency rebuild.
 .SS get_pkg_name
 .IX Subsection "get_pkg_name"
 .Vb 1
