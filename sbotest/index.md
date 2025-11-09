@@ -15,7 +15,7 @@ A SlackBuild for **sbotest** is [available](https://slackbuilds.org/repository/1
 **sbotest** and **sbotools** source archives can be found at [Downloads](https://pghvlaans.github.io/sbotools/downloads/).
 
 To use a development version:
-* Use **[sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild/)** to upgrade **sbotools** to version `20251102-8250110` at the oldest.
+* Use **[sbotools-git-slackbuild](https://github.com/pghvlaans/sbotools-git-slackbuild/)** to upgrade **sbotools** to version `20251109-1605eca` at the oldest.
 * Clone the **sbotest** repository.
 * Run `./tools/source_to_slackbuild.sh` from the root of the local repository.
 * Run the SlackBuild in `slackbuild/sbotest`.
