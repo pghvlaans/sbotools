@@ -1274,8 +1274,8 @@ sub display_settings {
 			$flag = "e";
 		}
 		if ($option =~ /^GIT_BRANCH/) {
-			$explanation = "If TRUE, use a non-default git branch.";
-			$criterion = "TRUE or FALSE.";
+			$explanation = "If a BRANCH NAME, use a non-default git branch.";
+			$criterion = "BRANCH NAME or FALSE.";
 			$flag = "B";
 		}
 		if ($option =~ /^GPG_VERIFY/) {

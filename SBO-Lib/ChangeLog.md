@@ -10,6 +10,7 @@
   * Build.pm: Better maintain dependency chains beyond the first level in rationalize_queue()
   * Build.pm: rationalize_queue() deals with the entire build queue for each script
   * Build.pm: Share warnings and completed build queues
+  * sbotool: Fix GIT_BRANCH settings editor
 
 #### 4.1 - 2025-10-31
   * Drop support for Slackware 14.0, 14.1 and 14.2
