@@ -465,7 +465,7 @@ sub series_check {
   my $good_perl = 1;
   my $good_python = 1;
   my $good_ruby = 1;
-  my $stock_pkg = $pkg =~ /-\d+$/;
+  my $stock_pkg = $pkg =~ /(-\d+|_slack\d+\.\d+)$/;
   my $exit = open(my $fh, "<", "$pkg_db/$pkg") == 0;
   error_code("Opening $pkg_db/$pkg failed.", _ERR_OPENFH) if $exit;
   if ($perl_check and not $ran_solibs) {
