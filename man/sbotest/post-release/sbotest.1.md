@@ -76,7 +76,9 @@ to minimize package installations and removals during the test run when
 ordering the testing queue. First, dependencies saved to the
 **SBO_ARCHIVE** directory (default */usr/sbotest/archive*) are installed
 to save time; see **CONFIGURATION** below for details. Any missing users
-and groups are added, and [sboinstall(1)](sboinstall.1.md) is called.
+and groups are added, and [sboinstall(1)](sboinstall.1.md) is called. All packages are
+built in an environment that is as clean as possible, with only
+previously-installed packages and additional dependencies on the system.
 
 Newly-built packages are saved to a timestamp-appended **PKG_DIR**. By
 default, any dependencies (not test targets) built are saved to
