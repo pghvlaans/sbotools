@@ -37,6 +37,8 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Build.pm: Share warnings and completed build queues
   * sbotool: Fix GIT_BRANCH settings editor
   * Solibs.pm: Stock package check picks up \_slack15.0, e.g.
+  * sbotool: Streamline the settings menu
+    * Thanks to SCerovec for the feedback.
 
 #### 4.1 - 2025-10-31
   * Drop support for Slackware 14.0, 14.1 and 14.2

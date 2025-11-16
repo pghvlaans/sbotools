@@ -1185,15 +1185,15 @@ sub display_series {
 }
 
 # Display settings with explanations; root users can pick one
-# to edit in edit_setting().
+# to edit in edit_setting(). TRUE/FALSE settings simply toggle.
 #
 # It may be long, but explanations are good for clarity.
 sub display_settings {
 	my ($height, $width, $begin_x, $begin_y, $res, $output);
 	$config{DIALOGRC} = $save_dialogrc;
 	my @config_values;
-	my $msg = "See sbotools.conf(5) for explanations of the different values.\n\nAll defaults are FALSE except for SBO_HOME.";
-	$msg = "$msg\n\nSelect a setting to change it." if $< == 0;
+	my $msg = "Defaults are FALSE except for SBO_HOME; see sbotools.conf(5).";
+	$msg = "$msg\n\nPress \\\"OK\\\" to change a setting." if $< == 0;
 	push @config_values, "\"BUILD_IGNORE=$config{BUILD_IGNORE}\" \"\" \"If TRUE, ignore build numbers when upgrading.\" \\",
 						"\"CLASSIC=$config{CLASSIC}\" \"\" \"If TRUE, use 2.7-style output; No color, rsync default, ignore build number.\" \\",
 						"\"COLOR=$config{COLOR}\" \"\" \"If TRUE, use sbotools color output.\" \\",
@@ -1576,19 +1576,19 @@ sub edit_setting {
 	my ($existing_setting, $explanation, $criterion, $flag) = @_;
 	my ($height, $width, $begin_y, $begin_x, $res, $output);
 	my ($setting_name, $setting_content) = split "=", $existing_setting;
+	my $original_setting = $setting_content;
+	$setting_content =~ s/^FALSE$//;
+	my $option;
 	if ($criterion eq "TRUE or FALSE.") {
-		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $existing_setting, "$explanation\n\n$criterion\n\nTrue\nFalse");
-		if ($existing_setting =~ /=FALSE$/) {
-			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Settings Editor\" --radiolist \"$explanation\n\n$criterion\n\n$existing_setting\" $height $width $height \"FALSE\" \"\" \"on\" \"TRUE\" \"\" \"\"");
-		} else {
-			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Settings Editor\" --radiolist \"$explanation\n\n$criterion\" $height $width $height \"FALSE\" \"\" \"\" \"TRUE\" \"\" \"on\"");
-		}
+		$option = $setting_content eq "TRUE" ? "FALSE" : "TRUE";
 	} else {
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $existing_setting, "$explanation\n\n$criterion\n\nInput here");
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Settings Editor\" --inputbox \"$explanation\n\n$criterion\n\n$existing_setting\" $height $width \"$setting_content\"");
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --extra-button --extra-label \"False\" --title \"Settings Editor\" --inputbox \"$explanation\n\n$criterion\n\n$existing_setting\" $height $width \"$setting_content\"");
+		$output = $output eq "" ? "FALSE" : $output;
+		$option = $res == $code_dialog_extra ? "FALSE" : $output;
+		return unless $option =~ /\w/;
+		return if $option eq $original_setting or $res == $code_dialog_cancel or $res == $code_dialog_error;
 	}
-	my $option = $output;
-	return unless $option =~ /\w/;
 	$option = "/usr/sbo" if $flag eq "s" and $option eq "FALSE";
 	system("clear");
 	$res = system("/usr/sbin/sboconfig -$flag $option") == 0;
@@ -1596,7 +1596,6 @@ sub edit_setting {
 		clear_info_store();
 		new_package_information();
 		$save_dialogrc = $config{DIALOGRC} if $existing_setting =~ /^DIALOGRC=/;
-		prompt $color_notice, "Press ENTER to continue.";
 		if ($setting_name eq "LOCAL_OVERRIDES" and $option ne "FALSE") {
 			unless (-d $option) {
 				($height, $width, $begin_y, $begin_x) = calculate_position("wide", "The specified local overrides directory does not exist:\n\n$option\n\ncreate?");
@@ -1767,7 +1766,7 @@ sub run_command {
 		chomp($dry_run_output = slurp $command_output);
 		unless ($dry_run_output =~ /with --batch.$/) {
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide_cond", $dry_run_output, "$cmd\n\nUse batch mode?\n\nUse interactive mode?\n\nDry Run:\n");
-			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yes-label \"Batch\" --extra-button --extra-label \"Interactive\" --no-label \"Back\" --title \"Building the Queue\" --yesno \"$cmd\n\nSelect \"Interactive\" to approve the queue manually.\n\nSelect \"Batch\" to build the queue automatically.\n\nDry Run:\n$dry_run_output\" $height $width", @help_batch);
+			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yes-label \"Batch\" --extra-button --extra-label \"Interactive\" --no-label \"Back\" --title \"Building the Queue\" --yesno \"$cmd\n\nSelect \\\"Interactive\\\" to approve the queue manually.\n\nSelect \\\"Batch\\\" to build the queue automatically.\n\nDry Run:\n$dry_run_output\" $height $width", @help_batch);
 			return if $res == $code_dialog_cancel or $res == $code_dialog_error;
 			if ($res == $code_dialog_ok) { $cmd = $batch_cmd; $batch_res = 1; }
 		} else {

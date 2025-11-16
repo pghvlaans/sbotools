@@ -36,7 +36,7 @@ MIT License and has provided other useful feedback.
 
 SCerovec has provided useful suggestions and advice about the visual
 side of sbotools, particularly during the addition of color output and
-the early development of the sbotool interface.
+the development of the sbotool interface.
 
 Matteo Bernardini's fork of the SlackBuilds.org repository has been a
 valuable resource for maintaining the /etc/sbotools/obsolete file.
