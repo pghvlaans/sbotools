@@ -33,13 +33,16 @@ are not permitted as directory settings.
 All values default to **FALSE** except for **SBO_HOME**. Recommended
 non-default settings include **TRUE** for:
 
-  -- --- -- -----------------------------------------------------------------------------------------
-     •      **COLOR**
-     •      **CPAN_IGNORE**
-     •      **ETC_PROFILE**
-     •      **GPG_VERIFY**, unless the upstream repository is not regularly signed with **gpg(1)**.
-     •      **SO_CHECK**
-  -- --- -- -----------------------------------------------------------------------------------------
+• **COLOR**
+
+• **CPAN_IGNORE**
+
+• **ETC_PROFILE**
+
+• **GPG_VERIFY**, provided the upstream repository is regularly signed
+with **gpg(1)**.
+
+• **SO_CHECK**
 
 The current configuration keys are as follows:
 
