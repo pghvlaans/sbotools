@@ -52,6 +52,39 @@ and possible top-level directories under
 /home
 are not permitted as directory settings.
 .P
+All values default to
+.B
+FALSE
+except for
+.B
+SBO_HOME\fR\
+\&. Recommended non-default settings include
+.B
+TRUE
+for:
+.RS
+.IP \[bu] 3n
+.B
+COLOR
+.IP \[bu] 3n
+.B
+CPAN_IGNORE
+.IP \[bu] 3n
+.B
+ETC_PROFILE
+.IP \[bu] 3n
+.B
+GPG_VERIFY\fR\
+\&, unless the upstream repository is not regularly
+signed with
+.B
+gpg(1)\fR\
+\&.
+.IP \[bu] 3n
+.B
+SO_CHECK
+.RE
+.P
 The current configuration keys are as follows:
 .P
 .B

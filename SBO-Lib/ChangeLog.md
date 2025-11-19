@@ -14,6 +14,7 @@
   * Solibs.pm: Stock package check picks up \_slack15.0, e.g.
   * sbotool: Streamline the settings menu
     * Thanks to SCerovec for the feedback.
+  * Note recommended non-default settings
 
 #### 4.1 - 2025-10-31
   * Drop support for Slackware 14.0, 14.1 and 14.2
