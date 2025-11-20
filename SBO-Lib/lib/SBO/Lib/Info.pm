@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '4.1';
+our $VERSION = '4.1.1';
 
 use SBO::Lib::Util qw/ :config :const in get_sbo_from_loc get_optional open_read script_error slurp usage_error error_code uniq wrapsay /;
 use SBO::Lib::Tree qw/ get_orig_location get_sbo_location is_local /;

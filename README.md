@@ -25,7 +25,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 **sbotools** currently supports Slackware 15.0 and beyond. For Slackware 14.0, 14.1 and 14.2, install `sbotools-4.0.2` at the latest. See the **sbotools** [downloads](https://pghvlaans.github.io/sbotools/downloads/) page.
 
 ## Most Recent Changes
-#### Post-Release
+#### 4.1.1 - 2025-11-20
   * sboupgrade: --nowrap properly disables sbotools wrapping
     * Thanks to leoctrl for the report.
   * sboremove: Fix dependency ordering when running on multiple scripts

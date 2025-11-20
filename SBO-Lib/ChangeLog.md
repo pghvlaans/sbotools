@@ -1,6 +1,6 @@
 # sbotools
 
-#### Post-Release
+#### 4.1.1 - 2025-11-20
   * sboupgrade: --nowrap properly disables sbotools wrapping
     * Thanks to leoctrl for the report.
   * sboremove: Fix dependency ordering when running on multiple scripts
