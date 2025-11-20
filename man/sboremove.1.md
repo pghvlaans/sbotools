@@ -40,10 +40,10 @@ dependencies, if any.
 To remove *compat32* packages, call **sboremove** with the
 **\--compat32** flag.
 
-In all cases, this script prompts the user package-by-package before
-performing any removal operations. No option exists to enable
-**sboremove** to uninstall packages without confirmation prompts, and
-there are no plans to add that functionality in the future.
+In all cases, this script prompts the user package-by-package in reverse
+build order before performing any removal operations. No option exists
+to enable **sboremove** to uninstall packages without confirmation
+prompts, and there are no plans to add that functionality in the future.
 
 Root privileges are required to run **sboremove**. If an invalid
 configuration is detected in */etc/sbotools/sbotools.conf*, or if

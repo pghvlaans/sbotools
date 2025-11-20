@@ -1,5 +1,5 @@
 # ChangeLog
-* Post-Release
+* 4.1.1 - 2025-11-20
   * *sboupgrade*: **\--nowrap** properly disables **sbotools** wrapping
     * Thanks to leoctrl for the report.
   * *sboremove*: Fix dependency ordering when running on multiple scripts
@@ -14,6 +14,7 @@
   * *sbotool*: Streamline the settings menu
     * Thanks to SCerovec for the feedback.
   * Note recommended non-default settings
+  * *sbotool*: Hide and unhide items in `Operations` instead of using a second menu
 
 * 4.1 - 2025-10-31
   * Drop support for Slackware 14.0, 14.1 and 14.2
