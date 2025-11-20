@@ -273,9 +273,9 @@ button to return to Main Menu.
 
 The options displayed depend on the running user; ineffective actions
 are ignored. If the number of available options is high, less-common
-options appear in a second menu that can be reached from "more".
+options appear only after selecting "more".
 
-These options are always displayed in the first menu if available:
+These options are always displayed if available:
 
 * Build Options
     As a non-root user, view saved build options for this SlackBuild. As
@@ -323,8 +323,9 @@ These options are always displayed in the first menu if available:
 
 * Template List (+/-)
     Non-root only. Add (or remove) the SlackBuild from the Template
-    list. Use the "List Operations" screen from Main Menu to implement
-    the list. The saved template can be installed later with
+    list. Use the "List Operations" screen from Main Menu to create
+    a template with the listed scripts and any uninstalled dependencies.
+    The saved template can be installed later with
     "sboinstall --use-template".
 
 * Upgrade
@@ -334,10 +335,10 @@ These options are always displayed in the first menu if available:
     Read any text file in the SlackBuild directory.
 
 * more
-    View a second menu with less-common options. Appears only if there
-    are at least nine available options.
+    Expand the menu with any hidden less-common options. Appears only if
+    there are at least nine available options.
 
-The remaining options can appear in the second menu:
+The remaining options may be hidden behind "more":
 
 * Add Override
     Available if the running user has write permissions for the local
@@ -379,8 +380,10 @@ The remaining options can appear in the second menu:
     Display the Operations menu for the -compat32 version of the
     SlackBuild. This appears only on multilib-capable systems. Perl-
     based, noarch and single-architecture scripts are ineligible.
-    compat32 appears in the first window if the -compat32 package is
-    installed.');
+    compat32 is never hidden if the -compat32 package is installed.
+
+* less
+    Hide the less-common options again.');
 
 our @help_options = ('Build Options - Help',
 

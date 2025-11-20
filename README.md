@@ -40,6 +40,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbotool: Streamline the settings menu
     * Thanks to SCerovec for the feedback.
   * Note recommended non-default settings
+  * sbotool: Hide and unhide items in Operations instead of using a second menu
 
 #### 4.1 - 2025-10-31
   * Drop support for Slackware 14.0, 14.1 and 14.2

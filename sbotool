@@ -163,7 +163,6 @@ sub build_operations {
 	$msg .= "\nOn the template list." if in $sbo, @template_list;
 	$msg .= "\nOn the upgrade list." if in $sbo, @upgrade_list;
 	$msg .= "\nOn the remove list." if in $sbo, @remove_list;
-	$msg .= "\n\nAdditional options." if defined $display_extras;
 	$msg .= "\n\nRun as root for more functions." unless $< == 0;
 
 	# Reverse dependency and queue information.
@@ -187,7 +186,7 @@ sub build_operations {
 		}
 	}
 
-	# @build_operations is for the first menu; @more_info is for the second.
+	# @build_operations has the main options; @more_info is for others.
 	# Only options with potentially useful information or actions are
 	# displayed.
 	my (@build_operations, @more_info);
@@ -280,34 +279,40 @@ sub build_operations {
 		push @build_operations, "\"Replace\" \"Reinstall from SBo; batch unavailable.\" \\";
 	}
 
-	# Don't bother with the second menu unless there are at least
+	# Don't bother hiding extras unless there are at least
 	# nine items total and two "less-common" items.
 	my $array_sum = @more_info + @build_operations;
+	my $extra_ops = @more_info;
 	if (($array_sum < 9 or @more_info < 2) and not defined $display_extras) {
 		push @build_operations, @more_info;
 		splice @more_info;
-	} else {
-		push @build_operations, "\"more\" \"Other SlackBuild operations.\" \\" if @more_info;
 	}
 
 	my $build_operations;
 	if (defined $display_extras and @more_info) {
 		@more_info = sort @more_info;
-		$more_info[-1] =~ s/\\$//;
-		$build_operations = join "\n", @more_info;
-	} else {
-		@build_operations = sort @build_operations;
-		$build_operations[-1] =~ s/\\$//;
-		$build_operations = join "\n", @build_operations;
+		push @build_operations, @more_info;
 	}
+	@build_operations = sort @build_operations;
+	if (@more_info) {
+		if (defined $display_extras) {
+			push @build_operations, "\"less\" \"Show $extra_ops fewer operations.\" \\";
+		} else {
+			push @build_operations, "\"more\" \"Show $extra_ops more operations.\" \\" if @more_info;
+		}
+	}
+
+	$build_operations[-1] =~ s/\\$//;
+	$build_operations = join "\n", @build_operations;
 	($height, $width, $begin_y, $begin_x) = calculate_position("wide", $build_operations, $msg);
-	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --extra-button --extra-label \"Main\" --title \"$sbo Operations\" --menu \"$msg\" $height $width $height $build_operations", (defined $display_extras and @more_info) ? @help_lists : @help_operations);
+	($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --extra-button --extra-label \"Main\" --title \"$sbo Operations\" --menu \"$msg\" $height $width $height $build_operations", @help_operations);
 	return if $res == $code_dialog_cancel or $res == $code_dialog_error;
 	display_main() if $res == $code_dialog_extra;
 	my $option = $output;
 	return unless $option;
 
 	if ($option eq "more") { build_operations($sbo, 1); }
+	if ($option eq "less") { return; }
 	if ($option eq "compat32") { build_operations($compat); }
 
 	if ($option eq "Add Override") {
@@ -926,7 +931,7 @@ sub display_main {
 		push @clean_string, "working dirs" if $has_working;
 		push @clean_string, "build options" if $has_options;
 		if (@clean_string == 3) {
-			$clean_msg = "Source, working dirs and build options.";
+			$clean_msg = "Source, working dirs, build options.";
 		} elsif (@clean_string == 2) {
 			$clean_msg = "Saved $clean_string[0] and $clean_string[1].";
 		} elsif (@clean_string == 1) {
