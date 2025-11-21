@@ -1,5 +1,8 @@
 # sbotools
 
+#### 4.1.2 - 2025-11-21
+  * sbocheck: Perl test properly checks perl-involved shared objects
+
 #### 4.1.1 - 2025-11-20
   * sboupgrade: --nowrap properly disables sbotools wrapping
     * Thanks to leoctrl for the report.

@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '4.1.1';
+our $VERSION = '4.1.2';
 
 use SBO::Lib::Util qw/ :config :const in uniq error_code script_error slurp /;
 use SBO::Lib::Pkgs qw/ $perl_pkg $ruby_pkg /;
@@ -113,8 +113,8 @@ my $is_x86_64 = $arch =~ /64/;
 my $perl_arch = $arch;
 $perl_arch = ($perl_arch =~ /86$/) ? "x86" : "arm" unless $is_x86_64;
 
-my $ran_solibs = 0;
-my ($check_perl, @check_perl);
+my %ran_solibs;
+my @check_perl;
 
 # determine relevant perl binary origin times
 my ($inst_perl_pkg_time, $inst_perl_bin_time, $perl_major_bin_time, $perl_major_pkg_time, $perl_major);
@@ -303,7 +303,7 @@ sub elf_links {
   my $elf_return_value = $is_32 ? -1 : 1;
   close $fh;
   undef $fh;
-  if (in "libperl.so", @cand_libs or in "/usr/lib64/perl5/CORE", @cand_rpaths or in "/usr/lib/perl5/CORE", @cand_rpaths) { $check_perl = 1; }
+  if (in "libperl.so", @cand_libs or in "/usr/lib64/perl5/CORE", @cand_rpaths or in "/usr/lib/perl5/CORE", @cand_rpaths) { push @check_perl, $file; }
   return $elf_return_value, @cand_libs;
 }
 
@@ -468,7 +468,7 @@ sub series_check {
   my $stock_pkg = $pkg =~ /(-\d+|_slack\d+\.\d+)$/;
   my $exit = open(my $fh, "<", "$pkg_db/$pkg") == 0;
   error_code("Opening $pkg_db/$pkg failed.", _ERR_OPENFH) if $exit;
-  if ($perl_check and not $ran_solibs) {
+  if ($perl_check and not exists $ran_solibs{$pkg}) {
     solib_check($pkg);
   }
   my ($start_reading, @file_list);
@@ -508,7 +508,7 @@ sub series_check {
 
     if ($perl_check) {
       next unless $good_perl;
-      unless (in $line, @check_perl) {
+      unless (in "/$line", @check_perl) {
         next unless $line =~ /\/lib(|64)\/perl/;
         next unless $line =~ /\.so$/;
         next if $line =~ /^opt\//;
@@ -532,9 +532,9 @@ sub series_check {
           $good_perl = 0 unless $built_with eq $perl_major;
         }
       } else {
-        next if $inst_perl_bin_time < $lib_time;
+        next if $inst_perl_bin_time <= $lib_time;
         $good_perl = 0 unless defined $perl_major_bin_time;
-        $good_perl = 0 unless $perl_major_bin_time < $lib_time;
+        $good_perl = 0 unless $perl_major_bin_time <= $lib_time;
       }
     }
   }
@@ -562,8 +562,7 @@ sub solib_check {
   script_error("solib_check requires at least one argument.") unless @_ >= 1;
   my ($pkg, @search) = @_;
   update_known_solibs() unless @native_libs;
-  $ran_solibs = 1;
-  $check_perl = 0;
+  $ran_solibs{$pkg} = 1;
   my $exit = open(my $fh, "<", "$pkg_db/$pkg") == 0;
   error_code("Opening $pkg_db/$pkg failed.", _ERR_OPENFH) if $exit;
   my ($start_reading, @file_list);
@@ -586,7 +585,6 @@ sub solib_check {
       push @shared, @cands;
     }
   }
-  push @check_perl, $pkg if $check_perl;
   return 1 unless @shared or @x86_shared;
   for my $cand (uniq sort @shared) {
     if (@search) { next unless in $cand, @search; }
@@ -674,7 +672,7 @@ The script exits in case of C<ldcdonfig> failure. There is no useful return valu
 sub update_known_solibs {
   undef @native_libs;
   undef @x86_libs;
-  undef $ran_solibs;
+  %ran_solibs = ();
   splice @py_installed;
   splice @py_missing;
   initialize_perl();
