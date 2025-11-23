@@ -1,0 +1,16 @@
+Version 4.1.3 TODO
+
+* Improve user and group detection.
+
+  Coverage is still not perfect; some required users and groups that
+  would otherwise be missed appear to be contained in the SlackBuilds
+  themselves. If they could be picked up with more comprehensive tests
+  on the README* files, that would be preferable, however.
+
+* Better handle exotic version numbers.
+
+  At least two scripts currently add (or potentially add) trailers to
+  the package version that are not reflected in the info file and are
+  not the running kernel version.
+
+* Explore ways to distinguish one-click options in sbotool Settings.
