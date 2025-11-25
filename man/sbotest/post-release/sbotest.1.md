@@ -101,12 +101,12 @@ incompatibility with system **perl**, **python** and **ruby** upon build
 test failure, set **SO_CHECK** to **TRUE** or pass **\--so-check TRUE**
 to **sbotest**.
 
-**sbopkglint(1)** is run on all test targets once [sboinstall(1)](sboinstall.1.md) has
-been called for the last time. A summary of results is displayed and
-saved to *SBO_HOME/results/(timestamp).log*. Scripts that fail
-**sbolint(1)** or **sbopkglint(1)**, or fail to build altogether, are
-reported so that any issues can be taken care of before submitting
-scripts to **SlackBuilds.org**.
+**sbopkglint(1)** is run on all test targets as they are built
+successfully. A summary of results is displayed at the end and saved to
+*SBO_HOME/results/(timestamp).log*. Scripts that fail **sbolint(1)** or
+**sbopkglint(1)**, or fail to build altogether, are reported so that any
+issues can be taken care of before submitting scripts to
+**SlackBuilds.org**.
 
 To generate a report of potential operations, use **\--dry-run** with
 any combination of other options.
