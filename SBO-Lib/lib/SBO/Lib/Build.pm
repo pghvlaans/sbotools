@@ -433,18 +433,20 @@ sub get_full_reverse_queue {
 
   my $name = get_pkg_name($str);
 
-C<get_pkg_name()> searches C<$str> for text matching the package name output
-from C<makepkg>. The package name is returned.
+C<get_pkg_name()> searches C<$str> for the last text matching the package
+name output from C<makepkg>. The package name is returned.
 
 =cut
 
 # pull the created package name from the temp file we tee'd to
 sub get_pkg_name {
   my $str = shift;
-
-  my ($out) = $str =~ m/^Slackware\s+package\s+([^\s]+)\s+created\.$/m;
-
-  return $out;
+  my @str = reverse split "\n", $str;
+  for (@str) {
+    my ($out) = $_ =~ /^Slackware\s+package\s+([^\s]+)\s+created\.$/;
+    return $out if defined $out;
+  }
+  return undef;
 }
 
 =head2 get_src_dir
