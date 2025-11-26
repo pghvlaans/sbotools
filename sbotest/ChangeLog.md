@@ -4,6 +4,7 @@
   * *bin/test*: Do not reuse log and test directories if called more than once in the same minute
   * *bin/test*: Use a separate `$TMP` directory for each script
   * *bin/test*: Run *sbopkglint* as packages are built, not at the end
+  * *bin/test*: Report failed builds with more specific error types
 
 #### 1.2 - 2025-11-20
   * *bin/test*: Use the **perl**, **python** and **ruby** package tests in case of failure
