@@ -5,7 +5,7 @@ package SBO::Lib::Util;
 # The line(s) below are used to inform the sbotest wrapper script
 # that sbotools is compatible.
 
-#% SBOTEST V1.2 COMPAT %concluded %
+#% SBOTEST V1.2.1 COMPAT %concluded %
 
 use 5.016;
 use strict;

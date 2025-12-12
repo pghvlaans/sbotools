@@ -461,7 +461,7 @@ FIRST: for my $sbo (@$build_queue) {
 					unless (defined $readme) {
 						error_code("Unable to open README for $sbo.", _ERR_OPENFH);
 					}
-					$cmds = get_user_group($readme, $locations{$sbo});
+					$cmds = get_user_group($sbo, $locations{$sbo});
 				} else {
 					wrapsay_color $color_lesser, "$locations{$sbo}/README is empty or does not exist.";
 				}

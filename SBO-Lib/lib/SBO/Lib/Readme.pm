@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '4.1.2';
 
-use SBO::Lib::Util qw/ :const :colors error_code prompt script_error slurp open_read open_fh usage_error wrapsay %config /;
+use SBO::Lib::Util qw/ :const :colors error_code prompt script_error slurp open_read open_fh uniq usage_error wrapsay %config /;
 use SBO::Lib::Tree qw/ is_local /;
 
 use Exporter 'import';
@@ -22,6 +22,7 @@ our @EXPORT_OK = qw{
   get_user_group
   user_group_exist
   user_prompt
+  validate_user_group
 };
 
 our %EXPORT_TAGS = (
@@ -167,31 +168,45 @@ sub get_readme_contents {
 
 =head2 get_user_group
 
-  my @cmds = @{ get_user_group($readme, $location) };
+  my @cmds = @{ get_user_group($sbo, $location) };
 
-C<get_user_group()> searches the C<$readme> in C<$location> for C<useradd(1)> and
-C<groupadd(1)> commands, and returns them in an array reference. If no
-commands are found initially, it searches any other C<README*> files for
-them.
+C<get_user_group()> searches the C<SlackBuild> for C<$sbo> in C<$location>
+for C<useradd(1)> and C<groupadd(1)> commands, and returns them in an array
+reference. If no commands are found initially, it searches any C<README*>
+files for them.
 
 =cut
 
-# look for any (user|group)add commands in the README files
+# look for any (user|group)add commands in the README files and
+# SlackBuild
 sub get_user_group {
   script_error('get_user_group requires two arguments.') unless @_ == 2;
-  my ($readme, $location) = @_;
-  $readme =~ s/'//g;
-  my @cmds = $readme =~ /^\s*#*\s*(useradd.*?|groupadd.*?)(?<!\\)\n/msg;
+  my ($sbo, $location) = @_;
+  my @cmds;
+  my $slackbuild_file = "$location/$sbo.SlackBuild";
+  my $slackbuild = slurp $slackbuild_file;
+  $slackbuild =~ s/'//g;
+  $slackbuild =~ s/('|"|`)\n/\n/g;
+  $slackbuild =~ s/useradd/\nuseradd/g;
+  $slackbuild =~ s/groupadd/\ngroupadd/g;
+  my @preliminary_cmds = $slackbuild =~ /^(useradd.*?|groupadd.*?)(?<!\\)\n/msg;
+  @cmds = verify_user_group(@preliminary_cmds) if @preliminary_cmds;
   unless (@cmds) {
-    my @readmes = sort glob "$location/README?*";
+    my @readmes = sort glob "$location/README*";
     if (@readmes) {
       for my $other_file (@readmes) {
-        my $other_readme = slurp $other_file;
-        @cmds = $other_readme =~ /^\s*#*\s*(useradd.*?|groupadd.*?)(?<!\\)\n/msg;
+        my $readme = slurp $other_file;
+        $readme =~ s/'//g;
+        $readme =~ s/('|"|`)\n/\n/g;
+        $readme =~ s/useradd/\nuseradd/g;
+        $readme =~ s/groupadd/\ngroupadd/g;
+        @preliminary_cmds = $readme =~ /^(useradd.*?|groupadd.*?)(?<!\\)\n/msg;
+        @cmds = verify_user_group(@preliminary_cmds) if @preliminary_cmds;
         last if @cmds;
       }
     }
   }
+  @cmds = uniq sort @cmds if @cmds;
   return \@cmds;
 }
 
@@ -258,7 +273,7 @@ sub user_prompt {
   if (defined $readme) {
     print "\n". $readme;
     # check for user/group add commands, offer to run any found
-    my $user_group = get_user_group($readme, $location);
+    my $user_group = get_user_group($sbo, $location);
     $cmds = ask_user_group($user_group, $readme) if $$user_group[0];
   } elsif (-s "$location/README") {
     error_code("Unable to open README for $sbo; exiting.", _ERR_OPENFH);
@@ -270,6 +285,39 @@ sub user_prompt {
   ask_other_readmes($sbo, $location) if $readme;
   my $proceed = prompt($color_notice, "\nProceed with $sbo?", default => 'yes');
   return $proceed, $cmds, $opts;
+}
+
+=head2 verify_user_group
+
+  my @cmds = verify_user_group(@preliminary_cmds);
+
+C<verify_user_group()> checks for required options and sanitizes C<useradd> and
+C<groupadd> commands found in C<SlackBuilds> and C<README> files. An array with
+correct commands is returned.
+
+=cut
+
+sub verify_user_group {
+  script_error("verify_user_group requires an argument.") unless @_;
+  my @preliminary_cmds = @_;
+  my @cmds;
+  for (@preliminary_cmds) {
+    if ($_ =~ /^useradd/) {
+      next unless $_ =~ /-u/;
+    } else {
+      next unless $_ =~ /-g/;
+    }
+    $_ =~ s/(\\(n|t)|#\s*$)//g;
+    $_ =~ s/\\"/"/g;
+    if ($_ =~ /^useradd/ and not $_ =~ /-g/) {
+      my @useradd = split " ", $_;
+      my $user = pop @useradd;
+      push @useradd, "-g", $user, $user;
+      $_ = join " ", @useradd;
+    }
+    push @cmds, $_;
+  }
+  return @cmds;
 }
 
 =head1 EXIT CODES

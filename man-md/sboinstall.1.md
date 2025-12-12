@@ -48,12 +48,13 @@ case of **\--reinstall**, scripts with automatic reverse dependency
 rebuilds have their reverse dependencies rebuilt as well. The script
 exits with an error message if circular dependencies are detected.
 
-*README* files are parsed for **groupadd** and **useradd** commands, and
-**sboinstall** offers to run them prior to building if any of the
-required users or groups do not exist. If the *README* is judged to
-document options in *KEY=VALUE* form, a prompt for setting options
-appears. Any build options, whether passed interactively or in a
-template, are saved to */var/log/sbotools* when the SlackBuild runs.
+*SlackBuild* and *README* files are parsed for **groupadd(1)** and
+**useradd(1)** commands, and **sboinstall** offers to run them prior to
+building if any of the required users or groups do not exist. If the
+*README* is judged to document options in *KEY=VALUE* form, a prompt for
+setting options appears. Any build options, whether passed interactively
+or in a template, are saved to */var/log/sbotools* when the SlackBuild
+runs.
 
 *compat32* packages share saved build options with the corresponding
 base script. Please note that saved build options are not displayed when
@@ -380,7 +381,8 @@ None known. If found, Issues and Pull Requests to
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
 [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
-[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1), setarch(1)
+[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1), groupadd(1), setarch(1),
+useradd(1)
 
 ## AUTHORS
 

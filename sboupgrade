@@ -381,7 +381,7 @@ FIRST: for my $sbo (@$upgrade_queue) {
 				unless (defined $readme) {
 					error_code("Unable to open README for $sbo.", _ERR_OPENFH);
 				}
-				$cmds = get_user_group($readme, $locations{$name});
+				$cmds = get_user_group($sbo, $locations{$name});
 			} else {
 				wrapsay_color $color_lesser, "$locations{$name}/README is empty or does not exist.";
 			}

@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Readme 3"
-.TH SBO::Lib::Readme 3 "Setting Orange, The Aftermath 33, 3191 YOLD" "" "sbotools 4.1.2"
+.TH SBO::Lib::Readme 3 "Sweetmorn, The Aftermath 54, 3191 YOLD" "" "sbotools 4.1.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -112,13 +112,13 @@ its contents. On error, it returns \f(CW\*(C`undef\*(C'\fR.
 .SS get_user_group
 .IX Subsection "get_user_group"
 .Vb 1
-\&  my @cmds = @{ get_user_group($readme, $location) };
+\&  my @cmds = @{ get_user_group($sbo, $location) };
 .Ve
 .PP
-\&\f(CWget_user_group()\fR searches the \f(CW$readme\fR in \f(CW$location\fR for \f(CWuseradd(1)\fR and
-\&\f(CWgroupadd(1)\fR commands, and returns them in an array reference. If no
-commands are found initially, it searches any other \f(CW\*(C`README*\*(C'\fR files for
-them.
+\&\f(CWget_user_group()\fR searches the \f(CW\*(C`SlackBuild\*(C'\fR for \f(CW$sbo\fR in \f(CW$location\fR
+for \f(CWuseradd(1)\fR and \f(CWgroupadd(1)\fR commands, and returns them in an array
+reference. If no commands are found initially, it searches any \f(CW\*(C`README*\*(C'\fR
+files for them.
 .SS user_group_exist
 .IX Subsection "user_group_exist"
 .Vb 1
@@ -139,6 +139,15 @@ installation. It returns the answer to the installation prompt (true for \*(Aqye
 false for \*(Aqno\*(Aq), the list of commands and the list of options.
 .PP
 The script exits if a non\-empty \f(CW\*(C`README\*(C'\fR file cannot be read.
+.SS verify_user_group
+.IX Subsection "verify_user_group"
+.Vb 1
+\&  my @cmds = verify_user_group(@preliminary_cmds);
+.Ve
+.PP
+\&\f(CWverify_user_group()\fR checks for required options and sanitizes \f(CW\*(C`useradd\*(C'\fR and
+\&\f(CW\*(C`groupadd\*(C'\fR commands found in \f(CW\*(C`SlackBuilds\*(C'\fR and \f(CW\*(C`README\*(C'\fR files. An array with
+correct commands is returned.
 .SH "EXIT CODES"
 .IX Header "EXIT CODES"
 Readme.pm subroutines can return the following exit codes:
