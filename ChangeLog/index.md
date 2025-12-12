@@ -3,6 +3,7 @@
   * *Build.pm*: Retrieve the name of the last package created by a SlackBuild, not the first
   * Fixed a typo in the *sbocheck* bash completion
     * Thanks to fsLeg.
+  * *Readme.pm*: Parse SlackBuilds for `useradd` and `groupadd` commands first
 
 * 4.1.2 - 2025-11-21
   * *sbocheck*: Perl test properly checks perl-involved shared objects
