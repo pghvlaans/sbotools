@@ -4,6 +4,7 @@
   * Fixed a typo in the *sbocheck* bash completion
     * Thanks to fsLeg.
   * *Readme.pm*: Parse SlackBuilds for `useradd` and `groupadd` commands first
+  * *Readme.pm*: Ask about options before asking about users and groups
 
 * 4.1.2 - 2025-11-21
   * *sbocheck*: Perl test properly checks perl-involved shared objects
