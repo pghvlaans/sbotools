@@ -80,7 +80,7 @@ sub ask_opts {
       }
     }
   }
-  return() unless $readme =~ /[A-Z0-9]+=[^\s]/;
+  return() unless defined $readme and $readme =~ /[A-Z0-9]+=[^\s]/;
   if (prompt($color_notice, "\nIt looks like $sbo has options; would you like to set any when the slackbuild is run?", default => 'no')) {
     my $ask = sub {
       chomp(my $opts = prompt($color_default, "\nPlease supply any options here, or press Enter to skip: "));
@@ -272,9 +272,6 @@ sub user_prompt {
   $readme = get_readme_contents($location);
   if (defined $readme) {
     print "\n". $readme;
-    # check for user/group add commands, offer to run any found
-    my $user_group = get_user_group($sbo, $location);
-    $cmds = ask_user_group($user_group, $readme) if $$user_group[0];
   } elsif (-s "$location/README") {
     error_code("Unable to open README for $sbo; exiting.", _ERR_OPENFH);
   } else {
@@ -282,6 +279,9 @@ sub user_prompt {
   }
   my $prel_opts = ask_opts($sbo, $readme);
   chomp($opts = $prel_opts) if $prel_opts;
+  # check for user/group add commands, offer to run any found
+  my $user_group = get_user_group($sbo, $location);
+  $cmds = ask_user_group($user_group) if $$user_group[0];
   ask_other_readmes($sbo, $location) if $readme;
   my $proceed = prompt($color_notice, "\nProceed with $sbo?", default => 'yes');
   return $proceed, $cmds, $opts;
