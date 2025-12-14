@@ -328,6 +328,10 @@ These options are always displayed if available:
     The saved template can be installed later with
     "sboinstall --use-template".
 
+* UID/GID
+    View commands for any missing users and/or groups specified by the
+    SlackBuild or a README file. As root, optionally run them.
+
 * Upgrade
     Root only. Upgrade the SlackBuild to the available version.
 

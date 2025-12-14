@@ -10,7 +10,7 @@
 use strict;
 use warnings;
 
-use SBO::Lib qw/ :colors :config :const :help auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_readme_contents get_reverse_reqs get_sbo_description get_sbo_location get_slack_version in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp series_check solib_check uniq update_known_solibs %concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated %warnings /;
+use SBO::Lib qw/ :colors :config :const :help auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_readme_contents get_reverse_reqs get_sbo_description get_sbo_location get_slack_version get_user_group in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp series_check solib_check uniq update_known_solibs user_group_do_not_exist %concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated %warnings /;
 
 use File::Basename;
 use File::Find;
@@ -243,14 +243,27 @@ sub build_operations {
 			push @build_operations, "\"Dry Run\" \"How this package would be $built_or_upgraded.\" \\";
 		}
 	}
+	my ($uid_gid, $missing_uid_gid);
 	if (-s $options_file) {
+		chomp(my $saved_opts = slurp $options_file);
+		$uid_gid = get_user_group($sbo, $location, $saved_opts);
+		$missing_uid_gid = user_group_do_not_exist(@$uid_gid) if @$uid_gid;
 		if ($< == 0) {
 			push @build_operations, "\"Build Options\" \"Edit saved build options.\" \\";
+			push @build_operations, "\"UID/GID\" \"Add missing user and/or group.\" \\" if defined $missing_uid_gid and @$missing_uid_gid;
 		} else {
 			push @build_operations, "\"Build Options\" \"View saved build options.\" \\";
+			push @build_operations, "\"UID/GID\" \"View missing user and/or group.\" \\" if defined $missing_uid_gid and @$missing_uid_gid;
 		}
 	} else {
-		push @build_operations, "\"Build Options\" \"Save build options.\" \\" if $< == 0;
+		$uid_gid = get_user_group($sbo, $location);
+		$missing_uid_gid = user_group_do_not_exist(@$uid_gid) if @$uid_gid;
+		if ($< == 0) {
+			push @build_operations, "\"Build Options\" \"Save build options.\" \\";
+			push @build_operations, "\"UID/GID\" \"Add missing user and/or group.\" \\" if defined $missing_uid_gid and @$missing_uid_gid;
+		} else {
+			push @build_operations, "\"UID/GID\" \"View missing user and/or group.\" \\" if defined $missing_uid_gid and @$missing_uid_gid;
+		}
 	}
 	push @more_info, "\"Add Override\" \"Make a local override copy for editing.\" \\" if $overrides_available and not is_local($sbo);
 	if (is_local($sbo) and $overrides_available) {
@@ -550,6 +563,28 @@ sub build_operations {
 
 	if ($option eq "Template List (+)") { push @template_list, $sbo; }
 	if ($option eq "Template List (-)") { @template_list = grep { !/^\Q$sbo\E$/ } @template_list; }
+
+	if ($option eq "UID/GID") {
+		return unless defined $missing_uid_gid and @$missing_uid_gid;
+		my $uid_gid_msg = "This SlackBuild requires one or more missing users and groups:\n\n";
+		$uid_gid_msg .= " # $_\n" for (@$missing_uid_gid);
+		$uid_gid_msg .= "\nRun the command(s) now?" if $< == 0;
+		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $uid_gid_msg);
+		if ($< == 0) {
+			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Missing Users and Groups\" --yesno \"$uid_gid_msg\" $height $width");
+			if ($res == $code_dialog_ok) {
+				system("clear");
+				for (@$missing_uid_gid) {
+					print "  $_\n";
+					system($_);
+				}
+				prompt $color_notice, "Press ENTER to continue.";
+			}
+		} else {
+			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Missing Users and Groups\" --msgbox \"$uid_gid_msg\" $height $width");
+		}
+	}
+
 
 	if ($option =~ /^Upgrade/) {
 		my $cmd = "/usr/sbin/sboupgrade";
