@@ -1,8 +1,7 @@
 _sboinstall() {
   local i cur prev opts cmd
   COMPREPLY=()
-  SBO_HOME="$(sboconfig --list | awk -F= '/SBO_HOME=/{print $2}')/repo"
-  REPOLIST="$(awk '/NAME/{print $3}' $SBO_HOME/SLACKBUILDS.TXT | tr \\n ' ')"
+  REPOLIST="$(perl -MSBO::Lib::Tree=get_all_available -E 'say $_ for get_all_available();')"
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
   cmd=""

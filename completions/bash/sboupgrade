@@ -1,8 +1,7 @@
 _sboupgrade() {
   local i cur prev opts cmd
   COMPREPLY=()
-  SBO_HOME="$(sboconfig --list | awk -F= '/SBO_HOME=/{print $2}')/repo"
-  REPOLIST="$(awk '/NAME/{print $3}' $SBO_HOME/SLACKBUILDS.TXT | tr \\n ' ')"
+  UPGRADELIST="$(perl -MSBO::Lib::Pkgs=get_available_updates -MSBO::Lib::Tree=get_sbo_locations -E 'get_sbo_locations(); say $_->{name} for @{ get_available_updates("BOTH"); }')"
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
   cmd=""
@@ -20,7 +19,7 @@ _sboupgrade() {
 
   case "${cmd}" in
     sboupgrade)
-      opts="-h -v -b -c -D -d -e -f -i -j -k -L -p -o -q -r -z -S -X --all --help --version --color --nocolor --wrap --nowrap --build-ignore --noclean --compat32 --distclean --etc-profile --force --noinstall --jobs --pkg_dir --log-dir --norecall --nointeractive --force-reqs --reverse-rebuild --strict-upgrades --batch --dry-run --so-check $REPOLIST"
+      opts="-h -v -b -c -D -d -e -f -i -j -k -L -p -o -q -r -z -S -X --all --help --version --color --nocolor --wrap --nowrap --build-ignore --noclean --compat32 --distclean --etc-profile --force --noinstall --jobs --pkg_dir --log-dir --norecall --nointeractive --force-reqs --reverse-rebuild --strict-upgrades --batch --dry-run --so-check $UPGRADELIST"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
@@ -39,7 +38,7 @@ _sboupgrade() {
           return 0
           ;;
         -f|--force|-i|--noinstall|-r|--nointeractive|-z|--force-reqs|-q|--reverse-rebuild|-o|--norecall|--batch|-D|--dry-run|-p|--compat32|--color|--nocolor|--wrap|--nowrap)
-          COMPREPLY=( $(compgen -W "$REPOLIST" -- "${cur}") )
+          COMPREPLY=( $(compgen -W "$UPGRADELIST" -- "${cur}") )
           return 0
           ;;
         *)
