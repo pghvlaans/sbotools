@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group in ineligible_compat installed_solibs is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue slurp solib_check verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group in ineligible_compat installed_solibs is_obsolete merge_queues open_fh user_group_do_not_exist user_prompt process_sbos print_failures rationalize_queue slurp solib_check verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -387,14 +387,15 @@ FIRST: for my $sbo (@$upgrade_queue) {
 				}
 			}
 			if ($$cmds[0]) {
-				unless (user_group_exist(@$cmds)) {
+				my $nonexistent = user_group_do_not_exist(@$cmds);
+				if (@$nonexistent) {
 					if ($dry_run) {
-						$missing_user_group{$name} = $cmds;
+						$missing_user_group{$name} = $nonexistent;
 					} else {
 						wrapsay_color $color_warn, "A required user or group is missing for $sbo:", 1;
-						for my $cmd (@$cmds) { say $cmd; }
+						for my $cmd (@$nonexistent) { say $cmd; }
 						say "";
-						error_code("Run these commands to install $sbo with --batch.", _ERR_USR_GRP);
+						error_code("Run the command(s) to install $sbo with --batch.", _ERR_USR_GRP);
 					}
 				}
 			}
@@ -452,7 +453,7 @@ if ($dry_run) {
 			wrapsay_color $color_lesser, "\nA required user or group is missing for $item:", 1;
 			for my $cmd (@{ $missing_user_group{$item} }) { say $cmd; }
 			say "";
-			wrapsay_color $color_lesser, "Run these commands to install $item with --batch.";
+			wrapsay_color $color_lesser, "Run the command(s) to install $item with --batch.";
 			$usr_grp_missing = 1;
 		}
 	}
