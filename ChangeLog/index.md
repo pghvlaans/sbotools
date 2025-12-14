@@ -9,6 +9,7 @@
   * *completions/zsh*: Fix a number of broken lines
     * Thanks to Ndolam for the report and pointers.
   * *completions/bash*: Use *SBO::Lib::\** in preference to outside programs
+  * *Readme.pm*: Better distinguish existing users and groups
 
 * 4.1.2 - 2025-11-21
   * *sbocheck*: Perl test properly checks perl-involved shared objects
