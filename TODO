@@ -7,6 +7,11 @@ Version 4.1.3 TODO
   themselves. If they could be picked up with more comprehensive tests
   on the README* files, that would be preferable, however.
 
+  STATUS: Overhauled with better results. Checking the SlackBuild
+  suffices for most UID/GID-dependent builds, so this is now done first.
+  The build options file is respected for those scripts that accept
+  variable user and group names and ID numbers.
+
 * Better handle exotic version numbers.
 
   At least two scripts currently add (or potentially add) trailers to

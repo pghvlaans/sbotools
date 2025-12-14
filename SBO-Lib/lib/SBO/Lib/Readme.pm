@@ -8,11 +8,13 @@ use warnings;
 
 our $VERSION = '4.1.2';
 
-use SBO::Lib::Util qw/ :const :colors error_code prompt script_error slurp open_read open_fh uniq usage_error wrapsay %config /;
+use SBO::Lib::Build qw/ $tempdir /;
+use SBO::Lib::Util qw/ :const :colors error_code in prompt script_error slurp open_read open_fh uniq usage_error wrapsay %config /;
 use SBO::Lib::Tree qw/ is_local /;
 
 use Exporter 'import';
 use File::Basename;
+use File::Temp qw/ tempfile /;
 
 our @EXPORT_OK = qw{
   ask_opts
@@ -168,24 +170,28 @@ sub get_readme_contents {
 
 =head2 get_user_group
 
-  my @cmds = @{ get_user_group($sbo, $location) };
+  my @cmds = @{ get_user_group($sbo, $location, $opts) };
 
 C<get_user_group()> searches the C<SlackBuild> for C<$sbo> in C<$location>
 for C<useradd(1)> and C<groupadd(1)> commands, and returns them in an array
 reference. If no commands are found initially, it searches any C<README*>
 files for them.
 
+Some SlackBuilds allow the user to set user and group names and ID numbers
+with variables. Optionally pass an option string C<$opt> if interactive or
+if an existing build options file is to be used.
+
 =cut
 
 # look for any (user|group)add commands in the README files and
 # SlackBuild
 sub get_user_group {
-  script_error('get_user_group requires two arguments.') unless @_ == 2;
-  my ($sbo, $location) = @_;
+  script_error('get_user_group requires at least two arguments.') unless @_ > 1;
+  my ($sbo, $location, $opts) = @_;
   my @cmds;
   my $slackbuild_file = "$location/$sbo.SlackBuild";
   my $slackbuild = slurp $slackbuild_file;
-  $slackbuild =~ s/'//g;
+  my @slackbuild = split "\n", $slackbuild;
   $slackbuild =~ s/('|"|`)\n/\n/g;
   $slackbuild =~ s/useradd/\nuseradd/g;
   $slackbuild =~ s/groupadd/\ngroupadd/g;
@@ -207,6 +213,48 @@ sub get_user_group {
     }
   }
   @cmds = uniq sort @cmds if @cmds;
+  # everything from here on down is for SlackBuilds with
+  # variable user and group names, of which there were about
+  # twenty as of December 2025
+  my $needs_parse = 0;
+  for (@cmds) {
+    if ($_ =~ /\$/) {
+      $needs_parse = 1;
+      last;
+    }
+  }
+  if ($needs_parse) {
+    my @parse_script;
+    for (@slackbuild) { push @parse_script, $_ if $_ =~ /^\S+=/ and not $_ =~ /^#/ and not $_ =~ /^\S+\s+[^#]+$/; }
+    if (@parse_script) {
+      my $echo_string;
+      for (@cmds) {
+        my $escaped_cmd = $_;
+        $escaped_cmd =~ s/(?=[^\\])"/\\"/g;
+        $escaped_cmd =~ s/(?=[^\\])'/\\'/g;
+        push @parse_script, "echo $escaped_cmd";
+      }
+      my ($fh, $parse_script);
+      if ($< == 0) {
+        ($fh, $parse_script) = tempfile(DIR => $tempdir);
+      } else {
+        ($fh, $parse_script) = tempfile(DIR => "/tmp");
+      }
+      my $exit;
+      ($fh, $exit) = open_fh($parse_script, '>');
+      error_code("SlackBuild had variable UID/GID specifications, and writing a parse script failed.", _ERR_OPENFH) if $exit;
+      print {$fh} "$_\n" for (@parse_script);
+      close $fh;
+      my @parse_output;
+      if ($opts) {
+        @parse_output = split "\n", `$opts /bin/bash $parse_script`;
+      } else {
+        @parse_output = split "\n", `/bin/bash $parse_script`;
+      }
+      unlink $parse_script;
+      @cmds = @parse_output if @parse_output;
+    }
+  }
   return \@cmds;
 }
 
@@ -280,7 +328,7 @@ sub user_prompt {
   my $prel_opts = ask_opts($sbo, $readme);
   chomp($opts = $prel_opts) if $prel_opts;
   # check for user/group add commands, offer to run any found
-  my $user_group = get_user_group($sbo, $location);
+  my $user_group = get_user_group($sbo, $location, $opts);
   $cmds = ask_user_group($user_group) if $$user_group[0];
   ask_other_readmes($sbo, $location) if $readme;
   my $proceed = prompt($color_notice, "\nProceed with $sbo?", default => 'yes');
@@ -303,9 +351,9 @@ sub verify_user_group {
   my @cmds;
   for (@preliminary_cmds) {
     if ($_ =~ /^useradd/) {
-      next unless $_ =~ /-u/;
+      next unless $_ =~ /-u\s[^-]/;
     } else {
-      next unless $_ =~ /-g/;
+      next unless $_ =~ /-g\s[^-]/;
     }
     $_ =~ s/(\\(n|t)|#\s*$)//g;
     $_ =~ s/\\"/"/g;

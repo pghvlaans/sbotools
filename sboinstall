@@ -456,14 +456,15 @@ FIRST: for my $sbo (@$build_queue) {
 			# with a message if not; notify with --dry-run
 			if ($yes_really) {
 				my $cmds;
-				if (-s "$locations{$sbo}/README") {
-					my $readme = get_readme_contents($locations{$sbo});
-					unless (defined $readme) {
-						error_code("Unable to open README for $sbo.", _ERR_OPENFH);
-					}
+				if ($no_recall) {
 					$cmds = get_user_group($sbo, $locations{$sbo});
 				} else {
-					wrapsay_color $color_lesser, "$locations{$sbo}/README is empty or does not exist.";
+					if (-s "/var/log/sbotools/$sbo") {
+						chomp(my $saved_opts = slurp "/var/log/sbotools/$sbo");
+						$cmds = get_user_group($sbo, $locations{$sbo}, $saved_opts);
+					} else {
+						$cmds = get_user_group($sbo, $locations{$sbo});
+					}
 				}
 				if ($$cmds[0]) {
 					unless (user_group_exist(@$cmds)) {

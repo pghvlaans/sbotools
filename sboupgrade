@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group in ineligible_compat installed_solibs is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue solib_check verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group in ineligible_compat installed_solibs is_obsolete merge_queues open_fh user_group_exist user_prompt process_sbos print_failures rationalize_queue slurp solib_check verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -376,14 +376,15 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		# with a message if not
 		if ($yes_really) {
 			my $cmds;
-			if (-s "$locations{$name}/README") {
-				my $readme = get_readme_contents($locations{$name});
-				unless (defined $readme) {
-					error_code("Unable to open README for $sbo.", _ERR_OPENFH);
-				}
-				$cmds = get_user_group($sbo, $locations{$name});
+			if ($no_recall) {
+				$cmds = get_user_group($sbo, $locations{$sbo});
 			} else {
-				wrapsay_color $color_lesser, "$locations{$name}/README is empty or does not exist.";
+				if (-s "/var/log/sbotools/$sbo") {
+					chomp(my $saved_opts = slurp "/var/log/sbotools/$sbo");
+					$cmds = get_user_group($sbo, $locations{$sbo}, $saved_opts);
+				} else {
+					$cmds = get_user_group($sbo, $locations{$sbo});
+				}
 			}
 			if ($$cmds[0]) {
 				unless (user_group_exist(@$cmds)) {
