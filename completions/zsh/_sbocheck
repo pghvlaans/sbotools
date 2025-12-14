@@ -11,11 +11,11 @@ _arguments \
     '(-)'{-O,--obsolete-check}'[In -current, download the obsolete scripts list and perl version history file.]:' \
     '(-)'{-n,--nopull}'[Check for updates without updating the tree.]:' \
     '(-)'{-X,--so-check}'[Check all _SBo packages for missing shared objects only.]:' \
-    '(-)'{-t, --type}'[Choose package check types (comma-separated): solibs (default), perl, python, ruby, all]:'\
-    '(-)'{--nocolor}'[Disable sbotools color output.]:'\
-    '(-)'{--color}'[Enable sbotools color output.]:'\
-    '(-)'{--nowrap}'[Disable sbotools word wrapping.]:'\
-    '(-)'{--wrap}'[Enable sbotools word wrapping.]:'\
+    '(-)'{-t,--type}'[Choose package check types (comma-separated): solibs (default), perl, python, ruby, all]:'\
+    '--nocolor[Disable sbotools color output.]:'\
+    '--color[Enable sbotools color output.]:'\
+    '--nowrap[Disable sbotools word wrapping.]:'\
+    '--wrap[Enable sbotools word wrapping.]:'\
     && return 0
 
 return 1

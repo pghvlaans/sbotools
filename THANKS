@@ -67,6 +67,7 @@ leoctrl (reported sbofind case insensitivity, and the EOL build options
          and sboupgrade nowrap bugs)
 lockywolf (originally reported the URI escape filename bug)
 montagdude (reported sboinstall and sbosnap bugs)
+NDolam (reported broken zsh completions)
 na3i09 (reported a compat32 sboremove bug)
 penduin (reported a Slackware -current version bug)
 qunying (requested build number upgrade notification)

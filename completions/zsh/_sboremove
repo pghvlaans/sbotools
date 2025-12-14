@@ -3,16 +3,17 @@
 # sbotools: https://pghvlaans.github.io/sbotools/
 
 # get all installed SBo packages
-packages=( ${(uf)"$(ls /var/log/packages/*_SBo | cut -d'/' -f5 | rev | cut -d- -f4- | rev)"} )
+packages=( ${(uf)"$(perl -MSBO::Lib::Pkgs=get_installed_packages -MSBO::Lib::Tree=get_all_available -E 'get_all_available(); say $_->{name} for @{ get_installed_packages("SBO") };')"} )
 
 _arguments \
     - info \
     '(-)'{-h,--help}'[Show help]:' \
     '(-)'{-v,--version}'[Show version]:' \
-    '(-)'{--nocolor}'[Disable sbotools color output.]:' \
-    '(-)'{--color}'[Enable sbotools color output.]:' \
-    '(-)'{--nowrap}'[Disable sbotools word wrapping.]:' \
-    '(-)'{--wrap}'[Enable sbotools word wrapping.]:' \
+    - formatting \
+    '--nocolor[Disable sbotools color output.]:' \
+    '--color[Enable sbotools color output.]:' \
+    '--nowrap[Disable sbotools word wrapping.]:' \
+    '--wrap[Enable sbotools word wrapping.]:' \
     - commands \
     '(-a --alwaysask)'{-a,--alwaysask}'[Always ask to remove requirements (even if required by installed packages).]' \
     '(-p --compat32)'{-p,--compat32}'[Remove compat32 scripts only.]' \

@@ -14,10 +14,11 @@ _arguments -s \
     	   '(-w --work)'{-w,--work}'[Clean working directories (default /tmp/SBo; /tmp for compat32).]' \
 	   '(-o --options)'{-o,--options}'[Clean saved options (ALL for all saved).]:SlackBuild:(${slackbuilds})' \
     	   '(-i --interactive)'{-i,--interactive}'[Ask for confirmation for each item to be removed.]' \
-	   '(--nocolor)'{--nocolor}'[Disable sbotools color output.]:' \
-	   '(--color)'{--color}'[Enable sbotools color output.]:' \
-	   '(--nowrap)'{--nowrap}'[Disable sbotools word wrapping.]:' \
-	   '(--wrap)'{--wrap}'[Enable sbotools word wrapping.]:' \
+	   - formatting \
+	   '--nocolor[Disable sbotools color output.]:' \
+	   '--color[Enable sbotools color output.]:' \
+	   '--nowrap[Disable sbotools word wrapping.]:' \
+	   '--wrap[Enable sbotools word wrapping.]:' \
     && return 0
 
 return 1

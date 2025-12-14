@@ -4,7 +4,7 @@
 
 _arguments \
     '(-)'{-d,--dialogrc}'[Use this absolute path as dialogrc.]:' \
-    '(-)'{--config}'[Enter the Settings menu directly.]:' \
+    '--config[Enter the Settings menu directly.]:' \
     '(-)'{-h,--help}'[Show help.]:' \
     '(-)'{-v,--version}'[Show version.]:' \
     && return 0

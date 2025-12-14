@@ -8,8 +8,8 @@ _arguments \
     '(-)'{-v,--version}'[Show version.]:' \
     '(-)'{-l,--list}'[List current configuration options (including unmodified defaults).]:' \
     '(-)'{-n,--non-default}'[List current non-default configuration options.]:' \
-    '(-)'{--reset}'[Restore all default configuration options.]:' \
     - commands \
+    '--reset[Restore all default configuration options.]:' \
     '(-B --git-branch)'{-B,--git-branch}'[Use this git branch (instead of the default for the Slackware version).]:Git branch:()' \
     '(-b --build-ignore)'{-b,--build-ignore}'[If TRUE, then only do upgrades if the version number differs.]:ignore build number?:((TRUE\:"Version upgrades only" FALSE\:"Script bump upgrades"))' \
     '(-C --classic)'{-C,--classic}'[If TRUE, a more traditional sbotools look and feel; see the man pages before turning this on.]:use Classic Mode?:((TRUE\:"Classic Mode" FALSE\:"No Classic Mode"))' \

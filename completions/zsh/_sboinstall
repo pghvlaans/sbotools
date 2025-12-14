@@ -2,34 +2,26 @@
 
 # sbotools: https://pghvlaans.github.io/sbotools/
 
-# work out where the SBo repo is (default to /usr/sbo/repo)
-# but also check for SBO_HOME setting in /etc/sbotools/sbotools.conf
-grep 'SBO_HOME' /etc/sbotools/sbotools.conf &> /dev/null
-if [ $? -eq 0 ]; then
-    repo="$(grep 'SBO_HOME' /etc/sbotools/sbotools.conf | cut -d= -f2)/repo"
-else
-    repo='/usr/sbo/repo'
-fi
-
-# grab a listing of all slackbuilds
-slackbuilds=( ${(uf)"$(grep 'SLACKBUILD NAME: ' $repo/SLACKBUILDS.TXT | cut -b 18-)"} )
+# grab a listing of all available slackbuilds
+slackbuilds=( ${(uf)"$(perl -MSBO::Lib::Tree=get_all_available -E 'say $_ for get_all_available();')"} )
 
 _arguments -s \
 	   - info \
 	   '(-)'{-h,--help}'[Show help]:' \
 	   '(-)'{-v,--version}'[Show version information.]:' \
-	   '(-)'{--nocolor}'[Disable sbotools color output.]:' \
-	   '(-)'{--color}'[Enable sbotools color output.]:' \
-	   '(-)'{--nowrap}'[Disable sbotools word wrapping.]:' \
-	   '(-)'{--wrap}'[Enable sbotools word wrapping.]:' \
+	   - formatting \
+	   '--nocolor[Disable sbotools color output.]:' \
+	   '--color[Enable sbotools color output.]:' \
+	   '--nowrap[Disable sbotools word wrapping.]:' \
+	   '--wrap[Enable sbotools word wrapping.]:' \
 	   - commands \
 	   '(-c --noclean)'{-c,--noclean}'[If TRUE, then do not clean working directories after build.]:clean work dirs?:((TRUE\:"Clean works directories" FALSE\:"Keep work directories"))' \
 	   '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code and the package after building.]:clean source and package?:((TRUE\:"Remove source and package" FALSE\:"Keep source and package"))' \
 	   '(-e --etc-profile)'{-e,--etc-profile}'[If TRUE, then source executable *.sh scripts in /etc/profile.d before building.]:source /etc/profile.d before building?:((TRUE\:"Source /etc/profile.d before building" FALSE\:"Do not source /etc/profile.d before building"))' \
 	   '(-i --noinstall)'{-i,--noinstall}'[Do not install package after building.]' \
 	   '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \
-	   '(-k --pkg-dir)'{-k,--pkg-dir}'[If an absolute path, save built packages here. If FALSE, do not save packages to PKG_DIR.]override default PKG_DIR?:((path\: "Save built packages here" FALSE\:"Do not save packages to PKG_DIR"))'\
-	   '(-L --log-dir)'{-L,--log-dir}'[If an absolute path, save build logs here. If FALSE, do not save logs.]override default LOG_DIR?:((path\: "Save build logs here" FALSE\:"Do not save logs to LOG_DIR"))'\
+	   '(-k --pkg-dir)'{-k,--pkg-dir}'[If an absolute path, save built packages here. If FALSE, do not save packages to PKG_DIR.]:override default PKG_DIR?:((path\: "Save built packages here" FALSE\:"Do not save packages to PKG_DIR"))'\
+	   '(-L --log-dir)'{-L,--log-dir}'[If an absolute path, save build logs here. If FALSE, do not save logs.]:override default LOG_DIR?:((path\: "Save build logs here" FALSE\:"Do not save logs to LOG_DIR"))'\
 	   '(-o --norecall)'{-o,--norecall}'[Do not automatically reuse build options if nointeractive.]' \
 	   '(-p --compat32)'{-p,--compat32}'[Create a -compat32 package on x86_64 systems (experimental).]' \
 	   '(-r --nointeractive)'{-r,--nointeractive}'[Skip README.]' \
