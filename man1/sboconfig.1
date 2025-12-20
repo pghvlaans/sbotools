@@ -38,12 +38,12 @@ sbotool\fR\
 .B
 dialog(1)
 is installed. If running as root, settings changes
-can be done from here.
+can be done here.
 .P
 The
 .B
 sbotools.conf(5)
-file can also be manually edited; any fields not
+file can also be edited manually; any fields not
 relevant to
 .B
 sbotools
@@ -144,7 +144,7 @@ flag can be used without root privileges.
 .B
 -n|--non-default
 .RS
-List current non-default configuration options.
+List non-default configuration options.
 .B
 --non-default
 also shows the
@@ -307,6 +307,10 @@ named
 .I
 *.sh
 before running each SlackBuild in the build queue.
+.P
+Recommended value:
+.B
+TRUE
 .RE
 .P
 .B
@@ -336,6 +340,11 @@ sboupgrade(1)\fR\
 .UR keyserver.ubuntu.com
 .UE
 on port 80 is offered if available.
+.P
+Recommended value:
+.B
+TRUE
+if the upstream repository is usually signed.
 .RE
 .P
 .B
@@ -373,6 +382,10 @@ file directly. See
 .B
 sbotools.colors(5)
 for details.
+.P
+Recommended value:
+.B
+TRUE
 .RE
 .P
 .B
@@ -433,6 +446,10 @@ CPAN_IGNORE\fR\
 .B
 TRUE\fR\
 \&, install scripts even if they are already installed from the CPAN.
+.P
+Recommended value:
+.B
+TRUE
 .RE
 .P
 .B
@@ -623,6 +640,10 @@ ruby
 .I
 _SBo
 packages.
+.P
+Recommended value:
+.B
+TRUE
 .RE
 .P
 .B

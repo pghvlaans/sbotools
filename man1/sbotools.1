@@ -23,7 +23,7 @@ for version updates, build number changes and out-of-tree installed
 SlackBuilds with the
 .I
 _SBo
-tag. Perform shared object dependency checks.
+tag. Perform shared object dependency and other package checks.
 .RE
 .P
 .B
@@ -147,7 +147,7 @@ companion package.
 sbotools
 currently supports Slackware 15.0 and beyond. For Slackware 14.0, 14.1 and 14.2, install
 .B
-sbotools-4.0.1
+sbotools-4.0.2
 at the latest.
 .SH STARTUP
 When using
@@ -314,28 +314,25 @@ TRUE\fR\
 Use
 .B
 sbocheck
-with the
+with any package-checking option and the
 .B
---perl\fR\
+--type
+option with any of
+.B
+solibs
+(default),
+.B
+perl\fR\
 \&,
 .B
---python
-and
+python\fR\
+\&,
 .B
---ruby
-options to check for incompatible
-.I
-SBo
-packages. This is done automatically when running
+ruby
+or
 .B
-sbocheck
-if the
-.B
-SO_CHECK
-setting is
-.B
-TRUE\fR\
-\&.
+all
+in a comma-separated list to perform extra package tests.
 .SH BUGS
 .P
 None known. If found, Issues and Pull Requests to

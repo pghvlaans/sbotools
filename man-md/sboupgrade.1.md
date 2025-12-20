@@ -21,7 +21,7 @@
 
     sboupgrade [-h|-v]
 
-    sboupgrade [-SXcbde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboupgrade [-SXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
                [-fiopqrz] [--batch|--dry-run] --all|sbo_name (sbo_name)
 

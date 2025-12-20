@@ -46,7 +46,6 @@ sed -i "s/#EXIT\%20CODES/#exit-codes/g" *
 sed -i "s/#VARIABLES/#variables/g" *
 sed -i "s/#SBOTEST/#sbotest/g" *
 sed -i "s/#AUTHORS/#authors/g" *
-sed -i "s/#AUTHORS/#authors/g" *
 sed -i 's|#MAINTAINER)\\|#maintainer)|g' *
 
 sed -i "s/^## NAME.*/## NAME/g" *
@@ -105,7 +104,6 @@ done
 # Why, yes, these lines are horrible.
 sed -i "s/\\\\\[/[/g" *
 sed -i "s/\\\\\]/]/g" *
-sed -i "s/^cd /    cd /g" *
 sed -i "s/^!javacc/    !javacc /g" *
 sed -i "s/^˜libmodplug/    ~libmodplug /g" *
 sed -i "s/^libcacard /    libcacard /g" *

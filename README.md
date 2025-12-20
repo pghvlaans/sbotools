@@ -2,7 +2,7 @@
 
 **[sbotools](https://pghvlaans.github.io/sbotools/)** is a set of Perl scripts providing a ports-like automation interface to [SlackBuilds.org](https://www.slackbuilds.org/). Run **sbotool** for a TUI. The tools can also run independently for greater efficiency:
 
-  * **sbocheck**: Fetch the latest version of SlackBuilds.org repository; check for version updates, build number changes and out-of-tree installed SlackBuilds. Perform shared object dependency checks.
+  * **sbocheck**: Fetch the latest version of SlackBuilds.org repository; check for version updates, build number changes and out-of-tree installed SlackBuilds. Perform shared object dependency and other package checks.
   * **sboclean**: Remove cruft by cleaning source archives, build directories and saved build options.
   * **sboconfig**: A command line interface for changing settings.
   * **sbofind**: Search the local copy of the repository.

@@ -31,15 +31,11 @@ a given name or names
 ## DESCRIPTION
 
 **sbofind** searches the names of all available SlackBuilds for one or
-more search terms. It reports back any SlackBuilds found along with
-path, version, installation status information and a short description.
-Use the **\--descriptions** option to search descriptions as well. This
-is akin to running
-
-    cd /usr/ports; make search name=$search_term display=name,path
-
-on a FreeBSD system. If the repository includes a *TAGS.txt* file, these
-tags are searched to generate additional results.
+more search terms. It reports any SlackBuilds found along with path,
+version, installation status information and a short description. Use
+the **\--descriptions** option to search descriptions as well. If the
+repository includes a *TAGS.txt* file, these tags are searched to
+generate additional results.
 
 **sbofind** issues a warning if the directory specified with
 **LOCAL_OVERRIDES** does not exist (see [sboconfig(1)](sboconfig.1.md) or

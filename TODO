@@ -18,4 +18,8 @@ Version 4.1.3 TODO
   the package version that are not reflected in the info file and are
   not the running kernel version.
 
+  STATUS: Invalid. The scripts in question actually alter the package
+  names; I highly doubt there is a reasonable way to deal with this
+  problem.
+
 * Explore ways to distinguish one-click options in sbotool Settings.

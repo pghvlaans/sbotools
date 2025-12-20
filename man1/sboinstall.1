@@ -12,13 +12,13 @@ sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-DRiopr] [--batch|--dry-run] [--create-template|-t FILE] \\
            sbo_name (sbo_name)
 .P
-sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-cde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-Di] --use-template FILE
 .P
-sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-cde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-Dioqr] [--create-template|-t FILE] --mass-rebuild
 .P
-sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-cde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES,...
 .P
 sboinstall [--color|--nocolor] [--wrap|--nowrap] ...
@@ -480,6 +480,7 @@ Incompatible with
 .B
 --create-template\fR\
 \&.
+.RE
 .P
 .B
 --reinstall
@@ -531,6 +532,9 @@ compat32
 packages from a template, consider using
 .B
 --create-template
+or
+.B
+--template-only
 with
 .B
 --compat32
