@@ -25,8 +25,8 @@ its own man page.
 
 Fetch the latest version of the upstream SlackBuilds repository. Check
 for version updates, build number changes and out-of-tree installed
-SlackBuilds with the *\_SBo* tag. Perform shared object dependency
-checks.
+SlackBuilds with the *\_SBo* tag. Perform shared object dependency and
+other package checks.
 
 [sboclean(1)](sboclean.1.md)
 
@@ -88,7 +88,7 @@ dependencies in a clean build environment may be interested in the
 **sbotest** companion package.
 
 **sbotools** currently supports Slackware 15.0 and beyond. For Slackware
-14.0, 14.1 and 14.2, install **sbotools-4.0.1** at the latest.
+14.0, 14.1 and 14.2, install **sbotools-4.0.2** at the latest.
 
 ## STARTUP
 
@@ -146,10 +146,9 @@ and **-c** can be used without a local copy of the repository. Checks of
 **sbocheck** and [sboupgrade(1)](sboupgrade.1.md) when the **SO_CHECK** setting is
 **TRUE**.
 
-Use **sbocheck** with the **\--perl**, **\--python** and **\--ruby**
-options to check for incompatible *SBo* packages. This is done
-automatically when running **sbocheck** if the **SO_CHECK** setting is
-**TRUE**.
+Use **sbocheck** with any package-checking option and the **\--type**
+option with any of **solibs** (default), **perl**, **python**, **ruby**
+or **all** in a comma-separated list to perform extra package tests.
 
 ## BUGS
 

@@ -60,6 +60,8 @@ for those who want it.
 If **TRUE**, install scripts even if they are already installed from the
 CPAN.
 
+Recommended value: **TRUE**
+
 **DIALOGRC=(FALSE\|/path)**
 
 If set to an **absolute path**, use that file as *dialogrc* when running
@@ -82,6 +84,9 @@ keys are detected, and a download from
 [keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 is offered if
 available.
 
+Recommended value: **TRUE** if the upstream repository is usually
+signed.
+
 **JOBS=(FALSE\|#)**
 
 If **numerical**, pass to the **-j** argument when a SlackBuild invoking
@@ -98,6 +103,8 @@ If **TRUE**, enable **sbotools** color output. To customize color
 output, edit the */etc/sbotools/sbotools.colors* file directly. See
 [sbotools.colors(5)](sbotools.colors.5.md) for more details.
 
+Recommended value: **TRUE**
+
 **GIT_BRANCH=(FALSE\|branch_name)**
 
 If **FALSE**, use the default git branch for the Slackware version, if
@@ -113,6 +120,8 @@ By default, upgrades also occur when the build number differs.
 
 **If TRUE**, source any executable scripts in */etc/profile.d* named
 *\*.sh* before running each SlackBuild in the build queue.
+
+Recommended value: **TRUE**
 
 **LOG_DIR=(FALSE\|/path)**
 
@@ -162,6 +171,8 @@ If set to **TRUE**, check for missing first-order shared object (solib)
 dependencies among *\_SBo* packages when running [sbocheck(1)](sbocheck.1.md) and
 [sboupgrade(1)](sboupgrade.1.md). Additionally, [sbocheck(1)](sbocheck.1.md) searches for
 incompatible **perl**, **python** and **ruby** *\_SBo* packages.
+
+Recommended value: **TRUE**
 
 **REPO=(FALSE\|url\|/path)**
 

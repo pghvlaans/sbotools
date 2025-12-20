@@ -25,13 +25,13 @@
                [-DRiopr] [--batch|--dry-run] [--create-template|-t FILE] \
                sbo_name (sbo_name)
 
-    sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
+    sboinstall [-cde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
                [-Di] --use-template FILE
 
-    sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
+    sboinstall [-cde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
                [-Dioqr] [--create-template|-t FILE] --mass-rebuild
 
-    sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
+    sboinstall [-cde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
                [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES,\...
 
     sboinstall [--color|--nocolor] [--wrap|--nowrap] \...
@@ -211,8 +211,8 @@ prompts.
 
 Incompatible with **\--compat32**, **\--series-rebuild**,
 **\--mass-rebuild** and **\--reverse-rebuild**. To make *compat32*
-packages from a template, consider using **\--create-template** with
-**\--compat32** first.
+packages from a template, consider using **\--create-template** or
+**\--template-only** with **\--compat32** first.
 
 **\--mass-rebuild**
 

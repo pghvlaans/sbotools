@@ -15,7 +15,7 @@
 
 ## NAME
 
-**sbohints** - interact with sbotools.hints
+**sbohints** - set and unset per-script hints
 
 ## SYNOPSIS
 
