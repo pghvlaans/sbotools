@@ -234,8 +234,7 @@ sub get_user_group {
         $escaped_cmd =~ s/(?=[^\\])'/\\'/g;
         push @parse_script, "echo $escaped_cmd";
       }
-      my ($fh, $parse_script);
-      ($fh, $parse_script) = tempfile(DIR => "/tmp");
+      my ($fh, $parse_script) = tempfile(DIR => "/tmp");
       my $exit;
       ($fh, $exit) = open_fh($parse_script, '>');
       error_code("SlackBuild had variable UID/GID specifications, and writing a parse script failed.", _ERR_OPENFH) if $exit;
