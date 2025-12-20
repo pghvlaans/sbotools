@@ -89,9 +89,9 @@ tag are unaffected, and no package that is already installed when
 **sbotest** starts can be removed or reinstalled.
 
 For a full-repository test, run **sbotest** with the
-**\--test-everything** option. This will build and test all packages
-that are available, supported, and not on the blacklist or up-to-date in
-the archive. Reverse rebuilds are performed when rebuilding archived
+**\--test-everything** option. This builds and tests all packages that
+are available, supported, and not on the blacklist or up-to-date in the
+archive. Reverse rebuilds are performed when rebuilding archived
 packages.
 
 Packages in the archive with missed rebuilds may lack required shared
@@ -313,10 +313,10 @@ mismatched packages are removed.
 ## CONFIGURATION
 
 The default configuration directory is */etc/sbotest* with files
-*sbotest.conf*, *sbotest.hints* and *obsolete* being recognized.
-*obsolete* is relevant only if testing against Slackware -current. To
-use an alternative configuration directory, set an environment variable
-*SBOTEST_CONF_DIR*.
+*sbotest.conf*, *sbotest.hints*, *obsolete* and *perl_vers* being
+recognized. *obsolete* is relevant only if testing against Slackware
+-current. To use an alternative configuration directory, set an
+environment variable *SBOTEST_CONF_DIR*.
 
 Configuration options and hints can be set from the command line with
 **config** and **hints**, respectively.
