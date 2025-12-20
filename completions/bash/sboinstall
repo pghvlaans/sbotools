@@ -37,15 +37,16 @@ _sboinstall() {
           COMPREPLY=( $(compgen -W "FALSE TRUE" -- "${cur}") )
           return 0
           ;;
-        --create-template|--use-template|--mass-rebuild|--batch|-D|--dry-run|--series-rebuild|--color|--nocolor|--wrap|--nowrap|-t|--template-only)
+        --create-template|--use-template|--mass-rebuild|--series-rebuild|-t|--template-only)
           COMPREPLY=( $(compgen -f -- "${cur}") )
           return 0
           ;;
-        -i|--noinstall|-p|--compat32|-r|--nointeractive|-R|--norequirements|--reinstall|-q|--reverse-rebuild|-o|--norecall)
+        -i|--noinstall|-p|--compat32|-r|--nointeractive|-R|--norequirements|--reinstall|-q|--reverse-rebuild|-o|--norecall|--batch|-D|--dry-run|--color|--nocolor|--wrap|--nowrap)
           COMPREPLY=( $(compgen -W "$REPOLIST" -- "${cur}") )
           return 0
           ;;
         *)
+          COMPREPLY=( $(compgen -W "$REPOLIST" -- "${cur}") )
           return 0
           ;;
       esac

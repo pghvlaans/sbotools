@@ -33,7 +33,7 @@ _arguments -s -C \
 	   '(-X --so-check)'{-X,--so-check}'[If TRUE, then check for missing shared object dependencies after building.]:solib check?:((TRUE\:"Check for shared objects." FALSE\:"No shared object check."))' \
 	   '--batch[Be non-interactive and calculate dependencies; use with caution.]' \
 	   '(-D --dry-run)'{-D,--dry-run}'[Print the potential queue and exit.]' \
-	   '(-)*:SlackBuild:(${sboupdates:|words})' \
+	   '*:SlackBuild:(${sboupdates:|words})' \
     && return 0
 
 return 1

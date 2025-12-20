@@ -42,6 +42,7 @@ _sboupgrade() {
           return 0
           ;;
         *)
+          COMPREPLY=( $(compgen -W "$UPGRADELIST" -- "${cur}") )
           return 0
           ;;
       esac
