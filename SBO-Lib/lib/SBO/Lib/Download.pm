@@ -171,7 +171,7 @@ sub get_distfile {
   my $download_start = time();
   #  if wget $link && verify, return
   #  else wget sbosrcarch && verify
-  if (system('wget', '--tries=5', $link) != 0) {
+  if (system('wget', '--tries=5', '--content-disposition', $link) != 0) {
     $fail->{msg} = "Unable to wget $link.";
     $fail->{err} = _ERR_DOWNLOAD;
   }
@@ -243,6 +243,17 @@ sub get_filename_from_link {
   script_error('get_filename_from_link requires two arguments.') unless @_ == 2;
   my $filename = _get_fname(@_);
   return undef unless defined $filename;
+  if ($filename =~ /[?;]f(|n)=/) {
+    my $md5sum = dirname $filename;
+    my @filename = split /[?;]/, $filename;
+    for (@filename) {
+      if ($_ =~ /^f(|n)=/) {
+        $_ =~ s/^f(|n)=//;
+        $filename = "$md5sum/$_";
+        last;
+      }
+    }
+  }
   return "$distfiles/$filename";
 }
 
