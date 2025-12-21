@@ -305,10 +305,12 @@ targets), use **\--archive-force**. Ignore the archive altogether with
 The archive can be kept current with **\--archive-rebuild**. This
 rebuilds all version- and build-mismatched packages in the archive,
 provided that they are not installed or on the blacklist.
-**\--archive-reverse** rebuilds all reverse dependencies as well. If
+**\--archive-reverse** rebuilds all reverse dependencies as well.
+**\--test-everything** implies an archive reverse rebuild. If
 **STRICT_UPGRADES** is **TRUE**, only mismatched packages with lower
 version or build numbers are removed from the archive. By default, all
-mismatched packages are removed.
+mismatched packages are removed unless the corresponding new version
+fails to build during the run.
 
 ## CONFIGURATION
 

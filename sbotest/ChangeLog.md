@@ -7,6 +7,7 @@
   * *bin/test*: Report failed builds with more specific error types
   * Compatibility bump for new *SBO::Lib::Readme* user and group handling
   * *bin/test*: Show `useradd` and `groupadd` commands as they are performed
+  * *bin/test*: Unlink outdated packages in archive unless the new build fails
 
 #### 1.2 - 2025-11-20
   * *bin/test*: Use the **perl**, **python** and **ruby** package tests in case of failure
