@@ -13,7 +13,7 @@
   * Readme.pm: Better distinguish existing users and groups
   * sbotool: Add a button for missing users and groups
   * Download.pm: Handle download URLs requiring content disposition
-    * Add --content-disposition to the wget command, following slackrepo
+    * Selectively add --content-disposition to the wget command, following slackrepo
 
 #### 4.1.2 - 2025-11-21
   * sbocheck: Perl test properly checks perl-involved shared objects

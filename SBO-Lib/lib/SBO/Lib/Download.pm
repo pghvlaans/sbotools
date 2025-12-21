@@ -166,12 +166,21 @@ sub get_distfile {
   mkdir "$distfiles/$info_md5" unless -d "$distfiles/$info_md5";
   chdir "$distfiles/$info_md5";
   unlink $filename if -f $filename;
+  my $info_filename = _get_fname($link, $info_md5);
+  my $file_check = basename $info_filename;
+  my $use_content_disposition = $file_check =~ /[?;]/ ? 1 : 0;
   my $fail = {};
 
   my $download_start = time();
   #  if wget $link && verify, return
   #  else wget sbosrcarch && verify
-  if (system('wget', '--tries=5', '--content-disposition', $link) != 0) {
+  my $wget_res;
+  if ($use_content_disposition) {
+    $wget_res = system('wget', '--tries=5', '--content-disposition', $link) == 0;
+  } else {
+    $wget_res = system('wget', '--tries=5', $link) == 0;
+  }
+  unless ($wget_res) {
     $fail->{msg} = "Unable to wget $link.";
     $fail->{err} = _ERR_DOWNLOAD;
   }
