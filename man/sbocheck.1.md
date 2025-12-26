@@ -14,8 +14,8 @@
 
 ## NAME
 
-**sbocheck** - update a local **SlackBuilds.org** tree and check for
-updates
+**sbocheck** - perform **SlackBuilds.org** tree updates and package
+checks
 
 ## SYNOPSIS
 
@@ -65,8 +65,8 @@ generally do not require rebuilds.
 
 Use **\--type** with any package-checking option to specify package
 tests to run in a comma-separated list. The supported values are
-currently **solibs** (default for no specification), **python**,
-**ruby** and **all**.
+currently **solibs** (default for no specification), **perl**,
+**python**, **ruby** and **all**.
 
 To check for updated SlackBuilds without updating the SlackBuilds tree,
 pass the **\--nopull** option. **sbocheck** performs **gpg(1)**

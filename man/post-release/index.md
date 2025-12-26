@@ -1,4 +1,4 @@
-The pages here reflect post-release development. For the version 4.1.2 pages (2025-11-21), see [man](/sbotools/man/).
+The pages here reflect post-release development. For the version 4.1.3 pages (2025-12-26), see [man](/sbotools/man/).
 
 * [sbotools(1)](sbotools.1.md)
     * A summary man page with brief descriptions of the tools.

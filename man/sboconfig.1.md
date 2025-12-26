@@ -35,9 +35,9 @@
 **sboconfig** is a front-end for managing **sbotools** configuration
 options. Using **sboconfig** without any flags enters the **Settings**
 menu within **sbotool**, provided that **dialog(1)** is installed. If
-running as root, settings changes can be done from here.
+running as root, settings changes can be done here.
 
-The [sbotools.conf(5)](sbotools.conf.5.md) file can also be manually edited; any fields
+The [sbotools.conf(5)](sbotools.conf.5.md) file can also be edited manually; any fields
 not relevant to **sbotools** configuration are ignored. To use a
 configuration directory other than */etc/sbotools*, export an
 environment variable **SBOTOOLS_CONF_DIR** with an absolute path.
@@ -72,8 +72,8 @@ for reference. The **\--list** flag can be used without root privileges.
 
 **-n\|\--non-default**
 
-List current non-default configuration options. **\--non-default** also
-shows the **sboconfig** flag used to set each option for reference. The
+List non-default configuration options. **\--non-default** also shows
+the **sboconfig** flag used to set each option for reference. The
 **\--non-default** flag can be used without root privileges.
 
 **\--reset**
@@ -127,6 +127,8 @@ directories under */usr/sbo/distfiles* (with default **SBO_HOME**). If
 */etc/profile.d* named *\*.sh* before running each SlackBuild in the
 build queue.
 
+Recommended value: **TRUE**
+
 **-g\|\--gpg-verify (FALSE\|TRUE)**
 
 **GPG_VERIFY**: If **TRUE**, use **gpg(1)** to verify the contents of
@@ -135,6 +137,9 @@ running [sbocheck(1)](sbocheck.1.md), [sboinstall(1)](sboinstall.1.md) and [sbou
 Missing public keys are detected, and a download from
 [keyserver.ubuntu.com](keyserver.ubuntu.com) on port 80 is offered if
 available.
+
+Recommended value: **TRUE** if the upstream repository is usually
+signed.
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -146,6 +151,8 @@ SlackBuild invoking **make** is run.
 **COLOR**: If **TRUE**, enable **sbotools** color output. To customize
 color output, edit the */etc/sbotools/sbotools.colors* file directly.
 See [sbotools.colors(5)](sbotools.colors.5.md) for details.
+
+Recommended value: **TRUE**
 
 **-L\|\--log-dir (FALSE\|/path)**
 
@@ -168,6 +175,8 @@ Slackware -current.
 
 **CPAN_IGNORE**: If **TRUE**, install scripts even if they are already
 installed from the CPAN.
+
+Recommended value: **TRUE**
 
 **-p\|\--pkg-dir (FALSE\|/path)**
 
@@ -229,6 +238,8 @@ object (solib) dependencies among *\_SBo* packages when running
 [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md). Additionally, [sbocheck(1)](sbocheck.1.md)
 searches for incompatible **perl**, **python** and **ruby** *\_SBo*
 packages.
+
+Recommended value: **TRUE**
 
 **-h\|\--help**
 
