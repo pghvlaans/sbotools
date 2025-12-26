@@ -1,6 +1,6 @@
 ## ChangeLog.md
 
-#### Post-Release
+#### 1.2.1 - 2025-12-26
   * *bin/test*: Do not reuse log and test directories if called more than once in the same minute
   * *bin/test*: Use a separate `$TMP` directory for each script
   * *bin/test*: Run *sbopkglint* as packages are built, not at the end

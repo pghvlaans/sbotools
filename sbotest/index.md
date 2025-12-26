@@ -10,7 +10,7 @@ The [ChangeLog](ChangeLog.md) has a record of changes since the initial release.
 
 ## Getting sbotest
 
-A SlackBuild for **sbotest** is [available](https://slackbuilds.org/repository/15.0/system/sbotest/) on **SlackBuilds.org**. The most recent version of **sbotest** requires **sbotools-3.8.1** or above and **sbo-maintainer-tools**.
+A SlackBuild for **sbotest** is [available](https://slackbuilds.org/repository/15.0/system/sbotest/) on **SlackBuilds.org**. The most recent version of **sbotest** requires **sbotools-4.1.3** or above and **sbo-maintainer-tools**.
 
 **sbotest** and **sbotools** source archives can be found at [Downloads](https://pghvlaans.github.io/sbotools/downloads/).
 

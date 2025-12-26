@@ -89,9 +89,9 @@ tag are unaffected, and no package that is already installed when
 **sbotest** starts can be removed or reinstalled.
 
 For a full-repository test, run **sbotest** with the
-**\--test-everything** option. This will build and test all packages
-that are available, supported, and not on the blacklist or up-to-date in
-the archive. Reverse rebuilds are performed when rebuilding archived
+**\--test-everything** option. This builds and tests all packages that
+are available, supported, and not on the blacklist or up-to-date in the
+archive. Reverse rebuilds are performed when rebuilding archived
 packages.
 
 Packages in the archive with missed rebuilds may lack required shared
@@ -101,12 +101,12 @@ incompatibility with system **perl**, **python** and **ruby** upon build
 test failure, set **SO_CHECK** to **TRUE** or pass **\--so-check TRUE**
 to **sbotest**.
 
-**sbopkglint(1)** is run on all test targets once [sboinstall(1)](sboinstall.1.md) has
-been called for the last time. A summary of results is displayed and
-saved to *SBO_HOME/results/(timestamp).log*. Scripts that fail
-**sbolint(1)** or **sbopkglint(1)**, or fail to build altogether, are
-reported so that any issues can be taken care of before submitting
-scripts to **SlackBuilds.org**.
+**sbopkglint(1)** is run on all test targets as they are built
+successfully. A summary of results is displayed at the end and saved to
+*SBO_HOME/results/(timestamp).log*. Scripts that fail **sbolint(1)** or
+**sbopkglint(1)**, or fail to build altogether, are reported so that any
+issues can be taken care of before submitting scripts to
+**SlackBuilds.org**.
 
 To generate a report of potential operations, use **\--dry-run** with
 any combination of other options.
@@ -305,18 +305,20 @@ targets), use **\--archive-force**. Ignore the archive altogether with
 The archive can be kept current with **\--archive-rebuild**. This
 rebuilds all version- and build-mismatched packages in the archive,
 provided that they are not installed or on the blacklist.
-**\--archive-reverse** rebuilds all reverse dependencies as well. If
+**\--archive-reverse** rebuilds all reverse dependencies as well.
+**\--test-everything** implies an archive reverse rebuild. If
 **STRICT_UPGRADES** is **TRUE**, only mismatched packages with lower
 version or build numbers are removed from the archive. By default, all
-mismatched packages are removed.
+mismatched packages are removed unless the corresponding new version
+fails to build during the run.
 
 ## CONFIGURATION
 
 The default configuration directory is */etc/sbotest* with files
-*sbotest.conf*, *sbotest.hints* and *obsolete* being recognized.
-*obsolete* is relevant only if testing against Slackware -current. To
-use an alternative configuration directory, set an environment variable
-*SBOTEST_CONF_DIR*.
+*sbotest.conf*, *sbotest.hints*, *obsolete* and *perl_vers* being
+recognized. *obsolete* is relevant only if testing against Slackware
+-current. To use an alternative configuration directory, set an
+environment variable *SBOTEST_CONF_DIR*.
 
 Configuration options and hints can be set from the command line with
 **config** and **hints**, respectively.
