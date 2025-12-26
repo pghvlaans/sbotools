@@ -1,6 +1,6 @@
 # sbotools
 
-#### Post-Release
+#### 4.1.3 - 2025-12-26
   * Build.pm: Retrieve the name of the last package created by a SlackBuild, not the first
   * Fixed a typo in the sbocheck bash completion
     * Thanks to fsLeg.

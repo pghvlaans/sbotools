@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '4.1.2';
+our $VERSION = '4.1.3';
 
 use SBO::Lib::Build qw/ $tempdir /;
 use SBO::Lib::Util qw/ :const :colors error_code in prompt script_error slurp open_read open_fh uniq usage_error wrapsay %config /;

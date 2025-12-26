@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '4.1.2';
+our $VERSION = '4.1.3';
 
 use SBO::Lib::Util qw/ :config :const in uniq error_code script_error slurp /;
 use SBO::Lib::Pkgs qw/ $perl_pkg $ruby_pkg /;

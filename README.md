@@ -25,7 +25,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 **sbotools** currently supports Slackware 15.0 and beyond. For Slackware 14.0, 14.1 and 14.2, install `sbotools-4.0.2` at the latest. See the **sbotools** [downloads](https://pghvlaans.github.io/sbotools/downloads/) page.
 
 ## Most Recent Changes
-#### Post-Release
+#### 4.1.3 - 2025-12-26
   * Build.pm: Retrieve the name of the last package created by a SlackBuild, not the first
   * Fixed a typo in the sbocheck bash completion
     * Thanks to fsLeg.
@@ -65,31 +65,6 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbocheck, sbotool: Add a perl package compatibility test
   * sbocheck: --obsolete-check also downloads the perl version history file
   * sbotool: Add a reinstallation button for build test failure lists
-
-#### 4.0.2 - 2025-10-31
-  * sbotool: Package test fixes
-
-#### 4.0.1 - 2025-10-27
-  * sbotool: Clarified the batch installation prompt
-    * Thanks to SCerovec for the feedback.
-  * sbotool: Titles for command confirmation windows
-  * sbocheck: Write a log to /tmp for non-root package tests
-  * sbotool: Added a script selection menus for SlackBuilds that failed package tests
-  * sbotool: List and mark non-SBo installations in the "Installed" menu
-  * sbocheck: Add --types to choose one or more package checks: solibs (default), python, ruby or all
-    * Thanks to fourtysixandtwo for the suggestion.
-    * Coming next version: perl
-  * sbotool: Incorporate the python and ruby checks
-  * sboconfig: Replace the interactive questionnaire with the sbotool Settings menu
-    * Thanks to SCerovec for the suggestion.
-  * sboinstall, sbotool: Use a comma-separated list to specify multiple series for --series-rebuild
-  * sbocheck: Exit with invalid options
-  * Repo.pm: Exit when the user declines a pubkey download
-  * Removed broken symlinks from t/
-  * sboupgrade: Match sbocheck solib log formatting
-  * sbotool: Add a button to delete local override files
-  * sbotool: Offer to create a non-existent overrides directory after setting it
-  * sbotool: Do not offer batch mode if unavailable
 
 ## Previous Changes
 See [ChangeLog.md](https://github.com/pghvlaans/sbotools/blob/master/SBO-Lib/ChangeLog.md) for a record of changes from version 1.9 onward.
