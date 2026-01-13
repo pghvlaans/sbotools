@@ -139,7 +139,7 @@ sub perform_search {
 		unless ($t_exit) {
 			while (my $line = <$t_fh>) {
 				if ($line =~ $search_tag_re) {
-					push @names, $1;
+					push @names, $1 unless $line =~ /No tags found/;
 				}
 			}
 		}
