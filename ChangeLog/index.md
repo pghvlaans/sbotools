@@ -1,6 +1,9 @@
 # ChangeLog
 * Post-Release
   * *sbofind*: Do not match "No tags found" in `TAGS.txt`
+  * *contrib*: SCerovec shared a Debian-like sbotool theme
+  * Allow for SlackBuilds without specified downloads
+    * Thanks to SCerovec for the suggestion.
 
 * 4.1.3 - 2025-12-26
   * *Build.pm*: Retrieve the name of the last package created by a SlackBuild, not the first
