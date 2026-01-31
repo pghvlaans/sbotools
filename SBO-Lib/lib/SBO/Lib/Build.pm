@@ -770,7 +770,7 @@ sub process_sbos {
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
       }
-    } else {
+    } elsif (@symlinks and @$temp_syms) {
       push @symlinks, @$temp_syms;
     }
   }

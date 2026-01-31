@@ -62,7 +62,8 @@ files have their checksums verified. Missing and unverifiable files are download
 md5sum-designated directories and verified. Finally, C<create_symlinks()> is run on each
 download.
 
-In case of success, an array of symlinks from C<create_symlinks()> is returned. In case of
+In case of success, an array of symlinks from C<create_symlinks()> is returned. The
+subroutine returns empty if the SlackBuild did not contain any downloads. In case of
 failure, an error message and an exit code are returned.
 
 =cut
@@ -84,11 +85,8 @@ sub check_distfiles {
     LOCATION => $location,
     32 => $args{COMPAT32}
   );
-  # return an error if we're unable to get download info
-  unless (keys %$downloads > 0) {
-    return "Unable to get download informtion from $location/$sbo.info.",
-      _ERR_NOINFO;
-  }
+  # return empty if no files are specified
+  return unless keys %$downloads > 0;
   for my $link (keys %$downloads) {
     my $md5 = $downloads->{$link};
     unless (verify_distfile($link, $md5)) {
