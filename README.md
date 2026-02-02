@@ -30,6 +30,8 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * contrib: SCerovec shared a Debian-like sbotool theme
   * Allow for SlackBuilds without specified downloads
     * Thanks to SCerovec for the suggestion.
+  * sbotool: Improve Settings menu readability
+    * Thanks to SCerovec for the feedback.
 
 #### 4.1.3 - 2025-12-26
   * Build.pm: Retrieve the name of the last package created by a SlackBuild, not the first

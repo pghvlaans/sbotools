@@ -1233,30 +1233,30 @@ sub display_settings {
 	$config{DIALOGRC} = $save_dialogrc;
 	my @config_values;
 	my $msg = "Defaults are FALSE except for SBO_HOME; see sbotools.conf(5).";
-	$msg = "$msg\n\nPress \\\"OK\\\" to change the highlighted setting.\n\nSettings marked with \\\"+\\\" change between \\\"TRUE\\\" and \\\"FALSE\\\"." if $< == 0;
-	my $plus = $< == 0 ? " +" : "";
-	push @config_values, "\"BUILD_IGNORE=$config{BUILD_IGNORE}$plus\" \"\" \"If TRUE, ignore build numbers when upgrading.\" \\",
-						"\"CLASSIC=$config{CLASSIC}$plus\" \"\" \"If TRUE, use 2.7-style output; No color, rsync default, ignore build number.\" \\",
-						"\"COLOR=$config{COLOR}$plus\" \"\" \"If TRUE, use sbotools color output.\" \\",
-						"\"CPAN_IGNORE=$config{CPAN_IGNORE}$plus\" \"\" \"If TRUE, ignore perl modules installed from the CPAN.\" \\",
-						"\"DIALOGRC=$config{DIALOGRC}\" \"\" \"If a file, use it as dialogrc for sbotool.\" \\",
-						"\"DISTCLEAN=$config{DISTCLEAN}$plus\" \"\" \"If TRUE, remove the source and built package after building.\" \\",
-						"\"ETC_PROFILE=$config{ETC_PROFILE}$plus\" \"\" \"If TRUE, source all executable *.sh in /etc/profile.d before building.\" \\",
-						"\"GIT_BRANCH=$config{GIT_BRANCH}\" \"\" \"Use this non-default branch for git repos.\" \\",
-						"\"GPG_VERIFY=$config{GPG_VERIFY}$plus\" \"\" \"If TRUE, verify the repo with GPG after fetching.\" \\",
-						"\"JOBS=$config{JOBS}\" \"\" \"If a number, use this many jobs with make.\" \\",
-						"\"LOCAL_OVERRIDES=$config{LOCAL_OVERRIDES}\" \"\" \"Use this directory for local override scripts.\" \\",
-						"\"LOG_DIR=$config{LOG_DIR}\" \"\" \"If a directory, save build logs there. Logs are otherwise not saved.\" \\",
-						"\"NOCLEAN=$config{NOCLEAN}$plus\" \"\" \"If TRUE, do not remove working directories after building.\" \\",
-						"\"NOWRAP=$config{NOWRAP}$plus\" \"\" \"If TRUE, disable sbotools word wrapping.\" \\",
-						"\"OBSOLETE_CHECK=$config{OBSOLETE_CHECK}$plus\" \"\" \"If TRUE, download the outdated script list and perl history on repo fetch.\" \\",
-						"\"PKG_DIR=$config{PKG_DIR}\" \"\" \"If a directory, save built packages there.\" \\",
-						"\"REPO=$config{REPO}\" \"\" \"Use this non-default git or rsync repository.\" \\",
-						"\"RSYNC_DEFAULT=$config{RSYNC_DEFAULT}$plus\" \"\" \"If TRUE, the default repository is rsync, not git. No effect on -current.\" \\",
-						"\"SBO_HOME=$config{SBO_HOME}\" \"\" \"Specify an sbotools directory (default /usr/sbo).\" \\",
-						"\"SLACKWARE_VERSION=$config{SLACKWARE_VERSION}\" \"\" \"Use this Slackware version to determine the default repo.\" \\",
-						"\"SO_CHECK=$config{SO_CHECK}$plus\" \"\" \"If TRUE, do a solib/perl/python/ruby check on fetch and upgrade.\" \\",
-						"\"STRICT_UPGRADES=$config{STRICT_UPGRADES}$plus\" \"\" \"If TRUE, ignore apparent downgrades.\"";
+	$msg = "$msg\n\nPress \\\"OK\\\" to change the highlighted setting.\n\nSettings marked with \\\"*\\\" are TRUE/FALSE toggles." if $< == 0;
+	my $plus = $< == 0 ? " *" : "";
+	push @config_values, "\"BUILD_IGNORE: $config{BUILD_IGNORE}$plus\" \"\" \"If TRUE, ignore build numbers when upgrading.\" \\",
+						"\"CLASSIC: $config{CLASSIC}$plus\" \"\" \"If TRUE, use 2.7-style output; No color, rsync default, ignore build number.\" \\",
+						"\"COLOR: $config{COLOR}$plus\" \"\" \"If TRUE, use sbotools color output.\" \\",
+						"\"CPAN_IGNORE: $config{CPAN_IGNORE}$plus\" \"\" \"If TRUE, ignore perl modules installed from the CPAN.\" \\",
+						"\"DIALOGRC: $config{DIALOGRC}\" \"\" \"If a file, use it as dialogrc for sbotool.\" \\",
+						"\"DISTCLEAN: $config{DISTCLEAN}$plus\" \"\" \"If TRUE, remove the source and built package after building.\" \\",
+						"\"ETC_PROFILE: $config{ETC_PROFILE}$plus\" \"\" \"If TRUE, source all executable *.sh in /etc/profile.d before building.\" \\",
+						"\"GIT_BRANCH: $config{GIT_BRANCH}\" \"\" \"Use this non-default branch for git repos.\" \\",
+						"\"GPG_VERIFY: $config{GPG_VERIFY}$plus\" \"\" \"If TRUE, verify the repo with GPG after fetching.\" \\",
+						"\"JOBS: $config{JOBS}\" \"\" \"If a number, use this many jobs with make.\" \\",
+						"\"LOCAL_OVERRIDES: $config{LOCAL_OVERRIDES}\" \"\" \"Use this directory for local override scripts.\" \\",
+						"\"LOG_DIR: $config{LOG_DIR}\" \"\" \"If a directory, save build logs there. Logs are otherwise not saved.\" \\",
+						"\"NOCLEAN: $config{NOCLEAN}$plus\" \"\" \"If TRUE, do not remove working directories after building.\" \\",
+						"\"NOWRAP: $config{NOWRAP}$plus\" \"\" \"If TRUE, disable sbotools word wrapping.\" \\",
+						"\"OBSOLETE_CHECK: $config{OBSOLETE_CHECK}$plus\" \"\" \"If TRUE, download the outdated script list and perl history on repo fetch.\" \\",
+						"\"PKG_DIR: $config{PKG_DIR}\" \"\" \"If a directory, save built packages there.\" \\",
+						"\"REPO: $config{REPO}\" \"\" \"Use this non-default git or rsync repository.\" \\",
+						"\"RSYNC_DEFAULT: $config{RSYNC_DEFAULT}$plus\" \"\" \"If TRUE, the default repository is rsync, not git. No effect on -current.\" \\",
+						"\"SBO_HOME: $config{SBO_HOME}\" \"\" \"Specify an sbotools directory (default /usr/sbo).\" \\",
+						"\"SLACKWARE_VERSION: $config{SLACKWARE_VERSION}\" \"\" \"Use this Slackware version to determine the default repo.\" \\",
+						"\"SO_CHECK: $config{SO_CHECK}$plus\" \"\" \"If TRUE, do a solib/perl/python/ruby check on fetch and upgrade.\" \\",
+						"\"STRICT_UPGRADES: $config{STRICT_UPGRADES}$plus\" \"\" \"If TRUE, ignore apparent downgrades.\"";
 	my $config_values = join "\n", @config_values;
 	($height, $width, $begin_y, $begin_x) = calculate_position("wide", $config_values, $msg);
 	$height--;
@@ -1277,7 +1277,7 @@ sub display_settings {
 		display_settings();
 	}
 	my $option = $output;
-	$option =~ s/ \+$//;
+	$option =~ s/ \*$//;
 	if ($< == 0) {
 		my ($explanation, $criterion, $flag);
 		if ($option =~ /^BUILD_IGNORE/) {
@@ -1617,7 +1617,8 @@ sub edit_setting {
 	script_error("edit_setting requires four arguments.") unless @_ == 4;
 	my ($existing_setting, $explanation, $criterion, $flag) = @_;
 	my ($height, $width, $begin_y, $begin_x, $res, $output);
-	my ($setting_name, $setting_content) = split "=", $existing_setting;
+	my ($setting_name, $setting_content) = split ":", $existing_setting;
+	$setting_content =~ s/^ //;
 	my $original_setting = $setting_content;
 	$setting_content =~ s/^FALSE$//;
 	my $option;
@@ -1637,7 +1638,7 @@ sub edit_setting {
 	if ($res) {
 		clear_info_store();
 		new_package_information();
-		$save_dialogrc = $config{DIALOGRC} if $existing_setting =~ /^DIALOGRC=/;
+		$save_dialogrc = $config{DIALOGRC} if $existing_setting =~ /^DIALOGRC: /;
 		if ($setting_name eq "LOCAL_OVERRIDES" and $option ne "FALSE") {
 			unless (-d $option) {
 				($height, $width, $begin_y, $begin_x) = calculate_position("wide", "The specified local overrides directory does not exist:\n\n$option\n\ncreate?");
