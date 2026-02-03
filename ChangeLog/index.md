@@ -6,6 +6,7 @@
     * Thanks to SCerovec for the suggestion.
   * *sbotool*: Improve Settings menu readability
     * Thanks to SCerovec for the feedback.
+  * More maintainable next-Slackware-version handling
 
 * 4.1.3 - 2025-12-26
   * *Build.pm*: Retrieve the name of the last package created by a SlackBuild, not the first
