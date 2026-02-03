@@ -44,6 +44,7 @@ my @EXPORT_CONSTS = keys %$consts;
 my @EXPORT_CONFIG = qw{
   read_config
 
+  $anticipated_next
   @auto_reverse
   $arch
   $conf_dir
@@ -160,6 +161,10 @@ SBO::Lib::Util - Utility functions for SBO::Lib and the sbotools
 
 =head1 VARIABLES
 
+=head2 $anticipated_next
+
+The anticipated Slackware version number to be supported by SBO, currently 15.1.
+
 =head2 $arch
 
 The kernel architecture, accounting for C<i?86> userlands reporting a C<x86_64> kernel.
@@ -238,30 +243,22 @@ automatic reverse dependency rebuilds read in from C</etc/sbotools/sbotools.hint
 These exported variables are populated by C<read_hints()> and used to determine hint
 status.
 
-=cut
-
 =head2 $obs_file
 
 This file contains a list of scripts that have been renamed and added to Slackware
 -current, or are known to be obsolete build dependencies. It is located at
 C</etc/sbotools/obsolete> by default.
 
-=cut
-
 =head2 @obsolete
 
 This array is based on the contents of C<$obs_file>. Only C<obsolete_array()> should
 interact with C<@obsolete> directly; in other situations, make a copy.
-
-=cut
 
 =head2 $perl_file
 
 This file contains build timestamps for the introduction of major perl versions
 into Slackware. It is used by C<Solibs.pm> during the C<perl> package test. It is
 located at C</etc/sbotools/perl_vers> by default.
-
-=cut
 
 =head2 $userland_32
 
@@ -271,6 +268,7 @@ kernel.
 =cut
 
 our $arch = get_arch();
+our $anticipated_next = "15.1";
 
 our $pkg_db = '/var/lib/pkgtools/packages';
 our $rem_pkg_db = '/var/lib/pkgtools/removed_packages';
@@ -614,26 +612,26 @@ sub get_sbo_from_loc {
 # %supported maps what's in /etc/slackware-version to an https URL, or to an
 # rsync URL if RSYNC_DEFAULT is true.
 my %supported = (
-  '15.0' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
-  '15.0+' => 'https://github.com/Ponce/slackbuilds.git',
-  '15.1' => 'https://gitlab.com/SlackBuilds.org/slackbuilds.git',
-  '15.1+' => 'https://github.com/Ponce/slackbuilds.git',
-  current => 'https://github.com/Ponce/slackbuilds.git',
+  "15.0" => "https://gitlab.com/SlackBuilds.org/slackbuilds.git",
+  "15.0+" => "https://github.com/Ponce/slackbuilds.git",
+  $anticipated_next => "https://gitlab.com/SlackBuilds.org/slackbuilds.git",
+  "$anticipated_next+" => "https://github.com/Ponce/slackbuilds.git",
+  current => "https://github.com/Ponce/slackbuilds.git",
 );
 
 if ($config{RSYNC_DEFAULT} eq 'TRUE') {
   %supported = (
-    '15.0' => 'rsync://slackbuilds.org/slackbuilds/15.0/',
-    '15.0+' => 'https://github.com/Ponce/slackbuilds.git',
-    '15.1' => 'rsync://slackbuilds.org/slackbuilds/15.1/',
-    '15.1+' => 'https://github.com/Ponce/slackbuilds.git',
-    current => 'https://github.com/Ponce/slackbuilds.git',
+    "15.0" => "rsync://slackbuilds.org/slackbuilds/15.0/",
+    "15.0+" => "https://github.com/Ponce/slackbuilds.git",
+    $anticipated_next => "rsync://slackbuilds.org/slackbuilds/$anticipated_next/",
+    "$anticipated_next+" => "https://github.com/Ponce/slackbuilds.git",
+    current => "https://github.com/Ponce/slackbuilds.git",
   );
 }
 
 my %branch = (
-  '15.0' => '15.0',
-  '15.1' => '15.1',
+  "15.0" => "15.0",
+  $anticipated_next => $anticipated_next,
 );
 
 =head2 get_slack_branch
@@ -691,9 +689,13 @@ The program exits if the version is unsupported or if an error occurs.
 
 sub get_slack_version_url {
   my $version = get_slack_version();
-  return $supported{$version} unless $version eq "15.1";
-  my $exists = system(qw! git --no-pager ls-remote --exit-code https://gitlab.com/SlackBuilds.org/slackbuilds.git --heads origin 15.1 !) == 0;
-  return $supported{$version} if $exists;
+  return $supported{$version} unless $version eq $anticipated_next;
+  return $supported{$version} if -f "$config{SBO_HOME}/.$anticipated_next";
+  my $exists = system("git --no-pager ls-remote --exit-code https://gitlab.com/SlackBuilds.org/slackbuilds.git --heads origin $anticipated_next") == 0;
+  if ($exists) {
+    system("touch $config{SBO_HOME}/.$anticipated_next") if $< == 0;
+    return $supported{$version};
+  }
   return $supported{current};
 }
 

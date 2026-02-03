@@ -491,7 +491,7 @@ sub pull_sbo_tree {
     generate_slackbuilds_txt();
   }
   if ($config{OBSOLETE_CHECK} eq "TRUE") {
-    get_obsolete() if $sw_version =~ /\+$|current/ or $sw_version eq "15.1";
+    get_obsolete() if $sw_version =~ /\+$|current/ or $sw_version eq $anticipated_next;
   }
 }
 
