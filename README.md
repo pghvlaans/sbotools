@@ -33,6 +33,8 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbotool: Improve Settings menu readability
     * Thanks to SCerovec for the feedback.
   * More maintainable next-Slackware-version handling
+  * Repo.pm: Display the mirror URL and branch when downloading
+    * Thanks to fsLeg for the suggestion.
 
 #### 4.1.3 - 2025-12-26
   * Build.pm: Retrieve the name of the last package created by a SlackBuild, not the first

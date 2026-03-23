@@ -418,6 +418,10 @@ sub git_sbo_tree {
     $res = eval {
       $branch = $backup_branch unless $branchres;
       die unless defined $branch;
+      wrapsay_color $color_notice, "\nUsing mirror:";
+      say $url;
+      wrapsay_color $color_notice, "Using branch:";
+      say "$branch\n";
       die unless system(qw! git --no-pager reset --hard !) == 0; # if system() doesn't return 0, there was an error
       die unless system(qw! git --no-pager fetch !) == 0;
       die unless system(qw! git --no-pager checkout --quiet --detach !) == 0;
@@ -512,6 +516,8 @@ sub rsync_sbo_tree {
   script_error('rsync_sbo_tree requires an argument.') unless @_ == 1;
   my $url = shift;
   $url .= '/' unless $url =~ m!/$!; # make sure $url ends with /
+  wrapsay_color $color_notice, "\nUsing mirror:";
+  say "$url\n";
   my @args = ('rsync', '--info=progress2', '-a', '--delete', $url);
   my $res = system(@args, $repo_path) == 0;
   if ($config{GPG_VERIFY} eq "TRUE") {
