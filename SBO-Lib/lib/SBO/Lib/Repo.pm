@@ -434,6 +434,14 @@ sub git_sbo_tree {
   } else {
     chdir $config{SBO_HOME} or return 0;
     remove_tree($repo_path) if -d $repo_path;
+    wrapsay_color $color_notice, "\nUsing mirror:";
+    say $url;
+    if (defined $branch) {
+      wrapsay_color $color_notice, "Using branch:";
+      say "$branch\n";
+    } else {
+      say "\n";
+    }
     $res = system(qw/ git --no-pager clone --no-local /, $url, $repo_path) == 0;
     if ($res) {
       chdir $repo_path or return 0;
