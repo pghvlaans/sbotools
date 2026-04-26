@@ -28,16 +28,16 @@
     sbotest [config|find|hints] \...
 
     sbotest [-f|-s] [-Akl /path|FALSE] [-j #|FALSE] \
-            [-X TRUE|FALSE] [-D] [--no-archive|--archive-force] \
+            [-NX TRUE|FALSE] [-D] [--no-archive|--archive-force] \
             sbo_name (sbo_name)
 
-    sbotest [-Al /path|FALSE] [-SX TRUE|FALSE] [-j #|FALSE] \
+    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
             [-D] --archive-rebuild
 
-    sbotest [-Al /path|FALSE] [-SX TRUE|FALSE] [-j #|FALSE] \
+    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
             [-D] --archive-reverse
 
-    sbotest [-Al /path|FALSE] [-SX TRUE|FALSE] [-j #|FALSE] \
+    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
             [--no-archive|--archive-force] --test-everything
 
 ## DISCLAIMER
@@ -217,6 +217,13 @@ If **FALSE**, use the default log directory of
 *SBO_HOME/logs/(timestamp)-logs*. If an **absolute path**, save build
 and **sbopkglint(1)** logs to that directory with a timestamp appended.
 
+**-N\|\--nonet**
+
+If **TRUE**, prevent SlackBuilds from accessing the network when they
+run. If **FALSE**, run SlackBuilds normally.
+
+Overrides the **NONET** setting.
+
 **\--no-archive**
 
 Do not reuse any archived packages during the test run, and do not
@@ -293,6 +300,11 @@ To use a local overrides directory, set **LOCAL_OVERRIDES** to an
 absolute path. Place directories for any script to be tested in the top
 level and run **sbotest**. Removing these directories when testing is
 complete is advisable.
+
+Set **NONET** to **TRUE** or call **sbotest** with **\--nonet TRUE** to
+run SlackBuilds without network access. This is a convenient way to spot
+scripts that perform downloads so that the user can be warned in the
+*README* file.
 
 Reusing built packages in future test runs saves time and resources. The
 default archive directory is */usr/sbotest/archive*; packages stored
