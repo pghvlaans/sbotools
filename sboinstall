@@ -57,6 +57,8 @@ Options (defaults shown first where applicable):
     set to an absolute path to save compiled packages here, or to FALSE.
   -L|--log-dir (FALSE|/path):
     set to an absolute path to save build logs here, or to FALSE.
+  -N|--nonet (FALSE|TRUE):
+    if TRUE, do not allow network access when running SlackBuilds.
   -p|--compat32:
     install a -compat32 package (multilib systems only).
   -q|--reverse-rebuild:
@@ -84,7 +86,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $noclean, $distclean, $pkg_dir, $log_dir, $etc_profile, $gpg, $series_rebuild, $jobs, $nocolor, $color, $wrap, $nowrap, $ctemp_only);
+my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $noclean, $distclean, $pkg_dir, $log_dir, $etc_profile, $gpg, $series_rebuild, $jobs, $nocolor, $color, $wrap, $nowrap, $ctemp_only, $nonet);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -113,6 +115,7 @@ my $options_ok = GetOptions(
 	'nowrap'            => \$nowrap,
 	'wrap'              => \$wrap,
 	'template-only|t=s' => \$ctemp_only,
+	'nonet|N=s'         => \$nonet,
 );
 
 if ($help) {
@@ -139,6 +142,7 @@ $config{ETC_PROFILE} = $etc_profile if $etc_profile;
 $config{PKG_DIR} = $pkg_dir if $pkg_dir;
 $config{LOG_DIR} = $log_dir if $log_dir;
 $config{JOBS} = $jobs if $jobs;
+$config{NONET} = $nonet if $nonet;
 
 lint_sbo_config($self, %config);
 
@@ -512,6 +516,9 @@ if ($dry_run) {
 		wrapsay_color $color_notice, "\nSaved build options to be used:";
 		for my $item (keys %saved_options) { say "  $item: $saved_options{$item}"; }
 	}
+	if ($config{NONET} eq "TRUE") {
+		wrapsay_color $color_lesser, "\nBlocking network access for SlackBuilds.";
+	}
 }
 unless ($no_install) {
 	wrapsay "\nInstall queue: " . join(' ', @$build_queue);
@@ -520,6 +527,7 @@ unless ($no_install) {
 }
 unless ($non_int) {
 	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
+	wrapsay_color $color_lesser, "\nBlocking network access for SlackBuilds." if $config{NONET} eq "TRUE";
 	unless (prompt($color_notice, "\nAre you sure you wish to continue?", default => 'yes')) {
 		exit 0;
 	}

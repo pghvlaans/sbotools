@@ -59,6 +59,8 @@ Options (defaults shown first where applicable):
     set to an absolute path to save compiled packages here, or to FALSE.
   -L|--log-dir (FALSE|/path):
     set to an absolute path to save build logs here, or to FALSE.
+  -N|--nonet (FALSE|TRUE):
+    if TRUE, do not allow network access when running SlackBuilds.
   -o|--norecall:
     do not use saved build options with nointeractive.
   -p|--compat32:
@@ -77,7 +79,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $socheck, $wrap, $nowrap);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $socheck, $wrap, $nowrap, $nonet);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -105,6 +107,7 @@ my $options_ok = GetOptions(
 	'so-check|X=s'      => \$socheck,
 	'nowrap'            => \$nowrap,
 	'wrap'              => \$wrap,
+	'nonet|N=s'         => \$nonet,
 );
 
 if ($help) {
@@ -134,6 +137,7 @@ $config{PKG_DIR} = $pkg_dir if $pkg_dir;
 $config{LOG_DIR} = $log_dir if $log_dir;
 $config{SO_CHECK} = $socheck if $socheck;
 $config{JOBS} = $jobs if $jobs;
+$config{NONET} = $nonet if $nonet;
 
 lint_sbo_config($self, %config);
 
@@ -435,6 +439,9 @@ if ($dry_run) {
 		wrapsay_color $color_notice, "\nSaved build options to be used:";
 		for my $item (keys %saved_options) { say "  $item: $saved_options{$item}"; }
 	}
+	if ($config{NONET} eq "TRUE") {
+		wrapsay_color $color_lesser, "\nBlocking network access for SlackBuilds.";
+	}
 }
 unless ($no_install) {
 	wrapsay "\nUpgrade queue: ". join(' ', @$upgrade_queue);
@@ -443,6 +450,7 @@ unless ($no_install) {
 }
 unless ($non_int) {
 	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
+	wrapsay_color $color_lesser, "\nBlocking network access for SlackBuilds." if $config{NONET} eq "TRUE";
 	exit 0 unless prompt($color_notice, "\nAre you sure you wish to continue?", default => 'yes');
 }
 if ($dry_run) {

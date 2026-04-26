@@ -15,7 +15,7 @@ sboconfig [-l|-n]
 .P
 sboconfig [--reset]
 .P
-sboconfig [-CKOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo /path|FALSE] \\
+sboconfig [-CKNOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo /path|FALSE] \\
           [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \\
           [-r url|FALSE]
 .SH DESCRIPTION
@@ -408,6 +408,17 @@ is
 .B
 FALSE\fR\
 \&.
+.RE
+.P
+.B
+-N|--nonet (FALSE|TRUE)
+.RS
+.B
+NONET\fR\
+\&: If
+.B
+TRUE\fR\
+\&, do not allow network access when running SlackBuilds.
 .RE
 .P
 .B

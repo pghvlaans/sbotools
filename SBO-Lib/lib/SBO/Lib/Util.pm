@@ -197,8 +197,8 @@ C</usr/sbo> if still C<"FALSE">.
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
-C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<COLOR>, C<SO_CHECK> and
-C<DIALOGRC>.
+C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<COLOR>, C<SO_CHECK>,
+C<DIALOGRC> and C<NONET>.
 
 =head2 $download_time
 
@@ -311,6 +311,7 @@ our %config = (
   NOWRAP => 'FALSE',
   SO_CHECK => 'FALSE',
   DIALOGRC => 'FALSE',
+  NONET => 'FALSE',
 );
 
 if (defined $is_sbotest) {
@@ -878,6 +879,12 @@ sub lint_sbo_config {
       push @invalid, "$warn -K (TRUE or FALSE)";
     }
   }
+  if (exists $configs{NONET}) {
+    unless ($configs{NONET} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "NONET" if $running ne 'sboconfig';
+      push @invalid, "$warn -N (TRUE or FALSE)";
+    }
+  }
   if (exists $configs{NOWRAP}) {
     unless ($configs{NOWRAP} =~ /^(TRUE|FALSE)$/) {
       push @invalid, "NOWRAP" if $running ne 'sboconfig';
@@ -1083,6 +1090,7 @@ sub print_failures {
     for my $failure (@$failures) {
       warn "  $_: $$failure{$_}\n" for keys %$failure;
     }
+    warn_color($color_lesser, "\nAttempted building without network access.") if $config{NONET} eq "TRUE";
   print color("reset");
   }
 }

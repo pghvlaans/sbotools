@@ -1248,6 +1248,7 @@ sub display_settings {
 						"\"LOCAL_OVERRIDES: $config{LOCAL_OVERRIDES}\" \"\" \"Use this directory for local override scripts.\" \\",
 						"\"LOG_DIR: $config{LOG_DIR}\" \"\" \"If a directory, save build logs there. Logs are otherwise not saved.\" \\",
 						"\"NOCLEAN: $config{NOCLEAN}$plus\" \"\" \"If TRUE, do not remove working directories after building.\" \\",
+						"\"NONET: $config{NONET}$plus\" \"\" \"If TRUE, do not allow network access when running SlackBuilds.\" \\",
 						"\"NOWRAP: $config{NOWRAP}$plus\" \"\" \"If TRUE, disable sbotools word wrapping.\" \\",
 						"\"OBSOLETE_CHECK: $config{OBSOLETE_CHECK}$plus\" \"\" \"If TRUE, download the outdated script list and perl history on repo fetch.\" \\",
 						"\"PKG_DIR: $config{PKG_DIR}\" \"\" \"If a directory, save built packages there.\" \\",
@@ -1344,6 +1345,11 @@ sub display_settings {
 			$explanation = "If TRUE, do not delete the working directory after building.";
 			$criterion = "TRUE or FALSE.";
 			$flag = "c";
+		}
+		if ($option =~ /^NONET/) {
+			$explanation = "If TRUE, do not allow network access when running SlackBuilds.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "N";
 		}
 		if ($option =~ /^NOWRAP/) {
 			$explanation = "If TRUE, suppress word wrapping in sbotools output.";

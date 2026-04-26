@@ -35,6 +35,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * More maintainable next-Slackware-version handling
   * Repo.pm: Display the mirror URL and branch when downloading
     * Thanks to fsLeg for the suggestion.
+  * Added a setting NONET to block network access when running SlackBuilds
 
 #### 4.1.3 - 2025-12-26
   * Build.pm: Retrieve the name of the last package created by a SlackBuild, not the first

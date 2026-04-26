@@ -68,6 +68,8 @@ Configuration options (defaults shown):
       COLOR: if TRUE, enable sbotools color output.
   -L|--log-dir FALSE:
       LOG_DIR: if an absolute path, save a log file here after each build.
+  -N|--nonet FALSE:
+      NONET: if TRUE, do not allow network access when running SlackBuilds.
   -P|--cpan-ignore FALSE:
       CPAN_IGNORE: install scripts even if they are installed from the CPAN.
   -p|--pkg-dir FALSE:
@@ -134,6 +136,8 @@ Configuration options (defaults shown):
       COLOR: if TRUE, enable sbotools color output.
   -L|--log-dir /usr/sbotest/logs:
       LOG_DIR: if an absolute path, save a log file here after each build.
+  -N|--nonet FALSE:
+      NONET: if TRUE, do not allow network access when running SlackBuilds.
   -P|--cpan-ignore TRUE:
       CPAN_IGNORE: install scripts even if they are installed from the CPAN.
   -p|--pkg-dir /usr/sbotest/tests:
@@ -170,14 +174,14 @@ unless ($is_sbotest) {
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'dialogrc|D=s');
+		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'dialogrc|D=s', 'nonet|N=s');
 } else {
 	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'sbo-archive|A=s', 'dialogrc|D=s');
+		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'sbo-archive|A=s', 'dialogrc|D=s', 'nonet|N=s');
 }
 
 $options{list} = 1 if exists $options{'non-default'};
@@ -215,6 +219,7 @@ my %valid_confs = (
 	nowrap              => 'NOWRAP',
 	'so-check'          => 'SO_CHECK',
 	'dialogrc'          => 'DIALOGRC',
+	nonet               => 'NONET',
 );
 $valid_confs{"sbo-archive"} = 'SBO_ARCHIVE' if $is_sbotest;
 
@@ -241,6 +246,7 @@ my %params = (
 	NOWRAP            => 'w|--nowrap',
 	SO_CHECK          => 'X|--so-check',
 	DIALOGRC          => 'D|--dialogrc',
+	NONET             => 'N|--nonet',
 );
 $params{SBO_ARCHIVE} = 'A|--sbo-archive' if $is_sbotest;
 

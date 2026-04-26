@@ -616,6 +616,8 @@ C<perform_sbo()> prepares and runs a SlackBuild. It returns the package name,
 an array with source directories and an exit code if successful. If unsuccessful,
 the first value is instead an error message.
 
+Network access is blocked with C<unshare(1)> if the C<NONET> setting is C<TRUE>.
+
 =cut
 
 # prep and run .SlackBuild
@@ -682,6 +684,7 @@ sub perform_sbo {
   # set TMP/OUTPUT if set in the environment
   $cmd .= " TMP=$env_tmp" if $env_tmp;
   $cmd .= " OUTPUT=$ENV{OUTPUT}" if defined $ENV{OUTPUT};
+  $cmd .= " unshare -n" if $config{NONET} eq "TRUE";
   # special cases: 32-bit compatible build or 32-bit userland and 64-bit kernel
   $cmd .= " setarch i686" if defined $userland_32 or defined $use_setarch;
   $cmd .= " /bin/bash $location/$sbo.SlackBuild";
@@ -1034,7 +1037,7 @@ Build.pm subroutines can return the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Solibs(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
+SBO::Lib(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Solibs(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), unshare(1)
 
 =head1 AUTHORS
 

@@ -150,6 +150,10 @@ Use **sbocheck** with any package-checking option and the **\--type**
 option with any of **solibs** (default), **perl**, **python**, **ruby**
 or **all** in a comma-separated list to perform extra package tests.
 
+A limited number of SlackBuilds download files when running, which some
+users consider a security risk. Set **NONET** to **TRUE** to prevent
+this behavior.
+
 ## BUGS
 
 None known. If found, Issues and Pull Requests to

@@ -19,7 +19,7 @@ _sboupgrade() {
 
   case "${cmd}" in
     sboupgrade)
-      opts="-h -v -b -c -D -d -e -f -i -j -k -L -p -o -q -r -z -S -X --all --help --version --color --nocolor --wrap --nowrap --build-ignore --noclean --compat32 --distclean --etc-profile --force --noinstall --jobs --pkg_dir --log-dir --norecall --nointeractive --force-reqs --reverse-rebuild --strict-upgrades --batch --dry-run --so-check $UPGRADELIST"
+      opts="-h -v -b -c -D -d -e -f -i -j -k -L -N -p -o -q -r -z -S -X --all --help --version --color --nocolor --wrap --nowrap --build-ignore --noclean --compat32 --distclean --etc-profile --nonet --force --noinstall --jobs --pkg_dir --log-dir --norecall --nointeractive --force-reqs --reverse-rebuild --strict-upgrades --batch --dry-run --so-check $UPGRADELIST"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
@@ -33,7 +33,7 @@ _sboupgrade() {
           COMPREPLY=( $(compgen -W "FALSE" -- "${cur}") )
           return 0
           ;;
-        -b|--build-ignore|-c|--noclean|-d|--distclean|-e|--etc-profile|-S|--strict-upgrades|-X|--so-check)
+        -b|--build-ignore|-c|--noclean|-d|--distclean|-e|--etc-profile|-S|--strict-upgrades|-X|--so-check|-N|--nonet)
           COMPREPLY=( $(compgen -W "FALSE TRUE" -- "${cur}") )
           return 0
           ;;
