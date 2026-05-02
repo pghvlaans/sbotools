@@ -338,10 +338,10 @@ can be used without issue.
 
 **TAG**
 
-**TAG** sets the tag at the end of the package name, **\_SBo** by
-default. Its use is not advisable with **sboinstall**. If a different
-tag is supplied, [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md) will fail to
-report upgrades for the installed package.
+**TAG** sets the tag at the end of the package name, *\_SBo* by default.
+Its use is not advisable with **sboinstall**. If a different tag is
+supplied, [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md) will fail to report
+upgrades for the installed package.
 
 **TMP**
 
