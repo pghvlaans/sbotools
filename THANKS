@@ -52,7 +52,8 @@ was forked:
 1-1sam (requested the CPAN_IGNORE setting)
 Charadon (requested --mass-rebuild and development man pages)
 chrish4cks (reported an .info parse bug)
-dchmelik (reported diligently on sbocheck problems, provided feedback)
+dchmelik (reported diligently on sbocheck problems, provided feedback,
+          suggested the --all-plus-failures sboupgrade flag)
 dcjud (requested an installable sbotools.conf)
 drbeco (requested a blacklist and strict version-up)
 fourtysixandtwo (feedback about the overzealous 'missing' script prompt;

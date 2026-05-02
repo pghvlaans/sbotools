@@ -11,6 +11,8 @@
   * Repo.pm: Display the mirror URL and branch when downloading
     * Thanks to fsLeg for the suggestion.
   * Added a setting NONET to block network access when running SlackBuilds
+  * sboupgrade: Added --all-plus-failures
+    * Thanks to dchmelik for the suggestion.
 
 #### 4.1.3 - 2025-12-26
   * Build.pm: Retrieve the name of the last package created by a SlackBuild, not the first

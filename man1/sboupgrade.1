@@ -9,7 +9,7 @@ sboupgrade
 sboupgrade [-h|-v]
 .P
 sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
-           [-fiopqrz] [--batch|--dry-run] --all|sbo_name (sbo_name)
+           [-fiopqrz] [--batch|--dry-run] --all|--all-plus-failures|sbo_name (sbo_name)
 .P
 sboupgrade [--color|--nocolor] [--wrap|--nowrap] ...
 .SH DESCRIPTION
@@ -444,7 +444,10 @@ builds for Perl-based or
 noarch
 scripts. Incompatible with
 .B
---all\fR\
+--all
+and
+.B
+--all-plus-failures\fR\
 \&.
 .RE
 .P
@@ -554,12 +557,47 @@ and
 sbotools.conf(5)\fR\
 \&. Incompatible with
 .B
+--all-plus-failures
+and
+.B
 --compat32\fR\
 \&. Please note that SlackBuilds installed from a
 .B
 LOCAL_OVERRIDES
 directory are upgraded only if the version or build number
 from this directory varies.
+.RE
+.P
+.B
+--all-plus-failures
+.RS
+Upgrade the same installed SlackBuilds that would be upgraded with
+.B
+--all\fR\
+\&, as well as any packages with the
+.B
+SBo
+tag that fail the
+.B
+solibs\fR\
+\&,
+.B
+perl\fR\
+\&,
+.B
+python
+or
+.B
+ruby
+tests before the upgrade process begins.
+.P
+Incompatible with
+.B
+--all
+and
+.B
+--compat32\fR\
+\&.
 .RE
 .P
 .B

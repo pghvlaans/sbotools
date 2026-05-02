@@ -19,14 +19,14 @@ _sboupgrade() {
 
   case "${cmd}" in
     sboupgrade)
-      opts="-h -v -b -c -D -d -e -f -i -j -k -L -N -p -o -q -r -z -S -X --all --help --version --color --nocolor --wrap --nowrap --build-ignore --noclean --compat32 --distclean --etc-profile --nonet --force --noinstall --jobs --pkg_dir --log-dir --norecall --nointeractive --force-reqs --reverse-rebuild --strict-upgrades --batch --dry-run --so-check $UPGRADELIST"
+      opts="-h -v -b -c -D -d -e -f -i -j -k -L -N -p -o -q -r -z -S -X --all --all-plus-failures --help --version --color --nocolor --wrap --nowrap --build-ignore --noclean --compat32 --distclean --etc-profile --nonet --force --noinstall --jobs --pkg_dir --log-dir --norecall --nointeractive --force-reqs --reverse-rebuild --strict-upgrades --batch --dry-run --so-check $UPGRADELIST"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
       fi
 
       case "${prev}" in
-        -h|--help|-v|--version|--all)
+        -h|--help|-v|--version|--all|--all-plus-failures)
           return 0
           ;;
         -j|--jobs|-k|--pkg-dir|-L|--log-dir)

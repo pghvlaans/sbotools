@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group in ineligible_compat installed_solibs is_obsolete merge_queues open_fh user_group_do_not_exist user_prompt process_sbos print_failures rationalize_queue slurp solib_check verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group in ineligible_compat installed_solibs is_obsolete merge_queues open_fh user_group_do_not_exist user_prompt process_sbos print_failures rationalize_queue series_check slurp solib_check verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -37,6 +37,8 @@ Options (defaults shown first where applicable):
     (do not) wrap sbotools output.
   --all
     this flag upgrades everything reported by sbocheck(1).
+  --all-plus-failures
+    like --all; also rebuild SBo packages failing solibs and other tests.
   --batch:
     like nointeractive, but calculates dependencies (use with caution).
   -b|--build-ignore (FALSE|TRUE):
@@ -79,7 +81,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $socheck, $wrap, $nowrap, $nonet);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $socheck, $wrap, $nowrap, $nonet, $all_fails);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -108,6 +110,7 @@ my $options_ok = GetOptions(
 	'nowrap'            => \$nowrap,
 	'wrap'              => \$wrap,
 	'nonet|N=s'         => \$nonet,
+	'all-plus-failures' => \$all_fails,
 );
 
 if ($help) {
@@ -157,9 +160,12 @@ if ($config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES}) {
 usage_error("force-reqs is incompatible with nointeractive.") if $non_int && $force_reqs;
 usage_error("reverse-rebuild is incompatible with noinstall.") if $reverse && $no_install;
 usage_error("all is incompatible with compat32.") if $compat32 && $all;
+usage_error("all-plus-failures is incompatible with compat32.") if $compat32 && $all_fails;
+usage_error("all is incompatible with all-plus-failures.") if $all_fails && $all;
 
 $yes_really = 1 if $dry_run;
 $non_int = 1 if $yes_really;
+$all = 1 if $all_fails;
 
 if ($config{GPG_VERIFY} eq "TRUE" and not ($dry_run and $< != 0)) { verify_gpg(); }
 
@@ -167,7 +173,7 @@ if ($config{GPG_VERIFY} eq "TRUE" and not ($dry_run and $< != 0)) { verify_gpg()
 slackbuilds_or_fetch();
 my %locations = get_sbo_locations();
 
-my $updates;
+my ($updates, @failed_test);
 if ($all) {
 	slackbuilds_or_fetch();
 	wrapsay_color $color_notice, "Checking for updated SlackBuilds...";
@@ -177,7 +183,66 @@ if ($all) {
 		$updates = get_available_updates('BOTH');
 	}
 	push @ARGV, map { $_->{name} } @$updates;
+	if ($all_fails) {
+		my @installed_sbos = @{ get_installed_packages('SBO') };
+		if (@installed_sbos) {
+			my (@bad_solibs, @bad_perl, @bad_python, @bad_ruby);
+			my $sbo_pkg = +{ map {; $_->{name}, $_->{pkg} } @installed_sbos };
+			wrapsay_color $color_notice, "Checking packges for missing shared objects...";
+			for my $sbo (keys %$sbo_pkg) {
+				next if in $sbo, @ARGV;
+				unless (solib_check($sbo_pkg->{$sbo})) {
+					push @ARGV, $sbo;
+					push @bad_solibs, $sbo;
+				}
+			}
+			if (@bad_solibs) {
+				print "\n";
+				wrapsay_color $color_lesser, "Rebuilding for missing solibs:";
+				for (sort @bad_solibs) {
+					print "  $_\n";
+				}
+				print "\n";
+			}
+			wrapsay_color $color_notice, "Checking packges for system incompatibility...";
+			my @series_to_check = ("perl", "python", "ruby");
+			for my $sbo (keys %$sbo_pkg) {
+				next if in $sbo, @ARGV;
+				my @results = series_check($sbo_pkg->{$sbo}, @series_to_check);
+				push @bad_perl, $sbo unless $results[0];
+				push @bad_python, $sbo unless $results[1];
+				push @bad_ruby, $sbo unless $results[2];
+			}
+			push @ARGV, @bad_perl, @bad_python, @bad_ruby;
+			push @failed_test, @bad_solibs, @bad_perl, @bad_python, @bad_ruby;
+			if (@bad_perl) {
+				print "\n";
+				wrapsay_color $color_lesser, "Rebuilding for perl incompatibility:";
+				for (sort @bad_perl) {
+					print "  $_\n";
+				}
+				print "\n";
+			}
+			if (@bad_python) {
+				print "\n";
+				wrapsay_color $color_lesser, "Rebuilding for python incompatibility:";
+				for (sort @bad_python) {
+					print "  $_\n";
+				}
+				print "\n";
+			}
+			if (@bad_ruby) {
+				print "\n";
+				wrapsay_color $color_lesser, "Rebuilding for ruby incompatibility:";
+				for (sort @bad_ruby) {
+					print "  $_\n";
+				}
+				print "\n";
+			}
+		}
+	}
 	unless (@ARGV) { print "Nothing to update."; exit 0; }
+	@ARGV = uniq @ARGV;
 }
 
 if (!@ARGV) { show_usage(); exit 1 }
@@ -252,7 +317,8 @@ if ($compat32) {
 }
 
 # doesn't matter what's updatable and what's not if force is specified,
-# but without force, we only want to update what there are updates for
+# but without force, we only want to upgrade upgradable packages while
+# accounting for all-plus-failures
 if ($non_int and not $reverse and not $yes_really) {
 	# --force, non-interactive
 	if ($force) {
@@ -266,7 +332,7 @@ if ($non_int and not $reverse and not $yes_really) {
 	# non-interactive, no --force
 	} else {
 		for my $sbo (@sbos) {
-			push @$upgrade_queue, $sbo if $updates{$sbo};
+			push @$upgrade_queue, $sbo if $updates{$sbo} or in $sbo, @failed_test;
 			if (auto_reverse($sbo) and not $no_install) {
 				push @needs_reverse, $sbo;
 				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo." unless not $all and not $compat32 and $sbo =~ m/-compat32/;
@@ -278,11 +344,11 @@ if ($non_int and not $reverse and not $yes_really) {
 	for my $sbo (@sbos) {
 		next if exists $concluded{$sbo};
 		unless ($force_reqs or $force) {
-			next unless $updates{$sbo};
+			next unless $updates{$sbo} or in $sbo, @failed_test;
 		}
 		my $queue = get_build_queue([$sbo]);
 		unless ($force_reqs) {
-			@$queue = grep { !$inst_names{$_} or $updates{$_} } @$queue;
+			@$queue = grep { !$inst_names{$_} or $updates{$_} or in $_, @failed_test} @$queue;
 		}
 		push @$queue, $sbo if $force;
 		$upgrade_queue = merge_queues($upgrade_queue, $queue);
