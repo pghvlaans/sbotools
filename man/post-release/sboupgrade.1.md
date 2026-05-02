@@ -23,7 +23,8 @@
 
     sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
-               [-fiopqrz] [--batch|--dry-run] --all|sbo_name (sbo_name)
+               [-fiopqrz] [--batch|--dry-run]
+\--all\|\--all-plus-failures\|sbo_name (sbo_name)
 
     sboupgrade [--color|--nocolor] [--wrap|--nowrap] \...
 
@@ -172,7 +173,8 @@ package can be inspected prior to installation. GitHub Issues are
 welcome in case of unexpected failure.
 
 **sboinstall** will not attempt *compat32* builds for Perl-based or
-*noarch* scripts. Incompatible with **\--all**.
+*noarch* scripts. Incompatible with **\--all** and
+**\--all-plus-failures**.
 
 **-q\|\--reverse-rebuild**
 
@@ -220,9 +222,18 @@ Incompatible with **\--nointeractive**.
 Upgrade all installed SlackBuilds that are eligible for upgrades,
 including *compat32* packages. This takes the **BUILD_IGNORE** setting
 into account. See [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
-Incompatible with **\--compat32**. Please note that SlackBuilds
-installed from a **LOCAL_OVERRIDES** directory are upgraded only if the
-version or build number from this directory varies.
+Incompatible with **\--all-plus-failures** and **\--compat32**. Please
+note that SlackBuilds installed from a **LOCAL_OVERRIDES** directory are
+upgraded only if the version or build number from this directory varies.
+
+**\--all-plus-failures**
+
+Upgrade the same installed SlackBuilds that would be upgraded with
+**\--all**, as well as any packages with the **SBo** tag that fail the
+**solibs**, **perl**, **python** or **ruby** tests before the upgrade
+process begins.
+
+Incompatible with **\--all** and **\--compat32**.
 
 **\--batch**
 
