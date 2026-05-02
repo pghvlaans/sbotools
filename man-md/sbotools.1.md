@@ -149,6 +149,13 @@ and **-c** can be used without a local copy of the repository. Checks of
 Use **sbocheck** with any package-checking option and the **\--type**
 option with any of **solibs** (default), **perl**, **python**, **ruby**
 or **all** in a comma-separated list to perform extra package tests.
+Calling
+
+    sboupgrade --all-plus-failures
+
+performs all available upgrades and rebuilds any packages with the
+*\_SBo* tag that fail one of these tests before the upgrade process
+begins.
 
 A limited number of SlackBuilds download files when running, which some
 users consider a security risk. Set **NONET** to **TRUE** to prevent

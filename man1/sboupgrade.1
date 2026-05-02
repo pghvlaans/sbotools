@@ -117,7 +117,16 @@ as a fallback measure. The
 .B
 --all
 flag may be passed to upgrade all eligible SlackBuilds
-simultaneously.
+simultaneously. Use
+.B
+--all-plus-failures
+to rebuild any packages with the
+.I
+_SBo
+tag that fail the
+.B
+sbocheck(1)
+package tests before the upgrade process as well.
 .P
 .B
 sboupgrade
@@ -575,8 +584,8 @@ Upgrade the same installed SlackBuilds that would be upgraded with
 .B
 --all\fR\
 \&, as well as any packages with the
-.B
-SBo
+.I
+_SBo
 tag that fail the
 .B
 solibs\fR\
@@ -828,7 +837,7 @@ TAG
 .B
 TAG
 sets the tag at the end of the package name,
-.B
+.I
 _SBo
 by default. Its use is not advisable with
 .B

@@ -59,6 +59,9 @@ build number is apparently higher. See [sboconfig(1)](sboconfig.1.md) or
 or the md5sum check fails, a new download is attempted from
 <ftp://slackware.uk/sbosrcarch/> as a fallback measure. The **\--all**
 flag may be passed to upgrade all eligible SlackBuilds simultaneously.
+Use **\--all-plus-failures** to rebuild any packages with the *\_SBo*
+tag that fail the [sbocheck(1)](sbocheck.1.md) package tests before the upgrade
+process as well.
 
 **sboupgrade** verifies the local repository with **gpg(1)** if
 **GPG_VERIFY** is **TRUE**.
@@ -229,7 +232,7 @@ upgraded only if the version or build number from this directory varies.
 **\--all-plus-failures**
 
 Upgrade the same installed SlackBuilds that would be upgraded with
-**\--all**, as well as any packages with the **SBo** tag that fail the
+**\--all**, as well as any packages with the *\_SBo* tag that fail the
 **solibs**, **perl**, **python** or **ruby** tests before the upgrade
 process begins.
 
@@ -315,9 +318,9 @@ can be used without issue.
 
 **TAG**
 
-**TAG** sets the tag at the end of the package name, **\_SBo** by
-default. Its use is not advisable with **sboupgrade**. If a different
-tag is supplied, [sbocheck(1)](sbocheck.1.md) and **sboupgrade** will fail to report
+**TAG** sets the tag at the end of the package name, *\_SBo* by default.
+Its use is not advisable with **sboupgrade**. If a different tag is
+supplied, [sbocheck(1)](sbocheck.1.md) and **sboupgrade** will fail to report
 upgrades for the installed package.
 
 **TMP**

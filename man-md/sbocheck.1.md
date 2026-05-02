@@ -151,7 +151,7 @@ wrong major version, e.g. **python-3.12**. Results are saved to
 **all** - run all supported package checks.
 
 Using **\--type** without another package checking option checks all
-installed **\_SBo** packages.
+installed *\_SBo* packages.
 
 **-X\|\--so-check**
 

@@ -332,7 +332,17 @@ ruby
 or
 .B
 all
-in a comma-separated list to perform extra package tests.
+in a comma-separated list to perform extra package tests. Calling
+.RS
+
+sboupgrade --all-plus-failures
+
+
+.RE
+performs all available upgrades and rebuilds any packages with the
+.I
+_SBo
+tag that fail one of these tests before the upgrade process begins.
 .P
 A limited number of SlackBuilds download files when running,
 which some users consider a security risk. Set
