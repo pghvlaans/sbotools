@@ -12,6 +12,8 @@
   * Added a setting **NONET** to block network access when running SlackBuilds
   * *sboupgrade*: Added **\--all-plus-failures**
     * Thanks to dchmelik for the suggestion.
+  * Added a hint for *sboupgrade* to ignore test failures for a script
+  * *sbohints*: Fixed the long-form **\--replace-optional** flag
 
 * 4.1.3 - 2025-12-26
   * *Build.pm*: Retrieve the name of the last package created by a SlackBuild, not the first
