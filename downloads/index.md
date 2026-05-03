@@ -16,8 +16,8 @@ Use the key from the homepage (updated 2024-12-15) to verify downloads with gpg.
 This file has been installed to `/etc/sbotools/obsolete` since `sbotools-3.6`. It contains a list of scripts that have been added to Slackware -current under different names, or are unneeded build dependencies in Slackware -current. It will be updated as needed.
 
 * [obsolete](obsolete) ([asc](obsolete.asc))
-    * md5sum: `bb77166c0e5e7ef3e56192f7949db934`
-    * Updated 2025-10-31.
+    * md5sum: `21fb485ccd62f02d6b97c81ad3686523`
+    * Updated 2026-05-03.
 
 ## Perl Build History
 
