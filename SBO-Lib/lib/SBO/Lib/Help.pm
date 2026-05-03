@@ -70,7 +70,8 @@ the "Filter" button to search within the results.
 our @help_builds_fail_menu = ('Build Lists - Help',
 
 'Select a SlackBuild from this screen to see its "Operations" menu. Use
-the "Reinstall" button to reinstall all packages on the list.');
+the "Reinstall" button to reinstall all packages on the list, except
+for those that have the Ignore Tests hint.');
 
 our @help_clean = ('sboclean - Help',
 
@@ -101,7 +102,7 @@ if this option is used.');
 
 our @help_hints = ('Hints - Help',
 
-'sbotools recognizes three kinds of per-script hints. The root user can
+'sbotools recognizes four kinds of per-script hints. The root user can
 add, modify and clear hints via the "Edit Hints" menu in the
 "Operations" dialog for each SlackBuild.
 
@@ -126,6 +127,12 @@ The following dependency-related options may appear in "Edit Hints":
                       list.
   Clear all Optional: Remove the entire list of SlackBuilds.
   New Optional List:  Replace an existing list with a new one.
+
+4. Ignore Test Failures
+
+sboupgrade ignores test failures for the script when running with
+"--all-plus-failures". This is useful for some scripts that repackage
+binaries.
 
 Please note that compat32 builds share hints with the corresponding
 base SlackBuild.');
@@ -507,7 +514,7 @@ If edits are needed, please ensure that lines in the body text do not exceed 72 
 
 =head1 SEE ALSO
 
-SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3)
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), sbotool(1)
 
 =head1 AUTHORS
 

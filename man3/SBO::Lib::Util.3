@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Sweetmorn, Discord 43, 3192 YOLD" "" "sbotools 4.1.3"
+.TH SBO::Lib::Util 3 "Pungenday, Discord 50, 3192 YOLD - Discoflux" "" "sbotools 4.1.3"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -150,11 +150,12 @@ Times are adjusted in the \f(CWreconcile_time()\fR subroutine before reporting.
 .ie n .SS @listings
 .el .SS \f(CW@listings\fP
 .IX Subsection "@listings"
-An array with blacklisted scripts and requests for optional dependencies and
-automatic reverse dependency rebuilds read in from \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR.
-.ie n .SS "(@on_blacklist, @auto_reverse, %optional)"
-.el .SS "(@on_blacklist, \f(CW@auto_reverse\fP, \f(CW%optional\fP)"
-.IX Subsection "(@on_blacklist, @auto_reverse, %optional)"
+An array with blacklisted scripts and requests for optional dependencies, ignoring
+test failures and automatic reverse dependency rebuilds read in from
+\&\f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR.
+.ie n .SS "(@on_blacklist, @auto_reverse, %optional, @ignore_tests)"
+.el .SS "(@on_blacklist, \f(CW@auto_reverse\fP, \f(CW%optional\fP, \f(CW@ignore_tests\fP)"
+.IX Subsection "(@on_blacklist, @auto_reverse, %optional, @ignore_tests)"
 These exported variables are populated by \f(CWread_hints()\fR and used to determine hint
 status.
 .ie n .SS $obs_file
@@ -321,6 +322,14 @@ The program exits if the version is unsupported or if an error occurs.
 .PP
 \&\f(CWidx()\fR looks for \f(CW$needle\fR in \f(CW@haystack\fR, and returns the index of where
 it was found, or \f(CW\*(C`undef\*(C'\fR if it was not found.
+.SS ignore_tests
+.IX Subsection "ignore_tests"
+.Vb 1
+\&  my $result = ignore_tests($sbo)
+.Ve
+.PP
+\&\f(CWignore_tests()\fR checks whether test failures for \f(CW$sbo\fR are to be ignored by
+\&\f(CWsboupgrade(1)\fR. Results will be the same for the \f(CW\*(C`compat32\*(C'\fR version of the script.
 .SS in
 .IX Subsection "in"
 .Vb 1
@@ -464,12 +473,13 @@ There is no useful return value.
 .Ve
 .PP
 \&\f(CWread_hints()\fR reads the contents of /etc/sbotools/sbotools.hints, returning an array
-of optional dependency requests and blacklisted scripts. \f(CWread_hints()\fR is used to
+of potentially valid lines in \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR. \f(CWread_hints()\fR is used to
 populate global array \f(CW@listings\fR, and should only be called at the start and again
 when editing the hints file.
 .PP
-\&\f(CW@on_blacklist\fR, \f(CW@auto_reverse\fR and \f(CW%optional\fR are populated here and used by
-\&\f(CWon_blacklist()\fR, \f(CWauto_reverse()\fR and \f(CWget_optional()\fR later.
+\&\f(CW@on_blacklist\fR, \f(CW@auto_reverse\fR, \f(CW%optional\fR and \f(CW@ignore_tests\fR are populated
+here and used by \f(CWon_blacklist()\fR, \f(CWauto_reverse()\fR, \f(CWget_optional()\fR and \f(CW\*(C`ignore_tests\*(C'\fR
+later.
 .SS reconcile_time
 .IX Subsection "reconcile_time"
 .Vb 1

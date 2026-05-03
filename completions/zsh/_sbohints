@@ -22,7 +22,8 @@ _arguments -s \
 	   '(-o --optional)'{-o,--optional}'[Add (or clear with -c) optional dependency requests for one or more scripts.]:' \
 	   '(-r --reverse)'{-r,--reverse}'[Add (or clear with -c) reverse dependency rebuild requests for one or more scripts.]:' \
 	   '(-O --replace-optional)'{-O,--replace-optional}'[Replace (or remove with -r) all optional dependency requests for one or more scripts.]:' \
-	   '(-c --clear)'{-c,--clear}'[Together with -b, -r, -o or -O, clear items instead of adding or replacing.]:'\
+	   '(-t --ignore-tests)'{-t,--ignore-tests}'[Add (or clear with -c) a request that sboupgrade ignore test failures for one or more scripts.]:' \
+	   '(-c --clear)'{-c,--clear}'[Together with -b, -r, -t, -o or -O, clear items instead of adding or replacing.]:'\
 	   '(-)*:SlackBuild:(${slackbuilds:|words})' \
     && return 0
 

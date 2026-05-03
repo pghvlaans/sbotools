@@ -14,7 +14,7 @@ The
 file is used to give
 .B
 sbotools
-hints about individual scripts. Three kinds of hints
+hints about individual scripts. Four kinds of hints
 are recognized:
 .RS
 
@@ -23,6 +23,8 @@ are recognized:
 \[bu] optional reverse dependencies
 
 \[bu] automatic reverse dependency rebuilds
+
+\[bu] test failures are ignored by sboupgrade
 
 .RE
 Please note that all requests apply equally
@@ -87,6 +89,21 @@ To use a configuration directory other than
 .B
 SBOTOOLS_CONF_DIR
 with an absolute path.
+.P
+To ask
+.B
+sboupgrade(1)
+to ignore test failures for a script when called with
+.B
+--all-plus-failures\fR\
+\&, place the name of the script on its own line with no
+whitespace, prepending a percent sign:
+.RS
+
+%zoom-linux
+
+
+.RE
 .SH SEE ALSO
 .P
 sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sbotool(1), sboupgrade(1), sbotools.colors(5), sbotools.conf(5)

@@ -11,7 +11,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :colors auto_reverse get_optional in lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay /;
+use SBO::Lib qw/ :config :colors auto_reverse get_optional ignore_tests in lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 
@@ -44,8 +44,10 @@ Options:
     replace all optional dependencies for scripts (clear with c).
   -r|--reverse:
     add reverse dependency rebuild requests for scripts (clear with c).
+  -t|--ignore-tests:
+    sboupgrade ignores test results for scripts (clear with c).
   --reset:
-    empty the blacklist and optional dependencies.
+    clear all hints.
 
   -c|--clear:
     clear instead of add.
@@ -57,7 +59,7 @@ Options:
 EOF
 }
 
-my ($help, $version, $list, $reset, $reverse, $optional, $replace_optional, $blacklist, $clear, $query, $nocolor, $color, $nowrap, $wrap);
+my ($help, $version, $list, $reset, $reverse, $optional, $replace_optional, $blacklist, $ignore_tests, $clear, $query, $nocolor, $color, $nowrap, $wrap);
 
 GetOptions(
 	'help|h'              => \$help,
@@ -66,10 +68,11 @@ GetOptions(
 	'reset'               => \$reset,
 	'reverse|r'           => \$reverse,
 	'optional|o'          => \$optional,
-	'replace_optional|O'  => \$replace_optional,
+	'replace-optional|O'  => \$replace_optional,
 	'clear|c'             => \$clear,
 	'query|q'             => \$query,
 	'blacklist|b'         => \$blacklist,
+	'ignore-tests|t'      => \$ignore_tests,
 	'nocolor'             => \$nocolor,
 	'color'               => \$color,
 	'nowrap'              => \$nowrap,
@@ -92,8 +95,8 @@ unless (@ARGV or $list or $reset) { show_usage(); exit 0; }
 
 lint_sbo_config($self, %config);
 
-if (($blacklist and ($optional or $replace_optional or $reverse)) or ($optional and $replace_optional) or ($optional and $reverse) or ($replace_optional and $reverse)) {
-	usage_error("optional, replace_optional, reverse and blacklist cannot be used together.");
+if (($blacklist and ($optional or $replace_optional or $reverse or $ignore_tests)) or ($optional and ($replace_optional or $reverse or $ignore_tests)) or ($replace_optional and $reverse) or ($replace_optional and $ignore_tests) or ($reverse and $ignore_tests)) {
+	usage_error("optional, replace-optional, reverse, ignore-tests and blacklist cannot be used together.");
 }
 
 if ($list) { show_list(); exit 0; }
@@ -104,7 +107,7 @@ for my $item (@ARGV) {
 
 if ($query) { make_query(); exit 0; }
 
-if ($reset and ($optional or $clear or $replace_optional or $blacklist or $clear or $reverse)) {
+if ($reset and ($optional or $clear or $replace_optional or $blacklist or $clear or $reverse or $ignore_tests)) {
 	usage_error("reset cannot be used with other flags.");
 }
 
@@ -127,7 +130,7 @@ if ($replace_optional or $optional) {
 	}
 }
 
-if ($blacklist or $reverse) {
+if ($blacklist or $reverse or $ignore_tests) {
 	unless (@ARGV) { show_usage(); exit 0; }
 	for my $target (uniq @ARGV) { alter_designation($target); }
 }
@@ -154,20 +157,31 @@ sub alter_designation {
 		wrapsay "$sbo already has a reverse dependency rebuild request.";
 		return;
 	}
+	if ($clear and $ignore_tests and not ignore_tests($sbo)) {
+		wrapsay "$sbo test failures are not ignored by sboupgrade.";
+		return;
+	}
+	if ($ignore_tests and ignore_tests($sbo) and not $clear) {
+		wrapsay "$sbo test failures are already ignored by sboupgrade.";
+		return;
+	}
 	if ($clear) {
 		my @incoming;
 		# it is not possible to reach this point unless
 		# /etc/sbotools/sbotools.hints exists
 		my ($rfh, $rexit) = open_read($hint_file);
 		error_code("Failed to open $hint_file; exiting.", $rexit) if $rexit;
-		# flag -cb/-cr; only write back lines that don't alter the
+		# flag -cb/-cr/-ct; only write back lines that don't alter the
 		# designation for $sbo
 		if ($blacklist) {
 			wrapsay "Clearing $sbo from the blacklist...";
 			for my $line (<$rfh>) { push @incoming, $line unless $line =~ m/^\!\Q$sbo\E$/; }
-		} else {
+		} elsif ($reverse) {
 			wrapsay "Clearing reverse dependency rebuild request for $sbo...";
 			for my $line (<$rfh>) { push @incoming, $line unless $line =~ m/^\~\Q$sbo\E$/; }
+		} elsif ($ignore_tests) {
+			wrapsay "Clearing test failure ignore request for $sbo...";
+			for my $line (<$rfh>) { push @incoming, $line unless $line =~ m/^\%\Q$sbo\E$/; }
 		}
 		close $rfh;
 		my ($fh, $exit) = open_fh($hint_file, ">");
@@ -179,14 +193,17 @@ sub alter_designation {
 		system(qw/ touch /, $hint_file) unless -f $hint_file;
 		my ($fh, $exit) = open_fh($hint_file, ">>");
 		error_code("Failed to open $hint_file; exiting.", $exit) if $exit;
-		# flag -b/-r; print a new line blacklisting/requesting reverse
-		# rebuilds for $sbo
+		# flag -b/-r/-t; print a new line blacklisting/requesting reverse
+		# rebuilds/ignoring test failures for $sbo
 		if ($blacklist) {
 			wrapsay "Blacklisting $sbo...";
 			print {$fh} "!$sbo\n";
-		} else {
+		} elsif ($reverse) {
 			wrapsay "Requesting reverse dependency rebuilds for $sbo...";
 			print {$fh} "~$sbo\n";
+		} elsif ($ignore_tests) {
+			wrapsay "sboupgrade will ignore test failures for $sbo...";
+			print {$fh} "%$sbo\n";
 		}
 		close $fh;
 	}
@@ -199,8 +216,8 @@ sub invalid_prompt_input {
 		wrapsay("Separate -compat32 requests are not needed.", 1);
 		return 1;
 	}
-	if (grep { /\!/ } @incoming) {
-		wrapsay_color $color_lesser, "! cannot be used in optional dependency requests.", 1;
+	if (grep { /(\!|\%|\~)/ } @incoming) {
+		wrapsay_color $color_lesser, "!, ~ and % cannot be used in optional dependency requests.", 1;
 		return 1;
 	}
 	if (in $sbo, @incoming) {
@@ -225,6 +242,10 @@ sub make_query {
 		}
 		if (auto_reverse($sbo)) {
 			wrapsay "$sbo has automatic reverse dependency rebuilding.";
+			$made_output = 1;
+		}
+		if (ignore_tests($sbo)) {
+			wrapsay "$sbo test failures are ignored by sboupgrade.";
 			$made_output = 1;
 		}
 		if (my @optionals = get_optional($sbo)) {
@@ -367,6 +388,19 @@ sub show_list {
 		} else {
 			my $result = shift @display_auto_reverse;
 			wrapsay "$result has reverse dependency rebuilding.";
+		}
+		$made_output = 1;
+	}
+	if (@ignore_tests) {
+		print "\n" if $made_output;
+		my @display_ignore_tests = grep { !/-compat32$/ } @ignore_tests;
+		@display_ignore_tests = sort(uniq(@display_ignore_tests));
+		unless (@display_ignore_tests == 1) {
+			wrapsay_color $color_notice, "Test failures for the following scripts are ignord by sboupgrade:";
+			say $_ for (@display_ignore_tests);
+		} else {
+			my $result = shift @display_ignore_tests;
+			wrapsay "$result test failures are ignored by sboupgrade.";
 		}
 		$made_output = 1;
 	}

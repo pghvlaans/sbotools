@@ -10,7 +10,7 @@
 use strict;
 use warnings;
 
-use SBO::Lib qw/ :colors :config :const :help auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_readme_contents get_reverse_reqs get_sbo_description get_sbo_location get_slack_version get_user_group in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp series_check solib_check uniq update_known_solibs user_group_do_not_exist %concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated %warnings /;
+use SBO::Lib qw/ :colors :config :const :help auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_readme_contents get_reverse_reqs get_sbo_description get_sbo_location get_slack_version get_user_group ignore_tests in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp series_check solib_check uniq update_known_solibs user_group_do_not_exist %concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated %warnings /;
 
 use File::Basename;
 use File::Find;
@@ -225,7 +225,7 @@ sub build_operations {
 	push @build_operations, "\"View File\" \"View any file in the script directory.\" \\";
 	push @build_operations, "\"RevDep (installed)\" \"Dependent packages on the system.\" \\" if @installed_reverse;
 	push @more_info, "\"RevDep (all)\" \"All dependent packages in the repo.\" \\" if @available_reverse;
-	if (on_blacklist($sbo) or auto_reverse($sbo) or get_optional($sbo) and $< != 0) {
+	if (on_blacklist($sbo) or auto_reverse($sbo) or get_optional($sbo) or ignore_tests($sbo) and $< != 0) {
 		push @build_operations, "\"Hints\" \"View package hints.\" \\";
 	}
 	unless (on_blacklist($sbo)) {
@@ -271,7 +271,7 @@ sub build_operations {
 		push @more_info, "\"Remove Override\" \"Delete the script from local overrides.\" \\";
 	}
 	push @more_info, "\"Package Tests\" \"Check solibs, perl, python and ruby.\" \\" if $inst_names{$sbo} or $inst_names_std{$sbo};
-	push @build_operations, "\"Edit Hints\" \"Blacklist, auto-rebuild and dependencies.\" \\" if $< == 0;
+	push @build_operations, "\"Edit Hints\" \"Blacklist, auto-rebuild, ignore tests, deps.\" \\" if $< == 0;
 	if ($inst_names{$sbo} and $< == 0 and not on_blacklist($sbo)) {
 		push @build_operations, "\"Remove\" \"Remove with unneeded dependencies.\" \\";
 		if (in $sbo, @update_names) {
@@ -745,11 +745,12 @@ sub display_builds {
 	my $do_filter;
 	if ($label =~ /(Missing|Perl|Python|Ruby)/ and $< == 0) {
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide", $for_dialog, "Select a SlackBuild\n\nuse\n\nplease");
-		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --extra-button --extra-label \"Reinstall\" --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\n\nUse Reinstall to reinstall everything on the list.\n\nPlease note that precompiled binaries do not require rebuilds.\" $height $width $height --file $dialog_input", @help_builds_fail_menu);
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --extra-button --extra-label \"Reinstall\" --title \"$label\" --item-help --menu \"Select a SlackBuild for more options.\n\nUse Reinstall to reinstall non-ignored scripts on the list.\n\nPlease note that precompiled binaries do not require rebuilds.\" $height $width $height --file $dialog_input", @help_builds_fail_menu);
 		if ($res == $code_dialog_extra) {
 			my $cmd = "/usr/sbin/sboinstall --reinstall";
 			my $need_dependency_prompt = 0;
 			for my $missing (@array_to_use) {
+				next if ignore_tests($missing);
 				my $queue = get_build_queue([$missing]);
 				my @disp_queue;
 				unless ($missing =~ /compat32$/) {
@@ -1547,6 +1548,7 @@ sub edit_hint {
 	my $blacklisted = on_blacklist($sbo);
 	my $is_auto = auto_reverse($sbo);
 	my $optional = get_optional($sbo);
+	my $ignore_tests = ignore_tests($sbo);
 
 	if ($blacklisted) {
 		push @hint_menu, "\"Blacklist (clear)\" \"Add to queues normally.\" \\";
@@ -1560,15 +1562,21 @@ sub edit_hint {
 		push @hint_menu, "\"Do Auto-Rebuilds\" \"Auto-rebuild reverse deps.\" \\";
 	}
 
+	if ($ignore_tests) {
+		push @hint_menu, "\"Respect Test Failures\" \"Respect tests with sboupgrade.\" \\";
+	} else {
+		push @hint_menu, "\"Ignore Test Failures\" \"Ignore tests with sboupgrade.\" \\";
+	}
+
 	push @hint_menu, "\"Add Optional Deps\" \"Add optional dependencies.\" \\";
 	if ($optional) {
 		push @hint_menu, "\"Clear Optionals\" \"Clear optional dependencies.\" \\",
 						"\"Clear all Optional\" \"Clear all optional dependencies.\" \\",
 					    "\"New Optional List\" \"Replace the optional dependency list.\" \\";
 	}
-	if (($blacklisted and ($is_auto or $optional)) or ($is_auto and $optional)) {
+	if (($blacklisted and ($is_auto or $optional or $ignore_tests)) or ($is_auto and ($optional or $ignore_tests)) or ($optional and $ignore_tests)) {
 		push @hint_menu, "\"\" \"\" \\",
-						"\"Clear all Hints\" \"No hints for $sbo.\" \\" if $is_auto or $optional;
+						"\"Clear all Hints\" \"No hints for $sbo.\" \\";
 	}
 
 	$hint_menu[-1] =~ s/\\$//;
@@ -1588,15 +1596,18 @@ sub edit_hint {
 		push @flags, "cb" if $blacklisted;
 		push @flags, "cr" if $is_auto;
 		push @flags, "cO" if $optional;
+		push @flags, "ct" if $ignore_tests;
 	}
 
 	push @flags, "cO" if $option eq "Clear all Optional";
 	push @flags, "cb" if $option eq "Blacklist (clear)";
 	push @flags, "co" if $option eq "Clear Optionals";
 	push @flags, "cr" if $option eq "No Auto-Rebuilds";
+	push @flags, "ct" if $option eq "Respect Test Failures";
 	push @flags, "r" if $option eq "Do Auto-Rebuilds";
 	push @flags, "o" if $option eq "Add Optional Deps";
 	push @flags, "b" if $option eq "Blacklist";
+	push @flags, "t" if $option eq "Ignore Test Failures";
 	push @flags, "O" if $option eq "New Optional List";
 
 	edit_hint($sbo) unless @flags;

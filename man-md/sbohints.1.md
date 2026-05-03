@@ -23,7 +23,7 @@
 
     sbohints [-l|--reset]
 
-    sbohints [-c] [-Obor] sbo_name (sbo_name)
+    sbohints [-c] [-Obort] sbo_name (sbo_name)
 
     sbohints [-q] sbo_name (sbo_name)
 
@@ -32,7 +32,7 @@
 ## DESCRIPTION
 
 **sbohints** queries and edits script-specific hints in
-[sbotools.hints(5)](sbotools.hints.5.md). Three kinds of hints are recognized:
+[sbotools.hints(5)](sbotools.hints.5.md). Four kinds of hints are recognized:
 
 • blacklist
 
@@ -40,9 +40,11 @@
 
 • automatic reverse dependency rebuild
 
+• test failures are ignored by sboupgrade
+
 The modification flags are **\--blacklist**, **\--optional**,
-**\--replace-optional** and **\--reverse**. These can be used in
-conjunction with **\--clear**, but not with each other.
+**\--replace-optional**, **\--reverse** and **\--ignore-tests**. These
+can be used in conjunction with **\--clear**, but not with each other.
 
 Please note that all hints apply equally to the *compat32* version of
 the target script or scripts; specific requests for *compat32* scripts
@@ -84,13 +86,20 @@ profile script has been sourced. Requesting reverse dependency rebuilds
 for such packages is not advised unless the **ETC_PROFILE** setting is
 **TRUE**. See [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md) for details.
 
+**-t\|\--ignore-tests**
+
+Add (or, with **\--clear**, clear) a request that [sboupgrade(1)](sboupgrade.1.md)
+ignore test failures for one or more scripts when running with
+**\--all-plus-failures**.
+
 **-c\|\--clear**
 
 This flag is used together with one (and only one) of **\--blacklist**,
-**\--optional**, **\--replace-optional** or **\--reverse**. For
-**\--blacklist**, **\--optional** and **\--reverse**, clear entries
-instead of adding them. For **\--replace-optional**, clear all existing
-optional dependency requests.
+**\--optional**, **\--replace-optional**, **\--ignore-tests** or
+**\--reverse**. For **\--blacklist**, **\--optional**,
+**\--ignore-tests** and **\--reverse**, clear entries instead of adding
+them. For **\--replace-optional**, clear all existing optional
+dependency requests.
 
 **-l\|\--list**
 

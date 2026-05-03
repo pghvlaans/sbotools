@@ -29,3 +29,10 @@
 # ~libmodplug
 #
 # There may not be any whitespace in auto-reverse entries.
+
+# To request that sboupgrade ignore test failures for a script, prepend
+# a percent sign:
+#
+# %zoom-linux
+#
+# There may not be any whitespace in ignore-tests entries.

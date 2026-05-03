@@ -106,6 +106,7 @@ sed -i "s/\\\\\[/[/g" *
 sed -i "s/\\\\\]/]/g" *
 sed -i "s/^!javacc/    !javacc /g" *
 sed -i "s/^˜libmodplug/    ~libmodplug /g" *
+sed -i "s/^%zoom-linux/    %zoom-linux /g" *
 sed -i "s/^libcacard /    libcacard /g" *
 sed -i "s/^dialog /    dialog /g" *
 sed -i 's|\\\\\\$|\\|g' *

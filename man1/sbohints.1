@@ -10,7 +10,7 @@ sbohints [-h|-v]
 .P
 sbohints [-l|--reset]
 .P
-sbohints [-c] [-Obor] sbo_name (sbo_name)
+sbohints [-c] [-Obort] sbo_name (sbo_name)
 .P
 sbohints [-q] sbo_name (sbo_name)
 .P
@@ -22,7 +22,7 @@ sbohints
 queries and edits script-specific hints in
 .B
 sbotools.hints(5)\fR\
-\&. Three
+\&. Four
 kinds of hints are recognized:
 .RS
 
@@ -31,6 +31,8 @@ kinds of hints are recognized:
 \[bu] optional dependencies
 
 \[bu] automatic reverse dependency rebuild
+
+\[bu] test failures are ignored by sboupgrade
 
 .RE
 The modification flags are
@@ -41,10 +43,13 @@ The modification flags are
 --optional\fR\
 \&,
 .B
---replace-optional
+--replace-optional\fR\
+\&,
+.B
+--reverse
 and
 .B
---reverse\fR\
+--ignore-tests\fR\
 \&. These can be used in conjunction with
 .B
 --clear\fR\
@@ -148,6 +153,21 @@ for details.
 .RE
 .P
 .B
+-t|--ignore-tests
+.RS
+Add (or, with
+.B
+--clear\fR\
+\&, clear) a request that
+.B
+sboupgrade(1)
+ignore test failures for one or more scripts when running with
+.B
+--all-plus-failures\fR\
+\&.
+.RE
+.P
+.B
 -c|--clear
 .RS
 This flag is used together with one (and only one) of
@@ -158,7 +178,10 @@ This flag is used together with one (and only one) of
 --optional\fR\
 \&,
 .B
---replace-optional
+--replace-optional\fR\
+\&,
+.B
+--ignore-tests
 or
 .B
 --reverse\fR\
@@ -167,7 +190,10 @@ or
 --blacklist\fR\
 \&,
 .B
---optional
+--optional\fR\
+\&,
+.B
+--ignore-tests
 and
 .B
 --reverse\fR\

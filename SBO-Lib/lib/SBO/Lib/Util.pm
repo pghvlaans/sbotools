@@ -51,6 +51,7 @@ my @EXPORT_CONFIG = qw{
   $conf_file
   $color_file
   $hint_file
+  @ignore_tests
   %config
   @listings
   @on_blacklist
@@ -107,6 +108,7 @@ our @EXPORT_OK = (
     get_slack_version
     get_slack_version_url
     idx
+    ignore_tests
     in
     in_regexp
     indent
@@ -235,10 +237,11 @@ Times are adjusted in the C<reconcile_time()> subroutine before reporting.
 
 =head2 @listings
 
-An array with blacklisted scripts and requests for optional dependencies and
-automatic reverse dependency rebuilds read in from C</etc/sbotools/sbotools.hints>.
+An array with blacklisted scripts and requests for optional dependencies, ignoring
+test failures and automatic reverse dependency rebuilds read in from
+C</etc/sbotools/sbotools.hints>.
 
-=head2 (@on_blacklist, @auto_reverse, %optional)
+=head2 (@on_blacklist, @auto_reverse, %optional, @ignore_tests)
 
 These exported variables are populated by C<read_hints()> and used to determine hint
 status.
@@ -324,7 +327,7 @@ read_config();
 
 # The hints file should be read in at the start, and
 # only if editing the hints file thereafter.
-our (@on_blacklist, @auto_reverse, %optional);
+our (@on_blacklist, @auto_reverse, %optional, @ignore_tests);
 our @listings = read_hints();
 
 # A list of obsolete scripts for Slackware-current.
@@ -714,6 +717,22 @@ sub idx {
     $_[0] eq $_[$idx] and return $idx - 1;
   }
   return undef;
+}
+
+=head2 ignore_tests
+
+  my $result = ignore_tests($sbo)
+
+C<ignore_tests()> checks whether test failures for C<$sbo> are to be ignored by
+C<sboupgrade(1)>. Results will be the same for the C<compat32> version of the script.
+
+=cut
+
+sub ignore_tests {
+  script_error("ignore_tests requires an argument.") unless @_ == 1;
+  my $sbo = shift;
+  return 1 if in($sbo, @ignore_tests);
+  return 0;
 }
 
 =head2 in
@@ -1202,12 +1221,13 @@ sub read_config {
   our @listings = read_hints();
 
 C<read_hints()> reads the contents of /etc/sbotools/sbotools.hints, returning an array
-of optional dependency requests and blacklisted scripts. C<read_hints()> is used to
+of potentially valid lines in C</etc/sbotools/sbotools.hints>. C<read_hints()> is used to
 populate global array C<@listings>, and should only be called at the start and again
 when editing the hints file.
 
-C<@on_blacklist>, C<@auto_reverse> and C<%optional> are populated here and used by
-C<on_blacklist()>, C<auto_reverse()> and C<get_optional()> later.
+C<@on_blacklist>, C<@auto_reverse>, C<%optional> and C<@ignore_tests> are populated
+here and used by C<on_blacklist()>, C<auto_reverse()>, C<get_optional()> and C<ignore_tests>
+later.
 
 =cut
 
@@ -1215,6 +1235,7 @@ sub read_hints{
   @listings = () if @listings;
   splice @on_blacklist;
   splice @auto_reverse;
+  splice @ignore_tests;
   %optional = ();
   if(-f "$hint_file") {
     my $contents = slurp("$hint_file");
@@ -1237,6 +1258,11 @@ sub read_hints{
       $item =~ s/~//;
       push @auto_reverse, $item;
       push @auto_reverse, "$item-compat32";
+    } elsif ($item =~ m/^%/) {
+      next if $item =~ m/\s/;
+      $item =~ s/%//;
+      push @ignore_tests, $item;
+      push @ignore_tests, "$item-compat32";
     } else {
       my @cand = split " ", $item;
       if (@cand gt 1) {
