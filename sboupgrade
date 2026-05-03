@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group in ineligible_compat installed_solibs is_obsolete merge_queues open_fh user_group_do_not_exist user_prompt process_sbos print_failures rationalize_queue series_check slurp solib_check verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group in ineligible_compat installed_solibs is_obsolete merge_queues on_blacklist open_fh user_group_do_not_exist user_prompt process_sbos print_failures rationalize_queue series_check slurp solib_check verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -190,7 +190,7 @@ if ($all) {
 			my $sbo_pkg = +{ map {; $_->{name}, $_->{pkg} } @installed_sbos };
 			wrapsay_color $color_notice, "Checking packges for missing shared objects...";
 			for my $sbo (keys %$sbo_pkg) {
-				next if in $sbo, @ARGV;
+				next if in $sbo, @ARGV or on_blacklist $sbo;
 				unless (solib_check($sbo_pkg->{$sbo})) {
 					push @ARGV, $sbo;
 					push @bad_solibs, $sbo;
@@ -207,7 +207,7 @@ if ($all) {
 			wrapsay_color $color_notice, "Checking packges for system incompatibility...";
 			my @series_to_check = ("perl", "python", "ruby");
 			for my $sbo (keys %$sbo_pkg) {
-				next if in $sbo, @ARGV;
+				next if in $sbo, @ARGV or on_blacklist $sbo;
 				my @results = series_check($sbo_pkg->{$sbo}, @series_to_check);
 				push @bad_perl, $sbo unless $results[0];
 				push @bad_python, $sbo unless $results[1];
