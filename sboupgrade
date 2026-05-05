@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group ignore_tests in ineligible_compat installed_solibs is_obsolete merge_queues on_blacklist open_fh user_group_do_not_exist user_prompt process_sbos print_failures rationalize_queue series_check slurp solib_check verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group ignore_tests in ineligible_compat installed_solibs is_obsolete merge_queues on_blacklist open_fh user_group_do_not_exist user_prompt process_sbos print_failures rationalize_queue series_check slurp solib_check update_known_solibs verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -559,6 +559,7 @@ print_failures($failures);
 
 if ($config{SO_CHECK} eq "TRUE" and @solib_search and not $no_install) {
 	print "\nChecking for broken shared object dependencies from this upgrade...";
+	update_known_solibs();
 	my (@actionable, @log_output);
 	my @new_installed = @{ get_installed_packages("SBO", 1) };
 	my $installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @new_installed };
