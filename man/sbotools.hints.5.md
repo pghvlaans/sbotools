@@ -15,13 +15,15 @@
 ## DESCRIPTION
 
 The */etc/sbotools/sbotools.hints* file is used to give **sbotools**
-hints about individual scripts. Three kinds of hints are recognized:
+hints about individual scripts. Four kinds of hints are recognized:
 
 • blacklist
 
 • optional reverse dependencies
 
 • automatic reverse dependency rebuilds
+
+• test failures are ignored by sboupgrade
 
 Please note that all requests apply equally to the *compat32* versions
 of the scripts; specific requests for *compat32* scripts are
@@ -54,6 +56,12 @@ of any entry.
 [sbohints(1)](sbohints.1.md) can also be used to interface with this file. To use a
 configuration directory other than */etc/sbotools*, export an
 environment variable **SBOTOOLS_CONF_DIR** with an absolute path.
+
+To ask [sboupgrade(1)](sboupgrade.1.md) to ignore test failures for a script when
+called with **\--all-plus-failures**, place the name of the script on
+its own line with no whitespace, prepending a percent sign:
+
+    %zoom-linux 
 
 ## SEE ALSO
 

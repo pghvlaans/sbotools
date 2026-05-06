@@ -131,6 +131,11 @@ with the name of the script and a timestamp. Please note that because
 may differ when running some SlackBuilds unless **LOG_DIR** is
 **FALSE**.
 
+**NONET=(FALSE\|TRUE)**
+
+If set to **TRUE**, do not allow network access when running
+SlackBuilds.
+
 **OBSOLETE_CHECK=(FALSE\|TRUE)**
 
 If **TRUE**, download updated copies of the obsolete script list and the

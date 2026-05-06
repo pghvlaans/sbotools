@@ -21,17 +21,21 @@
 
     sboinstall [-h|-v]
 
-    sboinstall [-dce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
+    sboinstall [-Ndce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+\
                [-DRiopr] [--batch|--dry-run] [--create-template|-t FILE] \
                sbo_name (sbo_name)
 
-    sboinstall [-cde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
+    sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+\
                [-Di] --use-template FILE
 
-    sboinstall [-cde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
+    sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+\
                [-Dioqr] [--create-template|-t FILE] --mass-rebuild
 
-    sboinstall [-cde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \
+    sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+\
                [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES,\...
 
     sboinstall [--color|--nocolor] [--wrap|--nowrap] \...
@@ -131,6 +135,11 @@ of the **PKG_DIR** setting.
 If an **absolute path**, save build logs here, overriding the value of
 the **LOG_DIR** setting. Logs are saved with the name of the script and
 a timestamp.
+
+**-N\|\--nonet (FALSE\|TRUE)**
+
+If **TRUE**, do not allow network access when running SlackBuilds. This
+overrides the **NONET** setting.
 
 **-o\|\--norecall**
 
@@ -329,10 +338,10 @@ can be used without issue.
 
 **TAG**
 
-**TAG** sets the tag at the end of the package name, **\_SBo** by
-default. Its use is not advisable with **sboinstall**. If a different
-tag is supplied, [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md) will fail to
-report upgrades for the installed package.
+**TAG** sets the tag at the end of the package name, *\_SBo* by default.
+Its use is not advisable with **sboinstall**. If a different tag is
+supplied, [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md) will fail to report
+upgrades for the installed package.
 
 **TMP**
 

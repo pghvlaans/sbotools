@@ -25,7 +25,7 @@
 
     sboconfig [--reset]
 
-    sboconfig [-CKOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo
+    sboconfig [-CKNOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo
 /path\|FALSE] \
               [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \
               [-r url|FALSE]
@@ -161,6 +161,11 @@ are saved with the name of the script and a timestamp. Please note that
 because **STDERR** must be redirected for a complete log, colors and
 formatting may differ when running some SlackBuilds unless **LOG_DIR**
 is **FALSE**.
+
+**-N\|\--nonet (FALSE\|TRUE)**
+
+**NONET**: If **TRUE**, do not allow network access when running
+SlackBuilds.
 
 **-O\|\--obsolete-check (FALSE\|TRUE)**
 

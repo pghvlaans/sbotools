@@ -1,7 +1,8 @@
 ## ChangeLog.md
 
-#### Post-Release
+#### 1.2.2 - 2026-05-06
   * Account for the new **NONET** setting
+  * Compatibility bump
 
 #### 1.2.1 - 2025-12-26
   * *bin/test*: Do not reuse log and test directories if called more than once in the same minute

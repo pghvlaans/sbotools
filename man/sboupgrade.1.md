@@ -21,9 +21,10 @@
 
     sboupgrade [-h|-v]
 
-    sboupgrade [-SXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
-               [-fiopqrz] [--batch|--dry-run] --all|sbo_name (sbo_name)
+               [-fiopqrz] [--batch|--dry-run]
+\--all\|\--all-plus-failures\|sbo_name (sbo_name)
 
     sboupgrade [--color|--nocolor] [--wrap|--nowrap] \...
 
@@ -58,6 +59,9 @@ build number is apparently higher. See [sboconfig(1)](sboconfig.1.md) or
 or the md5sum check fails, a new download is attempted from
 <ftp://slackware.uk/sbosrcarch/> as a fallback measure. The **\--all**
 flag may be passed to upgrade all eligible SlackBuilds simultaneously.
+Use **\--all-plus-failures** to rebuild any packages with the *\_SBo*
+tag that fail the [sbocheck(1)](sbocheck.1.md) package tests before the upgrade
+process as well.
 
 **sboupgrade** verifies the local repository with **gpg(1)** if
 **GPG_VERIFY** is **TRUE**.
@@ -146,6 +150,11 @@ If an **absolute path**, save build logs here, overriding the value of
 the **LOG_DIR** setting. Logs are saved with the name of the script and
 a timestamp.
 
+**-N\|\--nonet (FALSE\|TRUE)**
+
+If **TRUE**, do not allow network access when running SlackBuilds. This
+overrides the **NONET** setting.
+
 **-o\|\--norecall**
 
 Do not reuse saved build options if running with **\--nointeractive** or
@@ -167,7 +176,8 @@ package can be inspected prior to installation. GitHub Issues are
 welcome in case of unexpected failure.
 
 **sboinstall** will not attempt *compat32* builds for Perl-based or
-*noarch* scripts. Incompatible with **\--all**.
+*noarch* scripts. Incompatible with **\--all** and
+**\--all-plus-failures**.
 
 **-q\|\--reverse-rebuild**
 
@@ -215,9 +225,20 @@ Incompatible with **\--nointeractive**.
 Upgrade all installed SlackBuilds that are eligible for upgrades,
 including *compat32* packages. This takes the **BUILD_IGNORE** setting
 into account. See [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
-Incompatible with **\--compat32**. Please note that SlackBuilds
-installed from a **LOCAL_OVERRIDES** directory are upgraded only if the
-version or build number from this directory varies.
+Incompatible with **\--all-plus-failures** and **\--compat32**. Please
+note that SlackBuilds installed from a **LOCAL_OVERRIDES** directory are
+upgraded only if the version or build number from this directory varies.
+
+**\--all-plus-failures**
+
+Upgrade the same installed SlackBuilds that would be upgraded with
+**\--all**, as well as any packages with the *\_SBo* tag that fail the
+**solibs**, **perl**, **python** or **ruby** tests before the upgrade
+process begins. **sboupgrade** ignores test failures for any script with
+an *ignore-tests* request in */etc/sbotools/sbotools.hints*. See
+[sbohints(1)](sbohints.1.md) or [sbotools.hints(5)](sbotools.hints.5.md) for details.
+
+Incompatible with **\--all** and **\--compat32**.
 
 **\--batch**
 
@@ -299,9 +320,9 @@ can be used without issue.
 
 **TAG**
 
-**TAG** sets the tag at the end of the package name, **\_SBo** by
-default. Its use is not advisable with **sboupgrade**. If a different
-tag is supplied, [sbocheck(1)](sbocheck.1.md) and **sboupgrade** will fail to report
+**TAG** sets the tag at the end of the package name, *\_SBo* by default.
+Its use is not advisable with **sboupgrade**. If a different tag is
+supplied, [sbocheck(1)](sbocheck.1.md) and **sboupgrade** will fail to report
 upgrades for the installed package.
 
 **TMP**

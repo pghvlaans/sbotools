@@ -1,5 +1,5 @@
 # ChangeLog
-* Post-Release
+* 4.1.4 - 2026-05-06
   * *sbofind*: Do not match "No tags found" in `TAGS.txt`
   * *contrib*: SCerovec shared a Debian-like sbotool theme
   * Allow for SlackBuilds without specified downloads
