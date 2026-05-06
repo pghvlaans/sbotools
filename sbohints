@@ -396,7 +396,7 @@ sub show_list {
 		my @display_ignore_tests = grep { !/-compat32$/ } @ignore_tests;
 		@display_ignore_tests = sort(uniq(@display_ignore_tests));
 		unless (@display_ignore_tests == 1) {
-			wrapsay_color $color_notice, "Test failures for the following scripts are ignord by sboupgrade:";
+			wrapsay_color $color_notice, "Test failures for the following scripts are ignored by sboupgrade:";
 			say $_ for (@display_ignore_tests);
 		} else {
 			my $result = shift @display_ignore_tests;
