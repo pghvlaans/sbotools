@@ -25,7 +25,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 **sbotools** currently supports Slackware 15.0 and beyond. For Slackware 14.0, 14.1 and 14.2, install `sbotools-4.0.2` at the latest. See the **sbotools** [downloads](https://pghvlaans.github.io/sbotools/downloads/) page.
 
 ## Most Recent Changes
-#### Post-Release
+#### 4.1.4 - 2026-05-06
   * sbofind: Do not match "No tags found" in TAGS.txt
   * contrib: SCerovec shared a Debian-like sbotool theme
   * Allow for SlackBuilds without specified downloads
@@ -55,32 +55,6 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbotool: Add a button for missing users and groups
   * Download.pm: Handle download URLs requiring content disposition
     * Selectively add --content-disposition to the wget command, following slackrepo
-
-#### 4.1.2 - 2025-11-21
-  * sbocheck: Perl test properly checks perl-involved shared objects
-
-#### 4.1.1 - 2025-11-20
-  * sboupgrade: --nowrap properly disables sbotools wrapping
-    * Thanks to leoctrl for the report.
-  * sboremove: Fix dependency ordering when running on multiple scripts
-  * Solibs.pm: Figure out perl, python and ruby information only when tests are to be run
-  * sboinstall: --noinstall can build any installed package if --reinstall is used
-  * sboinstall, sboupgrade: Better on-screen messages with --noinstall
-  * Build.pm: Better maintain dependency chains in rationalize_queue()
-  * Build.pm: rationalize_queue() deals with the entire build queue for each script
-  * Build.pm: Share warnings and completed build queues
-  * sbotool: Fix GIT_BRANCH settings editor
-  * Solibs.pm: Stock package check picks up \_slack15.0, e.g.
-  * sbotool: Streamline the settings menu
-    * Thanks to SCerovec for the feedback.
-  * Note recommended non-default settings
-  * sbotool: Hide and unhide items in Operations instead of using a second menu
-
-#### 4.1 - 2025-10-31
-  * Drop support for Slackware 14.0, 14.1 and 14.2
-  * sbocheck, sbotool: Add a perl package compatibility test
-  * sbocheck: --obsolete-check also downloads the perl version history file
-  * sbotool: Add a reinstallation button for build test failure lists
 
 ## Previous Changes
 See [ChangeLog.md](https://github.com/pghvlaans/sbotools/blob/master/SBO-Lib/ChangeLog.md) for a record of changes from version 1.9 onward.

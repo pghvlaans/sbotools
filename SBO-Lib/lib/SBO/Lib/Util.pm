@@ -5,13 +5,13 @@ package SBO::Lib::Util;
 # The line(s) below are used to inform the sbotest wrapper script
 # that sbotools is compatible.
 
-#% SBOTEST V1.2.1 COMPAT %concluded %
+#% SBOTEST V1.2.2 COMPAT %
 
 use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '4.1.3';
+our $VERSION = '4.1.4';
 
 use Exporter 'import';
 use File::Copy;
