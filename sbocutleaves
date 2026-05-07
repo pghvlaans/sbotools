@@ -34,23 +34,26 @@ Options:
     (do not) wrap sbotools output.
   -l|--list:
      list packages without reverse dependencies and exit.
+  --raw:
+     like --list, but space-delineated with no other formatting.
 EOF
     return 1;
 }
 
-my ($help, $vers, $list, $color, $nocolor, $nowrap, $wrap);
+my ($help, $vers, $list, $raw, $color, $nocolor, $nowrap, $wrap);
 
 my $options_ok = GetOptions(
   'help|h'       => \$help,
   'version|v'    => \$vers,
   'list|l'       => \$list,
+  'raw'          => \$raw,
 );
 
 if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
-unless ($< == 0 or $list) {
+unless ($< == 0 or $list or $raw) {
   show_usage();
-  usage_error "\nNon-root users can call $self with -l.";
+  usage_error "\nNon-root users can call $self with -l and --raw.";
 }
 unless ($options_ok) {
   show_usage();
@@ -60,6 +63,8 @@ unless ($options_ok) {
 $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
 $config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $wrap xor $nowrap;
 lint_sbo_config($self, %config);
+
+$list = $raw ? $raw : $list;
 
 slackbuilds_or_fetch();
 get_all_available();
@@ -104,6 +109,11 @@ for my $sbo (sort keys %$installed_pkg) {
   }
 }
 
+if ($raw) {
+  exit 0 unless @leaves;
+  print "$_ " for (sort @leaves);
+  exit 0;
+}
 if ($list) {
   exit 0 unless @leaves;
   wrapsay_color $color_notice, "The following packages have no installed reverse dependencies:";
@@ -128,4 +138,4 @@ exit 0 unless prompt($color_notice, "Go on with new leaf packages?", default => 
 
 goto CUTLEAVES;
 
-END { say ""; }
+END { say "" if not $raw; }
