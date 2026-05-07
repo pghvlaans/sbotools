@@ -6,13 +6,62 @@
 # script to remove leaf packages.
 #
 # authors: Jacob Pipkin <jacob.pipkin@icloud.com>
+# maintainer: K. Eugene Carlson <kvngncrlsn@gmail.com>
 # license: MIT License
 
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/get_all_available get_installed_packages get_requires/;
+use SBO::Lib qw/ :config :colors $descriptions_generated get_all_available get_installed_packages get_requires in lint_sbo_config on_blacklist prompt show_version slackbuilds_or_fetch usage_error wrapsay wrapsay_color /;
+use File::Basename;
+use Getopt::Long qw/ :config no_ignore_case_always bundling /;
 
+my $self = basename($0);
+
+sub show_usage {
+  print <<"EOF";
+Usage: $self [options] [sbo ...]
+       $self [-l]
+
+Options:
+  -h|--help:
+    this screen.
+  -v|--version:
+    version information.
+  --(no)color:
+    (do not) use sbotools color output.
+  --(no)wrap:
+    (do not) wrap sbotools output.
+  -l|--list:
+     list packages without reverse dependencies and exit.
+EOF
+    return 1;
+}
+
+my ($help, $vers, $list, $color, $nocolor, $nowrap, $wrap);
+
+my $options_ok = GetOptions(
+  'help|h'       => \$help,
+  'version|v'    => \$vers,
+  'list|l'       => \$list,
+);
+
+if ($help) { show_usage(); exit 0 }
+if ($vers) { show_version(); exit 0 }
+unless ($< == 0 or $list) {
+  show_usage();
+  usage_error "\nNon-root users can call $self with -l.";
+}
+unless ($options_ok) {
+  show_usage();
+  usage_error "\nOne or more invalid options detected.";
+}
+
+$config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
+$config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $wrap xor $nowrap;
+lint_sbo_config($self, %config);
+
+slackbuilds_or_fetch();
 get_all_available();
 
 my @seen;
@@ -23,55 +72,60 @@ my @installed = @{get_installed_packages("SBO", 1)};
 my $installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @installed };
 
 my @delete = ();
+my @leaves = ();
 
-for my $sbo (keys %$installed_pkg) {
+for my $sbo (sort keys %$installed_pkg) {
+    next if in $sbo, @seen;
+    next if on_blacklist $sbo and not $list;
     my $found = 0;
-
-    next if grep {$_ eq $sbo} @seen;
-
     for my $pkg (keys %$installed_pkg) {
         next if $pkg eq $sbo;
-
-        for my $req (@{get_requires($pkg)}) {
-            if ($req eq $sbo) {
-                ++$found;
-                last;
-            }
+        if (in $sbo, @{get_requires($pkg)}) {
+          ++$found;
+          last;
         }
-        last if $found;
     }
     next if $found;
 
-    say "Package: $sbo";
-    print "[keep]/(d)elete/(a)bort? ";
-    my $res = readline STDIN;
-    chomp($res);
-
-    exit 0 if $res eq "a";
-    if ($res eq "d") {
+  if ($list) {
+    push @leaves, $sbo;
+  } else {
+    wrapsay_color $color_warn, "Package: $sbo";
+    if (prompt($color_default, "Mark $sbo for removal?", default => 'no')) {
         push @delete, $sbo;
-        say "** Marking $sbo for removal."
+        wrapsay_color $color_warn, "Marking $sbo for removal.";
     } else {
-        say "** Keeping $sbo."
+        wrapsay_color $color_default, "Keeping $sbo.";
     }
 
     say "";
 
     push @seen, $sbo;
+  }
+}
+
+if ($list) {
+  exit 0 unless @leaves;
+  wrapsay_color $color_notice, "The following packages have no installed reverse dependencies:";
+  for (sort @leaves) {
+    my $line = $_;
+    $line = on_blacklist($_) ? "$line (blacklisted)" : $line;
+    print "  $line\n";
+  }
+  exit 0;
 }
 
 exit 0 if @delete == 0;
 
+wrapsay_color $color_warn, "Done. The following packages are marked for removal:";
+print "  $_\n" for (sort @delete);
+say "";
+exit 0 unless prompt($color_warn, "Proceed with removal?", default => 'no');
 system("/sbin/removepkg", $_) for @delete;
 
-print "Go on with new leaf packages ([yes]/no)? ";
-my $res = readline STDIN;
-chomp($res);
-
-exit 0 if $res eq "n";
-exit 0 if $res eq "no";
-
 say "";
+exit 0 unless prompt($color_notice, "Go on with new leaf packages?", default => 'yes');
 
 goto CUTLEAVES;
 
+END { say ""; }
