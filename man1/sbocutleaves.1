@@ -1,16 +1,180 @@
-.Dd 02 Apr 2026
-.Dt sbocutleaves 1
-.Os sbotools
-.Sh NAME
-.Nm sbocutleaves
-.Nd remove leaf packages
-.Sh SYNOPSIS
-.Nm
-.Sh DESCRIPTION
-.Nm
+.TH sbocutleaves 1 "Boomtime, Discord 54, 3192 YOLD" "sbotools 4.1.4" sbotools
+.SH NAME
+.P
+.B
+sbocutleaves
+- list or remove SBo leaf packages
+.SH SYNOPSIS
+.P
+sbocutleaves [-h|-v]
+.P
+sbocutleaves [-l] [--no-display]
+.P
+sbocutleaves [--color|--nocolor] [--wrap|--nowrap] ...
+.P
+sbocutleaves [--raw]
+.SH DESCRIPTION
+.B
+sbocutleaves
 finds leaf packages (those which no other packages require) installed from
-slackbuilds.org, offers to remove or keep them, and repeats this process until
-no leaf packages are marked for deletion.
-.Sh SEE ALSO
-.Xr removepkg 8
+.I
+slackbuilds.org\fR\
+, offers to remove or keep them. Once any removals have been done, it prompts
+the user to repeat this process until no leaf packages are marked for deletion.
+Blacklisted scripts and optional dependency requests are respected; see
+.B
+sbohints(1)
+or
+.B
+sbotools.hints(5)
+for details.
+.P
+Use the
+.B
+--list
+or
+.B
+--raw
+flags to generate a list of leaf packages without taking any other action.
+.P
+Root privileges are required to run
+.B
+sbocutleaves
+unless passing
+.B
+--list
+or
+.B
+--raw\fR\
+\&. If an invalid configuration is detected in
+.I
+/etc/sbotools/sbotools.conf\fR\
+\&, the script exits with a diagnostic message.
+.SH OPTIONS
+.P
+.B
+-l|--list
+.RS
+Print a newline-delineated list of leaf packages with descriptions
+and take no other action. The
+.B
+--list
+flag can be used without root privileges.
+.RE
+.P
+.B
+--no-descriptions
+.RS
+Do not show descriptions in list or interactive output. This flag
+is unnecessary when calling
+.B
+sbocutleaves
+with
+.B
+--raw\fR\
+\&.
+.RE
+.P
+.B
+--raw
+.RS
+Print a space-delineated list of leaf packages with no descriptions or
+other formatting. The
+.B
+--raw
+flag can be used without root privileges.
+.RE
+.P
+.B
+-h|--help
+.RS
+Show help information.
+.RE
+.P
+.B
+-v|--version
+.RS
+Show version information.
+.RE
+.P
+.B
+--color
+.RS
+Turn on
+.B
+sbotools
+color output. See also
+.B
+sbotools.colors(5)\fR\
+\&.
+.RE
+.P
+.B
+--nocolor
+.RS
+Turn off
+.B
+sbotools
+color output.
+.RE
+.P
+.B
+--wrap
+.RS
+Turn on
+.B
+sbotools
+word wrapping (default).
+.RE
+.P
+.B
+--nowrap
+.RS
+Turn off
+.B
+sbotools
+word wrapping.
+.RE
+.SH BUGS
+.P
+None known. If found, Issues and Pull Requests to
+.UR https://github.com/pghvlaans/sbotools/
+.UE
+are always welcome.
+.SH EXIT CODES
+.P
+.B
+sbocutleaves
+can exit with the following codes:
+.RS
 
+0:  all operations completed successfully.
+.RE
+.RS
+1:  a usage error occurred, such as passing incorrect options to
+.B
+sbocutleaves\fR\
+\&.
+.RE
+.RS
+2:  a script or module error occurred.
+.RE
+.RS
+13: attempted to calculate a circular dependency.
+.RE
+.RS
+16: reading keyboard input failed.
+.RE
+.SH SEE ALSO
+.P
+sbocheck(1), sboconfig(1), sbocutleaves(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sbotool(1), sboupgrade(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), removepkg(8)
+.SH AUTHORS
+.P
+Jacob Pipkin <jacob.pipkin@icloud.com>
+.P
+Luke Williams <xocel@iquidus.org>
+.P
+Andreas Guldstrand <andreas.guldstrand@gmail.com>
+.SH MAINTAINER
+.P
+K. Eugene Carlson <kvngncrlsn@gmail.com>

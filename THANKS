@@ -3,9 +3,10 @@
                                **********
 
 Jacob Pipkin is the original author of all of the sbotools except for
-sboremove, sbohints and sbotool. For all the changes that have been
-made, the look-and-feel of the traditional sbotools CLI is still
-remarkably similar to his initial commit in 2012.
+sboremove, sbohints and sbotool. Most recently, he proposed and drafted
+sbocutleaves in 2026. For all the changes that have been made, the look-
+and-feel of the traditional sbotools CLI is still remarkably similar to
+his initial commit in 2012.
 
 Luke Williams made important contributions to early sbotools, most
 notably writing the original sboremove. He also wrote code allowing

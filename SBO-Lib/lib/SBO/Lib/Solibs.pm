@@ -710,7 +710,7 @@ resource about the structure of ELF files.
 
 =head1 AUTHORS
 
-SBO::Lib was originally written by Jacob Pipkin <j@dawnrazor.net> with
+SBO::Lib was originally written by Jacob Pipkin <jacob.pipkin@icloud.com> with
 contributions from Luke Williams <xocel@iquidus.org> and Andreas
 Guldstrand <andreas.guldstrand@gmail.com>.
 
@@ -725,6 +725,8 @@ The sbotools are licensed under the MIT License.
 Copyright (C) 2012-2017, Jacob Pipkin, Luke Williams, Andreas Guldstrand.
 
 Copyright (C) 2024-2026, K. Eugene Carlson.
+
+Copyright (C) 2026, K. Eugene Carlson, Jacob Pipkin.
 
 =cut
 

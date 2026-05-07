@@ -3,7 +3,7 @@ package SBO::App;
 # vim: ts=2:et
 #
 # authors: Luke Williams <xocel@iquidus.org>
-#          Jacob Pipkin <j@dawnrazor.net>
+#          Jacob Pipkin <jacob.pipkin@icloud.com>
 #          Andreas Guldstrand <andreas.guldstrand@gmail.com>
 # maintainer: K. Eugene Carlson <kvngncrlsn@gmail.com>
 # license: MIT License

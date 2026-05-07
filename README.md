@@ -5,6 +5,7 @@
   * **sbocheck**: Fetch the latest version of SlackBuilds.org repository; check for version updates, build number changes and out-of-tree installed SlackBuilds. Perform shared object dependency and other package checks.
   * **sboclean**: Remove cruft by cleaning source archives, build directories and saved build options.
   * **sboconfig**: A command line interface for changing settings.
+  * **sbocutleaves**: Interactively remove or list leaves, SBo packages without installed reverse dependencies.
   * **sbofind**: Search the local copy of the repository.
   * **sbohints**: Query and modify the blacklist and requests for optional dependencies and reverse
 dependency rebuilds.
@@ -25,6 +26,11 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 **sbotools** currently supports Slackware 15.0 and beyond. For Slackware 14.0, 14.1 and 14.2, install `sbotools-4.0.2` at the latest. See the **sbotools** [downloads](https://pghvlaans.github.io/sbotools/downloads/) page.
 
 ## Most Recent Changes
+#### Post-Release
+  * sbocutleaves: A new tool for managing leaves, i.e. packages without installed reverse dependencies.
+    * Proposed and drafted by Jacob Pipkin.
+  * sbotool: Added sbocutleaves functionality
+
 #### 4.1.4 - 2026-05-06
   * sbofind: Do not match "No tags found" in TAGS.txt
   * contrib: SCerovec shared a Debian-like sbotool theme

@@ -8,7 +8,7 @@ cd $(dirname $0) || exit
 cp ../man1/* ../man-md
 cp ../man5/* ../man-md
 cd ../man-md || exit
-for man in tools check clean config hints find install remove upgrade tool ; do
+for man in tools check clean config hints find install remove upgrade tool cutleaves ; do
   cat sbo$man.1 | groff -mandoc -Thtml > sbo$man.1.html
 done
 cat sbotools.conf.5 | groff -mandoc -Thtml > sbotools.conf.5.html
@@ -19,11 +19,12 @@ rm *1 *5
 # If something happens to me and someone else takes over the project,
 # a word to the wise: Add your email address here.
 sed -i 's|j@dawnrazor.net|j (at) dawnrazor (dot) net|g' *html
+sed -i 's|jacob.pipkin@icloud.com|jacob.pipkin (at) icloud (dot) com|g' *html
 sed -i 's|xocel@iquidus.org|xocel (at) iquidus (dot) org|g' *html
 sed -i 's|andreas.guldstrand@gmail.com|andreas (dot) guldstrand (at) gmail (dot) com|g' *html
 sed -i 's|kvngncrlsn@gmail.com|kvngncrlsn (at) gmail (dot) com|g' *html
 
-for man in tools check clean config hints find install remove upgrade tool ; do
+for man in tools check clean config hints find install remove upgrade tool cutleaves ; do
   pandoc --from=html --to=markdown sbo$man.1.html > sbo$man.1.md
 done
 
@@ -62,14 +63,14 @@ sed -i "s/^## SBOTEST.*/## SBOTEST/g" *
 sed -i "s/^## AUTHORS.*/## AUTHORS/g" *
 sed -i "s/^## MAINTAINER.*/## MAINTAINER/g" *
 
-for item in check clean config hints find install remove tools.colors tools.conf tools.hints upgrade tool ; do
+for item in check clean config cutleaves hints find install remove tools.colors tools.conf tools.hints upgrade tool ; do
   sed -i "s/^# sbo$item.*/# sbo$item/g" sbo$item.*
 done
 
 sed -i "s/^# sbotools.*/# sbotools/g" sbotools.1.md
 
 # Want man page links, but not bold ones.
-for item in check clean config hints find install remove upgrade tool ; do
+for item in check clean config cutleaves hints find install remove upgrade tool ; do
   sed -i "s/sbo$item(1)/[sbo$item(1)](sbo$item.1.md)/g" *
   sed -i "s/[*]\+\[sbo$item(1)\](sbo$item.1.md)[*]\+/[sbo$item(1)](sbo$item.1.md)/g" *
 done
@@ -86,7 +87,7 @@ sed -i "s/[*]\+\[sbotools.hints(5)\](sbotools.hints.5.md)[*]\+/[sbotools.hints(5
 sed -i 's|<rsync://slackbuilds.org/slackbuilds>|rsync://slackbuilds.org/slackbuilds|g' *
 
 # Right, time to work out code blocks.
-for item in check clean config hints find install remove upgrade tool tools tools.hints ; do
+for item in check clean config cutleaves hints find install remove upgrade tool tools tools.hints ; do
   sed -i "s/^sbo$item /    sbo$item /g" *
   sed -i "s/^sbo$item$/    sbo$item/g" *
   NUMCHAR=$(($(echo $item | wc -m)+7))

@@ -377,7 +377,7 @@ useradd(1)
 
 ## AUTHORS
 
-Jacob Pipkin \<j (at) dawnrazor (dot) net\>
+Jacob Pipkin \<jacob.pipkin (at) icloud (dot) com\>
 
 Luke Williams \<xocel (at) iquidus (dot) org\>
 
