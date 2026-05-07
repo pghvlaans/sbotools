@@ -1,0 +1,77 @@
+#!/usr/bin/perl
+#
+# vim: ts=2:et
+#
+# sbocutleaves
+# script to remove leaf packages.
+#
+# authors: Jacob Pipkin <jacob.pipkin@icloud.com>
+# license: MIT License
+
+use 5.16.0;
+use strict;
+use warnings FATAL => 'all';
+use SBO::Lib qw/get_all_available get_installed_packages get_requires/;
+
+get_all_available();
+
+my @seen;
+
+CUTLEAVES:
+
+my @installed = @{get_installed_packages("SBO", 1)};
+my $installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @installed };
+
+my @delete = ();
+
+for my $sbo (keys %$installed_pkg) {
+    my $found = 0;
+
+    next if grep {$_ eq $sbo} @seen;
+
+    for my $pkg (keys %$installed_pkg) {
+        next if $pkg eq $sbo;
+
+        for my $req (@{get_requires($pkg)}) {
+            if ($req eq $sbo) {
+                ++$found;
+                last;
+            }
+        }
+        last if $found;
+    }
+    next if $found;
+
+    say "Package: $sbo";
+    print "[keep]/(d)elete/(a)bort? ";
+    my $res = readline STDIN;
+    chomp($res);
+
+    exit 0 if $res eq "a";
+    if ($res eq "d") {
+        push @delete, $sbo;
+        say "** Marking $sbo for removal."
+    } else {
+        say "** Keeping $sbo."
+    }
+
+    say "";
+
+    push @seen, $sbo;
+}
+
+exit 0 if @delete == 0;
+
+system("/sbin/removepkg", $_) for @delete;
+
+print "Go on with new leaf packages ([yes]/no)? ";
+my $res = readline STDIN;
+chomp($res);
+
+exit 0 if $res eq "n";
+exit 0 if $res eq "no";
+
+say "";
+
+goto CUTLEAVES;
+
