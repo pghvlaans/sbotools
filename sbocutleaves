@@ -12,7 +12,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :colors $descriptions_generated get_all_available get_installed_packages get_requires in lint_sbo_config on_blacklist prompt show_version slackbuilds_or_fetch usage_error wrapsay wrapsay_color /;
+use SBO::Lib qw/ :config :colors $descriptions_generated get_all_available get_installed_packages get_requires get_sbo_description in lint_sbo_config on_blacklist prompt show_version slackbuilds_or_fetch usage_error wrapsay wrapsay wrapsay_color /;
 use File::Basename;
 use Getopt::Long qw/ :config no_ignore_case_always bundling /;
 
@@ -20,8 +20,7 @@ my $self = basename($0);
 
 sub show_usage {
   print <<"EOF";
-Usage: $self [options] [sbo ...]
-       $self [-l]
+Usage: $self [options]
 
 Options:
   -h|--help:
@@ -34,19 +33,22 @@ Options:
     (do not) wrap sbotools output.
   -l|--list:
      list packages without reverse dependencies and exit.
+  --no-descriptions:
+     do not show a short description for each script.
   --raw:
      like --list, but space-delineated with no other formatting.
 EOF
     return 1;
 }
 
-my ($help, $vers, $list, $raw, $color, $nocolor, $nowrap, $wrap);
+my ($help, $vers, $list, $no_descriptions, $raw, $color, $nocolor, $nowrap, $wrap);
 
 my $options_ok = GetOptions(
-  'help|h'       => \$help,
-  'version|v'    => \$vers,
-  'list|l'       => \$list,
-  'raw'          => \$raw,
+  'help|h'          => \$help,
+  'version|v'       => \$vers,
+  'list|l'          => \$list,
+  'no-descriptions' => \$no_descriptions,
+  'raw'             => \$raw,
 );
 
 if ($help) { show_usage(); exit 0 }
@@ -67,13 +69,30 @@ lint_sbo_config($self, %config);
 $list = $raw ? $raw : $list;
 
 slackbuilds_or_fetch();
+
+if ($config{LOCAL_OVERRIDES} ne "FALSE" and not -d $config{LOCAL_OVERRIDES}) {
+  unless ($list) {
+    exit 1 unless prompt($color_lesser, "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.\nContinue anyway?", default => 'no');
+  } else {
+    wrapsay_color $color_lesser, "$config{LOCAL_OVERRIDES} is specified as the overrides directory, but does not exist.\n";
+  }
+}
+
 get_all_available();
+
+unless ($raw or $no_descriptions) {
+  wrapsay_color $color_lesser, "Run sbocheck to generate descriptions.", 1 unless $descriptions_generated;
+}
 
 my @seen;
 
 CUTLEAVES:
 
 my @installed = @{get_installed_packages("SBO", 1)};
+unless (@installed) {
+  wrapsay_color $color_notice, "No _SBo packages are installed. Exiting.";
+  exit 0;
+}
 my $installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @installed };
 
 my @delete = ();
@@ -95,47 +114,64 @@ for my $sbo (sort keys %$installed_pkg) {
   if ($list) {
     push @leaves, $sbo;
   } else {
-    wrapsay_color $color_warn, "Package: $sbo";
+    wrapsay_color $color_warn, "\n$sbo";
+    unless ($no_descriptions) {
+      my $description = get_sbo_description($sbo);
+      wrapsay "  $description" if defined $description;
+    }
     if (prompt($color_default, "Mark $sbo for removal?", default => 'no')) {
         push @delete, $sbo;
         wrapsay_color $color_warn, "Marking $sbo for removal.";
     } else {
-        wrapsay_color $color_default, "Keeping $sbo.";
+        wrapsay "Keeping $sbo.";
     }
-
-    say "";
 
     push @seen, $sbo;
   }
 }
 
+# This situation would imply the presence of circular dependencies,
+# but leaving a message here just in case.
+if ($list and not @leaves) {
+  wrapsay_color $color_notice, "All _SBo packages have installed reverse dependencies.";
+  exit 0;
+}
 if ($raw) {
-  exit 0 unless @leaves;
   print "$_ " for (sort @leaves);
   exit 0;
 }
 if ($list) {
-  exit 0 unless @leaves;
-  wrapsay_color $color_notice, "The following packages have no installed reverse dependencies:";
+  my $grammar = @leaves > 1 ? "packages have" : "package has";
+  wrapsay_color $color_notice, "The following $grammar no installed reverse dependencies:";
   for (sort @leaves) {
     my $line = $_;
-    $line = on_blacklist($_) ? "$line (blacklisted)" : $line;
-    print "  $line\n";
+    my $blacklisted = on_blacklist($line) ? " (blacklisted)" : "";
+    if ($no_descriptions or not $descriptions_generated) {
+      $line = "  $line$blacklisted\n";
+    } else {
+      $line = "$line$blacklisted\n";
+      my $description = get_sbo_description($_);
+      $line = "$line  $description\n" if defined $description;
+    }
+    print $line;
   }
   exit 0;
 }
 
-exit 0 if @delete == 0;
+unless (@delete) {
+  wrapsay_color $color_notice, "\nNo packages are marked for removal. Exiting.";
+  exit 0;
+}
 
-wrapsay_color $color_warn, "Done. The following packages are marked for removal:";
+my $grammar = @delete > 1 ? "packages are" : "package is";
+wrapsay_color $color_warn, "\nDone. The following $grammar marked for removal:";
 print "  $_\n" for (sort @delete);
-say "";
-exit 0 unless prompt($color_warn, "Proceed with removal?", default => 'no');
+exit 0 unless prompt($color_warn, "\nProceed with removal?", default => 'no');
 system("/sbin/removepkg", $_) for @delete;
 
-say "";
-exit 0 unless prompt($color_notice, "Go on with new leaf packages?", default => 'yes');
+exit 0 unless prompt($color_notice, "\nGo on with new leaf packages?", default => 'yes');
 
+splice @delete;
 goto CUTLEAVES;
 
 END { say "" if not $raw; }
