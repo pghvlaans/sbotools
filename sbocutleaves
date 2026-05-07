@@ -114,16 +114,16 @@ for my $sbo (sort keys %$installed_pkg) {
   if ($list) {
     push @leaves, $sbo;
   } else {
-    wrapsay_color $color_warn, "\n$sbo";
+    wrapsay $sbo;
     unless ($no_descriptions) {
       my $description = get_sbo_description($sbo);
-      wrapsay "  $description" if defined $description;
+      wrapsay $description if defined $description;
     }
-    if (prompt($color_default, "Mark $sbo for removal?", default => 'no')) {
+    if (prompt($color_lesser, "Mark $sbo for removal?", default => 'no')) {
         push @delete, $sbo;
-        wrapsay_color $color_warn, "Marking $sbo for removal.";
+        wrapsay " * Added to remove queue.", 1;
     } else {
-        wrapsay "Keeping $sbo.";
+        wrapsay " * Keeping $sbo.", 1;
     }
 
     push @seen, $sbo;
