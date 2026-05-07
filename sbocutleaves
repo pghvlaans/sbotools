@@ -146,12 +146,16 @@ if ($list) {
   for (sort @leaves) {
     my $line = $_;
     my $blacklisted = on_blacklist($line) ? " (blacklisted)" : "";
-    if ($no_descriptions or not $descriptions_generated) {
-      $line = "  $line$blacklisted\n";
-    } else {
-      $line = "$line$blacklisted\n";
+    $line .= $blacklisted;
+    unless ($no_descriptions or not $descriptions_generated) {
       my $description = get_sbo_description($_);
-      $line = "$line  $description\n" if defined $description;
+      if (defined $description) {
+        $line .= " ($description)\n";
+      } else {
+        $line .= "\n";
+      }
+    } else {
+      $line .= "\n";
     }
     print $line;
   }
