@@ -1,0 +1,24 @@
+#compdef sbocutleaves
+
+# sbotools: https://pghvlaans.github.io/sbotools/
+
+_arguments -s \
+	   - info \
+	   '(-)'{-h,--help}'[Show help.]:' \
+	   '(-)'{-v,--version}'[Show version.]:' \
+	   - commands \
+    	   '(-l --list)'{-l,--list}'[List _SBo packages without installed reverse dependencies.]' \
+	   - formatting \
+	   '--raw[A space-delineated list of _SBo packages without installed reverse dependencies.]:' \
+	   '--no-descriptions[Do not show package descriptions.]:' \
+	   '--nocolor[Disable sbotools color output.]:' \
+	   '--color[Enable sbotools color output.]:' \
+	   '--nowrap[Disable sbotools word wrapping.]:' \
+	   '--wrap[Enable sbotools word wrapping.]:' \
+    && return 0
+
+return 1
+
+# Local Variables:
+# mode: sh
+# End:
