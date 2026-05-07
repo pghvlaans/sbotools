@@ -191,6 +191,10 @@ effective operations. The following options can appear in Main Menu:
     build options. Interactive and non-interactive deletion are both
     available.
 
+* Cut Leaves
+    Root only. Interactively remove packages with the "_SBo" or
+    "_SBocompat32" tags that do not have installed reverse dependencies.
+
 * Fetch Repository
     Root only. Download or update the local copy of the SlackBuilds.org
     repository. See the "Settings" screen to use a non-default
@@ -205,6 +209,11 @@ effective operations. The following options can appear in Main Menu:
     View, search and select installed in-tree SlackBuilds. Such
     packages installed without the "_SBo" or "_SBocompat32" tag are
     marked with "(NON-SBO)".
+
+* Leaves
+    View, search and select installed in-tree SlackBuilds without
+    installed reverse dependencies. Shows only packages with the "_SBo"
+    or "_SBocompat32" tags.
 
 * List Operations
     SlackBuilds can be added to the Install, Upgrade, Remove and

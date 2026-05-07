@@ -868,6 +868,7 @@ sub display_man_pages {
 					"\"sbocheck\" \"Update the repo and perform checks.\" \\",
 					"\"sboclean\" \"Remove sbotools-related cruft.\" \\",
 					"\"sboconfig\" \"A command line settings manager.\" \\",
+					"\"sbocutleaves\" \"For scripts without reverse dependencies.\" \\",
 					"\"sbofind\" \"Search the local repo for SlackBuilds.\" \\",
 					"\"sbohints\" \"Query and modify per-script hints.\" \\",
 					"\"sboinstall\" \"Install SlackBuilds and dependencies.\" \\",
@@ -934,7 +935,8 @@ sub display_main {
 			push @for_installed_list, $_ if get_sbo_location($_);
 		}
 		push @main_menu, "\"Installed\" \"List installed SBo packages.\" \\",
-						"\"Rebuilds\" \"Mass and per-series rebuilds.\" \\" if @for_installed_list;
+						"\"Rebuilds\" \"Mass and per-series rebuilds.\" \\",
+						"\"Leaves\" \"Installed, no reverse dependencies.\" \\", if @for_installed_list;
 		push @main_menu, "\"Upgradable\" \"Upgrades are available.\" \\" if @update_names;
 		push @main_menu, "\"Overrides\" \"View scripts in local overrides.\" \\" if @overrides;
 		if (@update_names) {
@@ -944,6 +946,7 @@ sub display_main {
 	}
 	if ($< == 0) {
 		push @main_menu, "\"Fetch Repository\" \"Get or update the repository.\" \\";
+		push @main_menu, "\"Cut Leaves\" \"Interactive removal, no rev dep.\" \\" if @for_installed_list;
 		my (@clean_string, $clean_msg, $has_distfiles, $has_options, $has_working);
 		if (-d "$config{SBO_HOME}/distfiles") {
 			opendir(my $handle, "$config{SBO_HOME}/distfiles");
@@ -1040,9 +1043,17 @@ sub display_main {
 		}
 	}
 
+	if ($option eq "Cut Leaves") {
+		($height, $width, $begin_y, $begin_x) = calculate_position("narrow", "sbocutleaves.\nProceed?", "sbocutleaves\nProceed?");
+		($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"sbocutleaves\" --yesno \"sbocutleaves finds SBo packages without installed reverse dependencies, offering to remove them.\n\nProceed?\" $height $width");
+		display_main() if $res == $code_dialog_cancel or $res == $code_dialog_error;
+		system("clear");
+		system("/usr/bin/sbocutleaves");
+	}
+
 	if ($option eq "Package Tests") {
 		if (-s $slackbuilds_txt) {
-			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "All Installed\nAll SBo", "Check missing");
+			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "All Installed\nAll SBo", "Check missing\nInstalled");
 			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Package Tests\" --menu \"Check intalled packages for missing shared object\ndependencies and perl, python or ruby incompatibility.\" $height $width $height \"All Installed\" \"All installed: solibs, perl, python and ruby.\" \"All SBo\" \"All SBo: solibs, perl, python and ruby.\"", @help_solibs);
 			display_main() if $res == $code_dialog_cancel or $res == $code_dialog_error;
 			my $so_option = $output;
@@ -1076,6 +1087,11 @@ sub display_main {
 	if ($option eq "Browse Repository") { display_series(); }
 	if ($option eq "Clean sbotools Files") { display_clean_menu(); }
 	if ($option eq "Installed") { display_builds("Installed SBo SlackBuilds", @for_installed_list); }
+	if ($option eq "Leaves") {
+		my $leaves_string = `/usr/bin/sbocutleaves --raw`;
+		my @leaves = split " ", $leaves_string;
+		display_builds("Installed, No Reverse Dependencies", @leaves) if @leaves;
+	}
 	if ($option eq "List Operations") { display_user_lists(); }
 	if ($option eq "Man Pages") { display_man_pages(); }
 	if ($option eq "Missing Solibs") { display_builds("SlackBuilds with Known Missing Solib Dependencies", @solibs_missing); }
