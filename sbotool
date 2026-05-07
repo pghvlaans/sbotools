@@ -1049,6 +1049,7 @@ sub display_main {
 		display_main() if $res == $code_dialog_cancel or $res == $code_dialog_error;
 		system("clear");
 		system("/usr/bin/sbocutleaves");
+		new_package_information();
 	}
 
 	if ($option eq "Package Tests") {
