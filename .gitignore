@@ -2,3 +2,4 @@ t/SBO
 t/Sort
 tools/cover.sh
 cover_db
+**/*.swp
