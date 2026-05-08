@@ -8,10 +8,11 @@ sbocutleaves in 2026. For all the changes that have been made, the look-
 and-feel of the traditional sbotools CLI is still remarkably similar to
 his initial commit in 2012.
 
-Luke Williams made important contributions to early sbotools, most
-notably writing the original sboremove. He also wrote code allowing
-sbotools to recognize non-SBo packages, added the --queue option to
-sbofind and overhauled sboupgrade.
+Luke Williams introduced true queueing functionality to sbotools in late
+2012, a critical change that allowed for the basic prompt-download-build
+workflow, queue reporting in sbofind and many other improvements. He
+also wrote sboremove, added code allowing sbotools to recognize non-SBo
+packages and overhauled sboupgrade.
 
 Andreas Guldstrand maintained sbotools from 2015 through 2019. He made
 many important changes, including but not limited to spinning off
