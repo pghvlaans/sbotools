@@ -10,6 +10,8 @@ The pages here reflect post-release development. For the version 4.1.4 pages (20
     * Remove cruft by cleaning source archives, build directories and saved build options.
 * [sboconfig(1)](sboconfig.1.md)
     * A command line interface for changing */etc/sbotools/sbotools.conf*.
+* [sbocutleaves(1)](sbocutleaves.1.md)
+    * Find and list or interactively delete \_SBo packages with no installed reverse dependencies.
 * [sbofind(1)](sbofind.1.md)
     * Search the local copy of the repository for SlackBuilds.
 * [sbohints(1)](sbohints.1.md)
