@@ -30,6 +30,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbocutleaves: A new tool for managing leaves, i.e. packages without installed reverse dependencies.
     * Proposed and drafted by Jacob Pipkin.
   * sbotool: Added sbocutleaves functionality
+  * sboclean, sbofind: Fix --wrap and --nowrap
 
 #### 4.1.4 - 2026-05-06
   * sbofind: Do not match "No tags found" in TAGS.txt

@@ -69,7 +69,7 @@ if ($help) {
 }
 if ($vers) { show_version(); exit 0 }
 $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
-$config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $color xor $nocolor;
+$config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $wrap xor $nowrap;
 unless ($< == 0) {
 	show_usage();
 	usage_error "\nThis is a root-only script.";

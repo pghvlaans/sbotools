@@ -94,7 +94,7 @@ if ($help) { show_usage(); exit 0 }
 if ($vers) { show_version(); exit 0 }
 
 $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
-$config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $color xor $nocolor;
+$config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $wrap xor $nowrap;
 lint_sbo_config($self, %config);
 
 if (!@ARGV) { show_usage(); exit 1 }
