@@ -340,7 +340,7 @@ sub get_update_list {
 		}
 	}
 
-	my @listing;
+	my (@listing, @unactionable);
 	foreach my $sbo (sort keys %updates) {
 		my $info = $updates{$sbo};
 
@@ -354,7 +354,16 @@ sub get_update_list {
 				$str = sprintf "%-*s  $sign  %s", $max-$adjust++, $info->{name_str}, $info->{upd_str};
 			}
 		}
-		push @listing, $str;
+		if ($sign eq "<") {
+			push @listing, $str;
+		} else {
+			push @unactionable, $str;
+		}
+	}
+	if (@unactionable and @listing) {
+		unshift @listing, @unactionable, "";
+	} elsif (@unactionable) {
+		@listing = @unactionable;
 	}
 	return @listing;
 }
