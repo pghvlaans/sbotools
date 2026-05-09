@@ -5,22 +5,18 @@ usage_exit() {
 	exit 1
 }
 
-if [[ "$1" == "-h" ]]; then
+if [ "$1" = "-h" -o "$1" = "-?" ]; then
 	usage_exit
 fi
 
-if [[ "$1" == "-?" ]]; then
-	usage_exit
-fi
-
-if [[ "$1" == "-d" ]]; then
+if [ "$1" = "-d" ]; then
 	date=true
 	shift
 fi
 
 version=$(grep '^our $VERSION' SBO-Lib/lib/SBO/Lib.pm | grep -Eo '[0-9]+(\.[0-9RC@gita-f_]+){0,2}')
 
-if ! [[ -d "./man1" ]]; then
+if ! [ -d "./man1" ]; then
 	echo "you do not seem to be at the right place to run this."
 	echo "the man{1,5}/ directories should be under ."
 	exit 1
@@ -29,7 +25,7 @@ fi
 tmpfile=$(mktemp /tmp/XXXXXXXXX)
 
 sed_file() {
-	if [[ "$1" == "" || "$2" == "" ]]; then
+	if [ "$1" = "" -o "$2" = "" ]; then
 		echo "sed_file(): two arguments required."
 		exit 1
 	fi
@@ -38,12 +34,11 @@ sed_file() {
 	sed_cmd="$2"
 
 	cat $file | sed "$sed_cmd" > $tmpfile
-	if [[ "$?" == "0" ]]; then
-		mv $tmpfile $file
-	else
+	if [ "$?" != "0" ]; then
 		return 1
 	fi
 
+	mv $tmpfile $file
 	return 0
 }
 
@@ -57,7 +52,7 @@ for i in $(ls man5); do
 	sed_file man5/$i "s/\"sbotools $old_version\"/\"sbotools $version\"/g"
 done
 
-if [[ "$?" == "0" ]]; then
+if [ "$?" = "0" ]; then
 	echo "version updated."
 fi
 
@@ -79,23 +74,19 @@ update_date() {
 		sed_file $i "s/$old_date/$new_date/g"
 	done
 
-	if [[ "$?" == "0" ]]; then
-		echo "date updated."
-	else
+	if [ "$?" != "0" ]; then
 		return 1
 	fi
 
+	echo "date updated."
 	return 0
 }
 
-date_return=0
-if [[ "$date" == "true" ]]; then
+if [ "$date" = "true" ]; then
 	update_date
-	date_return=$?
-fi
-
-if [[ "$date_return" != "0" ]]; then
-	exit 1
+	if [ "$?" != "0" ]; then
+	    exit 1
+    fi
 fi
 
 # Regenerate the man3 pages, just in case.

@@ -1,28 +1,11 @@
 #!/bin/sh
 
 usage_exit() {
-	echo "Usage: $(basename $0) (-g) version"
+	echo "Usage: $(basename $0) version"
 	exit 1
 }
 
-if [[ "$1" == "" ]]; then
-	usage_exit
-fi
-
-if [[ "$1" == "-?" ]]; then
-	usage_exit
-fi
-
-if [[ "$1" == "-h" ]]; then
-	usage_exit
-fi
-
-if [[ "$1" == "-g" ]]; then
-	git=true
-	shift
-fi
-
-if [[ "$1" == "" ]]; then
+if [ "$1" = "" -o "$1" = "-?" -o "$1" = "-h" ]; then
 	usage_exit
 fi
 
@@ -55,14 +38,14 @@ tmpfile=$(mktemp /tmp/XXXXXXXXXX)
 
 for i in $update_other; do
 	cat $i | sed "s/$old_version/$version/g" > $tmpfile
-	if [[ "$?" == "0" ]]; then
+	if [ "$?" = "0" ]; then
 		mv $tmpfile $i
 	fi
 done
 
 for i in $update_perl; do
   cat $i | sed "s/'$old_version'/'$version'/g" > $tmpfile
-  if [[ "$?" == "0" ]]; then
+  if [ "$?" = "0" ]; then
     mv $tmpfile $i
   fi
 done
