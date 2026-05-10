@@ -360,11 +360,7 @@ sub get_update_list {
 			push @unactionable, $str;
 		}
 	}
-	if (@unactionable and @listing) {
-		unshift @listing, @unactionable, "";
-	} elsif (@unactionable) {
-		@listing = @unactionable;
-	}
+	unshift @listing, @unactionable;
 	return @listing;
 }
 
