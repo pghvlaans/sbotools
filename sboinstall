@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors auto_reverse check_x32 check_x64 check_multilib error_code get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_user_group in ineligible_compat is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_do_not_exist user_prompt verify_gpg lint_sbo_config wrapsay %concluded %warnings /;
+use SBO::Lib qw/ :config :const :colors auto_reverse check_x32 check_x64 check_multilib error_code get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_sbo_version get_user_group in ineligible_compat is_local is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_do_not_exist user_prompt verify_gpg version_cmp lint_sbo_config wrapsay %concluded %warnings /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -385,6 +385,7 @@ FIRST: for my $sbo (@$build_queue) {
 		next FIRST;
 	}
 	$locations{$name} = get_sbo_location($sbo) unless $locations{$name};
+	my $install_from = is_local($name) ? "overrides" : "SBo";
 	if ($name =~ /-compat32$/ and $locations{$name}) {
 		my $compat_fail_msg = ineligible_compat($locations{$name});
 		if ($compat_fail_msg) { wrapsay_color $color_lesser, $compat_fail_msg; next FIRST; }
@@ -392,19 +393,39 @@ FIRST: for my $sbo (@$build_queue) {
 
 	if ($inst_names{$name}) {
 		next FIRST if defined $warnings{$name} and $warnings{$name} eq 'nonexistent';
-		my $inst_msg = sprintf "%s (%s) is already installed.", $name, $inst_names{$name}{pkg};
+		my $version = get_sbo_version($locations{$name});
+		my $version_differs = version_cmp($version, $inst_names{$name}{version});
+		my ($inst_label, $upgrade_label, $reinstall_label, $agreed_label);
+		if ($version_differs < 0) {
+			$inst_label = $config{STRICT_UPGRADES} eq 'TRUE' ? "installed" : "upgradable";
+			$upgrade_label = $config{STRICT_UPGRADES} eq 'TRUE' ? "Downgrade" : "Upgrade";
+			$reinstall_label = $config{STRICT_UPGRADES} eq 'TRUE' ? "downgrade" : "upgrade";
+			$agreed_label = $config{STRICT_UPGRADES} eq 'TRUE' ? "Downgrading" : "Upgrading";
+		} elsif ($version_differs > 0) {
+			$inst_label = "upgradable";
+			$upgrade_label = "Upgrade";
+			$reinstall_label = "upgrade";
+			$agreed_label = "Upgrading";
+		} else {
+			$inst_label = "already installed";
+			$upgrade_label = "Reinstall";
+			$reinstall_label = "reinstall";
+			$agreed_label = "Reinstalling";
+		}
+		my $inst_msg = sprintf "%s (%s) is $inst_label.", $name, $inst_names{$name}{pkg};
 		$inst_msg = $config{CLASSIC} eq 'TRUE' ? $inst_msg : $inst_msg. "\n  ($inst_names{$name}{created})";
+		$inst_msg .= "\n  $upgrade_label: $inst_names{$name}{version} > $version" if $version_differs;
 		say $inst_msg;
 		# always warn with default "no" for reinstall if the package is
 		# installed non-SBo and it exists in the tree
 		if ($reinstall and $std_names{$name} and not $no_install) {
-			next FIRST unless prompt($color_warn, "Warning: $name is not an SBo package. Reinstall from SBo anyway?", default => 'no');
+			next FIRST unless prompt($color_warn, "Warning: $name is not an SBo package. $upgrade_label from $install_from anyway?", default => 'no');
 		} elsif ($reinstall and not $non_int and not $no_install) {
 			my $default = ($mass_rebuild or $reverse_rebuild or $series_rebuild) ? "yes" : "no";
-			next FIRST unless prompt($color_notice, "Do you want to reinstall from SBo?", default => $default);
+			next FIRST unless prompt($color_notice, "Do you want to $reinstall_label from $install_from?", default => $default);
 		} elsif ($reinstall) {
 			unless ($no_install) {
-				say "Reinstalling." unless $dry_run;
+				say "$agreed_label." unless $dry_run;
 			} else {
 				say "Building, but not installing." unless $dry_run;
 			}

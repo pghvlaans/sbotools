@@ -32,6 +32,8 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sbotool: Added sbocutleaves functionality
   * sboclean, sbofind: Fix --wrap and --nowrap
   * sbocheck: Unless in Classic mode, separate upgradable and non-upgradable scripts in the output
+  * sboinstall: With --reinstall, mention version changes
+  * sboinstall: install and reinstall messaging reflects override scripts
 
 #### 4.1.4 - 2026-05-06
   * sbofind: Do not match "No tags found" in TAGS.txt

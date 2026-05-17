@@ -203,10 +203,10 @@ Incompatible with **\--create-template**.
 
 **\--reinstall**
 
-Offer to reinstall all packages in the build queue. If any of the
-packages have automatic reverse dependency rebuild requests, rebuild
-their reverese dependency queues as well. See [sbohints(1)](sbohints.1.md) or
-[sbotools.hints(5)](sbotools.hints.5.md).
+Offer to reinstall all packages in the build queue at the available
+version. If any of the packages have automatic reverse dependency
+rebuild requests, rebuild their reverese dependency queues as well. See
+[sbohints(1)](sbohints.1.md) or [sbotools.hints(5)](sbotools.hints.5.md).
 
 **\--create-template (FILE)**
 
