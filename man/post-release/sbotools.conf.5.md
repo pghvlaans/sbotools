@@ -198,8 +198,7 @@ If set to **TRUE**, use rsync default mirrors except for Slackware
 
 If set to **TRUE**, upgrades are only attempted if the incoming version
 or build number is greater. This has no effect on scripts in the local
-overrides directory or when using **sboinstall** with the
-**\--reinstall** flag.
+overrides directory or when reinstalling with **sboinstall**.
 
 **NOWRAP=(FALSE\|TRUE)**
 

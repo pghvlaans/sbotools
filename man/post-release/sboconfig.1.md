@@ -230,8 +230,8 @@ for Slackware -current.
 
 **STRICT_UPGRADES**: If set to **TRUE**, upgrades are only attempted if
 the incoming version or build number is greater. This has no effect on
-scripts in the local overrides directory or when using **sboinstall**
-with the **\--reinstall** flag.
+scripts in the local overrides directory or when reinstalling with
+**sboinstall**.
 
 **-w\|\--nowrap (FALSE\|TRUE)**
 
