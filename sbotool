@@ -1253,9 +1253,7 @@ sub display_settings {
 	my $msg = "Defaults are FALSE except for SBO_HOME; see sbotools.conf(5).";
 	$msg = "$msg\n\nPress \\\"OK\\\" to change the highlighted setting.\n\nSettings marked with \\\"*\\\" are TRUE/FALSE toggles." if $< == 0;
 	my $plus = $< == 0 ? " *" : "";
-	push @config_values, "\"BUILD_IGNORE: $config{BUILD_IGNORE}$plus\" \"\" \"If TRUE, ignore build numbers when upgrading.\" \\",
-						"\"CLASSIC: $config{CLASSIC}$plus\" \"\" \"If TRUE, use 2.7-style output; No color, rsync default, ignore build number.\" \\",
-						"\"COLOR: $config{COLOR}$plus\" \"\" \"If TRUE, use sbotools color output.\" \\",
+	push @config_values, "\"CLASSIC: $config{CLASSIC}$plus\" \"\" \"If TRUE, use 2.7-style output; No color, rsync default, ignore build number.\" \\",
 						"\"CPAN_IGNORE: $config{CPAN_IGNORE}$plus\" \"\" \"If TRUE, ignore perl modules installed from the CPAN.\" \\",
 						"\"DIALOGRC: $config{DIALOGRC}\" \"\" \"If a file, use it as dialogrc for sbotool.\" \\",
 						"\"DISTCLEAN: $config{DISTCLEAN}$plus\" \"\" \"If TRUE, remove the source and built package after building.\" \\",
@@ -1271,11 +1269,14 @@ sub display_settings {
 						"\"OBSOLETE_CHECK: $config{OBSOLETE_CHECK}$plus\" \"\" \"If TRUE, download the outdated script list and perl history on repo fetch.\" \\",
 						"\"PKG_DIR: $config{PKG_DIR}\" \"\" \"If a directory, save built packages there.\" \\",
 						"\"REPO: $config{REPO}\" \"\" \"Use this non-default git or rsync repository.\" \\",
-						"\"RSYNC_DEFAULT: $config{RSYNC_DEFAULT}$plus\" \"\" \"If TRUE, the default repository is rsync, not git. No effect on -current.\" \\",
 						"\"SBO_HOME: $config{SBO_HOME}\" \"\" \"Specify an sbotools directory (default /usr/sbo).\" \\",
 						"\"SLACKWARE_VERSION: $config{SLACKWARE_VERSION}\" \"\" \"Use this Slackware version to determine the default repo.\" \\",
 						"\"SO_CHECK: $config{SO_CHECK}$plus\" \"\" \"If TRUE, do a solib/perl/python/ruby check on fetch and upgrade.\" \\",
 						"\"STRICT_UPGRADES: $config{STRICT_UPGRADES}$plus\" \"\" \"If TRUE, ignore apparent downgrades with sboupgrade.\"";
+	push @config_values, "\"BUILD_IGNORE: $config{BUILD_IGNORE}$plus\" \"\" \"If TRUE, ignore build numbers when upgrading.\" \\",
+						"\"COLOR: $config{COLOR}$plus\" \"\" \"If TRUE, use sbotools color output.\" \\",
+						"\"RSYNC_DEFAULT: $config{RSYNC_DEFAULT}$plus\" \"\" \"If TRUE, the default repository is rsync, not git. No effect on -current.\" \\" unless $config{CLASSIC} eq 'TRUE';
+	@config_values = sort @config_values;
 	my $config_values = join "\n", @config_values;
 	($height, $width, $begin_y, $begin_x) = calculate_position("wide", $config_values, $msg);
 	$height--;
