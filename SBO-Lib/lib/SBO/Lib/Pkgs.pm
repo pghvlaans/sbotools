@@ -73,10 +73,11 @@ The file name of the installed C<ruby> package.
 
 =head2 get_available_updates
 
-  my @updates = @{ get_available_updates() };
+  my @updates = @{ get_available_updates($label) };
 
 C<get_available_updates()> compares version and build number information for
-packages installed with the _SBo tag with the local repository. It returns
+packages installed with the _SBo tag with the local repository. It takes a label:
+C<VERS> for versions, C<BUILD> for build numbers or C<BOTH> for both. It returns
 an array reference to an array of hash references specifying package names,
 installed versions and available versions.
 

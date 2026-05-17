@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Pkgs 3"
-.TH SBO::Lib::Pkgs 3 "Boomtime, Discord 54, 3192 YOLD" "" "sbotools 4.1.4"
+.TH SBO::Lib::Pkgs 3 "Boomtime, Discord 64, 3192 YOLD" "" "sbotools 4.1.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -87,11 +87,12 @@ The file name of the installed \f(CW\*(C`ruby\*(C'\fR package.
 .SS get_available_updates
 .IX Subsection "get_available_updates"
 .Vb 1
-\&  my @updates = @{ get_available_updates() };
+\&  my @updates = @{ get_available_updates($label) };
 .Ve
 .PP
 \&\f(CWget_available_updates()\fR compares version and build number information for
-packages installed with the _SBo tag with the local repository. It returns
+packages installed with the _SBo tag with the local repository. It takes a label:
+\&\f(CW\*(C`VERS\*(C'\fR for versions, \f(CW\*(C`BUILD\*(C'\fR for build numbers or \f(CW\*(C`BOTH\*(C'\fR for both. It returns
 an array reference to an array of hash references specifying package names,
 installed versions and available versions.
 .SS get_inst_names

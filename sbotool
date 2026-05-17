@@ -1275,7 +1275,7 @@ sub display_settings {
 						"\"SBO_HOME: $config{SBO_HOME}\" \"\" \"Specify an sbotools directory (default /usr/sbo).\" \\",
 						"\"SLACKWARE_VERSION: $config{SLACKWARE_VERSION}\" \"\" \"Use this Slackware version to determine the default repo.\" \\",
 						"\"SO_CHECK: $config{SO_CHECK}$plus\" \"\" \"If TRUE, do a solib/perl/python/ruby check on fetch and upgrade.\" \\",
-						"\"STRICT_UPGRADES: $config{STRICT_UPGRADES}$plus\" \"\" \"If TRUE, ignore apparent downgrades.\"";
+						"\"STRICT_UPGRADES: $config{STRICT_UPGRADES}$plus\" \"\" \"If TRUE, ignore apparent downgrades with sboupgrade.\"";
 	my $config_values = join "\n", @config_values;
 	($height, $width, $begin_y, $begin_x) = calculate_position("wide", $config_values, $msg);
 	$height--;
