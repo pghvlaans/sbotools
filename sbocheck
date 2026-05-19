@@ -360,7 +360,7 @@ sub get_update_list {
 			push @unactionable, $str;
 		}
 	}
-	unshift @listing, @unactionable;
+	push @listing, @unactionable;
 	return @listing;
 }
 
