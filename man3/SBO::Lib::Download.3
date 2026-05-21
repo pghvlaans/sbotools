@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Download 3"
-.TH SBO::Lib::Download 3 "Boomtime, Discord 54, 3192 YOLD" "" "sbotools 4.1.4"
+.TH SBO::Lib::Download 3 "Sweetmorn, Discord 68, 3192 YOLD" "" "sbotools 4.1.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -88,6 +88,15 @@ download.
 In case of success, an array of symlinks from \f(CWcreate_symlinks()\fR is returned. The
 subroutine returns empty if the SlackBuild did not contain any downloads. In case of
 failure, an error message and an exit code are returned.
+.SS check_manual
+.IX Subsection "check_manual"
+.Vb 1
+\&  my $manual_file = check_manual($filename, $info_md5);
+.Ve
+.PP
+\&\f(CWcheck_manual()\fR checks for a file \f(CW$filename\fR with md5sum \f(CW$info_md5\fR in
+\&\f(CW\*(C`MANUAL_DL_DIR\*(C'\fR, if specified. It returns the path to this file if it exists
+and 0 otherwise.
 .SS compute_md5sum
 .IX Subsection "compute_md5sum"
 .Vb 1
@@ -112,14 +121,6 @@ failure, an error message and an exit code are returned.
 \&\f(CWget_distfile()\fR downloads from the URL \f(CW$link\fR with \f(CWwget(1)\fR and compares
 the md5sum to \f(CW$md5\fR. The file is saved in an md5sum\-designated directory.
 The subroutine returns a message and an error code upon failure, and 1 upon success.
-.SS get_dl_fns
-.IX Subsection "get_dl_fns"
-.Vb 1
-\&  my @filenames = @{ get_dl_fns([@links]) };
-.Ve
-.PP
-\&\f(CWget_dl_fns()\fR returns the filenames of the items in \f(CW@links\fR in an
-array reference.
 .SS get_filename_from_link
 .IX Subsection "get_filename_from_link"
 .Vb 1

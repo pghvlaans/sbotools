@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '4.1.4';
 
-use SBO::Lib::Util qw/ :config :const :times script_error get_sbo_from_loc open_read /;
+use SBO::Lib::Util qw/ :colors :config :const :times script_error get_sbo_from_loc open_read wrapsay_color /;
 use SBO::Lib::Repo qw/ $distfiles /;
 use SBO::Lib::Info qw/ get_download_info /;
 
@@ -21,10 +21,10 @@ use URI::Escape qw/ uri_unescape /;
 
 our @EXPORT_OK = qw{
   check_distfiles
+  check_manual
   compute_md5sum
   create_symlinks
   get_distfile
-  get_dl_fns
   get_filename_from_link
   get_sbo_downloads
   get_symlink_from_filename
@@ -98,6 +98,29 @@ sub check_distfiles {
   return $symlinks;
 }
 
+=head2 check_manual
+
+  my $manual_file = check_manual($filename, $info_md5);
+
+C<check_manual()> checks for a file C<$filename> with md5sum C<$info_md5> in
+C<MANUAL_DL_DIR>, if specified. It returns the path to this file if it exists
+and 0 otherwise.
+
+=cut
+
+# check whether a file with a given md5sum exists in MANUAL_DL_DIR
+sub check_manual {
+  script_error('check_manual requires two arguments.') unless @_ == 2;
+  my ($filename, $info_md5) = @_;
+  return 0 if $config{MANUAL_DL_DIR} eq 'FALSE';
+  $filename = "$config{MANUAL_DL_DIR}/" . basename $filename;
+  if (-f $filename) {
+    my $md5sum = compute_md5sum($filename);
+    return $md5sum eq $info_md5 ? $filename : 0;
+  }
+  return 0;
+}
+
 =head2 compute_md5sum
 
   my $md5sum = compute_md5sum($file);
@@ -135,6 +158,8 @@ sub create_symlinks {
   for my $link (keys %$downloads) {
     my $md5 = $downloads->{$link};
     my $filename = get_filename_from_link($link, $md5);
+    my $manual_filename = check_manual($filename, $md5);
+    $filename = $manual_filename if $manual_filename;
     my $symlink = get_symlink_from_filename($filename, $location);
     unlink $symlink if -l $symlink;
     push @symlinks, $symlink;
@@ -218,23 +243,6 @@ sub get_distfile {
   $download_time += $download_took if $download_took;
   chdir $cwd;
   return $fail->{msg}, $fail->{err};
-}
-
-=head2 get_dl_fns
-
-  my @filenames = @{ get_dl_fns([@links]) };
-
-C<get_dl_fns()> returns the filenames of the items in C<@links> in an
-array reference.
-
-=cut
-
-# given a list of downloads, return just the filenames
-sub get_dl_fns {
-  my $fns = shift;
-  my $return;
-  push @$return, basename $_ for @$fns;
-  return $return;
 }
 
 =head2 get_filename_from_link
@@ -325,6 +333,11 @@ sub verify_distfile {
   script_error('verify_distfile requires two arguments.') unless @_ == 2;
   my ($link, $info_md5) = @_;
   my $filename = get_filename_from_link($link, $info_md5);
+  if (check_manual($filename, $info_md5)) {
+    my $msg_filename = basename $filename;
+    wrapsay_color $color_notice, "Using $msg_filename from $config{MANUAL_DL_DIR}.", 1;
+    return 1;
+  }
   return() unless -f $filename;
   my $md5sum = compute_md5sum($filename);
   return $info_md5 eq $md5sum ? 1 : 0;

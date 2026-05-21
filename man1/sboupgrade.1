@@ -8,7 +8,7 @@ sboupgrade
 .P
 sboupgrade [-h|-v]
 .P
-sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE] \\
            [-fiopqrz] [--batch|--dry-run] --all|--all-plus-failures|sbo_name (sbo_name)
 .P
 sboupgrade [--color|--nocolor] [--wrap|--nowrap] ...
@@ -113,7 +113,15 @@ either the download or the md5sum check fails, a new
 download is attempted from
 .UR ftp://slackware.uk/sbosrcarch/
 .UE
-as a fallback measure. The
+as a fallback measure. If
+.B
+MANUAL_DL_DIR
+is set to an absolute path, source files with a matching
+name and checksum are preferred to new downloads. This is
+a convenient way to download source files in advance
+in case of an unreliable connection.
+.P
+The
 .B
 --all
 flag may be passed to upgrade all eligible SlackBuilds
@@ -374,6 +382,19 @@ absolute path\fR\
 LOG_DIR
 setting. Logs are saved with the name of the script
 and a timestamp.
+.RE
+.P
+.B
+-M|--manual-dl-dir (FALSE|/path)
+.RS
+If an
+.B
+absolute path\fR\
+\&, prioritize source files with the proper name and checksum in that directory
+over new downloads. Overrides the
+.B
+MANUAL_DL_DIR
+setting.
 .RE
 .P
 .B

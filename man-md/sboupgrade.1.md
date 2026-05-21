@@ -21,8 +21,8 @@
 
     sboupgrade [-h|-v]
 
-    sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
-\
+    sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-LMk
+/path\|FALSE] \
                [-fiopqrz] [--batch|--dry-run]
 \--all\|\--all-plus-failures\|sbo_name (sbo_name)
 
@@ -57,11 +57,16 @@ build number is apparently higher. See [sboconfig(1)](sboconfig.1.md) or
 **sboupgrade** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
 or the md5sum check fails, a new download is attempted from
-<ftp://slackware.uk/sbosrcarch/> as a fallback measure. The **\--all**
-flag may be passed to upgrade all eligible SlackBuilds simultaneously.
-Use **\--all-plus-failures** to rebuild any packages with the *\_SBo*
-tag that fail the [sbocheck(1)](sbocheck.1.md) package tests before the upgrade
-process as well.
+<ftp://slackware.uk/sbosrcarch/> as a fallback measure. If
+**MANUAL_DL_DIR** is set to an absolute path, source files with a
+matching name and checksum are preferred to new downloads. This is a
+convenient way to download source files in advance in case of an
+unreliable connection.
+
+The **\--all** flag may be passed to upgrade all eligible SlackBuilds
+simultaneously. Use **\--all-plus-failures** to rebuild any packages
+with the *\_SBo* tag that fail the [sbocheck(1)](sbocheck.1.md) package tests before
+the upgrade process as well.
 
 **sboupgrade** verifies the local repository with **gpg(1)** if
 **GPG_VERIFY** is **TRUE**.
@@ -149,6 +154,12 @@ of the **PKG_DIR** setting.
 If an **absolute path**, save build logs here, overriding the value of
 the **LOG_DIR** setting. Logs are saved with the name of the script and
 a timestamp.
+
+**-M\|\--manual-dl-dir (FALSE\|/path)**
+
+If an **absolute path**, prioritize source files with the proper name
+and checksum in that directory over new downloads. Overrides the
+**MANUAL_DL_DIR** setting.
 
 **-N\|\--nonet (FALSE\|TRUE)**
 

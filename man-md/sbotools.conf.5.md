@@ -131,6 +131,13 @@ with the name of the script and a timestamp. Please note that because
 may differ when running some SlackBuilds unless **LOG_DIR** is
 **FALSE**.
 
+**MANUAL_DL_DIR=(FALSE\|/path)**
+
+If set to an **absolute path**, prioritize source files with the proper
+name and checksum in that directory over downloads when running
+[sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md). These files are not deleted
+after building, regardless of the value of **DISTCLEAN**.
+
 **NONET=(FALSE\|TRUE)**
 
 If set to **TRUE**, do not allow network access when running

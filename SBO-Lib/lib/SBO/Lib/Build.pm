@@ -11,7 +11,7 @@ our $VERSION = '4.1.4';
 use SBO::Lib::Util qw/ :config :const :times :colors prompt error_code script_error get_sbo_from_loc check_multilib on_blacklist open_fh open_read uniq save_options wrapsay in in_regexp $userland_32 /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires get_reverse_reqs /;
-use SBO::Lib::Download qw/ get_sbo_downloads get_dl_fns get_filename_from_link check_distfiles /;
+use SBO::Lib::Download qw/ get_sbo_downloads get_filename_from_link check_distfiles /;
 use SBO::Lib::Pkgs qw/ get_installed_packages /;
 
 use Exporter 'import';
@@ -579,7 +579,8 @@ sub make_distclean {
     }
     if (-f $filename and not $is_upcoming) {
       unlink $filename;
-      # be careful with the directory
+      # be careful with the directory; does not apply to files
+      # in MANUAL_DL_DIR.
       if (dirname(dirname($filename)) eq "$config{SBO_HOME}/distfiles") {
         remove_tree dirname($filename) if -d dirname($filename);
       } else {

@@ -1262,6 +1262,7 @@ sub display_settings {
 						"\"GPG_VERIFY: $config{GPG_VERIFY}$plus\" \"\" \"If TRUE, verify the repo with GPG after fetching.\" \\",
 						"\"JOBS: $config{JOBS}\" \"\" \"If a number, use this many jobs with make.\" \\",
 						"\"LOCAL_OVERRIDES: $config{LOCAL_OVERRIDES}\" \"\" \"Use this directory for local override scripts.\" \\",
+						"\"MANUAL_DL_DIR: $config{MANUAL_DL_DIR}\" \"\" \"Prioritize this directory for downloaded source.\" \\",
 						"\"LOG_DIR: $config{LOG_DIR}\" \"\" \"If a directory, save build logs there. Logs are otherwise not saved.\" \\",
 						"\"NOCLEAN: $config{NOCLEAN}$plus\" \"\" \"If TRUE, do not remove working directories after building.\" \\",
 						"\"NONET: $config{NONET}$plus\" \"\" \"If TRUE, do not allow network access when running SlackBuilds.\" \\",
@@ -1359,6 +1360,11 @@ sub display_settings {
 			$explanation = "If a PATH, save logs in that directory; logs are otherwise\nnot saved.\n\n/home/*, /root and / are not permitted.";
 			$criterion = "A PATH or FALSE.";
 			$flag = "L";
+		}
+		if ($option =~ /^MANUAL_DL_DIR/) {
+			$explanation = "If a PATH, prioritize source files found in that directory.\n\n/home/*, /root and / are not permitted.";
+			$criterion = "A PATH or FALSE.";
+			$flag = "M";
 		}
 		if ($option =~ /^NOCLEAN/) {
 			$explanation = "If TRUE, do not delete the working directory after building.";
