@@ -8,6 +8,8 @@
   * *sboinstall*: With **\--reinstall**, mention version changes
   * *sboinstall*: install and reinstall messaging reflects override scripts
   * *sbotool*: Hide ineffective settings when **CLASSIC** is **TRUE**
+  * Added a setting **MANUAL_DL_DIR** to specify a manual downloads directory for use with *sboinstall* and *sboupgrade*
+    * Thanks to dchmelik and shamefulCake1 for the feedback.
 
 * 4.1.4 - 2026-05-06
   * *sbofind*: Do not match "No tags found" in `TAGS.txt`

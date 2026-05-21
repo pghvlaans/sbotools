@@ -21,20 +21,20 @@
 
     sboinstall [-h|-v]
 
-    sboinstall [-Ndce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-Ndce TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE]
 \
                [-DRiopr] [--batch|--dry-run] [--create-template|-t FILE] \
                sbo_name (sbo_name)
 
-    sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE]
 \
                [-Di] --use-template FILE
 
-    sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE]
 \
                [-Dioqr] [--create-template|-t FILE] --mass-rebuild
 
-    sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE]
 \
                [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES,\...
 
@@ -70,7 +70,11 @@ base script. Please note that saved build options are not displayed when
 **sboinstall** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
 or the md5sum check fails, a new download is attempted from
-<ftp://slackware.uk/sbosrcarch/> as a fallback measure.
+<ftp://slackware.uk/sbosrcarch/> as a fallback measure. If
+**MANUAL_DL_DIR** is set to an absolute path, source files with a
+matching name and checksum are preferred to new downloads. This is a
+convenient way to download source files in advance in case of an
+unreliable connection.
 
 **sboinstall** verifies the local repository with **gpg** if
 **GPG_VERIFY** is **TRUE**.
@@ -135,6 +139,12 @@ of the **PKG_DIR** setting.
 If an **absolute path**, save build logs here, overriding the value of
 the **LOG_DIR** setting. Logs are saved with the name of the script and
 a timestamp.
+
+**-M\|\--manual-dl-dir (FALSE\|/path)**
+
+If an **absolute path**, prioritize source files with the proper name
+and checksum in that directory over new downloads. Overrides the
+**MANUAL_DL_DIR** setting.
 
 **-N\|\--nonet (FALSE\|TRUE)**
 
