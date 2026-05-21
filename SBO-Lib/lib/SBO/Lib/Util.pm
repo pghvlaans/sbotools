@@ -890,7 +890,7 @@ sub lint_sbo_config {
   if (exists $configs{MANUAL_DL_DIR}) {
     unless ($configs{MANUAL_DL_DIR} =~ qr#^(/|FALSE$)#) {
       push @invalid, "MANUAL_DL_DIR:" if $running ne 'sboconfig';
-      push @invalid, "$warn -L (absolute path or FALSE)";
+      push @invalid, "$warn -M (absolute path or FALSE)";
     } elsif ($configs{MANUAL_DL_DIR} =~ qr#^/#) {
       push @dangerous, "MANUAL_DL_DIR: $configs{MANUAL_DL_DIR}" if dangerous_directory($configs{MANUAL_DL_DIR});
     }
