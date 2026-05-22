@@ -14,9 +14,11 @@ _arguments \
     '--color[Enable sbotools color output.]:' \
     '--nowrap[Disable sbotools word wrapping.]:' \
     '--wrap[Enable sbotools word wrapping.]:' \
+    '--no-descriptions[Do not show package descriptions.]:' \
     - commands \
     '(-a --alwaysask)'{-a,--alwaysask}'[Always ask to remove requirements (even if required by installed packages).]' \
     '(-p --compat32)'{-p,--compat32}'[Remove compat32 scripts only.]' \
+    '(-q --query)'{-q,--query}'[Show the prospective removal prompt order and exit.]' \
     '(-)*:SlackBuild:(${packages:|words})'
 
 # Local Variables:

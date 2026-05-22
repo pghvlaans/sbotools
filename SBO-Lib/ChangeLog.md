@@ -11,6 +11,8 @@
   * sbotool: Hide ineffective settings when CLASSIC is TRUE
   * Added a setting MANUAL_DL_DIR to specify a manual downloads directory for use with sboinstall and sboupgrade
     * Thanks to dchmelik and shamefulCake1 for the feedback.
+  * sboremove: Use --query to print the prospective removal prompt order
+  * sboremove: Use --no-descriptions to suppress package descriptions
 
 #### 4.1.4 - 2026-05-06
   * sbofind: Do not match "No tags found" in TAGS.txt

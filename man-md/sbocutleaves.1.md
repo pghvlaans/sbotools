@@ -20,7 +20,7 @@
 
     sbocutleaves [-h|-v]
 
-    sbocutleaves [-l] [--no-display]
+    sbocutleaves [-l] [--no-descriptions]
 
     sbocutleaves [--color|--nocolor] [--wrap|--nowrap] \...
 

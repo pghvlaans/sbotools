@@ -11,7 +11,7 @@ package SBO::App::Remove;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :colors get_installed_packages get_sbo_description get_sbo_locations get_sbo_location get_full_queue get_full_reverse get_readme_contents get_reverse_reqs in prompt show_version lint_sbo_config error_code usage_error wrapsay %config @reverse_concluded $descriptions_generated /;
+use SBO::Lib qw/ :colors get_installed_packages get_sbo_description get_sbo_locations get_sbo_location get_full_queue get_full_reverse get_readme_contents get_reverse_reqs in prompt show_version uniq lint_sbo_config error_code usage_error wrapsay %config @reverse_concluded $descriptions_generated /;
 use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO::App';
@@ -23,7 +23,7 @@ sub _parse_opts {
   my $class = shift;
   my @ARGS = @_;
 
-  my ($help, $vers, $alwaysask, $compat, $nocolor, $color, $nowrap, $wrap);
+  my ($help, $vers, $alwaysask, $compat, $nocolor, $color, $nowrap, $wrap, $query, $no_desc);
 
   $options_ok = GetOptionsFromArray(
     \@ARGS,
@@ -35,9 +35,11 @@ sub _parse_opts {
     'color'         => \$color,
     'nowrap'        => \$nowrap,
     'wrap'          => \$wrap,
+    'query|q'       => \$query,
+    'no-descriptions' => \$no_desc,
   );
 
-  return { help => $help, vers => $vers, alwaysask => $alwaysask, compat => $compat, nocolor => $nocolor, color => $color, nowrap => $nowrap, wrap => $wrap, args => \@ARGS, };
+  return { help => $help, vers => $vers, alwaysask => $alwaysask, compat => $compat, nocolor => $nocolor, color => $color, nowrap => $nowrap, wrap => $wrap, query => $query, no_desc => $no_desc, args => \@ARGS, };
 }
 
 sub run {
@@ -45,7 +47,7 @@ sub run {
 
   if ($self->{help}) {
     $self->show_usage();
-    wrapsay "This is a root-only script." unless $< == 0;
+    wrapsay "Non-root users may run this script only with -q." unless $< == 0 or $self->{query};
     exit 0;
   }
   if ($self->{vers}) { $self->show_version(); return 0; }
@@ -53,11 +55,11 @@ sub run {
   $config{NOWRAP} = $self->{nowrap} ? 'TRUE' : 'FALSE' if $self->{wrap} xor $self->{nowrap};
   if (!@{ $self->{args} }) {
     $self->show_usage();
-    usage_error "This is a root-only script." unless $< == 0;
+    usage_error "Non-root users may run this script only with -q." unless $< == 0 or $self->{query};
   }
-  unless ($< == 0) {
+  unless ($< == 0 or $self->{query}) {
     $self->show_usage();
-    usage_error "This is a root-only script.";
+    usage_error "Non-root users may run this script only with -q.";
   }
   unless ($options_ok) {
     $self->show_usage();
@@ -121,16 +123,28 @@ sub run {
 
     next if $needed and not $self->{alwaysask};
 
-    push @confirmed, $remove if confirm($remove, $needed ? @required_by : ());
+    unless ($self->{query}) {
+      push @confirmed, $remove if confirm($remove, $self, $needed ? @required_by : ());
+    } else {
+      push @confirmed, $remove;
+    }
   }
 
-  if (@confirmed) {
+  if (@confirmed and not $self->{query}) {
     $self->remove(@confirmed);
+  } elsif (@confirmed) {
+    @confirmed = uniq @confirmed;
+    wrapsay_color $color_notice, "Removal prompt order:";
+    for (@confirmed) {
+      my $description = get_sbo_description($_->{name}) unless $self->{no_desc};
+      my $msg = defined $description ? "$_->{name} ($description)" : "$_->{name}";
+      print "$msg\n";
+    }
   } else {
     say "Nothing to remove.";
   }
 
-  unless ($descriptions_generated) { wrapsay_color $color_lesser, "Run sbocheck to generate descriptions."; }
+  unless ($descriptions_generated or $self->{no_desc}) { wrapsay_color $color_lesser, "Run sbocheck to generate descriptions."; }
 
   return 0;
 }
@@ -149,8 +163,12 @@ Options (defaults shown first where applicable):
     version information.
   -a|--alwaysask:
     always ask to remove, even if required by other installed packages.
+  --no-descriptions:
+    do not show package descriptions.
   -p|--compat32:
     remove compat32 scripts.
+  -q|--query:
+    show the prospective removal prompt order and exit.
 
 Note: optional dependencies need to be removed separately unless they are
 specified in /etc/sbotools/sbotools.hints.
@@ -176,14 +194,14 @@ sub check_sbo {
 }
 
 sub confirm {
-  my ($remove, @required_by) = @_;
+  my ($remove, $self, @required_by) = @_;
 
   if (@required_by) {
     wrapsay sprintf "%s : required by %s", $remove->{name}, join ' ', @required_by;
   } else {
     say $remove->{name};
   }
-  my $description = get_sbo_description($remove->{name});
+  my $description = get_sbo_description($remove->{name}) unless $self->{no_desc};
   say $description if defined $description;
 
   if ($remove->{warning}) {

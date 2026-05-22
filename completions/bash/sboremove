@@ -19,7 +19,7 @@ _sboremove() {
 
   case "${cmd}" in
     sboremove)
-      opts="-h -v -a -p --help --version --color --nocolor --wrap --nowrap --alwaysask --compat32 $REPOLIST"
+      opts="-h -v -a -p -q --help --version --color --nocolor --wrap --nowrap --alwaysask --compat32 --no-descriptions --query $REPOLIST"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
@@ -29,7 +29,7 @@ _sboremove() {
         -h|--help|-v|--version)
           return 0
           ;;
-        -a|--alwaysask|-p|--compat32)
+        -a|--alwaysask|-p|--compat32|-q|--query|--no-descriptions)
           COMPREPLY=( $(compgen -W "$REPOLIST" -- "${cur}") )
           return 0
           ;;

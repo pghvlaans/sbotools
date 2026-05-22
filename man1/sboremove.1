@@ -8,7 +8,7 @@ sboremove
 .P
 sboremove [-h|-v]
 .P
-sboremove [-ap] sbo_name (sbo_name)
+sboremove [-apq] [--no-descriptions] sbo_name (sbo_name)
 .P
 sboremove [--color|--nocolor] [--wrap|--nowrap] ...
 .SH DESCRIPTION
@@ -62,7 +62,10 @@ future.
 .P
 Root privileges are required to run
 .B
-sboremove\fR\
+sboremove
+unless passing
+.B
+--query\fR\
 \&. If an invalid configuration is detected in
 .I
 /etc/sbotools/sbotools.conf\fR\
@@ -78,6 +81,12 @@ required by other packages installed to the system.
 .RE
 .P
 .B
+--no-descriptions
+.RS
+Do not show descriptions in query or interactive output.
+.RE
+.P
+.B
 -p|--compat32
 .RS
 Remove the
@@ -87,6 +96,12 @@ version of the script or scripts, along with
 .I
 compat32
 dependencies.
+.RE
+.P
+.B
+-q|--query
+.RS
+Show the prospective removal prompt order and exit.
 .RE
 .P
 .B
