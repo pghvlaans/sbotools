@@ -20,7 +20,7 @@
 
     sboremove [-h|-v]
 
-    sboremove [-ap] sbo_name (sbo_name)
+    sboremove [-apq] [--no-descriptions] sbo_name (sbo_name)
 
     sboremove [--color|--nocolor] [--wrap|--nowrap] \...
 
@@ -45,10 +45,10 @@ build order before performing any removal operations. No option exists
 to enable **sboremove** to uninstall packages without confirmation
 prompts, and there are no plans to add that functionality in the future.
 
-Root privileges are required to run **sboremove**. If an invalid
-configuration is detected in */etc/sbotools/sbotools.conf*, or if
-invalid options are specified, the script exits with a diagnostic
-message.
+Root privileges are required to run **sboremove** unless passing
+**\--query**. If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, or if invalid options are specified, the
+script exits with a diagnostic message.
 
 ## OPTIONS
 
@@ -57,10 +57,18 @@ message.
 Always ask to remove dependencies, even if they are required by other
 packages installed to the system.
 
+**\--no-descriptions**
+
+Do not show descriptions in query or interactive output.
+
 **-p\|\--compat32**
 
 Remove the *compat32* version of the script or scripts, along with
 *compat32* dependencies.
+
+**-q\|\--query**
+
+Show the prospective removal prompt order and exit.
 
 **-h\|\--help**
 
