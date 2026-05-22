@@ -38,6 +38,15 @@ install any non-installed dependencies in the build queue, taking the
 hints in [sbotools.hints(5)](sbotools.hints.5.md) into account. The script exits with an
 error message if circular dependencies are detected.
 
+**sboupgrade** attempts to download the sources from the *DOWNLOAD* or
+*DOWNLOAD_x86_64* variables in the *info* file. If either the download
+or the md5sum check fails, a new download is attempted from
+<ftp://slackware.uk/sbosrcarch/> as a fallback measure. If
+**MANUAL_DL_DIR** is set to an absolute path, source files with a
+matching name and checksum are preferred to new downloads. This is a
+convenient way to download source files in advance in case of an
+unreliable connection.
+
 *SlackBuild* and *README* files are parsed for **groupadd(1)** and
 **useradd(1)** commands, and **sboupgrade** offers to run them prior to
 building if any of the required users or groups do not exist. If the
@@ -53,15 +62,6 @@ or **\--batch** , saved build options are used automatically unless
 upgrades are only performed for non-override packages if the version or
 build number is apparently higher. See [sboconfig(1)](sboconfig.1.md) or
 [sbotools.conf(5)](sbotools.conf.5.md).
-
-**sboupgrade** attempts to download the sources from the *DOWNLOAD* or
-*DOWNLOAD_x86_64* variables in the *info* file. If either the download
-or the md5sum check fails, a new download is attempted from
-<ftp://slackware.uk/sbosrcarch/> as a fallback measure. If
-**MANUAL_DL_DIR** is set to an absolute path, source files with a
-matching name and checksum are preferred to new downloads. This is a
-convenient way to download source files in advance in case of an
-unreliable connection.
 
 The **\--all** flag may be passed to upgrade all eligible SlackBuilds
 simultaneously. Use **\--all-plus-failures** to rebuild any packages
@@ -92,8 +92,8 @@ script exits with a diagnostic message.
 If **TRUE**, do not perform upgrades unless the version number differs.
 By default, upgrades also occur when the build number differs. This
 setting and **\--force** are not the same; **\--force** initiates
-upgrades even if the build number is unchanged. This overrides the
-**BUILD_IGNORE** setting in [sbotools.conf(5)](sbotools.conf.5.md).
+upgrades even if the build number is unchanged. This option overrides
+the **BUILD_IGNORE** setting in [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-c\|\--noclean (FALSE\|TRUE)**
 
@@ -101,7 +101,7 @@ If **TRUE**, do not clean working directories after building. These are
 the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
 Cleaning these directories can be set as default via the
 [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This option
-overrides the default.
+overrides the **NOCLEAN** setting.
 
 **-D\|\--dry-run**
 
@@ -118,13 +118,17 @@ If **TRUE**, then remove the source archives after building. They are
 retained in md5sum-designated directories under *SBO_HOME/distfiles* by
 default. The package archive (in */tmp* by default) is also removed.
 This option can be set as default via the [sboconfig(1)](sboconfig.1.md) command. See
-also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
+also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the **DISTCLEAN**
+setting.
+
+Please note that source files in a directory specified by the
+**MANUAL_DL_DIR** setting are not deleted automatically.
 
 **-e\|\--etc-profile**
 
 If **TRUE**, source any executable scripts in */etc/profile.d* named
 *\*.sh* before running each SlackBuild in the build queue. This option
-overrides the default.
+overrides the **ETC_PROFILE** setting.
 
 **-f\|\--force**
 
@@ -158,13 +162,13 @@ a timestamp.
 **-M\|\--manual-dl-dir (FALSE\|/path)**
 
 If an **absolute path**, prioritize source files with the proper name
-and checksum in that directory over new downloads. Overrides the
-**MANUAL_DL_DIR** setting.
+and checksum in that directory over new downloads. This option overrides
+the **MANUAL_DL_DIR** setting.
 
 **-N\|\--nonet (FALSE\|TRUE)**
 
 If **TRUE**, do not allow network access when running SlackBuilds. This
-overrides the **NONET** setting.
+option overrides the **NONET** setting.
 
 **-o\|\--norecall**
 
@@ -214,15 +218,16 @@ Overridden by **\--batch**.
 If **TRUE**, only perform upgrades if the incoming version or build
 number is higher. This has no effect scripts in the local overrides
 directory. This option can be set as default via [sboconfig(1)](sboconfig.1.md). See
-also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
+also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the **STRICT_UPGRADES**
+setting.
 
 **-X\|\--so-check (FALSE\|TRUE)**
 
 If **TRUE**, check for missing first-order shared object dependencies
 after running **sboupgrade**. Please note that only those shared objects
 provided by outgoing packages are reflected in the results. For a full
-shared object check, see [sbocheck(1)](sbocheck.1.md). Overrides the **SO_CHECK**
-setting.
+shared object check, see [sbocheck(1)](sbocheck.1.md). This option overrides the
+**SO_CHECK** setting.
 
 **-z\|\--force-reqs**
 

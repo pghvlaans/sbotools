@@ -52,10 +52,9 @@ message.
 
 **-d\|\--dist**
 
-Clean distfiles, located at */usr/sbo/distfiles* by default. Files
-stored in the manual downloads directory specified by the
-**MANUAL_DL_DIR** are setting unaffected. See also [sboconfig(1)](sboconfig.1.md) or
-[sbotools.conf(5)](sbotools.conf.5.md).
+Clean source archives, located at */usr/sbo/distfiles* by default. Files
+stored in the manual downloads directory specified by **MANUAL_DL_DIR**
+are unaffected. See also [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-w\|\--work**
 
