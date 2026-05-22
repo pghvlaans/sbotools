@@ -132,8 +132,7 @@ Build number increments are ignored if **BUILD_IGNORE** is set to
 
 Using [sboconfig(1)](sboconfig.1.md) without flags enters the [sbotool(1)](sbotool.1.md) settings
 menu, which shows all available options with explanations. Settings
-changes can be done from here if running as root. Using flags is faster,
-but some users may find this a helpful resource.
+changes can be done from here if running as root.
 
 **sbotools** can be set up to print some messages and prompts in color.
 All scripts except for **sboconfig** have **\--color** and

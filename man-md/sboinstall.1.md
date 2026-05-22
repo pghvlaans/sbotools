@@ -52,6 +52,15 @@ case of **\--reinstall**, scripts with automatic reverse dependency
 rebuilds have their reverse dependencies rebuilt as well. The script
 exits with an error message if circular dependencies are detected.
 
+**sboinstall** attempts to download the sources from the *DOWNLOAD* or
+*DOWNLOAD_x86_64* variables in the *info* file. If either the download
+or the md5sum check fails, a new download is attempted from
+<ftp://slackware.uk/sbosrcarch/> as a fallback measure. If
+**MANUAL_DL_DIR** is set to an absolute path, source files with a
+matching name and checksum are preferred to new downloads. This is a
+convenient way to download source files in advance in case of an
+unreliable connection.
+
 *SlackBuild* and *README* files are parsed for **groupadd(1)** and
 **useradd(1)** commands, and **sboinstall** offers to run them prior to
 building if any of the required users or groups do not exist. If the
@@ -66,15 +75,6 @@ base script. Please note that saved build options are not displayed when
 [sbotools.conf(5)](sbotools.conf.5.md). When running with **\--nointeractive** or
 **\--batch**, saved build options are used automatically unless
 **\--norecall** or **\--use-template** are passed as well.
-
-**sboinstall** attempts to download the sources from the *DOWNLOAD* or
-*DOWNLOAD_x86_64* variables in the *info* file. If either the download
-or the md5sum check fails, a new download is attempted from
-<ftp://slackware.uk/sbosrcarch/> as a fallback measure. If
-**MANUAL_DL_DIR** is set to an absolute path, source files with a
-matching name and checksum are preferred to new downloads. This is a
-convenient way to download source files in advance in case of an
-unreliable connection.
 
 **sboinstall** verifies the local repository with **gpg** if
 **GPG_VERIFY** is **TRUE**.
@@ -92,7 +92,7 @@ If **TRUE**, do not clean working directories after building. These are
 the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
 Cleaning these directories can be set as default via the
 [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This option
-overrides the default.
+overrides the **NOCLEAN** setting.
 
 **-D\|\--dry-run**
 
@@ -109,13 +109,17 @@ If **TRUE**, remove the source archives after building. They are
 retained in md5sum-designated directories under *SBO_HOME/distfiles* by
 default. The package archive (in */tmp* by default) is also removed.
 This option can be set as default via the [sboconfig(1)](sboconfig.1.md) command. See
-also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
+also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the **DISTCLEAN**
+setting.
+
+Please note that source files in a directory specified by the
+**MANUAL_DL_DIR** setting are not deleted automatically.
 
 **-e\|\--etc-profile**
 
 If **TRUE**, source any executable scripts in */etc/profile.d* named
 *\*.sh* before running each SlackBuild in the build queue. This option
-overrides the default.
+overrides the **ETC_PROFILE** setting.
 
 **-i\|\--noinstall**
 
@@ -143,13 +147,13 @@ a timestamp.
 **-M\|\--manual-dl-dir (FALSE\|/path)**
 
 If an **absolute path**, prioritize source files with the proper name
-and checksum in that directory over new downloads. Overrides the
-**MANUAL_DL_DIR** setting.
+and checksum in that directory over new downloads. This option overrides
+the **MANUAL_DL_DIR** setting.
 
 **-N\|\--nonet (FALSE\|TRUE)**
 
 If **TRUE**, do not allow network access when running SlackBuilds. This
-overrides the **NONET** setting.
+option overrides the **NONET** setting.
 
 **-o\|\--norecall**
 
@@ -206,7 +210,7 @@ prompts before proceeding with the build.
 
 **-t\|\--template-only FILE**
 
-Save a template to FILE, but do not attempt downloads or builds.
+Save a template to **FILE**, but do not attempt downloads or builds.
 Non-root users may call **sboinstall** with **\--template-only**.
 
 Incompatible with **\--create-template**.

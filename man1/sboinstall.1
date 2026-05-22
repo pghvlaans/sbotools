@@ -53,6 +53,30 @@ into account. In case of
 their reverse dependencies rebuilt as well. The script exits
 with an error message if circular dependencies are detected.
 .P
+.B
+sboinstall
+attempts to download the sources from the
+.I
+DOWNLOAD
+or
+.I
+DOWNLOAD_x86_64
+variables in the
+.I
+info
+file. If
+either the download or the md5sum check fails, a new
+download is attempted from
+.UR ftp://slackware.uk/sbosrcarch/
+.UE
+as a fallback measure. If
+.B
+MANUAL_DL_DIR
+is set to an absolute path, source files with a matching
+name and checksum are preferred to new downloads. This is
+a convenient way to download source files in advance
+in case of an unreliable connection.
+.P
 .I
 SlackBuild
 and
@@ -113,30 +137,6 @@ are passed as well.
 .P
 .B
 sboinstall
-attempts to download the sources from the
-.I
-DOWNLOAD
-or
-.I
-DOWNLOAD_x86_64
-variables in the
-.I
-info
-file. If
-either the download or the md5sum check fails, a new
-download is attempted from
-.UR ftp://slackware.uk/sbosrcarch/
-.UE
-as a fallback measure. If
-.B
-MANUAL_DL_DIR
-is set to an absolute path, source files with a matching
-name and checksum are preferred to new downloads. This is
-a convenient way to download source files in advance
-in case of an unreliable connection.
-.P
-.B
-sboinstall
 verifies the local repository with
 .B
 gpg
@@ -187,7 +187,10 @@ sboconfig(1)
 command. See also
 .B
 sbotools.conf(5)\fR\
-\&. This option overrides the default.
+\&. This option overrides the
+.B
+NOCLEAN
+setting.
 .RE
 .P
 .B
@@ -237,7 +240,15 @@ sboconfig(1)
 command. See also
 .B
 sbotools.conf(5)\fR\
-\&. This option overrides the default.
+\&. This option overrides the
+.B
+DISTCLEAN
+setting.
+.P
+Please note that source files in a directory specified by the
+.B
+MANUAL_DL_DIR
+setting are not deleted automatically.
 .RE
 .P
 .B
@@ -253,7 +264,10 @@ named
 .I
 *.sh
 before running each SlackBuild in the build queue.
-This option overrides the default.
+This option overrides the
+.B
+ETC_PROFILE
+setting.
 .RE
 .P
 .B
@@ -334,7 +348,7 @@ If an
 .B
 absolute path\fR\
 \&, prioritize source files with the proper name and checksum in that directory
-over new downloads. Overrides the
+over new downloads. This option overrides the
 .B
 MANUAL_DL_DIR
 setting.
@@ -347,7 +361,7 @@ If
 .B
 TRUE\fR\
 \&, do not allow network access when running SlackBuilds.
-This overrides the
+This option overrides the
 .B
 NONET
 setting.
@@ -499,7 +513,10 @@ user prompts before proceeding with the build.
 .B
 -t|--template-only FILE
 .RS
-Save a template to FILE, but do not attempt downloads or builds. Non-root
+Save a template to
+.B
+FILE\fR\
+\&, but do not attempt downloads or builds. Non-root
 users may call
 .B
 sboinstall
