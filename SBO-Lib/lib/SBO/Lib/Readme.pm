@@ -296,12 +296,13 @@ sub user_group_do_not_exist {
 
 =head2 user_prompt
 
-  my ($proceed, $cmds, $opts) = user_prompt($sbo, $location);
+  my ($proceed, $cmds, $opts) = user_prompt($sbo, $location, $get_only);
 
 C<user_prompt()> is the main point of access to the other commands in C<Readme.pm>.
-It calls subroutines to find options and commands, and then prompts the user for
-installation. It returns the answer to the installation prompt (true for 'yes' and
-false for 'no'), the list of commands and the list of options.
+Except in the download-only case, it calls subroutines to find options and commands,
+and then prompts the user for installation. It returns the answer to the installation
+prompt (true for 'yes' and false for 'no'), the list of commands and the list of
+options.
 
 The script exits if a non-empty C<README> file cannot be read.
 
@@ -309,8 +310,8 @@ The script exits if a non-empty C<README> file cannot be read.
 
 # for a given sbo, check for cmds/opts, prompt the user as appropriate
 sub user_prompt {
-  script_error('user_prompt requires two arguments.') unless @_ == 2;
-  my ($sbo, $location) = @_;
+  script_error('user_prompt requires three arguments.') unless @_ == 3;
+  my ($sbo, $location, $get_only) = @_;
   my $cmds;
   my $opts = 0;
   my $readme = 0;
@@ -324,13 +325,14 @@ sub user_prompt {
   } else {
     wrapsay_color $color_lesser, "\n$sbo has an empty or nonexistent README file.";
   }
-  my $prel_opts = ask_opts($sbo, $readme);
+  my $prel_opts = ask_opts($sbo, $readme) unless $get_only;
   chomp($opts = $prel_opts) if $prel_opts;
   # check for user/group add commands, offer to run any found
-  my $user_group = get_user_group($sbo, $location, $opts);
-  $cmds = ask_user_group($user_group) if $$user_group[0];
+  my $user_group = get_user_group($sbo, $location, $opts) unless $get_only;
+  $cmds = ask_user_group($user_group) if not $get_only and $$user_group[0];
   ask_other_readmes($sbo, $location) if $readme;
-  my $proceed = prompt($color_notice, "\nProceed with $sbo?", default => 'yes');
+  my $proceed_label = $get_only ? "Download source for" : "Proceed with";
+  my $proceed = prompt($color_notice, "\n$proceed_label $sbo?", default => 'yes');
   return $proceed, $cmds, $opts;
 }
 

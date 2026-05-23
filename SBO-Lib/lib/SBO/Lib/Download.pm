@@ -47,7 +47,7 @@ SBO::Lib::Download - Routines for downloading SlackBuild sources.
 
   use SBO::Lib::Download qw/ check_distfiles /;
 
-  my ($ret, $exit) = check_distfiles(LOCATION => $loc);
+  my ($ret, $exit) = check_distfiles(LOCATION => $loc, NO_DL => $no_dl);
 
 =head1 SUBROUTINES
 
@@ -55,16 +55,19 @@ SBO::Lib::Download - Routines for downloading SlackBuild sources.
 
 =head2 check_distfiles
 
-  my ($ret, $exit) = check_distfiles(LOCATION => $loc);
+  my ($ret, $exit) = check_distfiles(LOCATION => $loc, NO_DL => $no_dl);
 
 C<check_distfiles()> gets the list of downloads from C<$loc>. Any previously-downloaded
-files have their checksums verified. Missing and unverifiable files are downloaded to
-md5sum-designated directories and verified. Finally, C<create_symlinks()> is run on each
-download.
+files have their checksums verified. Unless there is a C<NO_DL> argument, missing and
+unverifiable files are downloaded to md5sum-designated directories and verified.
+Finally, C<create_symlinks()> is run on each download.
 
 In case of success, an array of symlinks from C<create_symlinks()> is returned. The
 subroutine returns empty if the SlackBuild did not contain any downloads. In case of
 failure, an error message and an exit code are returned.
+
+If there is an argument C<NO_DL>, 1 is returned if all sources are verified and 0
+otherwise.
 
 =cut
 
@@ -75,27 +78,41 @@ sub check_distfiles {
   my %args = (
     LOCATION  => '',
     COMPAT32  => 0,
+    NO_DL     => 0,
     @_
   );
   $args{LOCATION} or script_error('check_distfiles requires LOCATION.');
 
   my $location = $args{LOCATION};
+  my $no_dl = $args{NO_DL};
   my $sbo = get_sbo_from_loc($location);
   my $downloads = get_sbo_downloads(
     LOCATION => $location,
     32 => $args{COMPAT32}
   );
-  # return empty if no files are specified
-  return unless keys %$downloads > 0;
+  # return empty if no files are specified (1 in the no-download case)
+  if ($no_dl) {
+    return 1 unless keys %$downloads > 0;
+  } else {
+    return unless keys %$downloads > 0;
+  }
   for my $link (keys %$downloads) {
     my $md5 = $downloads->{$link};
     unless (verify_distfile($link, $md5)) {
-      my ($fail, $exit) = get_distfile($link, $md5);
-      return $fail, $exit if $exit;
+      if ($no_dl) {
+        return 0;
+      } else {
+        my ($fail, $exit) = get_distfile($link, $md5);
+        return $fail, $exit if $exit;
+      }
     }
   }
-  my $symlinks = create_symlinks($args{LOCATION}, $downloads);
-  return $symlinks;
+  if ($no_dl) {
+    return 1;
+  } else {
+    my $symlinks = create_symlinks($args{LOCATION}, $downloads);
+    return $symlinks;
+  }
 }
 
 =head2 check_manual

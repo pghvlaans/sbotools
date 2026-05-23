@@ -23,7 +23,7 @@
 
     sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-LMk
 /path\|FALSE] \
-               [-fiopqrz] [--batch|--dry-run]
+               [-figopqrz] [--batch|--dry-run]
 \--all\|\--all-plus-failures\|sbo_name (sbo_name)
 
     sboupgrade [--color|--nocolor] [--wrap|--nowrap] \...
@@ -41,7 +41,8 @@ error message if circular dependencies are detected.
 **sboupgrade** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
 or the md5sum check fails, a new download is attempted from
-<ftp://slackware.uk/sbosrcarch/> as a fallback measure. If
+<ftp://slackware.uk/sbosrcarch/> as a fallback measure. To verify
+sources for the queue and download if needed, use **\--get-only**. If
 **MANUAL_DL_DIR** is set to an absolute path, source files with a
 matching name and checksum are preferred to new downloads. This is a
 convenient way to download source files in advance in case of an
@@ -134,6 +135,11 @@ overrides the **ETC_PROFILE** setting.
 
 Force an upgrade, even if the installed version and build number are
 equal to the **SlackBuilds.org** version.
+
+**-g\|\--get-only**
+
+Verify source files for the queue and download anything necessary for
+later use. Incompatible with **\--noinstall**.
 
 **-i\|\--noinstall**
 

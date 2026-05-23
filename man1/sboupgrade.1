@@ -9,7 +9,7 @@ sboupgrade
 sboupgrade [-h|-v]
 .P
 sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE] \\
-           [-fiopqrz] [--batch|--dry-run] --all|--all-plus-failures|sbo_name (sbo_name)
+           [-figopqrz] [--batch|--dry-run] --all|--all-plus-failures|sbo_name (sbo_name)
 .P
 sboupgrade [--color|--nocolor] [--wrap|--nowrap] ...
 .SH DESCRIPTION
@@ -52,7 +52,11 @@ either the download or the md5sum check fails, a new
 download is attempted from
 .UR ftp://slackware.uk/sbosrcarch/
 .UE
-as a fallback measure. If
+as a fallback measure. To verify sources for the queue and
+download if needed, use
+.B
+--get-only\fR\
+\&. If
 .B
 MANUAL_DL_DIR
 is set to an absolute path, source files with a matching
@@ -325,6 +329,16 @@ build number are equal to the
 .B
 SlackBuilds.org
 version.
+.RE
+.P
+.B
+-g|--get-only
+.RS
+Verify source files for the queue and download anything necessary for
+later use. Incompatible with
+.B
+--noinstall\fR\
+\&.
 .RE
 .P
 .B

@@ -716,7 +716,8 @@ sub perform_sbo {
   my (@failures, $exit) = process_sbos(TODO => [@queue]);
 
 C<process_sbos()> processes a C<@queue> of SlackBuilds and returns an array reference
-with failed builds and the exit status.
+with failed builds and the exit status. If there is an argument C<GET_ONLY>, the array
+reference contains failed downloads instead of builds.
 
 In case of a mass rebuild, C<process_sbos> updates the resume file C<resume.temp>
 when a build fails.
@@ -733,6 +734,7 @@ sub process_sbos {
     NOINSTALL  => 0,
     NON_INT    => 0,
     MASS       => 0,
+    GET_ONLY   => 0,
     @_
   );
   my $todo = $args{TODO};
@@ -740,6 +742,8 @@ sub process_sbos {
   my $opts = $args{OPTS};
   my $locs = $args{LOCATIONS};
   my $mass = $args{MASS};
+  my $get_only = $args{GET_ONLY};
+  my $success_label = $get_only ? "Verified sources:" : "Built:";
   @$todo >= 1 or script_error('process_sbos requires TODO.');
   my $mtemp_in = "$config{SBO_HOME}/mass_rebuild.temp";
   my $mtemp_resume = "$config{SBO_HOME}/resume.temp";
@@ -760,7 +764,7 @@ sub process_sbos {
       # return now if we're not interactive
       if ($args{NON_INT}) {
         unlink for @symlinks;
-        if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
+        if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\n$success_label"; wrapsay join(" ", @successes); }
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
       }
@@ -770,13 +774,21 @@ sub process_sbos {
         next FIRST;
       } else {
         unlink for @symlinks;
-        if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
+        if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\n$success_label"; wrapsay join(" ", @successes); }
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
       }
+    } elsif ($get_only) {
+      push @successes, $sbo;
     } elsif (@symlinks and @$temp_syms) {
       push @symlinks, @$temp_syms;
     }
+  }
+  if ($get_only) {
+    unlink for @symlinks;
+    if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nVerified sources:"; wrapsay join(" ", @successes); }
+    display_times() unless $config{CLASSIC} eq "TRUE";
+    return \@failures, $err;
   }
   my $count = 0;
   FIRST: for my $sbo (@$todo) {

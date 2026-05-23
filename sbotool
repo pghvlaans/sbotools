@@ -291,6 +291,9 @@ sub build_operations {
 	if ($< == 0 and $inst_names_std{$sbo} and not $unsupported and not on_blacklist($sbo)) {
 		push @build_operations, "\"Replace\" \"Reinstall from SBo; batch unavailable.\" \\";
 	}
+	if ($< == 0 and not on_blacklist($sbo) and not $unsupported and (not $inst_names{$sbo} or in $sbo, @update_names)) {
+		push @build_operations, "\"Get\" \"Verify queue sources; download if needed.\" \\";
+	}
 
 	# Don't bother hiding extras unless there are at least
 	# nine items total and two "less-common" items.
@@ -425,6 +428,12 @@ sub build_operations {
 				}
 			}
 		}
+	}
+
+	if ($option eq "Get") {
+		my $cmd = in($sbo, @update_names) ? "/usr/sbin/sboupgrade" : "/usr/sbin/sboinstall";
+		$cmd .= " --get-only $sbo";
+		run_command($cmd);
 	}
 
 	if ($option eq "Hints") {
@@ -1849,8 +1858,21 @@ sub run_command {
 		system("$dry_run_cmd > $command_output");
 		chomp($dry_run_output = slurp $command_output);
 		unless ($dry_run_output =~ /with --batch.$/) {
+			my ($build_label, $build_title);
+			if ($cmd =~ /--get-only/) {
+				unless ($dry_run_output =~ /Download queue/) {
+					($height, $width, $begin_y, $begin_x) = calculate_position("narrow", "sources verified");
+					system("$dialog_prefix --begin $begin_y $begin_x --msgbox \"All sources for the queue are verified.\" $height $width");
+					return;
+				}
+				$build_label = "download";
+				$build_title = "Downloading";
+			} else {
+				$build_label = "build";
+				$build_title = "Building";
+			}
 			($height, $width, $begin_y, $begin_x) = calculate_position("wide_cond", $dry_run_output, "$cmd\n\nUse batch mode?\n\nUse interactive mode?\n\nDry Run:\n");
-			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yes-label \"Batch\" --extra-button --extra-label \"Interactive\" --no-label \"Back\" --title \"Building the Queue\" --yesno \"$cmd\n\nSelect \\\"Interactive\\\" to approve the queue manually.\n\nSelect \\\"Batch\\\" to build the queue automatically.\n\nDry Run:\n$dry_run_output\" $height $width", @help_batch);
+			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --help-button --yes-label \"Batch\" --extra-button --extra-label \"Interactive\" --no-label \"Back\" --title \"$build_title the Queue\" --yesno \"$cmd\n\nSelect \\\"Interactive\\\" to approve the queue manually.\n\nSelect \\\"Batch\\\" to $build_label the queue automatically.\n\nDry Run:\n$dry_run_output\" $height $width", @help_batch);
 			return if $res == $code_dialog_cancel or $res == $code_dialog_error;
 			if ($res == $code_dialog_ok) { $cmd = $batch_cmd; $batch_res = 1; }
 		} else {

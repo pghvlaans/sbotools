@@ -309,6 +309,11 @@ These options are always displayed if available:
     running user has write permissions. Edit any text file in the
     directory. The text editor priority list is $EDITOR, $VISUAL and vi.
 
+* Get
+    Root only. If the SlackBuild is either upgradable or not yet
+    installed, verify sources for the queue and download anything
+    necessary for later use.
+
 * Hints
     Non-root users. View active hints for this SlackBuild.
 

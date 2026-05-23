@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group ignore_tests in ineligible_compat installed_solibs is_obsolete merge_queues on_blacklist open_fh user_group_do_not_exist user_prompt process_sbos print_failures rationalize_queue series_check slurp solib_check update_known_solibs verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_distfiles check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group ignore_tests in ineligible_compat installed_solibs is_obsolete merge_queues on_blacklist open_fh user_group_do_not_exist user_prompt process_sbos print_failures rationalize_queue series_check slurp solib_check update_known_solibs verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -53,6 +53,8 @@ Options (defaults shown first where applicable):
     if TRUE, source all executable *.sh scripts in /etc/profile.d.
   -f|--force:
     force an upgrade, even if the version and build number are the same.
+  -g|--get-only:
+    verify sources for the queue and download if necessary.
   -i|--noinstall:
     do not run upgradepkg at the end of the build process.
   -j|--jobs (FALSE|#):
@@ -83,7 +85,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $socheck, $wrap, $nowrap, $nonet, $all_fails, $manual);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $socheck, $wrap, $nowrap, $nonet, $all_fails, $manual, $get_only);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -114,6 +116,7 @@ my $options_ok = GetOptions(
 	'nonet|N=s'         => \$nonet,
 	'all-plus-failures' => \$all_fails,
     'manual-dl-dir|M=s' => \$manual,
+	'get-only|g'        => \$wrap,
 );
 
 if ($help) {
@@ -166,6 +169,7 @@ usage_error("reverse-rebuild is incompatible with noinstall.") if $reverse && $n
 usage_error("all is incompatible with compat32.") if $compat32 && $all;
 usage_error("all-plus-failures is incompatible with compat32.") if $compat32 && $all_fails;
 usage_error("all is incompatible with all-plus-failures.") if $all_fails && $all;
+usage_error("get-only is incompatible with noinstall.") if $get_only and $no_install;
 
 $yes_really = 1 if $dry_run;
 $non_int = 1 if $yes_really;
@@ -188,6 +192,7 @@ if ($all) {
 	}
 	push @ARGV, map { $_->{name} } @$updates;
 	if ($all_fails) {
+		my $rebuild_label = $get_only ? "Rebuild needed" : "Rebuilding";
 		my @installed_sbos = @{ get_installed_packages('SBO') };
 		if (@installed_sbos) {
 			my (@bad_solibs, @bad_perl, @bad_python, @bad_ruby);
@@ -202,7 +207,7 @@ if ($all) {
 			}
 			if (@bad_solibs) {
 				print "\n";
-				wrapsay_color $color_lesser, "Rebuilding for missing solibs:";
+				wrapsay_color $color_lesser, "$rebuild_label for missing solibs:";
 				for (sort @bad_solibs) {
 					print "  $_\n";
 				}
@@ -221,7 +226,7 @@ if ($all) {
 			push @failed_test, @bad_solibs, @bad_perl, @bad_python, @bad_ruby;
 			if (@bad_perl) {
 				print "\n";
-				wrapsay_color $color_lesser, "Rebuilding for perl incompatibility:";
+				wrapsay_color $color_lesser, "$rebuild_label for perl incompatibility:";
 				for (sort @bad_perl) {
 					print "  $_\n";
 				}
@@ -229,7 +234,7 @@ if ($all) {
 			}
 			if (@bad_python) {
 				print "\n";
-				wrapsay_color $color_lesser, "Rebuilding for python incompatibility:";
+				wrapsay_color $color_lesser, "$rebuild_label for python incompatibility:";
 				for (sort @bad_python) {
 					print "  $_\n";
 				}
@@ -237,7 +242,7 @@ if ($all) {
 			}
 			if (@bad_ruby) {
 				print "\n";
-				wrapsay_color $color_lesser, "Rebuilding for ruby incompatibility:";
+				wrapsay_color $color_lesser, "$rebuild_label for ruby incompatibility:";
 				for (sort @bad_ruby) {
 					print "  $_\n";
 				}
@@ -394,13 +399,14 @@ $upgrade_queue = rationalize_queue($upgrade_queue) if $needs_rationalize;
 FIRST: for my $sbo (@$upgrade_queue) {
 	next FIRST if $std_names{$sbo};
 	my $name = $sbo;
-	if ($compat32 and $sbo !~ /-compat32$/) {
+	my $is_compat32 = $name =~ m/-compat32$/;
+	if ($compat32 and not $is_compat32) {
 		next FIRST unless $updates{$sbo} or not $inst_names{$sbo};
 	}
 	$sbo =~ s/-compat32//;
 
 	$locations{$name} = get_sbo_location($name) unless $locations{$name};
-	if ($name =~ /-compat32$/ and $locations{$name}) {
+	if ($is_compat32 and $locations{$name}) {
 		my $compat_fail_msg = ineligible_compat($locations{$name});
 		if ($compat_fail_msg) { wrapsay_color $color_lesser, $compat_fail_msg; next FIRST; }
 	}
@@ -414,6 +420,11 @@ FIRST: for my $sbo (@$upgrade_queue) {
 			}
 		}
 		next FIRST;
+	} else {
+		if ($get_only and check_distfiles( LOCATION => $locations{$name}, COMPAT32 => $is_compat32, NO_DL => 1 )) {
+			wrapsay_color $color_notice, "Sources verified for $name; skipping.";
+			next FIRST;
+		}
 	}
 	# will give %README% advisories later for --dry-run
 	push @see_readme, $name if defined $warnings{$name} and $warnings{$name} eq '%README%';
@@ -435,20 +446,22 @@ FIRST: for my $sbo (@$upgrade_queue) {
 	}
 
 	unless ($non_int) {
-		my ($proceed, $cmds, $opts) = user_prompt($name, $locations{$name});
+		my ($proceed, $cmds, $opts) = user_prompt($name, $locations{$name}, $get_only);
 		next FIRST unless $proceed;
 		push(@temp_queue, $name);
 		$commands{$name} = $cmds;
 		$options{$name} = $opts;
 		unless ($no_install) {
 			say "$name added to upgrade queue.";
+		} elsif ($get_only) {
+			say "$name added to download queue.";
 		} else {
 			say "$name added to build queue.";
 		}
 	} else {
 		# for --batch, check for existing user and group, exiting
 		# with a message if not
-		if ($yes_really) {
+		if ($yes_really and not $get_only) {
 			my $cmds;
 			if ($no_recall) {
 				$cmds = get_user_group($sbo, $locations{$sbo});
@@ -492,6 +505,8 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		push(@temp_queue, $name);
 		unless ($no_install) {
 			say "\n$name added to upgrade queue." unless $dry_run;
+		} elsif ($get_only) {
+			say "\n$name added to download queue." unless $dry_run;
 		} else {
 			say "\n$name added to build queue." unless $dry_run;
 		}
@@ -514,17 +529,20 @@ if ($dry_run) {
 	}
 }
 unless ($no_install) {
-	wrapsay "\nUpgrade queue: ". join(' ', @$upgrade_queue);
+	my $action = $get_only ? "Download" : "Upgrade";
+	wrapsay "\n$action queue: ". join(' ', @$upgrade_queue);
 } else {
 	wrapsay "\nBuild queue: ". join(' ', @$upgrade_queue);
 }
 unless ($non_int) {
 	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
-	wrapsay_color $color_lesser, "\nBlocking network access for SlackBuilds." if $config{NONET} eq "TRUE";
+	wrapsay_color $color_notice, "\n--get-only (-g) is in use; downloading sources only." if $get_only;
+	wrapsay_color $color_lesser, "\nBlocking network access for SlackBuilds." if $config{NONET} eq "TRUE" and not $get_only;
 	exit 0 unless prompt($color_notice, "\nAre you sure you wish to continue?", default => 'yes');
 }
 if ($dry_run) {
 	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
+	wrapsay_color $color_notice, "\n--get-only (-g) is in use; built packages will not be installed." if $get_only;
 	my $usr_grp_missing;
 	if (%missing_user_group) {
 		for my $item (keys %missing_user_group) {
@@ -540,7 +558,7 @@ if ($dry_run) {
 }
 
 my @solib_search;
-if ($config{SO_CHECK} eq "TRUE") {
+if ($config{SO_CHECK} eq "TRUE" and not $get_only) {
 	wrapsay_color $color_notice, "Checking for shared objects installed in the upgrade queue...";
 	my @before_installed = @{ get_installed_packages("SBO") };
 	my $installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @before_installed };
@@ -558,10 +576,11 @@ my ($failures, $exit) = process_sbos(
 	LOCATIONS => \%locations,
 	NOINSTALL => $no_install,
 	NON_INT   => $non_int,
+	GET_ONLY  => $get_only,
 );
 print_failures($failures);
 
-if ($config{SO_CHECK} eq "TRUE" and @solib_search and not $no_install) {
+if ($config{SO_CHECK} eq "TRUE" and @solib_search and not $no_install and not $get_only) {
 	print "\nChecking for broken shared object dependencies from this upgrade...";
 	update_known_solibs();
 	my (@actionable, @log_output);
@@ -597,7 +616,7 @@ if ($config{SO_CHECK} eq "TRUE" and @solib_search and not $no_install) {
 			wrapsay_color $color_notice, "\nNo broken dependencies from this upgrade found.";
 		}
 	}
-} elsif ($config{SO_CHECK} eq "TRUE" and not @solib_search and not $no_install) {
+} elsif ($config{SO_CHECK} eq "TRUE" and not @solib_search and not $no_install and not $get_only) {
 	wrapsay_color $color_notice, "\nNo outgoing package provided shared objects. Skipping the shared object check.";
 }
 

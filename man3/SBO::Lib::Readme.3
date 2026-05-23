@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Readme 3"
-.TH SBO::Lib::Readme 3 "Boomtime, Discord 54, 3192 YOLD" "" "sbotools 4.1.4"
+.TH SBO::Lib::Readme 3 "Pungenday, Discord 70, 3192 YOLD" "" "sbotools 4.1.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -134,13 +134,14 @@ returning those that do not exist on the system in an array reference.
 .SS user_prompt
 .IX Subsection "user_prompt"
 .Vb 1
-\&  my ($proceed, $cmds, $opts) = user_prompt($sbo, $location);
+\&  my ($proceed, $cmds, $opts) = user_prompt($sbo, $location, $get_only);
 .Ve
 .PP
 \&\f(CWuser_prompt()\fR is the main point of access to the other commands in \f(CW\*(C`Readme.pm\*(C'\fR.
-It calls subroutines to find options and commands, and then prompts the user for
-installation. It returns the answer to the installation prompt (true for \*(Aqyes\*(Aq and
-false for \*(Aqno\*(Aq), the list of commands and the list of options.
+Except in the download\-only case, it calls subroutines to find options and commands,
+and then prompts the user for installation. It returns the answer to the installation
+prompt (true for \*(Aqyes\*(Aq and false for \*(Aqno\*(Aq), the list of commands and the list of
+options.
 .PP
 The script exits if a non\-empty \f(CW\*(C`README\*(C'\fR file cannot be read.
 .SS verify_user_group

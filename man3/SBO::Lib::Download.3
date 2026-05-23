@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Download 3"
-.TH SBO::Lib::Download 3 "Sweetmorn, Discord 68, 3192 YOLD" "" "sbotools 4.1.4"
+.TH SBO::Lib::Download 3 "Pungenday, Discord 70, 3192 YOLD" "" "sbotools 4.1.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -77,17 +77,20 @@ SBO::Lib::Download \- Routines for downloading SlackBuild sources.
 .SS check_distfiles
 .IX Subsection "check_distfiles"
 .Vb 1
-\&  my ($ret, $exit) = check_distfiles(LOCATION => $loc);
+\&  my ($ret, $exit) = check_distfiles(LOCATION => $loc, NO_DL => $no_dl);
 .Ve
 .PP
 \&\f(CWcheck_distfiles()\fR gets the list of downloads from \f(CW$loc\fR. Any previously\-downloaded
-files have their checksums verified. Missing and unverifiable files are downloaded to
-md5sum\-designated directories and verified. Finally, \f(CWcreate_symlinks()\fR is run on each
-download.
+files have their checksums verified. Unless there is a \f(CW\*(C`NO_DL\*(C'\fR argument, missing and
+unverifiable files are downloaded to md5sum\-designated directories and verified.
+Finally, \f(CWcreate_symlinks()\fR is run on each download.
 .PP
 In case of success, an array of symlinks from \f(CWcreate_symlinks()\fR is returned. The
 subroutine returns empty if the SlackBuild did not contain any downloads. In case of
 failure, an error message and an exit code are returned.
+.PP
+If there is an argument \f(CW\*(C`NO_DL\*(C'\fR, 1 is returned if all sources are verified, and 0
+otherwise.
 .SS check_manual
 .IX Subsection "check_manual"
 .Vb 1

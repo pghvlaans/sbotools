@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors auto_reverse check_x32 check_x64 check_multilib error_code get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_sbo_version get_user_group in ineligible_compat is_local is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_do_not_exist user_prompt verify_gpg version_cmp lint_sbo_config wrapsay %concluded %warnings /;
+use SBO::Lib qw/ :config :const :colors auto_reverse check_distfiles check_x32 check_x64 check_multilib error_code get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_sbo_version get_user_group in ineligible_compat is_local is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_do_not_exist user_prompt verify_gpg version_cmp lint_sbo_config wrapsay %concluded %warnings /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -47,6 +47,8 @@ Options (defaults shown first where applicable):
     if TRUE, delete downloaded source archives and the completed package.
   -e|--etc-profile (FALSE|TRUE):
     if TRUE, source executable *.sh scripts in /etc/profile.d.
+  -g|--get-only:
+    verify sources for the queue and download if necessary.
   -i|--noinstall:
     do not run installpkg after building.
   -j|--jobs (FALSE|#):
@@ -88,7 +90,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $noclean, $distclean, $pkg_dir, $log_dir, $etc_profile, $gpg, $series_rebuild, $jobs, $nocolor, $color, $wrap, $nowrap, $ctemp_only, $nonet, $manual);
+my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $noclean, $distclean, $pkg_dir, $log_dir, $etc_profile, $gpg, $series_rebuild, $jobs, $nocolor, $color, $wrap, $nowrap, $ctemp_only, $nonet, $manual, $get_only);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -119,6 +121,7 @@ my $options_ok = GetOptions(
 	'template-only|t=s' => \$ctemp_only,
 	'nonet|N=s'         => \$nonet,
 	'manual-dl-dir|M=s' => \$manual,
+	'get-only|g'        => \$get_only,
 );
 
 if ($help) {
@@ -186,6 +189,9 @@ usage_error("series-rebuild is incompatible with norequirements.") if $no_reqs a
 usage_error("reverse-rebuild is incompatible with use-template.") if $utemp and $reverse_rebuild;
 usage_error("reverse-rebuild is incompatible with norequirements.") if $no_reqs and $reverse_rebuild;
 usage_error("mass-rebuild is incompatible with series-rebuild.") if $series_rebuild and $mass_rebuild;
+usage_error("get-only is incompatible with create-template.") if $get_only and $ctemp;
+usage_error("get-only is incompatible with template-only.") if $get_only and $ctemp_only;
+usage_error("get-only is incompatible with noinstall.") if $get_only and $no_install;
 
 my $true_non_int = $non_int;
 $yes_really = 1 if $dry_run;
@@ -375,13 +381,14 @@ if (defined $template) {
 	%commands = %{ $template->{commands} };
 	%options = %{ $template->{options} };
 }
-my $added = $no_install ? ' added to build queue.' : ' added to install queue.';
+my $added = $get_only ? ' added to download queue.' : ($no_install ? ' added to build queue.' : ' added to install queue.');
 my (@see_readme, %saved_options);
 $build_queue = rationalize_queue($build_queue) if $needs_rationalize;
 FIRST: for my $sbo (@$build_queue) {
 	my $name = $sbo;
+	my $is_compat32 = $name =~ /-compat32$/;
 	if ($compat32) {
-		next FIRST unless $utemp or $requested_reinstall or not $inst_names{$sbo} or $sbo =~ /-compat32$/;
+		next FIRST unless $utemp or $requested_reinstall or not $inst_names{$sbo} or $is_compat32;
 	}
 	$sbo =~ s/-compat32$//;
 	if ($std_names{$name} and $non_int and not $no_install) {
@@ -389,8 +396,14 @@ FIRST: for my $sbo (@$build_queue) {
 		next FIRST;
 	}
 	$locations{$name} = get_sbo_location($sbo) unless $locations{$name};
+	unless (defined $warnings{$name} and $warnings{$name} eq 'nonexistent') {
+		if ($get_only and check_distfiles( LOCATION => $locations{$name}, COMPAT32 => $is_compat32, NO_DL => 1 )) {
+			wrapsay_color $color_notice, "Sources verified for $name; skipping.";
+			next FIRST;
+		}
+	}
 	my $install_from = is_local($name) ? "overrides" : "SBo";
-	if ($name =~ /-compat32$/ and $locations{$name}) {
+	if ($is_compat32 and $locations{$name}) {
 		my $compat_fail_msg = ineligible_compat($locations{$name});
 		if ($compat_fail_msg) { wrapsay_color $color_lesser, $compat_fail_msg; next FIRST; }
 	}
@@ -416,6 +429,7 @@ FIRST: for my $sbo (@$build_queue) {
 			$reinstall_label = "reinstall";
 			$agreed_label = "Reinstalling";
 		}
+		$agreed_label = $get_only ? "Downloading sources." : $agreed_label;
 		my $inst_msg = sprintf "%s (%s) is $inst_label.", $name, $inst_names{$name}{pkg};
 		$inst_msg = $config{CLASSIC} eq 'TRUE' ? $inst_msg : $inst_msg. "\n  ($inst_names{$name}{created})";
 		$inst_msg .= "\n  $upgrade_label: $inst_names{$name}{version} > $version" if $version_differs;
@@ -423,10 +437,18 @@ FIRST: for my $sbo (@$build_queue) {
 		# always warn with default "no" for reinstall if the package is
 		# installed non-SBo and it exists in the tree
 		if ($reinstall and $std_names{$name} and not $no_install) {
-			next FIRST unless prompt($color_warn, "Warning: $name is not an SBo package. $upgrade_label from $install_from anyway?", default => 'no');
+			unless ($get_only) {
+				next FIRST unless prompt($color_warn, "Warning: $name is not an SBo package. $upgrade_label from $install_from anyway?", default => 'no');
+			} else {
+				next FIRST unless prompt($color_warn, "Warning: $name is not an SBo package. Download sources anyway?", default => 'no');
+			}
 		} elsif ($reinstall and not $non_int and not $no_install) {
 			my $default = ($mass_rebuild or $reverse_rebuild or $series_rebuild) ? "yes" : "no";
-			next FIRST unless prompt($color_notice, "Do you want to $reinstall_label from $install_from?", default => $default);
+			unless ($get_only) {
+				next FIRST unless prompt($color_notice, "Do you want to $reinstall_label from $install_from?", default => $default);
+			} else {
+				next FIRST unless prompt($color_notice, "Do you still want to donwload sources?", default => $default);
+			}
 		} elsif ($reinstall) {
 			unless ($no_install) {
 				say "$agreed_label." unless $dry_run;
@@ -473,14 +495,14 @@ FIRST: for my $sbo (@$build_queue) {
 	push @see_readme, $sbo if defined $warnings{$name} and $warnings{$name} eq '%README%';
 
 	unless ($non_int) {
-		my ($proceed, $cmds, $opts) = user_prompt($name, $locations{$name});
+		my ($proceed, $cmds, $opts) = user_prompt($name, $locations{$name}, $get_only);
 		next FIRST unless $proceed;
 		push(@temp_queue, $name);
 		$commands{$name} = $cmds;
 		$options{$name} = $opts;
 		say "$name$added";
 	} else {
-		unless ($utemp) {
+		unless ($utemp or $get_only) {
 			# for --batch, check for existing user and group, exiting
 			# with a message if not; notify with --dry-run
 			if ($yes_really) {
@@ -511,7 +533,7 @@ FIRST: for my $sbo (@$build_queue) {
 			}
 			# if nointeractive or batch, use saved build options unless reading a template
 			# or passing norecall
-			unless ($no_recall) {
+			unless ($no_recall or $get_only) {
 				my $opts_log = "/var/log/sbotools/$sbo";
 				if (-f $opts_log) {
 					my ($prev_fh, $exit) = open_fh($opts_log, '<');
@@ -532,7 +554,7 @@ FIRST: for my $sbo (@$build_queue) {
 @$build_queue = @temp_queue;
 
 exit 0 if (@{ $build_queue } == 0);
-if ($dry_run) {
+if ($dry_run and not $get_only) {
 	if (@see_readme) {
 		wrapsay_color $color_lesser, "\nSee README for:";
 		for my $item (@see_readme) { say "  $item"; }
@@ -546,19 +568,22 @@ if ($dry_run) {
 	}
 }
 unless ($no_install) {
-	wrapsay "\nInstall queue: " . join(' ', @$build_queue);
+	my $action = $get_only ? "Download" : "Install";
+	wrapsay "\n$action queue: " . join(' ', @$build_queue);
 } else {
 	wrapsay "\nBuild queue: " . join(' ', @$build_queue);
 }
 unless ($non_int) {
 	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
-	wrapsay_color $color_lesser, "\nBlocking network access for SlackBuilds." if $config{NONET} eq "TRUE";
+	wrapsay_color $color_notice, "\n--get-only (-g) is in use; downloading sources only." if $get_only;
+	wrapsay_color $color_lesser, "\nBlocking network access for SlackBuilds." if $config{NONET} eq "TRUE" and not $get_only;
 	unless (prompt($color_notice, "\nAre you sure you wish to continue?", default => 'yes')) {
 		exit 0;
 	}
 }
 if ($dry_run) {
 	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
+	wrapsay_color $color_notice, "\n--get-only (-g) is in use; downloading sources only." if $get_only;
 	my $usr_grp_missing;
 	if (%missing_user_group) {
 		for my $item (keys %missing_user_group) {
@@ -603,6 +628,7 @@ my ($failures, $exit) = process_sbos(
 	NOINSTALL => $no_install,
 	NON_INT   => $non_int,
 	MASS      => $mass_rebuild,
+	GET_ONLY  => $get_only,
 );
 print_failures($failures);
 

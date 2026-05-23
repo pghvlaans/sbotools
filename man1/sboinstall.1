@@ -9,17 +9,17 @@ sboinstall
 sboinstall [-h|-v]
 .P
 sboinstall [-Ndce TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE] \\
-           [-DRiopr] [--batch|--dry-run] [--create-template|-t FILE] \\
+           [-DRgiopr] [--batch|--dry-run] [--create-template|-t FILE] \\
            sbo_name (sbo_name)
 .P
 sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE] \\
-           [-Di] --use-template FILE
+           [-Dgi] --use-template FILE
 .P
 sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE] \\
-           [-Dioqr] [--create-template|-t FILE] --mass-rebuild
+           [-Dgioqr] [--create-template|-t FILE] --mass-rebuild
 .P
 sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE] \\
-           [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES,...
+           [-Dgioqr] [--create-template|-t FILE] --series-rebuild SERIES,...
 .P
 sboinstall [--color|--nocolor] [--wrap|--nowrap] ...
 .SH DESCRIPTION
@@ -69,7 +69,11 @@ either the download or the md5sum check fails, a new
 download is attempted from
 .UR ftp://slackware.uk/sbosrcarch/
 .UE
-as a fallback measure. If
+as a fallback measure. To verify sources for the queue and
+download if needed, use
+.B
+--get-only\fR\
+\&. If
 .B
 MANUAL_DL_DIR
 is set to an absolute path, source files with a matching
@@ -268,6 +272,22 @@ This option overrides the
 .B
 ETC_PROFILE
 setting.
+.RE
+.P
+.B
+-g|--get-only
+.RS
+Verify source files for the queue and download anything necessary for
+later use. Incompatible with
+.B
+--create-template\fR\
+\&,
+.B
+--template-only
+and
+.B
+--noinstall\fR\
+\&.
 .RE
 .P
 .B
