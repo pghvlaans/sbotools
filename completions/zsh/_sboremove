@@ -17,7 +17,7 @@ _arguments \
     '--no-descriptions[Do not show package descriptions.]:' \
     - commands \
     '(-a --alwaysask)'{-a,--alwaysask}'[Always ask to remove requirements (even if required by installed packages).]' \
-    '(-p --compat32)'{-p,--compat32}'[Remove compat32 scripts only.]' \
+    '(-p --compat32)'{-p,--compat32}'[Add -compat32 to all scripts on the command line.]' \
     '(-q --query)'{-q,--query}'[Show the prospective removal prompt order and exit.]' \
     '(-)*:SlackBuild:(${packages:|words})'
 

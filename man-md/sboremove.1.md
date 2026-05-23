@@ -37,8 +37,9 @@ dependencies receive removal prompts, even if they are required by other
 installed SlackBuilds. The per-script prompts list installed reverse
 dependencies, if any.
 
-To remove *compat32* packages, call **sboremove** with the
-**\--compat32** flag.
+*compat32* and normal packages can be requested together at the command
+line. Call **sboremove** with the **\--compat32** flag to specify all
+command line scripts as *compat32* automatically.
 
 In all cases, this script prompts the user package-by-package in reverse
 build order before performing any removal operations. No option exists
@@ -63,8 +64,8 @@ Do not show descriptions in query or interactive output.
 
 **-p\|\--compat32**
 
-Remove the *compat32* version of the script or scripts, along with
-*compat32* dependencies.
+Interpret all scripts passed to **sboremove** at the command line as
+*compat32*.
 
 **-q\|\--query**
 

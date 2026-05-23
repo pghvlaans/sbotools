@@ -40,16 +40,19 @@ flag, all dependencies receive removal prompts, even if they are
 required by other installed SlackBuilds. The per-script prompts list
 installed reverse dependencies, if any.
 .P
-To remove
 .I
 compat32
-packages, call
+and normal packages can be requested together at the command line.
+Call
 .B
 sboremove
 with the
 .B
 --compat32
-flag.
+flag to specify all command line scripts as
+.I
+compat32
+automatically.
 .P
 In all cases, this script prompts the user package-by-package in
 reverse build order before performing any removal operations. No
@@ -89,13 +92,13 @@ Do not show descriptions in query or interactive output.
 .B
 -p|--compat32
 .RS
-Remove the
+Interpret all scripts passed to
+.B
+sboremove
+at the command line as
 .I
-compat32
-version of the script or scripts, along with
-.I
-compat32
-dependencies.
+compat32\fR\
+\&.
 .RE
 .P
 .B

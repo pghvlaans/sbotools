@@ -156,7 +156,7 @@ sub show_usage {
   my $fname = $self->{fname};
 
 	print <<"EOF";
-Usage: $fname (options) sbo
+Usage: $fname (options) sbo ...
 
 Options (defaults shown first where applicable):
   -h|--help:
@@ -168,7 +168,7 @@ Options (defaults shown first where applicable):
   --no-descriptions:
     do not show package descriptions.
   -p|--compat32:
-    remove compat32 scripts.
+    add -compat32 to all scripts on the command line.
   -q|--query:
     show the prospective removal prompt order and exit.
 
@@ -231,7 +231,8 @@ sub remove {
   my $self = shift;
   my @confirmed = @_;
 
-  say sprintf "Removing %d package(s).", scalar @confirmed;
+  my $grammar = @confirmed > 1 ? "packages" : "package";
+  say sprintf "Removing %d $grammar.", scalar @confirmed;
   wrapsay join " ", map { $_->{name} } @confirmed;
 
   if (!prompt($color_warn, "\nAre you sure you want to continue?", default => 'no')) {
