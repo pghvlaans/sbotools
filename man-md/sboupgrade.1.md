@@ -147,7 +147,7 @@ Do not install the package at the end of the build process. It is left
 in */tmp* (or *\$OUTPUT*) if **DISTCLEAN** is **FALSE**. Packages are
 retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
 [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md). Incompatible with
-**\--reverse-rebuild**.
+**\--reverse-rebuild** and **\--get-only**.
 
 **-j\|\--jobs (FALSE\|#)**
 

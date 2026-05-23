@@ -135,7 +135,8 @@ later use. Incompatible with **\--create-template**,
 Do not install the package at the end of the build process. It is left
 in */tmp* (or *\$OUTPUT*) if **DISTCLEAN** is **FALSE**. Packages are
 retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
-[sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
+[sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md). Incompatible with
+**\--get-only**.
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -222,7 +223,7 @@ prompts before proceeding with the build.
 Save a template to **FILE**, but do not attempt downloads or builds.
 Non-root users may call **sboinstall** with **\--template-only**.
 
-Incompatible with **\--create-template**.
+Incompatible with **\--create-template** and **\--get-only**.
 
 **\--reinstall**
 
@@ -242,9 +243,10 @@ Build using the template saved to **FILE.** This disables all user
 prompts.
 
 Incompatible with **\--compat32**, **\--series-rebuild**,
-**\--mass-rebuild** and **\--reverse-rebuild**. To make *compat32*
-packages from a template, consider using **\--create-template** or
-**\--template-only** with **\--compat32** first.
+**\--mass-rebuild**, **\--reverse-rebuild** and **\--get-only**. To make
+*compat32* packages from a template, consider using
+**\--create-template** or **\--template-only** with **\--compat32**
+first.
 
 **\--mass-rebuild**
 

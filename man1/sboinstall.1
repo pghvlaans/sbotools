@@ -318,6 +318,9 @@ sboconfig(1)
 and
 .B
 sbotools.conf(5)\fR\
+\&. Incompatible with
+.B
+--get-only\fR\
 \&.
 .RE
 .P
@@ -547,7 +550,10 @@ with
 
 Incompatible with
 .B
---create-template\fR\
+--create-template
+and
+.B
+--get-only\fR\
 \&.
 .RE
 .P
@@ -591,10 +597,13 @@ Incompatible with
 --series-rebuild\fR\
 \&,
 .B
---mass-rebuild
+--mass-rebuild\fR\
+\&,
+.B
+--reverse-rebuild
 and
 .B
---reverse-rebuild\fR\
+--get-only\fR\
 \&. To make
 .I
 compat32

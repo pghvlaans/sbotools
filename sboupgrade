@@ -115,8 +115,8 @@ my $options_ok = GetOptions(
 	'wrap'              => \$wrap,
 	'nonet|N=s'         => \$nonet,
 	'all-plus-failures' => \$all_fails,
-    'manual-dl-dir|M=s' => \$manual,
-	'get-only|g'        => \$wrap,
+	'manual-dl-dir|M=s' => \$manual,
+	'get-only|g'        => \$get_only,
 );
 
 if ($help) {
@@ -451,13 +451,8 @@ FIRST: for my $sbo (@$upgrade_queue) {
 		push(@temp_queue, $name);
 		$commands{$name} = $cmds;
 		$options{$name} = $opts;
-		unless ($no_install) {
-			say "$name added to upgrade queue.";
-		} elsif ($get_only) {
-			say "$name added to download queue.";
-		} else {
-			say "$name added to build queue.";
-		}
+		my $added = $get_only ? ' added to download queue.' : ($no_install ? ' added to build queue.' : ' added to upgrade queue.');
+		say "$name$added";
 	} else {
 		# for --batch, check for existing user and group, exiting
 		# with a message if not
@@ -503,19 +498,18 @@ FIRST: for my $sbo (@$upgrade_queue) {
 			}
 		}
 		push(@temp_queue, $name);
-		unless ($no_install) {
-			say "\n$name added to upgrade queue." unless $dry_run;
-		} elsif ($get_only) {
-			say "\n$name added to download queue." unless $dry_run;
-		} else {
-			say "\n$name added to build queue." unless $dry_run;
-		}
+		my $added = $get_only ? ' added to download queue.' : ($no_install ? ' added to build queue.' : ' added to upgrade queue.');
+		say "$name$added";
 	}
 }
 @$upgrade_queue = @temp_queue;
 
-unless (exists $$upgrade_queue[0]) { say "Nothing to update."; exit 0; }
-if ($dry_run) {
+unless (exists $$upgrade_queue[0]) {
+	my $action = $get_only ? "download" : "update";
+	say "Nothing to $action.";
+	exit 0;
+}
+if ($dry_run and not $get_only) {
 	if (@see_readme) {
 		wrapsay_color $color_lesser, "\nSee README for:";
 		for my $item (@see_readme) { say "  $item"; }
@@ -542,7 +536,7 @@ unless ($non_int) {
 }
 if ($dry_run) {
 	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
-	wrapsay_color $color_notice, "\n--get-only (-g) is in use; built packages will not be installed." if $get_only;
+	wrapsay_color $color_notice, "\n--get-only (-g) is in use; downloading sources only." if $get_only;
 	my $usr_grp_missing;
 	if (%missing_user_group) {
 		for my $item (keys %missing_user_group) {
