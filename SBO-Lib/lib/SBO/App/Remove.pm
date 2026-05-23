@@ -120,12 +120,13 @@ sub run {
       # do not alert the user about being 'needed' by already-confirmed scripts
       push @required_by, $cand->{name} unless in $cand->{name}, @confirmed_names;
     }
+    # always prompt for requested scripts, even if they have reverse dependencies
     my $needed = $sbos{$remove->{name}} ? 0 : @required_by;
 
     next if $needed and not $self->{alwaysask};
 
     unless ($self->{query}) {
-      push @confirmed, $remove if confirm($remove, $self, $needed ? @required_by : ());
+      push @confirmed, $remove if confirm($remove, $self, @required_by);
     } else {
       push @confirmed, $remove;
     }
@@ -196,13 +197,13 @@ sub check_sbo {
 sub confirm {
   my ($remove, $self, @required_by) = @_;
 
-  if (@required_by) {
-    wrapsay sprintf "%s : required by %s", $remove->{name}, join ' ', @required_by;
-  } else {
-    say $remove->{name};
-  }
+  say $remove->{name};
   my $description = get_sbo_description($remove->{name}) unless $self->{no_desc};
   say $description if defined $description;
+
+  if (@required_by) {
+    wrapsay_color $color_warn, sprintf "Required by: %s", join ', ', @required_by;
+  }
 
   if ($remove->{warning}) {
     wrapsay_color $color_lesser, "Viewing the README before continuing is recommended.";
