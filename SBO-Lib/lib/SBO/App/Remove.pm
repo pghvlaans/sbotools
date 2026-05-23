@@ -47,7 +47,7 @@ sub run {
 
   if ($self->{help}) {
     $self->show_usage();
-    wrapsay "Non-root users may run this script only with -q." unless $< == 0 or $self->{query};
+    wrapsay "\nNon-root users may run this script only with -q." unless $< == 0 or $self->{query};
     exit 0;
   }
   if ($self->{vers}) { $self->show_version(); return 0; }
@@ -55,15 +55,16 @@ sub run {
   $config{NOWRAP} = $self->{nowrap} ? 'TRUE' : 'FALSE' if $self->{wrap} xor $self->{nowrap};
   if (!@{ $self->{args} }) {
     $self->show_usage();
-    usage_error "Non-root users may run this script only with -q." unless $< == 0 or $self->{query};
+    usage_error "\nNon-root users may run this script only with -q." unless $< == 0 or $self->{query};
+    usage_error "\nsboremove requires at least one argument.";
   }
   unless ($< == 0 or $self->{query}) {
     $self->show_usage();
-    usage_error "Non-root users may run this script only with -q.";
+    usage_error "\nNon-root users may run this script only with -q.";
   }
   unless ($options_ok) {
     $self->show_usage();
-    usage_error "One or more invalid options detected.";
+    usage_error "\nOne or more invalid options detected.";
   }
 
   lint_sbo_config($self, %config);
@@ -98,7 +99,7 @@ sub run {
   my $installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
 
   @args = grep { check_sbo($_, $installed) } @args;
-  usage_error("sboremove requires at least one argument.") unless @args;
+  unless (@args) { wrapsay_color $color_notice, "\nNothing to remove."; exit 0; }
   my %sbos = map { $_ => 1 } @args;
 
   my @remove = get_full_queue($installed, @args);
@@ -141,7 +142,7 @@ sub run {
       print "$msg\n";
     }
   } else {
-    say "Nothing to remove.";
+    wrapsay_color $color_notice, "Nothing to remove.";
   }
 
   unless ($descriptions_generated or $self->{no_desc}) { wrapsay_color $color_lesser, "Run sbocheck to generate descriptions."; }
@@ -172,7 +173,6 @@ Options (defaults shown first where applicable):
 
 Note: optional dependencies need to be removed separately unless they are
 specified in /etc/sbotools/sbotools.hints.
-
 EOF
 	return 1;
 }
