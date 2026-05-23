@@ -14,6 +14,7 @@
   * sboremove: Use **\--no-descriptions** to suppress package descriptions
   * *Readme.pm*: Fix opening SlackBuilds for -compat32
   * *sboinstall*: Do not attempt automatic dependency rebuilds with **\--noinstall**
+  * *sboinstall*, *sboupgrade*: Use **\--get-only** to verify and download sources for the queue with no other action
 
 * 4.1.4 - 2026-05-06
   * *sbofind*: Do not match "No tags found" in `TAGS.txt`

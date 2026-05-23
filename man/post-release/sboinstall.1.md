@@ -23,20 +23,22 @@
 
     sboinstall [-Ndce TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE]
 \
-               [-DRiopr] [--batch|--dry-run] [--create-template|-t FILE] \
+               [-DRgiopr] [--batch|--dry-run] [--create-template|-t FILE]
+\
                sbo_name (sbo_name)
 
     sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE]
 \
-               [-Di] --use-template FILE
+               [-Dgi] --use-template FILE
 
     sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE]
 \
-               [-Dioqr] [--create-template|-t FILE] --mass-rebuild
+               [-Dgioqr] [--create-template|-t FILE] --mass-rebuild
 
     sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE]
 \
-               [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES,\...
+               [-Dgioqr] [--create-template|-t FILE] --series-rebuild
+SERIES,\...
 
     sboinstall [--color|--nocolor] [--wrap|--nowrap] \...
 
@@ -55,7 +57,8 @@ exits with an error message if circular dependencies are detected.
 **sboinstall** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
 or the md5sum check fails, a new download is attempted from
-<ftp://slackware.uk/sbosrcarch/> as a fallback measure. If
+<ftp://slackware.uk/sbosrcarch/> as a fallback measure. To verify
+sources for the queue and download if needed, use **\--get-only**. If
 **MANUAL_DL_DIR** is set to an absolute path, source files with a
 matching name and checksum are preferred to new downloads. This is a
 convenient way to download source files in advance in case of an
@@ -120,6 +123,12 @@ Please note that source files in a directory specified by the
 If **TRUE**, source any executable scripts in */etc/profile.d* named
 *\*.sh* before running each SlackBuild in the build queue. This option
 overrides the **ETC_PROFILE** setting.
+
+**-g\|\--get-only**
+
+Verify source files for the queue and download anything necessary for
+later use. Incompatible with **\--create-template**,
+**\--template-only** and **\--noinstall**.
 
 **-i\|\--noinstall**
 
