@@ -330,7 +330,7 @@ if ($non_int and not $reverse and not $yes_really) {
 			push @$upgrade_queue, $sbo if $inst_names{$sbo};
 			if (auto_reverse($sbo) and not $no_install) {
 				push @needs_reverse, $sbo;
-				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo." unless not $all and not $compat32 and $sbo =~ m/-compat32$/;
+				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo.";
 			}
 		}
 	# non-interactive, no --force
@@ -339,7 +339,7 @@ if ($non_int and not $reverse and not $yes_really) {
 			push @$upgrade_queue, $sbo if $updates{$sbo} or in $sbo, @failed_test;
 			if (auto_reverse($sbo) and not $no_install) {
 				push @needs_reverse, $sbo;
-				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo." unless not $all and not $compat32 and $sbo =~ m/-compat32/;
+				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo.";
 			}
 		}
 	}
@@ -369,7 +369,7 @@ if ($non_int and not $reverse and not $yes_really) {
 		for my $sbo (@$upgrade_queue) {
 			if (auto_reverse($sbo)) {
 				push @needs_reverse, $sbo;
-				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo." unless in $sbo, @notified or (not $all and not $compat32 and $sbo =~ m/-compat32$/);
+				wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo." unless in $sbo, @notified;
 				push @notified, $sbo;
 			}
 		}

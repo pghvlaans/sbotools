@@ -284,7 +284,7 @@ if (length $utemp) {
 			for my $cand (@$build_queue) {
 				if (auto_reverse($cand)) {
 					push @needs_reverse, $cand;
-					wrapsay_color $color_notice, "Reverse dependency rebuild for $cand." unless $cand =~ m/-compat32/ and not $compat32;
+					wrapsay_color $color_notice, "Reverse dependency rebuild for $cand.";
 				}
 			}
 		}
@@ -314,11 +314,11 @@ if (length $utemp) {
 }
 
 # --reinstall, no --reverse-rebuild: trigger automatic rebuilds
-if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not $utemp and not $series_rebuild) {
+if ($requested_reinstall and not $reverse_rebuild and not $mass_rebuild and not $utemp and not $series_rebuild and not $no_install) {
 	for my $sbo (@$build_queue) {
 		if (auto_reverse($sbo)) {
 			push @needs_reverse, $sbo;
-			wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo." unless $sbo =~ m/-compat32/ and not $compat32;
+			wrapsay_color $color_notice, "Reverse dependency rebuild for $sbo.";
 		}
 	}
 }

@@ -189,6 +189,7 @@ sub get_user_group {
   script_error('get_user_group requires at least two arguments.') unless @_ > 1;
   my ($sbo, $location, $opts) = @_;
   my @cmds;
+  $sbo =~ s/-compat32$//;
   my $slackbuild_file = "$location/$sbo.SlackBuild";
   my $slackbuild = slurp $slackbuild_file;
   my @slackbuild = split "\n", $slackbuild;
