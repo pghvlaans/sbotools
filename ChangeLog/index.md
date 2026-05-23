@@ -12,6 +12,8 @@
     * Thanks to dchmelik and shamefulCake1 for the feedback.
   * *sboremove*: Use **\--query** to print the prospective removal prompt order
   * sboremove: Use **\--no-descriptions** to suppress package descriptions
+  * *Readme.pm*: Fix opening SlackBuilds for -compat32
+  * *sboinstall*: Do not attempt automatic dependency rebuilds with **\--noinstall**
 
 * 4.1.4 - 2026-05-06
   * *sbofind*: Do not match "No tags found" in `TAGS.txt`
