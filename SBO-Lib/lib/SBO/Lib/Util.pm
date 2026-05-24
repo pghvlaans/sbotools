@@ -1165,8 +1165,10 @@ sub prompt {
     }
   }
 
-  my $res = readline STDIN;
+  open my $fh, '<', '/dev/tty' or error_code("\nCould not read input; exiting.", _ERR_STDIN);
+  my $res = readline $fh;
   error_code("\nCould not read input; exiting.", _ERR_STDIN) unless defined $res;
+  close $fh;
 
   if (defined $def) {
     return 1 if $res =~ /^y/i;
