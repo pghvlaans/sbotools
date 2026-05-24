@@ -14,7 +14,6 @@ use warnings FATAL => 'all';
 use SBO::Lib qw/ :config :colors auto_reverse get_optional ignore_tests in lint_sbo_config on_blacklist open_fh open_read prompt read_hints read_pipe script_error show_version uniq usage_error wrapsay /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
-use Text::ParseWords qw(shellwords);
 
 my $self = basename($0);
 my $label = $is_sbotest ? "sbotest hints" : $self;
