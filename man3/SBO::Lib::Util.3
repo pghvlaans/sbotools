@@ -480,14 +480,6 @@ when editing the hints file.
 \&\f(CW@on_blacklist\fR, \f(CW@auto_reverse\fR, \f(CW%optional\fR and \f(CW@ignore_tests\fR are populated
 here and used by \f(CWon_blacklist()\fR, \f(CWauto_reverse()\fR, \f(CWget_optional()\fR and \f(CW\*(C`ignore_tests\*(C'\fR
 later.
-.SS read_pipe
-.IX Subsection "read_pipe"
-.Vb 1
-\&  my @piped_arguments = read_pipe;
-.Ve
-.PP
-\&\f(CWread_pipe()\fR reads \f(CW\*(C`STDIN\*(C'\fR piped or redirected into an \f(CW\*(C`sbotools\*(C'\fR script, returning
-an array of parsed arguments. If \f(CW\*(C`STDIN\*(C'\fR is empty, it returns undef.
 .SS reconcile_time
 .IX Subsection "reconcile_time"
 .Vb 1

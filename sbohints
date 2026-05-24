@@ -11,7 +11,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :colors auto_reverse get_optional ignore_tests in lint_sbo_config on_blacklist open_fh open_read prompt read_hints read_pipe script_error show_version uniq usage_error wrapsay /;
+use SBO::Lib qw/ :config :colors auto_reverse get_optional ignore_tests in lint_sbo_config on_blacklist open_fh open_read prompt read_hints script_error show_version uniq usage_error wrapsay /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 
@@ -58,9 +58,6 @@ Options:
   $label -q qemu
 EOF
 }
-
-my @piped_args = read_pipe;
-push @ARGV, @piped_args if defined $piped_args[0];
 
 my ($help, $version, $list, $reset, $reverse, $optional, $replace_optional, $blacklist, $ignore_tests, $clear, $query, $nocolor, $color, $nowrap, $wrap);
 

@@ -11,7 +11,7 @@ package SBO::App::Remove;
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :colors get_installed_packages get_sbo_description get_sbo_locations get_sbo_location get_full_queue get_full_reverse get_readme_contents get_reverse_reqs in prompt read_pipe show_version uniq lint_sbo_config error_code usage_error wrapsay %config @reverse_concluded $descriptions_generated /;
+use SBO::Lib qw/ :colors get_installed_packages get_sbo_description get_sbo_locations get_sbo_location get_full_queue get_full_reverse get_readme_contents get_reverse_reqs in prompt show_version uniq lint_sbo_config error_code usage_error wrapsay %config @reverse_concluded $descriptions_generated /;
 use Getopt::Long qw(GetOptionsFromArray :config bundling);
 
 use parent 'SBO::App';
@@ -22,9 +22,6 @@ our $options_ok;
 sub _parse_opts {
   my $class = shift;
   my @ARGS = @_;
-
-  my @piped_args = read_pipe;
-  push @ARGS, @piped_args if defined $piped_args[0];
 
   my ($help, $vers, $alwaysask, $compat, $nocolor, $color, $nowrap, $wrap, $query, $no_desc);
 

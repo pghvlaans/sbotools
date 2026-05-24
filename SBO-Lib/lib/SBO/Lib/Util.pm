@@ -18,7 +18,6 @@ use File::Copy;
 use File::Basename;
 use SBO::ThirdParty::Sort::Versions;
 use Term::ANSIColor qw/ color colorvalid /;
-use Text::ParseWords qw/ shellwords /;
 use Text::Wrap qw/ wrap $columns /;
 
 my $consts;
@@ -123,7 +122,6 @@ our @EXPORT_OK = (
     print_failures
     prompt
     read_hints
-    read_pipe
     save_options
     script_error
     show_version
@@ -1165,10 +1163,8 @@ sub prompt {
     }
   }
 
-  open my $fh, '<', '/dev/tty' or error_code("\nCould not read input; exiting.", _ERR_STDIN);
-  my $res = readline $fh;
+  my $res = readline STDIN;
   error_code("\nCould not read input; exiting.", _ERR_STDIN) unless defined $res;
-  close $fh;
 
   if (defined $def) {
     return 1 if $res =~ /^y/i;
@@ -1290,34 +1286,6 @@ sub read_hints{
 
   push @listings, "NULL" unless @listings;
   return @listings;
-}
-
-=head2 read_pipe
-
-  my @piped_arguments = read_pipe;
-
-C<read_pipe()> reads C<STDIN> piped or redirected into an C<sbotools> script, returning
-an array of parsed arguments. If C<STDIN> is empty, it returns undef.
-
-=cut
-
-sub read_pipe {
-  script_error("read_pipe takes no arguments.") if @_;
-  my @piped_arguments;
-  # pipes are socketpairs in ksh93 shells, including the version
-  # in Slackware.
-  if (-p STDIN or -S STDIN or -f STDIN) {
-    while (<STDIN>) {
-      chomp(my $piped = $_);
-      if (defined $piped) {
-        my @piped = shellwords $piped;
-        push @piped_arguments, @piped;
-      }
-    }
-  } else {
-    return undef;
-  }
-  return @piped_arguments;
 }
 
 =head2 reconcile_time

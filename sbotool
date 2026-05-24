@@ -10,7 +10,7 @@
 use strict;
 use warnings;
 
-use SBO::Lib qw/ :colors :config :const :help auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_readme_contents get_reverse_reqs get_sbo_description get_sbo_location get_slack_version get_user_group ignore_tests in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints read_pipe renew_sbo_locations save_options script_error show_version slurp series_check solib_check uniq update_known_solibs user_group_do_not_exist %concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated %warnings /;
+use SBO::Lib qw/ :colors :config :const :help auto_reverse check_multilib check_x32 check_x64 clear_info_store get_all_available get_available_updates get_build_queue get_from_info get_full_reverse get_installed_packages get_optional get_orig_location get_readme_contents get_reverse_reqs get_sbo_description get_sbo_location get_slack_version get_user_group ignore_tests in in_regexp ineligible_compat is_local lint_sbo_config on_blacklist prompt read_config read_hints renew_sbo_locations save_options script_error show_version slurp series_check solib_check uniq update_known_solibs user_group_do_not_exist %concluded @reverse_concluded %old_libs $repo_path $slackbuilds_txt $tmpd $tempdir $descriptions_generated %warnings /;
 
 use File::Basename;
 use File::Find;
@@ -21,9 +21,6 @@ use Time::HiRes qw/ time /;
 
 my $self = basename $0;
 $is_sbotool = 1;
-
-my @piped_args = read_pipe;
-push @ARGV, @piped_args if defined $piped_args[0];
 
 my $exit;
 usage_error("dialog is not installed.") unless -x "/usr/bin/dialog";

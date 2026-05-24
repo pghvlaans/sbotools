@@ -12,7 +12,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :colors $descriptions_generated get_all_available get_installed_packages get_requires get_sbo_description in lint_sbo_config on_blacklist prompt read_pipe show_version slackbuilds_or_fetch usage_error wrapsay wrapsay wrapsay_color /;
+use SBO::Lib qw/ :config :colors $descriptions_generated get_all_available get_installed_packages get_requires get_sbo_description in lint_sbo_config on_blacklist prompt show_version slackbuilds_or_fetch usage_error wrapsay wrapsay wrapsay_color /;
 use File::Basename;
 use Getopt::Long qw/ :config no_ignore_case_always bundling /;
 
@@ -40,9 +40,6 @@ Options:
 EOF
     return 1;
 }
-
-my @piped_args = read_pipe;
-push @ARGV, @piped_args if defined $piped_args[0];
 
 my ($help, $vers, $list, $no_descriptions, $raw, $color, $nocolor, $nowrap, $wrap);
 

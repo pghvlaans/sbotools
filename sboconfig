@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :colors slurp usage_error read_pipe script_error lint_sbo_config $tempdir open_fh prompt wrapsay show_version /;
+use SBO::Lib qw/ :config :colors slurp usage_error script_error lint_sbo_config $tempdir open_fh prompt wrapsay show_version /;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case_always);
 use File::Copy;
@@ -168,9 +168,6 @@ Configuration options (defaults shown):
 EOF
 	return 1;
 }
-
-my @piped_args = read_pipe;
-push @ARGV, @piped_args if defined $piped_args[0];
 
 my $all_clear = 1 unless @ARGV;
 my %options;
