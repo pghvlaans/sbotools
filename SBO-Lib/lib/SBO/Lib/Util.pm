@@ -1294,8 +1294,8 @@ sub read_hints{
 
   my @piped_arguments = read_pipe;
 
-C<read_pipe()> reads C<STDIN> piped into an C<sbotools> script, returning an array
-of parsed arguments. If C<STDIN> is empty, it returns undef.
+C<read_pipe()> reads C<STDIN> piped or redirected into an C<sbotools> script, returning
+an array of parsed arguments. If C<STDIN> is empty, it returns undef.
 
 =cut
 
@@ -1304,7 +1304,7 @@ sub read_pipe {
   my @piped_arguments;
   # pipes are socketpairs in ksh93 shells, including the version
   # in Slackware.
-  if (-p STDIN or -S STDIN) {
+  if (-p STDIN or -S STDIN or -f STDIN) {
     while (<STDIN>) {
       chomp(my $piped = $_);
       if (defined $piped) {

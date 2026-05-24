@@ -18,7 +18,7 @@
   * sboinstall, sboupgrade: Use --get-only to verify and download sources for the queue with no other action
   * sboremove: Also display reverse dependencies for scripts named in the command line
   * sboinstall: Fix template creation with a non-existent directory
-  * All scripts: Accept piped input
+  * All scripts: Accept piped input and file redirection to STDIN
 
 #### 4.1.4 - 2026-05-06
   * sbofind: Do not match "No tags found" in TAGS.txt

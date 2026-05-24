@@ -486,8 +486,8 @@ later.
 \&  my @piped_arguments = read_pipe;
 .Ve
 .PP
-\&\f(CWread_pipe()\fR reads \f(CW\*(C`STDIN\*(C'\fR piped into an \f(CW\*(C`sbotools\*(C'\fR script, returning an array
-of parsed arguments. If \f(CW\*(C`STDIN\*(C'\fR is empty, it returns undef.
+\&\f(CWread_pipe()\fR reads \f(CW\*(C`STDIN\*(C'\fR piped or redirected into an \f(CW\*(C`sbotools\*(C'\fR script, returning
+an array of parsed arguments. If \f(CW\*(C`STDIN\*(C'\fR is empty, it returns undef.
 .SS reconcile_time
 .IX Subsection "reconcile_time"
 .Vb 1
