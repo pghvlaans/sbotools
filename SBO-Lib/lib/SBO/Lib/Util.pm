@@ -18,6 +18,7 @@ use File::Copy;
 use File::Basename;
 use SBO::ThirdParty::Sort::Versions;
 use Term::ANSIColor qw/ color colorvalid /;
+use Text::ParseWords qw/ shellwords /;
 use Text::Wrap qw/ wrap $columns /;
 
 my $consts;
@@ -122,6 +123,7 @@ our @EXPORT_OK = (
     print_failures
     prompt
     read_hints
+    read_pipe
     save_options
     script_error
     show_version
@@ -1286,6 +1288,33 @@ sub read_hints{
 
   push @listings, "NULL" unless @listings;
   return @listings;
+}
+
+=head2 read_pipe
+
+  my @piped_arguments = read_pipe;
+
+C<read_pipe()> reads C<STDIN> piped into an C<sbotools> script, returning an array
+of parsed arguments. If C<STDIN> is empty, it returns undef.
+
+=cut
+
+sub read_pipe {
+  script_error("read_pipe takes no arguments.") if @_;
+  my @piped_arguments;
+  # ksh pipes are recognized as sockets as ksh93-1.0.10.
+  if (-p STDIN or -S STDIN) {
+    while (<STDIN>) {
+      chomp(my $piped = $_);
+      if (defined $piped) {
+        my @piped = shellwords $piped;
+        push @piped_arguments, @piped;
+      }
+    }
+  } else {
+    return undef;
+  }
+  return @piped_arguments;
 }
 
 =head2 reconcile_time

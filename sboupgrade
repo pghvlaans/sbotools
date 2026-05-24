@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_distfiles check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group ignore_tests in ineligible_compat installed_solibs is_obsolete merge_queues on_blacklist open_fh user_group_do_not_exist user_prompt process_sbos print_failures rationalize_queue series_check slurp solib_check update_known_solibs verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_distfiles check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error read_pipe slackbuilds_or_fetch uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group ignore_tests in ineligible_compat installed_solibs is_obsolete merge_queues on_blacklist open_fh user_group_do_not_exist user_prompt process_sbos print_failures rationalize_queue series_check slurp solib_check update_known_solibs verify_gpg %config show_version lint_sbo_config wrapsay %concluded %warnings /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -84,6 +84,9 @@ Options (defaults shown first where applicable):
 EOF
 	return 1;
 }
+
+my @piped_args = read_pipe;
+push @ARGV, @piped_args if defined $piped_args[0];
 
 my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $socheck, $wrap, $nowrap, $nonet, $all_fails, $manual, $get_only);
 

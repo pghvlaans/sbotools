@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local on_blacklist build_cmp version_cmp :colors %config $slackbuilds_txt $repo_path @last_level_reverse @reverse_concluded $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay $descriptions_generated /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local on_blacklist build_cmp version_cmp read_pipe :colors %config $slackbuilds_txt $repo_path @last_level_reverse @reverse_concluded $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay $descriptions_generated /;
 use Cwd;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
@@ -66,6 +66,9 @@ Examples:
 EOF
 	return 1;
 }
+
+my @piped_args = read_pipe;
+push @ARGV, @piped_args if defined $piped_args[0];
 
 my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue, $all_reverse, $last_reverse, $first_reverse, $nocolor, $color, $raw, $nowrap, $wrap, $search_descriptions);
 
