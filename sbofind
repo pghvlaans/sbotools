@@ -350,4 +350,4 @@ if (@raw_printout) {
 	print join(" ", @raw_printout);
 }
 
-END { say "" if not $raw and ($notfound or $?); }
+END { say "" if $vers or $help or (not $raw and ($notfound or $?)); }

@@ -54,11 +54,15 @@ my $options_ok = GetOptions(
   'raw'             => \$raw,
 );
 
-if ($help) { show_usage(); exit 0 }
+if ($help) {
+  show_usage();
+  wrapsay "\nNon-root users can call $self with -l, --raw, -h and -v." unless $< == 0;
+  exit 0
+}
 if ($vers) { show_version(); exit 0 }
 unless ($< == 0 or $list or $raw) {
   show_usage();
-  usage_error "\nNon-root users can call $self with -l and --raw.";
+  usage_error "\nNon-root users can call $self with -l, --raw, -h and -v.";
 }
 unless ($options_ok) {
   show_usage();

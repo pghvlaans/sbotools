@@ -124,7 +124,7 @@ my $options_ok = GetOptions(
 
 if ($help) {
 	show_usage();
-	wrapsay "\nNon-root users can call $self with -D, -v and -h." unless $< == 0;
+	wrapsay "\nNon-root users can call $self with -D, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
@@ -132,7 +132,7 @@ $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
 $config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $wrap xor $nowrap;
 unless ($< == 0 or $dry_run) {
 	show_usage();
-	usage_error "\nNon-root users can call $self with -D, -v and -h.";
+	usage_error "\nNon-root users can call $self with -D, -h and -v.";
 }
 unless ($options_ok) {
 	show_usage();

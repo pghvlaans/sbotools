@@ -50,7 +50,7 @@ sub run {
 
   if ($self->{help}) {
     $self->show_usage();
-    wrapsay "\nNon-root users may run this script only with -q." unless $< == 0 or $self->{query};
+    wrapsay "\nNon-root users can call sboremove with -q, -h and -v." unless $< == 0 or $self->{query};
     exit 0;
   }
   if ($self->{vers}) { $self->show_version(); return 0; }
@@ -58,12 +58,12 @@ sub run {
   $config{NOWRAP} = $self->{nowrap} ? 'TRUE' : 'FALSE' if $self->{wrap} xor $self->{nowrap};
   if (!@{ $self->{args} }) {
     $self->show_usage();
-    usage_error "\nNon-root users may run this script only with -q." unless $< == 0 or $self->{query};
+    usage_error "\nNon-root users can call sboremove with -q, -h and -v." unless $< == 0 or $self->{query};
     usage_error "\nsboremove requires at least one argument.";
   }
   unless ($< == 0 or $self->{query}) {
     $self->show_usage();
-    usage_error "\nNon-root users may run this script only with -q.";
+    usage_error "\nNon-root users can call sboremove with -q, -h and -v.";
   }
   unless ($options_ok) {
     $self->show_usage();

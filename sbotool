@@ -1991,7 +1991,6 @@ The contents of the menus change based on available actions
 and user permissions.
 
 sbotool requires a terminal of at least 80 by 25 characters.
-
 EOF
 	return 1;
 }
@@ -2026,4 +2025,4 @@ sub terminal_check {
 	return $max_height;
 }
 
-END { unless ($help or $show_version) { $exit = $?; remove_tree($sbotool_tempdir) if -d $sbotool_tempdir; system("clear"); exit $exit } }
+END { unless ($help or $show_version) { $exit = $?; remove_tree($sbotool_tempdir) if -d $sbotool_tempdir; system("clear"); exit $exit } else { print "\n"; exit 0; } }
