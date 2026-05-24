@@ -1302,7 +1302,8 @@ of parsed arguments. If C<STDIN> is empty, it returns undef.
 sub read_pipe {
   script_error("read_pipe takes no arguments.") if @_;
   my @piped_arguments;
-  # ksh pipes are recognized as sockets as ksh93-1.0.10.
+  # pipes are socketpairs in ksh93 shells, including the version
+  # in Slackware.
   if (-p STDIN or -S STDIN) {
     while (<STDIN>) {
       chomp(my $piped = $_);
