@@ -18,6 +18,7 @@ use SBO::Lib qw/ :config :const :colors auto_reverse check_distfiles check_x32 c
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
+use File::Path qw(make_path);
 use JSON::PP;
 
 use sigtrap qw/ handler _caught_signal ABRT INT QUIT TERM /;
@@ -197,6 +198,20 @@ my $true_non_int = $non_int;
 $yes_really = 1 if $dry_run;
 $non_int = 1 if $yes_really;
 $ctemp = $ctemp_only if $ctemp_only;
+
+if ($ctemp) {
+	usage_error("Cannot write to $ctemp; exiting.") if -d $ctemp or (-f $ctemp and not -W $ctemp);
+	my $dirname = $ctemp;
+	my $can_make_path;
+	while ($dirname ne "." and $dirname ne ".." and $dirname ne "/") {
+		$dirname = dirname $dirname;
+		if (-d $dirname) {
+			$can_make_path = -W $dirname;
+			last;
+		}
+	}
+	usage_error("Cannot write to $ctemp; exiting.") unless $can_make_path;
+}
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
@@ -600,6 +615,7 @@ if ($dry_run) {
 
 if (defined $ctemp or $mass_rebuild) {
 	$ctemp = $mtemp unless defined $ctemp;
+	make_path(dirname $ctemp) unless -d dirname $ctemp;
 	my ($temp_fh, $exit) = open_fh($ctemp, '>');
 	error_code("Failed to open $ctemp; exiting.", $exit) if $exit;
 
