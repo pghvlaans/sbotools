@@ -240,7 +240,11 @@ sub display_readmes {
   for (@display_readmes) {
     my $display_count = $count + 1;
     my $next = $display_count + 1;
-    wrapsay_color $color_notice, "\n$sbo: $display_fns[$count] ($display_count of $readme_count)";
+    unless ($config{CLASSIC} eq 'TRUE') {
+      wrapsay_color $color_notice, "\n$sbo: $display_fns[$count] ($display_count of $readme_count)";
+    } else {
+      say "\n$display_fns[$count]:" unless $display_fns[$count] eq "README";
+    }
     say $display_readmes[$count];
     $count++;
     return if $count eq @readmes;
