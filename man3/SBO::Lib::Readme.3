@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Readme 3"
-.TH SBO::Lib::Readme 3 "Pungenday, Discord 70, 3192 YOLD" "" "sbotools 4.1.4"
+.TH SBO::Lib::Readme 3 "Boomtime, Confusion 1, 3192 YOLD" "" "sbotools 4.1.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -77,20 +77,26 @@ SBO::Lib::Readme \- Routines for interacting with a typical SBo README file.
 .SS ask_opts
 .IX Subsection "ask_opts"
 .Vb 1
-\&  my $opts = ask_opts($sbo, $readme);
+\&  my $opts = ask_opts($sbo, $location);
 .Ve
 .PP
-\&\f(CWask_opts()\fR asks if options should be set. If no options are set, it returns \f(CW\*(C`undef\*(C'\fR.
-Saved options under \f(CW\*(C`/var/log/sbotools/$sbo\*(C'\fR are retrieved and can be used again. For
-\&\f(CW\*(C`compat32\*(C'\fR packages, saved options are shared with the base script.
-.SS ask_other_readmes
-.IX Subsection "ask_other_readmes"
+Users may be prompted to add options if saved options are not to be retrieved, provided
+that a \f(CW\*(C`README\*(C'\fR file associated with the script contains a variable assignment of the
+form \f(CW\*(C`WORD=\*(C'\fR (any case and accounts for quotes). The prompt appears if the SlackBuild
+accepts the variable name from the environment, the \f(CW\*(C`README\*(C'\fR shows an example of
+calling the SlackBuild with the variable or the phrase "to the script/SlackBuild"
+follows.
+.PP
+An option string is returned, if set.
+.SS ask_previous
+.IX Subsection "ask_previous"
 .Vb 1
-\&  ask_other_readmes($sbo, $location);
+\&  my $opts = ask_previous($sbo);
 .Ve
 .PP
-\&\f(CWask_other_readmes()\fR checks for secondary README files for \f(CW$sbo\fR in \f(CW$location\fR.
-It displays the files one by one upon prompt.
+\&\f(CWask_previous()\fR takes the name of a SlackBuild and checks for saved options
+under the \f(CW\*(C`/var/log/sbotools\*(C'\fR directory. If options have been saved, the user
+is prompted for reuse. The saved options are returned if yes.
 .SS ask_user_group
 .IX Subsection "ask_user_group"
 .Vb 1
@@ -101,6 +107,14 @@ It displays the files one by one upon prompt.
 \&\f(CW\*(C`README\*(C'\fR file and calls \f(CWuser_group_do_not_exist()\fR; if at least one of the specified
 users or groups does not exist, it prompts for running the commands. If yes,
 the \f(CW$cmds\fR are returned, and \f(CW\*(C`undef\*(C'\fR otherwise.
+.SS display_readmes
+.IX Subsection "display_readmes"
+.Vb 1
+\&  display_readmes($sbo, $location);
+.Ve
+.PP
+\&\f(CWdisplay_readmes()\fR checks for README files in \f(CW$location\fR. It displays \f(CW\*(C`README\*(C'\fR in
+all cases, and additional files one by one in alphabetical order upon prompt.
 .SS get_readme_contents
 .IX Subsection "get_readme_contents"
 .Vb 1
@@ -142,8 +156,6 @@ Except in the download\-only case, it calls subroutines to find options and comm
 and then prompts the user for installation. It returns the answer to the installation
 prompt (true for \*(Aqyes\*(Aq and false for \*(Aqno\*(Aq), the list of commands and the list of
 options.
-.PP
-The script exits if a non\-empty \f(CW\*(C`README\*(C'\fR file cannot be read.
 .SS verify_user_group
 .IX Subsection "verify_user_group"
 .Vb 1

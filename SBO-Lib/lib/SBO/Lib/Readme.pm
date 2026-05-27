@@ -18,7 +18,8 @@ use File::Temp qw/ tempfile /;
 
 our @EXPORT_OK = qw{
   ask_opts
-  ask_other_readmes
+  ask_previous
+  display_readmes
   ask_user_group
   get_readme_contents
   get_user_group
@@ -49,46 +50,92 @@ SBO::Lib::Readme - Routines for interacting with a typical SBo README file.
 
 =cut
 
+my @no_prompt = (
+  "SRCVER",
+  "BUILD",
+  "OUTPUT",
+  "PKGTYPE",
+  "TAG",
+  "TMP",
+  "VERSION",
+  "PATH",
+  "LD_LIBRARY_PATH",
+  "PYVER",
+);
+
 =head2 ask_opts
 
-  my $opts = ask_opts($sbo, $readme);
+  my $opts = ask_opts($sbo, $location);
 
-C<ask_opts()> asks if options should be set. If no options are set, it returns C<undef>.
-Saved options under C</var/log/sbotools/$sbo> are retrieved and can be used again. For
-C<compat32> packages, saved options are shared with the base script.
+Users may be prompted to add options if saved options are not to be retrieved, provided
+that a C<README> file associated with the script contains a variable assignment of the
+form C<WORD=> (any case and accounts for quotes). The prompt appears if the SlackBuild
+accepts the variable name from the environment, the C<README> shows an example of
+calling the SlackBuild with the variable or the phrase "to the script/SlackBuild"
+follows.
+
+An option string is returned, if set.
 
 =cut
 
 # provide an opportunity to set options or retrieve previously-used options
 sub ask_opts {
-  script_error('ask_opts requires at least one argument.') unless @_;
-  my ($sbo, $readme) = @_;
+  script_error('ask_opts requires two arguments.') unless @_ == 2;
+  my ($sbo, $location) = @_;
   my $real_name = $sbo;
-  $real_name =~ s/-compat32$//;
-  my $opts_log = "/var/log/sbotools/$real_name";
-  if (-f $opts_log) {
-    my ($fh, $exit) = open_fh($opts_log, '<');
-    if ($exit) {
-      warn_color $color_lesser, $fh;
-    } else {
-      my $prev_opts = <$fh>;
-      if ($config{CLASSIC} ne "TRUE") {
-        wrapsay_color $color_notice, "\nIt looks like options were previously specified for $sbo:\n";
-        wrapsay "\n$prev_opts\n";
-        if (prompt($color_notice, "\nWould you like to use these options to build $sbo?", default => 'yes')) {
-          my $opts = $prev_opts;
-          return $opts;
-        }
+  my @readmes = sort glob "$location/README*";
+  my $readmes = @readmes;
+  unless (@readmes) {
+    wrapsay_color $color_lesser, "$sbo has no README files.";
+    return ();
+  }
+  my $can_prompt;
+  my $readme;
+  my @check_terms;
+  for (@readmes) {
+    my $next_readme = slurp $_;
+    if (defined $next_readme) {
+      $readme = defined $readme ? $readme . "\n" . $next_readme : $next_readme;
+    }
+  }
+  my @readme = split "=", $readme;
+  return() unless @readme > 1;
+  my $count = 0;
+  for (@readme) {
+    last if ++$count eq @readme;
+    my @line = split " ", $_;
+    next unless defined $line[-1];
+    next unless $line[-1] =~ /^(|\(|\[|"|'|`|)+[\w]+$/ and $readme[$count] =~ /^[^\s]/;
+    $line[-1] =~ s/(|"|'|`|\[|\()//g;
+    next if in $line[-1], @no_prompt;
+    if ($line[-1] =~ /^VAR/) {
+      $can_prompt = 1;
+      last;
+    }
+    if ($readme[$count] =~ /((|ba)sh\s|\.\/)\Q$real_name\E.SlackBuild/i or $readme[$count] =~ /to the (script|SlackBuild)/i) {
+      $can_prompt = 1;
+      last;
+    }
+    push @check_terms, $line[-1];
+  }
+  unless ($can_prompt) {
+    my $slackbuild_location = "$location/$real_name.SlackBuild";
+    my $slackbuild = slurp $slackbuild_location;
+    return 0 unless defined $slackbuild;
+    for (@check_terms) {
+      if ($slackbuild =~ /[\W]+(\$\Q$_\E[\W]+|\Q$_\E(\Q^^\E|\Q,,\E|\}|:(|-|=)))/) {
+        $can_prompt = 1;
+        last;
       }
     }
   }
-  return() unless defined $readme and $readme =~ /[A-Z0-9]+=[^\s]/;
-  if (prompt($color_notice, "\nIt looks like $sbo has options; would you like to set any when the slackbuild is run?", default => 'no')) {
+  return() unless $can_prompt;
+  if (prompt($color_notice, "\n$sbo appears to have options; set options for running the SlackBuild?", default => 'no')) {
     my $ask = sub {
       chomp(my $opts = prompt($color_default, "\nPlease supply any options here, or press Enter to skip: "));
       return $opts;
     };
-    my $kv_regex = qr/[A-Z0-9]+=[^\s]+(|\s([A-Z]+=[^\s]+){0,})/;
+    my $kv_regex = qr/[\w]+=[^\s]+(|\s([\w]+=[^\s]+){0,})/;
     my $opts = $ask->();
     return() unless $opts;
     while ($opts !~ $kv_regex) {
@@ -101,28 +148,37 @@ sub ask_opts {
   return();
 }
 
-=head2 ask_other_readmes
+=head2 ask_previous
 
-  ask_other_readmes($sbo, $location);
+  my $opts = ask_previous($sbo);
 
-C<ask_other_readmes()> checks for secondary README files for C<$sbo> in C<$location>.
-It displays the files one by one upon prompt.
+C<ask_previous()> takes the name of a SlackBuild and checks for saved options
+under the C</var/log/sbotools> directory. If options have been saved, the user
+is prompted for reuse. The saved options are returned if yes.
 
 =cut
 
-sub ask_other_readmes {
-  script_error('ask_other_readmes requires two arguments.') unless @_ == 2;
-  my ($sbo, $location) = @_;
-  my @readmes = sort glob "$location/README?*";
-
-  return unless @readmes;
-
-  return unless (prompt($color_notice, "\nIt looks like $sbo has additional README files. Would you like to view those as well?", default => 'yes'));
-
-  for my $fn (@readmes) {
-    my $display_fn = basename $fn;
-    wrapsay_color $color_notice, "\n$display_fn:";
-    say slurp $fn;
+sub ask_previous {
+  script_error('ask_previous requires one argument.') unless @_ == 1;
+  my ($sbo) = shift;
+  my $real_name = $sbo;
+  $real_name =~ s/-compat32$//;
+  my $opts_log = "/var/log/sbotools/$real_name";
+  if (-f $opts_log) {
+    my ($fh, $exit) = open_fh($opts_log, '<');
+    if ($exit) {
+      warn_color $color_lesser, $fh;
+    } else {
+      my $prev_opts = <$fh>;
+      if ($config{CLASSIC} ne "TRUE") {
+        wrapsay_color $color_notice, "\nOptions were previously specified for $sbo:\n";
+        wrapsay "\n$prev_opts\n";
+        if (prompt($color_notice, "\nUse these options to build $sbo?", default => 'yes')) {
+          my $opts = $prev_opts;
+          return $opts;
+        }
+      }
+    }
   }
 }
 
@@ -149,6 +205,46 @@ sub ask_user_group {
     wrapsay_color $color_lesser, "\nThis SlackBuild requires the following command(s) to be run first:";
     say "    # $_" for @$nonexistent;
     return prompt($color_lesser, 'Run the command(s) prior to building?', default => 'yes') ? $nonexistent : undef;
+  }
+}
+
+=head2 display_readmes
+
+  display_readmes($sbo, $location);
+
+C<display_readmes()> checks for README files in C<$location>. It displays C<README> in
+all cases, and additional files one by one in alphabetical order upon prompt.
+
+=cut
+
+sub display_readmes {
+  script_error('display_readmes requires two arguments.') unless @_ == 2;
+  my ($sbo, $location) = @_;
+  my @readmes = sort glob "$location/README*";
+  return unless @readmes;
+  my (@display_readmes, @display_fns);
+  for (@readmes) {
+    my $display_fn = basename $_;
+    if (chomp(my $display = slurp $_)) {
+      push @display_readmes, $display;
+      push @display_fns, $display_fn
+    } else {
+      wrapsay_color $color_lesser, "$display_fn exists, but is empty or could not be read.";}
+    }
+  return unless @display_readmes;
+
+  my $readme_count = @display_readmes;
+  my $count = 0;
+
+  for my $fn (@readmes) {
+    my $display_count = $count + 1;
+    my $next = $display_count + 1;
+    wrapsay_color $color_notice, "\n$sbo: $display_fns[$count] ($display_count of $readme_count)";
+    say $display_readmes[$count];
+    $count++;
+    return if $count eq @readmes;
+    my $next_fn = $display_fns[$count];
+    return unless (prompt($color_notice, "\nView $display_fns[$count]? ($next of $readme_count)", default => 'yes'));
   }
 }
 
@@ -304,8 +400,6 @@ and then prompts the user for installation. It returns the answer to the install
 prompt (true for 'yes' and false for 'no'), the list of commands and the list of
 options.
 
-The script exits if a non-empty C<README> file cannot be read.
-
 =cut
 
 # for a given sbo, check for cmds/opts, prompt the user as appropriate
@@ -314,23 +408,18 @@ sub user_prompt {
   my ($sbo, $location, $get_only) = @_;
   my $cmds;
   my $opts = 0;
-  my $readme = 0;
   unless (defined $location) { usage_error("Unable to locate $sbo in the SlackBuilds.org tree."); }
   wrapsay_color $color_lesser, "\nFound $sbo in local overrides." if is_local($sbo);
-  $readme = get_readme_contents($location);
-  if (defined $readme) {
-    print "\n". $readme;
-  } elsif (-s "$location/README") {
-    error_code("Unable to open README for $sbo; exiting.", _ERR_OPENFH);
-  } else {
-    wrapsay_color $color_lesser, "\n$sbo has an empty or nonexistent README file.";
+  display_readmes($sbo, $location);
+  my $prel_opts;
+  unless ($get_only) {
+    $prel_opts = ask_previous($sbo);
+    $prel_opts = $prel_opts ? $prel_opts : ask_opts($sbo, $location);
   }
-  my $prel_opts = ask_opts($sbo, $readme) unless $get_only;
   chomp($opts = $prel_opts) if $prel_opts;
   # check for user/group add commands, offer to run any found
   my $user_group = get_user_group($sbo, $location, $opts) unless $get_only;
   $cmds = ask_user_group($user_group) if not $get_only and $$user_group[0];
-  ask_other_readmes($sbo, $location) if $readme;
   my $proceed_label = $get_only ? "Download source for" : "Proceed with";
   my $proceed = prompt($color_notice, "\n$proceed_label $sbo?", default => 'yes');
   return $proceed, $cmds, $opts;
