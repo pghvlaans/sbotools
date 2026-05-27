@@ -213,7 +213,7 @@ sub ask_user_group {
   display_readmes($sbo, $location);
 
 C<display_readmes()> checks for README files in C<$location>. It displays C<README> in
-all cases, and additional files one by one in alphabetical order upon prompt.
+all cases, and additional files in alphabetical order upon a single prompt.
 
 =cut
 
@@ -237,7 +237,7 @@ sub display_readmes {
   my $readme_count = @display_readmes;
   my $count = 0;
 
-  for my $fn (@readmes) {
+  for (@display_readmes) {
     my $display_count = $count + 1;
     my $next = $display_count + 1;
     wrapsay_color $color_notice, "\n$sbo: $display_fns[$count] ($display_count of $readme_count)";
@@ -245,7 +245,11 @@ sub display_readmes {
     $count++;
     return if $count eq @readmes;
     my $next_fn = $display_fns[$count];
-    return unless (prompt($color_notice, "\nView $display_fns[$count]? ($next of $readme_count)", default => 'yes'));
+    if ($display_count == 1) {
+      my $remaining = @display_readmes - 1;
+      my $grammar = $remaining == 1 ? "README" : "$remaining READMEs";
+      return unless (prompt($color_notice, "\nView the remaining $grammar for $sbo?", default => 'yes'));
+    }
   }
 }
 
