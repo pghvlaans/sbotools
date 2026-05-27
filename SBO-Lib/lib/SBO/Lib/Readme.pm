@@ -19,8 +19,8 @@ use File::Temp qw/ tempfile /;
 our @EXPORT_OK = qw{
   ask_opts
   ask_previous
-  display_readmes
   ask_user_group
+  display_readmes
   get_readme_contents
   get_user_group
   user_group_do_not_exist
@@ -229,8 +229,9 @@ sub display_readmes {
       push @display_readmes, $display;
       push @display_fns, $display_fn
     } else {
-      wrapsay_color $color_lesser, "$display_fn exists, but is empty or could not be read.";}
+      wrapsay_color $color_lesser, "$display_fn exists, but is empty or could not be read.";
     }
+  }
   return unless @display_readmes;
 
   my $readme_count = @display_readmes;
