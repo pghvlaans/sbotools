@@ -387,7 +387,10 @@ group missing.\
 
 ## BUGS
 
-None known. If found, Issues and Pull Requests to
+100% accuracy cannot be guaranteed for the option addition prompt. It
+may rarely appear when options appear to be documented, but are not.
+
+Otherwise, none known. If found, Issues and Pull Requests to
 <https://github.com/pghvlaans/sbotools/> are always welcome.
 
 ## SEE ALSO
