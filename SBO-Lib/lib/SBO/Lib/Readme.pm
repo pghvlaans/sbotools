@@ -105,18 +105,19 @@ sub ask_opts {
     last if ++$count eq @readme;
     my @line = split " ", $_;
     next unless defined $line[-1];
-    next unless $line[-1] =~ /^(|\(|\[|"|'|`|)+[\w]+$/ and $readme[$count] =~ /^[^\s]/;
-    $line[-1] =~ s/(|"|'|`|\[|\()//g;
-    next if in $line[-1], @no_prompt;
-    if ($line[-1] =~ /^VAR/) {
+    my $setting = $line[-1];
+    next unless $setting =~ /^(|\(|\[|"|'|`|)+[\w]+$/ and $readme[$count] =~ /^\S/;
+    $setting =~ s/\W//g;
+    next if in $setting, @no_prompt;
+    if ($setting =~ /^VAR/) {
       $can_prompt = 1;
       last;
     }
-    if ($readme[$count] =~ /((|ba)sh\s|\.\/)\Q$real_name\E.SlackBuild/i or $readme[$count] =~ /to the (script|SlackBuild)/i) {
+    if ($readme[$count] =~ /((|ba)sh\s|\.\/)\Q$real_name\E.SlackBuild/i or $readme[$count] =~ /to the ((|build(| ))script|SlackBuild)/i) {
       $can_prompt = 1;
       last;
     }
-    push @check_terms, $line[-1];
+    push @check_terms, $setting;
   }
   unless ($can_prompt) {
     my $slackbuild_location = "$location/$real_name.SlackBuild";
