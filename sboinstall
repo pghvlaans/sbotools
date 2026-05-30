@@ -61,7 +61,7 @@ Options (defaults shown first where applicable):
   -L|--log-dir (FALSE|/path):
     set to an absolute path to save build logs here, or to FALSE.
   -M|--manual-dl-dir (FALSE|/path):
-    set to a path to use source files in that directory.
+    set to a path to prioritize source files in that directory.
   -N|--nonet (FALSE|TRUE):
     if TRUE, do not allow network access when running SlackBuilds.
   -p|--compat32:
