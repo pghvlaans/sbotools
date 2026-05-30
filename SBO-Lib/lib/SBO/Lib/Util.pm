@@ -6,6 +6,7 @@ package SBO::Lib::Util;
 # that sbotools is compatible.
 
 #% SBOTEST V1.2.2 COMPAT %
+#% SBOTEST V1.2.3 COMPAT %
 
 use 5.016;
 use strict;
