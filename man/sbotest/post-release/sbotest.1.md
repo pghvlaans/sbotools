@@ -27,17 +27,17 @@
 
     sbotest [config|find|hints] \...
 
-    sbotest [-f|-s] [-Akl /path|FALSE] [-j #|FALSE] \
+    sbotest [-f|-s] [-AMkl /path|FALSE] [-j #|FALSE] \
             [-NX TRUE|FALSE] [-D] [--no-archive|--archive-force] \
             sbo_name (sbo_name)
 
-    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
+    sbotest [-AMl /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
             [-D] --archive-rebuild
 
-    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
+    sbotest [-AMl /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
             [-D] --archive-reverse
 
-    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
+    sbotest [-AMl /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
             [--no-archive|--archive-force] --test-everything
 
 ## DISCLAIMER
@@ -216,6 +216,13 @@ under that path.
 If **FALSE**, use the default log directory of
 *SBO_HOME/logs/(timestamp)-logs*. If an **absolute path**, save build
 and **sbopkglint(1)** logs to that directory with a timestamp appended.
+
+**-M\|\--manual-dl-dir**
+
+If an **absolute path**, prioritize source files with the proper name
+and checksum in that directory over new downloads.
+
+Overrides the **MANUAL_DL_DIR** setting.
 
 **-N\|\--nonet**
 
