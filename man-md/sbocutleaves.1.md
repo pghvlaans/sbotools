@@ -29,7 +29,7 @@
 ## DESCRIPTION
 
 **sbocutleaves** finds leaf packages (those which no other packages
-require) installed from *SlackBuilds.org*and offers to remove or keep
+require) installed from *SlackBuilds.org* and offers to remove or keep
 them. Once any removals have been done, it prompts the user to repeat
 this process until no leaf packages are marked for deletion. Blacklisted
 scripts and optional dependency requests are respected; see
