@@ -37,10 +37,10 @@
 • for **compat32** packages, working directories under */tmp*
 
 Note that if run without the **\--interactive** flag, **sboclean**
-removes anything in the distfiles and/or */tmp/SBo* (or *\$TMP*)
-directories and any */tmp/package-\*-compat32* (or
-*\$TMP/package-\*-compat32*) directories with extreme prejudice. One of
-**\--dist**, **\--work** or **\--option** must be specified for this
+removes anything in an md5-designated distfiles subdirectory and/or
+*/tmp/SBo* (or *\$TMP*) directories and any */tmp/package-\*-compat32*
+(or *\$TMP/package-\*-compat32*) directories with extreme prejudice. One
+of **\--dist**, **\--work** or **\--option** must be specified for this
 script to do anything.
 
 Root privileges are required to run **sboclean**. If an invalid
@@ -55,6 +55,8 @@ message.
 Clean source archives, located at */usr/sbo/distfiles* by default. Files
 stored in the manual downloads directory specified by **MANUAL_DL_DIR**
 are unaffected. See also [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
+**sboclean** leaves bare files and non-md5-designated directories under
+*distfiles* untouched.
 
 **-w\|\--work**
 
