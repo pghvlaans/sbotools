@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Prickle-Prickle, Discord 71, 3192 YOLD" "" "sbotools 4.1.4"
+.TH SBO::Lib::Util 3 "Prickle-Prickle, Confusion 8, 3192 YOLD" "" "sbotools 4.1.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -180,6 +180,12 @@ located at \f(CW\*(C`/etc/sbotools/perl_vers\*(C'\fR by default.
 .IX Subsection "$userland_32"
 \&\f(CWget_arch()\fR defines this variable when running in a 32\-bit userland on a 64\-bit
 kernel.
+.ie n .SS $stage_dir
+.el .SS \f(CW$stage_dir\fP
+.IX Subsection "$stage_dir"
+\&\f(CW$stage_dir\fR is a directory called \f(CW\*(C`SBOTOOLS_STAGING\*(C'\fR under \f(CW\*(C`SBO_HOME/distiles\*(C'\fR.
+When a script is to be built, its directory is copied here and any downloaded
+sources are moved in.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS auto_reverse
@@ -216,7 +222,8 @@ Returns 1 if the file exists, and 0 otherwise.
 .Ve
 .PP
 \&\f(CWdangerous_directory()\fR takes a string and returns true if it is equal to \f(CW\*(C`/\*(C'\fR,
-\&\f(CW\*(C`/root\*(C'\fR, \f(CW\*(C`/home\*(C'\fR or a possible top\-level directory under \f(CW\*(C`/home\*(C'\fR.
+\&\f(CW\*(C`/root\*(C'\fR, \f(CW\*(C`/home\*(C'\fR,  a possible top\-level directory under \f(CW\*(C`/home\*(C'\fR or is named
+\&\f(CW\*(C`SBOTOOLS_STAGING\*(C'\fR.
 .SS display_times
 .IX Subsection "display_times"
 .Vb 1

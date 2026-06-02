@@ -11,7 +11,7 @@ our $VERSION = '4.1.4';
 use SBO::Lib::Util qw/ :config :const :times :colors prompt error_code script_error get_sbo_from_loc check_multilib on_blacklist open_fh open_read uniq save_options wrapsay in in_regexp $userland_32 /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires get_reverse_reqs /;
-use SBO::Lib::Download qw/ get_sbo_downloads get_filename_from_link check_distfiles /;
+use SBO::Lib::Download qw/ get_sbo_downloads get_filename_from_link check_distfiles stage unstage /;
 use SBO::Lib::Pkgs qw/ get_installed_packages /;
 
 use Exporter 'import';
@@ -148,6 +148,9 @@ our @last_level_reverse;
 
 # a universal warnings hash; warnings currently include README and nonexistence
 our %warnings;
+
+# an array of distfile-related hashes
+our @distfiles;
 
 =head1 SUBROUTINES
 
@@ -688,11 +691,12 @@ sub perform_sbo {
   $cmd .= " unshare -n" if $config{NONET} eq "TRUE";
   # special cases: 32-bit compatible build or 32-bit userland and 64-bit kernel
   $cmd .= " setarch i686" if defined $userland_32 or defined $use_setarch;
-  $cmd .= " /bin/bash $location/$sbo.SlackBuild";
+  my $staging = "$stage_dir/" . basename $location;
+  $cmd .= " /bin/bash $staging/$sbo.SlackBuild";
 
   # run the slackbuild, grab its exit status
   my $cwd = getcwd();
-  chdir $location;
+  chdir $staging;
   my $build_time = time();
   my $log_name = $sbo;
   $log_name .= "-compat32" if $args{C32};
@@ -747,23 +751,23 @@ sub process_sbos {
   @$todo >= 1 or script_error('process_sbos requires TODO.');
   my $mtemp_in = "$config{SBO_HOME}/mass_rebuild.temp";
   my $mtemp_resume = "$config{SBO_HOME}/resume.temp";
-  my (@failures, @successes, @symlinks, $err);
+  my (@failures, @successes, $err);
   FIRST: for my $sbo (@$todo) {
     my $compat32 = $sbo =~ /-compat32$/ ? 1 : 0;
     push @upcoming, get_sbo_downloads(
       LOCATION => $$locs{$sbo}, COMPAT32 => $compat32
     );
-    my ($temp_syms, $exit) = check_distfiles(
+    my ($temp_distfiles, $exit) = check_distfiles(
       LOCATION => $$locs{$sbo}, COMPAT32 => $compat32
     );
+    push @distfiles, $temp_distfiles;
     # if $exit is defined, prompt to proceed or return with last $exit
     if ($exit) {
       $err = $exit;
-      my $fail = $temp_syms;
+      my $fail = $temp_distfiles;
       push @failures, {$sbo => $fail};
       # return now if we're not interactive
       if ($args{NON_INT}) {
-        unlink for @symlinks;
         if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\n$success_label"; wrapsay join(" ", @successes); }
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
@@ -773,19 +777,15 @@ sub process_sbos {
       if (prompt($color_lesser, 'Do you want to proceed?' , default => 'no')) {
         next FIRST;
       } else {
-        unlink for @symlinks;
         if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\n$success_label"; wrapsay join(" ", @successes); }
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
       }
     } elsif ($get_only) {
       push @successes, $sbo;
-    } elsif (@symlinks and @$temp_syms) {
-      push @symlinks, @$temp_syms;
     }
   }
   if ($get_only) {
-    unlink for @symlinks;
     if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nVerified sources:"; wrapsay join(" ", @successes); }
     display_times() unless $config{CLASSIC} eq "TRUE";
     return \@failures, $err;
@@ -801,11 +801,14 @@ sub process_sbos {
     # switch compat32 on if upgrading/installing a -compat32
     # else make sure compat32 is off
     my $compat32 = $sbo =~ /-compat32$/ ? 1 : 0;
+    my $staging = stage($$locs{$sbo}, $distfiles[0]);
     my ($version, $pkg, $src, $exit) = do_slackbuild(
       OPTS      => $options,
-      LOCATION  => $$locs{$sbo},
+      LOCATION  => $staging,
       COMPAT32  => $compat32,
     );
+    unstage($distfiles[0]);
+    shift @distfiles;
     if ($exit) {
       my $fail = $version;
       push @failures, {$sbo => $fail};
@@ -825,14 +828,12 @@ sub process_sbos {
       }
       # return now if we're not interactive
       if ($args{NON_INT}) {
-        unlink for @symlinks;
         if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
       }
       # or if this is the last $sbo
       if ($count == @$todo) {
-        unlink for @symlinks;
         if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
@@ -842,7 +843,6 @@ sub process_sbos {
       if (prompt($color_lesser, 'Do you want to proceed?', default => 'no')) {
         next FIRST;
       } else {
-        unlink for @symlinks;
         if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
         display_times() unless $config{CLASSIC} eq "TRUE";
         return \@failures, $exit;
@@ -850,7 +850,6 @@ sub process_sbos {
     } else {
       push @successes, $sbo;
     }
-
     do_upgradepkg($pkg) unless $args{NOINSTALL};
 
     unless ($config{NOCLEAN} eq "TRUE") {
@@ -880,7 +879,6 @@ sub process_sbos {
     }
   }
   unlink $mtemp_resume if $mass and -f $mtemp_resume;
-  unlink for @symlinks;
   if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
   display_times() unless $config{CLASSIC} eq "TRUE";
   return \@failures, $err;
@@ -1077,6 +1075,7 @@ Copyright (C) 2026, K. Eugene Carlson, Jacob Pipkin.
 sub _build_terminated {
   if ($< == 0) {
     remove_tree("$tempdir") if -d "$tempdir";
+    unstage($distfiles[0]) if exists $distfiles[0];
     exit _ERR_INST_SIGNAL;
   }
 }

@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Download 3"
-.TH SBO::Lib::Download 3 "Pungenday, Discord 70, 3192 YOLD" "" "sbotools 4.1.4"
+.TH SBO::Lib::Download 3 "Prickle-Prickle, Confusion 8, 3192 YOLD" "" "sbotools 4.1.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -70,7 +70,7 @@ SBO::Lib::Download \- Routines for downloading SlackBuild sources.
 .Vb 1
 \&  use SBO::Lib::Download qw/ check_distfiles /;
 \&
-\&  my ($ret, $exit) = check_distfiles(LOCATION => $loc);
+\&  my ($ret, $exit) = check_distfiles(LOCATION => $loc, NO_DL => $no_dl);
 .Ve
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
@@ -83,13 +83,13 @@ SBO::Lib::Download \- Routines for downloading SlackBuild sources.
 \&\f(CWcheck_distfiles()\fR gets the list of downloads from \f(CW$loc\fR. Any previously\-downloaded
 files have their checksums verified. Unless there is a \f(CW\*(C`NO_DL\*(C'\fR argument, missing and
 unverifiable files are downloaded to md5sum\-designated directories and verified.
-Finally, \f(CWcreate_symlinks()\fR is run on each download.
+Finally, \f(CWprepare_staging()\fR is run on the downloads.
 .PP
-In case of success, an array of symlinks from \f(CWcreate_symlinks()\fR is returned. The
-subroutine returns empty if the SlackBuild did not contain any downloads. In case of
-failure, an error message and an exit code are returned.
+In case of success, a hash of source files and destinations from \f(CWprepare_staging()\fR is
+returned. The subroutine returns empty if the SlackBuild did not contain any downloads.
+In case of failure, an error message and an exit code are returned.
 .PP
-If there is an argument \f(CW\*(C`NO_DL\*(C'\fR, 1 is returned if all sources are verified, and 0
+If there is an argument \f(CW\*(C`NO_DL\*(C'\fR, 1 is returned if all sources are verified and 0
 otherwise.
 .SS check_manual
 .IX Subsection "check_manual"
@@ -107,14 +107,6 @@ and 0 otherwise.
 .Ve
 .PP
 \&\f(CWcompute_md5sum()\fR computes and returns the md5sum of the file in \f(CW$file\fR.
-.SS create_symlinks
-.IX Subsection "create_symlinks"
-.Vb 1
-\&  my @symlinks = @{ create_symlinks($location, {%downloads}) };
-.Ve
-.PP
-\&\f(CWcreate_symlinks()\fR creates symlinks for the an array \f(CW%downloads\fR in
-\&\f(CW$location\fR, returning an array reference of the symlinks created.
 .SS get_distfile
 .IX Subsection "get_distfile"
 .Vb 1
@@ -140,14 +132,38 @@ The subroutine returns a message and an error code upon failure, and 1 upon succ
 .PP
 \&\f(CWget_sbo_downloads()\fR gets the download links and md5sums for the SlackBuild
 in location \f(CW$loc\fR, returning them in a hash reference.
-.SS get_symlink_from_filename
-.IX Subsection "get_symlink_from_filename"
+.SS get_destination_from_filename
+.IX Subsection "get_destination_from_filename"
 .Vb 1
-\&  my $symlink = get_symlink_from_filename($path, $loc);
+\&  my $destination = get_destination_from_filename($path, $loc);
 .Ve
 .PP
-\&\f(CWget_symlink_from_filename()\fR, given a source file at \f(CW$path\fR and a location \f(CW$loc\fR,
-returns the path of the generated symlink.
+\&\f(CWget_destination_from_filename()\fR, given a source file at \f(CW$path\fR and a location \f(CW$loc\fR,
+returns the destination path when moving the file.
+.SS prepare_staging
+.IX Subsection "prepare_staging"
+.Vb 1
+\&  my $destinations = prepare_staging($location, {%downloads});
+.Ve
+.PP
+\&\f(CWprepare_staging()\fR prepares a hash of files and their destinations based on
+\&\f(CW%downloads\fR for use during the build in a directory \f(CW$staging\fR.
+.SS stage
+.IX Subsection "stage"
+.Vb 1
+\&  stage($location, $distfiles);
+.Ve
+.PP
+\&\f(CWstage()\fR takes a location and a hash of distfiles to create the staging directory for
+a build. It returns the location of the staging directory on success and 0 on failure.
+.SS unstage
+.IX Subsection "unstage"
+.Vb 1
+\&  my $res = unstage($files);
+.Ve
+.PP
+\&\f(CWunstage()\fR returns any distfiles in the staging directory to the distfiles directory;
+the staging directory is removed for future use. It returns 1 on success and 0 on failure.
 .SS verify_distfile
 .IX Subsection "verify_distfile"
 .Vb 1
@@ -160,10 +176,11 @@ md5sum equal to \f(CW$md5\fR.
 .IX Header "EXIT CODES"
 Download.pm subroutines can return the following exit codes:
 .PP
-.Vb 4
+.Vb 5
 \&  _ERR_SCRIPT        2   script or module bug
 \&  _ERR_MD5SUM        4   download verification failure
 \&  _ERR_DOWNLOAD      5   download failure
+\&  _ERR_OPENFH        6   failure to open file handles
 \&  _ERR_NOINFO        7   missing download information
 .Ve
 .SH "SEE ALSO"

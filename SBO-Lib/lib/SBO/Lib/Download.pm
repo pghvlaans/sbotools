@@ -16,6 +16,9 @@ use Cwd;
 use Digest::MD5;
 use Exporter 'import';
 use File::Basename;
+use File::Copy qw/ move /;
+use SBO::ThirdParty::File::Copy::Recursive qw/ dircopy /;
+use File::Path qw/ make_path remove_tree /;
 use Time::HiRes qw/ time /;
 use URI::Escape qw/ uri_unescape /;
 
@@ -23,11 +26,13 @@ our @EXPORT_OK = qw{
   check_distfiles
   check_manual
   compute_md5sum
-  create_symlinks
   get_distfile
   get_filename_from_link
   get_sbo_downloads
-  get_symlink_from_filename
+  get_destination_from_filename
+  prepare_staging
+  stage
+  unstage
   verify_distfile
 };
 
@@ -60,11 +65,11 @@ SBO::Lib::Download - Routines for downloading SlackBuild sources.
 C<check_distfiles()> gets the list of downloads from C<$loc>. Any previously-downloaded
 files have their checksums verified. Unless there is a C<NO_DL> argument, missing and
 unverifiable files are downloaded to md5sum-designated directories and verified.
-Finally, C<create_symlinks()> is run on each download.
+Finally, C<prepare_staging()> is run on the downloads.
 
-In case of success, an array of symlinks from C<create_symlinks()> is returned. The
-subroutine returns empty if the SlackBuild did not contain any downloads. In case of
-failure, an error message and an exit code are returned.
+In case of success, a hash of source files and destinations from C<prepare_staging()> is
+returned. The subroutine returns empty if the SlackBuild did not contain any downloads.
+In case of failure, an error message and an exit code are returned.
 
 If there is an argument C<NO_DL>, 1 is returned if all sources are verified and 0
 otherwise.
@@ -73,7 +78,7 @@ otherwise.
 
 # for the given location, pull list of downloads and check to see if any exist;
 # if so, verify they md5 correctly and if not, download them and check the new
-# download's md5sum, then create required symlinks for them.
+# download's md5sum, then create a hash with required file moves.
 sub check_distfiles {
   my %args = (
     LOCATION  => '',
@@ -110,8 +115,8 @@ sub check_distfiles {
   if ($no_dl) {
     return 1;
   } else {
-    my $symlinks = create_symlinks($args{LOCATION}, $downloads);
-    return $symlinks;
+    my $moves = prepare_staging($location, $downloads);
+    return $moves;
   }
 }
 
@@ -155,34 +160,6 @@ sub compute_md5sum {
   my $md5sum = $md5->hexdigest;
   close $fh;
   return $md5sum;
-}
-
-=head2 create_symlinks
-
-  my @symlinks = @{ create_symlinks($location, {%downloads}) };
-
-C<create_symlinks()> creates symlinks for the an array C<%downloads> in
-C<$location>, returning an array reference of the symlinks created.
-
-=cut
-
-# given a location and a list of download links, assemble a list of symlinks,
-# and create them.
-sub create_symlinks {
-  script_error('create_symlinks requires two arguments.') unless @_ == 2;
-  my ($location, $downloads) = @_;
-  my @symlinks;
-  for my $link (keys %$downloads) {
-    my $md5 = $downloads->{$link};
-    my $filename = get_filename_from_link($link, $md5);
-    my $manual_filename = check_manual($filename, $md5);
-    $filename = $manual_filename if $manual_filename;
-    my $symlink = get_symlink_from_filename($filename, $location);
-    unlink $symlink if -l $symlink;
-    push @symlinks, $symlink;
-    symlink $filename, $symlink;
-  }
-  return \@symlinks;
 }
 
 =head2 get_distfile
@@ -318,21 +295,94 @@ sub get_sbo_downloads {
   return $dl_info;
 }
 
-=head2 get_symlink_from_filename
+=head2 get_destination_from_filename
 
-  my $symlink = get_symlink_from_filename($path, $loc);
+  my $destination = get_destination_from_filename($path, $loc);
 
-C<get_symlink_from_filename()>, given a source file at C<$path> and a location C<$loc>,
-returns the path of the generated symlink.
+C<get_destination_from_filename()>, given a source file at C<$path> and a location C<$loc>,
+returns the destination path when moving the file.
 
 =cut
 
-# for a given distfile, figure out what the full path to its symlink will be
-sub get_symlink_from_filename {
-  script_error('get_symlink_from_filename requires two arguments.') unless @_ == 2;
-  script_error('get_symlink_from_filename first argument is not a file.') unless -f $_[0];
-  my ($filename, $location) = @_;
-  return "$location/". basename $filename;
+# for a given distfile, figure out what the full path to its temporary location will be
+sub get_destination_from_filename {
+  script_error('get_destination_from_filename requires two arguments.') unless @_ == 2;
+  script_error('get_destination_from_filename first argument is not a file.') unless -f $_[0];
+  my ($filename, $staging) = @_;
+  return "$staging/". basename $filename;
+}
+
+=head2 prepare_staging
+
+  my $destinations = prepare_staging($location, {%downloads});
+
+C<prepare_staging()> prepares a hash of files and their destinations based on
+C<%downloads> for use during the build in a directory C<$staging>.
+
+=cut
+
+# given a location and a list of download links, create a staging directory
+# and prepare a hash of files to be moved with their destinations.
+sub prepare_staging {
+  script_error('prepare_staging requires two arguments.') unless @_ == 2;
+  my ($location, $downloads) = @_;
+  my $staging = "$stage_dir/" . basename $location;
+  my $destinations;
+  for my $link (keys %$downloads) {
+    my $md5 = $downloads->{$link};
+    my $filename = get_filename_from_link($link, $md5);
+    my $manual_filename = check_manual($filename, $md5);
+    $filename = $manual_filename if $manual_filename;
+    my $link = get_destination_from_filename($filename, $staging);
+    $destinations->{$filename} = $link;
+  }
+  return $destinations;
+}
+
+=head2 stage
+
+  stage($location, $distfiles);
+
+C<stage()> takes a location and a hash of distfiles to create the staging directory for
+a build. It returns the location of the staging directory on success and 0 on failure.
+
+=cut
+
+sub stage {
+  script_error('stage requires two arguments.') unless @_ == 2;
+  my ($location, $distfiles) = @_;
+  my $staging = "$stage_dir/" . basename $location;
+  remove_tree $stage_dir if -d $stage_dir;
+  dircopy $location, $staging or return 0;
+  for my $source (keys %$distfiles) {
+    my $file = $distfiles->{$source};
+    unlink $file;
+    move $source, $file or return 0;
+  }
+  return $staging;
+}
+
+=head2 unstage
+
+  my $res = unstage($files);
+
+C<unstage()> returns any distfiles in the staging directory to the distfiles directory;
+the staging directory is removed for future use. It returns 1 on success and 0 on failure.
+
+=cut
+
+sub unstage {
+  script_error('unstage requires one argument.') unless @_ == 1;
+  my ($distfiles) = @_;
+  return 0 unless $distfiles;
+  for my $source (keys %$distfiles) {
+    my $file = $distfiles->{$source};
+    my $source_dir = dirname $source;
+    make_tree $source_dir unless -d $source_dir;
+    move $file, $source or return 0;
+  }
+  remove_tree $stage_dir if -d $stage_dir;
+  return 1;
 }
 
 =head2 verify_distfile
@@ -367,6 +417,7 @@ Download.pm subroutines can return the following exit codes:
   _ERR_SCRIPT        2   script or module bug
   _ERR_MD5SUM        4   download verification failure
   _ERR_DOWNLOAD      5   download failure
+  _ERR_OPENFH        6   failure to open file handles
   _ERR_NOINFO        7   missing download information
 
 =head1 SEE ALSO

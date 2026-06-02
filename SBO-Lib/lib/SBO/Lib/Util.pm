@@ -48,6 +48,7 @@ my @EXPORT_CONFIG = qw{
   $anticipated_next
   @auto_reverse
   $arch
+  $checksum_length
   $conf_dir
   $conf_file
   $color_file
@@ -69,6 +70,7 @@ my @EXPORT_CONFIG = qw{
   $userland_32
   @py_installed
   @py_missing
+  $stage_dir
 };
 
 my @EXPORT_TIME = qw{
@@ -271,6 +273,14 @@ kernel.
 
 =cut
 
+=head2 $stage_dir
+
+C<$stage_dir> is a directory called C<SBOTOOLS_STAGING> under C<SBO_HOME/distiles>.
+When a script is to be built, its directory is copied here and any downloaded
+sources are moved in.
+
+=cut
+
 our $arch = get_arch();
 our $anticipated_next = "15.1";
 
@@ -292,6 +302,7 @@ our $hint_file = "$conf_dir/$filebase.hints";
 our $obs_file = "$conf_dir/obsolete";
 our $perl_file = "$conf_dir/perl_vers";
 our $color_file = "$conf_dir/$filebase.colors";
+our $checksum_length = 32;
 our %config = (
   CLASSIC => 'FALSE',
   NOCLEAN => 'FALSE',
@@ -326,6 +337,7 @@ if (defined $is_sbotest) {
 }
 
 read_config();
+our $stage_dir = "$config{SBO_HOME}/distfiles/SBOTOOLS_STAGING";
 
 # The hints file should be read in at the start, and
 # only if editing the hints file thereafter.
@@ -430,7 +442,8 @@ sub check_multilib {
   my $dangerous = dangerous_directory($dirname);
 
 C<dangerous_directory()> takes a string and returns true if it is equal to C</>,
-C</root>, C</home> or a possible top-level directory under C</home>.
+C</root>, C</home>,  a possible top-level directory under C</home> or is named
+C<SBOTOOLS_STAGING>.
 
 =cut
 
@@ -440,7 +453,8 @@ sub dangerous_directory {
   my $dangerous = 0;
   if ($dirname =~ m/^\/+$/ or
       $dirname =~ m/^\/+home\/+[^\/]+(|\/+)$/ or
-      $dirname =~ m/^\/+(home|root)(|\/+)$/) {
+      $dirname =~ m/^\/+(home|root)(|\/+)$/ or
+      $dirname =~ m/\/SBOTOOLS_STAGING$/) {
     $dangerous = 1;
   }
   return $dangerous;

@@ -810,7 +810,7 @@ sub display_clean_menu {
 	if (-d "$config{SBO_HOME}/distfiles") {
 		opendir(my $handle, "$config{SBO_HOME}/distfiles");
 		while (my $dir = readdir $handle) {
-			unless (in_regexp($dir => qw/ . .. /)) { $has_distfiles = 1; last; }
+			unless (in_regexp($dir => qw/ . .. /) or length $dir != $checksum_length or "$config{SBO_HOME}/distfiles/$dir" eq $config{MANUAL_DL_DIR}) { $has_distfiles = 1; last; }
 		}
 	}
 	if (-d "$tmpd") {
@@ -960,7 +960,7 @@ sub display_main {
 		if (-d "$config{SBO_HOME}/distfiles") {
 			opendir(my $handle, "$config{SBO_HOME}/distfiles");
 			while (my $dir = readdir $handle) {
-				unless (in_regexp($dir => qw/ . .. /)) { $has_distfiles = 1; last; }
+				unless (in_regexp($dir => qw/ . .. /) or length $dir != $checksum_length or "$config{SBO_HOME}/distfiles/$dir" eq $config{MANUAL_DL_DIR}) { $has_distfiles = 1; last; }
 			}
 		}
 		if (-d "$tmpd") {

@@ -51,7 +51,7 @@ Note that if run without the
 flag,
 .B
 sboclean
-removes anything in the distfiles and/or
+removes anything in an md5-designated distfiles subdirectory and/or
 .I
 /tmp/SBo
 (or
@@ -101,6 +101,12 @@ or
 .B
 sbotools.conf(5)\fR\
 \&.
+.B
+sboclean
+leaves bare files and non-md5-designated directories under
+.I
+distfiles
+untouched.
 .RE
 .P
 .B

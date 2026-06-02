@@ -20,12 +20,19 @@ This module bundles Sort::Versions 1.62, which has its own license:
    Avis, and Matt Johnson.  This package is free software; you can
    redistribute it and/or modify it under the same terms as Perl itself.
 
+This module bundles File::Copy::Recursive 0.45, which has its own license:
+
+   The files in this package are copyright Daniel Muey. This package is
+   free software; you can redistribute it and/or modify it under the same
+   terms as Perl itself.
+
 COPYRIGHT AND LICENCE
 
 MIT License
 
 Copyright (c) 2012-2019 Jacob Pipkin, Luke Williams, Andreas Guldstrand
 Copyright (c) 2024-2026 K. Eugene Carlson
+Copyright (c) 2026 K. Eugene Carlson, Jacob Pipkin
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the

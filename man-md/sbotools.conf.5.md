@@ -136,7 +136,9 @@ may differ when running some SlackBuilds unless **LOG_DIR** is
 If set to an **absolute path**, prioritize source files with the proper
 name and checksum in that directory over downloads when running
 [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md). These files are not deleted
-after building, regardless of the value of **DISTCLEAN**.
+after building, regardless of the value of **DISTCLEAN**. Place
+**MANUAL_DL_DIR** in the same partition as *SBO_HOME/distfiles* to
+maximize performance.
 
 **NONET=(FALSE\|TRUE)**
 

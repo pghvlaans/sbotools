@@ -46,6 +46,9 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboinstall: Fix template creation with a non-existent directory
   * Readme.pm: Rework option detection for accuracy
   * Readme.pm: Offer to show all readme files before asking for options and UID/GID
+  * Use a temporary staging directory with the real source files when building
+    * Thanks to leoctrl for reporting a symlink-related bug
+  * Added File::Copy::Recursive to ThirdParty
 
 #### 4.1.4 - 2026-05-06
   * sbofind: Do not match "No tags found" in TAGS.txt
