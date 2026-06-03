@@ -125,17 +125,16 @@ sub check_distfiles {
   my $manual_file = check_manual($filename, $info_md5);
 
 C<check_manual()> checks for a file C<$filename> with md5sum C<$info_md5> in
-C<MANUAL_DL_DIR>, if specified. It returns the path to this file if it exists
+C<SBO_HOME/distfiles/manual>. It returns the path to this file if it exists
 and 0 otherwise.
 
 =cut
 
-# check whether a file with a given md5sum exists in MANUAL_DL_DIR
+# check whether a file with a given md5sum exists in SBO_HOME/distfiles/manual
 sub check_manual {
   script_error('check_manual requires two arguments.') unless @_ == 2;
   my ($filename, $info_md5) = @_;
-  return 0 if $config{MANUAL_DL_DIR} eq 'FALSE';
-  $filename = "$config{MANUAL_DL_DIR}/" . basename $filename;
+  $filename = "$manual_dir/" . basename $filename;
   if (-f $filename) {
     my $md5sum = compute_md5sum($filename);
     return $md5sum eq $info_md5 ? $filename : 0;
@@ -403,7 +402,7 @@ sub verify_distfile {
   my $filename = get_filename_from_link($link, $info_md5);
   if (check_manual($filename, $info_md5)) {
     my $msg_filename = basename $filename;
-    wrapsay_color $color_notice, "Using $msg_filename from $config{MANUAL_DL_DIR}.", 1;
+    wrapsay_color $color_notice, "Using $msg_filename from the manual downloads directory.", 1;
     return 1;
   }
   return() unless -f $filename;

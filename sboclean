@@ -133,7 +133,7 @@ if ($dist) {
 	FIRST: while (my $ls = readdir $dh) {
 		next FIRST if length $ls != $checksum_length;
 		my $dir = "$distfiles/$ls";
-		next if $dir eq $config{MANUAL_DL_DIR};
+		next if $dir eq $manual_dir;
 		if (-d $dir) {
 			opendir(my $dh2, $dir);
 			SECOND: while (my $ls2 = readdir $dh2) {

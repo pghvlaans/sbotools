@@ -21,6 +21,7 @@ use SBO::ThirdParty::Sort::Versions;
 use Exporter 'import';
 
 our @EXPORT_OK = qw{
+  check_distfiles
   check_git_remote
   check_repo
   generate_slackbuilds_txt
@@ -95,6 +96,36 @@ our $slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
 =head1 SUBROUTINES
 
 =cut
+
+=head2 check_distfiles
+
+  my $bool = check_distfiles();
+
+C<check_distfiles()> checks for the existence of the C<distfiles> directory and the
+C<manual downloads> directory and convenience symlink. It creates them if necessary.
+The script exits if C<SBO_HOME/distfiles> or C<SBO_HOME/distfiles/manual> are
+existing non-directories, or if C<SBO_HOME/manual_downloads> is anything other than
+a correct symlink.
+
+It returns 1 on success.
+
+=cut
+
+sub check_distfiles {
+  my @dirs = ( $distfiles, $manual_dir, );
+  for my $dir (@dirs) {
+    usage_error("$dir is a non-directory. Please remove it and run sbocheck again.") if -s $dir and (-l $dir or not -d $dir);
+    unless (-d $dir) {
+      usage_error("Could not create $dir. Exiting.") unless make_path $dir;
+    }
+  }
+  unless (-l $manual_link) {
+    usage_error("$manual_link is not a symlink to $manual_dir. Please remove it and run sbocheck again.") if -s $manual_link;
+    usage_error("Could not link $manual_dir to $manual_link. Exiting.") unless symlink $manual_dir, $manual_link;
+  }
+  usage_error("$manual_link is not a symlink to $manual_dir. Please remove it and run sbocheck again.") unless readlink $manual_link eq $manual_dir;
+  return 1;
+}
 
 =head2 check_git_remote
 
@@ -584,6 +615,7 @@ sub update_tree {
     wrapsay_color $color_notice, 'Pulling SlackBuilds tree...';
   }
   check_repo();
+  check_distfiles();
   pull_sbo_tree(), return 1;
 }
 

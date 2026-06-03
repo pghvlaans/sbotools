@@ -56,6 +56,8 @@ my @EXPORT_CONFIG = qw{
   @ignore_tests
   %config
   @listings
+  $manual_dir
+  $manual_link
   @on_blacklist
   $obs_file
   @obsolete
@@ -203,7 +205,7 @@ The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
 C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<COLOR>, C<SO_CHECK>,
-C<DIALOGRC>, C<NONET> and C<MANUAL_DL_DIR>.
+C<DIALOGRC> and C<NONET>.
 
 =head2 $download_time
 
@@ -327,7 +329,6 @@ our %config = (
   SO_CHECK => 'FALSE',
   DIALOGRC => 'FALSE',
   NONET => 'FALSE',
-  MANUAL_DL_DIR => 'FALSE',
 );
 
 if (defined $is_sbotest) {
@@ -338,6 +339,8 @@ if (defined $is_sbotest) {
 
 read_config();
 our $stage_dir = "$config{SBO_HOME}/distfiles/SBOTOOLS_STAGING";
+our $manual_dir = "$config{SBO_HOME}/distfiles/manual";
+our $manual_link = "$config{SBO_HOME}/manual_downloads";
 
 # The hints file should be read in at the start, and
 # only if editing the hints file thereafter.
@@ -900,14 +903,6 @@ sub lint_sbo_config {
       push @invalid, "$warn -L (absolute path or FALSE)";
     } elsif ($configs{LOG_DIR} =~ qr#^/#) {
       push @dangerous, "LOG_DIR: $configs{LOG_DIR}" if dangerous_directory($configs{LOG_DIR});
-    }
-  }
-  if (exists $configs{MANUAL_DL_DIR}) {
-    unless ($configs{MANUAL_DL_DIR} =~ qr#^(/|FALSE$)#) {
-      push @invalid, "MANUAL_DL_DIR:" if $running ne 'sboconfig';
-      push @invalid, "$warn -M (absolute path or FALSE)";
-    } elsif ($configs{MANUAL_DL_DIR} =~ qr#^/#) {
-      push @dangerous, "MANUAL_DL_DIR: $configs{MANUAL_DL_DIR}" if dangerous_directory($configs{MANUAL_DL_DIR});
     }
   }
   if (exists $configs{NOCLEAN}) {

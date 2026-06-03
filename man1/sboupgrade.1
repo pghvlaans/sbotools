@@ -8,7 +8,7 @@ sboupgrade
 .P
 sboupgrade [-h|-v]
 .P
-sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-LMk /path|FALSE] \\
+sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-figopqrz] [--batch|--dry-run] --all|--all-plus-failures|sbo_name (sbo_name)
 .P
 sboupgrade [--color|--nocolor] [--wrap|--nowrap] ...
@@ -56,14 +56,7 @@ as a fallback measure. To verify sources for the queue and
 download if needed, use
 .B
 --get-only\fR\
-\&. If
-.B
-MANUAL_DL_DIR
-is set to an absolute path, source files with a matching
-name and checksum are preferred to new downloads. This is
-a convenient way to download source files in advance
-in case of an unreliable connection.
-.P
+\&.
 .I
 SlackBuild
 and
@@ -296,10 +289,8 @@ sbotools.conf(5)\fR\
 DISTCLEAN
 setting.
 .P
-Please note that source files in a directory specified by the
-.B
-MANUAL_DL_DIR
-setting are not deleted automatically.
+Please note that source files in the manual downloads directory
+not deleted automatically.
 .RE
 .P
 .B
@@ -413,19 +404,6 @@ absolute path\fR\
 LOG_DIR
 setting. Logs are saved with the name of the script
 and a timestamp.
-.RE
-.P
-.B
--M|--manual-dl-dir (FALSE|/path)
-.RS
-If an
-.B
-absolute path\fR\
-\&, prioritize source files with the proper name and checksum in that directory
-over new downloads. This option overrides the
-.B
-MANUAL_DL_DIR
-setting.
 .RE
 .P
 .B

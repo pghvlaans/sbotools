@@ -63,8 +63,6 @@ Options (defaults shown first where applicable):
     set to an absolute path to save compiled packages here, or to FALSE.
   -L|--log-dir (FALSE|/path):
     set to an absolute path to save build logs here, or to FALSE.
-  -M|--manual-dl-dir (FALSE|/path):
-    set to a path to prioritize source files in that directory.
   -N|--nonet (FALSE|TRUE):
     if TRUE, do not allow network access when running SlackBuilds.
   -o|--norecall:
@@ -85,7 +83,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $socheck, $wrap, $nowrap, $nonet, $all_fails, $manual, $get_only);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $socheck, $wrap, $nowrap, $nonet, $all_fails, $get_only);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -115,7 +113,6 @@ my $options_ok = GetOptions(
 	'wrap'              => \$wrap,
 	'nonet|N=s'         => \$nonet,
 	'all-plus-failures' => \$all_fails,
-	'manual-dl-dir|M=s' => \$manual,
 	'get-only|g'        => \$get_only,
 );
 
@@ -147,7 +144,6 @@ $config{LOG_DIR} = $log_dir if $log_dir;
 $config{SO_CHECK} = $socheck if $socheck;
 $config{JOBS} = $jobs if $jobs;
 $config{NONET} = $nonet if $nonet;
-$config{MANUAL_DL_DIR} = $manual if $manual;
 
 lint_sbo_config($self, %config);
 

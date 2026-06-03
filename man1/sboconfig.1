@@ -15,7 +15,7 @@ sboconfig [-l|-n]
 .P
 sboconfig [--reset]
 .P
-sboconfig [-CKNOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLMpo /path|FALSE] \\
+sboconfig [-CKNOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo /path|FALSE] \\
           [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \\
           [-r url|FALSE]
 .SH DESCRIPTION
@@ -289,12 +289,6 @@ PKG_DIR
 is set, package archives are saved there regardless of
 .B
 DISTCLEAN\fR\
-\&. Likewise, files in
-.B
-MANUAL_DL_DIR
-are unaffected by
-.B
-DISTCLEAN\fR\
 \&.
 .RE
 .P
@@ -414,33 +408,6 @@ is
 .B
 FALSE\fR\
 \&.
-.RE
-.P
-.B
--M|--manual-dl-dir (FALSE|/path)
-.RS
-.B
-MANUAL_DL_DIR\fR\
-\&: If set to an
-.B
-absolute path\fR\
-\&, prioritize source files with the proper name and checksum in that directory
-over downloads when running
-.B
-sboinstall(1)
-and
-.B
-sboupgrade(1)\fR\
-\&. These files are not deleted after building, regardless of the value of
-.B
-DISTCLEAN\fR\
-\&. Place
-.B
-MANUAL_DL_DIR
-in the same partition as
-.I
-SBO_HOME/distfiles
-to maximize performance.
 .RE
 .P
 .B

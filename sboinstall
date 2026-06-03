@@ -60,8 +60,6 @@ Options (defaults shown first where applicable):
     set to an absolute path to save compiled packages here, or to FALSE.
   -L|--log-dir (FALSE|/path):
     set to an absolute path to save build logs here, or to FALSE.
-  -M|--manual-dl-dir (FALSE|/path):
-    set to a path to prioritize source files in that directory.
   -N|--nonet (FALSE|TRUE):
     if TRUE, do not allow network access when running SlackBuilds.
   -p|--compat32:
@@ -91,7 +89,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $noclean, $distclean, $pkg_dir, $log_dir, $etc_profile, $gpg, $series_rebuild, $jobs, $nocolor, $color, $wrap, $nowrap, $ctemp_only, $nonet, $manual, $get_only);
+my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $noclean, $distclean, $pkg_dir, $log_dir, $etc_profile, $gpg, $series_rebuild, $jobs, $nocolor, $color, $wrap, $nowrap, $ctemp_only, $nonet, $get_only);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -121,7 +119,6 @@ my $options_ok = GetOptions(
 	'wrap'              => \$wrap,
 	'template-only|t=s' => \$ctemp_only,
 	'nonet|N=s'         => \$nonet,
-	'manual-dl-dir|M=s' => \$manual,
 	'get-only|g'        => \$get_only,
 );
 
@@ -150,7 +147,6 @@ $config{PKG_DIR} = $pkg_dir if $pkg_dir;
 $config{LOG_DIR} = $log_dir if $log_dir;
 $config{JOBS} = $jobs if $jobs;
 $config{NONET} = $nonet if $nonet;
-$config{MANUAL_DL_DIR} = $manual if $manual;
 
 lint_sbo_config($self, %config);
 

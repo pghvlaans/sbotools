@@ -568,6 +568,8 @@ sub make_distclean {
   my $downloads = shift @upcoming;
   for my $key (keys %$downloads) {
     my $md5 = $downloads->{$key};
+    # get_filename_from_link does not use the manual download
+    # directory
     my $filename = get_filename_from_link($key, $md5);
     my $is_upcoming;
     for my $dl2 (@upcoming) {
@@ -583,7 +585,7 @@ sub make_distclean {
     if (-f $filename and not $is_upcoming) {
       unlink $filename;
       # be careful with the directory; does not apply to files
-      # in MANUAL_DL_DIR.
+      # in the manual download directory
       if (dirname(dirname($filename)) eq "$config{SBO_HOME}/distfiles") {
         remove_tree dirname($filename) if -d dirname($filename);
       } else {
