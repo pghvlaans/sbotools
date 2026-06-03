@@ -251,6 +251,11 @@ C</etc/sbotools/sbotools.hints>.
 These exported variables are populated by C<read_hints()> and used to determine hint
 status.
 
+=head2 ($manual_dir, $manual_link)
+
+The manual download directory at C<SBO_HOME/distfiles/manual> and its symlink at
+C<SBO_HOME/manual_downloads>, respectively.
+
 =head2 $obs_file
 
 This file contains a list of scripts that have been renamed and added to Slackware
@@ -445,8 +450,8 @@ sub check_multilib {
   my $dangerous = dangerous_directory($dirname);
 
 C<dangerous_directory()> takes a string and returns true if it is equal to C</>,
-C</root>, C</home>,  a possible top-level directory under C</home> or is named
-C<SBOTOOLS_STAGING>.
+C</root>, C</home> or a possible top-level directory under C</home>. Paths under
+C<SBO_HOME/distfiles> and $manual_link are also disallowed.
 
 =cut
 
@@ -457,7 +462,7 @@ sub dangerous_directory {
   if ($dirname =~ m/^\/+$/ or
       $dirname =~ m/^\/+home\/+[^\/]+(|\/+)$/ or
       $dirname =~ m/^\/+(home|root)(|\/+)$/ or
-      $dirname =~ m/\/SBOTOOLS_STAGING$/) {
+      $dirname =~ m/^($config{SBO_HOME}\/distfiles|$manual_link)/) {
     $dangerous = 1;
   }
   return $dangerous;

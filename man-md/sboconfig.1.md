@@ -42,8 +42,9 @@ not relevant to **sbotools** configuration are ignored. To use a
 configuration directory other than */etc/sbotools*, export an
 environment variable **SBOTOOLS_CONF_DIR** with an absolute path.
 
-*/root*, */home*, */* and possible top-level directories under */home*
-are not permitted as directory settings.
+*/root*, */home*, */*, possible top-level directories under */home* and
+paths under *SBO_HOME/distfiles* or *SBO_HOME/manual_downloads* are not
+permitted as directory settings.
 
 Non-root users can only call **sboconfig** with the **\--list**,
 **\--non-default**, **\--help** and **\--version** flags.

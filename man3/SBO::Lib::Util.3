@@ -158,6 +158,11 @@ test failures and automatic reverse dependency rebuilds read in from
 .IX Subsection "(@on_blacklist, @auto_reverse, %optional, @ignore_tests)"
 These exported variables are populated by \f(CWread_hints()\fR and used to determine hint
 status.
+.ie n .SS "($manual_dir, $manual_link)"
+.el .SS "($manual_dir, \f(CW$manual_link\fP)"
+.IX Subsection "($manual_dir, $manual_link)"
+The manual download directory at \f(CW\*(C`SBO_HOME/distfiles/manual\*(C'\fR and its symlink at
+\&\f(CW\*(C`SBO_HOME/manual_downloads\*(C'\fR, respectively.
 .ie n .SS $obs_file
 .el .SS \f(CW$obs_file\fP
 .IX Subsection "$obs_file"
@@ -222,8 +227,8 @@ Returns 1 if the file exists, and 0 otherwise.
 .Ve
 .PP
 \&\f(CWdangerous_directory()\fR takes a string and returns true if it is equal to \f(CW\*(C`/\*(C'\fR,
-\&\f(CW\*(C`/root\*(C'\fR, \f(CW\*(C`/home\*(C'\fR,  a possible top\-level directory under \f(CW\*(C`/home\*(C'\fR or is named
-\&\f(CW\*(C`SBOTOOLS_STAGING\*(C'\fR.
+\&\f(CW\*(C`/root\*(C'\fR, \f(CW\*(C`/home\*(C'\fR or a possible top\-level directory under \f(CW\*(C`/home\*(C'\fR. Paths under
+\&\f(CW\*(C`SBO_HOME/distfiles\*(C'\fR and \f(CW$manual_link\fR are also disallowed.
 .SS display_times
 .IX Subsection "display_times"
 .Vb 1
