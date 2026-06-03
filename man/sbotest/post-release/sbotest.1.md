@@ -27,17 +27,17 @@
 
     sbotest [config|find|hints] \...
 
-    sbotest [-f|-s] [-AMkl /path|FALSE] [-j #|FALSE] \
+    sbotest [-f|-s] [-Akl /path|FALSE] [-j #|FALSE] \
             [-NX TRUE|FALSE] [-D] [--no-archive|--archive-force] \
             sbo_name (sbo_name)
 
-    sbotest [-AMl /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
+    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
             [-D] --archive-rebuild
 
-    sbotest [-AMl /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
+    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
             [-D] --archive-reverse
 
-    sbotest [-AMl /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
+    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
             [--no-archive|--archive-force] --test-everything
 
 ## DISCLAIMER
@@ -217,13 +217,6 @@ If **FALSE**, use the default log directory of
 *SBO_HOME/logs/(timestamp)-logs*. If an **absolute path**, save build
 and **sbopkglint(1)** logs to that directory with a timestamp appended.
 
-**-M\|\--manual-dl-dir**
-
-If an **absolute path**, prioritize source files with the proper name
-and checksum in that directory over new downloads.
-
-Overrides the **MANUAL_DL_DIR** setting.
-
 **-N\|\--nonet**
 
 If **TRUE**, prevent SlackBuilds from accessing the network when they
@@ -307,6 +300,13 @@ To use a local overrides directory, set **LOCAL_OVERRIDES** to an
 absolute path. Place directories for any script to be tested in the top
 level and run **sbotest**. Removing these directories when testing is
 complete is advisable.
+
+Source files for some scripts must be downloaded manually. To test such
+scripts, place any needed files in the manual downloads directory at
+*SBO_HOME/distfiles/manual*. A symlink can be found at
+*SBO_HOME/manual_downloads* for convenience. Please note that files
+stored here are unaffected by the **DISTCLEAN** setting, and are always
+retained after building.
 
 Set **NONET** to **TRUE** or call **sbotest** with **\--nonet TRUE** to
 run SlackBuilds without network access. This is a convenient way to spot
