@@ -155,7 +155,8 @@ returns the destination path when moving the file.
 .Ve
 .PP
 \&\f(CWstage()\fR takes a location and a hash of distfiles to create the staging directory for
-a build. It returns the location of the staging directory on success and 0 on failure.
+a build. It returns the location of the staging directory if it can be created and 0
+otherwise.
 .SS unstage
 .IX Subsection "unstage"
 .Vb 1

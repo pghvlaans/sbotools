@@ -344,7 +344,8 @@ sub prepare_staging {
   stage($location, $distfiles);
 
 C<stage()> takes a location and a hash of distfiles to create the staging directory for
-a build. It returns the location of the staging directory on success and 0 on failure.
+a build. It returns the location of the staging directory if it can be created and 0
+otherwise.
 
 =cut
 
@@ -357,7 +358,7 @@ sub stage {
   for my $source (keys %$distfiles) {
     my $file = $distfiles->{$source};
     unlink $file;
-    move $source, $file or return 0;
+    move $source, $file;
   }
   return $staging;
 }
