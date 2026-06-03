@@ -192,6 +192,24 @@ or by editing
 sbotool
 if running as root.
 .P
+Along with its copy of the repository, the
+.B
+SBO_HOME
+directory also contains directories for automatic and manual file
+downloads at
+.I
+SBO_HOME/distfiles
+and
+.I
+SBO_HOME/distfiles/manual\fR\
+\&, respectively. The manual downloads directory can be reached
+from a symlink at
+.I
+SBO_HOME/manual_downloads\fR\
+\&. Files with the correct name and checksum in this directory are prioritized when
+building packages. It is particularly useful for downloads that cannot be done from
+the command line (those requiring a license agreement, for example).
+.P
 The default mirror depends on the running version of Slackware. Stable
 releases use the appropriate branch on
 .UR https://gitlab.com/SlackBuilds.org/slackbuilds/

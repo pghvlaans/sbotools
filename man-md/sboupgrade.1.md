@@ -43,6 +43,10 @@ error message if circular dependencies are detected.
 or the md5sum check fails, a new download is attempted from
 <ftp://slackware.uk/sbosrcarch/> as a fallback measure. To verify
 sources for the queue and download if needed, use **\--get-only**.
+Manually-downloaded source files (such as those requiring a license
+agreement) can be placed in *SBO_HOME/manual_downloads* prior to running
+**sboupgrade**.
+
 *SlackBuild* and *README* files are parsed for **groupadd(1)** and
 **useradd(1)** commands, and **sboupgrade** offers to run them prior to
 building if any of the required users or groups do not exist. If the

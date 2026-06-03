@@ -108,6 +108,15 @@ location, give an absolute file path to the **SBO_HOME** setting with
 [sboconfig(1)](sboconfig.1.md) or by editing */etc/sbotools/sbotools.conf*. The
 repositiory can also be fetched using **sbotool** if running as root.
 
+Along with its copy of the repository, the **SBO_HOME** directory also
+contains directories for automatic and manual file downloads at
+*SBO_HOME/distfiles* and *SBO_HOME/distfiles/manual*, respectively. The
+manual downloads directory can be reached from a symlink at
+*SBO_HOME/manual_downloads*. Files with the correct name and checksum in
+this directory are prioritized when building packages. It is
+particularly useful for downloads that cannot be done from the command
+line (those requiring a license agreement, for example).
+
 The default mirror depends on the running version of Slackware. Stable
 releases use the appropriate branch on
 <https://gitlab.com/SlackBuilds.org/slackbuilds/> and -current uses
