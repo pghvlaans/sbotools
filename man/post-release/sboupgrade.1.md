@@ -21,8 +21,8 @@
 
     sboupgrade [-h|-v]
 
-    sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-LMk
-/path\|FALSE] \
+    sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+\
                [-figopqrz] [--batch|--dry-run]
 \--all\|\--all-plus-failures\|sbo_name (sbo_name)
 
@@ -42,12 +42,7 @@ error message if circular dependencies are detected.
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
 or the md5sum check fails, a new download is attempted from
 <ftp://slackware.uk/sbosrcarch/> as a fallback measure. To verify
-sources for the queue and download if needed, use **\--get-only**. If
-**MANUAL_DL_DIR** is set to an absolute path, source files with a
-matching name and checksum are preferred to new downloads. This is a
-convenient way to download source files in advance in case of an
-unreliable connection.
-
+sources for the queue and download if needed, use **\--get-only**.
 *SlackBuild* and *README* files are parsed for **groupadd(1)** and
 **useradd(1)** commands, and **sboupgrade** offers to run them prior to
 building if any of the required users or groups do not exist. If the
@@ -122,8 +117,8 @@ This option can be set as default via the [sboconfig(1)](sboconfig.1.md) command
 also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the **DISTCLEAN**
 setting.
 
-Please note that source files in a directory specified by the
-**MANUAL_DL_DIR** setting are not deleted automatically.
+Please note that source files in the manual downloads directory not
+deleted automatically.
 
 **-e\|\--etc-profile**
 
@@ -164,12 +159,6 @@ of the **PKG_DIR** setting.
 If an **absolute path**, save build logs here, overriding the value of
 the **LOG_DIR** setting. Logs are saved with the name of the script and
 a timestamp.
-
-**-M\|\--manual-dl-dir (FALSE\|/path)**
-
-If an **absolute path**, prioritize source files with the proper name
-and checksum in that directory over new downloads. This option overrides
-the **MANUAL_DL_DIR** setting.
 
 **-N\|\--nonet (FALSE\|TRUE)**
 

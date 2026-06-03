@@ -8,8 +8,6 @@
   * *sboinstall*: With **\--reinstall**, mention version changes
   * *sboinstall*: install and reinstall messaging reflects override scripts
   * *sbotool*: Hide ineffective settings when **CLASSIC** is **TRUE**
-  * Added a setting **MANUAL_DL_DIR** to specify a manual downloads directory for use with *sboinstall* and *sboupgrade*
-    * Thanks to dchmelik and shamefulCake1 for the feedback.
   * *sboremove*: Use **\--query** to print the prospective removal prompt order
   * sboremove: Use **\--no-descriptions** to suppress package descriptions
   * *Readme.pm*: Fix opening SlackBuilds for -compat32
@@ -22,6 +20,8 @@
   * Use a temporary staging directory with the real source files when building
     * Thanks to leoctrl for reporting a symlink-related bug
   * Added `File::Copy::Recursive` to *ThirdParty*
+  * Added *SBO_HOME/manual_downloads* for stowing manual downloads
+    * Thanks to dchmelik and shamefulCake1 for the feedback about managing manual downloads.
 
 * 4.1.4 - 2026-05-06
   * *sbofind*: Do not match "No tags found" in `TAGS.txt`

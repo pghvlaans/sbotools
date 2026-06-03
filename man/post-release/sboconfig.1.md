@@ -25,7 +25,7 @@
 
     sboconfig [--reset]
 
-    sboconfig [-CKNOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLMpo
+    sboconfig [-CKNOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo
 /path\|FALSE] \
               [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \
               [-r url|FALSE]
@@ -119,7 +119,6 @@ when running [sbotool(1)](sbotool.1.md).
 building. Source archives are otherwise retained in md5sum-designated
 directories under */usr/sbo/distfiles* (with default **SBO_HOME**). If
 **PKG_DIR** is set, package archives are saved there regardless of
-**DISTCLEAN**. Likewise, files in **MANUAL_DL_DIR** are unaffected by
 **DISTCLEAN**.
 
 **-e\|\--etc-profile (FALSE\|TRUE)**
@@ -162,15 +161,6 @@ are saved with the name of the script and a timestamp. Please note that
 because **STDERR** must be redirected for a complete log, colors and
 formatting may differ when running some SlackBuilds unless **LOG_DIR**
 is **FALSE**.
-
-**-M\|\--manual-dl-dir (FALSE\|/path)**
-
-**MANUAL_DL_DIR**: If set to an **absolute path**, prioritize source
-files with the proper name and checksum in that directory over downloads
-when running [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md). These files are
-not deleted after building, regardless of the value of **DISTCLEAN**.
-Place **MANUAL_DL_DIR** in the same partition as *SBO_HOME/distfiles* to
-maximize performance.
 
 **-N\|\--nonet (FALSE\|TRUE)**
 

@@ -53,10 +53,9 @@ message.
 **-d\|\--dist**
 
 Clean source archives, located at */usr/sbo/distfiles* by default. Files
-stored in the manual downloads directory specified by **MANUAL_DL_DIR**
-are unaffected. See also [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md).
-**sboclean** leaves bare files and non-md5-designated directories under
-*distfiles* untouched.
+stored in *SBO_HOME/distfiles/manual* are unaffected. **sboclean**
+leaves bare files and non-md5-designated directories under *distfiles*
+untouched.
 
 **-w\|\--work**
 
