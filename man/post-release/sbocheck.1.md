@@ -196,7 +196,8 @@ Turn off **sbotools** word wrapping.
 5: failed to download the tree.\
 6: failed to open a required file handle.\
 12: interrupt signal received.\
-15: GPG verification failed.
+15: GPG verification failed.\
+17: could not give **SBO_HOME** valid contents.
 
 ## BUGS
 
