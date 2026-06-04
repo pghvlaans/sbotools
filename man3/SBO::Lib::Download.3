@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Download 3"
-.TH SBO::Lib::Download 3 "Prickle-Prickle, Confusion 8, 3192 YOLD" "" "sbotools 4.1.4"
+.TH SBO::Lib::Download 3 "Setting Orange, Confusion 9, 3192 YOLD" "" "sbotools 4.1.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -132,22 +132,22 @@ The subroutine returns a message and an error code upon failure, and 1 upon succ
 .PP
 \&\f(CWget_sbo_downloads()\fR gets the download links and md5sums for the SlackBuild
 in location \f(CW$loc\fR, returning them in a hash reference.
-.SS get_destination_from_filename
-.IX Subsection "get_destination_from_filename"
+.SS get_hardlink_from_filename
+.IX Subsection "get_hardlink_from_filename"
 .Vb 1
-\&  my $destination = get_destination_from_filename($path, $loc);
+\&  my $destination = get_hardlink_from_filename($path, $staging);
 .Ve
 .PP
-\&\f(CWget_destination_from_filename()\fR, given a source file at \f(CW$path\fR and a location \f(CW$loc\fR,
-returns the destination path when moving the file.
+\&\f(CWget_hardlink_from_filename()\fR, given a source file at \f(CW$path\fR and a location \f(CW$staging\fR,
+returns the destination path for linking the file.
 .SS prepare_staging
 .IX Subsection "prepare_staging"
 .Vb 1
-\&  my $destinations = prepare_staging($location, {%downloads});
+\&  my $destinations = prepare_staging({%downloads});
 .Ve
 .PP
-\&\f(CWprepare_staging()\fR prepares a hash of files and their destinations based on
-\&\f(CW%downloads\fR for use during the build in a directory \f(CW$staging\fR.
+\&\f(CWprepare_staging()\fR prepares a hash of files and their proper names based on
+\&\f(CW%downloads\fR for use during the build in a staging directory.
 .SS stage
 .IX Subsection "stage"
 .Vb 1
@@ -155,16 +155,17 @@ returns the destination path when moving the file.
 .Ve
 .PP
 \&\f(CWstage()\fR takes a location and a hash of distfiles to create the staging directory for
-a build. It returns the location of the staging directory if it can be created and 0
-otherwise.
+a build; the SlackBuild directory is copied over and hardlinks to the required source
+files are created. It returns the location of the staging directory if it can be created
+and 0 otherwise.
 .SS unstage
 .IX Subsection "unstage"
 .Vb 1
-\&  my $res = unstage($files);
+\&  my $res = unstage();
 .Ve
 .PP
-\&\f(CWunstage()\fR returns any distfiles in the staging directory to the distfiles directory;
-the staging directory is removed for future use. It returns 1 on success and 0 on failure.
+\&\f(CWunstage()\fR is a shorthand subroutine for the removal of the staging directory when building
+is complete or upon signal. It has no useful return value.
 .SS verify_distfile
 .IX Subsection "verify_distfile"
 .Vb 1
@@ -177,12 +178,13 @@ md5sum equal to \f(CW$md5\fR.
 .IX Header "EXIT CODES"
 Download.pm subroutines can return the following exit codes:
 .PP
-.Vb 5
+.Vb 6
 \&  _ERR_SCRIPT        2   script or module bug
 \&  _ERR_MD5SUM        4   download verification failure
 \&  _ERR_DOWNLOAD      5   download failure
 \&  _ERR_OPENFH        6   failure to open file handles
 \&  _ERR_NOINFO        7   missing download information
+\&  _ERR_SBO_HOME      17  could not give SBO_HOME valid contents
 .Ve
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"

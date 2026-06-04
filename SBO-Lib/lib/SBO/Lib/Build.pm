@@ -586,7 +586,7 @@ sub make_distclean {
       unlink $filename;
       # be careful with the directory; does not apply to files
       # in the manual download directory
-      if (dirname(dirname($filename)) eq "$config{SBO_HOME}/distfiles") {
+      if (dirname(dirname($filename)) eq $distfiles_dir) {
         remove_tree dirname($filename) if -d dirname($filename);
       } else {
         warn_color $color_lesser, "Distcleaning for $sbo-$args{VERSION} failed...";
@@ -809,7 +809,7 @@ sub process_sbos {
       LOCATION  => $staging,
       COMPAT32  => $compat32,
     );
-    unstage($distfiles[0]);
+    unstage;
     shift @distfiles;
     if ($exit) {
       my $fail = $version;
@@ -1077,7 +1077,7 @@ Copyright (C) 2026, K. Eugene Carlson, Jacob Pipkin.
 sub _build_terminated {
   if ($< == 0) {
     remove_tree("$tempdir") if -d "$tempdir";
-    unstage($distfiles[0]) if exists $distfiles[0];
+    unstage;
     exit _ERR_INST_SIGNAL;
   }
 }

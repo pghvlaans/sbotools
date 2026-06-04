@@ -39,6 +39,7 @@ use constant $consts = {
   _ERR_USR_GRP       => 14,  # a required user or group is missing
   _ERR_GPG           => 15,  # GPG verification failed
   _ERR_STDIN         => 16,  # reading keyboard input failed
+  _ERR_SBO_HOME      => 17,  # could not give SBO_HOME valid contents
 };
 
 my @EXPORT_CONSTS = keys %$consts;
@@ -52,6 +53,7 @@ my @EXPORT_CONFIG = qw{
   $conf_dir
   $conf_file
   $color_file
+  $distfiles_dir
   $hint_file
   @ignore_tests
   %config
@@ -102,6 +104,7 @@ our @EXPORT_OK = (
   qw{
     auto_reverse
     build_cmp
+    check_distfiles_dir
     check_multilib
     dangerous_directory
     error_code
@@ -207,6 +210,11 @@ C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
 C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<COLOR>, C<SO_CHECK>,
 C<DIALOGRC> and C<NONET>.
 
+=head2 $distfiles_dir
+
+C<$distfiles_dir> defaults to C</usr/sbo/distfiles>, and it is where all
+downloaded sources are kept.
+
 =head2 $download_time
 
 The time spent downloading source files. Unless C<CLASSIC> is C<"TRUE">, it is
@@ -282,9 +290,9 @@ kernel.
 
 =head2 $stage_dir
 
-C<$stage_dir> is a directory called C<SBOTOOLS_STAGING> under C<SBO_HOME/distiles>.
-When a script is to be built, its directory is copied here and any downloaded
-sources are moved in.
+C<$stage_dir> is a temporary directory under C<SBO_HOME/distiles>. When a script is
+to be built, a new temporary directory is created, the SlackBuild directory is copied there
+and any downloaded sources are linked in.
 
 =cut
 
@@ -343,8 +351,9 @@ if (defined $is_sbotest) {
 }
 
 read_config();
-our $stage_dir = "$config{SBO_HOME}/distfiles/SBOTOOLS_STAGING";
-our $manual_dir = "$config{SBO_HOME}/distfiles/manual";
+our $stage_dir;
+our $distfiles_dir = "$config{SBO_HOME}/distfiles";
+our $manual_dir = "$distfiles_dir/manual";
 our $manual_link = "$config{SBO_HOME}/manual_downloads";
 
 # The hints file should be read in at the start, and
@@ -427,6 +436,36 @@ sub build_cmp {
   return 0;
 }
 
+=head2 check_distfiles_dir
+
+  my $bool = check_distfiles_dir();
+
+C<check_distfiles_dir()> checks for the existence of the C<distfiles> directory and the
+C<manual downloads> directory and convenience symlink. It creates them if necessary.
+The script exits if C<SBO_HOME/distfiles> or C<SBO_HOME/distfiles/manual> are
+existing non-directories, or if C<SBO_HOME/manual_downloads> is anything other than
+a correct symlink.
+
+It returns 1 on success.
+
+=cut
+
+sub check_distfiles_dir {
+  my @dirs = ( $distfiles_dir, $manual_dir, );
+  for my $dir (@dirs) {
+    error_code("$dir is a non-directory. Please remove it and try again.", _ERR_SBO_HOME) if -s $dir and (-l $dir or not -d $dir);
+    unless (-d $dir) {
+      error_code("Could not create $dir. Exiting.", _ERR_SBO_HOME) unless make_path $dir;
+    }
+  }
+  unless (-l $manual_link) {
+    error_code("$manual_link is not a symlink to $manual_dir. Please remove it and try again.", _ERR_SBO_HOME) if -s $manual_link;
+    error_code("Could not link $manual_dir to $manual_link. Exiting.", _ERR_SBO_HOME) unless symlink $manual_dir, $manual_link;
+  }
+  error_code("$manual_link is not a symlink to $manual_dir. Please remove it and try again.", _ERR_SBO_HOME) unless readlink $manual_link eq $manual_dir;
+  return 1;
+}
+
 =head2 check_multilib
 
   my $ml = check_multilib();
@@ -462,7 +501,7 @@ sub dangerous_directory {
   if ($dirname =~ m/^\/+$/ or
       $dirname =~ m/^\/+home\/+[^\/]+(|\/+)$/ or
       $dirname =~ m/^\/+(home|root)(|\/+)$/ or
-      $dirname =~ m/^($config{SBO_HOME}\/distfiles|$manual_link)/) {
+      $dirname =~ m/^($distfiles_dir|$manual_link)/) {
     $dangerous = 1;
   }
   return $dangerous;
@@ -1644,6 +1683,7 @@ The sbotools share the following exit codes:
   _ERR_USR_GRP       14  a required user or group is missing
   _ERR_GPG           15  GPG verification failed
   _ERR_STDIN         16  reading keyboard input failed
+  _ERR_SBO_HOME      17  could not give SBO_HOME valid contents
 
 =head1 SEE ALSO
 

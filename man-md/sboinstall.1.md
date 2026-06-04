@@ -61,7 +61,8 @@ or the md5sum check fails, a new download is attempted from
 sources for the queue and download if needed, use **\--get-only**.
 Manually-downloaded source files (such as those requiring a license
 agreement) can be placed in *SBO_HOME/manual_downloads* prior to running
-**sboinstall**.
+**sboinstall**. *SBO_HOME/distfiles* can serve as a mountpoint, but
+please ensure that no partitions are mounted in its subdirectories.
 
 *SlackBuild* and *README* files are parsed for **groupadd(1)** and
 **useradd(1)** commands, and **sboinstall** offers to run them prior to
@@ -397,7 +398,8 @@ required).\
 14: in **batch**, **nointeractive** or **dry-run**, required user or
 group missing.\
 15: GPG verification failed.\
-16: reading keyboard input failed.
+16: reading keyboard input failed.\
+17: could not give **SBO_HOME** valid contents.
 
 ## BUGS
 

@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '4.1.4';
 
-use SBO::Lib::Util qw/ :config :const :colors error_code prompt usage_error get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in in_regexp slurp wrapsay /;
+use SBO::Lib::Util qw/ :config :const :colors error_code prompt usage_error check_distfiles_dir get_slack_branch get_slack_version get_slack_version_url script_error open_fh open_read in in_regexp slurp wrapsay /;
 
 use Cwd;
 use File::Basename;
@@ -21,7 +21,6 @@ use SBO::ThirdParty::Sort::Versions;
 use Exporter 'import';
 
 our @EXPORT_OK = qw{
-  check_distfiles
   check_git_remote
   check_repo
   generate_slackbuilds_txt
@@ -34,7 +33,6 @@ our @EXPORT_OK = qw{
   verify_file
   verify_gpg
 
-  $distfiles
   $repo_path
   $slackbuilds_txt
 };
@@ -61,11 +59,6 @@ SBO::Lib::Repo - Routines for downloading and updating the SBo repository.
 
 The location of all variables depends on the C<SBO_HOME> config setting.
 
-=head2 $distfiles
-
-C<$distfiles> defaults to C</usr/sbo/distfiles>, and it is where all
-downloaded sources are kept.
-
 =head2 $gpg_log
 
 C<$gpg_log> defaults to C</usr/sbo/gpg.log>, and it is where the output
@@ -88,7 +81,6 @@ C<$repo_path> proceeds without prompting.
 =cut
 
 # some stuff we'll need later
-our $distfiles = "$config{SBO_HOME}/distfiles";
 our $repo_path = "$config{SBO_HOME}/repo";
 our $gpg_log = "$config{SBO_HOME}/gpg.log";
 our $slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
@@ -96,36 +88,6 @@ our $slackbuilds_txt = "$repo_path/SLACKBUILDS.TXT";
 =head1 SUBROUTINES
 
 =cut
-
-=head2 check_distfiles
-
-  my $bool = check_distfiles();
-
-C<check_distfiles()> checks for the existence of the C<distfiles> directory and the
-C<manual downloads> directory and convenience symlink. It creates them if necessary.
-The script exits if C<SBO_HOME/distfiles> or C<SBO_HOME/distfiles/manual> are
-existing non-directories, or if C<SBO_HOME/manual_downloads> is anything other than
-a correct symlink.
-
-It returns 1 on success.
-
-=cut
-
-sub check_distfiles {
-  my @dirs = ( $distfiles, $manual_dir, );
-  for my $dir (@dirs) {
-    usage_error("$dir is a non-directory. Please remove it and run sbocheck again.") if -s $dir and (-l $dir or not -d $dir);
-    unless (-d $dir) {
-      usage_error("Could not create $dir. Exiting.") unless make_path $dir;
-    }
-  }
-  unless (-l $manual_link) {
-    usage_error("$manual_link is not a symlink to $manual_dir. Please remove it and run sbocheck again.") if -s $manual_link;
-    usage_error("Could not link $manual_dir to $manual_link. Exiting.") unless symlink $manual_dir, $manual_link;
-  }
-  usage_error("$manual_link is not a symlink to $manual_dir. Please remove it and run sbocheck again.") unless readlink $manual_link eq $manual_dir;
-  return 1;
-}
 
 =head2 check_git_remote
 
@@ -615,7 +577,7 @@ sub update_tree {
     wrapsay_color $color_notice, 'Pulling SlackBuilds tree...';
   }
   check_repo();
-  check_distfiles();
+  check_distfiles_dir();
   pull_sbo_tree(), return 1;
 }
 
@@ -925,6 +887,7 @@ Repo.pm subroutines can return the following exit codes:
   _ERR_OPENFH        6   failure to open file handles
   _ERR_GPG           15  GPG verification failed
   _ERR_STDIN         16  reading keyboard input failed
+  _ERR_SBO_HOME      17  could not give SBO_HOME valid contents
 
 =head1 SEE ALSO
 

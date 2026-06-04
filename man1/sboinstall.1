@@ -81,6 +81,10 @@ prior to running
 .B
 sboinstall\fR\
 \&.
+.I
+SBO_HOME/distfiles
+can serve as a mountpoint, but please ensure that
+no partitions are mounted in its subdirectories.
 .P
 .I
 SlackBuild
@@ -1058,6 +1062,12 @@ dry-run\fR\
 .RE
 .RS
 16: reading keyboard input failed.
+.RE
+.RS
+17: could not give
+.B
+SBO_HOME
+valid contents.
 .RE
 .SH BUGS
 .P

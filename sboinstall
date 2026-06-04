@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors auto_reverse check_distfiles check_x32 check_x64 check_multilib error_code get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_sbo_version get_user_group in ineligible_compat is_local is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_do_not_exist user_prompt verify_gpg version_cmp lint_sbo_config wrapsay %concluded %warnings /;
+use SBO::Lib qw/ :config :const :colors auto_reverse check_distfiles_dir check_distfiles check_x32 check_x64 check_multilib error_code get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_sbo_version get_user_group in ineligible_compat is_local is_obsolete merge_queues on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_do_not_exist user_prompt verify_gpg version_cmp lint_sbo_config wrapsay %concluded %warnings /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -211,6 +211,7 @@ if ($ctemp) {
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
+check_distfiles_dir() unless $dry_run;
 
 # if SBO_HOME/resume.temp exists, resume the mass rebuild
 my $mtemp = "$config{SBO_HOME}/mass_rebuild.temp";
