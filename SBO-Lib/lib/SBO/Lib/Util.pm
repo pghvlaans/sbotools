@@ -15,8 +15,8 @@ use warnings;
 our $VERSION = '4.1.4';
 
 use Exporter 'import';
-use File::Copy;
 use File::Basename;
+use File::Copy;
 use SBO::ThirdParty::Sort::Versions;
 use Term::ANSIColor qw/ color colorvalid /;
 use Text::Wrap qw/ wrap $columns /;
@@ -443,8 +443,8 @@ sub build_cmp {
 C<check_distfiles_dir()> checks for the existence of the C<distfiles> directory and the
 C<manual downloads> directory and convenience symlink. It creates them if necessary.
 The script exits if C<SBO_HOME/distfiles> or C<SBO_HOME/distfiles/manual> are
-existing non-directories, or if C<SBO_HOME/manual_downloads> is anything other than
-a correct symlink.
+existing non-directories, if C<SBO_HOME/manual_downloads> is anything other than
+a correct symlink, or if partitions are mounted in subdirectories of C<SBO_HOME/distfiles>.
 
 It returns 1 on success.
 
@@ -463,6 +463,8 @@ sub check_distfiles_dir {
     error_code("Could not link $manual_dir to $manual_link. Exiting.", _ERR_SBO_HOME) unless symlink $manual_dir, $manual_link;
   }
   error_code("$manual_link is not a symlink to $manual_dir. Please remove it and try again.", _ERR_SBO_HOME) unless readlink $manual_link eq $manual_dir;
+  my $mounts = slurp("/proc/self/mounts");
+  error_code("A partition is mounted to a subdirectory of $distfiles_dir. Please fix this and try again.", _ERR_SBO_HOME) if $mounts =~ /\s$distfiles_dir\/\S/;
   return 1;
 }
 

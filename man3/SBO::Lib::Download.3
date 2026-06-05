@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Download 3"
-.TH SBO::Lib::Download 3 "Setting Orange, Confusion 9, 3192 YOLD" "" "sbotools 4.1.4"
+.TH SBO::Lib::Download 3 "Boomtime, Confusion 11, 3192 YOLD" "" "sbotools 4.1.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -158,6 +158,9 @@ returns the destination path for linking the file.
 a build; the SlackBuild directory is copied over and hardlinks to the required source
 files are created. It returns the location of the staging directory if it can be created
 and 0 otherwise.
+.PP
+The script exits if the \f(CW\*(C`distfiles\*(C'\fR directory is malformed or the source file or directory
+is a symlink.
 .SS unstage
 .IX Subsection "unstage"
 .Vb 1

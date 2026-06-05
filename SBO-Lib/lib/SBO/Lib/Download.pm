@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '4.1.4';
 
-use SBO::Lib::Util qw/ :colors :config :const :times script_error get_sbo_from_loc check_distfiles_dir open_read wrapsay_color /;
+use SBO::Lib::Util qw/ :colors :config :const :times script_error error_code get_sbo_from_loc check_distfiles_dir open_read wrapsay_color /;
 use SBO::Lib::Info qw/ get_download_info /;
 
 use Cwd;
@@ -16,6 +16,7 @@ use Digest::MD5;
 use Exporter 'import';
 use File::Basename;
 use File::Copy qw/ move /;
+use File::Find;
 use SBO::ThirdParty::File::Copy::Recursive qw/ dircopy /;
 use File::Path qw/ make_path remove_tree /;
 use File::Temp qw/ tempdir /;
@@ -344,12 +345,21 @@ a build; the SlackBuild directory is copied over and hardlinks to the required s
 files are created. It returns the location of the staging directory if it can be created
 and 0 otherwise.
 
+The script exits if the C<distfiles> directory is malformed or the source file or directory
+is a symlink.
+
 =cut
 
 sub stage {
   script_error('stage requires two arguments.') unless @_ == 2;
   script_error('stage must be run by root.') unless $< == 0;
+  check_distfiles_dir();
   my ($location, $distfiles) = @_;
+  my @sources;
+  push @sources, dirname $distfiles->{$_} for keys %$distfiles;
+  find { wanted => sub { error_code("Symlink found at $File::Find::name. Please remove it and try again.", _ERR_SBO_HOME) if -l; },
+         no_chdir => 1,
+         follow => 0 }, @sources if @sources;
   $stage_dir = tempdir(DIR => $distfiles_dir, TEMPLATE => "XXXXXX");
   my $staging = "$stage_dir/" . basename $location;
   dircopy $location, $staging or return 0;
