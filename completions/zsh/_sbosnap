@@ -14,7 +14,7 @@ _arguments \
     '(-)'{-t,--type}'[Choose package check types (comma-separated): solibs (default), perl, python, ruby, all]:'\
     '--nocolor[Disable sbotools color output.]:'\
     '--color[Enable sbotools color output.]:'\
-    '--nowrap}[Disable sbotools word wrapping.]:'\
+    '--nowrap[Disable sbotools word wrapping.]:'\
     '--wrap[Enable sbotools word wrapping.]:'\
     && return 0
 
