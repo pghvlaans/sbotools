@@ -211,7 +211,7 @@ if ($ctemp) {
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
 slackbuilds_or_fetch();
-check_distfiles_dir() unless $dry_run;
+check_distfiles_dir() unless $dry_run or $ctemp_only or $< != 0;
 
 # if SBO_HOME/resume.temp exists, resume the mass rebuild
 my $mtemp = "$config{SBO_HOME}/mass_rebuild.temp";

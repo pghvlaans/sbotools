@@ -17,6 +17,7 @@ our $VERSION = '4.1.4';
 use Exporter 'import';
 use File::Basename;
 use File::Copy;
+use File::Path qw/ make_path /;
 use SBO::ThirdParty::Sort::Versions;
 use Term::ANSIColor qw/ color colorvalid /;
 use Text::Wrap qw/ wrap $columns /;
