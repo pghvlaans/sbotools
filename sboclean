@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config prompt usage_error script_error in_regexp show_version lint_sbo_config wrapsay :colors %config /;
+use SBO::Lib qw/ :config prompt usage_error script_error in_regexp show_version lint_sbo_config wrapsay wrapsay_color :colors %config /;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 use File::Path qw(remove_tree);
@@ -90,22 +90,22 @@ sub rm_full {
 	my $message;
 	if ($dist) {
 		my $base = basename($full);
-		$message = "Remove $base from $config{SBO_HOME}/distfiles?";
+		$message = "Remove $base from $distfiles_dir?";
 	} else {
 		$message = "Remove $full?";
 	}
 	if ($interactive) {
 		return() unless prompt($color_lesser, "$message", default => 'no');
 	}
-	unlink $full if -f $full;
-	remove_tree($full) if -d $full;
+	unlink $full if -f $full or -l $full;
+	remove_tree($full) if -d $full and not -l $full;
 	return 1;
 }
 
 sub remove_stuff {
 	script_error 'remove_stuff requires an argument.' unless @_ == 1;
 	my $dir = shift;
-	unless (-d $dir) {
+	unless (-d $dir and not -l $dir) {
 		say 'Nothing to do.';
 		return 0;
 	}
@@ -128,20 +128,18 @@ sub clean_c32 {
 }
 
 if ($dist) {
-	my $distfiles = "$config{SBO_HOME}/distfiles";
-	opendir(my $dh, $distfiles);
+	opendir(my $dh, $distfiles_dir);
 	FIRST: while (my $ls = readdir $dh) {
 		next FIRST if length $ls != $checksum_length;
-		my $dir = "$distfiles/$ls";
-		next if $dir eq $manual_dir;
-		if (-d $dir) {
+		my $dir = "$distfiles_dir/$ls";
+		if (-d $dir and not -l $dir) {
 			opendir(my $dh2, $dir);
 			SECOND: while (my $ls2 = readdir $dh2) {
 				next SECOND if in_regexp($ls2 => qw / . .. /);
 				rm_full("$dir/$ls2", 1);
-				remove_tree($dir) unless -f "$dir/$ls2";
+				remove_tree($dir) unless -f "$dir/$ls2" or -l "$dir/$ls2";
 			}
-		} elsif (-f $dir) {
+		} elsif (-f $dir or -l $dir) {
 			rm_full($dir, 1);
 		}
 	}

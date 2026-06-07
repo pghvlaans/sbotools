@@ -23,6 +23,7 @@
   * Added File::Copy::Recursive to ThirdParty
   * Added SBO_HOME/manual_downloads for stowing manual downloads
     * Thanks to dchmelik and shamefulCake1 for the feedback about managing manual downloads.
+  * sboclean: Do not follow symlinks
 
 #### 4.1.4 - 2026-05-06
   * sbofind: Do not match "No tags found" in TAGS.txt

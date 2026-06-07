@@ -807,10 +807,10 @@ sub display_builds {
 sub display_clean_menu {
 	my (@clean_menu, $has_distfiles, $has_options, $has_working);
 	my ($height, $width, $begin_y, $begin_x, $res, $output);
-	if (-d "$config{SBO_HOME}/distfiles") {
-		opendir(my $handle, "$config{SBO_HOME}/distfiles");
+	if (-d $distfiles_dir) {
+		opendir(my $handle, $distfiles_dir);
 		while (my $dir = readdir $handle) {
-			unless (in_regexp($dir => qw/ . .. /) or length $dir != $checksum_length or "$config{SBO_HOME}/distfiles/$dir" eq $manual_dir) { $has_distfiles = 1; last; }
+			unless (in_regexp($dir => qw/ . .. /) or length $dir != $checksum_length or "$distfiles_dir/$dir" eq $manual_dir) { $has_distfiles = 1; last; }
 		}
 	}
 	if (-d "$tmpd") {
@@ -957,10 +957,10 @@ sub display_main {
 		push @main_menu, "\"Fetch Repository\" \"Get or update the repository.\" \\";
 		push @main_menu, "\"Cut Leaves\" \"Interactive removal, no rev dep.\" \\" if @for_installed_list;
 		my (@clean_string, $clean_msg, $has_distfiles, $has_options, $has_working);
-		if (-d "$config{SBO_HOME}/distfiles") {
-			opendir(my $handle, "$config{SBO_HOME}/distfiles");
+		if (-d $distfiles_dir) {
+			opendir(my $handle, $distfiles_dir);
 			while (my $dir = readdir $handle) {
-				unless (in_regexp($dir => qw/ . .. /) or length $dir != $checksum_length or "$config{SBO_HOME}/distfiles/$dir" eq $manual_dir}) { $has_distfiles = 1; last; }
+				unless (in_regexp($dir => qw/ . .. /) or length $dir != $checksum_length or "$distfiles_dir/$dir" eq $manual_dir}) { $has_distfiles = 1; last; }
 			}
 		}
 		if (-d "$tmpd") {
