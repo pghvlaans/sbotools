@@ -41,7 +41,7 @@ removes anything in an md5-designated distfiles subdirectory and/or
 */tmp/SBo* (or *\$TMP*) directories and any */tmp/package-\*-compat32*
 (or *\$TMP/package-\*-compat32*) directories with extreme prejudice. One
 of **\--dist**, **\--work** or **\--option** must be specified for this
-script to do anything.
+script to do anything. **sboclean** does not follow symlinks.
 
 Root privileges are required to run **sboclean**. If an invalid
 configuration is detected in */etc/sbotools/sbotools.conf*, or if
