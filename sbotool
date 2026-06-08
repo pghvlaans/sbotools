@@ -960,7 +960,7 @@ sub display_main {
 		if (-d $distfiles_dir) {
 			opendir(my $handle, $distfiles_dir);
 			while (my $dir = readdir $handle) {
-				unless (in_regexp($dir => qw/ . .. /) or length $dir != $checksum_length or "$distfiles_dir/$dir" eq $manual_dir}) { $has_distfiles = 1; last; }
+				unless (in_regexp($dir => qw/ . .. /) or length $dir != $checksum_length or "$distfiles_dir/$dir" eq $manual_dir) { $has_distfiles = 1; last; }
 			}
 		}
 		if (-d "$tmpd") {
