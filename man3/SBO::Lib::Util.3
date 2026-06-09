@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Boomtime, Confusion 11, 3192 YOLD" "" "sbotools 4.1.4"
+.TH SBO::Lib::Util 3 "Setting Orange, Confusion 14, 3192 YOLD" "" "sbotools 4.1.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -177,8 +177,7 @@ This file contains a list of scripts that have been renamed and added to Slackwa
 .ie n .SS @obsolete
 .el .SS \f(CW@obsolete\fP
 .IX Subsection "@obsolete"
-This array is based on the contents of \f(CW$obs_file\fR. Only \f(CWobsolete_array()\fR should
-interact with \f(CW@obsolete\fR directly; in other situations, make a copy.
+This array is based on the contents of \f(CW$obs_file\fR.
 .ie n .SS $perl_file
 .el .SS \f(CW$perl_file\fP
 .IX Subsection "$perl_file"
@@ -382,11 +381,11 @@ returns the resulting string.
 .SS is_obsolete
 .IX Subsection "is_obsolete"
 .Vb 1
-\&  my $is_obsolete = check_obsolete($sbo);
+\&  my $is_obsolete = is_obsolete($sbo);
 .Ve
 .PP
 \&\f(CWis_obsolete()\fR takes the name of a SlackBuild and searches for it in
-the \f(CW@obsolete\fR array. It returns 1 if the SlackBuild is found and the
+the \f(CW@obsolete\fR array. It returns true if the SlackBuild is found and the
 Slackware version is \-current equivalent.
 .SS lint_sbo_config
 .IX Subsection "lint_sbo_config"
@@ -407,7 +406,7 @@ all other scripts lint the full configuration at startup.
 .Ve
 .PP
 \&\f(CWobsolete_array()\fR populates the shared \f(CW@obsolete\fR array based on the
-\&\f(CW\*(C`/etc/sbotools/obsolete\*(C'\fR file.
+\&\f(CW\*(C`/etc/sbotools/obsolete\*(C'\fR file on Slackware \-current.
 .SS on_blacklist
 .IX Subsection "on_blacklist"
 .Vb 1

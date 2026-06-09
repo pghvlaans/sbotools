@@ -273,8 +273,7 @@ C</etc/sbotools/obsolete> by default.
 
 =head2 @obsolete
 
-This array is based on the contents of C<$obs_file>. Only C<obsolete_array()> should
-interact with C<@obsolete> directly; in other situations, make a copy.
+This array is based on the contents of C<$obs_file>.
 
 =head2 $perl_file
 
@@ -356,6 +355,31 @@ our $stage_dir;
 our $distfiles_dir = "$config{SBO_HOME}/distfiles";
 our $manual_dir = "$distfiles_dir/manual";
 our $manual_link = "$config{SBO_HOME}/manual_downloads";
+
+# %supported maps what's in /etc/slackware-version to an https URL, or to an
+# rsync URL if RSYNC_DEFAULT is true.
+my %supported = (
+  "15.0" => "https://gitlab.com/SlackBuilds.org/slackbuilds.git",
+  "15.0+" => "https://github.com/Ponce/slackbuilds.git",
+  $anticipated_next => "https://gitlab.com/SlackBuilds.org/slackbuilds.git",
+  "$anticipated_next+" => "https://github.com/Ponce/slackbuilds.git",
+  current => "https://github.com/Ponce/slackbuilds.git",
+);
+
+if ($config{RSYNC_DEFAULT} eq 'TRUE') {
+  %supported = (
+    "15.0" => "rsync://slackbuilds.org/slackbuilds/15.0/",
+    "15.0+" => "https://github.com/Ponce/slackbuilds.git",
+    $anticipated_next => "rsync://slackbuilds.org/slackbuilds/$anticipated_next/",
+    "$anticipated_next+" => "https://github.com/Ponce/slackbuilds.git",
+    current => "https://github.com/Ponce/slackbuilds.git",
+  );
+}
+
+my %branch = (
+  "15.0" => "15.0",
+  $anticipated_next => $anticipated_next,
+);
 
 # The hints file should be read in at the start, and
 # only if editing the hints file thereafter.
@@ -679,31 +703,6 @@ sub get_sbo_from_loc {
   return (shift =~ qr#/([^/]+)$#)[0];
 }
 
-# %supported maps what's in /etc/slackware-version to an https URL, or to an
-# rsync URL if RSYNC_DEFAULT is true.
-my %supported = (
-  "15.0" => "https://gitlab.com/SlackBuilds.org/slackbuilds.git",
-  "15.0+" => "https://github.com/Ponce/slackbuilds.git",
-  $anticipated_next => "https://gitlab.com/SlackBuilds.org/slackbuilds.git",
-  "$anticipated_next+" => "https://github.com/Ponce/slackbuilds.git",
-  current => "https://github.com/Ponce/slackbuilds.git",
-);
-
-if ($config{RSYNC_DEFAULT} eq 'TRUE') {
-  %supported = (
-    "15.0" => "rsync://slackbuilds.org/slackbuilds/15.0/",
-    "15.0+" => "https://github.com/Ponce/slackbuilds.git",
-    $anticipated_next => "rsync://slackbuilds.org/slackbuilds/$anticipated_next/",
-    "$anticipated_next+" => "https://github.com/Ponce/slackbuilds.git",
-    current => "https://github.com/Ponce/slackbuilds.git",
-  );
-}
-
-my %branch = (
-  "15.0" => "15.0",
-  $anticipated_next => $anticipated_next,
-);
-
 =head2 get_slack_branch
 
   my $url = get_slack_branch();
@@ -851,22 +850,18 @@ sub indent {
 
 =head2 is_obsolete
 
-  my $is_obsolete = check_obsolete($sbo);
+  my $is_obsolete = is_obsolete($sbo);
 
 C<is_obsolete()> takes the name of a SlackBuild and searches for it in
-the C<@obsolete> array. It returns 1 if the SlackBuild is found and the
+the C<@obsolete> array. It returns true if the SlackBuild is found and the
 Slackware version is -current equivalent.
 
 =cut
 
 sub is_obsolete {
-  script_error('is_obsolete requires an argument.') unless @_ == 1;
+  script_error('is_obsolete requires one argument.') unless @_ == 1;
   my $sbo = shift;
-  my $sw_version = get_slack_version();
-  return 0 unless $sw_version =~ /\+$|current/ or $sw_version eq "15.1";
-  my @local_obsolete = @obsolete;
-  for my $entry (@local_obsolete) { return 1 if $sbo eq $entry; }
-  return 0;
+  return in($sbo, @obsolete);
 }
 
 =head2 lint_sbo_config
@@ -1054,20 +1049,22 @@ sub lint_sbo_config {
   our @obsolete = obsolete_array();
 
 C<obsolete_array()> populates the shared C<@obsolete> array based on the
-C</etc/sbotools/obsolete> file.
+C</etc/sbotools/obsolete> file on Slackware -current.
 
 =cut
 
 sub obsolete_array {
   my @result;
   return 0 unless -f $obs_file;
+  my $sw_version = get_slack_version();
+  return 0 unless $sw_version =~ /\+$|current/ or $sw_version eq $anticipated_next;
   my ($fh, $exit) = open_fh($obs_file, "<");
   if ($exit) {
     warn_color($color_lesser, "Could not open $obs_file.");
     return 0;
   }
-  FIRST: for my $line (<$fh>) {
-    next FIRST if $line =~ /^#/;
+  for my $line (<$fh>) {
+    next if $line =~ /^#/;
     $line =~ s/\n//;
     push @result, $line;
   }
