@@ -1104,7 +1104,8 @@ sub _build_queue {
   while (my $sbo = shift @queue) {
     next if $sbo eq "%README%";
     if (exists $concluded{$sbo} or exists $warnings{$sbo}) {
-      push @result, @{$concluded{$sbo}}, $sbo unless exists $warnings{$sbo} and $warnings{$sbo} eq "nonexistent";
+      push @result, @{$concluded{$sbo}} unless exists $warnings{$sbo} and $warnings{$sbo} eq "nonexistent";
+      push @result, $sbo;
       next;
     }
     if (in $sbo, @checked) {
