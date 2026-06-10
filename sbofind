@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local on_blacklist build_cmp version_cmp :colors %config $slackbuilds_txt $repo_path @last_level_reverse @reverse_concluded $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay $descriptions_generated /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local is_obsolete on_blacklist build_cmp version_cmp :colors %config $slackbuilds_txt $repo_path @last_level_reverse @reverse_concluded $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay $descriptions_generated /;
 use Cwd;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
@@ -104,7 +104,7 @@ slackbuilds_or_fetch();
 my @available = get_all_available();
 
 # used to report package installation status
-my (@installed, $installed_times, $installed_vers, @installed_std, $std_times, $std_vers);
+my (@installed, $installed_times, $installed_vers, $installed_names, @installed_std, $std_times, $std_vers, $std_names);
 # these will be used later in case of reverse dependency searches
 my ($available, $all_fulldeps, $installed, $fulldeps);
 # this is relevant only in --raw mode
@@ -229,7 +229,16 @@ sub get_file_contents {
 sub show_build_queue {
 	script_error('show_build_queue requires an argument.') unless @_ == 1;
 	my $queue = get_build_queue([shift]);
-	return join(" ", @$queue);
+	my @return_queue;
+	for (@$queue) {
+		my $loc = get_sbo_location($_);
+		unless (defined $loc) {
+			push @return_queue, $_ unless $installed_names->{$_} or $std_names->{$_} or is_obsolete($_);
+		} else {
+			push @return_queue, $_;
+		}
+	}
+	return join(" ", @return_queue);
 }
 
 # get installed reverse dependencies and return them as a single line.
@@ -280,9 +289,11 @@ SEARCH: for my $search (@ARGV) {
 		@installed = @{ get_installed_packages('SBO') };
 		$installed_times = +{ map {; $_->{name}, $_->{created} } @installed };
 		$installed_vers = +{ map {; $_->{name}, $_->{version} } @installed };
+		$installed_names = +{ map {; $_->{name}, $_->{name} } @installed };
 		@installed_std = @{ get_installed_packages('STD') };
 		$std_times = +{ map {; $_->{name}, $_->{created} } @installed_std };
 		$std_vers = +{ map {; $_->{name}, $_->{version} } @installed_std };
+		$std_names = +{ map {; $_->{name}, $_->{name} } @installed_std };
 	}
 
 	my $findings = perform_search($search);

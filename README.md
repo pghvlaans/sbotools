@@ -50,6 +50,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Added SBO_HOME/manual_downloads for stowing manual downloads
     * Thanks to dchmelik and shamefulCake1 for the feedback about managing manual downloads.
   * sboclean: Do not follow symlinks
+  * sbofind: Do not show obsolete scripts in --queue output for -current
 
 #### 4.1.4 - 2026-05-06
   * sbofind: Do not match "No tags found" in TAGS.txt
