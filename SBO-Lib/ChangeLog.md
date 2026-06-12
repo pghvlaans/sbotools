@@ -1,6 +1,6 @@
 # sbotools
 
-#### Post-Release
+#### 4.2 - 2026-06-12
   * sbocutleaves: A new tool for managing leaves, i.e. packages without installed reverse dependencies.
     * Proposed and drafted by Jacob Pipkin.
   * sbotool: Added sbocutleaves functionality
