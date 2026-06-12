@@ -6,8 +6,8 @@ Use the key from the homepage (updated 2024-12-15) to verify downloads with gpg.
 
 ## Current Releases
 
-* [sbotools-4.1.4.tar.gz](sbotools-4.1.4.tar.gz) ([asc](sbotools-4.1.4.tar.gz.asc))
-    * md5sum: `7416bd671d2e9ff9215bba473ca8368c`
+* [sbotools-4.2.tar.gz](sbotools-4.2.tar.gz) ([asc](sbotools-4.2.tar.gz.asc))
+    * md5sum: `2932529399108fa14cb895410c74dce5`
 * [sbotest-1.2.2.tar.gz](sbotest-1.2.2.tar.gz) ([asc](sbotest-1.2.2.tar.gz.asc))
     * md5sum: `3b1b55cbc1a5f2678feb539401637743`
 
@@ -41,6 +41,8 @@ This file, introduced in `sbotools-4.1`, has a list of first-build times for maj
 
 ## Older Releases
 
+* [sbotools-4.1.4.tar.gz](sbotools-4.1.4.tar.gz) ([asc](sbotools-4.1.4.tar.gz.asc))
+    * md5sum: `7416bd671d2e9ff9215bba473ca8368c`
 * [sbotest-1.2.1.tar.gz](sbotest-1.2.1.tar.gz) ([asc](sbotest-1.2.1.tar.gz.asc))
     * md5sum: `a78e65ec6c708e7c97fab2206666c48b`
 * [sbotools-4.1.3.tar.gz](sbotools-4.1.3.tar.gz) ([asc](sbotools-4.1.3.tar.gz.asc))

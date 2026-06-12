@@ -37,6 +37,12 @@ build options.
 
 A command line interface for changing */etc/sbotools/sbotools.conf*.
 
+[sbocutleaves(1)](sbocutleaves.1.md)
+
+A command line interface for finding and listing or interactively
+deleting packages with the *\_SBo* tag and no installed reverse
+dependencies.
+
 [sbofind(1)](sbofind.1.md)
 
 Search the local copy of the repository for SlackBuilds. Optionally,
@@ -102,6 +108,15 @@ location, give an absolute file path to the **SBO_HOME** setting with
 [sboconfig(1)](sboconfig.1.md) or by editing */etc/sbotools/sbotools.conf*. The
 repositiory can also be fetched using **sbotool** if running as root.
 
+Along with its copy of the repository, the **SBO_HOME** directory also
+contains directories for automatic and manual file downloads at
+*SBO_HOME/distfiles* and *SBO_HOME/distfiles/manual*, respectively. The
+manual downloads directory can be reached from a symlink at
+*SBO_HOME/manual_downloads*. Files with the correct name and checksum in
+this directory are prioritized when building packages. It is
+particularly useful for downloads that cannot be done from the command
+line (those requiring a license agreement, for example).
+
 The default mirror depends on the running version of Slackware. Stable
 releases use the appropriate branch on
 <https://gitlab.com/SlackBuilds.org/slackbuilds/> and -current uses
@@ -126,8 +141,7 @@ Build number increments are ignored if **BUILD_IGNORE** is set to
 
 Using [sboconfig(1)](sboconfig.1.md) without flags enters the [sbotool(1)](sbotool.1.md) settings
 menu, which shows all available options with explanations. Settings
-changes can be done from here if running as root. Using flags is faster,
-but some users may find this a helpful resource.
+changes can be done from here if running as root.
 
 **sbotools** can be set up to print some messages and prompts in color.
 All scripts except for **sboconfig** have **\--color** and
@@ -170,13 +184,13 @@ None known. If found, Issues and Pull Requests to
 
 ## SEE ALSO
 
-[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md),
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbocutleaves(1)](sbocutleaves.1.md), [sbofind(1)](sbofind.1.md),
+[sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md),
 [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), dialog(1)
 
 ## AUTHORS
 
-Jacob Pipkin \<j (at) dawnrazor (dot) net\>
+Jacob Pipkin \<jacob.pipkin (at) icloud (dot) com\>
 
 Luke Williams \<xocel (at) iquidus (dot) org\>
 

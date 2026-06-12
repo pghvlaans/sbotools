@@ -27,8 +27,9 @@ To quickly restore all default settings, run
 To use a configuration directory other than */etc/sbotools*, export an
 environment variable **SBOTOOLS_CONF_DIR** with an absolute path.
 
-*/root*, */home*, */* and possible top-level directories under */home*
-are not permitted as directory settings.
+*/root*, */home*, */*, possible top-level directories under */home* and
+paths under *SBO_HOME/distfiles* or *SBO_HOME/manual_downloads* are not
+permitted as directory settings.
 
 All values default to **FALSE** except for **SBO_HOME**. Recommended
 non-default settings include **TRUE** for:
@@ -161,7 +162,7 @@ If set to a **path**, any directory name in the top level under that
 path matching a SlackBuild name is used in preference to the in-tree
 version. This works even if the SlackBuild is out-of-tree. Scripts
 installing packages not marked with the *\_SBo* tag are neither
-upgradeable with [sboupgrade(1)](sboupgrade.1.md) nor removable with [sboremove(1)](sboremove.1.md).
+upgradable with [sboupgrade(1)](sboupgrade.1.md) nor removable with [sboremove(1)](sboremove.1.md).
 *slack-desc*, an *info* file and a SlackBuild must all be present.
 
 **SLACKWARE_VERSION=(FALSE\|#.#)**
@@ -198,7 +199,7 @@ If set to **TRUE**, use rsync default mirrors except for Slackware
 
 If set to **TRUE**, upgrades are only attempted if the incoming version
 or build number is greater. This has no effect on scripts in the local
-overrides directory.
+overrides directory or when reinstalling with **sboinstall**.
 
 **NOWRAP=(FALSE\|TRUE)**
 
@@ -206,13 +207,13 @@ If set to **TRUE**, do not wrap **sbotools** output.
 
 ## SEE ALSO
 
-[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotool(1)](sbotool.1.md),
-[sbotools.colors(5)](sbotools.colors.5.md), [sbotools.hints(5)](sbotools.hints.5.md), dialog(1), gpg(1)
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbocutleaves(1)](sbocutleaves.1.md), [sbofind(1)](sbofind.1.md),
+[sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md),
+[sbotool(1)](sbotool.1.md), [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.hints(5)](sbotools.hints.5.md), dialog(1), gpg(1)
 
 ## AUTHORS
 
-Jacob Pipkin \<j (at) dawnrazor (dot) net\>
+Jacob Pipkin \<jacob.pipkin (at) icloud (dot) com\>
 
 Luke Williams \<xocel (at) iquidus (dot) org\>
 

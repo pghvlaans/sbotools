@@ -37,11 +37,11 @@
 • for **compat32** packages, working directories under */tmp*
 
 Note that if run without the **\--interactive** flag, **sboclean**
-removes anything in the distfiles and/or */tmp/SBo* (or *\$TMP*)
-directories and any */tmp/package-\*-compat32* (or
-*\$TMP/package-\*-compat32*) directories with extreme prejudice. One of
-**\--dist**, **\--work** or **\--option** must be specified for this
-script to do anything.
+removes anything in an md5-designated distfiles subdirectory and/or
+*/tmp/SBo* (or *\$TMP*) directories and any */tmp/package-\*-compat32*
+(or *\$TMP/package-\*-compat32*) directories with extreme prejudice. One
+of **\--dist**, **\--work** or **\--option** must be specified for this
+script to do anything. **sboclean** does not follow symlinks.
 
 Root privileges are required to run **sboclean**. If an invalid
 configuration is detected in */etc/sbotools/sbotools.conf*, or if
@@ -52,7 +52,10 @@ message.
 
 **-d\|\--dist**
 
-Clean distfiles, located at */usr/sbo/distfiles* by default.
+Clean source archives, located at */usr/sbo/distfiles* by default. Files
+stored in *SBO_HOME/distfiles/manual* are unaffected. **sboclean**
+leaves bare files and non-md5-designated directories under *distfiles*
+untouched.
 
 **-w\|\--work**
 
@@ -110,13 +113,13 @@ None known. If found, Issues and Pull Requests to
 
 ## SEE ALSO
 
-[sbocheck(1)](sbocheck.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
-[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
+[sbocheck(1)](sbocheck.1.md), [sboconfig(1)](sboconfig.1.md), [sbocutleaves(1)](sbocutleaves.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
+[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md),
+[sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md)
 
 ## AUTHORS
 
-Jacob Pipkin \<j (at) dawnrazor (dot) net\>
+Jacob Pipkin \<jacob.pipkin (at) icloud (dot) com\>
 
 Luke Williams \<xocel (at) iquidus (dot) org\>
 

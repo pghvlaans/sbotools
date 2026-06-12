@@ -4,7 +4,7 @@
 
 [This repository](https://github.com/pghvlaans/sbotools/) is an **sbotools** revival, and was forked from the [pink-mist repository](https://github.com/pghvlaans/pink-mist/sbotools/), which covered development from version 0.1 through version 2.7.
 
-A debt of gratitude is owed to the original author, Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
+A debt of gratitude is owed to original author and recent contributor Jacob Pipkin, longtime maintainer Andreas Guldstrand and major contributor Luke Williams. This software would not exist without their efforts.
 
 For online man pages and executive summaries of all commands, see [man](/sbotools/man/). Installation notes and release tarballs are available at [Downloads](/sbotools/downloads/). A record of changes back to version 1.9 can be found in [ChangeLog](/sbotools/ChangeLog/). [Development](/sbotools/development/) has links to **sbotools**-related repositories and information about future plans. Script maintainers may be interested in the **[sbotest](/sbotools/sbotest/)** companion package for convenient reverse dependency build testing.
 

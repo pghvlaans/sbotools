@@ -23,20 +23,22 @@
 
     sboinstall [-Ndce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
-               [-DRiopr] [--batch|--dry-run] [--create-template|-t FILE] \
+               [-DRgiopr] [--batch|--dry-run] [--create-template|-t FILE]
+\
                sbo_name (sbo_name)
 
     sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
-               [-Di] --use-template FILE
+               [-Dgi] --use-template FILE
 
     sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
-               [-Dioqr] [--create-template|-t FILE] --mass-rebuild
+               [-Dgioqr] [--create-template|-t FILE] --mass-rebuild
 
     sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
-               [-Dioqr] [--create-template|-t FILE] --series-rebuild SERIES,\...
+               [-Dgioqr] [--create-template|-t FILE] --series-rebuild
+SERIES,\...
 
     sboinstall [--color|--nocolor] [--wrap|--nowrap] \...
 
@@ -52,6 +54,16 @@ case of **\--reinstall**, scripts with automatic reverse dependency
 rebuilds have their reverse dependencies rebuilt as well. The script
 exits with an error message if circular dependencies are detected.
 
+**sboinstall** attempts to download the sources from the *DOWNLOAD* or
+*DOWNLOAD_x86_64* variables in the *info* file. If either the download
+or the md5sum check fails, a new download is attempted from
+<ftp://slackware.uk/sbosrcarch/> as a fallback measure. To verify
+sources for the queue and download if needed, use **\--get-only**.
+Manually-downloaded source files (such as those requiring a license
+agreement) can be placed in *SBO_HOME/manual_downloads* prior to running
+**sboinstall**. *SBO_HOME/distfiles* can serve as a mountpoint, but
+please ensure that no partitions are mounted in its subdirectories.
+
 *SlackBuild* and *README* files are parsed for **groupadd(1)** and
 **useradd(1)** commands, and **sboinstall** offers to run them prior to
 building if any of the required users or groups do not exist. If the
@@ -66,11 +78,6 @@ base script. Please note that saved build options are not displayed when
 [sbotools.conf(5)](sbotools.conf.5.md). When running with **\--nointeractive** or
 **\--batch**, saved build options are used automatically unless
 **\--norecall** or **\--use-template** are passed as well.
-
-**sboinstall** attempts to download the sources from the *DOWNLOAD* or
-*DOWNLOAD_x86_64* variables in the *info* file. If either the download
-or the md5sum check fails, a new download is attempted from
-<ftp://slackware.uk/sbosrcarch/> as a fallback measure.
 
 **sboinstall** verifies the local repository with **gpg** if
 **GPG_VERIFY** is **TRUE**.
@@ -88,7 +95,7 @@ If **TRUE**, do not clean working directories after building. These are
 the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
 Cleaning these directories can be set as default via the
 [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This option
-overrides the default.
+overrides the **NOCLEAN** setting.
 
 **-D\|\--dry-run**
 
@@ -105,20 +112,31 @@ If **TRUE**, remove the source archives after building. They are
 retained in md5sum-designated directories under *SBO_HOME/distfiles* by
 default. The package archive (in */tmp* by default) is also removed.
 This option can be set as default via the [sboconfig(1)](sboconfig.1.md) command. See
-also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
+also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the **DISTCLEAN**
+setting.
+
+Please note that source files in the manual downloads directory are not
+deleted automatically.
 
 **-e\|\--etc-profile**
 
 If **TRUE**, source any executable scripts in */etc/profile.d* named
 *\*.sh* before running each SlackBuild in the build queue. This option
-overrides the default.
+overrides the **ETC_PROFILE** setting.
+
+**-g\|\--get-only**
+
+Verify source files for the queue and download anything necessary for
+later use. Incompatible with **\--create-template**,
+**\--template-only** and **\--noinstall**.
 
 **-i\|\--noinstall**
 
 Do not install the package at the end of the build process. It is left
 in */tmp* (or *\$OUTPUT*) if **DISTCLEAN** is **FALSE**. Packages are
 retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
-[sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
+[sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md). Incompatible with
+**\--get-only**.
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -139,7 +157,7 @@ a timestamp.
 **-N\|\--nonet (FALSE\|TRUE)**
 
 If **TRUE**, do not allow network access when running SlackBuilds. This
-overrides the **NONET** setting.
+option overrides the **NONET** setting.
 
 **-o\|\--norecall**
 
@@ -196,17 +214,17 @@ prompts before proceeding with the build.
 
 **-t\|\--template-only FILE**
 
-Save a template to FILE, but do not attempt downloads or builds.
+Save a template to **FILE**, but do not attempt downloads or builds.
 Non-root users may call **sboinstall** with **\--template-only**.
 
-Incompatible with **\--create-template**.
+Incompatible with **\--create-template** and **\--get-only**.
 
 **\--reinstall**
 
-Offer to reinstall all packages in the build queue. If any of the
-packages have automatic reverse dependency rebuild requests, rebuild
-their reverese dependency queues as well. See [sbohints(1)](sbohints.1.md) or
-[sbotools.hints(5)](sbotools.hints.5.md).
+Offer to reinstall all packages in the build queue at the available
+version. If any of the packages have automatic reverse dependency
+rebuild requests, rebuild their reverese dependency queues as well. See
+[sbohints(1)](sbohints.1.md) or [sbotools.hints(5)](sbotools.hints.5.md).
 
 **\--create-template (FILE)**
 
@@ -219,9 +237,10 @@ Build using the template saved to **FILE.** This disables all user
 prompts.
 
 Incompatible with **\--compat32**, **\--series-rebuild**,
-**\--mass-rebuild** and **\--reverse-rebuild**. To make *compat32*
-packages from a template, consider using **\--create-template** or
-**\--template-only** with **\--compat32** first.
+**\--mass-rebuild**, **\--reverse-rebuild** and **\--get-only**. To make
+*compat32* packages from a template, consider using
+**\--create-template** or **\--template-only** with **\--compat32**
+first.
 
 **\--mass-rebuild**
 
@@ -379,23 +398,27 @@ required).\
 14: in **batch**, **nointeractive** or **dry-run**, required user or
 group missing.\
 15: GPG verification failed.\
-16: reading keyboard input failed.
+16: reading keyboard input failed.\
+17: could not give **SBO_HOME** valid contents.
 
 ## BUGS
 
-None known. If found, Issues and Pull Requests to
+100% accuracy cannot be guaranteed for the option addition prompt. It
+may rarely appear when options appear to be documented, but are not.
+
+Otherwise, none known. If found, Issues and Pull Requests to
 <https://github.com/pghvlaans/sbotools/> are always welcome.
 
 ## SEE ALSO
 
-[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
-[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1), groupadd(1), setarch(1),
-useradd(1)
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbocutleaves(1)](sbocutleaves.1.md), [sbofind(1)](sbofind.1.md),
+[sbohints(1)](sbohints.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md),
+[sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1),
+groupadd(1), setarch(1), useradd(1)
 
 ## AUTHORS
 
-Jacob Pipkin \<j (at) dawnrazor (dot) net\>
+Jacob Pipkin \<jacob.pipkin (at) icloud (dot) com\>
 
 Luke Williams \<xocel (at) iquidus (dot) org\>
 

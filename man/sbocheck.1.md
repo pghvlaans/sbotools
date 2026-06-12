@@ -41,7 +41,7 @@ SlackBuilds with differing build numbers are reported separately, as are
 any SlackBuilds marked *\_SBo* that are not found in the repository or
 local overrides (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). Except
 in **CLASSIC** mode, scripts in the report that would not be upgraded by
-[sboupgrade(1)](sboupgrade.1.md) are marked with **=** (equals sign).
+[sboupgrade(1)](sboupgrade.1.md) are listed last and marked with **=** (equals sign).
 
 The three output categories are logged separately to
 */var/log/sbocheck.log*, */var/log/sbocheck-bumps.log* and
@@ -196,7 +196,8 @@ Turn off **sbotools** word wrapping.
 5: failed to download the tree.\
 6: failed to open a required file handle.\
 12: interrupt signal received.\
-15: GPG verification failed.
+15: GPG verification failed.\
+17: could not give **SBO_HOME** valid contents.
 
 ## BUGS
 
@@ -205,13 +206,13 @@ None known. If found, Issues and Pull Requests to
 
 ## SEE ALSO
 
-[sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md),
-[sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
-[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
+[sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbocutleaves(1)](sbocutleaves.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
+[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md),
+[sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1)
 
 ## AUTHORS
 
-Jacob Pipkin \<j (at) dawnrazor (dot) net\>
+Jacob Pipkin \<jacob.pipkin (at) icloud (dot) com\>
 
 Luke Williams \<xocel (at) iquidus (dot) org\>
 

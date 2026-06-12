@@ -1,4 +1,4 @@
-The pages here reflect version 4.1.4 (2026-05-06). For the latest man pages, see [post-release](/sbotools/man/post-release/).
+The pages here reflect version 4.2 (2026-06-12). For post-release pages, see [post-release](/sbotools/man/post-release).
 
 * [sbotools(1)](sbotools.1.md)
     * A summary man page with brief descriptions of the tools.
@@ -10,6 +10,8 @@ The pages here reflect version 4.1.4 (2026-05-06). For the latest man pages, see
     * Remove cruft by cleaning source archives, build directories and saved build options.
 * [sboconfig(1)](sboconfig.1.md)
     * A command line interface for changing */etc/sbotools/sbotools.conf*.
+* [sbocutleaves(1)](sbocutleaves.1.md)
+    * Find and list or interactively delete \_SBo packages with no installed reverse dependencies.
 * [sbofind(1)](sbofind.1.md)
     * Search the local copy of the repository for SlackBuilds.
 * [sbohints(1)](sbohints.1.md)

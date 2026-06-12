@@ -23,7 +23,7 @@
 
     sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
-               [-fiopqrz] [--batch|--dry-run]
+               [-figopqrz] [--batch|--dry-run]
 \--all\|\--all-plus-failures\|sbo_name (sbo_name)
 
     sboupgrade [--color|--nocolor] [--wrap|--nowrap] \...
@@ -37,6 +37,16 @@ is a recursive operation over all dependencies. **sboupgrade** offers to
 install any non-installed dependencies in the build queue, taking the
 hints in [sbotools.hints(5)](sbotools.hints.5.md) into account. The script exits with an
 error message if circular dependencies are detected.
+
+**sboupgrade** attempts to download the sources from the *DOWNLOAD* or
+*DOWNLOAD_x86_64* variables in the *info* file. If either the download
+or the md5sum check fails, a new download is attempted from
+<ftp://slackware.uk/sbosrcarch/> as a fallback measure. To verify
+sources for the queue and download if needed, use **\--get-only**.
+Manually-downloaded source files (such as those requiring a license
+agreement) can be placed in *SBO_HOME/manual_downloads* prior to running
+**sboupgrade**. **SBO_HOME/distfiles** can serve as a mountpoint, but
+please ensure that no partitions are mounted in its subdirectories.
 
 *SlackBuild* and *README* files are parsed for **groupadd(1)** and
 **useradd(1)** commands, and **sboupgrade** offers to run them prior to
@@ -54,14 +64,10 @@ upgrades are only performed for non-override packages if the version or
 build number is apparently higher. See [sboconfig(1)](sboconfig.1.md) or
 [sbotools.conf(5)](sbotools.conf.5.md).
 
-**sboupgrade** attempts to download the sources from the *DOWNLOAD* or
-*DOWNLOAD_x86_64* variables in the *info* file. If either the download
-or the md5sum check fails, a new download is attempted from
-<ftp://slackware.uk/sbosrcarch/> as a fallback measure. The **\--all**
-flag may be passed to upgrade all eligible SlackBuilds simultaneously.
-Use **\--all-plus-failures** to rebuild any packages with the *\_SBo*
-tag that fail the [sbocheck(1)](sbocheck.1.md) package tests before the upgrade
-process as well.
+The **\--all** flag may be passed to upgrade all eligible SlackBuilds
+simultaneously. Use **\--all-plus-failures** to rebuild any packages
+with the *\_SBo* tag that fail the [sbocheck(1)](sbocheck.1.md) package tests before
+the upgrade process as well.
 
 **sboupgrade** verifies the local repository with **gpg(1)** if
 **GPG_VERIFY** is **TRUE**.
@@ -87,8 +93,8 @@ script exits with a diagnostic message.
 If **TRUE**, do not perform upgrades unless the version number differs.
 By default, upgrades also occur when the build number differs. This
 setting and **\--force** are not the same; **\--force** initiates
-upgrades even if the build number is unchanged. This overrides the
-**BUILD_IGNORE** setting in [sbotools.conf(5)](sbotools.conf.5.md).
+upgrades even if the build number is unchanged. This option overrides
+the **BUILD_IGNORE** setting in [sbotools.conf(5)](sbotools.conf.5.md).
 
 **-c\|\--noclean (FALSE\|TRUE)**
 
@@ -96,7 +102,7 @@ If **TRUE**, do not clean working directories after building. These are
 the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
 Cleaning these directories can be set as default via the
 [sboconfig(1)](sboconfig.1.md) command. See also [sbotools.conf(5)](sbotools.conf.5.md). This option
-overrides the default.
+overrides the **NOCLEAN** setting.
 
 **-D\|\--dry-run**
 
@@ -113,18 +119,27 @@ If **TRUE**, then remove the source archives after building. They are
 retained in md5sum-designated directories under *SBO_HOME/distfiles* by
 default. The package archive (in */tmp* by default) is also removed.
 This option can be set as default via the [sboconfig(1)](sboconfig.1.md) command. See
-also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
+also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the **DISTCLEAN**
+setting.
+
+Please note that source files in the manual downloads directory not
+deleted automatically.
 
 **-e\|\--etc-profile**
 
 If **TRUE**, source any executable scripts in */etc/profile.d* named
 *\*.sh* before running each SlackBuild in the build queue. This option
-overrides the default.
+overrides the **ETC_PROFILE** setting.
 
 **-f\|\--force**
 
 Force an upgrade, even if the installed version and build number are
 equal to the **SlackBuilds.org** version.
+
+**-g\|\--get-only**
+
+Verify source files for the queue and download anything necessary for
+later use. Incompatible with **\--noinstall**.
 
 **-i\|\--noinstall**
 
@@ -132,7 +147,7 @@ Do not install the package at the end of the build process. It is left
 in */tmp* (or *\$OUTPUT*) if **DISTCLEAN** is **FALSE**. Packages are
 retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
 [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md). Incompatible with
-**\--reverse-rebuild**.
+**\--reverse-rebuild** and **\--get-only**.
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -153,7 +168,7 @@ a timestamp.
 **-N\|\--nonet (FALSE\|TRUE)**
 
 If **TRUE**, do not allow network access when running SlackBuilds. This
-overrides the **NONET** setting.
+option overrides the **NONET** setting.
 
 **-o\|\--norecall**
 
@@ -203,15 +218,16 @@ Overridden by **\--batch**.
 If **TRUE**, only perform upgrades if the incoming version or build
 number is higher. This has no effect scripts in the local overrides
 directory. This option can be set as default via [sboconfig(1)](sboconfig.1.md). See
-also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the default.
+also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the **STRICT_UPGRADES**
+setting.
 
 **-X\|\--so-check (FALSE\|TRUE)**
 
 If **TRUE**, check for missing first-order shared object dependencies
 after running **sboupgrade**. Please note that only those shared objects
 provided by outgoing packages are reflected in the results. For a full
-shared object check, see [sbocheck(1)](sbocheck.1.md). Overrides the **SO_CHECK**
-setting.
+shared object check, see [sbocheck(1)](sbocheck.1.md). This option overrides the
+**SO_CHECK** setting.
 
 **-z\|\--force-reqs**
 
@@ -361,11 +377,15 @@ required).\
 14: in **batch**, **nointeractive** or **dry-run**, required user or
 group missing.\
 15: GPG verification failed.\
-16: reading keyboard input failed.
+16: reading keyboard input failed.\
+17: could not give **SBO_HOME** valid contents.
 
 ## BUGS
 
-None known. If found, Issues and Pull Requests to
+100% accuracy cannot be guaranteed for the option addition prompt. It
+may rarely appear when options appear to be documented, but are not.
+
+Otherwise, none known. If found, Issues and Pull Requests to
 <https://github.com/pghvlaans/sbotools/> are always welcome.
 
 ## SEE ALSO
@@ -377,7 +397,7 @@ useradd(1)
 
 ## AUTHORS
 
-Jacob Pipkin \<j (at) dawnrazor (dot) net\>
+Jacob Pipkin \<jacob.pipkin (at) icloud (dot) com\>
 
 Luke Williams \<xocel (at) iquidus (dot) org\>
 
