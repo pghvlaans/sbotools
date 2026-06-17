@@ -60,6 +60,8 @@ Configuration options (defaults shown):
       DISTCLEAN: if TRUE, clean source and package archives after building.
   -e|--etc-profile FALSE:
       ETC_PROFILE: if TRUE, source executable scripts in /etc/profile.d.
+  -F|--force-obsolete FALSE:
+      FORCE_OBSOLETE: if TRUE, blacklist obsolete scripts on -current.
   -g|--gpg-verify FALSE:
       GPG_VERIFY: verify the repo with gnupg.
   -j|--jobs FALSE:
@@ -128,6 +130,8 @@ Configuration options (defaults shown):
       DISTCLEAN: if TRUE, clean source and package archives after building.
   -e|--etc-profile TRUE:
       ETC_PROFILE: if FALSE, do not source executables in /etc/profile.d.
+  -F|--force-obsolete FALSE:
+      FORCE_OBSOLETE: if TRUE, blacklist obsolete scripts on -current.
   -g|--gpg-verify FALSE:
       GPG_VERIFY: verify the repo with gnupg.
   -j|--jobs FALSE:
@@ -174,14 +178,14 @@ unless ($is_sbotest) {
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'dialogrc|D=s', 'nonet|N=s');
+		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s');
 } else {
 	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'sbo-archive|A=s', 'dialogrc|D=s', 'nonet|N=s');
+		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'sbo-archive|A=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s');
 }
 
 $options{list} = 1 if exists $options{'non-default'};
@@ -220,6 +224,7 @@ my %valid_confs = (
 	'so-check'          => 'SO_CHECK',
 	'dialogrc'          => 'DIALOGRC',
 	nonet               => 'NONET',
+	'force-obsolete'    => 'FORCE_OBSOLETE',
 );
 $valid_confs{"sbo-archive"} = 'SBO_ARCHIVE' if $is_sbotest;
 
@@ -247,6 +252,7 @@ my %params = (
 	SO_CHECK          => 'X|--so-check',
 	DIALOGRC          => 'D|--dialogrc',
 	NONET             => 'N|--nonet',
+	FORCE_OBSOLETE    => 'F|--force-obsolete',
 );
 $params{SBO_ARCHIVE} = 'A|--sbo-archive' if $is_sbotest;
 

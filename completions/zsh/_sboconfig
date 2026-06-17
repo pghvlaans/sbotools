@@ -17,6 +17,7 @@ _arguments \
     '(-D --dialogrc)'{-D,--dialogrc}'[File to use as dialogrc for sbotool.]:sbotool dialogrc location:_files -/' \
     '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code and the package after building.]:clean source and package?:((TRUE\:"Remove source and package" FALSE\:"Keep source and package"))' \
     '(-e --etc-profile)'{-e,--etc-profile}'[If TRUE, then source any *.sh executable scripts in /etc/profile.d before running each SlackBuild.]:source /etc/profile.d?:((TRUE\:"Source profile scripts" FALSE\:"Do not source profile scripts"))' \
+    '(-F --force-obsolete)'{-F,--force-obsolete}'[If TRUE, then treat the obsolete list as a blacklist on -current. This is only helpful if using a repo from which obsolete SlackBuilds are not removed.]:obsolete scripts are blacklisted?:((TRUE\:"Blacklist obsolete scripts" FALSE\:"Default obsolete behavior"))' \
     '(-g --gpg-verify)'{-g,--gpg-verify}'[If TRUE, then verify with gpg.]:use gpg?:((TRUE\:"Verify with gpg" FALSE\:"Do not verify"))' \
     '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \
     '(-K --color)'{-K,--color}'[If TRUE, enable sbotools color output.]:enable sbotools colors?:((TRUE\:"Enable sbotools colors" FALSE\:"sbotools output has no color"))' \

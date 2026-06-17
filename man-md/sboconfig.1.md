@@ -25,7 +25,7 @@
 
     sboconfig [--reset]
 
-    sboconfig [-CKNOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo
+    sboconfig [-CKFNOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo
 /path\|FALSE] \
               [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \
               [-r url|FALSE]
@@ -129,6 +129,13 @@ directories under */usr/sbo/distfiles* (with default **SBO_HOME**). If
 build queue.
 
 Recommended value: **TRUE**
+
+**-F\|\--force-obsolete (FALSE\|TRUE)**
+
+**FORCE_OBSOLETE**: If **TRUE**, treat the obsolete script list at
+*/etc/sbotools/obsolete* as a supplementary blacklist on Slackware
+-current. Do not set to **TRUE** unless you are using a repository that
+does not remove outdated scripts.
 
 **-g\|\--gpg-verify (FALSE\|TRUE)**
 

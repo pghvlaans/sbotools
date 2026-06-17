@@ -1,5 +1,9 @@
 # sbotools
 
+#### Post-Release
+  * Added a setting FORCE_OBSOLETE to treat the obsolete scripts list as a supplementary blacklist on -current.
+    * Do not use unless your repository does not remove outdated scripts.
+
 #### 4.2 - 2026-06-12
   * sbocutleaves: A new tool for managing leaves, i.e. packages without installed reverse dependencies.
     * Proposed and drafted by Jacob Pipkin.

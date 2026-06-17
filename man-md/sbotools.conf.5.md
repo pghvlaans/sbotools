@@ -76,6 +76,13 @@ under */usr/sbo/distfiles* (with *SBO_HOME=/usr/sbo*) by default. If
 **PKG_DIR** is set, package archives are saved there regardless of
 **DISTCLEAN**.
 
+**FORCE_OBSOLETE=(FALSE\|TRUE)**
+
+If **TRUE**, treat the obsolete script list at */etc/sbotools/obsolete*
+as a supplementary blacklist on Slackware -current. Do not set to
+**TRUE** unless you are using a repository that does not remove outdated
+scripts.
+
 **GPG_VERIFY=(FALSE\|TRUE)**
 
 If **TRUE**, use **gpg(1)** to verify the contents of the local
