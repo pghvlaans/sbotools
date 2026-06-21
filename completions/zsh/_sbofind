@@ -20,7 +20,7 @@ _arguments -s \
 	   '(-E --exact-case)'{-E,--exact-case}'[Only exact matching (case-sensitive).]' \
 	   '(-e --exact)'{-e,--exact}'[Only exact matching (case-insensitive).]' \
 	   '(-F --first-reverse)'{-F,--first-reverse}'[Show the first level of reverse dependencies.]' \
-	   '(-M --maintainers)'{-M,--maintainers}'[Also search SlackBuild maintainers.]' \
+	   '(-M --maintainers)'{-M,--maintainers}'[Search by maintainer name only.]' \
 	   '(-t --no-tags)'{-t,--no-tags}'[Exclude tags from search.]' \
 	   '(-i --info)'{-i,--info}'[Show the contents of the .info file for each SlackBuild.]' \
 	   '(-R --reverse)'{-R,--reverse}'[Show any reverse dependencies installed on the system.]' \

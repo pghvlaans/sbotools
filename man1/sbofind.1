@@ -11,7 +11,9 @@ tree for a given name or names
 .P
 sbofind [-h|-v]
 .P
-sbofind [-AEFMRTdeiqrt] search_term (search_term)
+sbofind [-AEFRTeiqrt] [-d] search_term (search_term)
+.P
+sbofind [-AEFRTeiqrt] [-M] search_term (search_term)
 .P
 sbofind [--color|--nocolor] [--wrap|--nowrap] ...
 .P
@@ -60,6 +62,11 @@ each SlackBuild found.
 .RS
 Search for SlackBuilds by short description in addition
 to name and tag.
+
+Incompatible with
+.B
+--maintainers\fR\
+\&.
 .RE
 .P
 .B
@@ -84,8 +91,12 @@ repository for each SlackBuild found.
 .B
 -M|--maintainers
 .RS
-Search for SlackBuilds by maintainer in addition to name and
-tag.
+Search for SlackBuilds by maintainer.
+
+Incompatible with
+.B
+--descriptions\fR\
+\&.
 .RE
 .P
 .B

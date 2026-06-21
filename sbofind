@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local is_obsolete on_blacklist build_cmp version_cmp :colors %config $slackbuilds_txt $repo_path @last_level_reverse @reverse_concluded $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay $descriptions_generated /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local is_obsolete on_blacklist build_cmp version_cmp :colors %config $slackbuilds_txt $repo_path @last_level_reverse @reverse_concluded $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay usage_error $descriptions_generated /;
 use Cwd;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
@@ -46,7 +46,7 @@ Options:
   -F|--first-reverse:
     show the first level of reverse dependencies.
   -M|--maintainers:
-    return matches in maintainer names.
+    search maintainer names only.
   -t|--no-tags:
     exclude tags from search.
   -i|--info:
@@ -100,6 +100,7 @@ $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
 $config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $wrap xor $nowrap;
 lint_sbo_config($self, %config);
 
+if ($search_maintainers and $search_descriptions) { usage_error("--maintainers and --descriptions are incompatible."); }
 if (!@ARGV) { show_usage(); exit 1 }
 
 # if we can't find SLACKBUILDS.TXT in $config{HOME}, prompt to fetch the tree
@@ -153,27 +154,23 @@ sub perform_search {
 	for (@available) {
 		my $location = get_sbo_location($_);
 		my $local = is_local($_);
-		if ($use_tags) {
-			if (in $_, @names) {
+		if ($search_maintainers) {
+			my $maintainer = join " ", @{get_from_info(LOCATION => $location, GET => 'MAINTAINER')};
+			next unless defined $maintainer;
+			push @findings, {name => $_, location => $location, local => $local} if $maintainer =~ $search_desc_re;
+		} else {
+			if ($use_tags and in $_, @names) {
 				push @findings, {name => $_, $location, $local};
 				next;
 			}
-		}
-		if ($_ =~ $search_name_re) {
-			push @findings, {name => $_, location => $location, local => $local};
-			next;
-		}
-		if ($search_descriptions) {
-			if (get_sbo_description($_) =~ $search_desc_re) {
+			if ($_ =~ $search_name_re) {
 				push @findings, {name => $_, location => $location, local => $local};
 				next;
 			}
-		}
-		if ($search_maintainers) {
-			my $maintainer = join " ", @{get_from_info(LOCATION => $location, GET => 'MAINTAINER')};
-			if ($maintainer =~ $search_desc_re) {
-				push @findings, {name => $_, location => $location, local => $local};
-				next;
+			if ($search_descriptions) {
+				if (get_sbo_description($_) =~ $search_desc_re) {
+					push @findings, {name => $_, location => $location, local => $local};
+				}
 			}
 		}
 	}
