@@ -139,12 +139,13 @@ sub build_operations {
 		$unsupported = check_x32 $location;
 	}
 	my $sbo_version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
+	my $maintainer = join " ", @{get_from_info(LOCATION => $location, GET => 'MAINTAINER')};
 	my $description = get_sbo_description($sbo);
 	$description = "(No Description)" unless defined $description;
 	$description =~ s/"/'/g;
 	$description =~ s/\$/\\\$/g;
 	# Top matter with basic information about the SlackBuild.
-	my $msg = "$sbo $sbo_version\n$description";
+	my $msg = "$sbo $sbo_version\n$description\nMaintainer: $maintainer";
 	$msg .= "\nFound in local overrides." if is_local($sbo);
 	$msg .= "\nBlacklisted." if on_blacklist($sbo);
 	if (in $sbo, @update_names) {

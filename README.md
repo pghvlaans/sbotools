@@ -28,6 +28,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 ## Most Recent Changes
 #### Post-Release
   * sbofind: Show maintainer names unless in CLASSIC mode; search names with --maintainers.
+  * sbotool: Show maintainer names in the per-script Operations screens.
 
 #### 4.2 - 2026-06-12
   * sbocutleaves: A new tool for managing leaves, i.e. packages without installed reverse dependencies.
