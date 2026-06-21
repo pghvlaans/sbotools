@@ -22,7 +22,9 @@ a given name or names
 
     sbofind [-h|-v]
 
-    sbofind [-AEFMRTdeiqrt] search_term (search_term)
+    sbofind [-AEFRTeiqrt] [-d] search_term (search_term)
+
+    sbofind [-AEFRTeiqrt] [-M] search_term (search_term)
 
     sbofind [--color|--nocolor] [--wrap|--nowrap] \...
 
@@ -54,6 +56,8 @@ found.
 
 Search for SlackBuilds by short description in addition to name and tag.
 
+Incompatible with **\--maintainers**.
+
 **-E\|\--exact-case**
 
 Exact matching only (case-sensitive).
@@ -69,7 +73,9 @@ SlackBuild found.
 
 **-M\|\--maintainers**
 
-Search for SlackBuilds by maintainer in addition to name and tag.
+Search for SlackBuilds by maintainer.
+
+Incompatible with **\--descriptions**.
 
 **-t\|\--no-tags**
 
