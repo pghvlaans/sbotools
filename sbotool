@@ -140,6 +140,7 @@ sub build_operations {
 	}
 	my $sbo_version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
 	my $maintainer = join " ", @{get_from_info(LOCATION => $location, GET => 'MAINTAINER')};
+	$maintainer = "(No Listed Maintainer)" unless $maintainer;
 	my $description = get_sbo_description($sbo);
 	$description = "(No Description)" unless defined $description;
 	$description =~ s/"/'/g;

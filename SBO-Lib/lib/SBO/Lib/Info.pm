@@ -239,7 +239,7 @@ sub get_from_info {
 
   # allow local overrides to get away with not having quite all the fields
   if (is_local($sbo)) {
-    for my $key (qw/DOWNLOAD_x86_64 MD5SUM_x86_64 REQUIRES/) {
+    for my $key (qw/DOWNLOAD_x86_64 MD5SUM_x86_64 REQUIRES MAINTAINER/) {
       $store{$args{LOCATION}}->{$key} //= ['']; # if they don't exist, treat them as empty
     }
   }

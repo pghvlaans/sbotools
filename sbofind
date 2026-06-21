@@ -343,7 +343,10 @@ SEARCH: for my $search (@ARGV) {
 			my $location = $hash->{location};
 			my $version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
 			my $maintainer;
-			$maintainer = join " ", @{get_from_info(LOCATION=> $location, GET=> 'MAINTAINER')} if $config{CLASSIC} eq "FALSE" or $search_maintainers;
+			if ($config{CLASSIC} eq "FALSE" or $search_maintainers) {
+				$maintainer = join " ", @{get_from_info(LOCATION => $location, GET => 'MAINTAINER')} if $config{CLASSIC} eq "FALSE" or $search_maintainers;
+				$maintainer = "(No Listed Maintainer)" unless $maintainer;
+			}
 			my $sbo = $hash->{local} ? "Local: " : "SBo:   ";
 			my $description = get_sbo_description($name);
 			say "$sbo $name $version";
