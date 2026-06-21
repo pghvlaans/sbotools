@@ -27,7 +27,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 
 ## Most Recent Changes
 #### Post-Release
-  * sbofind: Show maintainer names unless in CLASSIC mode; with --maintainers.
+  * sbofind: Show maintainer names unless in CLASSIC mode; search names with --maintainers.
 
 #### 4.2 - 2026-06-12
   * sbocutleaves: A new tool for managing leaves, i.e. packages without installed reverse dependencies.
@@ -70,21 +70,6 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
     * Thanks to dchmelik for the suggestion.
   * Added a hint for sboupgrade to ignore test failures for a script
   * sbohints: Fixed the long-form --replace-optional flag
-
-#### 4.1.3 - 2025-12-26
-  * Build.pm: Retrieve the name of the last package created by a SlackBuild, not the first
-  * Fixed a typo in the sbocheck bash completion
-    * Thanks to fsLeg.
-  * Readme.pm: Parse SlackBuilds for useradd and groupadd commands first
-  * Readme.pm: Ask about options before asking about users and groups
-  * Readme.pm: Handle SlackBuilds with variable user and group names and UID/GID
-  * completions/zsh: Fix a number of broken lines
-    * Thanks to Ndolam for the report and pointers.
-  * completions/bash: Use SBO::Lib::* in preference to outside programs
-  * Readme.pm: Better distinguish existing users and groups
-  * sbotool: Add a button for missing users and groups
-  * Download.pm: Handle download URLs requiring content disposition
-    * Selectively add --content-disposition to the wget command, following slackrepo
 
 ## Previous Changes
 See [ChangeLog.md](https://github.com/pghvlaans/sbotools/blob/master/SBO-Lib/ChangeLog.md) for a record of changes from version 1.9 onward.

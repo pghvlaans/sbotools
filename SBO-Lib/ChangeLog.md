@@ -1,7 +1,7 @@
 # sbotools
 
 #### Post-Release
-  * sbofind: Show maintainer names unless in CLASSIC mode; with --maintainers.
+  * sbofind: Show maintainer names unless in CLASSIC mode; search names with --maintainers.
 
 #### 4.2 - 2026-06-12
   * sbocutleaves: A new tool for managing leaves, i.e. packages without installed reverse dependencies.
