@@ -11,7 +11,7 @@ tree for a given name or names
 .P
 sbofind [-h|-v]
 .P
-sbofind [-AEFRTdeiqrt] search_term (search_term)
+sbofind [-AEFMRTdeiqrt] search_term (search_term)
 .P
 sbofind [--color|--nocolor] [--wrap|--nowrap] ...
 .P
@@ -79,6 +79,13 @@ Exact matching only (case-insensitive).
 .RS
 Show all first-level reverse dependencies in the
 repository for each SlackBuild found.
+.RE
+.P
+.B
+-M|--maintainers
+.RS
+Search for SlackBuilds by maintainer in addition to name and
+tag.
 .RE
 .P
 .B

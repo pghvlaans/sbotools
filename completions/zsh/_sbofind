@@ -16,9 +16,11 @@ _arguments -s \
 	   '--wrap[Enable sbotools word wrapping.]:' \
 	   - commands \
 	   '(-A --all-reverse)'{-A,--all-reverse}'[Show all reverse dependencies in the repo.]' \
+	   '(-d --descriptions)'{-d,--descriptions}'[Also search SlackBuild descriptions.]' \
 	   '(-E --exact-case)'{-E,--exact-case}'[Only exact matching (case-sensitive).]' \
 	   '(-e --exact)'{-e,--exact}'[Only exact matching (case-insensitive).]' \
 	   '(-F --first-reverse)'{-F,--first-reverse}'[Show the first level of reverse dependencies.]' \
+	   '(-M --maintainers)'{-M,--maintainers}'[Also search SlackBuild maintainers.]' \
 	   '(-t --no-tags)'{-t,--no-tags}'[Exclude tags from search.]' \
 	   '(-i --info)'{-i,--info}'[Show the contents of the .info file for each SlackBuild.]' \
 	   '(-R --reverse)'{-R,--reverse}'[Show any reverse dependencies installed on the system.]' \

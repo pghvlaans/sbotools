@@ -45,6 +45,8 @@ Options:
     only exact matching (case-insensitive).
   -F|--first-reverse:
     show the first level of reverse dependencies.
+  -M|--maintainers:
+    return matches in maintainer names.
   -t|--no-tags:
     exclude tags from search.
   -i|--info:
@@ -67,7 +69,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue, $all_reverse, $last_reverse, $first_reverse, $nocolor, $color, $raw, $nowrap, $wrap, $search_descriptions);
+my ($help, $vers, $search_exact, $search_case, $exclude_tags, $show_info, $show_reverse, $show_readme, $show_queue, $all_reverse, $last_reverse, $first_reverse, $nocolor, $color, $raw, $nowrap, $wrap, $search_descriptions, $search_maintainers);
 
 GetOptions(
 	'help|h'    => \$help,
@@ -75,6 +77,7 @@ GetOptions(
 	'd|descriptions' => \$search_descriptions,
 	'exact|e'   => \$search_exact,
 	'exact-case|E' => \$search_case,
+	'maintainers|M' => \$search_maintainers,
 	'no-tags|t' => \$exclude_tags,
 	'info|i'    => \$show_info,
 	'readme|r'  => \$show_readme,
@@ -133,8 +136,9 @@ sub perform_search {
 
 	# first get a bunch of names from the TAGS.txt if it's available
 	my $tags_file = "$config{SBO_HOME}/repo/TAGS.txt";
+	my $use_tags = !$exclude_tags && -f $tags_file;
 	my @names;
-	if (!$exclude_tags && -f $tags_file) {
+	if ($use_tags) {
 		my ($t_fh, $t_exit) = open_read "$config{SBO_HOME}/repo/TAGS.txt";
 		unless ($t_exit) {
 			while (my $line = <$t_fh>) {
@@ -145,17 +149,35 @@ sub perform_search {
 		}
 	}
 
-	if ($search_descriptions) {
-		for (@available) {
-			push @names, $_ if get_sbo_description($_) =~ $search_desc_re;
+	my @findings;
+	for (@available) {
+		my $location = get_sbo_location($_);
+		my $local = is_local($_);
+		if ($use_tags) {
+			if (in $_, @names) {
+				push @findings, {name => $_, $location, $local};
+				next;
+			}
+		}
+		if ($_ =~ $search_name_re) {
+			push @findings, {name => $_, location => $location, local => $local};
+			next;
+		}
+		if ($search_descriptions) {
+			if (get_sbo_description($_) =~ $search_desc_re) {
+				push @findings, {name => $_, location => $location, local => $local};
+				next;
+			}
+		}
+		if ($search_maintainers) {
+			my $maintainer = join " ", @{get_from_info(LOCATION => $location, GET => 'MAINTAINER')};
+			if ($maintainer =~ $search_desc_re) {
+				push @findings, {name => $_, location => $location, local => $local};
+				next;
+			}
 		}
 	}
 
-	my @findings;
-	for (@available) {
-		push @findings, {name => $_, location => get_sbo_location($_), local => is_local($_)} if
-			$_ =~ $search_name_re or in $_, @names;
-	}
 	return \@findings;
 }
 
@@ -323,6 +345,8 @@ SEARCH: for my $search (@ARGV) {
 
 			my $location = $hash->{location};
 			my $version = get_from_info(LOCATION => $location, GET => 'VERSION')->[0];
+			my $maintainer;
+			$maintainer = join " ", @{get_from_info(LOCATION=> $location, GET=> 'MAINTAINER')} if $config{CLASSIC} eq "FALSE" or $search_maintainers;
 			my $sbo = $hash->{local} ? "Local: " : "SBo:   ";
 			my $description = get_sbo_description($name);
 			say "$sbo $name $version";
@@ -336,6 +360,7 @@ SEARCH: for my $search (@ARGV) {
 			say "Path:   $location";
 			say "Desc:   $description" if defined $description;
 			say "info:   ". get_file_contents("$location/$name.info") if $show_info;
+			say "Maint:  $maintainer" if defined $maintainer;
 			say "README: ". get_file_contents("$location/README") if $show_readme;
 			say "Queue:  ". show_build_queue($name) if $show_queue;
 			say "RevDep: ". show_reverse_dependencies($name) if $show_reverse;
