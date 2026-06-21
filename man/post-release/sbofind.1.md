@@ -22,7 +22,7 @@ a given name or names
 
     sbofind [-h|-v]
 
-    sbofind [-AEFRTdeiqrt] search_term (search_term)
+    sbofind [-AEFMRTdeiqrt] search_term (search_term)
 
     sbofind [--color|--nocolor] [--wrap|--nowrap] \...
 
@@ -66,6 +66,10 @@ Exact matching only (case-insensitive).
 
 Show all first-level reverse dependencies in the repository for each
 SlackBuild found.
+
+**-M\|\--maintainers**
+
+Search for SlackBuilds by maintainer in addition to name and tag.
 
 **-t\|\--no-tags**
 
