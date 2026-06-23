@@ -2,6 +2,8 @@
 * Post-Release
   * *sbofind*: Show maintainer names unless in **CLASSIC** mode; search names with **\--maintainers**.
   * *sbotool*: Show maintainer names in the per-script Operations screens.
+  * *Download.pm*: Ignore `content_disposition` settings in `wgetrc`.
+    * Thanks to worriedeland for the heads-up.
 
 * 4.2 - 2026-06-12
   * *sbocutleaves*: A new tool for managing leaves, i.e. packages without installed reverse dependencies.
