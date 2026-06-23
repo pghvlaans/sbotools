@@ -80,6 +80,7 @@ shamefulCake1 (requested NOWRAP and installation time reporting)
 travis-82 (requested tree download progress output)
 tuxuser1 (reported the overwritten source file bug)
 wgreenhouse (reported the local git repo chown bug)
+worriedeland (reported potential content disposition bugs from wgetrc)
 
 This file is almost certainly incomplete; information about pre-fork
 sbotools is limited, and oversights do happen. Please contact me if you

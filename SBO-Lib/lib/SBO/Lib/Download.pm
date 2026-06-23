@@ -195,7 +195,7 @@ sub get_distfile {
   if ($use_content_disposition) {
     $wget_res = system('wget', '--tries=5', '--content-disposition', $link) == 0;
   } else {
-    $wget_res = system('wget', '--tries=5', $link) == 0;
+    $wget_res = system('wget', '-e', 'content_disposition = off', '--tries=5', $link) == 0;
   }
   unless ($wget_res) {
     $fail->{msg} = "Unable to wget $link.";
