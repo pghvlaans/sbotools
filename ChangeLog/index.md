@@ -4,6 +4,9 @@
   * *sbotool*: Show maintainer names in the per-script Operations screens.
   * *Download.pm*: Ignore `content_disposition` settings in `wgetrc`.
     * Thanks to worriedeland for the heads-up.
+  * Added a setting **FORCE_OBSOLETE** to treat the obsolete scripts list as a supplementary blacklist on -current.
+    * Do not use unless your repository does not remove outdated scripts.
+    * Thanks to gbschenkel for raising this issue.
 
 * 4.2 - 2026-06-12
   * *sbocutleaves*: A new tool for managing leaves, i.e. packages without installed reverse dependencies.
