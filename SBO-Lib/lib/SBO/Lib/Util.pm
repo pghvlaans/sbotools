@@ -123,6 +123,7 @@ our @EXPORT_OK = (
     indent
     is_obsolete
     lint_sbo_config
+    merge_obsolete
     obsolete_array
     on_blacklist
     open_fh
@@ -209,7 +210,7 @@ The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
 C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<COLOR>, C<SO_CHECK>,
-C<DIALOGRC> and C<NONET>.
+C<DIALOGRC>, C<NONET> and C<FORCE_OBSOLETE>.
 
 =head2 $distfiles_dir
 
@@ -342,6 +343,7 @@ our %config = (
   SO_CHECK => 'FALSE',
   DIALOGRC => 'FALSE',
   NONET => 'FALSE',
+  FORCE_OBSOLETE => 'FALSE',
 );
 
 if (defined $is_sbotest) {
@@ -919,6 +921,12 @@ sub lint_sbo_config {
       push @invalid, "$warn -e (TRUE or FALSE)";
     }
   }
+  if (exists $configs{FORCE_OBSOLETE}) {
+    unless ($configs{FORCE_OBSOLETE} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "FORCE_OBSOLETE:" if $running ne 'sboconfig';
+      push @invalid, "$warn -F (TRUE or FALSE)";
+    }
+  }
   if (exists $configs{GPG_VERIFY}) {
     unless ($configs{GPG_VERIFY} =~ /^(TRUE|FALSE)$/) {
       push @invalid, "GPG_VERIFY:" if $running ne 'sboconfig';
@@ -1042,6 +1050,23 @@ sub lint_sbo_config {
     wrapsay("The requested configuration contains one or more forbidden parameters.", 1) if $running eq 'sboconfig';
     usage_error("$dangerous_string");
   }
+}
+
+=head2 merge_obsolete
+
+  merge_obsolete();
+
+C<merge_obsolete()> appends the contents of the C<@obsolete> array to the
+blacklist, provided that the C<FORCE_OBSOLETE> setting is C<TRUE>. It has
+no useful return value. It is currently called in C<sboinstall>, C<sboupgrade>
+and C<sbofind>.
+
+=cut
+
+sub merge_obsolete {
+  return unless @obsolete and $config{FORCE_OBSOLETE} eq 'TRUE';
+  push @on_blacklist, @obsolete;
+  @on_blacklist = uniq(@on_blacklist);
 }
 
 =head2 obsolete_array

@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local is_obsolete on_blacklist build_cmp version_cmp :colors %config $slackbuilds_txt $repo_path @last_level_reverse @reverse_concluded $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay usage_error $descriptions_generated /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local is_obsolete merge_obsolete on_blacklist build_cmp version_cmp :colors %config $slackbuilds_txt $repo_path @last_level_reverse @reverse_concluded $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay usage_error $descriptions_generated /;
 use Cwd;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
@@ -99,6 +99,7 @@ if ($vers) { show_version(); exit 0 }
 $config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
 $config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $wrap xor $nowrap;
 lint_sbo_config($self, %config);
+merge_obsolete();
 
 if ($search_maintainers and $search_descriptions) { usage_error("--maintainers and --descriptions are incompatible."); }
 if (!@ARGV) { show_usage(); exit 1 }
@@ -350,7 +351,8 @@ SEARCH: for my $search (@ARGV) {
 			my $sbo = $hash->{local} ? "Local: " : "SBo:   ";
 			my $description = get_sbo_description($name);
 			say "$sbo $name $version";
-			wrapsay_color $color_warn, "        blacklisted" if on_blacklist($name);
+			my $blacklisted_label = is_obsolete($name) ? "obsolete" : "blacklisted";
+			wrapsay_color $color_warn, "        $blacklisted_label" if on_blacklist($name);
 			wrapsay_color $color_notice, "        $installed_vers->{$name} installed ($installed_times->{$name})" if $installed_times->{$name};
 			wrapsay_color $color_lesser, "        $std_vers->{$name} installed, non-SBo ($std_times->{$name})" if $std_times->{$name};
 			# sbotest-only

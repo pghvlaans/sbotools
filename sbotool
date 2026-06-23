@@ -1269,6 +1269,7 @@ sub display_settings {
 						"\"DIALOGRC: $config{DIALOGRC}\" \"\" \"If a file, use it as dialogrc for sbotool.\" \\",
 						"\"DISTCLEAN: $config{DISTCLEAN}$plus\" \"\" \"If TRUE, remove the source and built package after building.\" \\",
 						"\"ETC_PROFILE: $config{ETC_PROFILE}$plus\" \"\" \"If TRUE, source all executable *.sh in /etc/profile.d before building.\" \\",
+						"\"FORCE_OBSOLETE: $config{FORCE_OBSOLETE}$plus\" \"\" \"If TRUE, treat obsolete scripts as blacklisted on -current.\" \\",
 						"\"GIT_BRANCH: $config{GIT_BRANCH}\" \"\" \"Use this non-default branch for git repos.\" \\",
 						"\"GPG_VERIFY: $config{GPG_VERIFY}$plus\" \"\" \"If TRUE, verify the repo with GPG after fetching.\" \\",
 						"\"JOBS: $config{JOBS}\" \"\" \"If a number, use this many jobs with make.\" \\",
@@ -1345,6 +1346,11 @@ sub display_settings {
 			$explanation = "If TRUE, source all executable *.sh scripts in /etc/profile.d\nbefore building.";
 			$criterion = "TRUE or FALSE.";
 			$flag = "e";
+		}
+		if ($option =~ /^FORCE_OBSOLETE/) {
+			$explanation = "If TRUE, treat obsolete scripts as blacklisted on Slackware -current. Do not set to TRUE unless your repository does not remove outdated scripts.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "F";
 		}
 		if ($option =~ /^GIT_BRANCH/) {
 			$explanation = "If a BRANCH NAME, use a non-default git branch.";

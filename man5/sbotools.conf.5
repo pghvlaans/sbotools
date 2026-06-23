@@ -176,6 +176,22 @@ DISTCLEAN\fR\
 .RE
 .P
 .B
+FORCE_OBSOLETE=(FALSE|TRUE)
+.RS
+If
+.B
+TRUE\fR\
+\&, treat the obsolete script list at
+.I
+/etc/sbotools/obsolete
+as a supplementary blacklist on Slackware -current. Do not set to
+.B
+TRUE
+unless you are using a repository that does not remove outdated
+scripts.
+.RE
+.P
+.B
 GPG_VERIFY=(FALSE|TRUE)
 .RS
 If
