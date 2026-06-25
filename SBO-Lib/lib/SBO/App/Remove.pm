@@ -78,7 +78,7 @@ sub run {
 
   # current workflow:
   # * get names of all installed SBo packages
-  # * compare commandline args to SBo packages as well as installed SBo packages
+  # * compare commandline args to SBo and non-SBo packages
   # * add reverse deps to list if they're not a dep of something else (which is not also already on the list)
   # * confirm removal of each package on the list
   #   - while taking into account the options passed in such as $alwaysask
@@ -97,12 +97,23 @@ sub run {
 
   my @installed = @{ get_installed_packages('SBO') };
   my $installed = +{ map {; $_->{name}, $_->{pkg} } @installed };
+  my @installed_std = @{ get_installed_packages('STD') };
+  my $installed_std = +{ map {; $_->{name}, $_->{pkg} } @installed_std };
 
-  @args = grep { check_sbo($_, $installed) } @args;
+  @args = grep { check_sbo($_, $installed_std) } @args;
+  my $print_newline;
+  for (@args) {
+    unless (exists $installed->{$_}) {
+      wrapsay_color $color_lesser, "$_ is not installed, but may have installed dependencies.";
+      $print_newline = 1;
+    }
+  }
+  print "\n" if $print_newline;
   unless (@args) { wrapsay_color $color_notice, "\nNothing to remove."; exit 0; }
   my %sbos = map { $_ => 1 } @args;
 
   my @remove = get_full_queue($installed, @args);
+  unless (@remove) { wrapsay_color $color_notice, "\nNothing to remove."; exit 0; }
 
   my @confirmed;
 
@@ -179,15 +190,15 @@ EOF
 }
 
 sub check_sbo {
-  my ($sbo, $installed) = @_;
+  my ($sbo, $installed_std) = @_;
 
   unless (get_sbo_location($sbo)) {
-    wrapsay "Unable to locate $sbo in the SlackBuilds.org tree.";
+    wrapsay_color $color_lesser, "Unable to locate $sbo in the SlackBuilds.org tree.";
     return 0;
   }
 
-  unless (exists $installed->{$sbo}) {
-    wrapsay "$sbo is not installed from SlackBuilds.org.";
+  if (exists $installed_std->{$sbo}) {
+    wrapsay_color $color_lesser, "$sbo is not an SBo package. Skipping.";
     return 0;
   }
 

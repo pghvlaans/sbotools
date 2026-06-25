@@ -15,20 +15,18 @@ sboremove [--color|--nocolor] [--wrap|--nowrap] ...
 .P
 .B
 sboremove
-removes packages installed from SlackBuilds, along with
-any unneeded dependencies. Dependency information is
-pulled recursively from
+interactively removes SlackBuilds and any unneeded dependencies.
+Dependency information is pulled recursively from
 .I
 info
 files and honors the contents of
 .B
 sbotools.hints(5)\fR\
-\&; any dependencies
-required by no other installed SlackBuilds are eligible
-for removal as well.
+\&.
 .B
 sboremove
-does not handle blacklisted scripts.
+handles neither blacklisted scripts nor scripts installed from non-SBo
+sources.
 .P
 If
 .B

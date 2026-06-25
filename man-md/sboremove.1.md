@@ -26,11 +26,11 @@
 
 ## DESCRIPTION
 
-**sboremove** removes packages installed from SlackBuilds, along with
-any unneeded dependencies. Dependency information is pulled recursively
-from *info* files and honors the contents of [sbotools.hints(5)](sbotools.hints.5.md); any
-dependencies required by no other installed SlackBuilds are eligible for
-removal as well. **sboremove** does not handle blacklisted scripts.
+**sboremove** interactively removes SlackBuilds and any unneeded
+dependencies. Dependency information is pulled recursively from *info*
+files and honors the contents of [sbotools.hints(5)](sbotools.hints.5.md). **sboremove**
+handles neither blacklisted scripts nor scripts installed from non-SBo
+sources.
 
 If **sboremove** is called with the **\--alwaysask** flag, all
 dependencies receive removal prompts, even if they are required by other
