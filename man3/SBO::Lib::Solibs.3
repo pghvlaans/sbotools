@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Solibs 3"
-.TH SBO::Lib::Solibs 3 "Pungenday, Confusion 17, 3192 YOLD" "" "sbotools 4.2"
+.TH SBO::Lib::Solibs 3 "Pungenday, Confusion 32, 3192 YOLD" "" "sbotools 4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -89,11 +89,11 @@ when running \f(CWsolib_check()\fR.
 .IX Subsection "%per_cand, %x86_per_cand"
 Hashes with per\-object lists of dynamically\-linked files. They are used to produce the file lists
 in \f(CW%old_libs\fR, and are not exported.
-.ie n .SS @x86_libs
-.el .SS \f(CW@x86_libs\fP
-.IX Subsection "@x86_libs"
-An array with 32\-bit shared objects in the \f(CWldconfig(1)\fR cache. Used only under the
-\&\f(CW\*(C`x86_64\*(C'\fR architecture, it is generated together with \f(CW@native_libs\fR by \f(CWupdate_known_solibs()\fR.
+.ie n .SS @libs_32
+.el .SS \f(CW@libs_32\fP
+.IX Subsection "@libs_32"
+An array with 32\-bit shared objects in the \f(CWldconfig(1)\fR cache. Used only under 64\-bit
+architectures, it is generated together with \f(CW@native_libs\fR by \f(CWupdate_known_solibs()\fR.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS decimalize
@@ -195,8 +195,8 @@ Because \f(CWelf_links()\fR is called, performance is cache\-dependent. It is be
 a package file and an array with probable ELF files shipped by that package. It returns 1 if
 the shared object appears to be present and 0 if it does not.
 .PP
-Please note that the known shared object array \f(CW@native_libs\fR (and \f(CW@x86_libs\fR if running
-on the \f(CW\*(C`x86_64\*(C'\fR architecture) is the main source of shared object verification.
+Please note that the known shared object array \f(CW@native_libs\fR (and \f(CW@libs_32\fR if running
+on a 64\-bit architecture) is the main source of shared object verification.
 \&\f(CWsolib_present()\fR is called after this first verification step fails. Shared objects
 that are neither shipped nor created as symlinks by the package can be missed.
 .PP
@@ -209,7 +209,7 @@ This subroutine is not exported.
 .PP
 \&\f(CWupdate_known_solibs()\fR takes no arguments. It uses the \f(CW\*(C`\-\-print\-cache\*(C'\fR option of
 \&\f(CWldconfig(1)\fR to generate an array of existent known shared objects, \f(CW@native_libs\fR. On
-\&\f(CW\*(C`x86_64\*(C'\fR systems, it generates \f(CW@x86_libs\fR as well, an array with 32\-bit shared objects.
+64\-bit systems, it generates \f(CW@libs_32\fR as well, an array with 32\-bit shared objects.
 .PP
 The \f(CW\*(C`initialize_*()\*(C'\fR subroutines for the additional package tests are called at this time.
 .PP

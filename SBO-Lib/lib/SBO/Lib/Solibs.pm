@@ -26,7 +26,7 @@ our @EXPORT_OK = qw{
 
   @native_libs
   %old_libs
-  @x86_libs
+  @libs_32
 };
 
 our %EXPORT_TAGS = (
@@ -64,10 +64,10 @@ when running C<solib_check()>.
 Hashes with per-object lists of dynamically-linked files. They are used to produce the file lists
 in C<%old_libs>, and are not exported.
 
-=head2 @x86_libs
+=head2 @libs_32
 
-An array with 32-bit shared objects in the C<ldconfig(1)> cache. Used only under the
-C<x86_64> architecture, it is generated together with C<@native_libs> by C<update_known_solibs()>.
+An array with 32-bit shared objects in the C<ldconfig(1)> cache. Used only under 64-bit
+architectures, it is generated together with C<@native_libs> by C<update_known_solibs()>.
 
 =cut
 
@@ -104,14 +104,14 @@ my $rpath_type_big = "0000000f";
 
 # For checking objects.
 our @native_libs;
-our @x86_libs;
+our @libs_32;
 our %old_libs;
 our %per_cand;
 our %x86_per_cand;
 
-my $is_x86_64 = $arch =~ /64/;
+my $is_64 = $arch =~ /64/;
 my $perl_arch = $arch;
-$perl_arch = ($perl_arch =~ /86$/) ? "x86" : "arm" unless $is_x86_64;
+$perl_arch = ($perl_arch =~ /86$/) ? "x86" : "arm" unless $is_64;
 
 my %ran_solibs;
 my @check_perl;
@@ -292,7 +292,7 @@ sub elf_links {
       for my $rpath (@cand_rpaths) {
         next CANDS if -f "$rpath/$string" or -l "$rpath/$string";
       }
-      if ($is_x86_64 and $is_32) {
+      if ($is_64 and $is_32) {
         $x86_per_cand{$string} .= " $file";
       } else {
         $per_cand{$string} .= " $file";
@@ -578,7 +578,7 @@ sub solib_check {
   my (@nonexistent, @shared, @x86_shared);
   for my $file (@file_list) {
     next unless my ($elf_links, @cands) = elf_links($file);
-    if ($is_x86_64) {
+    if ($is_64) {
       push @shared, @cands if $elf_links gt 0;
       push @x86_shared, @cands if $elf_links lt 0;
     } else {
@@ -596,7 +596,7 @@ sub solib_check {
   }
   for my $cand (uniq sort @x86_shared) {
     if (@search) { next unless in $cand, @search; }
-    next if in $cand, @x86_libs;
+    next if in $cand, @libs_32;
     unless (solib_present($cand, $pkg, @file_list)) {
       push @nonexistent, "  $cand (x86):";
       for my $file (uniq sort split " ", $x86_per_cand{$cand}) { push @nonexistent, "    $file" if in $file, @file_list; }
@@ -621,8 +621,8 @@ C<solib_present()> takes the name of the shared object to be checked, the name o
 a package file and an array with probable ELF files shipped by that package. It returns 1 if
 the shared object appears to be present and 0 if it does not.
 
-Please note that the known shared object array C<@native_libs> (and C<@x86_libs> if running
-on the C<x86_64> architecture) is the main source of shared object verification.
+Please note that the known shared object array C<@native_libs> (and C<@libs_32> if running
+on a 64-bit architecture) is the main source of shared object verification.
 C<solib_present()> is called after this first verification step fails. Shared objects
 that are neither shipped nor created as symlinks by the package can be missed.
 
@@ -661,7 +661,7 @@ sub solib_present {
 
 C<update_known_solibs()> takes no arguments. It uses the C<--print-cache> option of
 C<ldconfig(1)> to generate an array of existent known shared objects, C<@native_libs>. On
-C<x86_64> systems, it generates C<@x86_libs> as well, an array with 32-bit shared objects.
+64-bit systems, it generates C<@libs_32> as well, an array with 32-bit shared objects.
 
 The C<initialize_*()> subroutines for the additional package tests are called at this time.
 
@@ -671,7 +671,7 @@ The script exits in case of C<ldcdonfig> failure. There is no useful return valu
 
 sub update_known_solibs {
   undef @native_libs;
-  undef @x86_libs;
+  undef @libs_32;
   %ran_solibs = ();
   splice @py_installed;
   splice @py_missing;
@@ -685,11 +685,14 @@ sub update_known_solibs {
     next unless $line =~ m/^\s/;
     my @item = split " ", $line;
     next unless -f $item[-1] or -l $item[-1];
-    unless ($is_x86_64) {
+    unless ($is_64) {
       push @native_libs, $item[0];
     } else {
-      push @native_libs, $item[0] if $line =~ m/\(libc6,x86-64(\)|, )/;
-      push @x86_libs, $item[0] if $line =~ m/\(libc6(\)|, )/;
+      if ($line =~ m/\(libc6,[\S].+64(\)|, )/) {
+        push @native_libs, $item[0];
+      } else {
+        push @libs_32, $item[0];
+      }
     }
   }
 }
