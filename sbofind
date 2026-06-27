@@ -161,7 +161,7 @@ sub perform_search {
 			push @findings, {name => $_, location => $location, local => $local} if $maintainer =~ $search_desc_re;
 		} else {
 			if ($use_tags and in $_, @names) {
-				push @findings, {name => $_, $location, $local};
+				push @findings, {name => $_, location => $location, local => $local};
 				next;
 			}
 			if ($_ =~ $search_name_re) {
