@@ -327,7 +327,7 @@ sub get_requires {
   my $location = get_sbo_location($sbo);
   return undef unless $location;
   my $targ = "REQUIRES";
-  if ($arch eq "x86_64") {
+  if ($arch =~ /64$/) {
     $targ = $sbo =~ m/-compat32$/ ? "REQUIRES_C32" :
     (check_x32($location) ? "REQUIRES_X32" : $targ);
   }

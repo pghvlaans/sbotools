@@ -223,11 +223,11 @@ sub do_slackbuild {
         (undef) x 2, _ERR_NOCONVERTPKG;
     }
   } else {
-    if ($arch eq 'x86_64') {
+    if ($arch =~ /64$/) {
       $x32 = check_x32 $args{LOCATION};
       if ($x32 && ! $multilib) {
         my $warn =
-          "$sbo is 32-bit, which requires multilib on x86_64.";
+          "$sbo is 32-bit, which requires multilib on 64-bit architecture.";
         return $warn, (undef) x 2, _ERR_NOMULTILIB;
       }
     }

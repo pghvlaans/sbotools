@@ -35,7 +35,9 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
     * Do not use unless your repository does not remove outdated scripts.
     * Thanks to gbschenkel for raising this issue.
   * sboremove: Offer to remove installed dependencies of uninstalled packages.
-  * Solibs.pm: Make solib testing compatible with 64-bit ARM.
+  * SBO::Lib: AArch64 compatibility fixes.
+    * Shared object checks
+    * Handling for scripts supporting only 64- or 32-bit architecture
 
 #### 4.2 - 2026-06-12
   * sbocutleaves: A new tool for managing leaves, i.e. packages without installed reverse dependencies.

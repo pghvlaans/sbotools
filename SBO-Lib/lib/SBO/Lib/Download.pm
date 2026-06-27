@@ -286,7 +286,7 @@ sub get_sbo_downloads {
   my $location = $args{LOCATION};
   -d $location or script_error('get_sbo_downloads was given a non-directory.');
   my $dl_info;
-  if ($arch eq 'x86_64') {
+  if ($arch =~ /64$/) {
     $dl_info = get_download_info(LOCATION => $location) unless $args{32};
   }
   unless (keys %$dl_info > 0) {
