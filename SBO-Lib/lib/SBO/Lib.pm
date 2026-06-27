@@ -42,7 +42,7 @@ the build process from setting the queue through post-build cleaning.
 
 =head2 SBO::Lib::Download
 
-C<Download.pm> downloads, verifies and symlinks any needed source files before building the
+C<Download.pm> downloads, verifies and hardlinks any needed source files before building the
 queue begins.
 
 =head2 SBO::Lib::Help
