@@ -8,7 +8,7 @@
     * Do not use unless your repository does not remove outdated scripts.
     * Thanks to gbschenkel for raising this issue.
   * *sboremove*: Offer to remove installed dependencies of uninstalled packages.
-  * *SBO::Lib*: AArch64 compatibility fixes.
+  * *SBO::Lib*: `AArch64` compatibility fixes.
     * Shared object checks
     * Handling for scripts supporting only 64- or 32-bit architecture
 
