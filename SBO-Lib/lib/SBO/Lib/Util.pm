@@ -739,7 +739,7 @@ sub get_slack_version {
     close $fh;
     $version = ($line =~ /\s+(\d+[^\s]+)$/)[0];
   }
-  usage_error("\n$version is no longer supported. Use sbotools-4.0.1.\n" .
+  usage_error("\n$version is no longer supported. Use sbotools-4.0.2.\n" .
     "Alternatively, set SLACKWARE_VERSION to 15.0 or greater.") if $version =~ /^14\./;
   usage_error("\nThe running or configured Slackware version is unsupported: $version\n" .
     "Consider running \"sboconfig -r $supported{current}\" to use a repository for -current.")
