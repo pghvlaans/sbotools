@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree build_cmp get_all_available get_available_updates get_installed_packages get_removed_builds get_obsolete script_error open_fh in is_local is_obsolete show_version get_local_outdated_versions on_blacklist open_read series_check solib_check $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors %old_libs %config /;
+use SBO::Lib qw/ update_tree build_cmp get_all_available get_available_updates get_installed_packages get_removed_builds get_obsolete script_error open_fh in is_local is_obsolete show_version get_local_outdated_versions on_blacklist open_read series_check solib_check $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors $match_mode %old_libs %config /;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 use File::Basename;
 use List::Util 'max';
@@ -41,6 +41,8 @@ Options:
     check one or more packages for missing shared objects.
   -g|--gpg-verify:
     perform gpg verification.
+  -L|--lib-search:
+    a comma-separated list of libraries to search as dependencies.
   -O|--obsolete-check:
     download updated obsolete script list and perl version history.
   -n|--nopull:
@@ -58,15 +60,15 @@ EOF
 
 my $line_needed = 1;
 
-my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $pkg_check, $full_check, $nowrap, $wrap, $solibs, $perl, $python, $ruby, $type, @types);
+my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $pkg_check, $full_check, $nowrap, $wrap, $solibs, $perl, $python, $ruby, $type, @types, $lib_search);
 
 my @valid_types = ("solibs", "perl", "python", "ruby");
 
-my $options_ok = GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'nowrap' => \$nowrap, 'wrap' => \$wrap, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check, 't|type=s' => \$type);
+my $options_ok = GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'nowrap' => \$nowrap, 'wrap' => \$wrap, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check, 't|type=s' => \$type, 'L|lib-search=s' => \$lib_search);
 
 if ($help) {
 	show_usage();
-	wrapsay "\nNon-root users can call $self with -C -c, -n, -t, -X, -h and -v." unless $< == 0;
+	wrapsay "\nNon-root users can call $self with -C, -c, -L, -n, -t, -X, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
@@ -77,6 +79,8 @@ unless ($options_ok) {
 	show_usage();
 	usage_error "\nOne or more invalid options detected.";
 }
+
+usage_error "--type and --lib-search are incompatible with each other." if $type and $lib_search;
 
 if ($type) {
 	$socheck = ($socheck or $pkg_check or $full_check) ? $socheck : 1;
@@ -94,14 +98,25 @@ $python = in "python", @types;
 $ruby = in "ruby", @types;
 $solibs = in "solibs", @types;
 
-unless ($< == 0 or ($nopull and not $gpg) or $socheck or $pkg_check or $full_check) {
+my @lib_search;
+if ($lib_search) {
+	$match_mode = 1;
+	@lib_search = split ",", $lib_search;
+	usage_error "--lib-check requires a list of libraries." unless @lib_search;
+}
+
+unless ($< == 0 or ($nopull and not $gpg) or $socheck or $pkg_check or $full_check or $match_mode) {
 	show_usage();
-	usage_error "Non-root users can call $self with -C, -c, -n, -t, -X, -h and -v." unless $< == 0;
+	usage_error "Non-root users can call $self with -C, -c, -L, -n, -t, -X, -h and -v." unless $< == 0;
 }
 
 usage_error "obsolete-check is incompatible with nopull." if $nopull and $obsolete_check;
 usage_error "so-check, check-all-packages and check-package are incompatible with each other." if ($socheck and $pkg_check) or ($socheck and $full_check) or ($pkg_check and $full_check);
 usage_error "pkg-check requires a list of packages." if $pkg_check and not @ARGV;
+
+if ($match_mode and not ($pkg_check or $full_check or $socheck)) {
+	$full_check = 1;
+}
 
 lint_sbo_config($self, %config);
 
@@ -185,7 +200,7 @@ sub evaluate_series {
 sub evaluate_solibs {
 	my (@actionable, @to_rebuild);
 	my $count = 0;
-	my $msg = "Checking packages for missing shared objects...";
+	my $msg = !$lib_search ? "Checking packages for missing shared objects..." : "Checking for library dependencies...";
 	print "\n" if $pkg_check or $socheck or $full_check;
 	print $msg;
 	return unless $pkg_count;
@@ -196,11 +211,33 @@ sub evaluate_solibs {
 		}
 		$count++;
 		print "\r$msg ($count / $pkg_count)";
-		push @actionable, $sbo unless solib_check($installed_pkg->{$sbo});
+		push @actionable, $sbo unless solib_check($installed_pkg->{$sbo}, @lib_search);
 	}
 	$| = 0;
-	print "\nChecked for missing objects.      ";
+	if ($lib_search) {
+		print "\nChecked for dependencies.         ";
+	} else {
+		print "\nChecked for missing objects.      ";
+	}
 	if (@actionable) {
+		if ($match_mode) {
+			my $print_line;
+			for my $lib (sort @lib_search) {
+				push @to_rebuild, "" if $print_line;
+				my $found;
+				push @to_rebuild, "$lib:";
+				for my $sbo (sort @actionable) {
+					if ($old_libs{$installed_pkg->{$sbo}} =~ /$lib(:| \(x86\))/) {
+						push @to_rebuild, "  $sbo $installed_vers->{$sbo}";
+						$found = 1;
+					}
+				}
+				push @to_rebuild, "  (none)" unless $found;
+				$print_line = 1;
+			}
+			push @to_rebuild, "";
+			push @to_rebuild, "FILE DETAILS\n";
+		}
 		for my $sbo (sort @actionable) { push @to_rebuild, "$sbo $installed_vers->{$sbo}:\n$old_libs{$installed_pkg->{$sbo}}"; }
 	}
 	return @to_rebuild;
@@ -378,6 +415,7 @@ sub print_output {
 	if($logfile eq '/var/log/sbocheck-bumps.log') { $message="\tNo build numbers differ."; }
 	if($logfile eq '/var/log/sbocheck-out-of-tree.log') { $message="\tNo out-of-tree _SBo builds."; }
 	if($logfile =~ /solibs/) { $message="\tNo missing shared objects."; }
+	if($logfile =~ /lib-search/) { $message="\tNo dependent packages."; }
 	if($logfile =~ /perl/) {
 		print "Checked for perl incompatibility.";
 		$message="\tNo perl-incompatible packages.";
@@ -393,15 +431,31 @@ sub print_output {
 	if (@listing) {
 		if ($config{CLASSIC} ne "TRUE" and ($< == 0 or $non_root_write)) { print_color $color_notice; print "\tSee $logfile.\n\n"; print_color $color_default; }
 		else { print "\n\n"; }
-		if ($logfile =~ /solibs/) {
+		if ($logfile =~ /(solibs|lib-search)/) {
 			$line_needed = 1;
 			for my $listing (@listing) {
 				my $print_line = (split "\n", $listing)[0];
-				$print_line =~ s/\:$//;
-				say $print_line;
+				if (defined $print_line) {
+					last if $print_line =~ /FILE DETAILS/ and $match_mode;
+					$print_line =~ s/\:$// unless $match_mode;
+					say $print_line;
+				} else {
+					say "";
+				}
 			}
-			wrapsay_color $color_lesser, "\nBinary repackages generally do not require rebuilds.";
-			wrapsay_color $color_lesser, "Run as root and see /var/log/sbocheck-solibs.log for a breakdown of missing shared objects." if $< != 0 and not $non_root_write;
+			if ($match_mode) {
+				wrapsay_color $color_notice, "See $logfile for a breakdown of dependent files by package." unless $< != 0 and not $non_root_write;
+			} else {
+				wrapsay_color $color_lesser, "\nBinary repackages generally do not require rebuilds.";
+			}
+			if ($< != 0 and not $non_root_write) {
+				my $log_base = basename $logfile;
+				if ($match_mode) {
+					wrapsay_color $color_lesser, "Run as root and see /var/log/$log_base for a breakdown of dependent files.";
+				} else {
+					wrapsay_color $color_lesser, "Run as root and see /var/log/$log_base for a breakdown of missing shared objects." if $< != 0 and not $non_root_write;
+				}
+			}
 		} elsif ($logfile =~ /perl/) {
 				wrapsay_color $color_lesser, "Built against the wrong major perl version:";
 				print "\n";
@@ -456,7 +510,8 @@ unless ($socheck or $pkg_check or $full_check or $perl or $python or $ruby) {
 }
 if ($solibs and ($socheck or ($config{SO_CHECK} eq "TRUE" and not ($perl or $python or $ruby)) or $pkg_check or $full_check)) {
 	my @to_rebuild = evaluate_solibs();
-	my $check_log = $< == 0 ? '/var/log/sbocheck-solibs.log' : '/tmp/sbocheck-solibs.log';
+	my $log_base = $match_mode ? "sbocheck-lib-search.log" : "sbocheck-solibs.log";
+	my $check_log = $< == 0 ? "/var/log/$log_base" : "/tmp/$log_base";
 	print_output($check_log, @to_rebuild);
 }
 if ($perl or $python or $ruby or $auto_series) {

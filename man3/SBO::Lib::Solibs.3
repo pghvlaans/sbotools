@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Solibs 3"
-.TH SBO::Lib::Solibs 3 "Pungenday, Confusion 32, 3192 YOLD" "" "sbotools 4.2"
+.TH SBO::Lib::Solibs 3 "Pungenday, Confusion 47, 3192 YOLD" "" "sbotools 4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -72,6 +72,11 @@ SBO::Lib::Solibs \- Routines for evaluating ELF binaries and checking compatibil
 .Ve
 .SH VARIABLES
 .IX Header "VARIABLES"
+.ie n .SS $match_mode
+.el .SS \f(CW$match_mode\fP
+.IX Subsection "$match_mode"
+A variable indicating that the user is interested in files and packages depending on one or
+more libraries. It is set when the \f(CW\*(C`\-\-lib\-search\*(C'\fR flag is in use for \f(CWsbocheck(1)\fR.
 .ie n .SS @native_libs
 .el .SS \f(CW@native_libs\fP
 .IX Subsection "@native_libs"
@@ -182,6 +187,9 @@ The subroutine returns an array with results for the checks in alphabetical orde
 object names to search, and checks for the presence of any required first\-order shared
 object dependencies as based on the \f(CW@native_libs\fR shared object array. It returns 1 if
 all required shared objects appear to be present and 0 otherwise.
+.PP
+If \f(CW$match_mode\fR is set, \f(CWsolib_check()\fR instead returns 0 if any file in the package
+has a first\-order dependency on a library named by the user, present or not.
 .PP
 Because \f(CWelf_links()\fR is called, performance is cache\-dependent. It is best to call
 \&\f(CWsolib_check()\fR judiciously.

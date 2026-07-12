@@ -18,7 +18,7 @@ _sbosnap() {
 
   case "${cmd}" in
     sbosnap)
-      opts="-h -v -C -c -g -n -t -O -X --help --version --color --nocolor --wrap --nowrap --gpg-verify --obsolete-check --nopull --so-check --check-package --check-all-packages --type"
+      opts="-h -v -C -c -g -n -t -L -O -X --help --version --color --nocolor --wrap --nowrap --gpg-verify --obsolete-check --nopull --so-check --check-package --check-all-packages --type --lib-search"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0

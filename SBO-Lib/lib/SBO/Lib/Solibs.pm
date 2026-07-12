@@ -24,6 +24,7 @@ our @EXPORT_OK = qw{
   solib_check
   update_known_solibs
 
+  $match_mode
   @native_libs
   %old_libs
   @libs_32
@@ -46,6 +47,11 @@ SBO::Lib::Solibs - Routines for evaluating ELF binaries and checking compatibili
   use SBO::Lib::Solibs qw/ solib_check /;
 
 =head1 VARIABLES
+
+=head2 $match_mode
+
+A variable indicating that the user is interested in files and packages depending on one or
+more libraries. It is set when the C<--lib-search> flag is in use for C<sbocheck(1)>.
 
 =head2 @native_libs
 
@@ -108,6 +114,8 @@ our @libs_32;
 our %old_libs;
 our %per_cand;
 our %x86_per_cand;
+
+our $match_mode;
 
 my $is_64 = $arch =~ /64/;
 my $perl_arch = $arch;
@@ -289,8 +297,10 @@ sub elf_links {
       push @cand_rpaths, split ":", $string;
     } else {
       next CANDS unless $string =~ m/\.so(|\.\d+(|\.\d+(|\.\d+)))$/;
-      for my $rpath (@cand_rpaths) {
-        next CANDS if -f "$rpath/$string" or -l "$rpath/$string";
+      unless ($match_mode) {
+        for my $rpath (@cand_rpaths) {
+          next CANDS if -f "$rpath/$string" or -l "$rpath/$string";
+        }
       }
       if ($is_64 and $is_32) {
         $x86_per_cand{$string} .= " $file";
@@ -553,6 +563,9 @@ object names to search, and checks for the presence of any required first-order 
 object dependencies as based on the C<@native_libs> shared object array. It returns 1 if
 all required shared objects appear to be present and 0 otherwise.
 
+If C<$match_mode> is set, C<solib_check()> instead returns 0 if any file in the package
+has a first-order dependency on a library named by the user, present or not.
+
 Because C<elf_links()> is called, performance is cache-dependent. It is best to call
 C<solib_check()> judiciously.
 
@@ -588,16 +601,16 @@ sub solib_check {
   return 1 unless @shared or @x86_shared;
   for my $cand (uniq sort @shared) {
     if (@search) { next unless in $cand, @search; }
-    next if in $cand, @native_libs;
-    unless (solib_present($cand, $pkg, @file_list)) {
+    next if not $match_mode and in $cand, @native_libs;
+    unless (not $match_mode and solib_present($cand, $pkg, @file_list)) {
       push @nonexistent, "  $cand:";
       for my $file (uniq sort split " ", $per_cand{$cand}) { push @nonexistent, "    $file" if in $file, @file_list; }
     }
   }
   for my $cand (uniq sort @x86_shared) {
     if (@search) { next unless in $cand, @search; }
-    next if in $cand, @libs_32;
-    unless (solib_present($cand, $pkg, @file_list)) {
+    next if not $match_mode and in $cand, @libs_32;
+    unless (not $match_mode and solib_present($cand, $pkg, @file_list)) {
       push @nonexistent, "  $cand (x86):";
       for my $file (uniq sort split " ", $x86_per_cand{$cand}) { push @nonexistent, "    $file" if in $file, @file_list; }
     }

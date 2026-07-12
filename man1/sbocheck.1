@@ -13,6 +13,8 @@ sbocheck [-h|-v]
 .P
 sbocheck [-COXgn] [-t all,perl,python,ruby,solibs]
 .P
+sbocheck [-COXgn] [-L lib1,lib2,...]
+.P
 sbocheck [-c] package [package]
 .P
 sbocheck [--color|--nocolor] [--wrap|--nowrap] ...
@@ -307,6 +309,36 @@ FALSE\fR\
 .RE
 .P
 .B
+-L|--lib-search
+.RS
+Search for packages and files with first-order dependencies on one or more libraries
+in a comma-separated list. See
+.I
+/var/log/sbocheck-lib-search.log
+if running as root (or
+.I
+/tmp/sbocheck-lib-search
+otherwise) for a detailed breakdown of dependent files in each package.
+.P
+Use in conjunction with
+.B
+--check-all-packages\fR\
+\&,
+.B
+--check-package
+or
+.B
+--so-check
+to specify packages to check; if none of these options is enabled, search all packages
+on the system.
+.P
+Incompatible with
+.B
+--type\fR\
+\&.
+.RE
+.P
+.B
 -O|--obsolete-check
 .RS
 If running Slackware -current, download a copy of the obsolete script list
@@ -360,6 +392,11 @@ solibs
 .B
 --type
 runs this test.
+.P
+Incompatible with
+.B
+--lib-search\fR\
+\&.
 .P
 .B
 perl

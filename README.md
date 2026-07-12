@@ -38,6 +38,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * SBO::Lib: AArch64 compatibility fixes.
     * Shared object checks
     * Handling for scripts supporting only 64- or 32-bit architecture
+  * sbocheck: Search for files and packages depending on one or more libraries with --lib-search
 
 #### 4.2 - 2026-06-12
   * sbocutleaves: A new tool for managing leaves, i.e. packages without installed reverse dependencies.

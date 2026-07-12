@@ -12,6 +12,7 @@ _arguments \
     '(-)'{-n,--nopull}'[Check for updates without updating the tree.]:' \
     '(-)'{-X,--so-check}'[Check all _SBo packages for missing shared objects only.]:' \
     '(-)'{-t,--type}'[Choose package check types (comma-separated): solibs (default), perl, python, ruby, all]:'\
+    '(-)'{-L,--lib-search}'[Supply a comma-separated list of libraries to check packages for first-order dependencies.]:'\
     '--nocolor[Disable sbotools color output.]:'\
     '--color[Enable sbotools color output.]:'\
     '--nowrap[Disable sbotools word wrapping.]:'\

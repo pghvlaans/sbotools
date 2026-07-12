@@ -23,6 +23,8 @@ checks
 
     sbocheck [-COXgn] [-t all,perl,python,ruby,solibs]
 
+    sbocheck [-COXgn] [-L lib1,lib2,\...]
+
     sbocheck [-c] package [package]
 
     sbocheck [--color|--nocolor] [--wrap|--nowrap] \...
@@ -110,6 +112,20 @@ Use **gpg(1)** to verify the fetched repository, even if **GPG_VERIFY**
 is **FALSE**. When called with **\--nopull**, verify the repo without
 fetching.
 
+**-L\|\--lib-search**
+
+Search for packages and files with first-order dependencies on one or
+more libraries in a comma-separated list. See
+*/var/log/sbocheck-lib-search.log* if running as root (or
+*/tmp/sbocheck-lib-search* otherwise) for a detailed breakdown of
+dependent files in each package.
+
+Use in conjunction with **\--check-all-packages**, **\--check-package**
+or **\--so-check** to specify packages to check; if none of these
+options is enabled, search all packages on the system.
+
+Incompatible with **\--type**.
+
 **-O\|\--obsolete-check**
 
 If running Slackware -current, download a copy of the obsolete script
@@ -132,6 +148,8 @@ list. Supported checks include:
 
 **solibs** - The default option; using a package checking option without
 **\--type** runs this test.
+
+Incompatible with **\--lib-search**.
 
 **perl** - Check for incompatible perl-based shared objects and binaries
 based on timestamps. In addition to the currently-installed system
