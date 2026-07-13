@@ -155,8 +155,6 @@ list. Supported checks include:
 **solibs** - The default option; using a package checking option without
 **\--type** runs this test.
 
-Incompatible with **\--lib-search**.
-
 **perl** - Check for incompatible perl-based shared objects and binaries
 based on timestamps. In addition to the currently-installed system
 **perl** package, the first build dates for major **perl** versions on
@@ -176,6 +174,8 @@ wrong major version, e.g. **python-3.12**. Results are saved to
 
 Using **\--type** without another package checking option checks all
 installed *\_SBo* packages.
+
+Incompatible with **\--lib-search**.
 
 **-X\|\--so-check**
 
