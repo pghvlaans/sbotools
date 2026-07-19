@@ -12,6 +12,9 @@
     * Shared object checks
     * Handling for scripts supporting only 64- or 32-bit architecture
   * *sbocheck*: Search for files and packages depending on one or more libraries with **\--lib-search**
+  * *Info.pm*: Account for leading spaces in info files
+  * *Info.pm*: Deal with potential pattern match warning in x64 and x32 checks
+    * Thanks to leoctrl for the report.
 
 * 4.2 - 2026-06-12
   * *sbocutleaves*: A new tool for managing leaves, i.e. packages without installed reverse dependencies.
