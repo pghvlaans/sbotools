@@ -72,6 +72,7 @@ sub check_x32 {
   script_error('check_x32 requires an argument.') unless @_ == 1;
   my $location = shift;
   my $dl = get_from_info(LOCATION => $location, GET => 'DOWNLOAD_x86_64');
+  return 0 unless defined $dl;
   return $$dl[0] =~ /UN(SUPPOR|TES)TED/ ? 1 : 0;
 }
 
@@ -89,6 +90,7 @@ sub check_x64 {
   script_error('check_x64 requires an argument.') unless @_ == 1;
   my $location = shift;
   my $dl = get_from_info(LOCATION => $location, GET => 'DOWNLOAD');
+  return 0 unless defined $dl;
   return $$dl[0] =~ /UN(SUPPOR|TES)TED/ ? 1 : 0;
 }
 
@@ -131,7 +133,7 @@ sub fix_info {
   $info_str =~ s/(?<=[^\\\"])\n(?=\s)/\\\n/g;
   # Fix missing terminal quotation marks
   $info_str =~ s/(?<=[^\\\"])\n(?=[A-Z])/\"\n/g;
-  # Fix missing initial quotation marks
+  # Fix missing initial quotation marks and initial whitespace
   my @fields = qw{
         PRGNAM
         VERSION
@@ -144,7 +146,10 @@ sub fix_info {
         MAINTAINER
         EMAIL
   };
-  for my $field (@fields) { $info_str =~ s/(?<=$field)=(?=[^\"])/=\"/g; }
+  for my $field (@fields) {
+    $info_str =~ s/(?<=$field)=(?=[^\"])/=\"/g;
+    $info_str =~ s/[\s].+$field/$field/g;
+  }
   # Anything that follows a terminal quote and doesn't start KEY="VALUE" is unwanted
   $info_str =~ s/\"\n[^=\"]+(\\|\")\n/\"\n/g;
   # And the start of the file
