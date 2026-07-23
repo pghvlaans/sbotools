@@ -23,7 +23,9 @@ checks
 
     sbocheck [-COXgn] [-t all,perl,python,ruby,solibs]
 
-    sbocheck [-c] package [package]
+    sbocheck [-COXgn] [-L lib1,lib2,\...]
+
+    sbocheck [-c] package [package] [-t \... |-L \...]
 
     sbocheck [--color|--nocolor] [--wrap|--nowrap] \...
 
@@ -68,6 +70,11 @@ tests to run in a comma-separated list. The supported values are
 currently **solibs** (default for no specification), **perl**,
 **python**, **ruby** and **all**.
 
+**sbocheck** can also perform library searches. Pass a comma-separated
+list of library names with **\--lib-search** to generate a list of
+packages with first-order dependencies on each one. See the **OPTIONS**
+section for more details.
+
 To check for updated SlackBuilds without updating the SlackBuilds tree,
 pass the **\--nopull** option. **sbocheck** performs **gpg(1)**
 verification upon pulling the tree if **GPG_VERIFY** is **TRUE** (see
@@ -80,11 +87,12 @@ in **sbotools-3.3**, is a compatibility symlink to **sbocheck**.
 
 Non-root users can only call **sbocheck** with the **\--nopull**,
 **\--so-check**, **\--check-package**, **\--check-all-packages**,
-**\--type**, **\--help** and **\--version** flags. **sbocheck** issues a
-warning if the directory specified with **LOCAL_OVERRIDES** does not
-exist (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). If an invalid
-configuration is detected in */etc/sbotools/sbotools.conf*, the script
-exits with a diagnostic message.
+**\--lib-search**, **\--type**, **\--help** and **\--version** flags.
+**sbocheck** issues a warning if the directory specified with
+**LOCAL_OVERRIDES** does not exist (see [sboconfig(1)](sboconfig.1.md) or
+[sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
+message.
 
 ## OPTIONS
 
@@ -109,6 +117,20 @@ and **\--check-all-packages**. **solibs** are checked by default; use
 Use **gpg(1)** to verify the fetched repository, even if **GPG_VERIFY**
 is **FALSE**. When called with **\--nopull**, verify the repo without
 fetching.
+
+**-L\|\--lib-search**
+
+Search for packages and files with first-order dependencies on one or
+more libraries in a comma-separated list. See
+*/var/log/sbocheck-lib-search.log* if running as root (or
+*/tmp/sbocheck-lib-search* otherwise) for a detailed breakdown of
+dependent files in each package.
+
+Use in conjunction with **\--check-all-packages**, **\--check-package**
+or **\--so-check** to specify packages to check; if none of these
+options is specified, search all packages on the system.
+
+Incompatible with **\--type**.
 
 **-O\|\--obsolete-check**
 
@@ -152,6 +174,8 @@ wrong major version, e.g. **python-3.12**. Results are saved to
 
 Using **\--type** without another package checking option checks all
 installed *\_SBo* packages.
+
+Incompatible with **\--lib-search**.
 
 **-X\|\--so-check**
 

@@ -22,7 +22,9 @@ a given name or names
 
     sbofind [-h|-v]
 
-    sbofind [-AEFRTdeiqrt] search_term (search_term)
+    sbofind [-AEFRTeiqrt] [-d] search_term (search_term)
+
+    sbofind [-AEFRTeiqrt] [-M] search_term (search_term)
 
     sbofind [--color|--nocolor] [--wrap|--nowrap] \...
 
@@ -54,6 +56,8 @@ found.
 
 Search for SlackBuilds by short description in addition to name and tag.
 
+Incompatible with **\--maintainers**.
+
 **-E\|\--exact-case**
 
 Exact matching only (case-sensitive).
@@ -66,6 +70,12 @@ Exact matching only (case-insensitive).
 
 Show all first-level reverse dependencies in the repository for each
 SlackBuild found.
+
+**-M\|\--maintainers**
+
+Search for SlackBuilds by maintainer.
+
+Incompatible with **\--descriptions**.
 
 **-t\|\--no-tags**
 
