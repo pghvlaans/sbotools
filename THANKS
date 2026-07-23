@@ -62,6 +62,7 @@ fourtysixandtwo (feedback about the overzealous 'missing' script prompt;
                  suggested the sbocheck python test)
 fsLeg (fixed bash completion for sbocheck)
 Geremias (originally reported the info parse bug before version 3.3)
+gbschenkel (pointed out the need for FORCE_OBSOLETE)
 hackedhead (requested installation templates and sboupgrade --all)
 iluvatar1 (reported an .info parse bug)
 januscan (requested strict version-up)

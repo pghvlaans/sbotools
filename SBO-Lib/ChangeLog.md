@@ -1,6 +1,6 @@
 # sbotools
 
-#### Post-Release
+#### 4.2.1 - 2026-07-23
   * sbofind: Show maintainer names unless in CLASSIC mode; search names with --maintainers.
   * sbotool: Show maintainer names in the per-script Operations screens.
   * Download.pm: Ignore content_disposition settings in wgetrc.

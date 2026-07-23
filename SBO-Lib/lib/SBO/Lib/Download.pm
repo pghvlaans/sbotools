@@ -6,7 +6,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '4.2';
+our $VERSION = '4.2.1';
 
 use SBO::Lib::Util qw/ :colors :config :const :times script_error error_code get_sbo_from_loc check_distfiles_dir open_read wrapsay_color /;
 use SBO::Lib::Info qw/ get_download_info /;

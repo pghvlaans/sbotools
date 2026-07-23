@@ -26,7 +26,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 **sbotools** currently supports Slackware 15.0 and beyond. For Slackware 14.0, 14.1 and 14.2, install `sbotools-4.0.2` at the latest. See the **sbotools** [downloads](https://pghvlaans.github.io/sbotools/downloads/) page.
 
 ## Most Recent Changes
-#### Post-Release
+#### 4.2.1 - 2026-07-23
   * sbofind: Show maintainer names unless in CLASSIC mode; search names with --maintainers.
   * sbotool: Show maintainer names in the per-script Operations screens.
   * Download.pm: Ignore content_disposition settings in wgetrc.
@@ -68,22 +68,6 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
     * Thanks to dchmelik and shamefulCake1 for the feedback about managing manual downloads.
   * sboclean: Do not follow symlinks
   * sbofind: Do not show obsolete scripts in --queue output for -current
-
-#### 4.1.4 - 2026-05-06
-  * sbofind: Do not match "No tags found" in TAGS.txt
-  * contrib: SCerovec shared a Debian-like sbotool theme
-  * Allow for SlackBuilds without specified downloads
-    * Thanks to SCerovec for the suggestion.
-  * sbotool: Improve Settings menu readability
-    * Thanks to SCerovec for the feedback.
-  * More maintainable next-Slackware-version handling
-  * Repo.pm: Display the mirror URL and branch when downloading
-    * Thanks to fsLeg for the suggestion.
-  * Added a setting NONET to block network access when running SlackBuilds
-  * sboupgrade: Added --all-plus-failures
-    * Thanks to dchmelik for the suggestion.
-  * Added a hint for sboupgrade to ignore test failures for a script
-  * sbohints: Fixed the long-form --replace-optional flag
 
 ## Previous Changes
 See [ChangeLog.md](https://github.com/pghvlaans/sbotools/blob/master/SBO-Lib/ChangeLog.md) for a record of changes from version 1.9 onward.
