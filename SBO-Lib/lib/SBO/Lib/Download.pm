@@ -339,11 +339,14 @@ sub prepare_staging {
 =head2 stage
 
   stage($location, $distfiles);
+  stage($location, "NO_DISTFILES");
 
 C<stage()> takes a location and a hash of distfiles to create the staging directory for
 a build; the SlackBuild directory is copied over and hardlinks to the required source
 files are created. It returns the location of the staging directory if it can be created
 and 0 otherwise.
+
+If the second argument is the string C<NO_DISTFILES> (appropriate for no-download builds and failed downloads), copy the SlackBuild directory only.
 
 The script exits if the C<distfiles> directory is malformed or the source file or directory
 is a symlink.
@@ -355,19 +358,23 @@ sub stage {
   script_error('stage must be run by root.') unless $< == 0;
   check_distfiles_dir();
   my ($location, $distfiles) = @_;
-  my @sources;
-  push @sources, dirname $distfiles->{$_} for keys %$distfiles;
-  find { wanted => sub { error_code("Symlink found at $File::Find::name. Please remove it and try again.", _ERR_SBO_HOME) if -l; },
-         no_chdir => 1,
-         follow => 0 }, @sources if @sources;
+  unless ($distfiles eq "NO_DISTFILES") {
+    my @sources;
+    push @sources, dirname $distfiles->{$_} for keys %$distfiles;
+    find { wanted => sub { error_code("Symlink found at $File::Find::name. Please remove it and try again.", _ERR_SBO_HOME) if -l; },
+           no_chdir => 1,
+           follow => 0 }, @sources if @sources;
+  }
   $stage_dir = tempdir(DIR => $distfiles_dir, TEMPLATE => "XXXXXX");
   my $staging = "$stage_dir/" . basename $location;
   dircopy $location, $staging or return 0;
-  for my $link (keys %$distfiles) {
-    my $source = $distfiles->{$link};
-    my $file = "$staging/" . basename $source;
-    unlink $file;
-    link $source, $file;
+  unless ($distfiles eq "NO_DISTFILES") {
+    for my $link (keys %$distfiles) {
+      my $source = $distfiles->{$link};
+      my $file = "$staging/" . basename $source;
+      unlink $file;
+      link $source, $file;
+    }
   }
   return $staging;
 }

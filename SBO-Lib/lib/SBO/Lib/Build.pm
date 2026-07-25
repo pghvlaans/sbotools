@@ -762,7 +762,11 @@ sub process_sbos {
     my ($temp_distfiles, $exit) = check_distfiles(
       LOCATION => $$locs{$sbo}, COMPAT32 => $compat32
     );
-    push @distfiles, $temp_distfiles;
+    if ($exit or not $temp_distfiles) {
+      push @distfiles, "NO_DISTFILES";
+    } else {
+      push @distfiles, $temp_distfiles;
+    }
     # if $exit is defined, prompt to proceed or return with last $exit
     if ($exit) {
       $err = $exit;

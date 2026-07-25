@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Download 3"
-.TH SBO::Lib::Download 3 "Prickle-Prickle, Confusion 58, 3192 YOLD" "" "sbotools 4.2.1"
+.TH SBO::Lib::Download 3 "Sweetmorn, Confusion 60, 3192 YOLD" "" "sbotools 4.2.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -150,14 +150,17 @@ returns the destination path for linking the file.
 \&\f(CW%downloads\fR for use during the build in a staging directory.
 .SS stage
 .IX Subsection "stage"
-.Vb 1
+.Vb 2
 \&  stage($location, $distfiles);
+\&  stage($location, "NO_DISTFILES");
 .Ve
 .PP
 \&\f(CWstage()\fR takes a location and a hash of distfiles to create the staging directory for
 a build; the SlackBuild directory is copied over and hardlinks to the required source
 files are created. It returns the location of the staging directory if it can be created
 and 0 otherwise.
+.PP
+If the second argument is the string \f(CW\*(C`NO_DISTFILES\*(C'\fR (appropriate for no\-download builds and failed downloads), copy the SlackBuild directory only.
 .PP
 The script exits if the \f(CW\*(C`distfiles\*(C'\fR directory is malformed or the source file or directory
 is a symlink.
