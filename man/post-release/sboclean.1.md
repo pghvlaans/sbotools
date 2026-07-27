@@ -52,10 +52,10 @@ message.
 
 **-d\|\--dist**
 
-Clean source archives, located at */usr/sbo/distfiles* by default. Files
-stored in *SBO_HOME/distfiles/manual* are unaffected. **sboclean**
-leaves bare files and non-md5-designated directories under *distfiles*
-untouched.
+Clean source archives, located at */var/lib/sbotools/distfiles* by
+default. Files stored in *SBO_HOME/distfiles/manual* are unaffected.
+**sboclean** leaves bare files and non-md5-designated directories under
+*distfiles* untouched.
 
 **-w\|\--work**
 

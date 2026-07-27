@@ -78,9 +78,10 @@ for any remotely modern terminal.
 A copy of the **SlackBuilds.org** repository must be fetched when using
 **sbotools** for the first time, or when the **sbotools** directory has
 been changed. Run **sbotool** as root and select the **Fetch
-Repository** option. The local repository is saved to */usr/sbo/repo* by
-default; the default upstream is the **SlackBuilds.org GitLab** mirror,
-or the **Ponce repository** for Slackware -current.
+Repository** option. The local repository is saved to
+*/var/lib/sbotools/repo* by default; the default upstream is the
+**SlackBuilds.org GitLab** mirror, or the **Ponce repository** for
+Slackware -current.
 
 **sbotools** has a number of potentially useful configuration settings,
 including the upstream repository, git branch and location. To make

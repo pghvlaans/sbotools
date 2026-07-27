@@ -72,9 +72,9 @@ If set to an **absolute path**, use that file as *dialogrc* when running
 
 If **TRUE**, remove the package and source archives after building.
 Source archives are otherwise retained in md5sum-designated directories
-under */usr/sbo/distfiles* (with *SBO_HOME=/usr/sbo*) by default. If
-**PKG_DIR** is set, package archives are saved there regardless of
-**DISTCLEAN**.
+under */var/lib/sbotools/distfiles* (with *SBO_HOME=/var/lib/sbotools*)
+by default. If **PKG_DIR** is set, package archives are saved there
+regardless of **DISTCLEAN**.
 
 **FORCE_OBSOLETE=(FALSE\|TRUE)**
 
@@ -157,10 +157,10 @@ in Slackware -current.
 If set to a **path**, packages are stored there after installation. This
 overrides the **DISTCLEAN** setting for saved packages.
 
-**SBO_HOME=(/usr/sbo\|/path)**
+**SBO_HOME=(/var/lib/sbotools\|/path)**
 
 If set to a **path**, this is where the **SlackBuilds.org** tree is
-stored. The default setting is */usr/sbo*. The tree must be
+stored. The default setting is */var/lib/sbotools*. The tree must be
 re-downloaded with [sbocheck(1)](sbocheck.1.md) if the **SBO_HOME** setting changes.
 
 **LOCAL_OVERRIDES=(FALSE\|/path)**
