@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree build_cmp get_all_available get_available_updates get_installed_packages get_removed_builds get_obsolete script_error open_fh in is_local is_obsolete show_version get_local_outdated_versions on_blacklist open_read series_check solib_check $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors $match_mode %old_libs %config /;
+use SBO::Lib qw/ update_tree build_cmp get_all_available get_available_updates get_installed_packages get_removed_builds get_obsolete script_error open_fh in is_local is_obsolete is_orphaned show_version get_local_outdated_versions on_blacklist open_read series_check solib_check $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors $match_mode %old_libs %config /;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 use File::Basename;
 use List::Util 'max';
@@ -243,6 +243,29 @@ sub evaluate_solibs {
 	return @to_rebuild;
 }
 
+# retrieve and format list of orphaned builds upstream
+sub get_orphaned_list {
+	print "Checking for orphaned builds...";
+	my %orphans;
+	@installed = @{ get_installed_packages("SBO") };
+	for my $inst_pkg (@installed) {
+		next unless is_orphaned($inst_pkg->{name});
+		$orphans{$inst_pkg->{name}} = {
+			version => $inst_pkg->{version}
+		};
+	}
+
+	my @orphan_list;
+	foreach my $orphaned (keys %orphans) {
+		my $info = $orphans{$orphaned};
+		my $local = is_local($orphaned);
+		my $item = sprintf "%s %s%s", $orphaned, $info->{version}, $local ? " (override build)" : "";
+		push @orphan_list, $item;
+	}
+
+	return sort @orphan_list;
+}
+
 # retrieve and format list of removed builds
 sub get_removed_list {
 	print "Checking for out-of-tree builds...";
@@ -414,6 +437,7 @@ sub print_output {
 	}
 	if($logfile eq '/var/log/sbocheck-bumps.log') { $message="\tNo build numbers differ."; }
 	if($logfile eq '/var/log/sbocheck-out-of-tree.log') { $message="\tNo out-of-tree _SBo builds."; }
+	if($logfile eq '/var/log/sbocheck-orphaned.log') { $message="\tNo upstream orphans."; }
 	if($logfile =~ /solibs/) { $message="\tNo missing shared objects."; }
 	if($logfile =~ /lib-search/) { $message="\tNo dependent packages."; }
 	if($logfile =~ /perl/) {
@@ -474,6 +498,11 @@ sub print_output {
 				say $_ for @listing;
 				print "\n";
 				wrapsay_color $color_lesser, "Run as root and see /var/log/sbocheck-ruby.log to save a log." if $< != 0 and not $non_root_write;
+		} elsif ($logfile =~ /orphaned/) {
+				say $_ for @listing;
+				print "\n";
+				wrapsay_color $color_warn, "Orphaned builds are subject to removal upstream.";
+				print "\n";
 		} else {
 			say $_ for @listing;
 			print "\n";
@@ -506,6 +535,8 @@ unless ($socheck or $pkg_check or $full_check or $perl or $python or $ruby) {
 		print_output('/var/log/sbocheck-bumps.log', @bumps);
 		my @removed = get_removed_list();
 		print_output('/var/log/sbocheck-out-of-tree.log', @removed);
+		my @orphaned = get_orphaned_list();
+		print_output('/var/log/sbocheck-orphaned.log', @orphaned);
 	}
 }
 if ($solibs and ($socheck or ($config{SO_CHECK} eq "TRUE" and not ($perl or $python or $ruby)) or $pkg_check or $full_check)) {

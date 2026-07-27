@@ -66,6 +66,7 @@ Geremias (originally reported the info parse bug before version 3.3)
 gbschenkel (pointed out the need for FORCE_OBSOLETE)
 hackedhead (requested installation templates and sboupgrade --all)
 iluvatar1 (reported an .info parse bug)
+J. Milgram (proposed the sbocheck orphaned builds report)
 januscan (requested strict version-up)
 jonasdemoor (requested download beavior documentation)
 leoctrl (reported sbofind case insensitivity, and the EOL build options,

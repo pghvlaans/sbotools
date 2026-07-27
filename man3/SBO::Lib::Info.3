@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Info 3"
-.TH SBO::Lib::Info 3 "Prickle-Prickle, Confusion 58, 3192 YOLD" "" "sbotools 4.2.1"
+.TH SBO::Lib::Info 3 "Pungenday, Confusion 62, 3192 YOLD" "" "sbotools 4.2.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -181,6 +181,15 @@ be a list of all installed scripts.
 .PP
 \&\f(CWget_sbo_version()\fR returns the version found in the info file in
 \&\f(CW$location\fR.
+.SS is_orphaned
+.IX Subsection "is_orphaned"
+.Vb 1
+\&  my $bool = is_orphaned($sbo)
+.Ve
+.PP
+\&\f(CWis_orphaned()\fR checks whether the given \f(CW$sbo\fR (or, for \f(CW\*(C`compat32\*(C'\fR, the base script)
+has been marked as an orphaned build upstream. The return value is true if it is, and false
+if it is not.
 .SS ineligible_compat
 .IX Subsection "ineligible_compat"
 .Vb 1

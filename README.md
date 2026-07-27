@@ -31,6 +31,9 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
     * Thanks to fsLeg for the report.
   * Change the default SBO_HOME to /var/lib/sbotools.
     * Thanks to fourtysixandtwo for raising the issue.
+  * sbocheck: Unless in CLASSIC mode, report any SlackBuilds orphaned upstream.
+    * Thanks to J. Milgram for the proposal.
+  * sbofind, sbotool: Show a removal warning when orphaned builds are displayed.
 
 #### 4.2.1 - 2026-07-23
   * sbofind: Show maintainer names unless in CLASSIC mode; search names with --maintainers.

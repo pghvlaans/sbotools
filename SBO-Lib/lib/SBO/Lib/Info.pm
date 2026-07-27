@@ -30,6 +30,7 @@ our @EXPORT_OK = qw{
   get_sbo_build_number
   get_sbo_version
   ineligible_compat
+  is_orphaned
   parse_info
 };
 
@@ -409,6 +410,27 @@ sub get_sbo_version {
   script_error('get_sbo_version requires an argument.') unless @_ == 1;
   my $version = get_from_info(LOCATION => shift, GET => 'VERSION');
   return $version->[0];
+}
+
+=head2 is_orphaned
+
+  my $bool = is_orphaned($sbo)
+
+C<is_orphaned()> checks whether the given C<$sbo> (or, for C<compat32>, the base script)
+has been marked as an orphaned build upstream. The return value is true if it is, and false
+if it is not.
+
+=cut
+
+sub is_orphaned {
+  script_erorr('is_orphaned requires an argument.') unless @_ == 1;
+  my $sbo = shift;
+  my $orig_location = get_orig_location($sbo);
+  my $location = $orig_location ? $orig_location : get_sbo_location($sbo);
+  return 0 unless $location;
+  my $maintainer = join " ", @{get_from_info(LOCATION => $location, GET => 'MAINTAINER')};
+  return 0 unless $maintainer;
+  return $maintainer eq "orphaned - no maintainer";
 }
 
 =head2 ineligible_compat

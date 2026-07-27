@@ -60,7 +60,8 @@ sboconfig(1)
 or
 .B
 sbotools.conf(5)\fR\
-). Except in
+). SlackBuilds that have been designated as orphaned upstream are subject
+to eventual removal and are reported as well. Except in
 .B
 CLASSIC
 mode, scripts in the report that would not be upgraded by
@@ -71,16 +72,19 @@ are listed last and marked with
 =
 (equals sign).
 .P
-The three output categories are logged separately to
+The four output categories are logged separately to
 .I
 /var/log/sbocheck.log\fR\
 \&,
 .I
-/var/log/sbocheck-bumps.log
+/var/log/sbocheck-bumps.log\fR\
+\&,
+.I
+/var/log/sbocheck-out-of-tree.log
 and
 .I
-/var/log/sbocheck-out-of-tree.log\fR\
-\&. The out-of-tree and build number increment checks are disabled
+/var/log/sbocheck-orphaned.log\fR\
+\&. The out-of-tree, build number increment and orphaned build checks are disabled
 when
 .B
 CLASSIC

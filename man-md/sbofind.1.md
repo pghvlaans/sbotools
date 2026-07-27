@@ -34,10 +34,14 @@ a given name or names
 
 **sbofind** searches the names of all available SlackBuilds for one or
 more search terms. It reports any SlackBuilds found along with path,
-version, installation status information and a short description. Use
-the **\--descriptions** option to search descriptions as well. If the
-repository includes a *TAGS.txt* file, these tags are searched to
-generate additional results.
+version, maintainer, installation status information and a short
+description. Use the **\--descriptions** option to search descriptions
+as well. If the repository includes a *TAGS.txt* file, these tags are
+searched to generate additional results.
+
+SlackBuilds that have been designated as orphaned upstream are subject
+to future removal; orphaned builds are marked with a warning to that
+effect.
 
 **sbofind** issues a warning if the directory specified with
 **LOCAL_OVERRIDES** does not exist (see [sboconfig(1)](sboconfig.1.md) or

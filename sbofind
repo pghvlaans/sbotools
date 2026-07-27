@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local is_obsolete merge_obsolete on_blacklist build_cmp version_cmp :colors %config $slackbuilds_txt $repo_path @last_level_reverse @reverse_concluded $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay usage_error $descriptions_generated /;
+use SBO::Lib qw/ slackbuilds_or_fetch slurp script_error open_read get_all_available get_build_queue get_installed_cpans get_installed_packages get_full_reverse get_reverse_reqs get_sbo_build_number get_sbo_description get_sbo_location get_sbo_version is_local is_obsolete is_orphaned merge_obsolete on_blacklist build_cmp version_cmp :colors %config $slackbuilds_txt $repo_path @last_level_reverse @reverse_concluded $is_sbotest show_version in indent get_from_info uniq lint_sbo_config wrapsay usage_error $descriptions_generated /;
 use Cwd;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
@@ -361,7 +361,10 @@ SEARCH: for my $search (@ARGV) {
 			wrapsay_color $color_lesser, "        CPAN, file(s) missing" if in $name, @defective_cpans;
 			say "Path:   $location";
 			say "Desc:   $description" if defined $description;
-			say "Maint:  $maintainer" if defined $maintainer;
+			if (defined $maintainer) {
+				say "Maint:  $maintainer";
+				wrapsay_color $color_warn, "        Orphaned upstream and may be removed." if is_orphaned($name);
+			}
 			say "info:   ". get_file_contents("$location/$name.info") if $show_info;
 			say "README: ". get_file_contents("$location/README") if $show_readme;
 			say "Queue:  ". show_build_queue($name) if $show_queue;
