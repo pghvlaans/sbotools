@@ -74,11 +74,12 @@ not replaced.
 Each test target has a separate testing workflow. **sbotest** attempts
 to minimize package installations and removals during the test run when
 ordering the testing queue. First, dependencies saved to the
-**SBO_ARCHIVE** directory (default */usr/sbotest/archive*) are installed
-to save time; see **CONFIGURATION** below for details. Any missing users
-and groups are added, and [sboinstall(1)](sboinstall.1.md) is called. All packages are
-built in an environment that is as clean as possible, with only
-previously-installed packages and additional dependencies on the system.
+**SBO_ARCHIVE** directory (default */var/lib/sbotest/archive*) are
+installed to save time; see **CONFIGURATION** below for details. Any
+missing users and groups are added, and [sboinstall(1)](sboinstall.1.md) is called. All
+packages are built in an environment that is as clean as possible, with
+only previously-installed packages and additional dependencies on the
+system.
 
 Newly-built packages are saved to a timestamp-appended **PKG_DIR**. By
 default, any dependencies (not test targets) built are saved to
@@ -142,7 +143,7 @@ Fetch the upstream repository to *SBO_HOME/repo*. Flags other than
 **\--archive-rebuild**
 
 Replace build- and version-mismatched packages in the archive,
-*/usr/sbotest/archive* by default. Please note that installed and
+*/var/lib/sbotest/archive* by default. Please note that installed and
 blacklisted packages are ignored. If **STRICT_UPGRADES** is **TRUE**,
 only mismatched packages with lower version or build numbers are removed
 from the archive.
@@ -169,8 +170,8 @@ If an **absolute path**, use that as the archive directory.
 **\--archive-force**
 
 When testing the requested scripts, copy all built packages into
-**SBO_ARCHIVE**, */usr/sbotest/archive* by default. This includes even
-requested scripts and their reverse dependencies.
+**SBO_ARCHIVE**, */var/lib/sbotest/archive* by default. This includes
+even requested scripts and their reverse dependencies.
 
 Incompatible with **\--archive-rebuild**, **\--archive-reverse** and
 **\-\--no-archive**.
@@ -207,9 +208,9 @@ If **numeric**, pass to **make** with the **-j** flag.
 
 If **FALSE**, use the default package directory of
 *SBO_HOME/tests/(timestamp)-tests*, e.g.
-*/usr/sbotest/tests/2025-08-28-20:59-tests*. If an **absolute path**,
-save packages built during the test run a timestamp-designated directory
-under that path.
+*/var/lib/sbotest/tests/2025-08-28-20:59-tests*. If an **absolute
+path**, save packages built during the test run a timestamp-designated
+directory under that path.
 
 **-l\|\--log-dir**
 
@@ -314,7 +315,7 @@ scripts that perform downloads so that the user can be warned in the
 *README* file.
 
 Reusing built packages in future test runs saves time and resources. The
-default archive directory is */usr/sbotest/archive*; packages stored
+default archive directory is */var/lib/sbotest/archive*; packages stored
 here are reinstalled in lieu of building when needed, provided they are
 up-to-date. During an **sbotest** run, all built dependencies are
 archived by default. To archive all built packages (including testing
@@ -356,14 +357,14 @@ whether they have been installed from the CPAN.
 
 **SBO_HOME**
 
-The default value is */usr/sbotest*.
+The default value is */var/lib/sbotest*.
 
 **PKG_DIR**
 
 The default value is *SBO_HOME/tests*. Unless an **absolute path** is
 specified, packages built during the test run are saved to a
 timestamp-designated directory under that path, e.g.
-*/usr/sbotest/tests/2025-08-28-20:59-tests*.
+*/var/lib/sbotest/tests/2025-08-28-20:59-tests*.
 
 **LOG_DIR**
 

@@ -3,6 +3,7 @@
 #### Post-Release
   * Compatibility bump
   * Document the manual download directory and symlink
+  * Document the new **SBO_HOME** default of `/var/lib/sbotest`, etc.
 
 #### 1.2.2 - 2026-05-06
   * Account for the new **NONET** setting
