@@ -245,7 +245,7 @@ sub evaluate_solibs {
 
 # retrieve and format list of orphaned builds upstream
 sub get_orphaned_list {
-	print "Checking for orphaned builds...";
+	print "Checking for orphaned SlackBuilds...";
 	my %orphans;
 	@installed = @{ get_installed_packages("SBO") };
 	for my $inst_pkg (@installed) {
