@@ -61,18 +61,18 @@ The location of all variables depends on the C<SBO_HOME> config setting.
 
 =head2 $gpg_log
 
-C<$gpg_log> defaults to C</usr/sbo/gpg.log>, and it is where the output
+C<$gpg_log> defaults to C</var/lib/sbotools/gpg.log>, and it is where the output
 of the most recent C<gnupg> verification for the repository is kept. Other
-C<gnupg> logs are saved under C</usr/sbo/file_name_here.asc.log>.
+C<gnupg> logs are saved under C</var/lib/sbotools/file_name_here.asc.log>.
 
 =head2 $repo_path
 
-C<$repo_path> defaults to C</usr/sbo/repo>, and it is where the
+C<$repo_path> defaults to C</var/lib/sbotools/repo>, and it is where the
 SlackBuilds.org tree is kept.
 
 =head2 $slackbuilds_txt
 
-C<$slackbuilds_txt> defaults to C</usr/sbo/repo/SLACKBUILDS.TXT>. It is
+C<$slackbuilds_txt> defaults to C</var/lib/sbotools/repo/SLACKBUILDS.TXT>. It is
 included in the official rsync repos, but not the git mirrors.
 If this file exists, is non-empty and C<$repo_path> has an identical top-level
 directory structure to the SlackBuilds.org tree, pulling into an existent

@@ -94,7 +94,7 @@ SKIP: {
 	skip "Not doing online tests", 2 unless $ENV{TEST_ONLINE};
 
 	sboinstall 'failingdownload', { input => "y\ny\nn", expected => qr!Failures:\n  failingdownload: Unable to wget http://pink-mist[.]github[.]io/sbotools/testing/perf[.]dummy[.]fail[.]\n!, exit => 5 };
-	sboinstall 'failingmd5sum', { input => "y\ny\nn", expected => qr!Failures:\n  failingmd5sum: md5sum failure for /usr/sbo/distfiles/perf[.]dummy[.]\n!, exit => 4 };
+	sboinstall 'failingmd5sum', { input => "y\ny\nn", expected => qr!Failures:\n  failingmd5sum: md5sum failure for /var/lib/sbotools/distfiles/perf[.]dummy[.]\n!, exit => 4 };
 }
 
 # 4: Failing dependency
@@ -105,7 +105,7 @@ SKIP: {
 	skip "Not doing online tests", 2 unless $ENV{TEST_ONLINE};
 
 	sboinstall 'nonexistentslackbuild3', { input => "y\ny\ny\nn", expected => qr!Failures:\n  failingdownload: Unable to wget http://pink-mist[.]github[.]io/sbotools/testing/perf[.]dummy[.]fail[.]\n!, exit => 5 };
-	sboinstall 'nonexistentslackbuild4', { input => "y\ny\ny\nn", expected => qr!Failures:\n  failingmd5sum: md5sum failure for /usr/sbo/distfiles/perf[.]dummy[.]\n!, exit => 4 };
+	sboinstall 'nonexistentslackbuild4', { input => "y\ny\ny\nn", expected => qr!Failures:\n  failingmd5sum: md5sum failure for /var/lib/sbotools/distfiles/perf[.]dummy[.]\n!, exit => 4 };
 }
 
 # 7: Failing build with working dep

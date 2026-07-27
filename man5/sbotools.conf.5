@@ -161,10 +161,10 @@ TRUE\fR\
 \&, remove the package and source archives after building. Source
 archives are otherwise retained in md5sum-designated directories under
 .I
-/usr/sbo/distfiles
+/var/lib/sbotools/distfiles
 (with
 .I
-SBO_HOME=/usr/sbo\fR\
+SBO_HOME=/var/lib/sbotools\fR\
 \&)
 by default. If
 .B
@@ -398,7 +398,7 @@ setting for saved packages.
 .RE
 .P
 .B
-SBO_HOME=(/usr/sbo|/path)
+SBO_HOME=(/var/lib/sbotools|/path)
 .RS
 If set to a
 .B
@@ -408,7 +408,7 @@ path\fR\
 SlackBuilds.org
 tree is stored. The default setting is
 .I
-/usr/sbo\fR\
+/var/lib/sbotools\fR\
 \&. The tree must be re-downloaded with
 .B
 sbocheck(1)

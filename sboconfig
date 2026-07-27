@@ -76,7 +76,7 @@ Configuration options (defaults shown):
       CPAN_IGNORE: install scripts even if they are installed from the CPAN.
   -p|--pkg-dir FALSE:
       PKG_DIR: set a directory to store packages in.
-  -s|--sbo-home /usr/sbo:
+  -s|--sbo-home /var/lib/sbotools:
       SBO_HOME: set the SBo directory.
   -O|--obsolete-check FALSE:
       OBSOLETE_CHECK: -current: sbocheck gets obsolete list and perl history.
@@ -118,7 +118,7 @@ Options:
     restore the default configuration.
 
 Configuration options (defaults shown):
-  -A|--sbo-archive /usr/sbotest/archive:
+  -A|--sbo-archive /var/lib/sbotest/archive:
       SBO_ARCHIVE: the directory for package reuse.
   -B|--branch FALSE:
       GIT_BRANCH: git branch to use, or FALSE for the OS version default.
@@ -138,15 +138,15 @@ Configuration options (defaults shown):
       JOBS: numeric -j setting to feed to make for multicore systems.
   -K|--color FALSE:
       COLOR: if TRUE, enable sbotools color output.
-  -L|--log-dir /usr/sbotest/logs:
+  -L|--log-dir /var/lib/sbotest/logs:
       LOG_DIR: if an absolute path, save a log file here after each build.
   -N|--nonet FALSE:
       NONET: if TRUE, do not allow network access when running SlackBuilds.
   -P|--cpan-ignore TRUE:
       CPAN_IGNORE: install scripts even if they are installed from the CPAN.
-  -p|--pkg-dir /usr/sbotest/tests:
+  -p|--pkg-dir /var/lib/sbotest/tests:
       PKG_DIR: set a directory to store packages in.
-  -s|--sbo-home /usr/sbotest:
+  -s|--sbo-home /var/lib/sbotest:
       SBO_HOME: set the SBo directory.
   -O|--obsolete-check FALSE:
       OBSOLETE_CHECK: -current: sbocheck gets obsolete list and perl history.
@@ -261,13 +261,13 @@ if (exists $options{list}) {
 	if (exists $options{'non-default'} and not $is_sbotest) {
 		for my $item (@keys) {
 			next if $config{$item} eq 'FALSE';
-			next if $item eq 'SBO_HOME' and $config{$item} eq '/usr/sbo';
+			next if $item eq 'SBO_HOME' and $config{$item} eq '/var/lib/sbotools';
 			say "$label -$params{$item}:\n    $item=$config{$item}";
 		}
 	} elsif (exists $options{'non-default'} and $is_sbotest) {
 		for my $item (@keys) {
 			if ($item eq 'ETC_PROFILE' or $item eq 'CPAN_IGNORE') { next if $config{$item} eq 'TRUE'; }
-			if ($item eq 'SBO_HOME') { next if $config{$item} eq 'FALSE' or $config{$item} eq '/usr/sbotest'; }
+			if ($item eq 'SBO_HOME') { next if $config{$item} eq 'FALSE' or $config{$item} eq '/var/lib/sbotest'; }
 			if ($item eq 'SBO_ARCHIVE') { next if $config{$item} eq 'FALSE' or $config{$item} eq "$config{'SBO_HOME'}/archive"; }
 			if ($item eq 'PKG_DIR') { next if $config{$item} eq 'FALSE' or $config{$item} eq "$config{'SBO_HOME'}/tests"; }
 			if ($item eq 'LOG_DIR') { next if $config{$item} eq 'FALSE' or $config{$item} eq "$config{'SBO_HOME'}/logs"; }
@@ -300,12 +300,12 @@ for my $key (keys %valid_confs) {
 		$changes{$value} = $options{$key} if exists $options{$key};
 	}
 }
-$changes{'SBO_HOME'} = '/usr/sbo' if exists $options{reset};
+$changes{'SBO_HOME'} = '/var/lib/sbotools' if exists $options{reset};
 if (exists $options{reset} and $is_sbotest) {
-	$changes{'SBO_HOME'} =  '/usr/sbotest';
-	$changes{'PKG_DIR'} = '/usr/sbotest/tests';
-	$changes{'LOG_DIR'} = '/usr/sbotest/logs';
-	$changes{'SBO_ARCHIVE'} = '/usr/sbotest/archive';
+	$changes{'SBO_HOME'} =  '/var/lib/sbotest';
+	$changes{'PKG_DIR'} = '/var/lib/sbotest/tests';
+	$changes{'LOG_DIR'} = '/var/lib/sbotest/logs';
+	$changes{'SBO_ARCHIVE'} = '/var/lib/sbotest/archive';
 	$changes{'ETC_PROFILE'} = 'TRUE';
 	$changes{'CPAN_IGNORE'} = 'TRUE';
 }
@@ -343,14 +343,14 @@ sub config_write {
 		my $comment = '';
 		unless ($is_sbotest) {
 			$comment = '#' if $val eq 'FALSE';
-			$comment = '#' if $key eq 'SBO_HOME' and $val eq '/usr/sbo';
+			$comment = '#' if $key eq 'SBO_HOME' and $val eq '/var/lib/sbotools';
 		} else {
 			$comment = '#' if $key ne 'ETC_PROFILE' and $key ne 'CPAN_IGNORE' and $val eq 'FALSE';
 			$comment = '#' if ($key eq 'ETC_PROFILE' or $key eq 'CPAN_IGNORE') and $val eq 'TRUE';
-			$comment = '#' if $key eq 'SBO_HOME' and $val eq '/usr/sbotest';
-			$comment = '#' if $key eq 'PKG_DIR' and $val eq '/usr/sbotest/tests';
-			$comment = '#' if $key eq 'LOG_DIR' and $val eq '/usr/sbotest/logs';
-			$comment = '#' if $key eq 'SBO_ARCHIVE' and $val eq '/usr/sbotest/archive';
+			$comment = '#' if $key eq 'SBO_HOME' and $val eq '/var/lib/sbotest';
+			$comment = '#' if $key eq 'PKG_DIR' and $val eq '/var/lib/sbotest/tests';
+			$comment = '#' if $key eq 'LOG_DIR' and $val eq '/var/lib/sbotest/logs';
+			$comment = '#' if $key eq 'SBO_ARCHIVE' and $val eq '/var/lib/sbotest/archive';
 		}
 
 		if ($conf =~ /^#(\s*)\Q$key\E=/m) {

@@ -58,9 +58,9 @@ my $sbt = 0;
 my $repo = 0;
 sub set_repo {
 	_set_config('REPO', @_);
-	if (-e "/usr/sbo/repo" and not $repo) {
+	if (-e "/var/lib/sbotools/repo" and not $repo) {
 		$repo = 1;
-		rename '/usr/sbo/repo', "$RealBin/repo.backup";
+		rename '/var/lib/sbotools/repo', "$RealBin/repo.backup";
 
 		# if $sbt is true, the SLACKBUILDS.TXT has been created by
 		# make_slackbuilds_txt and should not be backed up
@@ -100,20 +100,20 @@ sub _set_config {
 	}
 }
 
-my $sbtn = "/usr/sbo/repo/SLACKBUILDS.TXT";
+my $sbtn = "/var/lib/sbotools/repo/SLACKBUILDS.TXT";
 sub make_slackbuilds_txt {
-	if (not -e $sbtn) { $sbt = 1; system('mkdir', '-p', '/usr/sbo/repo'); system('touch', $sbtn); }
+	if (not -e $sbtn) { $sbt = 1; system('mkdir', '-p', '/var/lib/sbotools/repo'); system('touch', $sbtn); }
 }
 
 sub restore_perf_dummy {
-	if (!-e '/usr/sbo/distfiles/perf.dummy') {
-		system('mkdir', '-p', '/usr/sbo/distfiles');
-		system('cp', "$RealBin/travis-deps/perf.dummy", '/usr/sbo/distfiles');
+	if (!-e '/var/lib/sbotools/distfiles/perf.dummy') {
+		system('mkdir', '-p', '/var/lib/sbotools/distfiles');
+		system('cp', "$RealBin/travis-deps/perf.dummy", '/var/lib/sbotools/distfiles');
 	}
 }
 
 my $tags = 0;
-my $tags_txt = '/usr/sbo/repo/TAGS.txt';
+my $tags_txt = '/var/lib/sbotools/repo/TAGS.txt';
 sub replace_tags_txt {
 	if (-e $tags_txt) {
 		if (! $tags) {
@@ -124,7 +124,7 @@ sub replace_tags_txt {
 		$tags = 1 if $tags == 0;
 	}
 
-	system('mkdir', '-p', '/usr/sbo/repo');
+	system('mkdir', '-p', '/var/lib/sbotools/repo');
 	open my $fh, '>', $tags_txt;
 	print $fh $_ for @_;
 	close $fh;
@@ -139,8 +139,8 @@ END {
 		system(qw!rm -rf!, $sbtn);
 	}
 	if ($repo) {
-		system(qw! rm -rf /usr/sbo/repo !);
-		rename "$RealBin/repo.backup", "/usr/sbo/repo";
+		system(qw! rm -rf /var/lib/sbotools/repo !);
+		rename "$RealBin/repo.backup", "/var/lib/sbotools/repo";
 	}
 	if ($tags) {
 		system(qw!rm -rf !, $tags_txt);

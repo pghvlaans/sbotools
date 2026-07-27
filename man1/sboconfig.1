@@ -16,7 +16,7 @@ sboconfig [-l|-n]
 sboconfig [--reset]
 .P
 sboconfig [-CKFNOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo /path|FALSE] \\
-          [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \\
+          [-s /path|/var/lib/sbotools] [-B branch_name|FALSE] [-V #.#|FALSE] \\
           [-r url|FALSE]
 .SH DESCRIPTION
 .P
@@ -285,7 +285,7 @@ TRUE\fR\
 \&, remove the package and source archives after building. Source
 archives are otherwise retained in md5sum-designated directories under
 .I
-/usr/sbo/distfiles
+/var/lib/sbotools/distfiles
 (with default
 .B
 SBO_HOME\fR\
@@ -503,7 +503,7 @@ setting for saved packages.
 .RE
 .P
 .B
--s|--sbo-home (/usr/sbo|/path)
+-s|--sbo-home (/var/lib/sbotools|/path)
 .RS
 .B
 SBO_HOME\fR\
@@ -515,7 +515,7 @@ path\fR\
 SlackBuilds.org
 tree is stored. The default setting is
 .I
-/usr/sbo\fR\
+/var/lib/sbotools\fR\
 \&. The tree must be re-downloaded if the
 .B
 SBO_HOME
@@ -709,7 +709,7 @@ sbotest config\fR\
 .RS
 Defaults to
 .I
-/usr/sbotest/archive\fR\
+/var/lib/sbotest/archive\fR\
 \&. This setting is specific to
 .B
 sbotest\fR\
@@ -730,7 +730,7 @@ TRUE\fR\
 .RS
 Defaults to
 .I
-/usr/sbotest/logs\fR\
+/var/lib/sbotest/logs\fR\
 \&.
 .RE
 .P
@@ -748,7 +748,7 @@ TRUE\fR\
 .RS
 Defaults to
 .I
-/usr/sbotest/tests\fR\
+/var/lib/sbotest/tests\fR\
 \&.
 .RE
 .P
@@ -757,7 +757,7 @@ Defaults to
 .RS
 Defaults to
 .I
-/usr/sbotest\fR\
+/var/lib/sbotest\fR\
 \&.
 .RE
 .P

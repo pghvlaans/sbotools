@@ -40,13 +40,13 @@ sub cleanup {
 cleanup();
 make_slackbuilds_txt();
 set_lo("$RealBin/LO");
-system("mv /usr/sbo/repo/* /usr/sbo");
+system("mv /var/lib/sbotools/repo/* /var/lib/sbotools");
 restore_perf_dummy();
 
 # 1-3: sboinstall nonexistentslackbuild
 sboinstall 'nonexistentslackbuild', { input => "y\ny", expected => qr/nonexistentslackbuild added to install queue.*Install queue: nonexistentslackbuild/s };
 ok (! -e "$RealBin/LO/nonexistentslackbuild/perf.dummy", "Source symlink removed");
-ok (-e "/usr/sbo/repo/SLACKBUILDS.TXT", "SLACKBUILDS.TXT has been migrated back to its proper place");
+ok (-e "/var/lib/sbotools/repo/SLACKBUILDS.TXT", "SLACKBUILDS.TXT has been migrated back to its proper place");
 sboremove 'nonexistentslackbuild', { input => "y\ny", test => 0 };
 
 # 4: sboinstall nonexistentslackbuild2

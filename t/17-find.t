@@ -60,36 +60,36 @@ set_repo("file://$tempdir");
 set_lo('FALSE');
 sbocheck, { test => 0, note => 1 };
 
-sbofind 'nonexistentslackbuild', { expected => qr!\Q/usr/sbo/repo/test/nonexistentslackbuild! };
+sbofind 'nonexistentslackbuild', { expected => qr!\Q/var/lib/sbotools/repo/test/nonexistentslackbuild! };
 
 replace_tags_txt("R: r\nfoo: r\nbar: rar");
 
 # 8: non-restricted search finds a lot
 sbofind qw/R/, { expected => <<"END" };
 SBo:    R 1.0
-Path:   /usr/sbo/repo/test/R
+Path:   /var/lib/sbotools/repo/test/R
 
 SBo:    foo 1.0
-Path:   /usr/sbo/repo/test/foo
+Path:   /var/lib/sbotools/repo/test/foo
 
 SBo:    bar 1.0
-Path:   /usr/sbo/repo/test/bar
+Path:   /var/lib/sbotools/repo/test/bar
 
 END
 
 # 9: checking for exact matches (including tags)
 sbofind qw/ -e R /, { expected => <<"END" };
 SBo:    R 1.0
-Path:   /usr/sbo/repo/test/R
+Path:   /var/lib/sbotools/repo/test/R
 
 SBo:    foo 1.0
-Path:   /usr/sbo/repo/test/foo
+Path:   /var/lib/sbotools/repo/test/foo
 
 END
 
 # 10: exact matches (excluding tags)
 sbofind qw/ -et R /, { expected => <<"END" };
 SBo:    R 1.0
-Path:   /usr/sbo/repo/test/R
+Path:   /var/lib/sbotools/repo/test/R
 
 END

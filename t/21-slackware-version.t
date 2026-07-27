@@ -51,7 +51,7 @@ sub set_repo {
 	state $orig;
 	if ($_[0]) {
 		if ($set) {
-			capture_merged { system(qw!rm -rf /usr/sbo/repo!); system('mv', "$RealBin/repo.backup", "/usr/sbo/repo"); } if -e "$RealBin/repo.backup";
+			capture_merged { system(qw!rm -rf /var/lib/sbotools/repo!); system('mv', "$RealBin/repo.backup", "/var/lib/sbotools/repo"); } if -e "$RealBin/repo.backup";
 			script (qw/ sboconfig -r /, $orig, { test => 0 });
 		}
 	} else {
@@ -60,7 +60,7 @@ sub set_repo {
 		note "Saving original value of REPO: $orig";
 		$set = 1;
 		script (qw/ sboconfig -r FALSE /, { test => 0 });
-		capture_merged { system(qw! mv /usr/sbo/repo !, "$RealBin/repo.backup"); } if -e "/usr/sbo/repo";
+		capture_merged { system(qw! mv /var/lib/sbotools/repo !, "$RealBin/repo.backup"); } if -e "/var/lib/sbotools/repo";
 	}
 }
 

@@ -1281,7 +1281,7 @@ sub display_settings {
 						"\"OBSOLETE_CHECK: $config{OBSOLETE_CHECK}$plus\" \"\" \"If TRUE, download the outdated script list and perl history on repo fetch.\" \\",
 						"\"PKG_DIR: $config{PKG_DIR}\" \"\" \"If a directory, save built packages there.\" \\",
 						"\"REPO: $config{REPO}\" \"\" \"Use this non-default git or rsync repository.\" \\",
-						"\"SBO_HOME: $config{SBO_HOME}\" \"\" \"Specify an sbotools directory (default /usr/sbo).\" \\",
+						"\"SBO_HOME: $config{SBO_HOME}\" \"\" \"Specify an sbotools directory (default /var/lib/sbotools).\" \\",
 						"\"SLACKWARE_VERSION: $config{SLACKWARE_VERSION}\" \"\" \"Use this Slackware version to determine the default repo.\" \\",
 						"\"SO_CHECK: $config{SO_CHECK}$plus\" \"\" \"If TRUE, do a solib/perl/python/ruby check on fetch and upgrade.\" \\",
 						"\"STRICT_UPGRADES: $config{STRICT_UPGRADES}$plus\" \"\" \"If TRUE, ignore apparent downgrades with sboupgrade.\"";
@@ -1413,7 +1413,7 @@ sub display_settings {
 			$flag = "R";
 		}
 		if ($option =~ /^SBO_HOME/) {
-			$explanation = "If a PATH, use that as the sbotools directory.\n\nThe default is /usr/sbo. /home/*, /root and / are not permitted.";
+			$explanation = "If a PATH, use that as the sbotools directory.\n\nThe default is /var/lib/sbotools. /home/*, /root and / are not permitted.";
 			$criterion = "A PATH or FALSE.";
 			$flag = "s";
 		}
@@ -1684,7 +1684,7 @@ sub edit_setting {
 		return unless $option =~ /\w/;
 		return if $option eq $original_setting or $res == $code_dialog_cancel or $res == $code_dialog_error;
 	}
-	$option = "/usr/sbo" if $flag eq "s" and $option eq "FALSE";
+	$option = "/var/lib/sbotools" if $flag eq "s" and $option eq "FALSE";
 	system("clear");
 	$res = system("/usr/sbin/sboconfig -$flag $option") == 0;
 	if ($res) {

@@ -103,10 +103,11 @@ repository must be fetched with [sbocheck(1)](sbocheck.1.md):
 
     sbocheck
 
-The local repository is saved to */usr/sbo/repo*. To use an alternative
-location, give an absolute file path to the **SBO_HOME** setting with
-[sboconfig(1)](sboconfig.1.md) or by editing */etc/sbotools/sbotools.conf*. The
-repositiory can also be fetched using **sbotool** if running as root.
+The local repository is saved to */var/lib/sbotools/repo*. To use an
+alternative location, give an absolute file path to the **SBO_HOME**
+setting with [sboconfig(1)](sboconfig.1.md) or by editing
+*/etc/sbotools/sbotools.conf*. The repositiory can also be fetched using
+**sbotool** if running as root.
 
 Along with its copy of the repository, the **SBO_HOME** directory also
 contains directories for automatic and manual file downloads at

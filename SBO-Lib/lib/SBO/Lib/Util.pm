@@ -204,7 +204,7 @@ C<$conf_file> is C</etc/sbotools/sbotools.conf> by default.
 
 All values default to C<"FALSE">, but when C<read_config()> is run,
 they change according to the configuration. C<SBO_HOME> is changed to
-C</usr/sbo> if still C<"FALSE">.
+C</var/lib/sbotools> if still C<"FALSE">.
 
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
@@ -214,7 +214,7 @@ C<DIALOGRC>, C<NONET> and C<FORCE_OBSOLETE>.
 
 =head2 $distfiles_dir
 
-C<$distfiles_dir> defaults to C</usr/sbo/distfiles>, and it is where all
+C<$distfiles_dir> defaults to C</var/lib/sbotools/distfiles>, and it is where all
 downloaded sources are kept.
 
 =head2 $download_time
@@ -1262,15 +1262,15 @@ sub prompt {
 
 C<read_config()> reads in the configuration settings from
 C</etc/sbotools/sbotools.conf>, updating the C<%config> hash. If
-C<SBO_HOME> is C<FALSE>, it changes to C</usr/sbo>.
+C<SBO_HOME> is C<FALSE>, it changes to C</var/lib/sbotools>.
 Additionally, C<BUILD_IGNORE> and C<RSYNC_DEFAULT> are turned on
 if C<CLASSIC> is C<TRUE>; C<COLOR> is turned off.
 
 When C<sbotest> is running, the default value of C<SBO_HOME>
-is C</usr/sbotest>, and C<ETC_PROFILE> and C<CPAN_IGNORE> default
+is C</var/lib/sbotest>, and C<ETC_PROFILE> and C<CPAN_IGNORE> default
 to C<TRUE>. Supplementary setting C<SBO_ARCHIVE> defaults to
-C</usr/sbotest/archive>. C<PKG_DIR> and C<LOG_DIR> default to
-C</usr/sbotest/tests> and C</usr/sbotest/logs>, respectively, but
+C</var/lib/sbotest/archive>. C<PKG_DIR> and C<LOG_DIR> default to
+C</var/lib/sbotest/tests> and C</var/lib/sbotest/logs>, respectively, but
 C<sbotest> uses timestamped directories under the configured paths.
 
 There is no useful return value.
@@ -1295,9 +1295,9 @@ sub read_config {
     $config{COLOR} = "FALSE";
   }
   unless (defined $is_sbotest) {
-    $config{SBO_HOME} = '/usr/sbo' if $config{SBO_HOME} eq 'FALSE';
+    $config{SBO_HOME} = '/var/lib/sbotools' if $config{SBO_HOME} eq 'FALSE';
   } else {
-    $config{SBO_HOME} = '/usr/sbotest' if $config{SBO_HOME} eq 'FALSE';
+    $config{SBO_HOME} = '/var/lib/sbotest' if $config{SBO_HOME} eq 'FALSE';
     $config{SBO_ARCHIVE} = "$config{SBO_HOME}/archive" if $config{SBO_ARCHIVE} eq 'FALSE';
     $config{PKG_DIR} = "$config{SBO_HOME}/tests" if $config{PKG_DIR} eq 'FALSE';
     $config{LOG_DIR} = "$config{SBO_HOME}/logs" if $config{LOG_DIR} eq 'FALSE';

@@ -55,7 +55,7 @@ END
 set_repo("$RealBin/gitrepo/");
 
 # 1: sbocheck get initial repo
-sbocheck, { expected => qr!Pulling SlackBuilds tree.*Cloning into '/usr/sbo/repo'!s };
+sbocheck, { expected => qr!Pulling SlackBuilds tree.*Cloning into '/var/lib/sbotools/repo'!s };
 
 # 2-3: check ownership of repodir if under TRAVIS
 SKIP: {
@@ -77,7 +77,7 @@ END
 sbocheck 'update', { expected => qr!Updating SlackBuilds tree.*master.*->.*origin/master.*forced update.*HEAD is now at!s };
 
 # 5: make sure test repo is merged correctly
-is (slurp('/usr/sbo/repo/test'), <<"END", 'repo test file updated correctly');
+is (slurp('/var/lib/sbotools/repo/test'), <<"END", 'repo test file updated correctly');
 echo "Hello World."
 END
 

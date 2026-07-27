@@ -18,7 +18,7 @@ if (defined $ENV{TRAVIS} and $ENV{TRAVIS} eq 'true') {
 $ENV{TEST_ONLINE} //= 0;
 
 # Since this is only run under Travis CI, we can blow away the repo without consequence
-system(qw! rm -rf /usr/sbo !);
+system(qw! rm -rf /var/lib/sbotools !);
 
 # 1-3: Test SLACKWARE_VERSION
 sboconfig qw/ -V 14.1 /, { expected => "Setting SLACKWARE_VERSION to 14.1...\n" };
@@ -26,27 +26,27 @@ SKIP: {
 	skip 'Not doing online tests without TEST_ONLINE=1', 2 if $ENV{TEST_ONLINE} ne '1';
 
 	sbocheck, { expected => qr/\APulling SlackBuilds tree\.\.\.\n/ };
-	sbofind 'sbotools', { expected => qr"SBo:    sbotools \d[.]\d\nPath:   /usr/sbo/repo/system/sbotools\n\n" };
+	sbofind 'sbotools', { expected => qr"SBo:    sbotools \d[.]\d\nPath:   /var/lib/sbotools/repo/system/sbotools\n\n" };
 }
 
 # 4-10: Test alternative REPO
-is (system(qw!rm -rf /usr/sbo!), 0, 'Removing /usr/sbo works');
-ok (! -e "/usr/sbo/repo/SLACKBUILDS.TXT", "SLACKBUILDS.TXT doesn't exist");
+is (system(qw!rm -rf /var/lib/sbotools!), 0, 'Removing /var/lib/sbotools works');
+ok (! -e "/var/lib/sbotools/repo/SLACKBUILDS.TXT", "SLACKBUILDS.TXT doesn't exist");
 sboconfig qw! -r https://github.com/Ponce/slackbuilds.git !, { expected => "Setting REPO to https://github.com/Ponce/slackbuilds.git...\n", name => 'Alternative REPO' };
 SKIP: {
 	skip 'Not doing online tests without TEST_ONLINE=1', 4 if $ENV{TEST_ONLINE} ne '1';
 
-	sbocheck, { expected => qr!Pulling SlackBuilds tree.*Cloning into '/usr/sbo/repo'!s };
-	ok (-e "/usr/sbo/repo/SLACKBUILDS.TXT", "SLACKBUILDS.TXT exists (REPO)");
-	ok (! -e "/usr/sbo/repo/SLACKBUILDS.TXT.gz", "SLACKBUILDS.TXT.gz doesn't exist (REPO)");
-	sbofind 'sbotools', { expected => qr"SBo:    sbotools .*\nPath:   /usr/sbo/repo/system/sbotools\n\n" };
+	sbocheck, { expected => qr!Pulling SlackBuilds tree.*Cloning into '/var/lib/sbotools/repo'!s };
+	ok (-e "/var/lib/sbotools/repo/SLACKBUILDS.TXT", "SLACKBUILDS.TXT exists (REPO)");
+	ok (! -e "/var/lib/sbotools/repo/SLACKBUILDS.TXT.gz", "SLACKBUILDS.TXT.gz doesn't exist (REPO)");
+	sbofind 'sbotools', { expected => qr"SBo:    sbotools .*\nPath:   /var/lib/sbotools/repo/system/sbotools\n\n" };
 }
 
 # 11-17: Test local overrides
 sboconfig '-o', "$RealBin/LO", { expected => "Setting LOCAL_OVERRIDES to $RealBin/LO...\n", name => 'LOCAL_OVERRIDES' };
 my $skip = 0;
 SKIP: {
-	if ($ENV{TEST_ONLINE} ne '1') { $skip = !(system(qw! mkdir -p /usr/sbo/repo !) == 0 and system(qw! touch /usr/sbo/repo/SLACKBUILDS.TXT !) == 0) }
+	if ($ENV{TEST_ONLINE} ne '1') { $skip = !(system(qw! mkdir -p /var/lib/sbotools/repo !) == 0 and system(qw! touch /var/lib/sbotools/repo/SLACKBUILDS.TXT !) == 0) }
 	skip "Online testing disabled (TEST_ONLINE!=1) and could not create dummy SLACKBUILDS.TXT", 9 if $skip;
 
 	sbofind 'nonexistentslackbuild', { expected => sub {

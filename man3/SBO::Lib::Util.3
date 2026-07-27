@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Prickle-Prickle, Confusion 58, 3192 YOLD" "" "sbotools 4.2.1"
+.TH SBO::Lib::Util 3 "Boomtime, Confusion 61, 3192 YOLD" "" "sbotools 4.2.1"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -107,7 +107,7 @@ environment variable \f(CW\*(C`SBOTOOLS_CONF_DIR\*(C'\fR.
 .IX Subsection "%config"
 All values default to \f(CW"FALSE"\fR, but when \f(CWread_config()\fR is run,
 they change according to the configuration. \f(CW\*(C`SBO_HOME\*(C'\fR is changed to
-\&\f(CW\*(C`/usr/sbo\*(C'\fR if still \f(CW"FALSE"\fR.
+\&\f(CW\*(C`/var/lib/sbotools\*(C'\fR if still \f(CW"FALSE"\fR.
 .PP
 The supported keys are: \f(CW\*(C`NOCLEAN\*(C'\fR, \f(CW\*(C`DISTCLEAN\*(C'\fR, \f(CW\*(C`JOBS\*(C'\fR, \f(CW\*(C`PKG_DIR\*(C'\fR,
 \&\f(CW\*(C`SBO_HOME\*(C'\fR, \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR, \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR, \f(CW\*(C`REPO\*(C'\fR, \f(CW\*(C`BUILD_IGNORE\*(C'\fR,
@@ -117,7 +117,7 @@ The supported keys are: \f(CW\*(C`NOCLEAN\*(C'\fR, \f(CW\*(C`DISTCLEAN\*(C'\fR, 
 .ie n .SS $distfiles_dir
 .el .SS \f(CW$distfiles_dir\fP
 .IX Subsection "$distfiles_dir"
-\&\f(CW$distfiles_dir\fR defaults to \f(CW\*(C`/usr/sbo/distfiles\*(C'\fR, and it is where all
+\&\f(CW$distfiles_dir\fR defaults to \f(CW\*(C`/var/lib/sbotools/distfiles\*(C'\fR, and it is where all
 downloaded sources are kept.
 .ie n .SS $download_time
 .el .SS \f(CW$download_time\fP
@@ -493,15 +493,15 @@ Output is wrapped at 72 characters.
 .PP
 \&\f(CWread_config()\fR reads in the configuration settings from
 \&\f(CW\*(C`/etc/sbotools/sbotools.conf\*(C'\fR, updating the \f(CW%config\fR hash. If
-\&\f(CW\*(C`SBO_HOME\*(C'\fR is \f(CW\*(C`FALSE\*(C'\fR, it changes to \f(CW\*(C`/usr/sbo\*(C'\fR.
+\&\f(CW\*(C`SBO_HOME\*(C'\fR is \f(CW\*(C`FALSE\*(C'\fR, it changes to \f(CW\*(C`/var/lib/sbotools\*(C'\fR.
 Additionally, \f(CW\*(C`BUILD_IGNORE\*(C'\fR and \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR are turned on
 if \f(CW\*(C`CLASSIC\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR; \f(CW\*(C`COLOR\*(C'\fR is turned off.
 .PP
 When \f(CW\*(C`sbotest\*(C'\fR is running, the default value of \f(CW\*(C`SBO_HOME\*(C'\fR
-is \f(CW\*(C`/usr/sbotest\*(C'\fR, and \f(CW\*(C`ETC_PROFILE\*(C'\fR and \f(CW\*(C`CPAN_IGNORE\*(C'\fR default
+is \f(CW\*(C`/var/lib/sbotest\*(C'\fR, and \f(CW\*(C`ETC_PROFILE\*(C'\fR and \f(CW\*(C`CPAN_IGNORE\*(C'\fR default
 to \f(CW\*(C`TRUE\*(C'\fR. Supplementary setting \f(CW\*(C`SBO_ARCHIVE\*(C'\fR defaults to
-\&\f(CW\*(C`/usr/sbotest/archive\*(C'\fR. \f(CW\*(C`PKG_DIR\*(C'\fR and \f(CW\*(C`LOG_DIR\*(C'\fR default to
-\&\f(CW\*(C`/usr/sbotest/tests\*(C'\fR and \f(CW\*(C`/usr/sbotest/logs\*(C'\fR, respectively, but
+\&\f(CW\*(C`/var/lib/sbotest/archive\*(C'\fR. \f(CW\*(C`PKG_DIR\*(C'\fR and \f(CW\*(C`LOG_DIR\*(C'\fR default to
+\&\f(CW\*(C`/var/lib/sbotest/tests\*(C'\fR and \f(CW\*(C`/var/lib/sbotest/logs\*(C'\fR, respectively, but
 \&\f(CW\*(C`sbotest\*(C'\fR uses timestamped directories under the configured paths.
 .PP
 There is no useful return value.

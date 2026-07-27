@@ -17,7 +17,7 @@ if (defined $ENV{TRAVIS} and $ENV{TRAVIS} eq 'true') {
 }
 
 # first set up the repo
-my $repo = "/usr/sbo/repo";
+my $repo = "/var/lib/sbotools/repo";
 my $moved = rename $repo, "$repo.orig";
 my $url = "$RealBin/02.2-unit-repo/";
 my $rsync_res;
@@ -43,7 +43,7 @@ if (defined $rsync_res) {
 	my $moved = rename $file, "$file.orig";
 
 	my ($exit, @ret);
-	my $out = capture_merged { $exit = exit_code { @ret = do_slackbuild(LOCATION => "/usr/sbo/repo/test/test", COMPAT32 => 1); }; };
+	my $out = capture_merged { $exit = exit_code { @ret = do_slackbuild(LOCATION => "/var/lib/sbotools/repo/test/test", COMPAT32 => 1); }; };
 
 	is ($exit, undef, "do_slackbuild() didn't exit without $file.");
 	is ($out, "", "do_slackbuild() didn't output anything without $file.");
@@ -60,7 +60,7 @@ SKIP: {
 	my $moved = rename $file, "$file.orig";
 
 	my ($exit, @ret);
-	my $out = capture_merged { $exit = exit_code { @ret = do_slackbuild(LOCATION => "/usr/sbo/repo/test/test", COMPAT32 => 1); }; };
+	my $out = capture_merged { $exit = exit_code { @ret = do_slackbuild(LOCATION => "/var/lib/sbotools/repo/test/test", COMPAT32 => 1); }; };
 
 	is ($exit, undef, "do_slackbuild() didn't exit without $file.");
 	is ($out, "", "do_slackbuild() didn't output anything without $file.");
@@ -77,7 +77,7 @@ SKIP: {
 	local *SBO::Lib::Build::check_multilib = sub { return (); };
 
 	my ($exit, @ret);
-	my $out = capture_merged { $exit = exit_code { @ret = do_slackbuild(LOCATION => "/usr/sbo/repo/test/test" ); }; };
+	my $out = capture_merged { $exit = exit_code { @ret = do_slackbuild(LOCATION => "/var/lib/sbotools/repo/test/test" ); }; };
 
 	is ($exit, undef, "do_slackbuild() didn't exit without needed multilib.");
 	is ($out, "", "do_slackbuild() didn't output anything without needed multilib.");
@@ -92,7 +92,7 @@ SKIP: {
 	local *SBO::Lib::Build::perform_sbo = sub { return 'sentinel', undef, -1 };
 
 	my ($exit, @ret);
-	my $out = capture_merged { $exit = exit_code { @ret = do_slackbuild(LOCATION => "/usr/sbo/repo/test/test" ); }; };
+	my $out = capture_merged { $exit = exit_code { @ret = do_slackbuild(LOCATION => "/var/lib/sbotools/repo/test/test" ); }; };
 
 	is ($exit, undef, "do_slackbuild() didn't exit when it's on 32bit.");
 	is ($out, "", "do_slackbuild() didn't output anything when it's on 32bit.");
@@ -104,7 +104,7 @@ SKIP: {
   no warnings 'redefine';
   local *SBO::Lib::Download::get_arch = sub { return 'i586' };
 
-  my $ret = get_sbo_downloads(LOCATION => "/usr/sbo/repo/test/test2");
+  my $ret = get_sbo_downloads(LOCATION => "/var/lib/sbotools/repo/test/test2");
 
   ok (exists $ret->{'http://pink-mist.github.io/sbotools/testing/32/perf.dummy'}, "get_sbo_downloads() returned the correct link for 32bit.")
     or diag explain $ret;

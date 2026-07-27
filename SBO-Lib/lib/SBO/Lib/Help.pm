@@ -82,9 +82,10 @@ are shown.
 1. Distfiles
 
 "Distfiles" are downloaded source files. They are stored in the
-sbotools directory (default /usr/sbo) in md5-indexed directories under
-distfiles, e.g. "/usr/sbo/distfiles/(md5)/source-1.1.tar.gz". Set the
-sbotools DISTCLEAN setting to TRUE to delete source upon building.
+sbotools directory (default /var/lib/sbotools) in md5-indexed
+directories under distfiles, e.g.
+"/var/lib/sbotools/distfiles/(md5)/source-1.1.tar.gz". Set the sbotools
+DISTCLEAN setting to TRUE to delete source upon building.
 
 2. Options
 
@@ -442,9 +443,9 @@ prompts.
 Rebuild every SBo package installed to the system, accounting for new
 dependencies, saved build options and per-script hints. If the queue
 fails for any reason, a template file named "resume.temp" is saved
-to the sbotools directory (/usr/sbo by default). sbotool offers to pick
-up the mass rebuild from the SlackBuild after the one that failed if the
-file is present.
+to the sbotools directory (/var/lib/sbotools by default). sbotool offers
+to pick up the mass rebuild from the SlackBuild after the one that
+failed if the file is present.
 
 2. Series Rebuild
 

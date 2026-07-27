@@ -27,7 +27,8 @@
 
     sboconfig [-CKFNOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo
 /path\|FALSE] \
-              [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \
+              [-s /path|/var/lib/sbotools] [-B branch_name|FALSE] [-V
+#.#\|FALSE] \
               [-r url|FALSE]
 
 ## DESCRIPTION
@@ -118,9 +119,9 @@ when running [sbotool(1)](sbotool.1.md).
 
 **DISTCLEAN**: If **TRUE**, remove the package and source archives after
 building. Source archives are otherwise retained in md5sum-designated
-directories under */usr/sbo/distfiles* (with default **SBO_HOME**). If
-**PKG_DIR** is set, package archives are saved there regardless of
-**DISTCLEAN**.
+directories under */var/lib/sbotools/distfiles* (with default
+**SBO_HOME**). If **PKG_DIR** is set, package archives are saved there
+regardless of **DISTCLEAN**.
 
 **-e\|\--etc-profile (FALSE\|TRUE)**
 
@@ -197,11 +198,12 @@ Recommended value: **TRUE**
 installation. This overrides the **DISTCLEAN** setting for saved
 packages.
 
-**-s\|\--sbo-home (/usr/sbo\|/path)**
+**-s\|\--sbo-home (/var/lib/sbotools\|/path)**
 
 **SBO_HOME**: If set to a **path**, this is where the
-**SlackBuilds.org** tree is stored. The default setting is */usr/sbo*.
-The tree must be re-downloaded if the **SBO_HOME** setting changes.
+**SlackBuilds.org** tree is stored. The default setting is
+*/var/lib/sbotools*. The tree must be re-downloaded if the **SBO_HOME**
+setting changes.
 
 **-o\|\--local-overrides (FALSE\|/path)**
 
@@ -270,7 +272,7 @@ default values change in this situation:
 
 **-A\|\--sbo-archive**
 
-Defaults to */usr/sbotest/archive*. This setting is specific to
+Defaults to */var/lib/sbotest/archive*. This setting is specific to
 **sbotest**.
 
 **-e\|\--etc-profile**
@@ -279,7 +281,7 @@ Defaults to **TRUE**.
 
 **-L\|\--log-dir**
 
-Defaults to */usr/sbotest/logs*.
+Defaults to */var/lib/sbotest/logs*.
 
 **-P\|\--cpan-ignore**
 
@@ -287,11 +289,11 @@ Defaults to **TRUE**.
 
 **-p\|\--pkg-dir**
 
-Defaults to */usr/sbotest/tests*.
+Defaults to */var/lib/sbotest/tests*.
 
 **-s\|\--sbo-home**
 
-Defaults to */usr/sbotest*.
+Defaults to */var/lib/sbotest*.
 
 Running **sbotest config** without options is ineffective.
 

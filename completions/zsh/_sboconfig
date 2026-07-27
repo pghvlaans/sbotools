@@ -26,7 +26,7 @@ _arguments \
     '(-O --obsolete-check)'{-o,--obsolete-check}'[if TRUE, then update the list of obsoleted scripts when running sbocheck on -current.]:update the obsolete script list on -current?:((TRUE\:"Download the file from the sbotools home page." FALSE\:"Retain the copy in /etc/sbotools."))' \
     '(-P --cpan-ignore)'{-P,--cpan-ignore}'[If TRUE, then install scripts even if they are installed from the CPAN.]:ignore CPAN modules?:((TRUE\:"Ignore CPAN modules" FALSE\:"Account for CPAN modules"))' \
     '(-p --pkg-dir)'{-p,--pkg-dir}'[Directory to store built packages in.]:package directory:_files -/' \
-    '(-s --sbo-home)'{-s,--sbo-home}'[Directory for SBo tree (default /usr/sbo).]:SBo home dir:_files -/' \
+    '(-s --sbo-home)'{-s,--sbo-home}'[Directory for SBo tree (default /var/lib/sbotools).]:SBo home dir:_files -/' \
     '(-o --local-overrides)'{-o,--local-overrides}'[Directory for local SlackBuild overrides.]:overrides directory:_files -/' \
     '(-V --slackware-version)'{-V,--slackware-version}'[Use SBo repo for this version (instead of /etc/slackware-version).]:Slackware version:()' \
     '(-r --repo)'{-r,--repo}'[Use git/rsync repo at URL instead of the SBo repo for your SLACKWARE_VERSION.]:repo URL:()' \

@@ -18,7 +18,7 @@ if ($ENV{TEST_INSTALL}) {
 }
 
 my $sboname = "nonexistentslackbuild";
-my $perf    = "/usr/sbo/distfiles/perf.dummy";
+my $perf    = "/var/lib/sbotools/distfiles/perf.dummy";
 sub cleanup {
 	capture_merged {
 		system('removepkg', $sboname);
@@ -92,7 +92,7 @@ sboclean '-d', { exit => 0, expected => "Nothing to do.\n" };
 }
 
 # 16: sboupgrade -c TRUE
-set_sbo_home("/usr/sbo");
+set_sbo_home("/var/lib/sbotools");
 sboinstall qw/ -r nonexistentslackbuild /, { test => 0 };
 set_lo "$RealBin/LO2";
 sboupgrade qw/ -c TRUE nonexistentslackbuild /, { input => "y\ny", test => 0 };

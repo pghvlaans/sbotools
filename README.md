@@ -29,6 +29,8 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 #### Post-Release
   * {Build,Download}.pm: Properly handle failed downloads when continuing.
     * Thanks to fsLeg for the report.
+  * Change the default SBO_HOME to /var/lib/sbotools.
+    * Thanks to fourtysixandtwo for raising the issue.
 
 #### 4.2.1 - 2026-07-23
   * sbofind: Show maintainer names unless in CLASSIC mode; search names with --maintainers.

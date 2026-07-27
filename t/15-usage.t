@@ -66,7 +66,7 @@ Config options (defaults shown):
       JOBS: numeric -j setting to feed to make for multicore systems.
   -p|--pkg-dir FALSE:
       PKG_DIR: set a directory to store packages in.
-  -s|--sbo-home /usr/sbo:
+  -s|--sbo-home /var/lib/sbotools:
       SBO_HOME: set the SBo directory.
   -o|--local-overrides FALSE:
       LOCAL_OVERRIDES: a directory containing local overrides.

@@ -85,44 +85,44 @@ is(indent(1, "foo\n\nbar"), " foo\n\n bar", 'indent(1,...) returns correctly');
 
 # 16-20: test check_repo();
 SKIP: {
-	skip 'Test invalid if no SLACKBUILDS.TXT exists.', 5 if ! -e '/usr/sbo/repo/SLACKBUILDS.TXT';
+	skip 'Test invalid if no SLACKBUILDS.TXT exists.', 5 if ! -e '/var/lib/sbotools/repo/SLACKBUILDS.TXT';
 
-	system(qw"cp /usr/sbo/repo/SLACKBUILDS.TXT /usr/sbo");
+	system(qw"cp /var/lib/sbotools/repo/SLACKBUILDS.TXT /var/lib/sbotools");
 	system(qw"rm -rf", "$RealBin/repo.backup");
-	system(qw"mv /usr/sbo/repo", "$RealBin/repo.backup");
+	system(qw"mv /var/lib/sbotools/repo", "$RealBin/repo.backup");
 
-	is (SBO::Lib::check_repo(), 1, 'check_repo() returned 1 when /usr/sbo/repo was empty');
+	is (SBO::Lib::check_repo(), 1, 'check_repo() returned 1 when /var/lib/sbotools/repo was empty');
 
-	system("mv /usr/sbo/repo/* /usr/sbo");
-	system(qw! rmdir /usr/sbo/repo !);
+	system("mv /var/lib/sbotools/repo/* /var/lib/sbotools");
+	system(qw! rmdir /var/lib/sbotools/repo !);
 
-	system(qw"rm /usr/sbo/repo/SLACKBUILDS.TXT");
-	system(qw! rmdir /usr/sbo/repo !);
+	system(qw"rm /var/lib/sbotools/repo/SLACKBUILDS.TXT");
+	system(qw! rmdir /var/lib/sbotools/repo !);
 
-	system('touch', '/usr/sbo/repo');
+	system('touch', '/var/lib/sbotools/repo');
 	my $exit;
 	my $out = capture_merged { $exit = exit_code { SBO::Lib::check_repo(); }; };
 
-	is ($out, "Unable to create /usr/sbo/repo.\n\n", 'check_repo() output is good');
+	is ($out, "Unable to create /var/lib/sbotools/repo.\n\n", 'check_repo() output is good');
 	is ($exit, 1, 'check-repo() exit code is good');
 
-	system('rm', '/usr/sbo/repo');
-	system("mv", "$RealBin/repo.backup", "/usr/sbo/repo");
+	system('rm', '/var/lib/sbotools/repo');
+	system("mv", "$RealBin/repo.backup", "/var/lib/sbotools/repo");
 }
 
 # 21-25: test check_repo();
 SKIP: {
-	skip 'Test invalid if no SLACKBUILDS.TXT exists.', 5 if ! -e '/usr/sbo/repo/SLACKBUILDS.TXT';
+	skip 'Test invalid if no SLACKBUILDS.TXT exists.', 5 if ! -e '/var/lib/sbotools/repo/SLACKBUILDS.TXT';
 
 	my $exit;
 	my $out = capture_merged { $exit = exit_code { SBO::Lib::check_repo(); }; };
 
 	is ($exit, 1, 'check_repo() exited with 1');
-	is ($out, "/usr/sbo/repo exists and is not empty. Exiting.\n\n", 'check_repo() gave correct output');
+	is ($out, "/var/lib/sbotools/repo exists and is not empty. Exiting.\n\n", 'check_repo() gave correct output');
 
 	system(qq'rm -rf "$RealBin/repo.backup"');
-	system(qq'mv /usr/sbo/repo "$RealBin/repo.backup"');
-	system(qq'mkdir /usr/sbo/repo');
+	system(qq'mv /var/lib/sbotools/repo "$RealBin/repo.backup"');
+	system(qq'mkdir /var/lib/sbotools/repo');
 
 	undef $exit;
 	my $res;
@@ -132,8 +132,8 @@ SKIP: {
 	is ($out, '', "check_repo() didn't print anything");
 	is ($res, 1, "check_repo() returned correctly");
 
-	system(qq'rmdir /usr/sbo/repo');
-	system(qq'mv "$RealBin/repo.backup" /usr/sbo/repo');
+	system(qq'rmdir /var/lib/sbotools/repo');
+	system(qq'mv "$RealBin/repo.backup" /var/lib/sbotools/repo');
 }
 
 # 26-27: test rsync_sbo_tree();
@@ -151,16 +151,16 @@ SKIP: {
 
 # 28-37: test git_sbo_tree(), check_git_remote(), generate_slackbuilds_txt(), and pull_sbo_tree();
 {
-	system(qw! mv /usr/sbo/repo /usr/sbo/backup !) if -d '/usr/sbo/repo';
-	system(qw! mkdir -p /usr/sbo/repo/.git !);
+	system(qw! mv /var/lib/sbotools/repo /var/lib/sbotools/backup !) if -d '/var/lib/sbotools/repo';
+	system(qw! mkdir -p /var/lib/sbotools/repo/.git !);
 
 	my $res;
 	capture_merged { $res = SBO::Lib::git_sbo_tree(''); };
 	is ($res, 0, q!git_sbo_tree('') returned 0!);
 
-	system(qw! rm -r /usr/sbo/repo !) if -d '/usr/sbo/repo';
-	system(qw! mkdir -p /usr/sbo/repo/.git !);
-	my ($fh) = open_fh('/usr/sbo/repo/.git/config', '>');
+	system(qw! rm -r /var/lib/sbotools/repo !) if -d '/var/lib/sbotools/repo';
+	system(qw! mkdir -p /var/lib/sbotools/repo/.git !);
+	my ($fh) = open_fh('/var/lib/sbotools/repo/.git/config', '>');
 	print $fh qq'[remote "origin"]\n'; print $fh "foo=bar\n"; print $fh "url=\n";
 	close $fh;
 
@@ -171,28 +171,28 @@ SKIP: {
 	capture_merged { $res = SBO::Lib::git_sbo_tree('foo'); };
 	is ($res, 0, q!git_sbo_tree('foo') returned 0!);
 
-	system(qw! rm -r /usr/sbo/repo !) if -d '/usr/sbo/repo';
-	system(qw! mkdir -p /usr/sbo/repo/.git !);
-	($fh) = open_fh('/usr/sbo/repo/.git/config', '>');
+	system(qw! rm -r /var/lib/sbotools/repo !) if -d '/var/lib/sbotools/repo';
+	system(qw! mkdir -p /var/lib/sbotools/repo/.git !);
+	($fh) = open_fh('/var/lib/sbotools/repo/.git/config', '>');
 	print $fh qq'[remote "origin"]\n'; print $fh "[]";
 	close $fh;
 
 	undef $res;
-	capture_merged { $res = SBO::Lib::check_git_remote('/usr/sbo/repo', 'foo'); };
+	capture_merged { $res = SBO::Lib::check_git_remote('/var/lib/sbotools/repo', 'foo'); };
 	is ($res, 0, 'check_git_remote() returned 0');
 
-	system(qw! rm -r /usr/sbo/repo !) if -d '/usr/sbo/repo';
+	system(qw! rm -r /var/lib/sbotools/repo !) if -d '/var/lib/sbotools/repo';
 
 	is (SBO::Lib::generate_slackbuilds_txt(), 0, 'generate_slackbuilds_txt() returned 0');
 
-	system(qw! mkdir -p /usr/sbo/repo/foo/bar !);
+	system(qw! mkdir -p /var/lib/sbotools/repo/foo/bar !);
 
 	is (SBO::Lib::generate_slackbuilds_txt(), 1, 'generate_slackbuilds_txt() returned 1');
 
-	system(qw! rm -r /usr/sbo/repo !) if -d '/usr/sbo/repo';
-	system(qw! mv /usr/sbo/backup /usr/sbo/repo !) if -d '/usr/sbo/backup';
+	system(qw! rm -r /var/lib/sbotools/repo !) if -d '/var/lib/sbotools/repo';
+	system(qw! mv /var/lib/sbotools/backup /var/lib/sbotools/repo !) if -d '/var/lib/sbotools/backup';
 
-	my $sbohome = '/usr/sbo';
+	my $sbohome = '/var/lib/sbotools';
 	system('mv', $sbohome, "$sbohome.bak");
 
 	my $cwd = getcwd();
@@ -225,7 +225,7 @@ SKIP: {
 	is ($out, "A fatal script error has occurred:\nget_sbo_location requires an argument.\nExiting.\n", 'get_sbo_location([]) gave correct output');
 
 	SKIP: {
-		skip 'Test invalid if no SLACKBUILDS.TXT exists.', 1 if ! -e '/usr/sbo/repo/SLACKBUILDS.TXT';
+		skip 'Test invalid if no SLACKBUILDS.TXT exists.', 1 if ! -e '/var/lib/sbotools/repo/SLACKBUILDS.TXT';
 		local $config{LOCAL_OVERRIDES} = 'FALSE';
 		my %res = get_sbo_locations('nonexistentslackbuild');
 
