@@ -99,10 +99,10 @@ number differs.
 
 **CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT** and
 **BUILD_IGNORE**, and disable **COLOR** (overriding the contents of
-[sbotools.conf(5)](sbotools.conf.5.md)). Build increment and out-of-tree SlackBuild checks
-by [sbocheck(1)](sbocheck.1.md) are disabled, and previously-used build options are
-not displayed. This provides a more traditional **sbotools** look and
-feel for those who want it.
+[sbotools.conf(5)](sbotools.conf.5.md)). Build increment, out-of-tree SlackBuild and
+orphaned SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are disabled, and
+previously-used build options are not displayed. This provides a more
+traditional **sbotools** look and feel for those who want it.
 
 **-c\|\--noclean (FALSE\|TRUE)**
 

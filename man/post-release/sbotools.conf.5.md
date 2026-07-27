@@ -51,10 +51,10 @@ The current configuration keys are as follows:
 
 If **TRUE**, automatically enable **RSYNC_DEFAULT** and
 **BUILD_IGNORE**, and disable **COLOR** (overriding the contents of this
-file). Build increment and out-of-tree SlackBuild checks by
-[sbocheck(1)](sbocheck.1.md) are disabled, and previously-used build options are not
-displayed. This provides a more traditional **sbotools** look and feel
-for those who want it.
+file). Build increment, out-of-tree SlackBuild and orphaned SlackBuild
+checks by [sbocheck(1)](sbocheck.1.md) are disabled, and previously-used build
+options are not displayed. This provides a more traditional **sbotools**
+look and feel for those who want it.
 
 **CPAN_IGNORE=(FALSE\|TRUE)**
 

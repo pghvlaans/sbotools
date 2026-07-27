@@ -41,16 +41,19 @@ checks for available upgrades and reports what it finds. If
 
 SlackBuilds with differing build numbers are reported separately, as are
 any SlackBuilds marked *\_SBo* that are not found in the repository or
-local overrides (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). Except
-in **CLASSIC** mode, scripts in the report that would not be upgraded by
+local overrides (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
+SlackBuilds that have been designated as orphaned upstream are subject
+to eventual removal and are reported as well. Except in **CLASSIC**
+mode, scripts in the report that would not be upgraded by
 [sboupgrade(1)](sboupgrade.1.md) are listed last and marked with **=** (equals sign).
 
-The three output categories are logged separately to
-*/var/log/sbocheck.log*, */var/log/sbocheck-bumps.log* and
-*/var/log/sbocheck-out-of-tree.log*. The out-of-tree and build number
-increment checks are disabled when **CLASSIC** is **TRUE**; if
-**STRICT_UPGRADES** is **TRUE**, apparent downgrades are reported with
-"differs", but are not acted on by [sboupgrade(1)](sboupgrade.1.md) (see
+The four output categories are logged separately to
+*/var/log/sbocheck.log*, */var/log/sbocheck-bumps.log*,
+*/var/log/sbocheck-out-of-tree.log* and
+*/var/log/sbocheck-orphaned.log*. The out-of-tree, build number
+increment and orphaned build checks are disabled when **CLASSIC** is
+**TRUE**; if **STRICT_UPGRADES** is **TRUE**, apparent downgrades are
+reported with "differs", but are not acted on by [sboupgrade(1)](sboupgrade.1.md) (see
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
 Upgrades to Slackware and third-party packages occasionally cause
