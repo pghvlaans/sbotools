@@ -526,21 +526,39 @@ sub check_multilib {
 
 C<dangerous_directory()> takes a string and returns true if it is equal to C</>,
 C</root>, C</home> or a possible top-level directory under C</home>. Paths under
-C<SBO_HOME/distfiles> and $manual_link are also disallowed.
+C<SBO_HOME/distfiles> and $manual_link are also disallowed. This process accounts
+for symlinks.
 
 =cut
 
 sub dangerous_directory {
   script_error("dangerous_directory requires an argument.") unless @_ == 1;
   my $dirname = shift;
-  my $dangerous = 0;
+  my ($real_distfiles_dir, $real_manual_link);
+  $real_distfiles_dir = abs_path $distfiles_dir if -d $distfiles_dir;
+  $real_manual_link = abs_path $manual_link if -d $manual_link;
   if ($dirname =~ m/^\/+$/ or
       $dirname =~ m/^\/+home\/+[^\/]+(|\/+)$/ or
       $dirname =~ m/^\/+(home|root)(|\/+)$/ or
-      $dirname =~ m/^($distfiles_dir|$manual_link)/) {
-    $dangerous = 1;
+      $dirname =~ m/^($distfiles_dir|$manual_link)($|\/+)/) {
+    return 1;
   }
-  return $dangerous;
+  return 1 if $real_distfiles_dir and $dirname =~ m/^$real_distfiles_dir($|\/+)/;
+  return 1 if $real_manual_link and $dirname =~ m/^$real_manual_link($|\/+)/;
+  if (-d $dirname) {
+    my $real_dirname = abs_path $dirname;
+    if ($real_dirname =~ m/^\/+$/ or
+        $real_dirname =~ m/^\/+home\/+[^\/]+(|\/+)$/ or
+        $real_dirname =~ m/^\/+(home|root)(|\/+)$/ or
+        $real_dirname =~ m/^($distfiles_dir|$manual_link)/ or
+        $real_dirname =~ m/^($distfiles_dir|$manual_link)($|\/+)/) {
+      return 1;
+    }
+    return 1 if $real_distfiles_dir and $real_dirname =~ m/^$real_distfiles_dir($|\/+)/;
+    return 1 if $real_manual_link and $real_dirname =~ m/^$real_manual_link($|\/+)/;
+  }
+
+  return 0;
 }
 
 =head2 display_times

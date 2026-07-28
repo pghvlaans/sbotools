@@ -11,6 +11,7 @@
   * Util.pm: Allow SBO_HOME/distfiles to be a symlink to an existing directory.
   * sboclean: Verify a proper SBO_HOME before trying to clean distfiles.
   * Use color output by default; replace the COLOR setting with NOCOLOR.
+  * Util.pm: Account for symlinks when detecting dangerous directory settings.
 
 #### 4.2.1 - 2026-07-23
   * sbofind: Show maintainer names unless in CLASSIC mode; search names with --maintainers.
