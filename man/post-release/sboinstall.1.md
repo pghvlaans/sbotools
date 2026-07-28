@@ -61,8 +61,9 @@ or the md5sum check fails, a new download is attempted from
 sources for the queue and download if needed, use **\--get-only**.
 Manually-downloaded source files (such as those requiring a license
 agreement) can be placed in *SBO_HOME/manual_downloads* prior to running
-**sboinstall**. *SBO_HOME/distfiles* can serve as a mountpoint, but
-please ensure that no partitions are mounted in its subdirectories.
+**sboinstall**. *SBO_HOME/distfiles* can be a mountpoint or a symlink to
+an existing directory, but please ensure that no partitions are mounted
+in its subdirectories.
 
 *SlackBuild* and *README* files are parsed for **groupadd(1)** and
 **useradd(1)** commands, and **sboinstall** offers to run them prior to
