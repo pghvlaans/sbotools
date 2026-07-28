@@ -14,6 +14,7 @@ use warnings;
 
 our $VERSION = '4.2.1';
 
+use Cwd qw/ abs_path /;
 use Exporter 'import';
 use File::Basename;
 use File::Copy;
@@ -469,18 +470,22 @@ sub build_cmp {
 
 C<check_distfiles_dir()> checks for the existence of the C<distfiles> directory and the
 C<manual downloads> directory and convenience symlink. It creates them if necessary.
-The script exits if C<SBO_HOME/distfiles> or C<SBO_HOME/distfiles/manual> are
-existing non-directories, if C<SBO_HOME/manual_downloads> is anything other than
-a correct symlink, or if partitions are mounted in subdirectories of C<SBO_HOME/distfiles>.
+The script exits if C<SBO_HOME/distfiles> is an existing non-directory, if
+C<SBO_HOME/distfiles/manual> is an existing non-directory or a symlink, if
+C<SBO_HOME/manual_downloads> is anything other than a correct symlink, or if partitions are
+mounted in subdirectories of C<SBO_HOME/distfiles>. If C<SBO_HOME/distfiles> is a symlink, it
+must point to an existing directory.
 
-It returns 1 on success.
+C<check_distfiles_dir()> returns 1 on success.
 
 =cut
 
 sub check_distfiles_dir {
+  error_code("$distfiles_dir is a symlink to a non-directory. Please fix this and try again.", _ERR_SBO_HOME) if -l $distfiles_dir and not -d $distfiles_dir;
+  error_code("$manual_dir is a symlink. Please remove it and try again.", _ERR_SBO_HOME) if -l $manual_dir;
   my @dirs = ( $distfiles_dir, $manual_dir, );
   for my $dir (@dirs) {
-    error_code("$dir is a non-directory. Please remove it and try again.", _ERR_SBO_HOME) if -s $dir and (-l $dir or not -d $dir);
+    error_code("$dir is a non-directory. Please remove it and try again.", _ERR_SBO_HOME) if -s $dir and not -d $dir;
     unless (-d $dir) {
       error_code("Could not create $dir. Exiting.", _ERR_SBO_HOME) unless make_path $dir;
     }
@@ -489,9 +494,10 @@ sub check_distfiles_dir {
     error_code("$manual_link is not a symlink to $manual_dir. Please remove it and try again.", _ERR_SBO_HOME) if -s $manual_link;
     error_code("Could not link $manual_dir to $manual_link. Exiting.", _ERR_SBO_HOME) unless symlink $manual_dir, $manual_link;
   }
-  error_code("$manual_link is not a symlink to $manual_dir. Please remove it and try again.", _ERR_SBO_HOME) unless readlink $manual_link eq $manual_dir;
+  error_code("$manual_link is not a symlink to $manual_dir. Please remove it and try again.", _ERR_SBO_HOME) unless -d $manual_link and abs_path $manual_link eq $manual_dir;
   my $mounts = slurp("/proc/self/mounts");
-  error_code("A partition is mounted to a subdirectory of $distfiles_dir. Please fix this and try again.", _ERR_SBO_HOME) if $mounts =~ /\s$distfiles_dir\/\S/;
+  my $absolute_distfiles = abs_path $distfiles_dir;
+  error_code("A partition is mounted to a subdirectory of $distfiles_dir. Please fix this and try again.", _ERR_SBO_HOME) if $mounts =~ /\s$absolute_distfiles\/\S/;
   return 1;
 }
 
