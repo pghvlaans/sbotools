@@ -72,7 +72,7 @@ if ($help) {
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
-$config{COLOR} = $color ? 'TRUE' : 'FALSE' if $color xor $nocolor;
+$config{NOCOLOR} = $color ? 'FALSE' : 'TRUE' if $color xor $nocolor;
 $config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $nowrap xor $wrap;
 if ($< != 0) { $config{GPG_VERIFY} = "FALSE"; }
 unless ($options_ok) {

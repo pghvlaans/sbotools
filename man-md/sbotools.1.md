@@ -146,8 +146,8 @@ changes can be done from here if running as root.
 
 **sbotools** can be set up to print some messages and prompts in color.
 All scripts except for **sboconfig** have **\--color** and
-**\--nocolor** options to turn colors on and off. To turn all colors on
-by default, set **COLOR** to **TRUE**. Output colors can be customized
+**\--nocolor** options to turn colors on and off. To turn all colors off
+by default, set **NOCOLOR** to **TRUE**. Output colors can be customized
 by editing the */etc/sbotools/sbotools.colors* file. See the comments
 there or [sbotools.colors(5)](sbotools.colors.5.md) for details.
 

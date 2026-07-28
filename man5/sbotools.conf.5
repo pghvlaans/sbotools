@@ -72,10 +72,6 @@ for:
 
 \[bu]
 .B
-COLOR
-
-\[bu]
-.B
 CPAN_IGNORE
 
 \[bu]
@@ -106,13 +102,13 @@ If
 TRUE\fR\
 \&, automatically enable
 .B
-RSYNC_DEFAULT
-and
+RSYNC_DEFAULT\fR\
+\&,
 .B
 BUILD_IGNORE\fR\
-\&, and disable
+and
 .B
-COLOR
+NOCOLOR
 (overriding the contents of this file). Build increment, out-of-tree
 SlackBuild and orphaned SlackBuild checks by
 .B
@@ -258,12 +254,12 @@ $TMP\fR\
 .RE
 .P
 .B
-COLOR=(FALSE|TRUE)
+NOCOLOR=(FALSE|TRUE)
 .RS
 If
 .B
 TRUE\fR\
-\&, enable
+\&, disable
 .B
 sbotools
 color output. To customize color output, edit the

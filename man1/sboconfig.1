@@ -107,10 +107,6 @@ for:
 
 \[bu]
 .B
-COLOR
-
-\[bu]
-.B
 CPAN_IGNORE
 
 \[bu]
@@ -215,14 +211,13 @@ CLASSIC\fR\
 TRUE\fR\
 \&, automatically enable
 .B
-RSYNC_DEFAULT
-and
+RSYNC_DEFAULT\fR\
+\&,
 .B
 BUILD_IGNORE\fR\
-\&,
-and disable
+and
 .B
-COLOR
+NOCOLOR
 (overriding the contents of
 .B
 sbotools.conf(5)\fR\
@@ -392,11 +387,11 @@ is run.
 -K|--color (FALSE|TRUE)
 .RS
 .B
-COLOR\fR\
+NOCOLOR\fR\
 \&: If
 .B
 TRUE\fR\
-\&, enable
+\&, disable
 .B
 sbotools
 color output. To customize color output, edit the

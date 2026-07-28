@@ -20,7 +20,7 @@ _arguments \
     '(-F --force-obsolete)'{-F,--force-obsolete}'[If TRUE, then treat the obsolete list as a blacklist on -current. This is only helpful if using a repo from which obsolete SlackBuilds are not removed.]:obsolete scripts are blacklisted?:((TRUE\:"Blacklist obsolete scripts" FALSE\:"Default obsolete behavior"))' \
     '(-g --gpg-verify)'{-g,--gpg-verify}'[If TRUE, then verify with gpg.]:use gpg?:((TRUE\:"Verify with gpg" FALSE\:"Do not verify"))' \
     '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \
-    '(-K --color)'{-K,--color}'[If TRUE, enable sbotools color output.]:enable sbotools colors?:((TRUE\:"Enable sbotools colors" FALSE\:"sbotools output has no color"))' \
+    '(-K --nocolor)'{-K,--nocolor}'[If TRUE, disable sbotools color output.]:enable sbotools colors?:((TRUE\:"Disable sbotools colors" FALSE\:"sbotools output has color"))' \
     '(-L --log-dir)'{-L,--log-dir}'[Directory to store build logs in.]:build log directory:_files -/' \
     '(-N --nonet)'{-N,--nonet}'[If TRUE, do not allow network access when running SlackBuilds.]:block network access for SlackBuilds?:((TRUE\:"Block network access" FALSE\:"Allow network access"))' \
     '(-O --obsolete-check)'{-o,--obsolete-check}'[if TRUE, then update the list of obsoleted scripts when running sbocheck on -current.]:update the obsolete script list on -current?:((TRUE\:"Download the file from the sbotools home page." FALSE\:"Retain the copy in /etc/sbotools."))' \

@@ -55,8 +55,6 @@ Non-root users can only call **sboconfig** with the **\--list**,
 All values default to **FALSE** except for **SBO_HOME**. Recommended
 non-default settings include **TRUE** for:
 
-• **COLOR**
-
 • **CPAN_IGNORE**
 
 • **ETC_PROFILE**
@@ -97,8 +95,8 @@ number differs.
 
 **-C\|\--classic (FALSE\|TRUE)**
 
-**CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT** and
-**BUILD_IGNORE**, and disable **COLOR** (overriding the contents of
+**CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT**,
+**BUILD_IGNORE**and **NOCOLOR** (overriding the contents of
 [sbotools.conf(5)](sbotools.conf.5.md)). Build increment, out-of-tree SlackBuild and
 orphaned SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are disabled, and
 previously-used build options are not displayed. This provides a more
@@ -157,9 +155,9 @@ SlackBuild invoking **make** is run.
 
 **-K\|\--color (FALSE\|TRUE)**
 
-**COLOR**: If **TRUE**, enable **sbotools** color output. To customize
-color output, edit the */etc/sbotools/sbotools.colors* file directly.
-See [sbotools.colors(5)](sbotools.colors.5.md) for details.
+**NOCOLOR**: If **TRUE**, disable **sbotools** color output. To
+customize color output, edit the */etc/sbotools/sbotools.colors* file
+directly. See [sbotools.colors(5)](sbotools.colors.5.md) for details.
 
 Recommended value: **TRUE**
 

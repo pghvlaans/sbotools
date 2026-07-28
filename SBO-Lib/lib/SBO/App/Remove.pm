@@ -51,7 +51,7 @@ sub run {
     exit 0;
   }
   if ($self->{vers}) { $self->show_version(); return 0; }
-  $config{COLOR} = $self->{color} ? 'TRUE' : 'FALSE' if $self->{color} xor $self->{nocolor};
+  $config{NOCOLOR} = $self->{color} ? 'FALSE' : 'TRUE' if $self->{color} xor $self->{nocolor};
   $config{NOWRAP} = $self->{nowrap} ? 'TRUE' : 'FALSE' if $self->{wrap} xor $self->{nowrap};
   if (!@{ $self->{args} }) {
     $self->show_usage();

@@ -1287,7 +1287,7 @@ sub display_settings {
 						"\"SO_CHECK: $config{SO_CHECK}$plus\" \"\" \"If TRUE, do a solib/perl/python/ruby check on fetch and upgrade.\" \\",
 						"\"STRICT_UPGRADES: $config{STRICT_UPGRADES}$plus\" \"\" \"If TRUE, ignore apparent downgrades with sboupgrade.\"";
 	push @config_values, "\"BUILD_IGNORE: $config{BUILD_IGNORE}$plus\" \"\" \"If TRUE, ignore build numbers when upgrading.\" \\",
-						"\"COLOR: $config{COLOR}$plus\" \"\" \"If TRUE, use sbotools color output.\" \\",
+						"\"NOCOLOR: $config{NOCOLOR}$plus\" \"\" \"If TRUE, do not use sbotools color output.\" \\",
 						"\"RSYNC_DEFAULT: $config{RSYNC_DEFAULT}$plus\" \"\" \"If TRUE, the default repository is rsync, not git. No effect on -current.\" \\" unless $config{CLASSIC} eq 'TRUE';
 	@config_values = sort @config_values;
 	my $config_values = join "\n", @config_values;
@@ -1323,8 +1323,8 @@ sub display_settings {
 			$criterion = "TRUE or FALSE.";
 			$flag = "C";
 		}
-		if ($option =~ /^COLOR/) {
-			$explanation = "If TRUE, sbotools will use color output for emphasis and\nreadability.";
+		if ($option =~ /^NOCOLOR/) {
+			$explanation = "If TRUE, sbotools will not use color output for emphasis and\nreadability.";
 			$criterion = "TRUE or FALSE.";
 			$flag = "K";
 		}

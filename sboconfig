@@ -66,8 +66,8 @@ Configuration options (defaults shown):
       GPG_VERIFY: verify the repo with gnupg.
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
-  -K|--color FALSE:
-      COLOR: if TRUE, enable sbotools color output.
+  -K|--nocolor FALSE:
+      NOCOLOR: if TRUE, disable sbotools color output.
   -L|--log-dir FALSE:
       LOG_DIR: if an absolute path, save a log file here after each build.
   -N|--nonet FALSE:
@@ -136,8 +136,8 @@ Configuration options (defaults shown):
       GPG_VERIFY: verify the repo with gnupg.
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
-  -K|--color FALSE:
-      COLOR: if TRUE, enable sbotools color output.
+  -K|--nocolor FALSE:
+      NOCOLOR: if TRUE, disable sbotools color output.
   -L|--log-dir /var/lib/sbotest/logs:
       LOG_DIR: if an absolute path, save a log file here after each build.
   -N|--nonet FALSE:
@@ -178,14 +178,14 @@ unless ($is_sbotest) {
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s');
+		'nowrap|w=s', 'nocolor|K=s', 'so-check|X=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s');
 } else {
 	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'color|K=s', 'so-check|X=s', 'sbo-archive|A=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s');
+		'nowrap|w=s', 'nocolor|K=s', 'so-check|X=s', 'sbo-archive|A=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s');
 }
 
 $options{list} = 1 if exists $options{'non-default'};
@@ -219,7 +219,7 @@ my %valid_confs = (
 	'obsolete-check'    => 'OBSOLETE_CHECK',
 	'etc-profile'       => 'ETC_PROFILE',
 	'log-dir'           => 'LOG_DIR',
-	color               => 'COLOR',
+	nocolor             => 'NOCOLOR',
 	nowrap              => 'NOWRAP',
 	'so-check'          => 'SO_CHECK',
 	'dialogrc'          => 'DIALOGRC',
@@ -247,7 +247,7 @@ my %params = (
 	OBSOLETE_CHECK    => 'O|--obsolete-check',
 	ETC_PROFILE       => 'e|--etc-profile',
 	LOG_DIR           => 'L|--log-dir',
-	COLOR             => 'K|--color',
+	NOCOLOR           => 'K|--nocolor',
 	NOWRAP            => 'w|--nowrap',
 	SO_CHECK          => 'X|--so-check',
 	DIALOGRC          => 'D|--dialogrc',
@@ -336,7 +336,7 @@ sub config_write {
 		my $key = shift;
 		my $val = shift;
 		next if $key eq 'BUILD_IGNORE' and $is_sbotest;
-		next if $key eq 'COLOR' and $is_sbotest;
+		next if $key eq 'NOCOLOR' and $is_sbotest;
 		say "Setting $key to $val..." unless exists $options{reset};
 
 		# Comment default values when written in
