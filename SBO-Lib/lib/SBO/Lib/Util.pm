@@ -550,7 +550,6 @@ sub dangerous_directory {
     if ($real_dirname =~ m/^\/+$/ or
         $real_dirname =~ m/^\/+home\/+[^\/]+(|\/+)$/ or
         $real_dirname =~ m/^\/+(home|root)(|\/+)$/ or
-        $real_dirname =~ m/^($distfiles_dir|$manual_link)/ or
         $real_dirname =~ m/^($distfiles_dir|$manual_link)($|\/+)/) {
       return 1;
     }
