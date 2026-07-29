@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree build_cmp get_all_available get_available_updates get_installed_packages get_removed_builds get_obsolete script_error open_fh in is_local is_obsolete is_orphaned show_version get_local_outdated_versions on_blacklist open_read series_check solib_check $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors $match_mode %old_libs %config /;
+use SBO::Lib qw/ update_tree build_cmp get_all_available get_available_updates get_installed_packages get_removed_builds get_obsolete script_error open_fh in is_local is_obsolete is_orphaned show_version get_local_outdated_versions on_blacklist open_read series_check solib_check $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors $match_mode %old_libs @not_opt_only %config /;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 use File::Basename;
 use List::Util 'max';
@@ -456,21 +456,28 @@ sub print_output {
 		if ($config{CLASSIC} ne "TRUE" and ($< == 0 or $non_root_write)) { print_color $color_notice; print "\tSee $logfile.\n\n"; print_color $color_default; }
 		else { print "\n\n"; }
 		if ($logfile =~ /(solibs|lib-search)/) {
+			my $opt_msg = 0;
 			$line_needed = 1;
 			for my $listing (@listing) {
 				my $print_line = (split "\n", $listing)[0];
 				if (defined $print_line) {
 					last if $print_line =~ /FILE DETAILS/ and $match_mode;
 					$print_line =~ s/\:$// unless $match_mode;
-					say $print_line;
+					my $name = (split " ", $print_line)[0];
+					unless (in $name, @not_opt_only) {
+						say "$print_line (/opt only)";
+						$opt_msg = 1;
+					} else {
+						say $print_line;
+					}
 				} else {
 					say "";
 				}
 			}
 			if ($match_mode) {
 				wrapsay_color $color_notice, "See $logfile for a breakdown of dependent files by package." unless $< != 0 and not $non_root_write;
-			} else {
-				wrapsay_color $color_lesser, "\nBinary repackages generally do not require rebuilds.";
+			} elsif ($opt_msg) {
+				wrapsay_color $color_lesser, "\nPackages in /opt do not usually require rebuilds.";
 			}
 			if ($< != 0 and not $non_root_write) {
 				my $log_base = basename $logfile;

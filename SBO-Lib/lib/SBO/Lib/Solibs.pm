@@ -28,6 +28,7 @@ our @EXPORT_OK = qw{
   @native_libs
   %old_libs
   @libs_32
+  @not_opt_only
 };
 
 our %EXPORT_TAGS = (
@@ -75,6 +76,10 @@ in C<%old_libs>, and are not exported.
 An array with 32-bit shared objects in the C<ldconfig(1)> cache. Used only under 64-bit
 architectures, it is generated together with C<@native_libs> by C<update_known_solibs()>.
 
+=head2 @not_opt_only
+
+An array with packages that have missing solib dependencies outside of C</opt>.
+
 =cut
 
 # ELF-related variables
@@ -114,6 +119,7 @@ our @libs_32;
 our %old_libs;
 our %per_cand;
 our %x86_per_cand;
+our @not_opt_only;
 
 our $match_mode;
 
@@ -578,7 +584,7 @@ sub solib_check {
   $ran_solibs{$pkg} = 1;
   my $exit = open(my $fh, "<", "$pkg_db/$pkg") == 0;
   error_code("Opening $pkg_db/$pkg failed.", _ERR_OPENFH) if $exit;
-  my ($start_reading, @file_list);
+  my ($start_reading, $not_opt_only, @file_list);
   for my $line (<$fh>) {
     $start_reading = 1 if $line eq "./\n";
     next unless defined $start_reading;
@@ -604,7 +610,10 @@ sub solib_check {
     next if not $match_mode and in $cand, @native_libs;
     unless (not $match_mode and solib_present($cand, $pkg, @file_list)) {
       push @nonexistent, "  $cand:";
-      for my $file (uniq sort split " ", $per_cand{$cand}) { push @nonexistent, "    $file" if in $file, @file_list; }
+      for my $file (uniq sort split " ", $per_cand{$cand}) {
+        push @nonexistent, "    $file" if in $file, @file_list;
+        $not_opt_only = 1 unless $file =~ m!^/opt/!;
+      }
     }
   }
   for my $cand (uniq sort @x86_shared) {
@@ -612,7 +621,10 @@ sub solib_check {
     next if not $match_mode and in $cand, @libs_32;
     unless (not $match_mode and solib_present($cand, $pkg, @file_list)) {
       push @nonexistent, "  $cand (x86):";
-      for my $file (uniq sort split " ", $x86_per_cand{$cand}) { push @nonexistent, "    $file" if in $file, @file_list; }
+      for my $file (uniq sort split " ", $x86_per_cand{$cand}) {
+        push @nonexistent, "    $file" if in $file, @file_list;
+        $not_opt_only = 1 unless $file =~ m!^/opt/!;
+      }
     }
   }
   undef @file_list;
@@ -621,6 +633,7 @@ sub solib_check {
   if (@nonexistent) {
     push @nonexistent, "";
     $old_libs{$pkg} = join("\n", @nonexistent);
+    push @not_opt_only, $pkg if $not_opt_only;
     return 0;
   }
   return 1;
@@ -688,6 +701,7 @@ sub update_known_solibs {
   %ran_solibs = ();
   splice @py_installed;
   splice @py_missing;
+  splice @not_opt_only;
   initialize_perl();
   initialize_python();
   initialize_ruby();
