@@ -210,7 +210,7 @@ C</var/lib/sbotools> if still C<"FALSE">.
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
-C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<NOCOLOR>, C<SO_CHECK>,
+C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<NOCOLOR>, C<NO_SOCHECK>,
 C<DIALOGRC>, C<NONET> and C<FORCE_OBSOLETE>.
 
 =head2 $distfiles_dir
@@ -341,7 +341,7 @@ our %config = (
   LOG_DIR => 'FALSE',
   NOCOLOR => 'FALSE',
   NOWRAP => 'FALSE',
-  SO_CHECK => 'FALSE',
+  NO_SOCHECK => 'FALSE',
   DIALOGRC => 'FALSE',
   NONET => 'FALSE',
   FORCE_OBSOLETE => 'FALSE',
@@ -1044,9 +1044,9 @@ sub lint_sbo_config {
       push @dangerous, "SBO_HOME: $configs{SBO_HOME}" if dangerous_directory($configs{SBO_HOME});
     }
   }
-  if (exists $configs{SO_CHECK}) {
-    unless ($configs{SO_CHECK} =~ /^(TRUE|FALSE)$/) {
-      push @invalid, "SO_CHECK" if $running ne 'sboconfig';
+  if (exists $configs{NO_SOCHECK}) {
+    unless ($configs{NO_SOCHECK} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "NO_SOCHECK" if $running ne 'sboconfig';
       push @invalid, "$warn -X (TRUE or FALSE)";
     }
   }

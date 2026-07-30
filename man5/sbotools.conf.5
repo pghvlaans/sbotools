@@ -86,10 +86,6 @@ GPG_VERIFY\fR\
 gpg(1)\fR\
 \&.
 
-\[bu]
-.B
-SO_CHECK
-
 .RE
 .P
 The current configuration keys are as follows:
@@ -460,12 +456,12 @@ the one specified in
 .RE
 .P
 .B
-SO_CHECK=(FALSE|TRUE)
+NO_SOCHECK=(FALSE|TRUE)
 .RS
 If set to
 .B
 TRUE\fR\
-\&, check for missing first-order shared object (solib) dependencies
+\&, do not check for missing first-order shared object (solib) dependencies
 among
 .I
 _SBo
@@ -478,7 +474,7 @@ sboupgrade(1)\fR\
 \&. Additionally,
 .B
 sbocheck(1)
-searches for incompatible
+does not search for incompatible
 .B
 perl\fR\
 \&,
@@ -490,10 +486,6 @@ ruby
 .I
 _SBo
 packages.
-.P
-Recommended value:
-.B
-TRUE
 .RE
 .P
 .B

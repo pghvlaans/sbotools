@@ -92,8 +92,8 @@ Configuration options (defaults shown):
       STRICT_UPGRADES: only upgrade when the version or build is higher.
   -w|--nowrap FALSE:
       NOWRAP: do not automatically wrap sbotools output.
-  -X|--so-check FALSE:
-      SO_CHECK: check for .so dependencies after sbocheck and sboupgrade.
+  -X|--no-socheck FALSE:
+      NO_SOCHECK: do not check .so dependencies after sbocheck and sboupgrade.
 
 Use $label without options for a dialog menu.
 EOF
@@ -163,8 +163,8 @@ Configuration options (defaults shown):
       build is lower.
   -w|--nowrap FALSE:
       NOWRAP: do not automatically wrap sbotest output.
-  -X|--so-check FALSE:
-      SO_CHECK: check for missing .so dependencies when running sbocheck.
+  -X|--no-socheck FALSE:
+      NO_SOCHECK: do not check for missing .so dependencies after failures.
 EOF
 	return 1;
 }
@@ -178,14 +178,14 @@ unless ($is_sbotest) {
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'nocolor|K=s', 'so-check|X=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s');
+		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s');
 } else {
 	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'nocolor|K=s', 'so-check|X=s', 'sbo-archive|A=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s');
+		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'sbo-archive|A=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s');
 }
 
 $options{list} = 1 if exists $options{'non-default'};
@@ -221,7 +221,7 @@ my %valid_confs = (
 	'log-dir'           => 'LOG_DIR',
 	nocolor             => 'NOCOLOR',
 	nowrap              => 'NOWRAP',
-	'so-check'          => 'SO_CHECK',
+	'no-socheck'        => 'NO_SOCHECK',
 	'dialogrc'          => 'DIALOGRC',
 	nonet               => 'NONET',
 	'force-obsolete'    => 'FORCE_OBSOLETE',
@@ -249,7 +249,7 @@ my %params = (
 	LOG_DIR           => 'L|--log-dir',
 	NOCOLOR           => 'K|--nocolor',
 	NOWRAP            => 'w|--nowrap',
-	SO_CHECK          => 'X|--so-check',
+	NO_SOCHECK        => 'X|--no-socheck',
 	DIALOGRC          => 'D|--dialogrc',
 	NONET             => 'N|--nonet',
 	FORCE_OBSOLETE    => 'F|--force-obsolete',

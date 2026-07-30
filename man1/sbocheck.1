@@ -11,6 +11,8 @@ tree updates and package checks
 .P
 sbocheck [-h|-v]
 .P
+sbocheck [-NOgn]
+.P
 sbocheck [-COXgn] [-t all,perl,python,ruby,solibs]
 .P
 sbocheck [-COXgn] [-L lib1,lib2,...]
@@ -126,19 +128,25 @@ if running as root, or
 .I
 /tmp/sbocheck-solibs.log
 otherwise. This log contains a list of missing shared objects and the files that have
-first-order dependencies on them. This can be done automatically on every
+first-order dependencies on them. This is done automatically on every
 .B
 sbocheck
-run
+run by default. To disable these automatic checks,
 by setting
 .B
-SO_CHECK
+NO_SOCHECK
 to
 .B
-TRUE\fR\
-\&.
-Please note that scripts repackaging from binary packages occasionally trigger
-false positives. Such packages generally do not require rebuilds.
+TRUE
+or use the
+.B
+--no-socheck
+flag. Please note that scripts repackaging from binary packages occasionally trigger
+false positives. Such packages generally do not require rebuilds. Packages including
+files with missing solibs in the
+.I
+/opt
+directory only are marked in the output.
 .P
 Use
 .B
@@ -356,6 +364,12 @@ Incompatible with
 .RE
 .P
 .B
+-N|--no-socheck
+.RS
+Skip the default missing shared object check.
+.RE
+.P
+.B
 -O|--obsolete-check
 .RS
 If running Slackware -current, download a copy of the obsolete script list
@@ -485,16 +499,17 @@ solibs
 are checked by default; use
 .B
 --type
-to specify other tests. To do this automatically
+to specify other tests. This is done automatically
 every time
 .B
 sbocheck
-is run, set
+is run. Set
 .B
-SO_CHECK
+NO_SOCHECK
 to
 .B
 TRUE
+to disable this behavior.
 (see
 .B
 sboconfig(1)

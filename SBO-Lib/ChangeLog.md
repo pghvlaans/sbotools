@@ -14,6 +14,10 @@
   * Util.pm: Account for symlinks when detecting dangerous directory settings.
   * Solibs.pm, sbocheck: Packages with missing solibs only in /opt are marked; improved disclaimer.
   * sboupgrade: --all-plus-failures skips packages with missing solibs only in /opt.
+  * Run the solib tests after sbocheck and sboupgrade by default.
+    * Replace the SO_CHECK setting with NO_SOCHECK.
+    * sboupgrade: Replace --so-check with --no-socheck.
+    * sbocheck: Use --no-socheck to skip the default check.
 
 #### 4.2.1 - 2026-07-23
   * sbofind: Show maintainer names unless in CLASSIC mode; search names with --maintainers.

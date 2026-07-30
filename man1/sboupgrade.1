@@ -172,13 +172,13 @@ sboupgrade\fR\
 .I
 /var/log/sboupgrade-solibs.log
 with a list of missing shared objects and the files that have first-order dependencies on
-them. This can be done automatically after every
+them. This is done automatically after every
 .B
 sboupgrade
-run by setting
+run. To disable the automatic checks, set the
 .B
-SO_CHECK
-to
+NO_SOCHECK
+setting to
 .B
 TRUE\fR\
 \&.
@@ -561,12 +561,12 @@ setting.
 .RE
 .P
 .B
--X|--so-check (FALSE|TRUE)
+-X|--no-socheck (FALSE|TRUE)
 .RS
 If
 .B
 TRUE\fR\
-\&, check for missing first-order shared object dependencies after running
+\&, do not check for missing first-order shared object dependencies after running
 .B
 sboupgrade\fR\
 \&. Please note that only those shared objects provided by outgoing packages are reflected
@@ -575,7 +575,7 @@ in the results. For a full shared object check, see
 sbocheck(1)\fR\
 \&. This option overrides the
 .B
-SO_CHECK
+NO_SOCHECK
 setting.
 .RE
 .P

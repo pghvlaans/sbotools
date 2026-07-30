@@ -43,6 +43,8 @@ Options:
     perform gpg verification.
   -L|--lib-search:
     a comma-separated list of libraries to search as dependencies.
+  -N|--no-socheck:
+    do not perform the default check for missing shared objects.
   -O|--obsolete-check:
     download updated obsolete script list and perl version history.
   -n|--nopull:
@@ -60,20 +62,21 @@ EOF
 
 my $line_needed = 1;
 
-my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $pkg_check, $full_check, $nowrap, $wrap, $solibs, $perl, $python, $ruby, $type, @types, $lib_search);
+my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $pkg_check, $full_check, $nowrap, $wrap, $solibs, $perl, $python, $ruby, $type, @types, $lib_search, $no_socheck);
 
 my @valid_types = ("solibs", "perl", "python", "ruby");
 
-my $options_ok = GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'nowrap' => \$nowrap, 'wrap' => \$wrap, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check, 't|type=s' => \$type, 'L|lib-search=s' => \$lib_search);
+my $options_ok = GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'nowrap' => \$nowrap, 'wrap' => \$wrap, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check, 't|type=s' => \$type, 'L|lib-search=s' => \$lib_search, 'N|no-socheck' => \$no_socheck);
 
 if ($help) {
 	show_usage();
-	wrapsay "\nNon-root users can call $self with -C, -c, -L, -n, -t, -X, -h and -v." unless $< == 0;
+	wrapsay "\nNon-root users can call $self with -C, -c, -L, -N, -n, -t, -X, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
 $config{NOCOLOR} = $color ? 'FALSE' : 'TRUE' if $color xor $nocolor;
 $config{NOWRAP} = $nowrap ? 'TRUE' : 'FALSE' if $nowrap xor $wrap;
+$config{NO_SOCHECK} = $no_socheck ? 'TRUE' : $config{NO_SOCHECK};
 if ($< != 0) { $config{GPG_VERIFY} = "FALSE"; }
 unless ($options_ok) {
 	show_usage();
@@ -105,9 +108,9 @@ if ($lib_search) {
 	usage_error "--lib-check requires a list of libraries." unless @lib_search;
 }
 
-unless ($< == 0 or ($nopull and not $gpg) or $socheck or $pkg_check or $full_check or $match_mode) {
+unless ($< == 0 or ($nopull and not $gpg) or ($nopull and $no_socheck and not $gpg) or $socheck or $pkg_check or $full_check or $match_mode) {
 	show_usage();
-	usage_error "Non-root users can call $self with -C, -c, -L, -n, -t, -X, -h and -v." unless $< == 0;
+	usage_error "Non-root users can call $self with -C, -c, -L, -N, -n, -t, -X, -h and -v." unless $< == 0;
 }
 
 usage_error "obsolete-check is incompatible with nopull." if $nopull and $obsolete_check;
@@ -133,7 +136,7 @@ if ($obsolete_check) {
 	exit 0;
 }
 
-my $auto_series = ($config{SO_CHECK} eq "TRUE" and not ($socheck or $pkg_check or $full_check));
+my $auto_series = ($config{NO_SOCHECK} ne "TRUE" and not ($socheck or $pkg_check or $full_check));
 
 update_tree() unless $nopull or $socheck or $pkg_check or $full_check;
 if ((($nopull or $socheck) and slackbuilds_or_fetch()) or $pkg_check or $full_check) {
@@ -546,7 +549,7 @@ unless ($socheck or $pkg_check or $full_check or $perl or $python or $ruby) {
 		print_output('/var/log/sbocheck-orphaned.log', @orphaned);
 	}
 }
-if ($solibs and ($socheck or ($config{SO_CHECK} eq "TRUE" and not ($perl or $python or $ruby)) or $pkg_check or $full_check)) {
+if ($solibs and ($socheck or ($config{NO_SOCHECK} ne "TRUE" and not ($perl or $python or $ruby)) or $pkg_check or $full_check)) {
 	my @to_rebuild = evaluate_solibs();
 	my $log_base = $match_mode ? "sbocheck-lib-search.log" : "sbocheck-solibs.log";
 	my $check_log = $< == 0 ? "/var/log/$log_base" : "/tmp/$log_base";

@@ -75,15 +75,15 @@ Options (defaults shown first where applicable):
     non-interactive; skips README and all prompts.
   -S|--strict-upgrades (FALSE|TRUE):
     if TRUE, SBo upgrades only when the version or build number is higher.
-  -X|--so-check (FALSE|TRUE):
-    if TRUE, check for missing .so dependencies if needed.
+  -X|--no-socheck (FALSE|TRUE):
+    if TRUE, do not check for missing .so dependencies.
   -z|--force-reqs:
     rebuild dependencies as well.
 EOF
 	return 1;
 }
 
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $socheck, $wrap, $nowrap, $nonet, $all_fails, $get_only);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $no_socheck, $wrap, $nowrap, $nonet, $all_fails, $get_only);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -108,7 +108,7 @@ my $options_ok = GetOptions(
 	'log-dir|L=s'       => \$log_dir,
 	'nocolor'           => \$nocolor,
 	'color'             => \$color,
-	'so-check|X=s'      => \$socheck,
+	'no-socheck|X=s'    => \$no_socheck,
 	'nowrap'            => \$nowrap,
 	'wrap'              => \$wrap,
 	'nonet|N=s'         => \$nonet,
@@ -141,7 +141,7 @@ $config{STRICT_UPGRADES} = $strict_upgrades if $strict_upgrades;
 $config{ETC_PROFILE} = $etc_profile if $etc_profile;
 $config{PKG_DIR} = $pkg_dir if $pkg_dir;
 $config{LOG_DIR} = $log_dir if $log_dir;
-$config{SO_CHECK} = $socheck if $socheck;
+$config{NO_SOCHECK} = $no_socheck if $no_socheck;
 $config{JOBS} = $jobs if $jobs;
 $config{NONET} = $nonet if $nonet;
 
@@ -551,7 +551,7 @@ if ($dry_run) {
 }
 
 my @solib_search;
-if ($config{SO_CHECK} eq "TRUE" and not $get_only) {
+if ($config{NO_SOCHECK} ne "TRUE" and not $get_only) {
 	wrapsay_color $color_notice, "Checking for shared objects installed in the upgrade queue...";
 	my @before_installed = @{ get_installed_packages("SBO") };
 	my $installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @before_installed };
@@ -573,7 +573,7 @@ my ($failures, $exit) = process_sbos(
 );
 print_failures($failures);
 
-if ($config{SO_CHECK} eq "TRUE" and @solib_search and not $no_install and not $get_only) {
+if ($config{NO_SOCHECK} ne "TRUE" and @solib_search and not $no_install and not $get_only) {
 	print "\nChecking for broken shared object dependencies from this upgrade...";
 	update_known_solibs();
 	my (@actionable, @log_output);
@@ -618,7 +618,7 @@ if ($config{SO_CHECK} eq "TRUE" and @solib_search and not $no_install and not $g
 			wrapsay_color $color_notice, "\nNo broken dependencies from this upgrade found.";
 		}
 	}
-} elsif ($config{SO_CHECK} eq "TRUE" and not @solib_search and not $no_install and not $get_only) {
+} elsif ($config{NO_SOCHECK} ne "TRUE" and not @solib_search and not $no_install and not $get_only) {
 	wrapsay_color $color_notice, "\nNo outgoing package provided shared objects. Skipping the shared object check.";
 }
 

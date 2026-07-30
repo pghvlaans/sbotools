@@ -41,8 +41,6 @@ non-default settings include **TRUE** for:
 • **GPG_VERIFY**, provided the upstream repository is regularly signed
 with **gpg(1)**.
 
-• **SO_CHECK**
-
 The current configuration keys are as follows:
 
 **CLASSIC=(FALSE\|TRUE)**
@@ -176,14 +174,12 @@ If set to a **version number**, use the **SlackBuilds.org** repository
 for that version of Slackware rather than the one specified in
 */etc/slackware-version*.
 
-**SO_CHECK=(FALSE\|TRUE)**
+**NO_SOCHECK=(FALSE\|TRUE)**
 
-If set to **TRUE**, check for missing first-order shared object (solib)
-dependencies among *\_SBo* packages when running [sbocheck(1)](sbocheck.1.md) and
-[sboupgrade(1)](sboupgrade.1.md). Additionally, [sbocheck(1)](sbocheck.1.md) searches for
+If set to **TRUE**, do not check for missing first-order shared object
+(solib) dependencies among *\_SBo* packages when running [sbocheck(1)](sbocheck.1.md)
+and [sboupgrade(1)](sboupgrade.1.md). Additionally, [sbocheck(1)](sbocheck.1.md) does not search for
 incompatible **perl**, **python** and **ruby** *\_SBo* packages.
-
-Recommended value: **TRUE**
 
 **REPO=(FALSE\|url\|/path)**
 

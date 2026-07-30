@@ -1284,7 +1284,7 @@ sub display_settings {
 						"\"REPO: $config{REPO}\" \"\" \"Use this non-default git or rsync repository.\" \\",
 						"\"SBO_HOME: $config{SBO_HOME}\" \"\" \"Specify an sbotools directory (default /var/lib/sbotools).\" \\",
 						"\"SLACKWARE_VERSION: $config{SLACKWARE_VERSION}\" \"\" \"Use this Slackware version to determine the default repo.\" \\",
-						"\"SO_CHECK: $config{SO_CHECK}$plus\" \"\" \"If TRUE, do a solib/perl/python/ruby check on fetch and upgrade.\" \\",
+						"\"NO_SOCHECK: $config{NO_SOCHECK}$plus\" \"\" \"If TRUE, skip the solib/perl/python/ruby check on fetch and upgrade.\" \\",
 						"\"STRICT_UPGRADES: $config{STRICT_UPGRADES}$plus\" \"\" \"If TRUE, ignore apparent downgrades with sboupgrade.\"";
 	push @config_values, "\"BUILD_IGNORE: $config{BUILD_IGNORE}$plus\" \"\" \"If TRUE, ignore build numbers when upgrading.\" \\",
 						"\"NOCOLOR: $config{NOCOLOR}$plus\" \"\" \"If TRUE, do not use sbotools color output.\" \\",
@@ -1423,8 +1423,8 @@ sub display_settings {
 			$criterion = "A SLACKWARE VERSION or FALSE.";
 			$flag = "V";
 		}
-		if ($option =~ /^SO_CHECK/) {
-			$explanation = "If TRUE, do a shared object check when checking for updates\nand after upgrades.\n\nFrom sbocheck, also search for incompatible perl, python and\nruby _SBo packages.";
+		if ($option =~ /^NO_SOCHECK/) {
+			$explanation = "If TRUE, skip shared object check when checking for updates\nand after upgrades.\n\nFrom sbocheck, do not search for incompatible perl, python and\nruby _SBo packages either.";
 			$criterion = "TRUE or FALSE.";
 			$flag = "X";
 		}
