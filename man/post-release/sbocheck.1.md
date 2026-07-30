@@ -21,6 +21,8 @@ checks
 
     sbocheck [-h|-v]
 
+    sbocheck [-NOgn]
+
     sbocheck [-COXgn] [-t all,perl,python,ruby,solibs]
 
     sbocheck [-COXgn] [-L lib1,lib2,\...]
@@ -63,10 +65,13 @@ in-tree *\_SBo* packages, use the **\--so-check** option. Each affected
 package is logged to */var/log/sbocheck-solibs.log* if running as root,
 or */tmp/sbocheck-solibs.log* otherwise. This log contains a list of
 missing shared objects and the files that have first-order dependencies
-on them. This can be done automatically on every **sbocheck** run by
-setting **SO_CHECK** to **TRUE**. Please note that scripts repackaging
-from binary packages occasionally trigger false positives. Such packages
-generally do not require rebuilds.
+on them. This is done automatically on every **sbocheck** run by
+default. To disable these automatic checks, by setting **NO_SOCHECK** to
+**TRUE** or use the **\--no-socheck** flag. Please note that scripts
+repackaging from binary packages occasionally trigger false positives.
+Such packages generally do not require rebuilds. Packages including
+files with missing solibs in the */opt* directory only are marked in the
+output.
 
 Use **\--type** with any package-checking option to specify package
 tests to run in a comma-separated list. The supported values are
@@ -135,6 +140,10 @@ options is specified, search all packages on the system.
 
 Incompatible with **\--type**.
 
+**-N\|\--no-socheck**
+
+Skip the default missing shared object check.
+
 **-O\|\--obsolete-check**
 
 If running Slackware -current, download a copy of the obsolete script
@@ -184,10 +193,10 @@ Incompatible with **\--lib-search**.
 
 Run package checks on all installed *\_SBo* packages; no other
 operations are performed. **solibs** are checked by default; use
-**\--type** to specify other tests. To do this automatically every time
-**sbocheck** is run, set **SO_CHECK** to **TRUE** (see [sboconfig(1)](sboconfig.1.md)
-or [sbotools.conf(5)](sbotools.conf.5.md)). Incompatible with **\--check-package** and
-**\--check-all-packages**.
+**\--type** to specify other tests. This is done automatically every
+time **sbocheck** is run. Set **NO_SOCHECK** to **TRUE** to disable this
+behavior. (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). Incompatible
+with **\--check-package** and **\--check-all-packages**.
 
 **-h\|\--help**
 

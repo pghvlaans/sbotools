@@ -154,12 +154,12 @@ there or [sbotools.colors(5)](sbotools.colors.5.md) for details.
 Upgrading Slackware or other packages occasionally causes breakage
 related to missing shared object dependencies (solibs). To check
 first-order dependencies for all installed *SBo* packages, use
-**sbocheck** with the **-X** option. Use **-c** instead to check a list
-of installed packages, or **-C** to check all installed packages. **-C**
-and **-c** can be used without a local copy of the repository. Checks of
-*\_SBo* packages only are performed automatically after running
-**sbocheck** and [sboupgrade(1)](sboupgrade.1.md) when the **SO_CHECK** setting is
-**TRUE**.
+[sbocheck(1)](sbocheck.1.md) with the **-X** option. Use **-c** instead to check a
+list of installed packages, or **-C** to check all installed packages.
+**-C** and **-c** can be used without a local copy of the repository.
+Checks of *\_SBo* packages only are performed automatically after
+running **sbocheck** and [sboupgrade(1)](sboupgrade.1.md); to disable this behavior,
+set the **NO_SOCHECK** setting to **TRUE**.
 
 Use **sbocheck** with any package-checking option and the **\--type**
 option with any of **solibs** (default), **perl**, **python**, **ruby**

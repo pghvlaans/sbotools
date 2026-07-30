@@ -62,8 +62,6 @@ non-default settings include **TRUE** for:
 • **GPG_VERIFY**, provided the upstream repository is regularly signed
 with **gpg(1)**.
 
-• **SO_CHECK**
-
 **-l\|\--list**
 
 List the current configuration options, including unmodified defaults.
@@ -245,15 +243,13 @@ scripts in the local overrides directory or when reinstalling with
 
 **NOWRAP**: If set to **TRUE**, do not wrap **sbotools** output.
 
-**-X\|\--so-check (FALSE\|TRUE)**
+**-X\|\--no-socheck (FALSE\|TRUE)**
 
-**SO_CHECK**: If set to **TRUE**, check for missing first-order shared
-object (solib) dependencies among *\_SBo* packages when running
+**NO_SOCHECK**: If set to **TRUE**, do not check for missing first-order
+shared object (solib) dependencies among *\_SBo* packages when running
 [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md). Additionally, [sbocheck(1)](sbocheck.1.md)
-searches for incompatible **perl**, **python** and **ruby** *\_SBo*
-packages.
-
-Recommended value: **TRUE**
+does not search for incompatible **perl**, **python** and **ruby**
+*\_SBo* packages.
 
 **-h\|\--help**
 
