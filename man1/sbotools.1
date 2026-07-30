@@ -189,7 +189,7 @@ or by editing
 /etc/sbotools/sbotools.conf\fR\
 \&. The repositiory can also be fetched using
 .B
-sbotool
+sbotool(1)
 if running as root.
 .P
 Along with its copy of the repository, the
@@ -375,6 +375,12 @@ invariably. Use
 .B
 sbohints --ignore-tests
 with one or more scripts to skip them.
+.B
+--all-plus-failures
+skips packages with solib issues only in the
+.I
+/opt
+directory automatically.
 .P
 A limited number of SlackBuilds download files when running,
 which some users consider a security risk. Set
