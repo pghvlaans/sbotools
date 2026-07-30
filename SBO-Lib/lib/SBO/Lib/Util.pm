@@ -491,9 +491,13 @@ sub check_distfiles_dir {
       error_code("Could not create $dir. Exiting.", _ERR_SBO_HOME) unless make_path $dir;
     }
   }
+  if (-d $manual_link and readlink $manual_link eq $manual_dir) {
+    unlink $manual_link;
+    symlink "distfiles/manual", $manual_link;
+  }
   unless (-l $manual_link) {
     error_code("$manual_link is not a symlink to $manual_dir. Please remove it and try again.", _ERR_SBO_HOME) if -s $manual_link;
-    error_code("Could not link $manual_dir to $manual_link. Exiting.", _ERR_SBO_HOME) unless symlink $manual_dir, $manual_link;
+    error_code("Could not link $manual_dir to $manual_link. Exiting.", _ERR_SBO_HOME) unless symlink "distfiles/manual", $manual_link;
   }
   error_code("$manual_link is not a symlink to $manual_dir. Please remove it and try again.", _ERR_SBO_HOME) unless -d $manual_link and abs_path $manual_link eq $manual_dir;
   my $mounts = slurp("/proc/self/mounts");

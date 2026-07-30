@@ -18,6 +18,7 @@
     * Replace the SO_CHECK setting with NO_SOCHECK.
     * sboupgrade: Replace --so-check with --no-socheck.
     * sbocheck: Use --no-socheck to skip the default check.
+  * Util.pm: Use a relative symlink for SBO_HOME/manual_downloads.
 
 #### 4.2.1 - 2026-07-23
   * sbofind: Show maintainer names unless in CLASSIC mode; search names with --maintainers.
