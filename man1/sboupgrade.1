@@ -644,6 +644,12 @@ or
 .B
 ruby
 tests before the upgrade process begins.
+.P
+Because packages with missing solibs only in the
+.I
+/opt
+directory are usually binary and therefore do not require rebuilds,
+they are not added to the queue.
 .B
 sboupgrade
 ignores test failures for any script with an

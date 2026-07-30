@@ -13,6 +13,7 @@
   * Use color output by default; replace the COLOR setting with NOCOLOR.
   * Util.pm: Account for symlinks when detecting dangerous directory settings.
   * Solibs.pm, sbocheck: Packages with missing solibs only in /opt are marked; improved disclaimer.
+  * sboupgrade: --all-plus-failures skips packages with missing solibs only in /opt.
 
 #### 4.2.1 - 2026-07-23
   * sbofind: Show maintainer names unless in CLASSIC mode; search names with --maintainers.

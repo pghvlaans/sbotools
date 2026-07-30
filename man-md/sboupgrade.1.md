@@ -251,7 +251,11 @@ upgraded only if the version or build number from this directory varies.
 Upgrade the same installed SlackBuilds that would be upgraded with
 **\--all**, as well as any packages with the *\_SBo* tag that fail the
 **solibs**, **perl**, **python** or **ruby** tests before the upgrade
-process begins. **sboupgrade** ignores test failures for any script with
+process begins.
+
+Because packages with missing solibs only in the */opt* directory are
+usually binary and therefore do not require rebuilds, they are not added
+to the queue. **sboupgrade** ignores test failures for any script with
 an *ignore-tests* request in */etc/sbotools/sbotools.hints*. See
 [sbohints(1)](sbohints.1.md) or [sbotools.hints(5)](sbotools.hints.5.md) for details.
 
