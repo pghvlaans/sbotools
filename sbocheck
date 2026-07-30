@@ -47,6 +47,8 @@ Options:
     do not perform the default check for missing shared objects.
   -O|--obsolete-check:
     download updated obsolete script list and perl version history.
+  -o|--no-orphans:
+    skip the check for builds orphaned upstream.
   -n|--nopull:
     run without updating the tree.
   -t|--type:
@@ -62,15 +64,15 @@ EOF
 
 my $line_needed = 1;
 
-my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $pkg_check, $full_check, $nowrap, $wrap, $solibs, $perl, $python, $ruby, $type, @types, $lib_search, $no_socheck);
+my ($help, $vers, $gpg, $nopull, $obsolete_check, $nocolor, $color, $socheck, $pkg_check, $full_check, $nowrap, $wrap, $solibs, $perl, $python, $ruby, $type, @types, $lib_search, $no_socheck, $no_orphans);
 
 my @valid_types = ("solibs", "perl", "python", "ruby");
 
-my $options_ok = GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'nowrap' => \$nowrap, 'wrap' => \$wrap, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check, 't|type=s' => \$type, 'L|lib-search=s' => \$lib_search, 'N|no-socheck' => \$no_socheck);
+my $options_ok = GetOptions('help|h' => \$help, 'version|v' => \$vers, 'gpg-verify|g' => \$gpg, 'obsolete-check|O' => \$obsolete_check, 'nopull|n' => \$nopull, 'nocolor' => \$nocolor, 'color' => \$color, 'nowrap' => \$nowrap, 'wrap' => \$wrap, 'X|so-check' => \$socheck, 'c|check-package' => \$pkg_check, 'C|check-all-packages' => \$full_check, 't|type=s' => \$type, 'L|lib-search=s' => \$lib_search, 'N|no-socheck' => \$no_socheck, 'o|no-orphans' => \$no_orphans);
 
 if ($help) {
 	show_usage();
-	wrapsay "\nNon-root users can call $self with -C, -c, -L, -N, -n, -t, -X, -h and -v." unless $< == 0;
+	wrapsay "\nNon-root users can call $self with -C, -c, -L, -N, -n, -o, -t, -X, -h and -v." unless $< == 0;
 	exit 0;
 }
 if ($vers) { show_version(); exit 0 }
@@ -108,9 +110,13 @@ if ($lib_search) {
 	usage_error "--lib-check requires a list of libraries." unless @lib_search;
 }
 
-unless ($< == 0 or ($nopull and not $gpg) or ($nopull and $no_socheck and not $gpg) or $socheck or $pkg_check or $full_check or $match_mode) {
+unless ($< == 0 or
+        ($nopull and not $gpg) or
+		($nopull and $no_socheck and not $gpg) or
+		($nopull and $no_orphans and not $gpg) or
+		$socheck or $pkg_check or $full_check or $match_mode) {
 	show_usage();
-	usage_error "Non-root users can call $self with -C, -c, -L, -N, -n, -t, -X, -h and -v." unless $< == 0;
+	usage_error "Non-root users can call $self with -C, -c, -L, -N, -n, -o, -t, -X, -h and -v." unless $< == 0;
 }
 
 usage_error "obsolete-check is incompatible with nopull." if $nopull and $obsolete_check;
@@ -545,8 +551,10 @@ unless ($socheck or $pkg_check or $full_check or $perl or $python or $ruby) {
 		print_output('/var/log/sbocheck-bumps.log', @bumps);
 		my @removed = get_removed_list();
 		print_output('/var/log/sbocheck-out-of-tree.log', @removed);
-		my @orphaned = get_orphaned_list();
-		print_output('/var/log/sbocheck-orphaned.log', @orphaned);
+		unless ($no_orphans) {
+			my @orphaned = get_orphaned_list();
+			print_output('/var/log/sbocheck-orphaned.log', @orphaned);
+		}
 	}
 }
 if ($solibs and ($socheck or ($config{NO_SOCHECK} ne "TRUE" and not ($perl or $python or $ruby)) or $pkg_check or $full_check)) {

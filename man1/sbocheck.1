@@ -11,7 +11,7 @@ tree updates and package checks
 .P
 sbocheck [-h|-v]
 .P
-sbocheck [-NOgn]
+sbocheck [-NOgno]
 .P
 sbocheck [-COXgn] [-t all,perl,python,ruby,solibs]
 .P
@@ -247,6 +247,12 @@ with the
 --type\fR\
 \&,
 .B
+--no-socheck\fR\
+\&,
+.B
+--no-orphans\fR\
+\&,
+.B
 --help
 and
 .B
@@ -370,6 +376,16 @@ Skip the default missing shared object check.
 .RE
 .P
 .B
+-n|--nopull
+.RS
+Check for updated SlackBuilds without updating the SlackBuilds
+tree. The
+.B
+--nopull
+flag can be used without root privileges, but no log is kept.
+.RE
+.P
+.B
 -O|--obsolete-check
 .RS
 If running Slackware -current, download a copy of the obsolete script list
@@ -393,13 +409,9 @@ Incompatible with
 .RE
 .P
 .B
--n|--nopull
+-o|--no-orphans
 .RS
-Check for updated SlackBuilds without updating the SlackBuilds
-tree. The
-.B
---nopull
-flag can be used without root privileges, but no log is kept.
+Skip the check for builds orphaned upstream.
 .RE
 .P
 .B

@@ -21,7 +21,7 @@ checks
 
     sbocheck [-h|-v]
 
-    sbocheck [-NOgn]
+    sbocheck [-NOgno]
 
     sbocheck [-COXgn] [-t all,perl,python,ruby,solibs]
 
@@ -95,12 +95,12 @@ in **sbotools-3.3**, is a compatibility symlink to **sbocheck**.
 
 Non-root users can only call **sbocheck** with the **\--nopull**,
 **\--so-check**, **\--check-package**, **\--check-all-packages**,
-**\--lib-search**, **\--type**, **\--help** and **\--version** flags.
-**sbocheck** issues a warning if the directory specified with
-**LOCAL_OVERRIDES** does not exist (see [sboconfig(1)](sboconfig.1.md) or
-[sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
-message.
+**\--lib-search**, **\--type**, **\--no-socheck**, **\--no-orphans**,
+**\--help** and **\--version** flags. **sbocheck** issues a warning if
+the directory specified with **LOCAL_OVERRIDES** does not exist (see
+[sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration
+is detected in */etc/sbotools/sbotools.conf*, the script exits with a
+diagnostic message.
 
 ## OPTIONS
 
@@ -144,6 +144,12 @@ Incompatible with **\--type**.
 
 Skip the default missing shared object check.
 
+**-n\|\--nopull**
+
+Check for updated SlackBuilds without updating the SlackBuilds tree. The
+**\--nopull** flag can be used without root privileges, but no log is
+kept.
+
 **-O\|\--obsolete-check**
 
 If running Slackware -current, download a copy of the obsolete script
@@ -152,11 +158,9 @@ list and the perl version history file from
 **GPG_VERIFY** is **TRUE** or **\--gpg-verify** is passed. Incompatible
 with **\--nopull**.
 
-**-n\|\--nopull**
+**-o\|\--no-orphans**
 
-Check for updated SlackBuilds without updating the SlackBuilds tree. The
-**\--nopull** flag can be used without root privileges, but no log is
-kept.
+Skip the check for builds orphaned upstream.
 
 **-t\|\--type**
 
