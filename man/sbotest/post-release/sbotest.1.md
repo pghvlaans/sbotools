@@ -96,11 +96,11 @@ archive. Reverse rebuilds are performed when rebuilding archived
 packages.
 
 Packages in the archive with missed rebuilds may lack required shared
-object dependencies, which can in turn cause builds to fail. To check
-all installed *\_SBo* packages for missing dependencies and
+object dependencies, which can in turn cause builds to fail. All
+installed *\_SBo* packages are checked for missing dependencies and
 incompatibility with system **perl**, **python** and **ruby** upon build
-test failure, set **SO_CHECK** to **TRUE** or pass **\--so-check TRUE**
-to **sbotest**.
+test failure by default. To skip these checks, set **NO_SOCHECK** to
+**TRUE** or pass **\--no-socheck TRUE** to **sbotest**.
 
 **sbopkglint(1)** is run on all test targets as they are built
 successfully. A summary of results is displayed at the end and saved to
@@ -257,12 +257,12 @@ rebuilt regardless of whether they are up-to-date.
 
 Incompatible with **\--single** and **\--archive-force**.
 
-**-X\|\--so-check**
+**-X\|\--no-socheck**
 
-If **TRUE**, perform tests for missing shared object dependencies and
-**perl**, **python** and **ruby** incompatibility on all installed
-*\_SBo* packages upon build test failure. Overrides the setting in
-*/etc/sbotest/sbotest.conf*.
+If **TRUE**, do not perform the default tests for missing shared object
+dependencies and **perl**, **python** and **ruby** incompatibility on
+all installed *\_SBo* packages upon build test failure. Overrides the
+**NO_SOCHECK** setting in */etc/sbotest/sbotest.conf*.
 
 **-h\|\--help**
 

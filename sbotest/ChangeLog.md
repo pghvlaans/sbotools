@@ -4,6 +4,7 @@
   * Compatibility bump
   * Document the manual download directory and symlink
   * Document the new **SBO_HOME** default of `/var/lib/sbotest`, etc.
+  * Account for the **NO_SOCHECK** setting; replace **\--so-check** with **\--no-socheck**
 
 #### 1.2.2 - 2026-05-06
   * Account for the new **NONET** setting
