@@ -200,7 +200,7 @@ if ($all) {
 			for my $sbo (keys %$sbo_pkg) {
 				next if in $sbo, @ARGV or on_blacklist $sbo or ignore_tests $sbo;
 				unless (solib_check($sbo_pkg->{$sbo})) {
-					if (in $sbo, @not_opt_only) {
+					if (in $sbo_pkg->{$sbo}, @not_opt_only) {
 						push @bad_solibs, $sbo;
 						push @ARGV, $sbo;
 					} else {
@@ -607,7 +607,7 @@ if ($config{NO_SOCHECK} ne "TRUE" and @solib_search and not $no_install and not 
 			wrapsay_color $color_lesser, "\nThe following packages may require rebuilding:", 1;
 			my $had_opt_only;
 			for my $sbo (sort @actionable) {
-				my $opt_msg = in $sbo, @not_opt_only ? "" : " (/opt only)";
+				my $opt_msg = in $installed_pkg->{$sbo}, @not_opt_only ? "" : " (/opt only)";
 				print "  $sbo$opt_msg\n";
 				$had_opt_only = 1 if $opt_msg;
 			}
