@@ -194,20 +194,32 @@ if ($all) {
 		my $rebuild_label = $get_only ? "Rebuild needed" : "Rebuilding";
 		my @installed_sbos = @{ get_installed_packages('SBO') };
 		if (@installed_sbos) {
-			my (@bad_solibs, @bad_perl, @bad_python, @bad_ruby);
+			my (@bad_solibs, @opt_pkgs, @bad_perl, @bad_python, @bad_ruby);
 			my $sbo_pkg = +{ map {; $_->{name}, $_->{pkg} } @installed_sbos };
 			wrapsay_color $color_notice, "Checking packges for missing shared objects...";
 			for my $sbo (keys %$sbo_pkg) {
 				next if in $sbo, @ARGV or on_blacklist $sbo or ignore_tests $sbo;
 				unless (solib_check($sbo_pkg->{$sbo})) {
-					push @ARGV, $sbo;
-					push @bad_solibs, $sbo if in $sbo, @not_opt_only;
+					if (in $sbo, @not_opt_only) {
+						push @bad_solibs, $sbo;
+						push @ARGV, $sbo;
+					} else {
+						push @opt_pkgs, $sbo;
+					}
 				}
 			}
 			if (@bad_solibs) {
 				print "\n";
 				wrapsay_color $color_lesser, "$rebuild_label for missing solibs:";
 				for (sort @bad_solibs) {
+					print "  $_\n";
+				}
+				print "\n";
+			}
+			if (@opt_pkgs) {
+				print "\n" unless @bad_solibs;
+				wrapsay_color $color_notice, "Missing solibs in /opt only; not adding to the queue:";
+				for (sort @opt_pkgs) {
 					print "  $_\n";
 				}
 				print "\n";
