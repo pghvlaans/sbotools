@@ -103,10 +103,11 @@ repository must be fetched with [sbocheck(1)](sbocheck.1.md):
 
     sbocheck
 
-The local repository is saved to */usr/sbo/repo*. To use an alternative
-location, give an absolute file path to the **SBO_HOME** setting with
-[sboconfig(1)](sboconfig.1.md) or by editing */etc/sbotools/sbotools.conf*. The
-repositiory can also be fetched using **sbotool** if running as root.
+The local repository is saved to */var/lib/sbotools/repo*. To use an
+alternative location, give an absolute file path to the **SBO_HOME**
+setting with [sboconfig(1)](sboconfig.1.md) or by editing
+*/etc/sbotools/sbotools.conf*. The repositiory can also be fetched using
+[sbotool(1)](sbotool.1.md) if running as root.
 
 Along with its copy of the repository, the **SBO_HOME** directory also
 contains directories for automatic and manual file downloads at
@@ -145,20 +146,20 @@ changes can be done from here if running as root.
 
 **sbotools** can be set up to print some messages and prompts in color.
 All scripts except for **sboconfig** have **\--color** and
-**\--nocolor** options to turn colors on and off. To turn all colors on
-by default, set **COLOR** to **TRUE**. Output colors can be customized
+**\--nocolor** options to turn colors on and off. To turn all colors off
+by default, set **NOCOLOR** to **TRUE**. Output colors can be customized
 by editing the */etc/sbotools/sbotools.colors* file. See the comments
 there or [sbotools.colors(5)](sbotools.colors.5.md) for details.
 
 Upgrading Slackware or other packages occasionally causes breakage
 related to missing shared object dependencies (solibs). To check
 first-order dependencies for all installed *SBo* packages, use
-**sbocheck** with the **-X** option. Use **-c** instead to check a list
-of installed packages, or **-C** to check all installed packages. **-C**
-and **-c** can be used without a local copy of the repository. Checks of
-*\_SBo* packages only are performed automatically after running
-**sbocheck** and [sboupgrade(1)](sboupgrade.1.md) when the **SO_CHECK** setting is
-**TRUE**.
+[sbocheck(1)](sbocheck.1.md) with the **-X** option. Use **-c** instead to check a
+list of installed packages, or **-C** to check all installed packages.
+**-C** and **-c** can be used without a local copy of the repository.
+Checks of *\_SBo* packages only are performed automatically after
+running **sbocheck** and [sboupgrade(1)](sboupgrade.1.md); to disable this behavior,
+set the **NO_SOCHECK** setting to **TRUE**.
 
 Use **sbocheck** with any package-checking option and the **\--type**
 option with any of **solibs** (default), **perl**, **python**, **ruby**
@@ -171,7 +172,8 @@ performs all available upgrades and rebuilds any packages with the
 *\_SBo* tag that fail one of these tests before the upgrade process
 begins. Some scripts that repackage binaries are known to fail solib
 tests invariably. Use **sbohints \--ignore-tests** with one or more
-scripts to skip them.
+scripts to skip them. **\--all-plus-failures** skips packages with solib
+issues only in the */opt* directory automatically.
 
 A limited number of SlackBuilds download files when running, which some
 users consider a security risk. Set **NONET** to **TRUE** to prevent

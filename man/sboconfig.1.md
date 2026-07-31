@@ -27,7 +27,8 @@
 
     sboconfig [-CKFNOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo
 /path\|FALSE] \
-              [-s /path|/usr/sbo] [-B branch_name|FALSE] [-V #.#|FALSE] \
+              [-s /path|/var/lib/sbotools] [-B branch_name|FALSE] [-V
+#.#\|FALSE] \
               [-r url|FALSE]
 
 ## DESCRIPTION
@@ -54,16 +55,12 @@ Non-root users can only call **sboconfig** with the **\--list**,
 All values default to **FALSE** except for **SBO_HOME**. Recommended
 non-default settings include **TRUE** for:
 
-• **COLOR**
-
 • **CPAN_IGNORE**
 
 • **ETC_PROFILE**
 
 • **GPG_VERIFY**, provided the upstream repository is regularly signed
 with **gpg(1)**.
-
-• **SO_CHECK**
 
 **-l\|\--list**
 
@@ -96,12 +93,12 @@ number differs.
 
 **-C\|\--classic (FALSE\|TRUE)**
 
-**CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT** and
-**BUILD_IGNORE**, and disable **COLOR** (overriding the contents of
-[sbotools.conf(5)](sbotools.conf.5.md)). Build increment and out-of-tree SlackBuild checks
-by [sbocheck(1)](sbocheck.1.md) are disabled, and previously-used build options are
-not displayed. This provides a more traditional **sbotools** look and
-feel for those who want it.
+**CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT**,
+**BUILD_IGNORE**and **NOCOLOR** (overriding the contents of
+[sbotools.conf(5)](sbotools.conf.5.md)). Build increment, out-of-tree SlackBuild and
+orphaned SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are disabled, and
+previously-used build options are not displayed. This provides a more
+traditional **sbotools** look and feel for those who want it.
 
 **-c\|\--noclean (FALSE\|TRUE)**
 
@@ -118,9 +115,9 @@ when running [sbotool(1)](sbotool.1.md).
 
 **DISTCLEAN**: If **TRUE**, remove the package and source archives after
 building. Source archives are otherwise retained in md5sum-designated
-directories under */usr/sbo/distfiles* (with default **SBO_HOME**). If
-**PKG_DIR** is set, package archives are saved there regardless of
-**DISTCLEAN**.
+directories under */var/lib/sbotools/distfiles* (with default
+**SBO_HOME**). If **PKG_DIR** is set, package archives are saved there
+regardless of **DISTCLEAN**.
 
 **-e\|\--etc-profile (FALSE\|TRUE)**
 
@@ -156,9 +153,9 @@ SlackBuild invoking **make** is run.
 
 **-K\|\--color (FALSE\|TRUE)**
 
-**COLOR**: If **TRUE**, enable **sbotools** color output. To customize
-color output, edit the */etc/sbotools/sbotools.colors* file directly.
-See [sbotools.colors(5)](sbotools.colors.5.md) for details.
+**NOCOLOR**: If **TRUE**, disable **sbotools** color output. To
+customize color output, edit the */etc/sbotools/sbotools.colors* file
+directly. See [sbotools.colors(5)](sbotools.colors.5.md) for details.
 
 Recommended value: **TRUE**
 
@@ -197,11 +194,12 @@ Recommended value: **TRUE**
 installation. This overrides the **DISTCLEAN** setting for saved
 packages.
 
-**-s\|\--sbo-home (/usr/sbo\|/path)**
+**-s\|\--sbo-home (/var/lib/sbotools\|/path)**
 
 **SBO_HOME**: If set to a **path**, this is where the
-**SlackBuilds.org** tree is stored. The default setting is */usr/sbo*.
-The tree must be re-downloaded if the **SBO_HOME** setting changes.
+**SlackBuilds.org** tree is stored. The default setting is
+*/var/lib/sbotools*. The tree must be re-downloaded if the **SBO_HOME**
+setting changes.
 
 **-o\|\--local-overrides (FALSE\|/path)**
 
@@ -245,15 +243,13 @@ scripts in the local overrides directory or when reinstalling with
 
 **NOWRAP**: If set to **TRUE**, do not wrap **sbotools** output.
 
-**-X\|\--so-check (FALSE\|TRUE)**
+**-X\|\--no-socheck (FALSE\|TRUE)**
 
-**SO_CHECK**: If set to **TRUE**, check for missing first-order shared
-object (solib) dependencies among *\_SBo* packages when running
+**NO_SOCHECK**: If set to **TRUE**, do not check for missing first-order
+shared object (solib) dependencies among *\_SBo* packages when running
 [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md). Additionally, [sbocheck(1)](sbocheck.1.md)
-searches for incompatible **perl**, **python** and **ruby** *\_SBo*
-packages.
-
-Recommended value: **TRUE**
+does not search for incompatible **perl**, **python** and **ruby**
+*\_SBo* packages.
 
 **-h\|\--help**
 
@@ -270,7 +266,7 @@ default values change in this situation:
 
 **-A\|\--sbo-archive**
 
-Defaults to */usr/sbotest/archive*. This setting is specific to
+Defaults to */var/lib/sbotest/archive*. This setting is specific to
 **sbotest**.
 
 **-e\|\--etc-profile**
@@ -279,7 +275,7 @@ Defaults to **TRUE**.
 
 **-L\|\--log-dir**
 
-Defaults to */usr/sbotest/logs*.
+Defaults to */var/lib/sbotest/logs*.
 
 **-P\|\--cpan-ignore**
 
@@ -287,11 +283,11 @@ Defaults to **TRUE**.
 
 **-p\|\--pkg-dir**
 
-Defaults to */usr/sbotest/tests*.
+Defaults to */var/lib/sbotest/tests*.
 
 **-s\|\--sbo-home**
 
-Defaults to */usr/sbotest*.
+Defaults to */var/lib/sbotest*.
 
 Running **sbotest config** without options is ineffective.
 

@@ -45,8 +45,9 @@ or the md5sum check fails, a new download is attempted from
 sources for the queue and download if needed, use **\--get-only**.
 Manually-downloaded source files (such as those requiring a license
 agreement) can be placed in *SBO_HOME/manual_downloads* prior to running
-**sboupgrade**. **SBO_HOME/distfiles** can serve as a mountpoint, but
-please ensure that no partitions are mounted in its subdirectories.
+**sboupgrade**. **SBO_HOME/distfiles** can be a mountpoint or a symlink
+to an existing directory, but please ensure that no partitions are
+mounted in its subdirectories.
 
 *SlackBuild* and *README* files are parsed for **groupadd(1)** and
 **useradd(1)** commands, and **sboupgrade** offers to run them prior to
@@ -77,9 +78,9 @@ differences. To check for missing first-order shared object (solib)
 dependencies that may have resulted from running **sboupgrade**, use
 **\--so-check TRUE**. Each affected package is logged to
 */var/log/sboupgrade-solibs.log* with a list of missing shared objects
-and the files that have first-order dependencies on them. This can be
-done automatically after every **sboupgrade** run by setting
-**SO_CHECK** to **TRUE**.
+and the files that have first-order dependencies on them. This is done
+automatically after every **sboupgrade** run. To disable the automatic
+checks, set the **NO_SOCHECK** setting to **TRUE**.
 
 Root privileges are required to run **sboupgrade** unless passing
 **\--dry-run**. If an invalid configuration is detected in
@@ -221,13 +222,13 @@ directory. This option can be set as default via [sboconfig(1)](sboconfig.1.md).
 also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the **STRICT_UPGRADES**
 setting.
 
-**-X\|\--so-check (FALSE\|TRUE)**
+**-X\|\--no-socheck (FALSE\|TRUE)**
 
-If **TRUE**, check for missing first-order shared object dependencies
-after running **sboupgrade**. Please note that only those shared objects
-provided by outgoing packages are reflected in the results. For a full
-shared object check, see [sbocheck(1)](sbocheck.1.md). This option overrides the
-**SO_CHECK** setting.
+If **TRUE**, do not check for missing first-order shared object
+dependencies after running **sboupgrade**. Please note that only those
+shared objects provided by outgoing packages are reflected in the
+results. For a full shared object check, see [sbocheck(1)](sbocheck.1.md). This
+option overrides the **NO_SOCHECK** setting.
 
 **-z\|\--force-reqs**
 
@@ -250,7 +251,11 @@ upgraded only if the version or build number from this directory varies.
 Upgrade the same installed SlackBuilds that would be upgraded with
 **\--all**, as well as any packages with the *\_SBo* tag that fail the
 **solibs**, **perl**, **python** or **ruby** tests before the upgrade
-process begins. **sboupgrade** ignores test failures for any script with
+process begins.
+
+Because packages with missing solibs only in the */opt* directory are
+usually binary and therefore do not require rebuilds, they are not added
+to the queue. **sboupgrade** ignores test failures for any script with
 an *ignore-tests* request in */etc/sbotools/sbotools.hints*. See
 [sbohints(1)](sbohints.1.md) or [sbotools.hints(5)](sbotools.hints.5.md) for details.
 

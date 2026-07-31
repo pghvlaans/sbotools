@@ -107,7 +107,7 @@ The local repository is saved to */var/lib/sbotools/repo*. To use an
 alternative location, give an absolute file path to the **SBO_HOME**
 setting with [sboconfig(1)](sboconfig.1.md) or by editing
 */etc/sbotools/sbotools.conf*. The repositiory can also be fetched using
-**sbotool** if running as root.
+[sbotool(1)](sbotool.1.md) if running as root.
 
 Along with its copy of the repository, the **SBO_HOME** directory also
 contains directories for automatic and manual file downloads at
@@ -172,7 +172,8 @@ performs all available upgrades and rebuilds any packages with the
 *\_SBo* tag that fail one of these tests before the upgrade process
 begins. Some scripts that repackage binaries are known to fail solib
 tests invariably. Use **sbohints \--ignore-tests** with one or more
-scripts to skip them.
+scripts to skip them. **\--all-plus-failures** skips packages with solib
+issues only in the */opt* directory automatically.
 
 A limited number of SlackBuilds download files when running, which some
 users consider a security risk. Set **NONET** to **TRUE** to prevent

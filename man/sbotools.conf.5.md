@@ -34,8 +34,6 @@ permitted as directory settings.
 All values default to **FALSE** except for **SBO_HOME**. Recommended
 non-default settings include **TRUE** for:
 
-• **COLOR**
-
 • **CPAN_IGNORE**
 
 • **ETC_PROFILE**
@@ -43,18 +41,16 @@ non-default settings include **TRUE** for:
 • **GPG_VERIFY**, provided the upstream repository is regularly signed
 with **gpg(1)**.
 
-• **SO_CHECK**
-
 The current configuration keys are as follows:
 
 **CLASSIC=(FALSE\|TRUE)**
 
-If **TRUE**, automatically enable **RSYNC_DEFAULT** and
-**BUILD_IGNORE**, and disable **COLOR** (overriding the contents of this
-file). Build increment and out-of-tree SlackBuild checks by
-[sbocheck(1)](sbocheck.1.md) are disabled, and previously-used build options are not
-displayed. This provides a more traditional **sbotools** look and feel
-for those who want it.
+If **TRUE**, automatically enable **RSYNC_DEFAULT**, **BUILD_IGNORE**and
+**NOCOLOR** (overriding the contents of this file). Build increment,
+out-of-tree SlackBuild and orphaned SlackBuild checks by [sbocheck(1)](sbocheck.1.md)
+are disabled, and previously-used build options are not displayed. This
+provides a more traditional **sbotools** look and feel for those who
+want it.
 
 **CPAN_IGNORE=(FALSE\|TRUE)**
 
@@ -72,9 +68,9 @@ If set to an **absolute path**, use that file as *dialogrc* when running
 
 If **TRUE**, remove the package and source archives after building.
 Source archives are otherwise retained in md5sum-designated directories
-under */usr/sbo/distfiles* (with *SBO_HOME=/usr/sbo*) by default. If
-**PKG_DIR** is set, package archives are saved there regardless of
-**DISTCLEAN**.
+under */var/lib/sbotools/distfiles* (with *SBO_HOME=/var/lib/sbotools*)
+by default. If **PKG_DIR** is set, package archives are saved there
+regardless of **DISTCLEAN**.
 
 **FORCE_OBSOLETE=(FALSE\|TRUE)**
 
@@ -105,9 +101,9 @@ If **numerical**, pass to the **-j** argument when a SlackBuild invoking
 If **TRUE**, do not clean working directories after building. These are
 the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
 
-**COLOR=(FALSE\|TRUE)**
+**NOCOLOR=(FALSE\|TRUE)**
 
-If **TRUE**, enable **sbotools** color output. To customize color
+If **TRUE**, disable **sbotools** color output. To customize color
 output, edit the */etc/sbotools/sbotools.colors* file directly. See
 [sbotools.colors(5)](sbotools.colors.5.md) for more details.
 
@@ -157,10 +153,10 @@ in Slackware -current.
 If set to a **path**, packages are stored there after installation. This
 overrides the **DISTCLEAN** setting for saved packages.
 
-**SBO_HOME=(/usr/sbo\|/path)**
+**SBO_HOME=(/var/lib/sbotools\|/path)**
 
 If set to a **path**, this is where the **SlackBuilds.org** tree is
-stored. The default setting is */usr/sbo*. The tree must be
+stored. The default setting is */var/lib/sbotools*. The tree must be
 re-downloaded with [sbocheck(1)](sbocheck.1.md) if the **SBO_HOME** setting changes.
 
 **LOCAL_OVERRIDES=(FALSE\|/path)**
@@ -178,14 +174,12 @@ If set to a **version number**, use the **SlackBuilds.org** repository
 for that version of Slackware rather than the one specified in
 */etc/slackware-version*.
 
-**SO_CHECK=(FALSE\|TRUE)**
+**NO_SOCHECK=(FALSE\|TRUE)**
 
-If set to **TRUE**, check for missing first-order shared object (solib)
-dependencies among *\_SBo* packages when running [sbocheck(1)](sbocheck.1.md) and
-[sboupgrade(1)](sboupgrade.1.md). Additionally, [sbocheck(1)](sbocheck.1.md) searches for
+If set to **TRUE**, do not check for missing first-order shared object
+(solib) dependencies among *\_SBo* packages when running [sbocheck(1)](sbocheck.1.md)
+and [sboupgrade(1)](sboupgrade.1.md). Additionally, [sbocheck(1)](sbocheck.1.md) does not search for
 incompatible **perl**, **python** and **ruby** *\_SBo* packages.
-
-Recommended value: **TRUE**
 
 **REPO=(FALSE\|url\|/path)**
 

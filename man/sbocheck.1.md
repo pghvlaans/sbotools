@@ -21,6 +21,8 @@ checks
 
     sbocheck [-h|-v]
 
+    sbocheck [-NOgno]
+
     sbocheck [-COXgn] [-t all,perl,python,ruby,solibs]
 
     sbocheck [-COXgn] [-L lib1,lib2,\...]
@@ -41,16 +43,19 @@ checks for available upgrades and reports what it finds. If
 
 SlackBuilds with differing build numbers are reported separately, as are
 any SlackBuilds marked *\_SBo* that are not found in the repository or
-local overrides (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). Except
-in **CLASSIC** mode, scripts in the report that would not be upgraded by
+local overrides (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
+SlackBuilds that have been designated as orphaned upstream are subject
+to eventual removal and are reported as well. Except in **CLASSIC**
+mode, scripts in the report that would not be upgraded by
 [sboupgrade(1)](sboupgrade.1.md) are listed last and marked with **=** (equals sign).
 
-The three output categories are logged separately to
-*/var/log/sbocheck.log*, */var/log/sbocheck-bumps.log* and
-*/var/log/sbocheck-out-of-tree.log*. The out-of-tree and build number
-increment checks are disabled when **CLASSIC** is **TRUE**; if
-**STRICT_UPGRADES** is **TRUE**, apparent downgrades are reported with
-"differs", but are not acted on by [sboupgrade(1)](sboupgrade.1.md) (see
+The four output categories are logged separately to
+*/var/log/sbocheck.log*, */var/log/sbocheck-bumps.log*,
+*/var/log/sbocheck-out-of-tree.log* and
+*/var/log/sbocheck-orphaned.log*. The out-of-tree, build number
+increment and orphaned build checks are disabled when **CLASSIC** is
+**TRUE**; if **STRICT_UPGRADES** is **TRUE**, apparent downgrades are
+reported with "differs", but are not acted on by [sboupgrade(1)](sboupgrade.1.md) (see
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
 Upgrades to Slackware and third-party packages occasionally cause
@@ -60,10 +65,13 @@ in-tree *\_SBo* packages, use the **\--so-check** option. Each affected
 package is logged to */var/log/sbocheck-solibs.log* if running as root,
 or */tmp/sbocheck-solibs.log* otherwise. This log contains a list of
 missing shared objects and the files that have first-order dependencies
-on them. This can be done automatically on every **sbocheck** run by
-setting **SO_CHECK** to **TRUE**. Please note that scripts repackaging
-from binary packages occasionally trigger false positives. Such packages
-generally do not require rebuilds.
+on them. This is done automatically on every **sbocheck** run by
+default. To disable these automatic checks, by setting **NO_SOCHECK** to
+**TRUE** or use the **\--no-socheck** flag. Please note that scripts
+repackaging from binary packages occasionally trigger false positives.
+Such packages generally do not require rebuilds. Packages including
+files with missing solibs in the */opt* directory only are marked in the
+output.
 
 Use **\--type** with any package-checking option to specify package
 tests to run in a comma-separated list. The supported values are
@@ -87,12 +95,12 @@ in **sbotools-3.3**, is a compatibility symlink to **sbocheck**.
 
 Non-root users can only call **sbocheck** with the **\--nopull**,
 **\--so-check**, **\--check-package**, **\--check-all-packages**,
-**\--lib-search**, **\--type**, **\--help** and **\--version** flags.
-**sbocheck** issues a warning if the directory specified with
-**LOCAL_OVERRIDES** does not exist (see [sboconfig(1)](sboconfig.1.md) or
-[sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
-message.
+**\--lib-search**, **\--type**, **\--no-socheck**, **\--no-orphans**,
+**\--help** and **\--version** flags. **sbocheck** issues a warning if
+the directory specified with **LOCAL_OVERRIDES** does not exist (see
+[sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration
+is detected in */etc/sbotools/sbotools.conf*, the script exits with a
+diagnostic message.
 
 ## OPTIONS
 
@@ -132,6 +140,16 @@ options is specified, search all packages on the system.
 
 Incompatible with **\--type**.
 
+**-N\|\--no-socheck**
+
+Skip the default missing shared object check.
+
+**-n\|\--nopull**
+
+Check for updated SlackBuilds without updating the SlackBuilds tree. The
+**\--nopull** flag can be used without root privileges, but no log is
+kept.
+
 **-O\|\--obsolete-check**
 
 If running Slackware -current, download a copy of the obsolete script
@@ -140,11 +158,9 @@ list and the perl version history file from
 **GPG_VERIFY** is **TRUE** or **\--gpg-verify** is passed. Incompatible
 with **\--nopull**.
 
-**-n\|\--nopull**
+**-o\|\--no-orphans**
 
-Check for updated SlackBuilds without updating the SlackBuilds tree. The
-**\--nopull** flag can be used without root privileges, but no log is
-kept.
+Skip the check for builds orphaned upstream.
 
 **-t\|\--type**
 
@@ -181,10 +197,10 @@ Incompatible with **\--lib-search**.
 
 Run package checks on all installed *\_SBo* packages; no other
 operations are performed. **solibs** are checked by default; use
-**\--type** to specify other tests. To do this automatically every time
-**sbocheck** is run, set **SO_CHECK** to **TRUE** (see [sboconfig(1)](sboconfig.1.md)
-or [sbotools.conf(5)](sbotools.conf.5.md)). Incompatible with **\--check-package** and
-**\--check-all-packages**.
+**\--type** to specify other tests. This is done automatically every
+time **sbocheck** is run. Set **NO_SOCHECK** to **TRUE** to disable this
+behavior. (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). Incompatible
+with **\--check-package** and **\--check-all-packages**.
 
 **-h\|\--help**
 
