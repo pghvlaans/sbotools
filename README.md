@@ -26,7 +26,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 **sbotools** currently supports Slackware 15.0 and beyond. For Slackware 14.0, 14.1 and 14.2, install `sbotools-4.0.2` at the latest. See the **sbotools** [downloads](https://pghvlaans.github.io/sbotools/downloads/) page.
 
 ## Most Recent Changes
-#### Post-Release
+#### 4.3 - 2026-07-31
   * {Build,Download}.pm: Properly handle failed downloads when continuing.
     * Thanks to fsLeg for the report.
   * Change the default SBO_HOME to /var/lib/sbotools.

@@ -1,6 +1,6 @@
 # sbotools
 
-#### Post-Release
+#### 4.3 - 2026-07-31
   * {Build,Download}.pm: Properly handle failed downloads when continuing.
     * Thanks to fsLeg for the report.
   * Change the default SBO_HOME to /var/lib/sbotools.
