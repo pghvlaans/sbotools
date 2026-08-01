@@ -37,7 +37,7 @@ Options (defaults shown first where applicable):
     (do not) wrap sbotools output.
   --all
     this flag upgrades everything reported by sbocheck(1).
-  --all-plus-failures
+  -A|--all-plus-failures
     like --all; also rebuild SBo packages failing solibs and other tests.
   --batch:
     like nointeractive, but calculates dependencies (use with caution).
@@ -112,7 +112,7 @@ my $options_ok = GetOptions(
 	'nowrap'            => \$nowrap,
 	'wrap'              => \$wrap,
 	'nonet|N=s'         => \$nonet,
-	'all-plus-failures' => \$all_fails,
+	'all-plus-failures|A' => \$all_fails,
 	'get-only|g'        => \$get_only,
 );
 
