@@ -473,7 +473,9 @@ sub print_output {
 					last if $print_line =~ /FILE DETAILS/ and $match_mode;
 					$print_line =~ s/\:$// unless $match_mode;
 					my $name = (split " ", $print_line)[0];
-					unless (in $installed_pkg->{$name}, @not_opt_only) {
+					if ($match_mode) {
+						say $print_line;
+					} elsif (not in $installed_pkg->{$name}, @not_opt_only) {
 						say "$print_line (/opt only)";
 						$opt_msg = 1;
 					} else {
