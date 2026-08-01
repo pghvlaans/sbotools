@@ -168,12 +168,12 @@ Calling
 
     sboupgrade --all-plus-failures
 
-performs all available upgrades and rebuilds any packages with the
-*\_SBo* tag that fail one of these tests before the upgrade process
-begins. Some scripts that repackage binaries are known to fail solib
-tests invariably. Use **sbohints \--ignore-tests** with one or more
-scripts to skip them. **\--all-plus-failures** skips packages with solib
-issues only in the */opt* directory automatically.
+(or **-A** for short) performs all available upgrades and rebuilds any
+packages with the *\_SBo* tag that fail one of these tests before the
+upgrade process begins. Some scripts that repackage binaries are known
+to fail solib tests invariably. Use **sbohints \--ignore-tests** with
+one or more scripts to skip them. **\--all-plus-failures** skips
+packages with solib issues only in the */opt* directory automatically.
 
 A limited number of SlackBuilds download files when running, which some
 users consider a security risk. Set **NONET** to **TRUE** to prevent

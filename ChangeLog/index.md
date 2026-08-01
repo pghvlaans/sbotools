@@ -1,4 +1,7 @@
 # ChangeLog
+* Post-Release
+  * *sboupgrade*: Accept **\-A** for **\--all-plus-failures**.
+
 * 4.3 - 2026-07-31
   * *{Build,Download}.pm*: Properly handle failed downloads when continuing.
     * Thanks to fsLeg for the report.

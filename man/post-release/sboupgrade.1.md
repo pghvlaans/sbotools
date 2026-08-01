@@ -246,7 +246,7 @@ Incompatible with **\--all-plus-failures** and **\--compat32**. Please
 note that SlackBuilds installed from a **LOCAL_OVERRIDES** directory are
 upgraded only if the version or build number from this directory varies.
 
-**\--all-plus-failures**
+**-A\|\--all-plus-failures**
 
 Upgrade the same installed SlackBuilds that would be upgraded with
 **\--all**, as well as any packages with the *\_SBo* tag that fail the
