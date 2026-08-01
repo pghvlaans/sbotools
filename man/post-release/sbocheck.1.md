@@ -67,11 +67,12 @@ or */tmp/sbocheck-solibs.log* otherwise. This log contains a list of
 missing shared objects and the files that have first-order dependencies
 on them. This is done automatically on every **sbocheck** run by
 default. To disable these automatic checks, by setting **NO_SOCHECK** to
-**TRUE** or use the **\--no-socheck** flag. Please note that scripts
-repackaging from binary packages occasionally trigger false positives.
-Such packages generally do not require rebuilds. Packages including
-files with missing solibs in the */opt* directory only are marked in the
-output.
+**TRUE** or use the **\--no-socheck** flag.
+
+Please note that scripts repackaging from binary packages occasionally
+trigger false positives. Such packages generally do not require
+rebuilds. Packages including files with missing solibs in the */opt*
+directory only are listed separately in the output with an explanation.
 
 Use **\--type** with any package-checking option to specify package
 tests to run in a comma-separated list. The supported values are
