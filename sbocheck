@@ -462,7 +462,7 @@ sub print_output {
 		$message="\tNo ruby-incompatible packages.";
 	}
 	if (@listing) {
-		if ($config{CLASSIC} ne "TRUE" and ($< == 0 or $non_root_write)) { print_color $color_notice; print "\tSee $logfile.\n\n"; print_color $color_default; }
+		if ($config{CLASSIC} ne "TRUE" and ($< == 0 or $non_root_write)) { print_color $color_notice; print "\tSee $logfile."; print_color $color_default; print "\n\n"; }
 		else { print "\n\n"; }
 		if ($logfile =~ /(solibs|lib-search)/) {
 			my $opt_msg = 0;
