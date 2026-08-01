@@ -465,7 +465,7 @@ sub print_output {
 		if ($config{CLASSIC} ne "TRUE" and ($< == 0 or $non_root_write)) { print_color $color_notice; print "\tSee $logfile."; print_color $color_default; print "\n\n"; }
 		else { print "\n\n"; }
 		if ($logfile =~ /(solibs|lib-search)/) {
-			my $opt_msg = 0;
+			my (@display_failed, @display_opt_failed);
 			$line_needed = 1;
 			for my $listing (@listing) {
 				my $print_line = (split "\n", $listing)[0];
@@ -476,10 +476,9 @@ sub print_output {
 					if ($match_mode) {
 						say $print_line;
 					} elsif (not in $installed_pkg->{$name}, @not_opt_only) {
-						say "$print_line (/opt only)";
-						$opt_msg = 1;
+						push @display_opt_failed, $print_line;
 					} else {
-						say $print_line;
+						push @display_failed, $print_line;
 					}
 				} else {
 					say "";
@@ -487,8 +486,15 @@ sub print_output {
 			}
 			if ($match_mode) {
 				wrapsay_color $color_notice, "See $logfile for a breakdown of dependent files by package." unless $< != 0 and not $non_root_write;
-			} elsif ($opt_msg) {
-				wrapsay_color $color_lesser, "\nPackages in /opt do not usually require rebuilds.";
+			}
+			if (@display_failed) {
+				say $_ for (@display_failed);
+			}
+			if (@display_opt_failed) {
+				print "\n" if @display_failed;
+				wrapsay_color $color_notice, "The following had failures only in /opt:", 1;
+				say $_ for (@display_opt_failed);
+				wrapsay_color $color_notice, "\nSuch packages are often binary extractions, which do not require rebuilds.";
 			}
 			if ($< != 0 and not $non_root_write) {
 				my $log_base = basename $logfile;

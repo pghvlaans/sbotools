@@ -4,6 +4,7 @@
   * sboupgrade: Accept -A for --all-plus-failures.
   * Util.pm: Reset the color at the end of colored lines, not afterwards.
   * sbocheck: Do not attempt /opt labeling with --lib-search.
+  * sbocheck: List /opt-only packages failing the solib test separately.
 
 #### 4.3 - 2026-07-31
   * {Build,Download}.pm: Properly handle failed downloads when continuing.

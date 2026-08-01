@@ -141,12 +141,14 @@ TRUE
 or use the
 .B
 --no-socheck
-flag. Please note that scripts repackaging from binary packages occasionally trigger
+flag.
+.P
+Please note that scripts repackaging from binary packages occasionally trigger
 false positives. Such packages generally do not require rebuilds. Packages including
 files with missing solibs in the
 .I
 /opt
-directory only are marked in the output.
+directory only are listed separately in the output with an explanation.
 .P
 Use
 .B
