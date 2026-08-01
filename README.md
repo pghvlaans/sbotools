@@ -28,6 +28,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 ## Most Recent Changes
 #### Post-Release
   * sboupgrade: Accept -A for --all-plus-failures.
+  * Util.pm: Reset the color at the end of colored lines, not afterwards.
 
 #### 4.3 - 2026-07-31
   * {Build,Download}.pm: Properly handle failed downloads when continuing.

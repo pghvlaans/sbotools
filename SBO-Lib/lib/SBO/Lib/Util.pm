@@ -579,12 +579,10 @@ sub display_times {
   $build_time_string = time_format($total_build_time) if $total_build_time;
   $download_time_string = time_format($download_time) if $download_time;
   $install_time_string = time_format($total_install_time) if $total_install_time;
-  print_color($color_notice);
   say "" if $build_time_string or $download_time_string or $install_time_string;
-  say "Download: $download_time_string" if $download_time_string;
-  say "Package:  $build_time_string" if $build_time_string;
-  say "Install:  $install_time_string" if $install_time_string;
-  print_color($color_default);
+  wrapsay_color($color_notice, "Download: $download_time_string") if $download_time_string;
+  wrapsay_color($color_notice, "Package:  $build_time_string") if $build_time_string;
+  wrapsay_color($color_notice, "Install:  $install_time_string") if $install_time_string;
   return;
 }
 
@@ -1693,15 +1691,15 @@ sub wrapsay {
   wrapsay_color($color, $msg, $trail);
 
 C<wrapsay_color()> takes a color, a message and any true value if a trailing line
-is required. It applies a color, runs the message through C<wrapsay()> and
-resets the color afterwards. No colors are used unless C<NOCOLOR> is C<FALSE>. There
+is required. It applies a color, prints a wrapped message at 72 characters and
+resets the color at the end of the line. No colors are used unless C<NOCOLOR> is
+C<FALSE>; please note that C<print_color()> checks the configuration value. There
 is no useful return value.
 
 =cut
 
 sub wrapsay_color {
   my $color = shift;
-  return () unless colorvalid($color);
   script_error("wrapsay_color requires a message; exiting.") unless @_;
   my ($msg, $trail) = @_;
   my $extra_line;
@@ -1710,9 +1708,16 @@ sub wrapsay_color {
     $extra_line = 1;
   }
   say "" if defined $extra_line;
-  print color($color) if $config{NOCOLOR} ne 'TRUE';
-  wrapsay($msg, $trail);
-  print color($color_default) if $config{NOCOLOR} ne 'TRUE';
+  print_color($color);
+  unless ($config{NOWRAP} eq 'TRUE') {
+    $columns = 73;
+    print wrap('', '', "$msg");
+  } else {
+    print $msg;
+  }
+  print_color($color_default);
+  print "\n";
+  print "\n" if $trail;
   return;
 }
 
