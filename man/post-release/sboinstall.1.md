@@ -21,21 +21,21 @@
 
     sboinstall [-h|-v]
 
-    sboinstall [-Ndce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIdce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
                [-DRgiopr] [--batch|--dry-run] [--create-template|-t FILE]
 \
                sbo_name (sbo_name)
 
-    sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
                [-Dgi] --use-template FILE
 
-    sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
                [-Dgioqr] [--create-template|-t FILE] --mass-rebuild
 
-    sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
 \
                [-Dgioqr] [--create-template|-t FILE] --series-rebuild
 SERIES,\...
@@ -138,6 +138,14 @@ in */tmp* (or *\$OUTPUT*) if **DISTCLEAN** is **FALSE**. Packages are
 retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
 [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md). Incompatible with
 **\--get-only**.
+
+**-I\|\--instant-stop (FALSE\|TRUE)**
+
+If **TRUE**, offer to stop the queue as soon as one build fails. If
+non-interactive, stop immediately. Otherwise, builds continue, skipping
+any SlackBuild that depends on a previously-failed build.
+
+Overrides the **INSTANT_STOP** setting.
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -258,9 +266,10 @@ Incompatible with **\--series-rebuild**, **\--reverse-rebuild**,
 
 If the mass rebuild process is interrupted after downloading has been
 completed, whether by signal or by build failure, a template named
-*resume.temp* is saved to **SBO_HOME**. If this file is present, the
-mass rebuild restarts from the script after the script that failed when
-**\--mass-rebuild** is used again.
+*resume.temp* is saved to **SBO_HOME**. It includes all builds that
+neither failed nor built successfully. If this file is present, it is
+used as a template when **\--mass-rebuild** is used again. This is best
+done after resolving any build failures.
 
 **\--series-rebuild (SERIES)**
 

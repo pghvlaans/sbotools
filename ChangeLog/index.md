@@ -5,6 +5,13 @@
   * *sbocheck*: Do not attempt `/opt` labeling with **\--lib-search**.
   * *sbocheck*: List `/opt`-only packages failing the solib test separately.
   * *sboinstall*, *sboupgrade*: Build queue label prints in color.
+  * *Build.pm*: By default, continue the queue after build failure, skipping SlackBuilds with failed dependencies.
+    * Thanks to dchmelik for the suggestion.
+  * Added an **INSTANT_STOP** setting, which offers to stop the queue as soon as one build fails.
+    * If continuing, builds with failed dependencies are skipped.
+    * If non-interactive, stop immediately.
+  * *sboinstall*, *sboupgrade*: Use **\--instant-stop** to override the **INSTANT_STOP** setting.
+  * *Build.pm*: Use *JSON::PP* to write the mass rebuild resume queue.
 
 * 4.3 - 2026-07-31
   * *{Build,Download}.pm*: Properly handle failed downloads when continuing.
