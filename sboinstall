@@ -582,12 +582,16 @@ if ($dry_run and not $get_only) {
 		wrapsay_color $color_lesser, "\nBlocking network access for SlackBuilds.";
 	}
 }
-unless ($no_install) {
-	my $action = $get_only ? "Download" : "Install";
+
+my $action = $get_only ? "Download" : "Install";
+$action = "Build" if $no_install;
+if ($config{CLASSIC} eq "TRUE") {
 	wrapsay "\n$action queue: " . join(' ', @$build_queue);
 } else {
-	wrapsay "\nBuild queue: " . join(' ', @$build_queue);
+	wrapsay_color $color_notice, "\n$action queue:";
+	wrapsay join(' ', @$build_queue);
 }
+
 unless ($non_int) {
 	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
 	wrapsay_color $color_notice, "\n--get-only (-g) is in use; downloading sources only." if $get_only;
