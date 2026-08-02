@@ -91,6 +91,12 @@ available.
 Recommended value: **TRUE** if the upstream repository is usually
 signed.
 
+**INSTANT_STOP=(FALSE\|TRUE)**
+
+If **TRUE**, offer to stop the queue as soon as one build fails. If
+non-interactive, stop immediately. Otherwise, builds continue, skipping
+any SlackBuild that depends on a previously-failed build.
+
 **JOBS=(FALSE\|#)**
 
 If **numerical**, pass to the **-j** argument when a SlackBuild invoking

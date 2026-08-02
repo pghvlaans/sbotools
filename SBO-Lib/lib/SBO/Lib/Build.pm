@@ -24,6 +24,7 @@ use Term::ANSIColor qw/ RESET /;
 use Tie::File;
 use Time::HiRes qw/ time /;
 use Cwd;
+use JSON::PP;
 
 use sigtrap qw/ handler _build_terminated ABRT INT QUIT TERM /;
 use sigtrap qw/ handler _time_stop TSTP /;
@@ -47,6 +48,7 @@ our @EXPORT_OK = qw{
   process_sbos
   rationalize_queue
   run_tee
+  write_resume
 
   $tempdir
   $tmpd
@@ -753,7 +755,7 @@ sub process_sbos {
   @$todo >= 1 or script_error('process_sbos requires TODO.');
   my $mtemp_in = "$config{SBO_HOME}/mass_rebuild.temp";
   my $mtemp_resume = "$config{SBO_HOME}/resume.temp";
-  my (@failures, @successes, $err);
+  my (@failures, @failure_names, @skipped, @successes, $err);
   FIRST: for my $sbo (@$todo) {
     my $compat32 = $sbo =~ /-compat32$/ ? 1 : 0;
     push @upcoming, get_sbo_downloads(
@@ -772,6 +774,7 @@ sub process_sbos {
       $err = $exit;
       my $fail = $temp_distfiles;
       push @failures, {$sbo => $fail};
+      push @failure_names, $sbo;
       # return now if we're not interactive
       if ($args{NON_INT}) {
         if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\n$success_label"; wrapsay join(" ", @successes); }
@@ -799,6 +802,16 @@ sub process_sbos {
   my $count = 0;
   FIRST: for my $sbo (@$todo) {
     $count++;
+    if (@failure_names) {
+      for (@{$concluded{$sbo}}) {
+        if (in $_, @failure_names) {
+          push @skipped, $sbo;
+          wrapsay_color $color_lesser, "Skipping $sbo because $_ failed.";
+          shift @distfiles;
+          next FIRST;
+        }
+      }
+    }
     my $options = $$opts{$sbo} // 0;
     my $cmds = $$cmds{$sbo} // [];
     for my $cmd (@$cmds) {
@@ -818,41 +831,26 @@ sub process_sbos {
     if ($exit) {
       my $fail = $version;
       push @failures, {$sbo => $fail};
-      if ($mass and -f $mtemp_in) {
-        my ($in_fh, $exit_in) = open_fh($mtemp_in, '<');
-        error_code("Failed to open $mtemp_in; exiting.", $exit_in) if $exit_in;
-        unlink $mtemp_resume if -f $mtemp_resume;
-        my ($out_fh, $exit_out) = open_fh($mtemp_resume, '>');
-        error_code("Failed to open $mtemp_resume; exiting.", $exit_out) if $exit_out;
-        while(readline($in_fh)) {
-          if ($. < 3 or $. > $count + 2) {
-            print {$out_fh} $_;
-          }
+      push @failure_names, $sbo;
+      write_resume($todo, $opts, $cmds, $mtemp_resume, @successes, @failure_names) if $mass;
+      if ($config{INSTANT_STOP} eq "TRUE" and $count < @$todo and not $args{NON_INT}) {
+        wrapsay_color $color_warn, "A failure occurred while building $sbo:";
+        say "  $fail";
+        if (prompt $color_lesser, "$sbo failed to build. Continue with the rest of the queue?", default => "no") {
+          next FIRST;
+        } else {
+          if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
+          if (@skipped and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
+          display_times() unless $config{CLASSIC} eq "TRUE";
+          return \@failures, $exit;
         }
-        close $in_fh;
-        close $out_fh;
+      } elsif ($count == @$todo or ($config{INSTANT_STOP} eq "TRUE" and $args{NON_INT})) {
+          if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
+          if (@skipped and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
+          display_times() unless $config{CLASSIC} eq "TRUE";
+          return \@failures, $exit;
       }
-      # return now if we're not interactive
-      if ($args{NON_INT}) {
-        if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
-        display_times() unless $config{CLASSIC} eq "TRUE";
-        return \@failures, $exit;
-      }
-      # or if this is the last $sbo
-      if ($count == @$todo) {
-        if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
-        display_times() unless $config{CLASSIC} eq "TRUE";
-        return \@failures, $exit;
-      }
-      wrapsay_color $color_warn, "A failure occurred while building $sbo:";
-      say "  $fail";
-      if (prompt($color_lesser, 'Do you want to proceed?', default => 'no')) {
-        next FIRST;
-      } else {
-        if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
-        display_times() unless $config{CLASSIC} eq "TRUE";
-        return \@failures, $exit;
-      }
+      next FIRST;
     } else {
       push @successes, $sbo;
     }
@@ -884,8 +882,10 @@ sub process_sbos {
       unlink $pkg;
     }
   }
-  unlink $mtemp_resume if $mass and -f $mtemp_resume;
+  write_resume($todo, $opts, $cmds, $mtemp_resume, @successes, @failure_names) if $mass;
+  unlink $mtemp_resume if $mass and -f $mtemp_resume and not @failures;
   if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
+  if (@skipped and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
   display_times() unless $config{CLASSIC} eq "TRUE";
   return \@failures, $err;
 }
@@ -1038,6 +1038,37 @@ sub run_tee {
   return $out, $ret;
 }
 
+=head2
+
+  write_resume($todo, $opts, $cmds, $mtemp_resume, @builds);
+
+C<write_resume()> takes C<$todo>, C<$opts>, C<$cmds> and C<$mtemp_resume> from
+C<perform_sbos()> and a list of builds to ignore. This should generally include failed
+and succeeded builds. It writes all non-ignored builds into a new resume file using
+C<JSON::PP(3)>. There is no useful return value.
+
+=cut
+
+sub write_resume {
+  my ($todo, $opts, $cmds, $mtemp_resume, @not_to_use) = @_;
+  my $undone_queue;
+  for (@$todo) {
+    push @$undone_queue, $_ unless in $_, @not_to_use;
+  }
+  unlink $mtemp_resume if -f $mtemp_resume;
+  my ($fh, $exit) = open_fh($mtemp_resume, '>');
+  error_code("Failed to open $mtemp_resume; exiting.", $exit) if $exit;
+  my $json = JSON::PP->new->latin1->pretty->canonical;
+  my $build_settings = {
+    build_queue => $undone_queue,
+    commands    => $cmds,
+    options     => $opts,
+  };
+  print {$fh} $json->encode( $build_settings );
+  close $fh;
+  return;
+}
+
 =head1 EXIT CODES
 
 Build.pm subroutines can return the following exit codes:
@@ -1054,7 +1085,7 @@ Build.pm subroutines can return the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Solibs(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), unshare(1)
+SBO::Lib(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Solibs(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), JSON::PP(3), unshare(1)
 
 =head1 AUTHORS
 

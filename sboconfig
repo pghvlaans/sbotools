@@ -64,6 +64,8 @@ Configuration options (defaults shown):
       FORCE_OBSOLETE: if TRUE, blacklist obsolete scripts on -current.
   -g|--gpg-verify FALSE:
       GPG_VERIFY: verify the repo with gnupg.
+  -I|--instant-stop FALSE:
+      INSTANT_STOP: if TRUE, offer to stop the whole queue on build failure.
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
   -K|--nocolor FALSE:
@@ -136,8 +138,6 @@ Configuration options (defaults shown):
       GPG_VERIFY: verify the repo with gnupg.
   -j|--jobs FALSE:
       JOBS: numeric -j setting to feed to make for multicore systems.
-  -K|--nocolor FALSE:
-      NOCOLOR: if TRUE, disable sbotools color output.
   -L|--log-dir /var/lib/sbotest/logs:
       LOG_DIR: if an absolute path, save a log file here after each build.
   -N|--nonet FALSE:
@@ -178,14 +178,14 @@ unless ($is_sbotest) {
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s');
+		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s', 'instant-stop|I=s');
 } else {
 	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'sbo-archive|A=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s');
+		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'sbo-archive|A=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s', 'instant-stop|I=s');
 }
 
 $options{list} = 1 if exists $options{'non-default'};
@@ -225,6 +225,7 @@ my %valid_confs = (
 	'dialogrc'          => 'DIALOGRC',
 	nonet               => 'NONET',
 	'force-obsolete'    => 'FORCE_OBSOLETE',
+	'instant-stop'      => 'INSTANT_STOP',
 );
 $valid_confs{"sbo-archive"} = 'SBO_ARCHIVE' if $is_sbotest;
 
@@ -253,6 +254,7 @@ my %params = (
 	DIALOGRC          => 'D|--dialogrc',
 	NONET             => 'N|--nonet',
 	FORCE_OBSOLETE    => 'F|--force-obsolete',
+	INSTANT_STOP      => 'I|--instant-stop',
 );
 $params{SBO_ARCHIVE} = 'A|--sbo-archive' if $is_sbotest;
 
@@ -337,6 +339,7 @@ sub config_write {
 		my $val = shift;
 		next if $key eq 'BUILD_IGNORE' and $is_sbotest;
 		next if $key eq 'NOCOLOR' and $is_sbotest;
+		next if $key eq 'INSTANT_STOP' and $is_sbotest;
 		say "Setting $key to $val..." unless exists $options{reset};
 
 		# Comment default values when written in

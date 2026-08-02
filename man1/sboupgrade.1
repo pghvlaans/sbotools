@@ -8,7 +8,7 @@ sboupgrade
 .P
 sboupgrade [-h|-v]
 .P
-sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboupgrade [-NISXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-figopqrz] [--batch|--dry-run] --all|--all-plus-failures|sbo_name (sbo_name)
 .P
 sboupgrade [--color|--nocolor] [--wrap|--nowrap] ...
@@ -379,6 +379,22 @@ and
 .B
 --get-only\fR\
 \&.
+.RE
+.P
+.B
+-I|--instant-stop (FALSE|TRUE)
+.RS
+If
+.B
+TRUE\fR\
+\&, offer to stop the queue as soon as one build fails. If non-interactive,
+stop immediately. Otherwise, builds continue, skipping any SlackBuild that
+depends on a previously-failed build.
+.P
+Overrides the
+.B
+INSTANT_STOP
+setting.
 .RE
 .P
 .B

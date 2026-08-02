@@ -216,6 +216,17 @@ if the upstream repository is usually signed.
 .RE
 .P
 .B
+INSTANT_STOP=(FALSE|TRUE)
+.RS
+If
+.B
+TRUE\fR\
+\&, offer to stop the queue as soon as one build fails. If non-interactive,
+stop immediately. Otherwise, builds continue, skipping any SlackBuild that
+depends on a previously-failed build.
+.RE
+.P
+.B
 JOBS=(FALSE|#)
 .RS
 If

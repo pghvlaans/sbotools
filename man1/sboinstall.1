@@ -8,17 +8,17 @@ sboinstall
 .P
 sboinstall [-h|-v]
 .P
-sboinstall [-Ndce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-NIdce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-DRgiopr] [--batch|--dry-run] [--create-template|-t FILE] \\
            sbo_name (sbo_name)
 .P
-sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-NIcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-Dgi] --use-template FILE
 .P
-sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-NIcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-Dgioqr] [--create-template|-t FILE] --mass-rebuild
 .P
-sboinstall [-Ncde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-NIcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
            [-Dgioqr] [--create-template|-t FILE] --series-rebuild SERIES,...
 .P
 sboinstall [--color|--nocolor] [--wrap|--nowrap] ...
@@ -325,6 +325,22 @@ sbotools.conf(5)\fR\
 .B
 --get-only\fR\
 \&.
+.RE
+.P
+.B
+-I|--instant-stop (FALSE|TRUE)
+.RS
+If
+.B
+TRUE\fR\
+\&, offer to stop the queue as soon as one build fails. If non-interactive,
+stop immediately. Otherwise, builds continue, skipping any SlackBuild that
+depends on a previously-failed build.
+.P
+Overrides the
+.B
+INSTANT_STOP
+setting.
 .RE
 .P
 .B
@@ -651,11 +667,11 @@ resume.temp
 is saved to
 .B
 SBO_HOME\fR\
-\&. If this file is present, the mass rebuild restarts from
-the script after the script that failed when
+\&. It includes all builds that neither failed nor built successfully.
+If this file is present, it is used as a template when
 .B
 --mass-rebuild
-is used again.
+is used again. This is best done after resolving any build failures.
 .RE
 .P
 .B

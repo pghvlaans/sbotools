@@ -21,8 +21,8 @@
 
     sboupgrade [-h|-v]
 
-    sboupgrade [-NSXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
-\
+    sboupgrade [-NISXbcde TRUE|FALSE] [-j #|FALSE] [-Lk
+/path\|FALSE] \
                [-figopqrz] [--batch|--dry-run]
 \--all\|\--all-plus-failures\|sbo_name (sbo_name)
 
@@ -149,6 +149,14 @@ in */tmp* (or *\$OUTPUT*) if **DISTCLEAN** is **FALSE**. Packages are
 retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
 [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md). Incompatible with
 **\--reverse-rebuild** and **\--get-only**.
+
+**-I\|\--instant-stop (FALSE\|TRUE)**
+
+If **TRUE**, offer to stop the queue as soon as one build fails. If
+non-interactive, stop immediately. Otherwise, builds continue, skipping
+any SlackBuild that depends on a previously-failed build.
+
+Overrides the **INSTANT_STOP** setting.
 
 **-j\|\--jobs (FALSE\|#)**
 

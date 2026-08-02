@@ -15,7 +15,7 @@ sboconfig [-l|-n]
 .P
 sboconfig [--reset]
 .P
-sboconfig [-CKFNOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo /path|FALSE] \\
+sboconfig [-CFKINOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo /path|FALSE] \\
           [-s /path|/var/lib/sbotools] [-B branch_name|FALSE] [-V #.#|FALSE] \\
           [-r url|FALSE]
 .SH DESCRIPTION
@@ -360,6 +360,19 @@ Recommended value:
 .B
 TRUE
 if the upstream repository is usually signed.
+.RE
+.P
+.B
+-I|--instant-stop (FALSE|TRUE)
+.RS
+.B
+INSTANT_STOP\fR\
+\&: If
+.B
+TRUE\fR\
+\&, offer to stop the queue as soon as one build fails. If non-interactive,
+stop immediately. Otherwise, builds continue, skipping any SlackBuild that
+depends on a previously-failed build.
 .RE
 .P
 .B

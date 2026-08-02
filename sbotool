@@ -1153,11 +1153,12 @@ sub display_rebuild_menu {
 		}
 	}
 	if ($option eq "Mass Rebuild") {
-		# If resume.temp is present, it indicates a previous failure;
-		# make sure the user wants to pick up from there.
+		# If resume.temp is present, it indicates a previous attempt with
+		# skipped and/or unreached scripts; make sure the user wants to pick
+		# up from there.
 		($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "Picking up");
 		if (-s "$config{SBO_HOME}/resume.temp") {
-			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Mass Rebuild\" --yesno \"A previous mass rebuild failed. Pick up from the next script?\" $height $width");
+			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Mass Rebuild\" --yesno \"A mass rebuild failed. Pick up with skipped and unreached scripts?\" $height $width");
 			unless ($res == $code_dialog_ok) {
 				($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "Picking up");
 				system("$dialog_prefix --begin $begin_y $begin_x --title \"Mass Rebuild\" --msgbox \"Delete the file at $config{SBO_HOME}/resume.temp to start over.\" $height $width");
@@ -1167,7 +1168,7 @@ sub display_rebuild_menu {
 		run_command("/usr/sbin/sboinstall --mass-rebuild");
 		if (-s "$config{SBO_HOME}/resume.temp") {
 			($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "Picking up");
-			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"OK\" --title \"Mass Rebuild\" --msgbox \"The next mass rebuild attempt will start from after the failed script.\" $height $width");
+			system("$dialog_prefix --begin $begin_y $begin_x --ok-label \"OK\" --title \"Mass Rebuild\" --msgbox \"The next mass rebuild will cover skipped and unreached scripts.\" $height $width");
 		}
 	}
 
@@ -1273,6 +1274,7 @@ sub display_settings {
 						"\"FORCE_OBSOLETE: $config{FORCE_OBSOLETE}$plus\" \"\" \"If TRUE, treat obsolete scripts as blacklisted on -current.\" \\",
 						"\"GIT_BRANCH: $config{GIT_BRANCH}\" \"\" \"Use this non-default branch for git repos.\" \\",
 						"\"GPG_VERIFY: $config{GPG_VERIFY}$plus\" \"\" \"If TRUE, verify the repo with GPG after fetching.\" \\",
+						"\"INSTANT_STOP: $config{INSTANT_STOP}$plus\" \"\" \"If TRUE, offer to stop the queue as soon as one build fails.\" \\",
 						"\"JOBS: $config{JOBS}\" \"\" \"If a number, use this many jobs with make.\" \\",
 						"\"LOCAL_OVERRIDES: $config{LOCAL_OVERRIDES}\" \"\" \"Use this directory for local override scripts.\" \\",
 						"\"LOG_DIR: $config{LOG_DIR}\" \"\" \"If a directory, save build logs there. Logs are otherwise not saved.\" \\",
@@ -1362,6 +1364,11 @@ sub display_settings {
 			$explanation = "If TRUE, use GPG to verify the repository and the obsolete\nscript list.";
 			$criterion = "TRUE or FALSE.";
 			$flag = "g";
+		}
+		if ($option =~ /^INSTANT_STOP/) {
+			$explanation = "If TRUE, offer to stop the queue as soon as one build fails.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "I";
 		}
 		if ($option =~ /^JOBS/) {
 			$explanation = "If a NUMBER, use that many jobs with \"make\".";

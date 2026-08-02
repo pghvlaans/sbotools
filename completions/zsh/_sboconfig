@@ -19,6 +19,7 @@ _arguments \
     '(-e --etc-profile)'{-e,--etc-profile}'[If TRUE, then source any *.sh executable scripts in /etc/profile.d before running each SlackBuild.]:source /etc/profile.d?:((TRUE\:"Source profile scripts" FALSE\:"Do not source profile scripts"))' \
     '(-F --force-obsolete)'{-F,--force-obsolete}'[If TRUE, then treat the obsolete list as a blacklist on -current. This is only helpful if using a repo from which obsolete SlackBuilds are not removed.]:obsolete scripts are blacklisted?:((TRUE\:"Blacklist obsolete scripts" FALSE\:"Default obsolete behavior"))' \
     '(-g --gpg-verify)'{-g,--gpg-verify}'[If TRUE, then verify with gpg.]:use gpg?:((TRUE\:"Verify with gpg" FALSE\:"Do not verify"))' \
+    '(-I --instant-stop)'{-I,--instant-stop}'[If TRUE, offer to stop queues as soon as one build fails.]:stop on one failure?:((TRUE\:"Stop on one failure" FALSE\:"Continue on failure, skipping dependents on failed builds"))' \
     '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \
     '(-K --nocolor)'{-K,--nocolor}'[If TRUE, disable sbotools color output.]:enable sbotools colors?:((TRUE\:"Disable sbotools colors" FALSE\:"sbotools output has color"))' \
     '(-L --log-dir)'{-L,--log-dir}'[Directory to store build logs in.]:build log directory:_files -/' \

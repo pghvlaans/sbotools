@@ -55,6 +55,8 @@ Options (defaults shown first where applicable):
     force an upgrade, even if the version and build number are the same.
   -g|--get-only:
     verify sources for the queue and download if necessary.
+  -I|--instant-stop;
+    if TRUE, offer to stop the whole queue on build failure.
   -i|--noinstall:
     do not run upgradepkg at the end of the build process.
   -j|--jobs (FALSE|#):
@@ -83,7 +85,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $no_socheck, $wrap, $nowrap, $nonet, $all_fails, $get_only);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $no_socheck, $wrap, $nowrap, $nonet, $all_fails, $get_only, $instant_stop);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -114,6 +116,7 @@ my $options_ok = GetOptions(
 	'nonet|N=s'         => \$nonet,
 	'all-plus-failures|A' => \$all_fails,
 	'get-only|g'        => \$get_only,
+	'instant-stop|I=s'  => \$instant_stop,
 );
 
 if ($help) {
@@ -144,6 +147,7 @@ $config{LOG_DIR} = $log_dir if $log_dir;
 $config{NO_SOCHECK} = $no_socheck if $no_socheck;
 $config{JOBS} = $jobs if $jobs;
 $config{NONET} = $nonet if $nonet;
+$config{INSTANT_STOP} = $instant_stop if $instant_stop;
 
 lint_sbo_config($self, %config);
 merge_obsolete();

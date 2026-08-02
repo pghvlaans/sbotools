@@ -55,7 +55,8 @@ was forked:
 Charadon (requested --mass-rebuild and development man pages)
 chrish4cks (reported an .info parse bug)
 dchmelik (reported diligently on sbocheck problems, provided feedback,
-          suggested the --all-plus-failures sboupgrade flag)
+          suggested the --all-plus-failures sboupgrade flag, suggested
+          continue-and-skip on build failure)
 dcjud (requested an installable sbotools.conf)
 drbeco (requested a blacklist and strict version-up)
 fourtysixandtwo (feedback about the overzealous 'missing' script prompt;

@@ -211,7 +211,7 @@ The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
 C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<NOCOLOR>, C<NO_SOCHECK>,
-C<DIALOGRC>, C<NONET> and C<FORCE_OBSOLETE>.
+C<DIALOGRC>, C<NONET>, C<FORCE_OBSOLETE> and C<INSTANT_STOP>.
 
 =head2 $distfiles_dir
 
@@ -345,6 +345,7 @@ our %config = (
   DIALOGRC => 'FALSE',
   NONET => 'FALSE',
   FORCE_OBSOLETE => 'FALSE',
+  INSTANT_STOP => 'FALSE',
 );
 
 if (defined $is_sbotest) {
@@ -957,6 +958,12 @@ sub lint_sbo_config {
     unless ($configs{GPG_VERIFY} =~ /^(TRUE|FALSE)$/) {
       push @invalid, "GPG_VERIFY:" if $running ne 'sboconfig';
       push @invalid, "$warn -g (TRUE or FALSE)";
+    }
+  }
+  if (exists $configs{INSTANT_STOP}) {
+    unless ($configs{INSTANT_STOP} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "INSTANT_STOP:" if $running ne 'sboconfig';
+      push @invalid, "$warn -I (TRUE or FALSE)";
     }
   }
   if (exists $configs{JOBS}) {

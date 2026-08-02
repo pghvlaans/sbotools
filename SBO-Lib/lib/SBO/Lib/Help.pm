@@ -443,9 +443,10 @@ prompts.
 Rebuild every SBo package installed to the system, accounting for new
 dependencies, saved build options and per-script hints. If the queue
 fails for any reason, a template file named "resume.temp" is saved
-to the sbotools directory (/var/lib/sbotools by default). sbotool offers
-to pick up the mass rebuild from the SlackBuild after the one that
-failed if the file is present.
+to the sbotools directory (/var/lib/sbotools by default). It includes
+all builds that neither failed nor succeeded. sbotool offers to pick
+to pick up the mass rebuild using this file as a template if it is
+present; this is best done after resolving any build failures.
 
 2. Series Rebuild
 

@@ -19,6 +19,7 @@ _arguments -s \
 	   '(-d --distclean)'{-d,--distclean}'[If TRUE, then remove source code and the package after building.]:clean source and package?:((TRUE\:"Remove source and package" FALSE\:"Keep source and package"))' \
 	   '(-e --etc-profile)'{-e,--etc-profile}'[If TRUE, then source executable *.sh scripts in /etc/profile.d before building.]:source /etc/profile.d before building?:((TRUE\:"Source /etc/profile.d before building" FALSE\:"Do not source /etc/profile.d before building"))' \
 	   '(-g --get-only)'{-g,--get-only}'[Verify sources for the queue and download if necessary.]' \
+	   '(-I --instant-stop)'{-I,--instant-stop}'[If TRUE, offer to stop queues as soon as one build fails.]:stop on one failure?:((TRUE\:"Stop on one failure" FALSE\:"Continue on failure, skipping dependents on failed builds"))' \
 	   '(-i --noinstall)'{-i,--noinstall}'[Do not install package after building.]' \
 	   '(-j --jobs)'{-j,--jobs}'[Number fed to -j# for make.]:number of jobs (make):()' \
 	   '(-k --pkg-dir)'{-k,--pkg-dir}'[If an absolute path, save built packages here. If FALSE, do not save packages to PKG_DIR.]:override default PKG_DIR?:((path\: "Save built packages here" FALSE\:"Do not save packages to PKG_DIR"))'\
