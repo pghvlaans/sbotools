@@ -173,7 +173,8 @@ packages with the *\_SBo* tag that fail one of these tests before the
 upgrade process begins. Some scripts that repackage binaries are known
 to fail solib tests invariably. Use **sbohints \--ignore-tests** with
 one or more scripts to skip them. **\--all-plus-failures** skips
-packages with solib issues only in the */opt* directory automatically.
+packages with solib issues only in the */opt* directory automatically
+unless [sboupgrade(1)](sboupgrade.1.md) is running interactively.
 
 A limited number of SlackBuilds download files when running, which some
 users consider a security risk. Set **NONET** to **TRUE** to prevent
