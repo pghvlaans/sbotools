@@ -183,6 +183,7 @@ slackbuilds_or_fetch();
 check_distfiles_dir() unless $dry_run or $< != 0;
 
 my %locations = get_sbo_locations();
+my (@bad_solibs, @opt_pkgs, @bad_perl, @bad_python, @bad_ruby);
 
 my ($updates, @failed_test);
 if ($all) {
@@ -198,7 +199,6 @@ if ($all) {
 		my $rebuild_label = $get_only ? "Rebuild needed" : "Rebuilding";
 		my @installed_sbos = @{ get_installed_packages('SBO') };
 		if (@installed_sbos) {
-			my (@bad_solibs, @opt_pkgs, @bad_perl, @bad_python, @bad_ruby);
 			my $sbo_pkg = +{ map {; $_->{name}, $_->{pkg} } @installed_sbos };
 			wrapsay_color $color_notice, "Checking packges for missing shared objects...";
 			for my $sbo (keys %$sbo_pkg) {
@@ -209,6 +209,7 @@ if ($all) {
 						push @ARGV, $sbo;
 					} else {
 						push @opt_pkgs, $sbo;
+						push @ARGV, $sbo unless $non_int;
 					}
 				}
 			}
@@ -222,7 +223,9 @@ if ($all) {
 			}
 			if (@opt_pkgs) {
 				print "\n" unless @bad_solibs;
-				wrapsay_color $color_notice, "Missing solibs in /opt only; not adding to the queue:";
+				my $queue_action = $non_int ? "would add to the queue if interactive" : "may not require a rebuild.";
+				$queue_action = $dry_run ? "will add to the queue only if interactive" : $queue_action;
+				wrapsay_color $color_notice, "Missing solibs in /opt only; $queue_action:";
 				for (sort @opt_pkgs) {
 					print "  $_\n";
 				}
@@ -238,7 +241,7 @@ if ($all) {
 				push @bad_ruby, $sbo unless $results[2];
 			}
 			push @ARGV, @bad_perl, @bad_python, @bad_ruby;
-			push @failed_test, @bad_solibs, @bad_perl, @bad_python, @bad_ruby;
+			push @failed_test, @bad_solibs, @opt_pkgs, @bad_perl, @bad_python, @bad_ruby;
 			if (@bad_perl) {
 				print "\n";
 				wrapsay_color $color_lesser, "$rebuild_label for perl incompatibility:";
@@ -461,6 +464,12 @@ FIRST: for my $sbo (@$upgrade_queue) {
 	}
 
 	unless ($non_int) {
+		wrapsay_color $color_notice, "\n$sbo:" if in $name, @failed_test;
+		if (in $name, @bad_solibs) { wrapsay_color $color_notice, "Missing shared objects."; }
+		if (in $name, @opt_pkgs) { wrapsay_color $color_notice, "Missing shared objects in /opt only; may not require a rebuild."; }
+		if (in $name, @bad_perl) { wrapsay_color $color_notice, "Incompatible with system perl."; }
+		if (in $name, @bad_python) { wrapsay_color $color_notice, "Incompatible with system python."; }
+		if (in $name, @bad_ruby) { wrapsay_color $color_notice, "Incompatible with system ruby."; }
 		my ($proceed, $cmds, $opts) = user_prompt($name, $locations{$name}, $get_only);
 		next FIRST unless $proceed;
 		push(@temp_queue, $name);

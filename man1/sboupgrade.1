@@ -665,7 +665,10 @@ Because packages with missing solibs only in the
 .I
 /opt
 directory are usually binary and therefore do not require rebuilds,
-they are not added to the queue.
+they are added to the queue only if
+.B
+sboupgrade
+is being used interactively.
 .B
 sboupgrade
 ignores test failures for any script with an

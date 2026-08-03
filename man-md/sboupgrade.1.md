@@ -262,9 +262,10 @@ Upgrade the same installed SlackBuilds that would be upgraded with
 process begins.
 
 Because packages with missing solibs only in the */opt* directory are
-usually binary and therefore do not require rebuilds, they are not added
-to the queue. **sboupgrade** ignores test failures for any script with
-an *ignore-tests* request in */etc/sbotools/sbotools.hints*. See
+usually binary and therefore do not require rebuilds, they are added to
+the queue only if **sboupgrade** is being used interactively.
+**sboupgrade** ignores test failures for any script with an
+*ignore-tests* request in */etc/sbotools/sbotools.hints*. See
 [sbohints(1)](sbohints.1.md) or [sbotools.hints(5)](sbotools.hints.5.md) for details.
 
 Incompatible with **\--all** and **\--compat32**.
