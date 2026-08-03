@@ -108,13 +108,13 @@ sub run {
       $print_newline = 1;
     }
   }
-  print "\n" if $print_newline;
   unless (@args) { wrapsay_color $color_notice, "\nNothing to remove."; exit 0; }
   my %sbos = map { $_ => 1 } @args;
 
   my @remove = get_full_queue($installed, @args);
   unless (@remove) { wrapsay_color $color_notice, "\nNothing to remove."; exit 0; }
 
+  print "\n" if $print_newline;
   my @confirmed;
 
   my $required_by = get_reverse_reqs($installed);

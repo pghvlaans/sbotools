@@ -13,6 +13,7 @@
     * If non-interactive, stop immediately.
   * sboinstall, sboupgrade: Use --instant-stop to override the INSTANT_STOP setting.
   * Build.pm: Use JSON::PP to write the mass rebuild resume queue.
+  * sboremove: Fix extra newline.
 
 #### 4.3 - 2026-07-31
   * {Build,Download}.pm: Properly handle failed downloads when continuing.
