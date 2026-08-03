@@ -14,6 +14,7 @@
   * *Build.pm*: Use *JSON::PP* to write the mass rebuild resume queue.
   * *sboremove*: Fix extra newline.
   * *sboupgrade*: **\--all-plus-failures** adds packages with missing solibs only in `/opt` to the queue if running interactively.
+  * Notify about CPAN installations regardless of **CPAN_IGNORE**; remove **CPAN_IGNORE** from the recommended settings list.
 
 * 4.3 - 2026-07-31
   * *{Build,Download}.pm*: Properly handle failed downloads when continuing.
