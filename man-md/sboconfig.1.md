@@ -55,8 +55,6 @@ Non-root users can only call **sboconfig** with the **\--list**,
 All values default to **FALSE** except for **SBO_HOME**. Recommended
 non-default settings include **TRUE** for:
 
-• **CPAN_IGNORE**
-
 • **ETC_PROFILE**
 
 • **GPG_VERIFY**, provided the upstream repository is regularly signed
@@ -192,8 +190,6 @@ Slackware -current.
 
 **CPAN_IGNORE**: If **TRUE**, install scripts even if they are already
 installed from the CPAN.
-
-Recommended value: **TRUE**
 
 **-p\|\--pkg-dir (FALSE\|/path)**
 

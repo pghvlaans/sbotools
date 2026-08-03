@@ -34,8 +34,6 @@ permitted as directory settings.
 All values default to **FALSE** except for **SBO_HOME**. Recommended
 non-default settings include **TRUE** for:
 
-• **CPAN_IGNORE**
-
 • **ETC_PROFILE**
 
 • **GPG_VERIFY**, provided the upstream repository is regularly signed
@@ -56,8 +54,6 @@ want it.
 
 If **TRUE**, install scripts even if they are already installed from the
 CPAN.
-
-Recommended value: **TRUE**
 
 **DIALOGRC=(FALSE\|/path)**
 

@@ -329,12 +329,7 @@ unless ($non_int and $force) {
 	}
 	$updates{$$_{name}} = 1 for @$updates;
 }
-my ($pms, $defective);
-unless ($config{CPAN_IGNORE} eq "TRUE") {
-	($pms, $defective) = get_installed_cpans();
-	s/::/-/g for @$pms;
-	s/::/-/g for @$defective;
-}
+my ($pms, $defective) = get_installed_cpans();
 
 my ($upgrade_queue, @needs_reverse, $needs_rationalize);
 
@@ -447,18 +442,18 @@ FIRST: for my $sbo (@$upgrade_queue) {
 	# will give %README% advisories later for --dry-run
 	push @see_readme, $name if defined $warnings{$name} and $warnings{$name} eq '%README%';
 
-	if ($name =~ /^perl-/ and $config{CPAN_IGNORE} ne "TRUE" and not $inst_names{$name}) {
+	if ($name =~ /^perl-/) {
 		my $pm_name = $sbo;
 		$pm_name =~ s/^perl-//;
 		for my $pm (@$pms) {
 			if ($pm =~ /^$pm_name$/i) {
-				say "sbo installed via the CPAN.";
-				next FIRST;
+				wrapsay_color $color_lesser, "$sbo installed via the CPAN.";
+				next FIRST unless $config{CPAN_IGNORE} eq "TRUE";
 			}
-			for my $pm (@$defective) {
-				if ($pm =~ /^$pm_name$/i) {
-					wrapsay "$sbo installed via the CPAN, but file(s) missing.";
-				}
+		}
+		for my $pm (@$defective) {
+			if ($pm =~ /^$pm_name$/i) {
+				wrapsay_color $color_lesser, "$sbo installed via the CPAN, but file(s) missing.";
 			}
 		}
 	}

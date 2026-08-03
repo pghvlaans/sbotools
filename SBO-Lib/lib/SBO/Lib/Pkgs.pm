@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '4.3';
 
-use SBO::Lib::Util qw/ :config :const build_cmp in script_error error_code open_read version_cmp /;
+use SBO::Lib::Util qw/ :config :const build_cmp in script_error error_code open_read version_cmp uniq /;
 use SBO::Lib::Tree qw/ get_sbo_location is_local /;
 use SBO::Lib::Info qw/ get_orig_build_number get_orig_version get_sbo_build_number get_sbo_version /;
 
@@ -155,7 +155,8 @@ modules installed from the CPAN and a second array with installed modules
 that have missing files. Modules are only fully recognized as installed if all
 files in C<.packlist> exist. This is used in C<sboinstall(1)> and
 C<sboupgrade(1)> to prevent conflicting installations from the CPAN and
-SlackBuilds.
+SlackBuilds; if the setting C<CPAN_IGNORE> is C<TRUE>, users are updated but
+building may proceed.
 
 =cut
 
@@ -196,6 +197,14 @@ sub get_installed_cpans {
       }
       close $pfh;
     }
+  }
+  if (@mods) {
+    s/::/-/g for @mods;
+    @mods = uniq @mods;
+  }
+  if (@defective) {
+    s/::/-/g for @defective;
+    @defective = uniq @defective;
   }
   return (\@mods, \@defective);
 }

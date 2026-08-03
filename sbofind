@@ -118,8 +118,6 @@ my @raw_printout;
 # get lists of installed and defective CPAN modules
 my (@cpans, @defective_cpans);
 my ($pms, $defective) = get_installed_cpans();
-s/::/-/g for @$pms;
-s/::/-/g for @$defective;
 
 # find anything with $search in its name
 sub perform_search {

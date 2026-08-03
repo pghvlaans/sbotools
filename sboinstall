@@ -272,12 +272,7 @@ if ($compat32) {
 # get lists of installed packages and perl modules from CPAN
 my $inst_pkgs = get_installed_packages('ALL');
 my $std_pkgs = get_installed_packages('STD');
-my ($pms, $defective);
-unless ($config{CPAN_IGNORE} eq "TRUE") {
-	($pms, $defective) = get_installed_cpans();
-	s/::/-/g for @$pms;
-	s/::/-/g for @$defective;
-}
+my ($pms, $defective) = get_installed_cpans();
 my (%inst_names, %std_names);
 $inst_names{$_->{name}} = $_ for @$inst_pkgs;
 $std_names{$_->{name}} = $_ for @$std_pkgs;
@@ -478,14 +473,14 @@ FIRST: for my $sbo (@$build_queue) {
 			next FIRST;
 		}
 	} else {
-		if ($sbo =~ /^perl-/ and $config{CPAN_IGNORE} ne "TRUE") {
+		if ($sbo =~ /^perl-/) {
 			my $pm_name = $sbo;
 			$pm_name =~ s/^perl-//;
 			for my $pm (@$pms) {
 				if ($pm =~ /^$pm_name$/i) {
-					say "$sbo installed via the CPAN.";
+					wrapsay_color $color_lesser, "$sbo installed via the CPAN.";
 					unless ($no_install) {
-						next FIRST;
+						next FIRST unless $config{CPAN_IGNORE} eq "TRUE";
 					} else {
 						say "Building, but not installing." unless $dry_run;
 					}
@@ -493,7 +488,7 @@ FIRST: for my $sbo (@$build_queue) {
 			}
 			for my $pm (@$defective) {
 				if ($pm =~ /^$pm_name$/i) {
-					wrapsay "$sbo installed via the CPAN, but file(s) missing.";
+					wrapsay_color $color_lesser, "$sbo installed via the CPAN, but file(s) missing.";
 				}
 			}
 		}
