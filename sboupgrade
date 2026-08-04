@@ -81,11 +81,13 @@ Options (defaults shown first where applicable):
     if TRUE, do not check for missing .so dependencies.
   -z|--force-reqs:
     rebuild dependencies as well.
+  -Z|--niceness (FALSE|-20..19)
+    if a NUMBER (-20 ~ 19), use that niceness for build/install.
 EOF
 	return 1;
 }
 
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $no_socheck, $wrap, $nowrap, $nonet, $all_fails, $get_only, $instant_stop);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $no_socheck, $wrap, $nowrap, $nonet, $all_fails, $get_only, $instant_stop, $niceness);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -117,6 +119,7 @@ my $options_ok = GetOptions(
 	'all-plus-failures|A' => \$all_fails,
 	'get-only|g'        => \$get_only,
 	'instant-stop|I=s'  => \$instant_stop,
+	'niceness|Z=s'      => \$niceness,
 );
 
 if ($help) {
@@ -148,6 +151,7 @@ $config{NO_SOCHECK} = $no_socheck if $no_socheck;
 $config{JOBS} = $jobs if $jobs;
 $config{NONET} = $nonet if $nonet;
 $config{INSTANT_STOP} = $instant_stop if $instant_stop;
+$config{NICENESS} = $niceness if $niceness;
 
 lint_sbo_config($self, %config);
 merge_obsolete();

@@ -96,6 +96,8 @@ Configuration options (defaults shown):
       NOWRAP: do not automatically wrap sbotools output.
   -X|--no-socheck FALSE:
       NO_SOCHECK: do not check .so dependencies after sbocheck and sboupgrade.
+  -Z|--niceness FALSE:
+      NICENESS: if a NUMBER (-20 ~ 19), use that niceness for build/install.
 
 Use $label without options for a dialog menu.
 EOF
@@ -165,6 +167,8 @@ Configuration options (defaults shown):
       NOWRAP: do not automatically wrap sbotest output.
   -X|--no-socheck FALSE:
       NO_SOCHECK: do not check for missing .so dependencies after failures.
+  -Z|--niceness FALSE:
+      NICENESS: if a NUMBER (-20 ~ 19), use that niceness for build/install.
 EOF
 	return 1;
 }
@@ -178,14 +182,14 @@ unless ($is_sbotest) {
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s', 'instant-stop|I=s');
+		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s', 'instant-stop|I=s', 'niceness|Z=s');
 } else {
 	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'sbo-archive|A=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s', 'instant-stop|I=s');
+		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'sbo-archive|A=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s', 'instant-stop|I=s', 'niceness|Z=s');
 }
 
 $options{list} = 1 if exists $options{'non-default'};
@@ -226,6 +230,7 @@ my %valid_confs = (
 	nonet               => 'NONET',
 	'force-obsolete'    => 'FORCE_OBSOLETE',
 	'instant-stop'      => 'INSTANT_STOP',
+	'niceness'          => 'NICENESS',
 );
 $valid_confs{"sbo-archive"} = 'SBO_ARCHIVE' if $is_sbotest;
 
@@ -255,6 +260,7 @@ my %params = (
 	NONET             => 'N|--nonet',
 	FORCE_OBSOLETE    => 'F|--force-obsolete',
 	INSTANT_STOP      => 'I|--instant-stop',
+	NICENESS          => 'Z|--niceness',
 );
 $params{SBO_ARCHIVE} = 'A|--sbo-archive' if $is_sbotest;
 

@@ -74,6 +74,8 @@ Options (defaults shown first where applicable):
     view the README but do not parse requirements, commands, or options.
   -t|--template-only (FILE):
     create a template, but do not download or install anything.
+  -Z|--niceness (FALSE|-20..19)
+    if a NUMBER (-20 ~ 19), use that niceness for build/install.
   --batch:
     like nointeractive, but calculates dependencies (use with caution).
   --reinstall:
@@ -91,7 +93,7 @@ EOF
 	return 1;
 }
 
-my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $noclean, $distclean, $pkg_dir, $log_dir, $etc_profile, $gpg, $series_rebuild, $jobs, $nocolor, $color, $wrap, $nowrap, $ctemp_only, $nonet, $get_only, $instant_stop);
+my ($help, $vers, $no_install, $no_recall, $non_int, $no_reqs, $compat32, $ctemp, $utemp, $reinstall, $mass_rebuild, $reverse_rebuild, $yes_really, $dry_run, $noclean, $distclean, $pkg_dir, $log_dir, $etc_profile, $gpg, $series_rebuild, $jobs, $nocolor, $color, $wrap, $nowrap, $ctemp_only, $nonet, $get_only, $instant_stop, $niceness);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -123,6 +125,7 @@ my $options_ok = GetOptions(
 	'nonet|N=s'         => \$nonet,
 	'get-only|g'        => \$get_only,
 	'instant-stop|I=s'  => \$instant_stop,
+	'niceness|Z=s'      => \$niceness,
 );
 
 if ($help) {
@@ -151,6 +154,7 @@ $config{LOG_DIR} = $log_dir if $log_dir;
 $config{JOBS} = $jobs if $jobs;
 $config{NONET} = $nonet if $nonet;
 $config{INSTANT_STOP} = $instant_stop if $instant_stop;
+$config{NICENESS} = $niceness if $niceness;
 
 lint_sbo_config($self, %config);
 merge_obsolete();

@@ -15,7 +15,7 @@ sboconfig [-l|-n]
 .P
 sboconfig [--reset]
 .P
-sboconfig [-CFKINOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo /path|FALSE] \\
+sboconfig [-CFKINOPRSXcbdegw TRUE|FALSE] [-Zj #|FALSE] [-DLpo /path|FALSE] \\
           [-s /path|/var/lib/sbotools] [-B branch_name|FALSE] [-V #.#|FALSE] \\
           [-r url|FALSE]
 .SH DESCRIPTION
@@ -675,6 +675,30 @@ ruby
 .I
 _SBo
 packages.
+.RE
+.P
+.B
+-Z|--niceness (FALSE|-20..19)
+.RS
+.B
+NICENESS\fR\
+\&: If set to a
+.B
+number
+from -20 through 19, use that as the absolute niceness value for
+.B
+sboinstall(1)
+and
+.B
+sboupgrade(1)
+during the building and installation phase. If
+.B
+FALSE\fR\
+\&, simply use the niceness value that the script started with, generally
+.I
+0
+without user intervention. A lower niceness value gives a process greater
+priority. Use with caution.
 .RE
 .P
 .B

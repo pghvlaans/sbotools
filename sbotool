@@ -1278,6 +1278,7 @@ sub display_settings {
 						"\"JOBS: $config{JOBS}\" \"\" \"If a number, use this many jobs with make.\" \\",
 						"\"LOCAL_OVERRIDES: $config{LOCAL_OVERRIDES}\" \"\" \"Use this directory for local override scripts.\" \\",
 						"\"LOG_DIR: $config{LOG_DIR}\" \"\" \"If a directory, save build logs there. Logs are otherwise not saved.\" \\",
+						"\"NICENESS: $config{NICENESS}\" \"\" \"If a number from -20 through 19, use this niceness for build/install.\" \\",
 						"\"NOCLEAN: $config{NOCLEAN}$plus\" \"\" \"If TRUE, do not remove working directories after building.\" \\",
 						"\"NONET: $config{NONET}$plus\" \"\" \"If TRUE, do not allow network access when running SlackBuilds.\" \\",
 						"\"NOWRAP: $config{NOWRAP}$plus\" \"\" \"If TRUE, disable sbotools word wrapping.\" \\",
@@ -1384,6 +1385,11 @@ sub display_settings {
 			$explanation = "If a PATH, save logs in that directory; logs are otherwise\nnot saved.\n\n/home/*, /root and / are not permitted.";
 			$criterion = "A PATH or FALSE.";
 			$flag = "L";
+		}
+		if ($option =~ /^NICENESS/) {
+			$explanation = "If a NUMBER from -20 through 19, use that niceness level for the build and installation phase.";
+			$criterion = "A NUMBER or FALSE.";
+			$flag = "Z";
 		}
 		if ($option =~ /^NOCLEAN/) {
 			$explanation = "If TRUE, do not delete the working directory after building.";

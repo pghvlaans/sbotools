@@ -727,8 +727,9 @@ C<process_sbos()> processes a C<@queue> of SlackBuilds and returns an array refe
 with failed builds and the exit status. If there is an argument C<GET_ONLY>, the array
 reference contains failed downloads instead of builds.
 
-In case of a mass rebuild, C<process_sbos> updates the resume file C<resume.temp>
-when a build fails.
+In case of a mass rebuild, C<process_sbos()> updates the resume file C<resume.temp>
+when a build fails. If the C<NICENESS> setting is not C<FALSE>, that is also handled
+here with C<renice(1)>.
 
 =cut
 
@@ -800,6 +801,8 @@ sub process_sbos {
     return \@failures, $err;
   }
   my $count = 0;
+  chomp(my $existing_nice = `nice`);
+  `renice $config{NICENESS} $$` if $config{NICENESS} ne "FALSE";
   FIRST: for my $sbo (@$todo) {
     $count++;
     if (@failure_names) {
@@ -842,12 +845,16 @@ sub process_sbos {
           if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
           if (@skipped and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
           display_times() unless $config{CLASSIC} eq "TRUE";
+          chomp(my $test_nice = `nice`);
+          `renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
           return \@failures, $exit;
         }
       } elsif ($count == @$todo or ($config{INSTANT_STOP} eq "TRUE" and $args{NON_INT})) {
           if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
           if (@skipped and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
           display_times() unless $config{CLASSIC} eq "TRUE";
+          chomp(my $test_nice = `nice`);
+          `renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
           return \@failures, $exit;
       }
       next FIRST;
@@ -887,6 +894,8 @@ sub process_sbos {
   if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
   if (@skipped and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
   display_times() unless $config{CLASSIC} eq "TRUE";
+  chomp(my $test_nice = `nice`);
+  `renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
   return \@failures, $err;
 }
 
@@ -1085,7 +1094,7 @@ Build.pm subroutines can return the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Solibs(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), JSON::PP(3), unshare(1)
+SBO::Lib(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Solibs(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), JSON::PP(3), renice(1), unshare(1)
 
 =head1 AUTHORS
 

@@ -8,7 +8,7 @@ sboupgrade
 .P
 sboupgrade [-h|-v]
 .P
-sboupgrade [-NISXbcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboupgrade [-NISXbcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
            [-figopqrz] [--batch|--dry-run] --all|--all-plus-failures|sbo_name (sbo_name)
 .P
 sboupgrade [--color|--nocolor] [--wrap|--nowrap] ...
@@ -592,6 +592,31 @@ sbocheck(1)\fR\
 \&. This option overrides the
 .B
 NO_SOCHECK
+setting.
+.RE
+.P
+.B
+-Z|--niceness (FALSE|-20..19)
+.RS
+.B
+If set to a
+.B
+number
+from -20 through 19, use that as the absolute niceness value for
+.B
+sboupgrade
+during the building and installation phase. If
+.B
+FALSE\fR\
+\&, simply use the niceness value that the script started with, generally
+.I
+0
+without user intervention. A lower niceness value gives a process greater
+priority. Use with caution.
+.P
+Overrides the
+.B
+NICENESS
 setting.
 .RE
 .P

@@ -8,17 +8,17 @@ sboinstall
 .P
 sboinstall [-h|-v]
 .P
-sboinstall [-NIdce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-NIdce TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
            [-DRgiopr] [--batch|--dry-run] [--create-template|-t FILE] \\
            sbo_name (sbo_name)
 .P
-sboinstall [-NIcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
            [-Dgi] --use-template FILE
 .P
-sboinstall [-NIcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
            [-Dgioqr] [--create-template|-t FILE] --mass-rebuild
 .P
-sboinstall [-NIcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
            [-Dgioqr] [--create-template|-t FILE] --series-rebuild SERIES,...
 .P
 sboinstall [--color|--nocolor] [--wrap|--nowrap] ...
@@ -561,6 +561,31 @@ and
 .B
 --get-only\fR\
 \&.
+.RE
+.P
+.B
+-Z|--niceness (FALSE|-20..19)
+.RS
+.B
+If set to a
+.B
+number
+from -20 through 19, use that as the absolute niceness value for
+.B
+sboinstall
+during the building and installation phase. If
+.B
+FALSE\fR\
+\&, simply use the niceness value that the script started with, generally
+.I
+0
+without user intervention. A lower niceness value gives a process greater
+priority. Use with caution.
+.P
+Overrides the
+.B
+NICENESS
+setting.
 .RE
 .P
 .B

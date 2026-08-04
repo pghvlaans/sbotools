@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Prickle-Prickle, Confusion 68, 3192 YOLD" "" "sbotools 4.3"
+.TH SBO::Lib::Build 3 "Sweetmorn, Confusion 70, 3192 YOLD" "" "sbotools 4.3"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -277,8 +277,9 @@ Network access is blocked with \f(CWunshare(1)\fR if the \f(CW\*(C`NONET\*(C'\fR
 with failed builds and the exit status. If there is an argument \f(CW\*(C`GET_ONLY\*(C'\fR, the array
 reference contains failed downloads instead of builds.
 .PP
-In case of a mass rebuild, \f(CW\*(C`process_sbos\*(C'\fR updates the resume file \f(CW\*(C`resume.temp\*(C'\fR
-when a build fails.
+In case of a mass rebuild, \f(CWprocess_sbos()\fR updates the resume file \f(CW\*(C`resume.temp\*(C'\fR
+when a build fails. If the \f(CW\*(C`NICENESS\*(C'\fR setting is not \f(CW\*(C`FALSE\*(C'\fR, that is also handled
+here with \f(CWrenice(1)\fR.
 .SS rationalize_queue
 .IX Subsection "rationalize_queue"
 .Vb 1
@@ -340,7 +341,7 @@ Build.pm subroutines can return the following exit codes:
 .Ve
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
-\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Solibs\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBSBO::Lib::Util\fR\|(3), \fBJSON::PP\fR\|(3), \fBunshare\fR\|(1)
+\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Solibs\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBSBO::Lib::Util\fR\|(3), \fBJSON::PP\fR\|(3), \fBrenice\fR\|(1), \fBunshare\fR\|(1)
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <jacob.pipkin@icloud.com> with

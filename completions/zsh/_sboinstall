@@ -31,6 +31,7 @@ _arguments -s \
 	   '(-R --norequirements)'{-R,--norequirements}'[Skip requirement handling.]' \
 	   '(-t --template-only)'{-t,--template-only}'[Create a template, but do not build.]:Template file:()' \
 	   '(-q --reverse-rebuild)'{-q,--reverse-rebuild}'[Rebuild installed reverse dependencies.]' \
+	   '(-Z --niceness)'{-Z,--niceness}'[During the build/install phase, FALSE for incoming niceness or a number from -20 to 19; lower means more priority. Use with caution.]:Niceness level for build and installation phase, or FALSE for default:()' \
 	   '--reinstall[Asks for reinstall from the requirements.]' \
 	   '--series-rebuild[Rebuild all installed SlackBuilds in one or more series (comma-separated).]' \
 	   '--mass-rebuild[Rebuild all installed SlackBuilds.]' \

@@ -7,6 +7,7 @@ package SBO::Lib::Util;
 
 #% SBOTEST V1.2.2 COMPAT %
 #% SBOTEST V1.2.3 COMPAT %
+#% SBOTEST V1.2.4 COMPAT %
 
 use 5.016;
 use strict;
@@ -211,7 +212,7 @@ The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
 C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<NOCOLOR>, C<NO_SOCHECK>,
-C<DIALOGRC>, C<NONET>, C<FORCE_OBSOLETE> and C<INSTANT_STOP>.
+C<DIALOGRC>, C<NONET>, C<FORCE_OBSOLETE>, C<INSTANT_STOP> and C<NICENESS>.
 
 =head2 $distfiles_dir
 
@@ -346,6 +347,7 @@ our %config = (
   NONET => 'FALSE',
   FORCE_OBSOLETE => 'FALSE',
   INSTANT_STOP => 'FALSE',
+  NICENESS => 'FALSE',
 );
 
 if (defined $is_sbotest) {
@@ -986,6 +988,12 @@ sub lint_sbo_config {
       push @invalid, "$warn -L (absolute path or FALSE)";
     } elsif ($configs{LOG_DIR} =~ qr#^/#) {
       push @dangerous, "LOG_DIR: $configs{LOG_DIR}" if dangerous_directory($configs{LOG_DIR});
+    }
+  }
+  if (exists $configs{NICENESS}) {
+    unless ($configs{NICENESS} =~ /^FALSE$/ or ($configs{NICENESS} =~ /^(-|)\d+$/ and $configs{NICENESS} < 20 and $configs{NICENESS} > -21)) {
+      push @invalid, "NICENESS:" if $running ne 'sboconfig';
+      push @invalid, "$warn -Z (FALSE or a number from -20 through 19)";
     }
   }
   if (exists $configs{NOCLEAN}) {

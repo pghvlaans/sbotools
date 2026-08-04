@@ -25,7 +25,7 @@
 
     sboconfig [--reset]
 
-    sboconfig [-CFKINOPRSXcbdegw TRUE|FALSE] [-j #|FALSE] [-DLpo
+    sboconfig [-CFKINOPRSXcbdegw TRUE|FALSE] [-Zj #|FALSE] [-DLpo
 /path\|FALSE] \
               [-s /path|/var/lib/sbotools] [-B branch_name|FALSE] [-V
 #.#\|FALSE] \
@@ -253,6 +253,15 @@ shared object (solib) dependencies among *\_SBo* packages when running
 [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md). Additionally, [sbocheck(1)](sbocheck.1.md)
 does not search for incompatible **perl**, **python** and **ruby**
 *\_SBo* packages.
+
+**-Z\|\--niceness (FALSE\|-20..19)**
+
+**NICENESS**: If set to a **number** from -20 through 19, use that as
+the absolute niceness value for [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md)
+during the building and installation phase. If **FALSE**, simply use the
+niceness value that the script started with, generally *0* without user
+intervention. A lower niceness value gives a process greater priority.
+Use with caution.
 
 **-h\|\--help**
 
