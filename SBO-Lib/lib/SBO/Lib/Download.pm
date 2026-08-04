@@ -77,9 +77,6 @@ otherwise.
 
 =cut
 
-# for the given location, pull list of downloads and check to see if any exist;
-# if so, verify they md5 correctly and if not, download them and check the new
-# download's md5sum, then create a hash with required file moves.
 sub check_distfiles {
   my %args = (
     LOCATION  => '',
@@ -131,7 +128,6 @@ and 0 otherwise.
 
 =cut
 
-# check whether a file with a given md5sum exists in SBO_HOME/distfiles/manual
 sub check_manual {
   script_error('check_manual requires two arguments.') unless @_ == 2;
   my ($filename, $info_md5) = @_;
@@ -151,7 +147,6 @@ C<compute_md5sum()> computes and returns the md5sum of the file in C<$file>.
 
 =cut
 
-# for a given file, compute its md5sum
 sub compute_md5sum {
   script_error('compute_md5sum requires a file argument.') unless -f $_[0];
   my ($fh, $exit) = open_read(shift);
@@ -172,8 +167,6 @@ The subroutine returns a message and an error code upon failure, and 1 upon succ
 
 =cut
 
-# for a given distfile, attempt to retrieve it and, if successful, check its
-# md5sum against that in the sbo's .info file
 sub get_distfile {
   script_error('get_distfile requires two arguments.') unless @_ == 2;
   my ($link, $info_md5) = @_;
@@ -304,7 +297,6 @@ returns the destination path for linking the file.
 
 =cut
 
-# for a given distfile, figure out what the full path to its temporary location will be
 sub get_hardlink_from_filename {
   script_error('get_hardlink_from_filename requires two arguments.') unless @_ == 2;
   script_error('get_hardlink_from_filename first argument is not a file.') unless -f $_[0];
@@ -321,7 +313,6 @@ C<%downloads> for use during the build in a staging directory.
 
 =cut
 
-# given a location and a list of download links, prepare a hash of files to be moved
 sub prepare_staging {
   script_error('prepare_staging requires one argument.') unless @_ == 1;
   my ($downloads) = @_;
@@ -346,7 +337,8 @@ a build; the SlackBuild directory is copied over and hardlinks to the required s
 files are created. It returns the location of the staging directory if it can be created
 and 0 otherwise.
 
-If the second argument is the string C<NO_DISTFILES> (appropriate for no-download builds and failed downloads), copy the SlackBuild directory only.
+If the second argument is the string C<NO_DISTFILES> (appropriate for no-download builds
+and failed downloads), only copy the SlackBuild directory.
 
 The script exits if the C<distfiles> directory is malformed or the source file or directory
 is a symlink.
@@ -401,8 +393,6 @@ md5sum equal to C<$md5>.
 
 =cut
 
-# for a given distfile, see whether or not it exists, and if so, if its md5sum
-# matches the sbo's .info file
 sub verify_distfile {
   script_error('verify_distfile requires two arguments.') unless @_ == 2;
   my ($link, $info_md5) = @_;

@@ -31,7 +31,7 @@ our %EXPORT_TAGS = (
   all => \@EXPORT_OK,
 );
 
-our @help_batch = ('Installation - Help',
+our @help_batch = ('Help - Installation',
 
 'Building queues can be done in either Batch or Interactive mode.
 
@@ -57,23 +57,23 @@ Batch mode does not add missing users and groups; add them manually or
 run interactively for a prompt.
 
 Batch mode is unavailable if a directory is specified by the
-LOCAL_OVERRIDES directory and does not exist, and if one or more scripts
+LOCAL_OVERRIDES directory and does not exist, or if one or more scripts
 in the queue is missing a user or group.');
 
-our @help_builds = ('Build Lists - Help',
+our @help_builds = ('Help - Build Lists',
 
 'Select a SlackBuild from this screen to see its "Operations" menu. Use
 the "Filter" button to search within the results.
 
 "Filter" appears only for lists of more than one SlackBuild.');
 
-our @help_builds_fail_menu = ('Build Lists - Help',
+our @help_builds_fail_menu = ('Help - Failed Test List',
 
 'Select a SlackBuild from this screen to see its "Operations" menu. Use
 the "Reinstall" button to reinstall all packages on the list, except
 for those that have the Ignore Tests hint.');
 
-our @help_clean = ('sboclean - Help',
+our @help_clean = ('Help - sboclean',
 
 'This menu interfaces with sboclean(1); three separate categories are
 available to the root user for cleaning. Only applicable categories
@@ -85,7 +85,7 @@ are shown.
 sbotools directory (default /var/lib/sbotools) in md5-indexed
 directories under distfiles, e.g.
 "/var/lib/sbotools/distfiles/(md5)/source-1.1.tar.gz". Set the sbotools
-DISTCLEAN setting to TRUE to delete source upon building.
+DISTCLEAN setting to TRUE to delete source after building.
 
 2. Options
 
@@ -101,7 +101,7 @@ package directories are stored here. $TMP is used instead if it is set
 in the user environment. Please note that everything in $TMP is deleted
 if this option is used.');
 
-our @help_hints = ('Hints - Help',
+our @help_hints = ('Help - Hints',
 
 'sbotools recognizes four kinds of per-script hints. The root user can
 add, modify and clear hints via the "Edit Hints" menu in the
@@ -138,7 +138,7 @@ binaries.
 Please note that compat32 builds share hints with the corresponding
 base SlackBuild.');
 
-our @help_list_mgmt = ('List Management - Help',
+our @help_list_mgmt = ('Help - List Management',
 
 'Use this screen to add or remove the SlackBuild from one or more of
 these lists:
@@ -154,7 +154,7 @@ these lists:
 Only applicable lists appear in the options. Use the "List Operations"
 screen from Main Menu to implement or clear the lists.');
 
-our @help_lists = ('List Operations - Help',
+our @help_lists = ('Help - List Operations',
 
 'Root users can place SlackBuilds on the Install, Upgrade and Remove
 lists.  All users can place SlackBuilds on the Template list. List
@@ -171,7 +171,7 @@ operations use dependency resolution.
 Empty lists do not appear in the options. Use "Clear" to empty all of
 the lists.');
 
-our @help_main = ('Main Menu - Help',
+our @help_main = ('Help - Main Menu',
 
 'sbotool is a TUI to sbotools, a set of Perl scripts providing a Ports-
 like interface to SlackBuilds.org. Although most sbotools functions can
@@ -282,7 +282,7 @@ effective operations. The following options can appear in Main Menu:
 * Upgrade All
     Root only. Perform all available upgrades.');
 
-our @help_operations = ('Script Operations - Help',
+our @help_operations = ('Help - Script Operations',
 
 'Each available SlackBuild has an Operations menu, which is the main
 point of contact for script information and actions. Use the "Main"
@@ -411,7 +411,7 @@ The remaining options may be hidden behind "more":
 * less
     Hide the less-common options again.');
 
-our @help_options = ('Build Options - Help',
+our @help_options = ('Help - Build Options',
 
 'Build options for individual SlackBuilds are saved to files in the
 "/var/log/sbotools" directory. They can be added or edited by installing
@@ -444,9 +444,9 @@ Rebuild every SBo package installed to the system, accounting for new
 dependencies, saved build options and per-script hints. If the queue
 fails for any reason, a template file named "resume.temp" is saved
 to the sbotools directory (/var/lib/sbotools by default). It includes
-all builds that neither failed nor succeeded. sbotool offers to pick
-to pick up the mass rebuild using this file as a template if it is
-present; this is best done after resolving any build failures.
+all builds that neither failed nor succeeded. sbotool offers to pick up
+the mass rebuild using this file as a template if it is present; this is
+best done after resolving any build failures.
 
 2. Series Rebuild
 
@@ -459,13 +459,13 @@ packages are displayed.
 Like Series Rebuild, but also rebuild any reverse dependencies
 installed to the system.');
 
-our @help_sboremove = ('sboremove - Help',
+our @help_sboremove = ('Help - sboremove',
 
 'sboremove removes one or more packages and any of their unneeded
 dependencies. The user is prompted before any package is designated for
 removal, and before the final remove operation.');
 
-our @help_search = ('Package Search - Help',
+our @help_search = ('Help - Package Search',
 
 'Use this screen to search for SlackBuilds by name. To include
 description strings as well, use the "Desc" button. Exact word matches
@@ -475,7 +475,7 @@ list of results to see its Operations menu.
 Script results lists can be refined further using the "Filter" button,
 which applies an additional search to the list.');
 
-our @help_solibs = ('Package Tests - Help',
+our @help_solibs = ('Help - Package Tests',
 
 'Root and non-root users can perform per-package checks for missing
 shared object dependencies (often called "solibs"), and perl, python and
@@ -510,7 +510,7 @@ against the wrong major version.');
 
 =head1 NAME
 
-SBO::Lib::Help - internal documentation for sbotool
+SBO::Lib::Help - Internal documentation for sbotool
 
 =head1 SYNOPSIS
 

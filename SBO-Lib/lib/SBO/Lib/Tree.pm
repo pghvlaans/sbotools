@@ -228,7 +228,7 @@ sub renew_sbo_locations {
 
 =head1 EXIT CODES
 
-Tree.pm subroutines can return the following exit code:
+Tree.pm subroutines can return the following exit codes:
 
   _ERR_SCRIPT        2   script or module bug
   _ERR_OPENFH        6   failure to open file handles

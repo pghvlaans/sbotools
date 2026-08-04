@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Sweetmorn, Confusion 70, 3192 YOLD" "" "sbotools 4.3"
+.TH SBO::Lib::Build 3 "Boomtime, Confusion 71, 3192 YOLD" "" "sbotools 4.3"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -80,7 +80,7 @@ SBO::Lib::Build \- Routines for building Slackware packages from SlackBuilds.org
 This is a shared hash that contains already\-calculated build queues.
 It is used by \f(CWget_build_queue()\fR to reduce wasted time and check for
 circular dependencies. Note that \f(CW%concluded\fR is cleared
-by \f(CW\*(C`sbotool\*(C'\fR when using the \f(CW\*(C`Refresh\*(C'\fR button.
+by \f(CWsbotool(1)\fR when using the \f(CW\*(C`Refresh\*(C'\fR button.
 .ie n .SS $env_tmp
 .el .SS \f(CW$env_tmp\fP
 .IX Subsection "$env_tmp"
@@ -92,7 +92,7 @@ set.
 This is a shared array that tracks scripts with verified
 reverse dependency chains; it is used by \f(CWget_full_reverse()\fR to check for
 circular reverse dependencies. Note that \f(CW@reverse_concluded\fR is cleared
-by \f(CW\*(C`sbofind\*(C'\fR, \f(CW\*(C`sboremove\*(C'\fR and \f(CW\*(C`sbotool\*(C'\fR between results.
+by \f(CWsbofind(1)\fR, \f(CWsboremove(1)\fR and \f(CWsbotool(1)\fR between results.
 .ie n .SS $tempdir
 .el .SS \f(CW$tempdir\fP
 .IX Subsection "$tempdir"
@@ -106,8 +106,8 @@ This is the same as \f(CW$TMP\fR if it is set. Otherwise, it is \f(CW\*(C`/tmp/S
 .el .SS \f(CW@last_level_reverse\fP
 .IX Subsection "@last_level_reverse"
 This is an array containing the last level of reverse dependencies generated
-by \f(CW\*(C`sbofind\*(C'\fR with \f(CW\*(C`all\-reverse\*(C'\fR and \f(CW\*(C`top\-reverse\*(C'\fR. It is used only by
-\&\f(CW\*(C`sbofind\*(C'\fR.
+by \f(CWsbofind(1)\fR with \f(CW\*(C`all\-reverse\*(C'\fR and \f(CW\*(C`top\-reverse\*(C'\fR. It is used only by
+\&\f(CWsbofind(1)\fR.
 .ie n .SS @upcoming
 .el .SS \f(CW@upcoming\fP
 .IX Subsection "@upcoming"
@@ -186,7 +186,7 @@ These arrays should not be included when called from outside of the subroutine.
 \&\f(CWget_full_reverse()\fR returns an array with installed reverse dependencies.
 .PP
 The final level of reverse dependencies is kept in the shared array \f(CW@last_level_reverse\fR;
-these are displayed only by \f(CW\*(C`sbofind \-\-top\-reverse\*(C'\fR.
+these are displayed only by \f(CW\*(C`sbofind(1) \-\-top\-reverse\*(C'\fR.
 .PP
 If any circular reverse dependencies are found, the script exits with \f(CW\*(C`_ERR_CIRCULAR\*(C'\fR.
 .SS get_full_reverse_queue
@@ -293,12 +293,12 @@ especially beyond the first level; this makes output and build orders more
 intuitive.
 .PP
 Currently, this is only useful when the queue has been constructed with
-reference to reverse dependencies, or, in the case of \f(CW\*(C`sbotest\*(C'\fR, a full
+reference to reverse dependencies, or, in the case of \f(CWsbotest(1)\fR, a full
 repository test or archive rebuild is needed.
 .PP
-\&\f(CW\*(C`sbotest\*(C'\fR has a separate subroutine that reduces the number of expected
+\&\f(CWsbotest(1)\fR has a separate subroutine that reduces the number of expected
 package installations and removals during test runs. Intuitiveness is not
-to be expected in \f(CW\*(C`sbotest\*(C'\fR queues.
+to be expected in \f(CWsbotest(1)\fR queues.
 .PP
 The rearranged queue is returned.
 .SS run_tee

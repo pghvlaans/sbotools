@@ -84,7 +84,7 @@ SBO::Lib::Build - Routines for building Slackware packages from SlackBuilds.org.
 This is a shared hash that contains already-calculated build queues.
 It is used by C<get_build_queue()> to reduce wasted time and check for
 circular dependencies. Note that C<%concluded> is cleared
-by C<sbotool> when using the C<Refresh> button.
+by C<sbotool(1)> when using the C<Refresh> button.
 
 =head2 $env_tmp
 
@@ -96,7 +96,7 @@ set.
 This is a shared array that tracks scripts with verified
 reverse dependency chains; it is used by C<get_full_reverse()> to check for
 circular reverse dependencies. Note that C<@reverse_concluded> is cleared
-by C<sbofind>, C<sboremove> and C<sbotool> between results.
+by C<sbofind(1)>, C<sboremove(1)> and C<sbotool(1)> between results.
 
 =head2 $tempdir
 
@@ -110,8 +110,8 @@ This is the same as C<$TMP> if it is set. Otherwise, it is C</tmp/SBo>.
 =head2 @last_level_reverse
 
 This is an array containing the last level of reverse dependencies generated
-by C<sbofind> with C<all-reverse> and C<top-reverse>. It is used only by
-C<sbofind>.
+by C<sbofind(1)> with C<all-reverse> and C<top-reverse>. It is used only by
+C<sbofind(1)>.
 
 =head2 @upcoming
 
@@ -169,7 +169,6 @@ failure, it returns an error message instead of the package name.
 
 =cut
 
-# run convertpkg on a package to turn it into a -compat32 thing
 sub do_convertpkg {
   script_error('do_convertpkg requires an argument.') unless @_ == 1;
   my $pkg = shift;
@@ -200,7 +199,6 @@ value is an error message; the second and third values are empty.
 
 =cut
 
-# "public interface", sort of thing.
 sub do_slackbuild {
   my %args = (
     OPTS      => 0,
@@ -259,7 +257,6 @@ There is no useful return value.
 
 =cut
 
-# run upgradepkg for a created package
 sub do_upgradepkg {
   script_error('do_upgradepkg requires an argument.') unless @_ == 1;
   my $install_start = time();
@@ -328,7 +325,7 @@ These arrays should not be included when called from outside of the subroutine.
 C<get_full_reverse()> returns an array with installed reverse dependencies.
 
 The final level of reverse dependencies is kept in the shared array C<@last_level_reverse>;
-these are displayed only by C<sbofind --top-reverse>.
+these are displayed only by C<sbofind(1) --top-reverse>.
 
 If any circular reverse dependencies are found, the script exits with C<_ERR_CIRCULAR>.
 
@@ -347,7 +344,7 @@ sub get_full_reverse {
   if (@sublist) {
     for my $revdep (@sublist) {
       next if in $revdep, @reverse_concluded;
-      # The first two conditions are prone to false positives if a script
+      # The first condition is prone to false positives if a script
       # and its dependency share a listed dependency; get_build_queue
       # makes certain in these cases.
       if (in $revdep, @checked and in $revdep, get_build_queue([$sbo])) {
@@ -443,7 +440,6 @@ name output from C<makepkg>. The package name is returned.
 
 =cut
 
-# pull the created package name from the temp file we tee'd to
 sub get_pkg_name {
   my $str = shift;
   my @str = reverse split "\n", $str;
@@ -490,7 +486,6 @@ It returns the filename if successful, and C<undef> otherwise.
 
 =cut
 
-# return a filename from a temp fh for use externally
 sub get_tmp_extfn {
   script_error('get_tmp_extfn requires an argument.') unless @_ == 1;
   my $fh = shift;
@@ -509,7 +504,6 @@ It has no useful return value.
 
 =cut
 
-# remove work directories (source and packaging dirs under /tmp/SBo or $TMP and /tmp or $OUTPUT)
 sub make_clean {
   my %args = (
     SBO      => '',
@@ -552,7 +546,6 @@ It has no useful return value.
 
 =cut
 
-# remove distfiles
 sub make_distclean {
   my %args = (
     SRC       => '',
@@ -609,8 +602,6 @@ as an array reference.
 =cut
 
 sub merge_queues {
-  # Usage: merge_queues(\@queue_a, \@queue_b);
-  # Results in queue_b being merged into queue_a (without duplicates)
   script_error('merge_queues requires two arguments.') unless @_ == 2;
 
   return [ uniq @{$_[0]}, @{$_[1]} ];
@@ -628,7 +619,6 @@ Network access is blocked with C<unshare(1)> if the C<NONET> setting is C<TRUE>.
 
 =cut
 
-# prep and run .SlackBuild
 sub perform_sbo {
   my %args = (
     OPTS      => 0,
@@ -733,7 +723,6 @@ here with C<renice(1)>.
 
 =cut
 
-# do the things with the provided sbos - whether upgrades or new installs.
 sub process_sbos {
   my %args = (
     TODO       => '',
@@ -910,12 +899,12 @@ especially beyond the first level; this makes output and build orders more
 intuitive.
 
 Currently, this is only useful when the queue has been constructed with
-reference to reverse dependencies, or, in the case of C<sbotest>, a full
+reference to reverse dependencies, or, in the case of C<sbotest(1)>, a full
 repository test or archive rebuild is needed.
 
-C<sbotest> has a separate subroutine that reduces the number of expected
+C<sbotest(1)> has a separate subroutine that reduces the number of expected
 package installations and removals during test runs. Intuitiveness is not
-to be expected in C<sbotest> queues.
+to be expected in C<sbotest(1)> queues.
 
 The rearranged queue is returned.
 

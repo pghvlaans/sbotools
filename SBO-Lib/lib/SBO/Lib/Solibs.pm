@@ -41,7 +41,7 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Solibs - Routines for evaluating ELF binaries and checking compatibility
+SBO::Lib::Solibs - Routines for evaluating ELF binaries and checking compatibility.
 
 =head1 SYNOPSIS
 
@@ -78,7 +78,7 @@ architectures, it is generated together with C<@native_libs> by C<update_known_s
 
 =head2 @not_opt_only
 
-An array with packages that have missing solib dependencies outside of C</opt>.
+An array with packages with files outside of C</opt> that have missing solib dependencies.
 
 =cut
 
@@ -691,7 +691,7 @@ C<ldconfig(1)> to generate an array of existent known shared objects, C<@native_
 
 The C<initialize_*()> subroutines for the additional package tests are called at this time.
 
-The script exits in case of C<ldcdonfig> failure. There is no useful return value.
+The script exits in case of C<ldcdonfig(1)> failure. There is no useful return value.
 
 =cut
 

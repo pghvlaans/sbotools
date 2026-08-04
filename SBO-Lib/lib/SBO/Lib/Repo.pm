@@ -62,7 +62,7 @@ The location of all variables depends on the C<SBO_HOME> config setting.
 =head2 $gpg_log
 
 C<$gpg_log> defaults to C</var/lib/sbotools/gpg.log>, and it is where the output
-of the most recent C<gnupg> verification for the repository is kept. Other
+of the most recent C<gpg(1)> verification for the repository is kept. Other
 C<gnupg> logs are saved under C</var/lib/sbotools/file_name_here.asc.log>.
 
 =head2 $repo_path
@@ -415,7 +415,7 @@ sub git_sbo_tree {
       say $url;
       wrapsay_color $color_notice, "Using branch:";
       say "$branch\n";
-      die unless system(qw! git --no-pager reset --hard !) == 0; # if system() doesn't return 0, there was an error
+      die unless system(qw! git --no-pager reset --hard !) == 0;
       die unless system(qw! git --no-pager fetch !) == 0;
       die unless system(qw! git --no-pager checkout --quiet --detach !) == 0;
       die unless system(qw! git --no-pager branch --force !, $branch, "origin/$branch") == 0;
@@ -512,11 +512,10 @@ at the end of the subroutine.
 
 =cut
 
-# rsync the sbo tree from slackbuilds.org to $repo_path
 sub rsync_sbo_tree {
   script_error('rsync_sbo_tree requires an argument.') unless @_ == 1;
   my $url = shift;
-  $url .= '/' unless $url =~ m!/$!; # make sure $url ends with /
+  $url .= '/' unless $url =~ m!/$!;
   wrapsay_color $color_notice, "\nUsing mirror:";
   say "$url\n";
   my @args = ('rsync', '--info=progress2', '-a', '--delete', $url);
@@ -539,7 +538,7 @@ repository and fetch the tree.
 =cut
 
 # if SLACKBUILDS.TXT is not in $repo_path, the tree may not have been
-# populated; prompt the user to check $repo_path and fetch.
+# populated.
 sub slackbuilds_or_fetch {
   unless (-s $slackbuilds_txt) {
     unless ($< == 0) {

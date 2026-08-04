@@ -68,7 +68,6 @@ C<check_x32()> returns a true value if the SlackBuild in C<$location> considers
 
 =cut
 
-# determine whether or not a given sbo is 32-bit only
 sub check_x32 {
   script_error('check_x32 requires an argument.') unless @_ == 1;
   my $location = shift;
@@ -86,7 +85,6 @@ C<check_x64()> returns a true value if the SlackBuild in C<$location> considers
 
 =cut
 
-# determine whether or not a given sbo is 64-bit only
 sub check_x64 {
   script_error('check_x64 requires an argument.') unless @_ == 1;
   my $location = shift;
@@ -172,8 +170,6 @@ corresponding value is the expected md5sum.
 
 =cut
 
-# get downloads and md5sums from an sbo's .info file, first
-# checking for x86_64-specific info if we are told to
 sub get_download_info {
   my %args = (
     LOCATION  => 0,
@@ -212,7 +208,6 @@ immediately.
 
 =cut
 
-# pull piece(s) of data, GET, from the $sbo.info file under LOCATION.
 sub get_from_info {
   my %args = (
     LOCATION  => '',
@@ -327,7 +322,6 @@ C<get_requires()> returns the requirements for a given C<$sbo>.
 
 =cut
 
-# wrapper to pull the list of requirements for a given sbo
 sub get_requires {
   my $sbo = shift;
   my $location = get_sbo_location($sbo);
@@ -374,7 +368,6 @@ C<$location>.
 
 =cut
 
-# find the build number in the tree for a given sbo (provided a location)
 sub get_sbo_build_number {
   script_error('get_sbo_build_number requires an argument.') unless @_ == 1;
 
@@ -405,7 +398,6 @@ C<$location>.
 
 =cut
 
-# find the version in the tree for a given sbo (provided a location)
 sub get_sbo_version {
   script_error('get_sbo_version requires an argument.') unless @_ == 1;
   my $version = get_from_info(LOCATION => shift, GET => 'VERSION');

@@ -83,9 +83,6 @@ installed versions and available versions.
 
 =cut
 
-# for each installed sbo, find out whether or not the version or build number in
-# the tree is newer, and compile an array of hashes containing those which are.
-# Takes BUILD for build number only, VERS for version only and BOTH for both
 sub get_available_updates {
     script_error('get_available_updates requires an argument.') unless @_ == 1;
 
@@ -136,8 +133,6 @@ as one returned by C<get_available_updates()>.
 
 =cut
 
-# for a ref to an array of hashes of installed packages, return an array ref
-# consisting of just their names
 sub get_inst_names {
     script_error('get_inst_names requires an argument.') unless @_ == 1;
     my $inst = shift;
@@ -160,7 +155,6 @@ building may proceed.
 
 =cut
 
-# return a list of perl modules installed via the CPAN
 sub get_installed_cpans {
   my $libdirsuffix = $arch =~ m/64(-|$)/ ? "64" : "";
   my $auto_location = "/usr/local/lib$libdirsuffix/perl5/auto";
@@ -228,8 +222,6 @@ The C<perl> and C<ruby> package file names are found at this time.
 
 =cut
 
-# pull an array of hashes, each hash containing the name and version of a
-# package currently installed. Gets filtered using STD, SBO, DIRTY or ALL.
 sub get_installed_packages {
   script_error('get_installed_packages requires at least one argument.') unless @_ ge 1;
   my ($filter, $clear) = @_;
@@ -350,7 +342,6 @@ This subroutine is used only by C<sbocheck(1)>.
 
 =cut
 
-# For each installed SlackBuild, find out whether it still exists in the tree
 sub get_removed_builds {
     my @removed;
     my $pkg_list = get_installed_packages('DIRTY');

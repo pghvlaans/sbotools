@@ -164,7 +164,7 @@ our %EXPORT_TAGS = (
 
 =head1 NAME
 
-SBO::Lib::Util - Utility functions for SBO::Lib and the sbotools
+SBO::Lib::Util - Utility functions for SBO::Lib and the sbotools.
 
 =head1 SYNOPSIS
 
@@ -204,9 +204,9 @@ C<$conf_file> is C</etc/sbotools/sbotools.conf> by default.
 
 =head2 %config
 
-All values default to C<"FALSE">, but when C<read_config()> is run,
+All values default to C<FALSE>, but when C<read_config()> is run,
 they change according to the configuration. C<SBO_HOME> is changed to
-C</var/lib/sbotools> if still C<"FALSE">.
+C</var/lib/sbotools> if still C<FALSE>.
 
 The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
@@ -221,7 +221,7 @@ downloaded sources are kept.
 
 =head2 $download_time
 
-The time spent downloading source files. Unless C<CLASSIC> is C<"TRUE">, it is
+The time spent downloading source files. Unless C<CLASSIC> is C<TRUE>, it is
 displayed when all builds are complete.
 
 =head2 $hint_file
@@ -231,21 +231,21 @@ optional script dependencies and automatic revese dependency rebuild requests.
 
 =head2 ($is_sbotest, $is_sbotool)
 
-This shared variable indicate runs from C<sbotest> and C<sbotool>, respectively.
+This shared variable indicate runs from C<sbotest(1)> and C<sbotool(1)>, respectively.
 
 =head2 $sbotest_compatible
 
-This shared variable indicates compatibility with the C<sbotest> companion package.
+This shared variable indicates compatibility with the C<sbotest(1)> companion package.
 
 =head2 $total_build_time
 
 A running total of the time it took to build and package each script in the queue.
-Unless C<CLASSIC> is C<"TRUE">, it is displayed when all builds are complete.
+Unless C<CLASSIC> is C<TRUE>, it is displayed when all builds are complete.
 
 =head2 $total_install_time
 
 A running total of the time it took to install each script in the queue. Unless
-C<CLASSIC> is C<"TRUE">, it is displayed when all builds are complete.
+C<CLASSIC> is C<TRUE>, it is displayed when all builds are complete.
 
 =head2 ($paused_time, $resume_time, $stop_time)
 
@@ -295,7 +295,7 @@ kernel.
 
 C<$stage_dir> is a temporary directory under C<SBO_HOME/distiles>. When a script is
 to be built, a new temporary directory is created, the SlackBuild directory is copied there
-and any downloaded sources are linked in.
+and any downloaded sources are hardlinked in.
 
 =cut
 
@@ -520,8 +520,6 @@ Returns 1 if the file exists, and 0 otherwise.
 
 =cut
 
-# can't do 32-bit on x86_64 without this file, so we'll use it as the test to
-# to determine whether or not an x86_64 system is setup for multilib
 sub check_multilib {
   return 1 if -f '/etc/profile.d/32dev.sh';
   return();
@@ -599,7 +597,7 @@ There is no useful return value.
 
 C<dialog(1)> displays the message when running C<sbotool>.
 
-For _ERR_USAGE and _ERR_SCRIPT, use C<usage_error()> and C<script_error()>,
+For C<_ERR_USAGE> and C<_ERR_SCRIPT>, use C<usage_error()> and C<script_error()>,
 respectively.
 
 =cut
@@ -728,7 +726,6 @@ C<get_sbo_from_loc()> returns the package name from the C<$location> passed in.
 
 =cut
 
-# pull the sbo name from a $location: $repo_path/system/wine, etc.
 sub get_sbo_from_loc {
   script_error('get_sbo_from_loc requires an argument.') unless @_ == 1;
   return (shift =~ qr#/([^/]+)$#)[0];
@@ -843,7 +840,6 @@ Use C<in_regexp()> for the old functionality.
 
 =cut
 
-# Checks if the first argument equals any of the subsequent ones
 sub in {
   my $first = shift;
   for (@_) { return 1 if $first eq $_; }
@@ -858,6 +854,7 @@ sub in_regexp {
   }
   return 0;
 }
+
 =head2 indent
 
   my $str = indent($indent, $text);
@@ -1099,8 +1096,8 @@ sub lint_sbo_config {
 
 C<merge_obsolete()> appends the contents of the C<@obsolete> array to the
 blacklist, provided that the C<FORCE_OBSOLETE> setting is C<TRUE>. It has
-no useful return value. It is currently called in C<sboinstall>, C<sboupgrade>
-and C<sbofind>.
+no useful return value. It is currently called in C<sboinstall(1)>, C<sboupgrade(1)>
+and C<sbofind(1)>.
 
 =cut
 
@@ -1166,7 +1163,6 @@ is non-zero, it returns an error message rather than a file handle.
 
 =cut
 
-# sub for opening files, second arg is like '<','>', etc
 sub open_fh {
   script_error('open_fh requires two arguments') unless @_ == 2;
   my ($file, $op) = @_;
@@ -1230,7 +1226,6 @@ There is no useful return value.
 
 =cut
 
-# subroutine to print out failures
 sub print_failures {
   my $failures = shift;
   if (@$failures > 0) {
@@ -1318,7 +1313,6 @@ There is no useful return value.
 
 =cut
 
-# subroutine to suck in config in order to facilitate unit testing
 sub read_config {
   my $text = slurp($conf_file);
   if (defined $text) {
@@ -1349,7 +1343,7 @@ sub read_config {
 
   our @listings = read_hints();
 
-C<read_hints()> reads the contents of /etc/sbotools/sbotools.hints, returning an array
+C<read_hints()> reads the contents of C</etc/sbotools/sbotools.hints>, returning an array
 of potentially valid lines in C</etc/sbotools/sbotools.hints>. C<read_hints()> is used to
 populate global array C<@listings>, and should only be called at the start and again
 when editing the hints file.
@@ -1466,7 +1460,7 @@ sub save_options {
   script_error();
   script_error($msg);
 
-script_error() warns and exits with code _ERR_SCRIPT, printing the following to STDERR:
+script_error() warns and exits with code C<_ERR_SCRIPT>, printing the following to STDERR:
 
   A fatal script error has occurred. Exiting.
 
@@ -1478,12 +1472,11 @@ If a $msg was supplied, it instead prints:
 
 C<dialog(1)> displays $msg when running C<sbotools>.
 
-There is no useful return value. For _ERR_USAGE, use C<usage_error()>. For other error
+There is no useful return value. For C<_ERR_USAGE>, use C<usage_error()>. For other error
 codes, use C<error_code()>.
 
 =cut
 
-# subroutine for throwing internal script errors
 sub script_error {
   if (@_) {
     if (defined $is_sbotool and -x "/usr/bin/dialog") {
@@ -1580,17 +1573,16 @@ sub uniq {
 
   usage_error($msg);
 
-C<usage_error()> warns and exits with code _ERR_USAGE, printing C<$msg> to STDERR.
+C<usage_error()> warns and exits with code C<_ERR_USAGE>, printing C<$msg> to STDERR.
 Error messages wrap at 72 characters.
 
 C<dialog(1)> displays $msg when running C<sbotools>.
 
-There is no useful return value. For _ERR_SCRIPT, use C<script_error()>; for other
+There is no useful return value. For C<_ERR_SCRIPT>, use C<script_error()>; for other
 error codes, use C<error_code()>.
 
 =cut
 
-# subroutine for usage errors
 sub usage_error {
   my $msg = shift;
   if (defined $is_sbotool and -x "/usr/bin/dialog") {
@@ -1623,6 +1615,8 @@ sub usage_error {
 C<version_cmp()> compares C<$ver1> with C<$ver2>. It returns 1 if C<$ver1> is higher,
 -1 if C<$ver2> is higher and 0 if they are equal. It strips the running kernel version,
 as well as any locale information that may have been appended to the version strings.
+
+This subroutine is a wrapper for C<Sort::Versions>, which is bundled under C<SBO::ThirdParty>.
 
 =cut
 

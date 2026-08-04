@@ -58,13 +58,13 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Sweetmorn, Confusion 70, 3192 YOLD" "" "sbotools 4.3"
+.TH SBO::Lib::Util 3 "Boomtime, Confusion 71, 3192 YOLD" "" "sbotools 4.3"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
 .nh
 .SH NAME
-SBO::Lib::Util \- Utility functions for SBO::Lib and the sbotools
+SBO::Lib::Util \- Utility functions for SBO::Lib and the sbotools.
 .SH SYNOPSIS
 .IX Header "SYNOPSIS"
 .Vb 1
@@ -105,9 +105,9 @@ environment variable \f(CW\*(C`SBOTOOLS_CONF_DIR\*(C'\fR.
 .ie n .SS %config
 .el .SS \f(CW%config\fP
 .IX Subsection "%config"
-All values default to \f(CW"FALSE"\fR, but when \f(CWread_config()\fR is run,
+All values default to \f(CW\*(C`FALSE\*(C'\fR, but when \f(CWread_config()\fR is run,
 they change according to the configuration. \f(CW\*(C`SBO_HOME\*(C'\fR is changed to
-\&\f(CW\*(C`/var/lib/sbotools\*(C'\fR if still \f(CW"FALSE"\fR.
+\&\f(CW\*(C`/var/lib/sbotools\*(C'\fR if still \f(CW\*(C`FALSE\*(C'\fR.
 .PP
 The supported keys are: \f(CW\*(C`NOCLEAN\*(C'\fR, \f(CW\*(C`DISTCLEAN\*(C'\fR, \f(CW\*(C`JOBS\*(C'\fR, \f(CW\*(C`PKG_DIR\*(C'\fR,
 \&\f(CW\*(C`SBO_HOME\*(C'\fR, \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR, \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR, \f(CW\*(C`REPO\*(C'\fR, \f(CW\*(C`BUILD_IGNORE\*(C'\fR,
@@ -122,7 +122,7 @@ downloaded sources are kept.
 .ie n .SS $download_time
 .el .SS \f(CW$download_time\fP
 .IX Subsection "$download_time"
-The time spent downloading source files. Unless \f(CW\*(C`CLASSIC\*(C'\fR is \f(CW"TRUE"\fR, it is
+The time spent downloading source files. Unless \f(CW\*(C`CLASSIC\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR, it is
 displayed when all builds are complete.
 .ie n .SS $hint_file
 .el .SS \f(CW$hint_file\fP
@@ -132,21 +132,21 @@ optional script dependencies and automatic revese dependency rebuild requests.
 .ie n .SS "($is_sbotest, $is_sbotool)"
 .el .SS "($is_sbotest, \f(CW$is_sbotool\fP)"
 .IX Subsection "($is_sbotest, $is_sbotool)"
-This shared variable indicate runs from \f(CW\*(C`sbotest\*(C'\fR and \f(CW\*(C`sbotool\*(C'\fR, respectively.
+This shared variable indicate runs from \f(CWsbotest(1)\fR and \f(CWsbotool(1)\fR, respectively.
 .ie n .SS $sbotest_compatible
 .el .SS \f(CW$sbotest_compatible\fP
 .IX Subsection "$sbotest_compatible"
-This shared variable indicates compatibility with the \f(CW\*(C`sbotest\*(C'\fR companion package.
+This shared variable indicates compatibility with the \f(CWsbotest(1)\fR companion package.
 .ie n .SS $total_build_time
 .el .SS \f(CW$total_build_time\fP
 .IX Subsection "$total_build_time"
 A running total of the time it took to build and package each script in the queue.
-Unless \f(CW\*(C`CLASSIC\*(C'\fR is \f(CW"TRUE"\fR, it is displayed when all builds are complete.
+Unless \f(CW\*(C`CLASSIC\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR, it is displayed when all builds are complete.
 .ie n .SS $total_install_time
 .el .SS \f(CW$total_install_time\fP
 .IX Subsection "$total_install_time"
 A running total of the time it took to install each script in the queue. Unless
-\&\f(CW\*(C`CLASSIC\*(C'\fR is \f(CW"TRUE"\fR, it is displayed when all builds are complete.
+\&\f(CW\*(C`CLASSIC\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR, it is displayed when all builds are complete.
 .ie n .SS "($paused_time, $resume_time, $stop_time)"
 .el .SS "($paused_time, \f(CW$resume_time\fP, \f(CW$stop_time\fP)"
 .IX Subsection "($paused_time, $resume_time, $stop_time)"
@@ -194,7 +194,7 @@ kernel.
 .IX Subsection "$stage_dir"
 \&\f(CW$stage_dir\fR is a temporary directory under \f(CW\*(C`SBO_HOME/distiles\*(C'\fR. When a script is
 to be built, a new temporary directory is created, the SlackBuild directory is copied there
-and any downloaded sources are linked in.
+and any downloaded sources are hardlinked in.
 .SH SUBROUTINES
 .IX Header "SUBROUTINES"
 .SS auto_reverse
@@ -270,7 +270,7 @@ There is no useful return value.
 .PP
 \&\f(CWdialog(1)\fR displays the message when running \f(CW\*(C`sbotool\*(C'\fR.
 .PP
-For _ERR_USAGE and _ERR_SCRIPT, use \f(CWusage_error()\fR and \f(CWscript_error()\fR,
+For \f(CW\*(C`_ERR_USAGE\*(C'\fR and \f(CW\*(C`_ERR_SCRIPT\*(C'\fR, use \f(CWusage_error()\fR and \f(CWscript_error()\fR,
 respectively.
 .SS get_arch
 .IX Subsection "get_arch"
@@ -410,8 +410,8 @@ all other scripts lint the full configuration at startup.
 .PP
 \&\f(CWmerge_obsolete()\fR appends the contents of the \f(CW@obsolete\fR array to the
 blacklist, provided that the \f(CW\*(C`FORCE_OBSOLETE\*(C'\fR setting is \f(CW\*(C`TRUE\*(C'\fR. It has
-no useful return value. It is currently called in \f(CW\*(C`sboinstall\*(C'\fR, \f(CW\*(C`sboupgrade\*(C'\fR
-and \f(CW\*(C`sbofind\*(C'\fR.
+no useful return value. It is currently called in \f(CWsboinstall(1)\fR, \f(CWsboupgrade(1)\fR
+and \f(CWsbofind(1)\fR.
 .SS obsolete_array
 .IX Subsection "obsolete_array"
 .Vb 1
@@ -514,7 +514,7 @@ There is no useful return value.
 \&  our @listings = read_hints();
 .Ve
 .PP
-\&\f(CWread_hints()\fR reads the contents of /etc/sbotools/sbotools.hints, returning an array
+\&\f(CWread_hints()\fR reads the contents of \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR, returning an array
 of potentially valid lines in \f(CW\*(C`/etc/sbotools/sbotools.hints\*(C'\fR. \f(CWread_hints()\fR is used to
 populate global array \f(CW@listings\fR, and should only be called at the start and again
 when editing the hints file.
@@ -546,7 +546,7 @@ user supplies no build options, the existing file is retained.
 \&  script_error($msg);
 .Ve
 .PP
-\&\fBscript_error()\fR warns and exits with code _ERR_SCRIPT, printing the following to STDERR:
+\&\fBscript_error()\fR warns and exits with code \f(CW\*(C`_ERR_SCRIPT\*(C'\fR, printing the following to STDERR:
 .PP
 .Vb 1
 \&  A fatal script error has occurred. Exiting.
@@ -562,7 +562,7 @@ If a \f(CW$msg\fR was supplied, it instead prints:
 .PP
 \&\f(CWdialog(1)\fR displays \f(CW$msg\fR when running \f(CW\*(C`sbotools\*(C'\fR.
 .PP
-There is no useful return value. For _ERR_USAGE, use \f(CWusage_error()\fR. For other error
+There is no useful return value. For \f(CW\*(C`_ERR_USAGE\*(C'\fR, use \f(CWusage_error()\fR. For other error
 codes, use \f(CWerror_code()\fR.
 .SS show_version
 .IX Subsection "show_version"
@@ -604,12 +604,12 @@ list in the same order.
 \&  usage_error($msg);
 .Ve
 .PP
-\&\f(CWusage_error()\fR warns and exits with code _ERR_USAGE, printing \f(CW$msg\fR to STDERR.
+\&\f(CWusage_error()\fR warns and exits with code \f(CW\*(C`_ERR_USAGE\*(C'\fR, printing \f(CW$msg\fR to STDERR.
 Error messages wrap at 72 characters.
 .PP
 \&\f(CWdialog(1)\fR displays \f(CW$msg\fR when running \f(CW\*(C`sbotools\*(C'\fR.
 .PP
-There is no useful return value. For _ERR_SCRIPT, use \f(CWscript_error()\fR; for other
+There is no useful return value. For \f(CW\*(C`_ERR_SCRIPT\*(C'\fR, use \f(CWscript_error()\fR; for other
 error codes, use \f(CWerror_code()\fR.
 .SS version_cmp
 .IX Subsection "version_cmp"
@@ -620,6 +620,8 @@ error codes, use \f(CWerror_code()\fR.
 \&\f(CWversion_cmp()\fR compares \f(CW$ver1\fR with \f(CW$ver2\fR. It returns 1 if \f(CW$ver1\fR is higher,
 \&\-1 if \f(CW$ver2\fR is higher and 0 if they are equal. It strips the running kernel version,
 as well as any locale information that may have been appended to the version strings.
+.PP
+This subroutine is a wrapper for \f(CW\*(C`Sort::Versions\*(C'\fR, which is bundled under \f(CW\*(C`SBO::ThirdParty\*(C'\fR.
 .SS warn_color
 .IX Subsection "warn_color"
 .Vb 1

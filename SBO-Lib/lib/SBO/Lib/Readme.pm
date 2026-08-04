@@ -78,7 +78,6 @@ An option string is returned, if set.
 
 =cut
 
-# provide an opportunity to set options or retrieve previously-used options
 sub ask_opts {
   script_error('ask_opts requires two arguments.') unless @_ == 2;
   my ($sbo, $location) = @_;
@@ -194,7 +193,6 @@ the C<$cmds> are returned, and C<undef> otherwise.
 
 =cut
 
-# offer to run any user/group add commands
 sub ask_user_group {
   script_error('ask_user_group requires an argument') unless @_;
   my $cmds = shift;
@@ -289,8 +287,6 @@ if an existing build options file is to be used.
 
 =cut
 
-# look for any (user|group)add commands in the README files and
-# SlackBuild
 sub get_user_group {
   script_error('get_user_group requires at least two arguments.') unless @_ > 1;
   my ($sbo, $location, $opts) = @_;
@@ -412,7 +408,6 @@ options.
 
 =cut
 
-# for a given sbo, check for cmds/opts, prompt the user as appropriate
 sub user_prompt {
   script_error('user_prompt requires three arguments.') unless @_ == 3;
   my ($sbo, $location, $get_only) = @_;
@@ -427,7 +422,6 @@ sub user_prompt {
     $prel_opts = $prel_opts ? $prel_opts : ask_opts($sbo, $location);
   }
   chomp($opts = $prel_opts) if $prel_opts;
-  # check for user/group add commands, offer to run any found
   my $user_group = get_user_group($sbo, $location, $opts) unless $get_only;
   $cmds = ask_user_group($user_group) if not $get_only and $$user_group[0];
   my $proceed_label = $get_only ? "Download source for" : "Proceed with";
