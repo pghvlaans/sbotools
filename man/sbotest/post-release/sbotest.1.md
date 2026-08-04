@@ -27,17 +27,17 @@
 
     sbotest [config|find|hints] \...
 
-    sbotest [-f|-s] [-Akl /path|FALSE] [-j #|FALSE] \
+    sbotest [-f|-s] [-Akl /path|FALSE] [-Zj #|FALSE] \
             [-NX TRUE|FALSE] [-D] [--no-archive|--archive-force] \
             sbo_name (sbo_name)
 
-    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
+    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-Zj #|FALSE] \
             [-D] --archive-rebuild
 
-    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
+    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-Zj #|FALSE] \
             [-D] --archive-reverse
 
-    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-j #|FALSE] \
+    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-Zj #|FALSE] \
             [--no-archive|--archive-force] --test-everything
 
 ## DISCLAIMER
@@ -244,6 +244,16 @@ If **TRUE**, delete only mismatched packages with lower version or build
 numbers when running **\--archive-rebuild** or **\--archive-reverse**.
 If **FALSE**, delete all mismatched packages from the archive. Overrides
 the setting in */etc/sbotest/sbotest.conf*.
+
+**-Z\|\--niceness (FALSE\|-20..19)**
+
+If set to a **number** from -20 through 19, use that as the absolute
+niceness value for **sbotest** during the building and installation
+phase. If **FALSE**, simply use the niceness value that the script
+started with, generally *0* without user intervention. A lower niceness
+value gives a process greater priority. Use with caution.
+
+Overrides the **NICENESS** setting.
 
 **\--test-everything**
 

@@ -137,6 +137,13 @@ with the name of the script and a timestamp. Please note that because
 may differ when running some SlackBuilds unless **LOG_DIR** is
 **FALSE**.
 
+**NICENESS=(FALSE\|-20..19)** If set to a **number** from -20 through
+19, use that as the absolute niceness value for [sboinstall(1)](sboinstall.1.md) and
+[sboupgrade(1)](sboupgrade.1.md) during the building and installation phase. If
+**FALSE**, simply use the niceness value that the script started with,
+generally *0* without user intervention. A lower niceness value gives a
+process greater priority. Use with caution.
+
 **NONET=(FALSE\|TRUE)**
 
 If set to **TRUE**, do not allow network access when running

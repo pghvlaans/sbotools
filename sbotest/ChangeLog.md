@@ -1,5 +1,10 @@
 ## ChangeLog.md
 
+#### Post-Release
+  * Compatibility bump
+  * Account for the new **NICENESS** setting; add **\--niceness**
+    * Thanks to shamefulCake1 for the sbotools request
+
 #### 1.2.3 - 2026-07-31
   * Compatibility bump
   * Document the manual download directory and symlink

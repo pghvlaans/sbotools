@@ -21,21 +21,21 @@
 
     sboinstall [-h|-v]
 
-    sboinstall [-NIdce TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIdce TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
 \
                [-DRgiopr] [--batch|--dry-run] [--create-template|-t FILE]
 \
                sbo_name (sbo_name)
 
-    sboinstall [-NIcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
 \
                [-Dgi] --use-template FILE
 
-    sboinstall [-NIcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
 \
                [-Dgioqr] [--create-template|-t FILE] --mass-rebuild
 
-    sboinstall [-NIcde TRUE|FALSE] [-j #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
 \
                [-Dgioqr] [--create-template|-t FILE] --series-rebuild
 SERIES,\...
@@ -227,6 +227,16 @@ Save a template to **FILE**, but do not attempt downloads or builds.
 Non-root users may call **sboinstall** with **\--template-only**.
 
 Incompatible with **\--create-template** and **\--get-only**.
+
+**-Z\|\--niceness (FALSE\|-20..19)**
+
+**If set to a number** from -20 through 19, use that as the absolute
+niceness value for [sboinstall(1)](sboinstall.1.md) during the building and
+installation phase. If **FALSE**, simply use the niceness value that the
+script started with, generally *0* without user intervention. A lower
+niceness value gives a process greater priority. Use with caution.
+
+Overrides the **NICENESS** setting.
 
 **\--reinstall**
 

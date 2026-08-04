@@ -21,7 +21,7 @@
 
     sboupgrade [-h|-v]
 
-    sboupgrade [-NISXbcde TRUE|FALSE] [-j #|FALSE] [-Lk
+    sboupgrade [-NISXbcde TRUE|FALSE] [-Zj #|FALSE] [-Lk
 /path\|FALSE] \
                [-figopqrz] [--batch|--dry-run]
 \--all\|\--all-plus-failures\|sbo_name (sbo_name)
@@ -237,6 +237,16 @@ dependencies after running **sboupgrade**. Please note that only those
 shared objects provided by outgoing packages are reflected in the
 results. For a full shared object check, see [sbocheck(1)](sbocheck.1.md). This
 option overrides the **NO_SOCHECK** setting.
+
+**-Z\|\--niceness (FALSE\|-20..19)**
+
+**If set to a number** from -20 through 19, use that as the absolute
+niceness value for [sboupgrade(1)](sboupgrade.1.md) during the building and
+installation phase. If **FALSE**, simply use the niceness value that the
+script started with, generally *0* without user intervention. A lower
+niceness value gives a process greater priority. Use with caution.
+
+Overrides the **NICENESS** setting.
 
 **-z\|\--force-reqs**
 
