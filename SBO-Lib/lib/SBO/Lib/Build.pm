@@ -801,8 +801,8 @@ sub process_sbos {
     return \@failures, $err;
   }
   my $count = 0;
-  chomp(my $existing_nice = `nice`);
-  `renice $config{NICENESS} $$` if $config{NICENESS} ne "FALSE";
+  chomp(my $existing_nice = `/bin/nice`);
+  `/usr/bin/renice $config{NICENESS} $$` if $config{NICENESS} ne "FALSE";
   FIRST: for my $sbo (@$todo) {
     $count++;
     if (@failure_names) {
@@ -845,16 +845,16 @@ sub process_sbos {
           if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
           if (@skipped and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
           display_times() unless $config{CLASSIC} eq "TRUE";
-          chomp(my $test_nice = `nice`);
-          `renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
+          chomp(my $test_nice = `/bin/nice`);
+          `/usr/bin/renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
           return \@failures, $exit;
         }
       } elsif ($count == @$todo or ($config{INSTANT_STOP} eq "TRUE" and $args{NON_INT})) {
           if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
           if (@skipped and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
           display_times() unless $config{CLASSIC} eq "TRUE";
-          chomp(my $test_nice = `nice`);
-          `renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
+          chomp(my $test_nice = `/bin/nice`);
+          `/usr/bin/renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
           return \@failures, $exit;
       }
       next FIRST;
@@ -894,8 +894,8 @@ sub process_sbos {
   if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
   if (@skipped and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
   display_times() unless $config{CLASSIC} eq "TRUE";
-  chomp(my $test_nice = `nice`);
-  `renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
+  chomp(my $test_nice = `/bin/nice`);
+  `/usr/bin/renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
   return \@failures, $err;
 }
 
