@@ -40,7 +40,7 @@
 
 • automatic reverse dependency rebuild
 
-• test failures are ignored by sboupgrade
+• test failures are ignored by [sboupgrade(1)](sboupgrade.1.md)
 
 The modification flags are **\--blacklist**, **\--optional**,
 **\--replace-optional**, **\--reverse** and **\--ignore-tests**. These
@@ -90,7 +90,9 @@ for such packages is not advised unless the **ETC_PROFILE** setting is
 
 Add (or, with **\--clear**, clear) a request that [sboupgrade(1)](sboupgrade.1.md)
 ignore test failures for one or more scripts when running with
-**\--all-plus-failures**.
+**\--all-plus-failures**. Please note that scripts with missing shared
+object failures only in */opt* are skipped by [sboupgrade(1)](sboupgrade.1.md) unless
+running interactively.
 
 **-c\|\--clear**
 
@@ -127,7 +129,8 @@ Show version information.
 
 **\--color**
 
-Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors.5.md).
+Turn on **sbotools** color output (default). See also
+[sbotools.colors(5)](sbotools.colors.5.md).
 
 **\--nocolor**
 

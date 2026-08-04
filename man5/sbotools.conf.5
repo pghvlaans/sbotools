@@ -22,7 +22,7 @@ commands.
 If an invalid configuration is detected (or requested with
 .B
 sboconfig(1)\fR\
-), the script exits with a diagnostic message.
+&\), the script exits with a diagnostic message.
 .P
 To quickly restore all default settings, run
 .RS
@@ -249,7 +249,7 @@ directories under
 (or
 .I
 $TMP\fR\
-).
+\&).
 .RE
 .P
 .B
@@ -268,10 +268,6 @@ file directly. See
 .B
 sbotools.colors(5)
 for more details.
-.P
-Recommended value:
-.B
-TRUE
 .RE
 .P
 .B
@@ -334,7 +330,7 @@ absolute path\fR\
 \&, save build logs here. Logs are saved with the name of the script
 and a timestamp. Please note that because
 .B
-STDERR
+standard error
 must be redirected for a complete log, colors and formatting may differ
 when running some SlackBuilds unless
 .B
@@ -345,7 +341,6 @@ FALSE\fR\
 \&.
 .RE
 .P
-.B
 .B
 NICENESS=(FALSE|-20..19)
 If set to a
@@ -404,9 +399,9 @@ in Slackware -current.
 .B
 PKG_DIR=(FALSE|/path)
 .RS
-If set to a
+If set to an
 .B
-path\fR\
+absolute path\fR\
 \&, packages are stored there after installation. This
 overrides the
 .B
@@ -438,9 +433,9 @@ setting changes.
 .B
 LOCAL_OVERRIDES=(FALSE|/path)
 .RS
-If set to a
+If set to an
 .B
-path\fR\
+absolute path\fR\
 \&, any directory name in the top level under that path matching a
 SlackBuild name is used in preference to the
 in-tree version. This works even if the SlackBuild
@@ -534,8 +529,11 @@ RSYNC_DEFAULT
 is
 .B
 TRUE\fR\
-\&, and
-.UR https://gitlab.com/SlackBuilds.org
+\&,
+.UR https://github.com/Ponce/slackbuilds/
+.UE
+if running Slackware -current and
+.UR https://gitlab.com/SlackBuilds.org/slackbuilds/
 .UE
 otherwise. The repository must be laid out in the same
 manner as one found at
@@ -565,7 +563,7 @@ version or build number is greater. This has no
 effect on scripts in the local overrides directory or
 when reinstalling with
 .B
-sboinstall\fR\
+sboinstall(1)\fR\
 \&.
 .RE
 .P

@@ -35,10 +35,10 @@ is
 .B
 TRUE\fR\
 \&, updated copies of the script list at
-.B
+.I
 /etc/sbotools/obsolete
 and the perl version history file at
-.B
+.I
 /etc/sbotools/perl_vers
 are downloaded from
 .UR https://pghvlaans.github.io/sbotools
@@ -384,7 +384,8 @@ Check for updated SlackBuilds without updating the SlackBuilds
 tree. The
 .B
 --nopull
-flag can be used without root privileges, but no log is kept.
+flag can be used without root privileges, but only the package test logs are
+kept.
 .RE
 .P
 .B
@@ -464,7 +465,7 @@ python
 - Check for
 .I
 site-packages
-irectories built against the wrong major version, e.g.
+directories built against the wrong major version, e.g.
 .B
 python-3.12\fR\
 \&. Results are saved to
@@ -557,7 +558,7 @@ Show version information.
 Turn on
 .B
 sbotools
-color output. See also
+color output (default). See also
 .B
 sbotools.colors(5)\fR\
 \&.

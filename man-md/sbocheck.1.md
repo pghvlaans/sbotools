@@ -36,8 +36,8 @@ checks
 **sbocheck** updates or fetches a copy of the **SlackBuilds.org** tree,
 checks for available upgrades and reports what it finds. If
 **OBSOLETE_CHECK** is **TRUE**, updated copies of the script list at
-**/etc/sbotools/obsolete** and the perl version history file at
-**/etc/sbotools/perl_vers** are downloaded from
+*/etc/sbotools/obsolete* and the perl version history file at
+*/etc/sbotools/perl_vers* are downloaded from
 <https://pghvlaans.github.io/sbotools> if running Slackware -current
 (see [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
@@ -148,8 +148,8 @@ Skip the default missing shared object check.
 **-n\|\--nopull**
 
 Check for updated SlackBuilds without updating the SlackBuilds tree. The
-**\--nopull** flag can be used without root privileges, but no log is
-kept.
+**\--nopull** flag can be used without root privileges, but only the
+package test logs are kept.
 
 **-O\|\--obsolete-check**
 
@@ -180,7 +180,7 @@ previously-installed **perl** packages are used to avoid false positives
 for stock and built packages, respectively. Results are saved to
 *sbocheck-perl.log*.
 
-**python** - Check for *site-packages* irectories built against the
+**python** - Check for *site-packages* directories built against the
 wrong major version, e.g. **python-3.12**. Results are saved to
 *sbocheck-python.log*.
 
@@ -213,7 +213,8 @@ Show version information.
 
 **\--color**
 
-Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors.5.md).
+Turn on **sbotools** color output (default). See also
+[sbotools.colors(5)](sbotools.colors.5.md).
 
 **\--nocolor**
 

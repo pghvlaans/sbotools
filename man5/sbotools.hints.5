@@ -24,7 +24,7 @@ are recognized:
 
 \[bu] automatic reverse dependency rebuilds
 
-\[bu] test failures are ignored by sboupgrade
+\[bu] test failures are ignored by sboupgrade(1)
 
 .RE
 Please note that all requests apply equally
@@ -53,6 +53,9 @@ Blacklist entries supersede optional dependency requests.
 To ask
 .B
 sboupgrade(1)
+and
+.B
+sboinstall(1)
 to rebuild a script's reverse dependencies upon upgrade or reinstall, place the name
 of the script on its own line with no whitespace, prepending a tilde:
 .RS
@@ -79,17 +82,6 @@ libcacard spice libiscsi qemu
 Commented lines are ignored. There should not be whitespace to the left of any
 entry.
 .P
-.B
-sbohints(1)
-can also be used to interface with this file.
-To use a configuration directory other than
-.I
-/etc/sbotools\fR\
-\&, export an environment variable
-.B
-SBOTOOLS_CONF_DIR
-with an absolute path.
-.P
 To ask
 .B
 sboupgrade(1)
@@ -104,6 +96,17 @@ whitespace, prepending a percent sign:
 
 
 .RE
+.P
+.B
+sbohints(1)
+can also be used to interface with this file.
+To use a configuration directory other than
+.I
+/etc/sbotools\fR\
+\&, export an environment variable
+.B
+SBOTOOLS_CONF_DIR
+with an absolute path.
 .SH SEE ALSO
 .P
 sbocheck(1), sboclean(1), sboconfig(1), sbocutleaves(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sbotool(1), sboupgrade(1), sbotools.colors(5), sbotools.conf(5)

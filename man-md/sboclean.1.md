@@ -82,7 +82,8 @@ Show version information.
 
 **\--color**
 
-Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors.5.md).
+Turn on **sbotools** color output (default). See also
+[sbotools.colors(5)](sbotools.colors.5.md).
 
 **\--nocolor**
 

@@ -32,7 +32,7 @@ kinds of hints are recognized:
 
 \[bu] automatic reverse dependency rebuild
 
-\[bu] test failures are ignored by sboupgrade
+\[bu] test failures are ignored by sboupgrade(1)
 
 .RE
 The modification flags are
@@ -164,7 +164,13 @@ sboupgrade(1)
 ignore test failures for one or more scripts when running with
 .B
 --all-plus-failures\fR\
-\&.
+\&. Please note that scripts with missing shared object failures only in
+.I
+/opt
+are skipped by
+.B
+sboupgrade(1)
+unless running interactively.
 .RE
 .P
 .B
@@ -249,7 +255,7 @@ Show version information.
 Turn on
 .B
 sbotools
-color output. See also
+color output (default). See also
 .B
 sbotools.colors(5)\fR\
 \&.

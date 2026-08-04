@@ -66,8 +66,8 @@ sboupgrade\fR\
 \&.
 .B
 SBO_HOME/distfiles
-can be a mountpoint or a symlink to an existing directory, but please ensure that
-no partitions are mounted in its subdirectories.
+can be a mountpoint or a symlink to an existing directory, but the script will
+exit if partitions are mounted to its subdirectories.
 .P
 .I
 SlackBuild
@@ -161,14 +161,12 @@ TRUE\fR\
 Package upgrades occasionally cause breakage due to
 .B
 *.so
-version differences. To check for missing first-order shared object (solib) dependencies
+version differences. A check for missing first-order shared object (solib) dependencies
 that may have resulted from running
 .B
 sboupgrade\fR\
-\&, use
-.B
---so-check TRUE\fR\
-\&. Each affected package is logged to
+is performed by default after the queue has been procesed, successfully or unsuccessfully.
+Each affected package is logged to
 .I
 /var/log/sboupgrade-solibs.log
 with a list of missing shared objects and the files that have first-order dependencies on
@@ -237,7 +235,7 @@ directories under
 (or
 .I
 $TMP\fR\
-). Cleaning these directories can be set as default
+\&). Cleaning these directories can be set as default
 via the
 .B
 sboconfig(1)
@@ -264,10 +262,10 @@ in
 REQUIRES\fR\
 \&, saved build options to be used and
 .B
-useradd
+useradd(1)
 or
 .B
-groupadd
+groupadd(1)
 commands to be run. This makes
 .B
 --batch
@@ -354,7 +352,7 @@ It is left in
 (or
 .I
 $OUTPUT\fR\
-) if
+\&) if
 .B
 DISTCLEAN
 is
@@ -389,9 +387,7 @@ If
 TRUE\fR\
 \&, offer to stop the queue as soon as one build fails. If non-interactive,
 stop immediately. Otherwise, builds continue, skipping any SlackBuild that
-depends on a previously-failed build.
-.P
-Overrides the
+depends on a previously-failed build. This option overrides the
 .B
 INSTANT_STOP
 setting.
@@ -400,7 +396,10 @@ setting.
 .B
 -j|--jobs (FALSE|#)
 .RS
-If numerical, pass to the
+If
+.B
+numerical\fR\
+\&, pass to the
 .B
 -j
 argument when a SlackBuild invoking
@@ -452,10 +451,10 @@ setting.
 .RS
 Do not reuse saved build options if running with
 .B
---nointeractive
+--batch
 or
 .B
---batch\fR\
+--nointeractive\fR\
 \&.
 .RE
 .P
@@ -528,7 +527,19 @@ google-go-lang\fR\
 \&, does not work without first sourcing a version-specific profile script.
 .B
 --reverse-rebuild
-fails in such cases. Incompatible with
+fails in such cases unless the
+.B
+ETC_PROFILE
+setting is
+.B
+TRUE
+(see
+.B
+sboconfig(1)
+or
+.B
+sbotools.config(1)\fR\
+\&). Incompatible with
 .B
 --noinstall\fR\
 \&.
@@ -569,6 +580,8 @@ default via
 sboconfig(1)\fR\
 \&. See also
 .B
+sboconfig(1)
+or
 sbotools.conf(5)\fR\
 \&. This option overrides the
 .B
@@ -612,9 +625,7 @@ FALSE\fR\
 .I
 0
 without user intervention. A lower niceness value gives a process greater
-priority. Use with caution.
-.P
-Overrides the
+priority. Use with caution. This option overrides the
 .B
 NICENESS
 setting.
@@ -731,10 +742,10 @@ is not passed. Any saved build options are used again unless
 --norecall
 is passed as well. If a script calls for
 .B
-useradd
+useradd(1)
 or
 .B
-groupadd\fR\
+groupadd(1)\fR\
 \&,
 .B
 sboupgrade
@@ -782,7 +793,7 @@ Show version information.
 Turn on
 .B
 sbotools
-color output. See also
+color output (default). See also
 .B
 sbotools.colors(5)\fR\
 \&.
@@ -1075,7 +1086,7 @@ valid contents.
 .SH BUGS
 .P
 100% accuracy cannot be guaranteed for the option addition prompt. It may
-rarely appear when options appear to be documented, but are not.
+rarely appear when options seem to be documented, but are not.
 .P
 Otherwise, none known. If found, Issues and Pull Requests to
 .UR https://github.com/pghvlaans/sbotools/

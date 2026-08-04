@@ -83,8 +83,8 @@ sboinstall\fR\
 \&.
 .I
 SBO_HOME/distfiles
-can be a mountpoint or a symlink to an existing directory, but please ensure that
-no partitions are mounted in its subdirectories.
+can be a mountpoint or a symlink to an existing directory, but the script will
+exit if partitions are mounted to its subdirectories.
 .P
 .I
 SlackBuild
@@ -117,7 +117,7 @@ when the SlackBuild runs.
 .I
 compat32
 packages share saved build options with the corresponding
-base script.  Please note that saved build options are not
+base script. Please note that saved build options are not
 displayed when
 .B
 CLASSIC
@@ -148,7 +148,7 @@ are passed as well.
 sboinstall
 verifies the local repository with
 .B
-gpg
+gpg(1)
 if
 .B
 GPG_VERIFY
@@ -216,10 +216,10 @@ in
 REQUIRES\fR\
 \&, saved build options to be used and
 .B
-useradd
+useradd(1)
 or
 .B
-groupadd
+groupadd(1)
 commands to be run. This makes
 .B
 --batch
@@ -335,9 +335,7 @@ If
 TRUE\fR\
 \&, offer to stop the queue as soon as one build fails. If non-interactive,
 stop immediately. Otherwise, builds continue, skipping any SlackBuild that
-depends on a previously-failed build.
-.P
-Overrides the
+depends on a previously-failed build. This option overrides the
 .B
 INSTANT_STOP
 setting.
@@ -401,6 +399,8 @@ setting.
 .RS
 Do not reuse saved build options if running with
 .B
+--batch
+or
 --nointeractive\fR\
 \&.
 .RE
@@ -457,7 +457,8 @@ builds for Perl-based or
 noarch
 scripts. Incompatible with
 .B
---mass-rebuild,
+--mass-rebuild\fR\
+\&,
 .B
 --series-rebuild
 and
@@ -566,7 +567,6 @@ and
 .B
 -Z|--niceness (FALSE|-20..19)
 .RS
-.B
 If set to a
 .B
 number
@@ -580,9 +580,7 @@ FALSE\fR\
 .I
 0
 without user intervention. A lower niceness value gives a process greater
-priority. Use with caution.
-.P
-Overrides the
+priority. Use with caution. This option overrides the
 .B
 NICENESS
 setting.
@@ -770,10 +768,10 @@ are passed. Any saved build options are used again unless
 --norecall
 is passed as well. If a script calls for
 .B
-useradd
+useradd(1)
 or
 .B
-groupadd\fR\
+groupadd(1)\fR\
 \&,
 .B
 sboinstall
@@ -820,7 +818,7 @@ Show version information.
 Turn on
 .B
 sbotools
-color output. See also
+color output (default). See also
 .B
 sbotools.colors(5)\fR\
 \&.
@@ -1113,7 +1111,7 @@ valid contents.
 .SH BUGS
 .P
 100% accuracy cannot be guaranteed for the option addition prompt. It may
-rarely appear when options appear to be documented, but are not.
+rarely appear when options seem to be documented, but are not.
 .P
 Otherwise, none known. If found, Issues and Pull Requests to
 .UR https://github.com/pghvlaans/sbotools/

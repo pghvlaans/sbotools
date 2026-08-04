@@ -14,7 +14,7 @@
 
 ## NAME
 
-**sbotool** - text user interface to sbotools
+**sbotool** - text user interface to **sbotools**
 
 ## SYNOPSIS
 
@@ -103,7 +103,7 @@ can also specify a file at runtime.
 
 **\--config**
 
-Enter the **Settings** menu directly. **sboconfig** calls **sbotool**
+Enter the **Settings** menu directly. [sboconfig(1)](sboconfig.1.md) calls **sbotool**
 with this option when run without flags.
 
 **-d\|\--dialogrc (FILE)**

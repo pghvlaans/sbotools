@@ -46,8 +46,8 @@ sources for the queue and download if needed, use **\--get-only**.
 Manually-downloaded source files (such as those requiring a license
 agreement) can be placed in *SBO_HOME/manual_downloads* prior to running
 **sboupgrade**. **SBO_HOME/distfiles** can be a mountpoint or a symlink
-to an existing directory, but please ensure that no partitions are
-mounted in its subdirectories.
+to an existing directory, but the script will exit if partitions are
+mounted to its subdirectories.
 
 *SlackBuild* and *README* files are parsed for **groupadd(1)** and
 **useradd(1)** commands, and **sboupgrade** offers to run them prior to
@@ -74,9 +74,10 @@ the upgrade process as well.
 **GPG_VERIFY** is **TRUE**.
 
 Package upgrades occasionally cause breakage due to **\*.so** version
-differences. To check for missing first-order shared object (solib)
-dependencies that may have resulted from running **sboupgrade**, use
-**\--so-check TRUE**. Each affected package is logged to
+differences. A check for missing first-order shared object (solib)
+dependencies that may have resulted from running **sboupgrade**is
+performed by default after the queue has been procesed, successfully or
+unsuccessfully. Each affected package is logged to
 */var/log/sboupgrade-solibs.log* with a list of missing shared objects
 and the files that have first-order dependencies on them. This is done
 automatically after every **sboupgrade** run. To disable the automatic
@@ -109,8 +110,8 @@ overrides the **NOCLEAN** setting.
 
 Non-interactively print the prospective build queue and exit.
 **\--dry-run** reports SlackBuilds in the queue with *%README%* in
-*REQUIRES*, saved build options to be used and **useradd** or
-**groupadd** commands to be run. This makes **\--batch** considerably
+*REQUIRES*, saved build options to be used and **useradd(1)** or
+**groupadd(1)** commands to be run. This makes **\--batch** considerably
 safer for everyday use. **\--dry-run** can be used without root
 privileges.
 
@@ -154,13 +155,12 @@ retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
 
 If **TRUE**, offer to stop the queue as soon as one build fails. If
 non-interactive, stop immediately. Otherwise, builds continue, skipping
-any SlackBuild that depends on a previously-failed build.
-
-Overrides the **INSTANT_STOP** setting.
+any SlackBuild that depends on a previously-failed build. This option
+overrides the **INSTANT_STOP** setting.
 
 **-j\|\--jobs (FALSE\|#)**
 
-If numerical, pass to the **-j** argument when a SlackBuild invoking
+If **numerical**, pass to the **-j** argument when a SlackBuild invoking
 **make** is run.
 
 **-k\|\--pkg-dir (FALSE\|/path)**
@@ -181,8 +181,8 @@ option overrides the **NONET** setting.
 
 **-o\|\--norecall**
 
-Do not reuse saved build options if running with **\--nointeractive** or
-**\--batch**.
+Do not reuse saved build options if running with **\--batch** or
+**\--nointeractive**.
 
 **-p\|\--compat32**
 
@@ -208,8 +208,9 @@ welcome in case of unexpected failure.
 Rebuild the reverse dependency queue after upgrading. Please note that
 building against some packages, including **google-go-lang**, does not
 work without first sourcing a version-specific profile script.
-**\--reverse-rebuild** fails in such cases. Incompatible with
-**\--noinstall**.
+**\--reverse-rebuild** fails in such cases unless the **ETC_PROFILE**
+setting is **TRUE** (see [sboconfig(1)](sboconfig.1.md) or **sbotools.config(1)**).
+Incompatible with **\--noinstall**.
 
 **-r\|\--nointeractive**
 
@@ -227,8 +228,8 @@ Overridden by **\--batch**.
 If **TRUE**, only perform upgrades if the incoming version or build
 number is higher. This has no effect scripts in the local overrides
 directory. This option can be set as default via [sboconfig(1)](sboconfig.1.md). See
-also [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the **STRICT_UPGRADES**
-setting.
+also [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md). This option overrides the
+**STRICT_UPGRADES** setting.
 
 **-X\|\--no-socheck (FALSE\|TRUE)**
 
@@ -241,12 +242,11 @@ option overrides the **NO_SOCHECK** setting.
 **-Z\|\--niceness (FALSE\|-20..19)**
 
 **If set to a number** from -20 through 19, use that as the absolute
-niceness value for [sboupgrade(1)](sboupgrade.1.md) during the building and
-installation phase. If **FALSE**, simply use the niceness value that the
-script started with, generally *0* without user intervention. A lower
-niceness value gives a process greater priority. Use with caution.
-
-Overrides the **NICENESS** setting.
+niceness value for **sboupgrade** during the building and installation
+phase. If **FALSE**, simply use the niceness value that the script
+started with, generally *0* without user intervention. A lower niceness
+value gives a process greater priority. Use with caution. This option
+overrides the **NICENESS** setting.
 
 **-z\|\--force-reqs**
 
@@ -285,9 +285,9 @@ Incompatible with **\--all** and **\--compat32**.
 Bypass all user prompts for the requested SlackBuilds, but perform
 dependency resolution, even if **\--reverse-rebuild** is not passed. Any
 saved build options are used again unless **\--norecall** is passed as
-well. If a script calls for **useradd** or **groupadd**, **sboupgrade**
-exits with an informative message if any specified user or group does
-not exist.
+well. If a script calls for **useradd(1)** or **groupadd(1)**,
+**sboupgrade** exits with an informative message if any specified user
+or group does not exist.
 
 This flag is not to be taken lightly, as it can cause new dependencies
 to be installed without prompting. Usage in a production environment
@@ -308,7 +308,8 @@ Show version information.
 
 **\--color**
 
-Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors.5.md).
+Turn on **sbotools** color output (default). See also
+[sbotools.colors(5)](sbotools.colors.5.md).
 
 **\--nocolor**
 
@@ -407,7 +408,7 @@ group missing.\
 ## BUGS
 
 100% accuracy cannot be guaranteed for the option addition prompt. It
-may rarely appear when options appear to be documented, but are not.
+may rarely appear when options seem to be documented, but are not.
 
 Otherwise, none known. If found, Issues and Pull Requests to
 <https://github.com/pghvlaans/sbotools/> are always welcome.
