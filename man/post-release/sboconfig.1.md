@@ -35,7 +35,7 @@
 
 **sboconfig** is a front-end for managing **sbotools** configuration
 options. Using **sboconfig** without any flags enters the **Settings**
-menu within **sbotool**, provided that **dialog(1)** is installed. If
+menu within [sbotool(1)](sbotool.1.md), provided that **dialog(1)** is installed. If
 running as root, settings changes can be done here.
 
 The [sbotools.conf(5)](sbotools.conf.5.md) file can also be edited manually; any fields
@@ -156,21 +156,19 @@ build.
 **JOBS**: If **numerical**, pass to the **-j** argument when a
 SlackBuild invoking **make** is run.
 
-**-K\|\--color (FALSE\|TRUE)**
+**-K\|\--nocolor (FALSE\|TRUE)**
 
 **NOCOLOR**: If **TRUE**, disable **sbotools** color output. To
 customize color output, edit the */etc/sbotools/sbotools.colors* file
 directly. See [sbotools.colors(5)](sbotools.colors.5.md) for details.
 
-Recommended value: **TRUE**
-
 **-L\|\--log-dir (FALSE\|/path)**
 
 **LOG_DIR**: If set to an **absolute path**, save build logs here. Logs
 are saved with the name of the script and a timestamp. Please note that
-because **STDERR** must be redirected for a complete log, colors and
-formatting may differ when running some SlackBuilds unless **LOG_DIR**
-is **FALSE**.
+because **standard error** must be redirected for a complete log, colors
+and formatting may differ when running some SlackBuilds unless
+**LOG_DIR** is **FALSE**.
 
 **-N\|\--nonet (FALSE\|TRUE)**
 
@@ -193,8 +191,8 @@ installed from the CPAN.
 
 **-p\|\--pkg-dir (FALSE\|/path)**
 
-**PKG_DIR**: If set to a **path**, packages are stored there after
-installation. This overrides the **DISTCLEAN** setting for saved
+**PKG_DIR**: If set to an **absolute path**, packages are stored there
+after installation. This overrides the **DISTCLEAN** setting for saved
 packages.
 
 **-s\|\--sbo-home (/var/lib/sbotools\|/path)**
@@ -206,9 +204,9 @@ setting changes.
 
 **-o\|\--local-overrides (FALSE\|/path)**
 
-**LOCAL_OVERRIDES**: If set to a **path**, any directory name in the top
-level under that path matching a SlackBuild name is used in preference
-to the in-tree version. This works even if the SlackBuild is
+**LOCAL_OVERRIDES**: If set to an **absolute path**, any directory name
+in the top level under that path matching a SlackBuild name is used in
+preference to the in-tree version. This works even if the SlackBuild is
 out-of-tree. Scripts installing packages not marked with the *\_SBo* tag
 are neither upgradable with [sboupgrade(1)](sboupgrade.1.md) nor removable with
 [sboremove(1)](sboremove.1.md). *slack-desc*, an *info* file and a SlackBuild must all
@@ -225,9 +223,11 @@ the one specified in */etc/slackware-version*.
 **REPO**: If set to a git or rsync **URL**, use that repository instead
 of the **sbotools** default for your **SLACKWARE_VERSION**. The default
 repositories are under rsync://slackbuilds.org/slackbuilds if
-**RSYNC_DEFAULT** is **TRUE**, and <https://gitlab.com/SlackBuilds.org>
-otherwise. The repository must be laid out in the same manner as one
-found at <https://git.slackbuilds.org/slackbuilds> such that SlackBuild
+**RSYNC_DEFAULT** is **TRUE**, <https://github.com/Ponce/slackbuilds/>
+if running Slackware -current and
+<https://gitlab.com/SlackBuilds.org/slackbuilds/> otherwise. The
+repository must be laid out in the same manner as one found at
+<https://git.slackbuilds.org/slackbuilds> such that SlackBuild
 directories are under the category directories.
 
 **-R\|\--rsync (FALSE\|TRUE)**

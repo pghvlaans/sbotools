@@ -62,8 +62,8 @@ sources for the queue and download if needed, use **\--get-only**.
 Manually-downloaded source files (such as those requiring a license
 agreement) can be placed in *SBO_HOME/manual_downloads* prior to running
 **sboinstall**. *SBO_HOME/distfiles* can be a mountpoint or a symlink to
-an existing directory, but please ensure that no partitions are mounted
-in its subdirectories.
+an existing directory, but the script will exit if partitions are
+mounted to its subdirectories.
 
 *SlackBuild* and *README* files are parsed for **groupadd(1)** and
 **useradd(1)** commands, and **sboinstall** offers to run them prior to
@@ -80,7 +80,7 @@ base script. Please note that saved build options are not displayed when
 **\--batch**, saved build options are used automatically unless
 **\--norecall** or **\--use-template** are passed as well.
 
-**sboinstall** verifies the local repository with **gpg** if
+**sboinstall** verifies the local repository with **gpg(1)** if
 **GPG_VERIFY** is **TRUE**.
 
 Root privileges are required to run **sboinstall** unless passing
@@ -102,8 +102,8 @@ overrides the **NOCLEAN** setting.
 
 Non-interactively print the prospective build queue and exit.
 **\--dry-run** reports SlackBuilds in the queue with *%README%* in
-*REQUIRES*, saved build options to be used and **useradd** or
-**groupadd** commands to be run. This makes **\--batch** considerably
+*REQUIRES*, saved build options to be used and **useradd(1)** or
+**groupadd(1)** commands to be run. This makes **\--batch** considerably
 safer for everyday use. **\--dry-run** can be used without root
 privileges.
 
@@ -143,9 +143,8 @@ retained in **PKG_DIR** if so defined regardless of **DISTCLEAN**. See
 
 If **TRUE**, offer to stop the queue as soon as one build fails. If
 non-interactive, stop immediately. Otherwise, builds continue, skipping
-any SlackBuild that depends on a previously-failed build.
-
-Overrides the **INSTANT_STOP** setting.
+any SlackBuild that depends on a previously-failed build. This option
+overrides the **INSTANT_STOP** setting.
 
 **-j\|\--jobs (FALSE\|#)**
 
@@ -170,7 +169,8 @@ option overrides the **NONET** setting.
 
 **-o\|\--norecall**
 
-Do not reuse saved build options if running with **\--nointeractive**.
+Do not reuse saved build options if running with **\--batch** or
+\--nointeractive.
 
 **-p\|\--compat32**
 
@@ -188,8 +188,8 @@ package can be inspected prior to installation. GitHub Issues are
 welcome in case of unexpected failure.
 
 **sboinstall** will not attempt *compat32* builds for Perl-based or
-*noarch* scripts. Incompatible with **\--mass-rebuild,
-\--series-rebuild** and **\--use-template**.
+*noarch* scripts. Incompatible with **\--mass-rebuild**,
+**\--series-rebuild** and **\--use-template**.
 
 **-q\|\--reverse-rebuild**
 
@@ -230,13 +230,12 @@ Incompatible with **\--create-template** and **\--get-only**.
 
 **-Z\|\--niceness (FALSE\|-20..19)**
 
-**If set to a number** from -20 through 19, use that as the absolute
-niceness value for [sboinstall(1)](sboinstall.1.md) during the building and
-installation phase. If **FALSE**, simply use the niceness value that the
-script started with, generally *0* without user intervention. A lower
-niceness value gives a process greater priority. Use with caution.
-
-Overrides the **NICENESS** setting.
+If set to a **number** from -20 through 19, use that as the absolute
+niceness value for **sboinstall** during the building and installation
+phase. If **FALSE**, simply use the niceness value that the script
+started with, generally *0* without user intervention. A lower niceness
+value gives a process greater priority. Use with caution. This option
+overrides the **NICENESS** setting.
 
 **\--reinstall**
 
@@ -302,9 +301,9 @@ Bypass all user prompts for the requested SlackBuilds, but perform
 dependency resolution, even if none of **\--mass-rebuild**,
 **\--series-rebuild** or **\--reverse-rebuild** are passed. Any saved
 build options are used again unless **\--norecall** is passed as well.
-If a script calls for **useradd** or **groupadd**, **sboinstall** exits
-with an informative message if any specified user and group does not
-exist.
+If a script calls for **useradd(1)** or **groupadd(1)**, **sboinstall**
+exits with an informative message if any specified user and group does
+not exist.
 
 This flag is not to be taken lightly, as it can cause new dependencies
 to be installed without prompting. Usage in a production environment
@@ -325,7 +324,8 @@ Show version information.
 
 **\--color**
 
-Turn on **sbotools** color output. See also [sbotools.colors(5)](sbotools.colors.5.md).
+Turn on **sbotools** color output (default). See also
+[sbotools.colors(5)](sbotools.colors.5.md).
 
 **\--nocolor**
 
@@ -424,7 +424,7 @@ group missing.\
 ## BUGS
 
 100% accuracy cannot be guaranteed for the option addition prompt. It
-may rarely appear when options appear to be documented, but are not.
+may rarely appear when options seem to be documented, but are not.
 
 Otherwise, none known. If found, Issues and Pull Requests to
 <https://github.com/pghvlaans/sbotools/> are always welcome.

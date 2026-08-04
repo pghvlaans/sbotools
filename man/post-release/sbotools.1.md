@@ -46,8 +46,8 @@ dependencies.
 [sbofind(1)](sbofind.1.md)
 
 Search the local copy of the repository for SlackBuilds. Optionally,
-display build queues, *README* and *info* files and installed reverse
-dependencies.
+display build queues, *README* and *info* files, installed reverse
+dependencies and more.
 
 [sbohints(1)](sbohints.1.md)
 
@@ -158,7 +158,7 @@ first-order dependencies for all installed *SBo* packages, use
 list of installed packages, or **-C** to check all installed packages.
 **-C** and **-c** can be used without a local copy of the repository.
 Checks of *\_SBo* packages only are performed automatically after
-running **sbocheck** and [sboupgrade(1)](sboupgrade.1.md); to disable this behavior,
+running [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md); to disable this behavior,
 set the **NO_SOCHECK** setting to **TRUE**.
 
 Use **sbocheck** with any package-checking option and the **\--type**

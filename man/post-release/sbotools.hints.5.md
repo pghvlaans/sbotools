@@ -23,7 +23,7 @@ hints about individual scripts. Four kinds of hints are recognized:
 
 • automatic reverse dependency rebuilds
 
-• test failures are ignored by sboupgrade
+• test failures are ignored by [sboupgrade(1)](sboupgrade.1.md)
 
 Please note that all requests apply equally to the *compat32* versions
 of the scripts; specific requests for *compat32* scripts are
@@ -37,9 +37,9 @@ own line with no whitespace, prepending an exclamation mark:
 
 Blacklist entries supersede optional dependency requests.
 
-To ask [sboupgrade(1)](sboupgrade.1.md) to rebuild a script's reverse dependencies upon
-upgrade or reinstall, place the name of the script on its own line with
-no whitespace, prepending a tilde:
+To ask [sboupgrade(1)](sboupgrade.1.md) and [sboinstall(1)](sboinstall.1.md) to rebuild a script's
+reverse dependencies upon upgrade or reinstall, place the name of the
+script on its own line with no whitespace, prepending a tilde:
 
     ~libmodplug 
 
@@ -53,15 +53,15 @@ of the script at the end:
 Commented lines are ignored. There should not be whitespace to the left
 of any entry.
 
-[sbohints(1)](sbohints.1.md) can also be used to interface with this file. To use a
-configuration directory other than */etc/sbotools*, export an
-environment variable **SBOTOOLS_CONF_DIR** with an absolute path.
-
 To ask [sboupgrade(1)](sboupgrade.1.md) to ignore test failures for a script when
 called with **\--all-plus-failures**, place the name of the script on
 its own line with no whitespace, prepending a percent sign:
 
     %zoom-linux 
+
+[sbohints(1)](sbohints.1.md) can also be used to interface with this file. To use a
+configuration directory other than */etc/sbotools*, export an
+environment variable **SBOTOOLS_CONF_DIR** with an absolute path.
 
 ## SEE ALSO
 
