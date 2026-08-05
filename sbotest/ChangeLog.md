@@ -4,6 +4,7 @@
   * Compatibility bump
   * Account for the new **NICENESS** setting; add **\--niceness**
     * Thanks to shamefulCake1 for the sbotools request
+  * Show version and build number in the results summary where appropriate
 
 #### 1.2.3 - 2026-07-31
   * Compatibility bump
