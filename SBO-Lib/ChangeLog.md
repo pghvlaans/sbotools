@@ -21,6 +21,7 @@
   * sboinstall, sboupgrade: If interactive, explain why non-requested SlackBuilds are in the queue.
   * Bugfix: sboinstall -q --reinstall is supposed to include the command line builds in the queue.
   * Readme.pm: Print the local overrides message after the READMEs.
+  * sbotool: Include items for sboupgrade --all-plus-failures in Main Menu.
 
 #### 4.3 - 2026-07-31
   * {Build,Download}.pm: Properly handle failed downloads when continuing.

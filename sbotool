@@ -954,6 +954,8 @@ sub display_main {
 		if (@update_names) {
 			push @main_menu, "\"Upgrade All (dry run)\" \"How all upgrades would be done.\" \\";
 			push @main_menu, "\"Upgrade All\" \"Apply all available upgrades.\" \\" if $< == 0;
+			push @main_menu, "\"All + Fails (dry run)\" \"Upgrades and test failures, dry run.\" \\";
+			push @main_menu, "\"All + Fails\" \"Upgrades and test failures.\" \\" if $< == 0;
 		}
 	}
 	if ($< == 0) {
@@ -1089,12 +1091,21 @@ sub display_main {
 		}
 	}
 
-	if ($option eq "Upgrade All (dry run)") {
+	if ($option eq "Upgrade All (dry run)" or $option eq "All + Fails (dry run)") {
 		unlink $command_output;
-		system("/usr/sbin/sboupgrade --wrap --nocolor -D --all > $command_output");
+		if ($option =~ /^U/) {
+			system("/usr/sbin/sboupgrade --wrap --nocolor -D --all > $command_output");
+		} else {
+			system("$dialog_prefix --infobox \"Doing package checks...\" 3 28");
+			system("/usr/sbin/sboupgrade --wrap --nocolor -D -A > $command_output");
+		}
 		my $dry_run_output = slurp $command_output;
 		($height, $width, $begin_y, $begin_x) = calculate_position("wide_cond", $dry_run_output);
-		system("$dialog_prefix --begin $begin_y $begin_x --title \"Upgrade All: Dry Run\" --textbox $command_output $height $width");
+		if ($option =~ /^U/) {
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"Upgrade All: Dry Run\" --textbox $command_output $height $width");
+		} else {
+			system("$dialog_prefix --begin $begin_y $begin_x --title \"All Plus Fails: Dry Run\" --textbox $command_output $height $width");
+		}
 	}
 
 	if ($option eq "Browse Repository") { display_series(); }
@@ -1117,6 +1128,7 @@ sub display_main {
 	if ($option eq "Settings") { display_settings(); }
 	if ($option eq "Upgradable") { display_builds("Upgradable SBo Packages", @update_names); }
 	if ($option eq "Upgrade All") { run_command("/usr/sbin/sboupgrade --all"); }
+	if ($option eq "All + Fails") { run_command("/usr/sbin/sboupgrade -A"); }
 
 	display_main();
 	return;
@@ -1870,6 +1882,7 @@ sub run_command {
 	if ($cmd =~ /sbo(install|upgrade)/ and not defined $no_batch and $overrides_ok) {
 		my $batch_cmd = "$cmd --batch";
 		my $dry_run_cmd = "$batch_cmd --wrap --nocolor -D";
+		system("$dialog_prefix --infobox \"Doing package checks...\" 3 28") if $cmd =~ /-A/;
 		unlink $command_output;
 		system("$dry_run_cmd > $command_output");
 		chomp($dry_run_output = slurp $command_output);

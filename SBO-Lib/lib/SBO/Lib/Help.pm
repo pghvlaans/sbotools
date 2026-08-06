@@ -181,6 +181,16 @@ individual tools to call them independently as well.
 All sbotool menus are dynamic, and reflect available and potentially
 effective operations. The following options can appear in Main Menu:
 
+* All + Fails
+    Apply all available upgrades and rebuild for test failures. It is
+    not necessary to use the Package Tests menu first. Appears if
+    upgrades are available and running as root.
+
+* All + Fails (dry run)
+    A dry run of applying all available upgrades and rebuilding for test
+    failures. It is not necessary to use the Package Tests menu first.
+    Appears if upgrades are available.
+
 * Browse Repository
     View available SlackBuilds by series. Select a SlackBuild to see its
     "Operations" menu, which has per-script options and information. As
