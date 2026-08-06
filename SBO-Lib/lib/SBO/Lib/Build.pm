@@ -417,7 +417,7 @@ sub get_full_reverse_queue {
         for my $cand (@$queue) {
           if ($from eq "sboinstall" and $self_include) {
             if (in $cand, @full_reverse or not in $cand, @namelist or in $cand, @ARGV) {
-              push @$interim_queue, $cand unless $cand eq $sbo;
+              push @$interim_queue, $cand;
             }
           } elsif ($from eq "sboinstall" and not $self_include) {
             if (in $cand, @full_reverse or not in $cand, @namelist) {
@@ -430,7 +430,7 @@ sub get_full_reverse_queue {
           }
         }
       }
-      @$interim_queue = grep { !/^$sbo$/ } @$interim_queue;
+      @$interim_queue = grep { !/^$sbo$/ } @$interim_queue unless $self_include;
     }
     $return_queue = merge_queues($return_queue, $interim_queue) if $interim_queue;
   }
