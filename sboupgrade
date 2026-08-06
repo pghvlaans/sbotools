@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_distfiles check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch check_distfiles_dir uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group ignore_tests in ineligible_compat installed_solibs is_obsolete merge_obsolete merge_queues on_blacklist open_fh user_group_do_not_exist user_prompt process_sbos print_failures rationalize_queue series_check slurp solib_check update_known_solibs verify_gpg %config show_version lint_sbo_config wrapsay @not_opt_only %concluded %warnings /;
+use SBO::Lib qw/ :config :const :colors %old_libs auto_reverse check_distfiles check_x32 check_x64 check_multilib error_code get_available_updates prompt usage_error slackbuilds_or_fetch check_distfiles_dir uniq get_full_reverse_queue get_sbo_locations get_sbo_location get_inst_names get_installed_cpans get_installed_packages get_build_queue get_orig_location get_readme_contents get_requires get_user_group ignore_tests in ineligible_compat installed_solibs is_obsolete merge_obsolete merge_queues on_blacklist open_fh user_group_do_not_exist user_prompt process_sbos print_failures rationalize_queue series_check slurp solib_check update_known_solibs verify_gpg %config show_version lint_sbo_config wrapsay @not_opt_only %concluded %warnings %notices /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -211,9 +211,11 @@ if ($all) {
 					if (in $sbo_pkg->{$sbo}, @not_opt_only) {
 						push @bad_solibs, $sbo;
 						push @ARGV, $sbo;
+						$notices{$sbo} .= "Missing shared object dependencies.\n"
 					} else {
 						push @opt_pkgs, $sbo;
 						push @ARGV, $sbo unless $non_int;
+						$notices{$sbo} .= "Missing shared object dependencies, /opt only; may not requre a rebuild.\n"
 					}
 				}
 			}
@@ -240,9 +242,9 @@ if ($all) {
 			for my $sbo (keys %$sbo_pkg) {
 				next if in $sbo, @ARGV or on_blacklist $sbo or ignore_tests $sbo;
 				my @results = series_check($sbo_pkg->{$sbo}, @series_to_check);
-				push @bad_perl, $sbo unless $results[0];
-				push @bad_python, $sbo unless $results[1];
-				push @bad_ruby, $sbo unless $results[2];
+				unless ($results[0]) { push @bad_perl, $sbo; $notices{sbo} .= "Rebuild against system perl.\n"; }
+				unless ($results[1]) { push @bad_python, $sbo; $notices{sbo} .= "Rebuild against system python.\n"; }
+				unless ($results[2]) { push @bad_ruby, $sbo; $notices{sbo} .= "Rebuild against system ruby.\n"; }
 			}
 			push @ARGV, @bad_perl, @bad_python, @bad_ruby;
 			push @failed_test, @bad_solibs, @opt_pkgs, @bad_perl, @bad_python, @bad_ruby;
@@ -382,6 +384,12 @@ if ($non_int and not $reverse and not $yes_really) {
 	if ($reverse) {
 		my $extra_queue = get_full_reverse_queue($self, $updates, @$upgrade_queue);
 		if ($extra_queue) {
+			for my $revdep (@$extra_queue) {
+				next if in $revdep, @$upgrade_queue;
+				for (@$upgrade_queue) {
+					$notices{$revdep} .= "Reverse dependency of $_.\n" if in $_, @{$concluded{$revdep}};
+				}
+			}
 			$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
 		}
 		$needs_rationalize = 1;
@@ -403,11 +411,15 @@ if (@needs_reverse and not $no_install and not $reverse) {
 	$needs_rationalize = 1;
 	my $extra_queue = get_full_reverse_queue($self, $updates, @needs_reverse);
 	if ($extra_queue) {
+		for my $revdep (@$extra_queue) {
+			next if in $revdep, @$upgrade_queue;
+			for (@needs_reverse) {
+				$notices{$revdep} .= "Reverse dependency of $_.\n" if in $_, @{$concluded{$revdep}};
+			}
+		}
 		$upgrade_queue = merge_queues($upgrade_queue, $extra_queue);
 	}
 }
-
-my $cqueue;
 
 # Get user input regarding upgrades
 my (@temp_queue, %commands, %options, %missing_user_group);
@@ -443,6 +455,14 @@ FIRST: for my $sbo (@$upgrade_queue) {
 			next FIRST;
 		}
 	}
+
+	unless (in $name, @sbos or in $sbo, @sbos) {
+		for (@sbos) {
+			next unless in $_, @$upgrade_queue;
+			$notices{$name} .= "Dependency of $_.\n" if in $name, @{$concluded{$_}};
+		}
+	}
+
 	# will give %README% advisories later for --dry-run
 	push @see_readme, $name if defined $warnings{$name} and $warnings{$name} eq '%README%';
 
@@ -463,12 +483,6 @@ FIRST: for my $sbo (@$upgrade_queue) {
 	}
 
 	unless ($non_int) {
-		wrapsay_color $color_notice, "\n$sbo:" if in $name, @failed_test;
-		if (in $name, @bad_solibs) { wrapsay_color $color_notice, "Missing shared objects."; }
-		if (in $name, @opt_pkgs) { wrapsay_color $color_notice, "Missing shared objects in /opt only; may not require a rebuild."; }
-		if (in $name, @bad_perl) { wrapsay_color $color_notice, "Incompatible with system perl."; }
-		if (in $name, @bad_python) { wrapsay_color $color_notice, "Incompatible with system python."; }
-		if (in $name, @bad_ruby) { wrapsay_color $color_notice, "Incompatible with system ruby."; }
 		my ($proceed, $cmds, $opts) = user_prompt($name, $locations{$name}, $get_only);
 		next FIRST unless $proceed;
 		push(@temp_queue, $name);

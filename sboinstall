@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ :config :const :colors auto_reverse check_distfiles_dir check_distfiles check_x32 check_x64 check_multilib error_code get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_sbo_version get_user_group in ineligible_compat is_local is_obsolete merge_queues merge_obsolete on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_do_not_exist user_prompt verify_gpg version_cmp lint_sbo_config wrapsay %concluded %warnings /;
+use SBO::Lib qw/ :config :const :colors auto_reverse check_distfiles_dir check_distfiles check_x32 check_x64 check_multilib error_code get_build_queue get_full_reverse get_full_reverse_queue get_installed_cpans get_installed_packages get_orig_location get_reverse_reqs get_readme_contents get_requires get_sbo_location get_sbo_locations get_sbo_version get_user_group in ineligible_compat is_local is_obsolete merge_queues merge_obsolete on_blacklist open_fh print_failures process_sbos prompt rationalize_queue show_version slackbuilds_or_fetch slurp uniq usage_error user_group_do_not_exist user_prompt verify_gpg version_cmp lint_sbo_config wrapsay %concluded %warnings %notices /;
 use Getopt::Long qw(:config bundling);
 use File::Basename;
 use File::Copy;
@@ -303,7 +303,6 @@ if (length $utemp) {
 	}
 	unless ($mass_rebuild or $no_install) {
 		if ($requested_reinstall) {
-			my $extra_queue;
 			for my $cand (@$build_queue) {
 				if (auto_reverse($cand)) {
 					push @needs_reverse, $cand;
@@ -328,9 +327,14 @@ if (length $utemp) {
 	} elsif ($reverse_rebuild) {
 		$build_queue = get_full_reverse_queue($self, $requested_reinstall ? 1 : 0, @sbos);
 		exit 0 unless $build_queue;
+		for my $to_build (@$build_queue) {
+			next if in $to_build, @sbos;
+			for (sort @sbos) {
+				$notices{$to_build} .= "Reverse dependency of $_.\n" if in $_, @{$concluded{$to_build}};
+			}
+		}
 	} else {
 		for my $sbo (@sbos) {
-			my $extra_queue;
 			my $queue = get_build_queue([$sbo]);
 			$build_queue = merge_queues($build_queue, $queue);
 		}
@@ -378,6 +382,12 @@ if ($series_rebuild or ($mass_rebuild and not $resume_mass_rebuild)) {
 if (@needs_reverse) {
 	my $extra_queue = get_full_reverse_queue($self, $requested_reinstall ? 1 : 0, @needs_reverse);
 	if ($extra_queue) {
+		for my $revdep (@$extra_queue) {
+			next if in $revdep, @$build_queue;
+			for (@needs_reverse) {
+				$notices{$revdep} .= "Reverse dependency of $_.\n" if in $_, @{$concluded{$revdep}};
+			}
+		}
 		$needs_rationalize = 1;
 		$build_queue = merge_queues($build_queue, $extra_queue);
 	}
@@ -424,6 +434,12 @@ FIRST: for my $sbo (@$build_queue) {
 	if ($is_compat32 and $locations{$name}) {
 		my $compat_fail_msg = ineligible_compat($locations{$name});
 		if ($compat_fail_msg) { wrapsay_color $color_lesser, $compat_fail_msg; next FIRST; }
+	}
+
+	unless (defined $template or in $name, @sbos or in $sbo, @sbos) {
+		for (@sbos) {
+			$notices{$name} .= "Dependency of $_.\n" if in $name, @{$concluded{$_}};
+		}
 	}
 
 	if ($inst_names{$name}) {

@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Boomtime, Confusion 71, 3192 YOLD" "" "sbotools 4.3"
+.TH SBO::Lib::Build 3 "Pungenday, Confusion 72, 3192 YOLD" "" "sbotools 4.3"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -108,6 +108,11 @@ This is the same as \f(CW$TMP\fR if it is set. Otherwise, it is \f(CW\*(C`/tmp/S
 This is an array containing the last level of reverse dependencies generated
 by \f(CWsbofind(1)\fR with \f(CW\*(C`all\-reverse\*(C'\fR and \f(CW\*(C`top\-reverse\*(C'\fR. It is used only by
 \&\f(CWsbofind(1)\fR.
+.ie n .SS %notices
+.el .SS \f(CW%notices\fP
+.IX Subsection "%notices"
+This is a shared hash that contains per\-script notification strings to display
+during \f(CWuser_prompt()\fR; see \f(CWSBO::Lib::Readme(3)\fR.
 .ie n .SS @upcoming
 .el .SS \f(CW@upcoming\fP
 .IX Subsection "@upcoming"

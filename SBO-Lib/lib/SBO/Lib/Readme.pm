@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '4.3';
 
-use SBO::Lib::Build qw/ $tempdir /;
+use SBO::Lib::Build qw/ $tempdir %notices /;
 use SBO::Lib::Util qw/ :const :colors error_code in prompt script_error slurp open_read open_fh uniq usage_error wrapsay %config /;
 use SBO::Lib::Tree qw/ is_local /;
 
@@ -416,6 +416,11 @@ sub user_prompt {
   unless (defined $location) { usage_error("Unable to locate $sbo in the SlackBuilds.org tree."); }
   wrapsay_color $color_lesser, "\nFound $sbo in local overrides." if is_local($sbo);
   display_readmes($sbo, $location);
+  if (exists $notices{$sbo}) {
+    $notices{$sbo} =~ s/\n$//;
+    wrapsay_color $color_notice, "\n$sbo:";
+    wrapsay_color $color_lesser, $notices{$sbo};
+  }
   my $prel_opts;
   unless ($get_only) {
     $prel_opts = ask_previous($sbo);

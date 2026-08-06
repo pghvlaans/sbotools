@@ -57,6 +57,7 @@ our @EXPORT_OK = qw{
   %concluded
   @reverse_concluded
   %warnings
+  %notices
 };
 
 our %EXPORT_TAGS = (
@@ -113,6 +114,11 @@ This is an array containing the last level of reverse dependencies generated
 by C<sbofind(1)> with C<all-reverse> and C<top-reverse>. It is used only by
 C<sbofind(1)>.
 
+=head2 %notices
+
+This is a shared hash that contains per-script notification strings to display
+during C<user_prompt()>; see C<SBO::Lib::Readme(3)>.
+
 =head2 @upcoming
 
 This is a shared, non-exportable array that contains hashes with the source
@@ -150,6 +156,7 @@ our @last_level_reverse;
 
 # a universal warnings hash; warnings currently include README and nonexistence
 our %warnings;
+our %notices;
 
 # an array of distfile-related hashes
 our @distfiles;
