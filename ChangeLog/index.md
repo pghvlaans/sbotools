@@ -17,6 +17,7 @@
   * Notify about CPAN installations regardless of **CPAN_IGNORE**; remove **CPAN_IGNORE** from the recommended settings list.
   * Added a **NICENESS** setting; set an absolute niceness value for the build and package installation phase, or **FALSE** for whatever value the script started with.
     * Thanks to shamefulCake1 for the request.
+  * *sboinstall*, *sboupgrade*: If interactive, explain why non-requested SlackBuilds are in the queue.
 
 * 4.3 - 2026-07-31
   * *{Build,Download}.pm*: Properly handle failed downloads when continuing.
