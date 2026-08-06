@@ -419,7 +419,7 @@ sub user_prompt {
   if (exists $notices{$sbo}) {
     $notices{$sbo} =~ s/\n$//;
     wrapsay_color $color_notice, "\n$sbo:";
-    wrapsay_color $color_lesser, $notices{$sbo};
+    wrapsay $notices{$sbo};
   }
   my $prel_opts;
   unless ($get_only) {
