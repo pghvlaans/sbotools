@@ -16,17 +16,17 @@ Use the key from the homepage (updated 2024-12-15) to verify downloads with gpg.
 This file has been installed to `/etc/sbotools/obsolete` since `sbotools-3.6`. It contains a list of scripts that have been added to Slackware -current under different names, or are unneeded build dependencies in Slackware -current. It will be updated as needed.
 
 * [obsolete](obsolete) ([asc](obsolete.asc))
-    * md5sum: `ca31d4180be0b88d92bad38c12343f1d`
-    * Updated 2026-07-19.
+    * md5sum: `58b1204ed8c49c08ec487ef0660fbfc2`
+    * Updated 2026-08-06.
 
 ## Perl Build History
 
 This file, introduced in `sbotools-4.1`, has a list of first-build times for major perl versions in Slackware, sourced mostly from the Slackware Cumulative Archive. Slackware ARM and 32-bit Slackware have relatively limited coverage; if you have access to older packages for these architectures (or know where to find them), please consider contacting the maintainer.
 
 * [perl_vers](perl_vers) ([asc](perl_vers.asc))
-    * md5sum: `18c8a6056c661f0ada8308f159453e8c`
-    * Updated 2026-07-23.
-    * Most recent versions: 5.44 (x86_64, i\*86), 5.42 (aarch64).
+    * md5sum: `534a73121bcf6fcf71bf86758cc8c513`
+    * Updated 2026-08-06.
+    * Most recent versions: 5.44 (x86_64, i\*86, aarch64)
 
 ## Slackware Support
 
