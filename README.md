@@ -28,6 +28,8 @@ Nonetheless, this repository was originally a simple fork adding a feature: Savi
 * Run `sbotool` for a dialog-based interface
 * Test installed packages for missing shared objects and perl/python/ruby compatibility
 * Blacklist and request optional dependencies with `sbotools.hints` and/or `sbohints`
+* Default "continue-and-skip" queue processing on build failure
+* Color output for legibility
 * Use a customizable git branch to clone the local repository
 * New git-based default URLs, with the option to use default rsync URLs instead
 * Optionally upgrade on build increments and report out-of-tree SlackBuilds
