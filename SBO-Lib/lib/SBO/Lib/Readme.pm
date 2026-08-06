@@ -414,8 +414,8 @@ sub user_prompt {
   my $cmds;
   my $opts = 0;
   unless (defined $location) { usage_error("Unable to locate $sbo in the SlackBuilds.org tree."); }
-  wrapsay_color $color_lesser, "\nFound $sbo in local overrides." if is_local($sbo);
   display_readmes($sbo, $location);
+  wrapsay_color $color_lesser, "\nFound $sbo in local overrides." if is_local($sbo);
   if (exists $notices{$sbo}) {
     $notices{$sbo} =~ s/\n$//;
     wrapsay_color $color_notice, "\n$sbo:";
