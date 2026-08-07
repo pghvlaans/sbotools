@@ -847,7 +847,7 @@ sub process_sbos {
         }
       } elsif ($count == @$todo or ($config{INSTANT_STOP} eq "TRUE" and $args{NON_INT})) {
           if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
-          if (@skipped and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
+          if (@skipped) { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
           display_times() unless $config{CLASSIC} eq "TRUE";
           chomp(my $test_nice = `/bin/nice`);
           `/usr/bin/renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
@@ -888,7 +888,7 @@ sub process_sbos {
   write_resume($todo, $opts, $cmds, $mtemp_resume, @successes, @failure_names) if $mass;
   unlink $mtemp_resume if $mass and -f $mtemp_resume and not @failures;
   if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
-  if (@skipped and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
+  if (@skipped) { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
   display_times() unless $config{CLASSIC} eq "TRUE";
   chomp(my $test_nice = `/bin/nice`);
   `/usr/bin/renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
