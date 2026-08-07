@@ -839,7 +839,7 @@ sub process_sbos {
           next FIRST;
         } else {
           if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
-          if (@skipped and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
+          if (@skipped) { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
           display_times() unless $config{CLASSIC} eq "TRUE";
           chomp(my $test_nice = `/bin/nice`);
           `/usr/bin/renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
