@@ -255,6 +255,8 @@ if ($all) {
 					print "  $_\n";
 				}
 				print "\n";
+			} else {
+				wrapsay "No perl-incompatible packages.";
 			}
 			if (@bad_python) {
 				print "\n";
@@ -263,6 +265,8 @@ if ($all) {
 					print "  $_\n";
 				}
 				print "\n";
+			} else {
+				wrapsay "No python-incompatible packages.";
 			}
 			if (@bad_ruby) {
 				print "\n";
@@ -271,7 +275,10 @@ if ($all) {
 					print "  $_\n";
 				}
 				print "\n";
+			} else {
+				wrapsay "No ruby-incompatible packages.";
 			}
+			print "\n" unless @bad_ruby or not $yes_really;
 		}
 	}
 	unless (@ARGV) { print "Nothing to update."; exit 0; }
