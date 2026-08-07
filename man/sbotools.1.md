@@ -46,8 +46,8 @@ dependencies.
 [sbofind(1)](sbofind.1.md)
 
 Search the local copy of the repository for SlackBuilds. Optionally,
-display build queues, *README* and *info* files and installed reverse
-dependencies.
+display build queues, *README* and *info* files, installed reverse
+dependencies and more.
 
 [sbohints(1)](sbohints.1.md)
 
@@ -158,7 +158,7 @@ first-order dependencies for all installed *SBo* packages, use
 list of installed packages, or **-C** to check all installed packages.
 **-C** and **-c** can be used without a local copy of the repository.
 Checks of *\_SBo* packages only are performed automatically after
-running **sbocheck** and [sboupgrade(1)](sboupgrade.1.md); to disable this behavior,
+running [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md); to disable this behavior,
 set the **NO_SOCHECK** setting to **TRUE**.
 
 Use **sbocheck** with any package-checking option and the **\--type**
@@ -168,12 +168,13 @@ Calling
 
     sboupgrade --all-plus-failures
 
-performs all available upgrades and rebuilds any packages with the
-*\_SBo* tag that fail one of these tests before the upgrade process
-begins. Some scripts that repackage binaries are known to fail solib
-tests invariably. Use **sbohints \--ignore-tests** with one or more
-scripts to skip them. **\--all-plus-failures** skips packages with solib
-issues only in the */opt* directory automatically.
+(or **-A** for short) performs all available upgrades and rebuilds any
+packages with the *\_SBo* tag that fail one of these tests before the
+upgrade process begins. Some scripts that repackage binaries are known
+to fail solib tests invariably. Use **sbohints \--ignore-tests** with
+one or more scripts to skip them. **\--all-plus-failures** skips
+packages with solib issues only in the */opt* directory automatically
+unless [sboupgrade(1)](sboupgrade.1.md) is running interactively.
 
 A limited number of SlackBuilds download files when running, which some
 users consider a security risk. Set **NONET** to **TRUE** to prevent

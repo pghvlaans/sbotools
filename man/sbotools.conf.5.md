@@ -18,7 +18,7 @@
 parameters, and is read by all **sbotools** commands.
 
 If an invalid configuration is detected (or requested with
-[sboconfig(1)](sboconfig.1.md)), the script exits with a diagnostic message.
+[sboconfig(1)](sboconfig.1.md)&, the script exits with a diagnostic message.
 
 To quickly restore all default settings, run
 
@@ -33,8 +33,6 @@ permitted as directory settings.
 
 All values default to **FALSE** except for **SBO_HOME**. Recommended
 non-default settings include **TRUE** for:
-
-• **CPAN_IGNORE**
 
 • **ETC_PROFILE**
 
@@ -56,8 +54,6 @@ want it.
 
 If **TRUE**, install scripts even if they are already installed from the
 CPAN.
-
-Recommended value: **TRUE**
 
 **DIALOGRC=(FALSE\|/path)**
 
@@ -91,6 +87,12 @@ available.
 Recommended value: **TRUE** if the upstream repository is usually
 signed.
 
+**INSTANT_STOP=(FALSE\|TRUE)**
+
+If **TRUE**, offer to stop the queue as soon as one build fails. If
+non-interactive, stop immediately. Otherwise, builds continue, skipping
+any SlackBuild that depends on a previously-failed build.
+
 **JOBS=(FALSE\|#)**
 
 If **numerical**, pass to the **-j** argument when a SlackBuild invoking
@@ -106,8 +108,6 @@ the build and *package-(sbo)* directories under */tmp/SBo* (or *\$TMP*).
 If **TRUE**, disable **sbotools** color output. To customize color
 output, edit the */etc/sbotools/sbotools.colors* file directly. See
 [sbotools.colors(5)](sbotools.colors.5.md) for more details.
-
-Recommended value: **TRUE**
 
 **GIT_BRANCH=(FALSE\|branch_name)**
 
@@ -131,9 +131,16 @@ Recommended value: **TRUE**
 
 If set to an **absolute path**, save build logs here. Logs are saved
 with the name of the script and a timestamp. Please note that because
-**STDERR** must be redirected for a complete log, colors and formatting
-may differ when running some SlackBuilds unless **LOG_DIR** is
-**FALSE**.
+**standard error** must be redirected for a complete log, colors and
+formatting may differ when running some SlackBuilds unless **LOG_DIR**
+is **FALSE**.
+
+**NICENESS=(FALSE\|-20..19)** If set to a **number** from -20 through
+19, use that as the absolute niceness value for [sboinstall(1)](sboinstall.1.md) and
+[sboupgrade(1)](sboupgrade.1.md) during the building and installation phase. If
+**FALSE**, simply use the niceness value that the script started with,
+generally *0* without user intervention. A lower niceness value gives a
+process greater priority. Use with caution.
 
 **NONET=(FALSE\|TRUE)**
 
@@ -150,8 +157,9 @@ in Slackware -current.
 
 **PKG_DIR=(FALSE\|/path)**
 
-If set to a **path**, packages are stored there after installation. This
-overrides the **DISTCLEAN** setting for saved packages.
+If set to an **absolute path**, packages are stored there after
+installation. This overrides the **DISTCLEAN** setting for saved
+packages.
 
 **SBO_HOME=(/var/lib/sbotools\|/path)**
 
@@ -161,10 +169,10 @@ re-downloaded with [sbocheck(1)](sbocheck.1.md) if the **SBO_HOME** setting chan
 
 **LOCAL_OVERRIDES=(FALSE\|/path)**
 
-If set to a **path**, any directory name in the top level under that
-path matching a SlackBuild name is used in preference to the in-tree
-version. This works even if the SlackBuild is out-of-tree. Scripts
-installing packages not marked with the *\_SBo* tag are neither
+If set to an **absolute path**, any directory name in the top level
+under that path matching a SlackBuild name is used in preference to the
+in-tree version. This works even if the SlackBuild is out-of-tree.
+Scripts installing packages not marked with the *\_SBo* tag are neither
 upgradable with [sboupgrade(1)](sboupgrade.1.md) nor removable with [sboremove(1)](sboremove.1.md).
 *slack-desc*, an *info* file and a SlackBuild must all be present.
 
@@ -186,9 +194,11 @@ incompatible **perl**, **python** and **ruby** *\_SBo* packages.
 If set to a git or rsync **URL**, use that repository instead of the
 **sbotools** default for your **SLACKWARE_VERSION**. The default
 repositories are under rsync://slackbuilds.org/slackbuilds if
-**RSYNC_DEFAULT** is **TRUE**, and <https://gitlab.com/SlackBuilds.org>
-otherwise. The repository must be laid out in the same manner as one
-found at <https://git.slackbuilds.org/slackbuilds> such that SlackBuild
+**RSYNC_DEFAULT** is **TRUE**, <https://github.com/Ponce/slackbuilds/>
+if running Slackware -current and
+<https://gitlab.com/SlackBuilds.org/slackbuilds/> otherwise. The
+repository must be laid out in the same manner as one found at
+<https://git.slackbuilds.org/slackbuilds> such that SlackBuild
 directories are under the category directories.
 
 **RSYNC_DEFAULT=(FALSE\|TRUE)**
@@ -200,7 +210,7 @@ If set to **TRUE**, use rsync default mirrors except for Slackware
 
 If set to **TRUE**, upgrades are only attempted if the incoming version
 or build number is greater. This has no effect on scripts in the local
-overrides directory or when reinstalling with **sboinstall**.
+overrides directory or when reinstalling with [sboinstall(1)](sboinstall.1.md).
 
 **NOWRAP=(FALSE\|TRUE)**
 

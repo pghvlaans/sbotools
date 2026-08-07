@@ -1,6 +1,6 @@
 ## ChangeLog.md
 
-#### Post-Release
+#### 1.3 - 2026-08-07
   * Compatibility bump
   * Account for the new **NICENESS** setting; add **\--niceness**
     * Thanks to shamefulCake1 for the sbotools request

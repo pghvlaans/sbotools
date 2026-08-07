@@ -31,14 +31,17 @@
             [-NX TRUE|FALSE] [-D] [--no-archive|--archive-force] \
             sbo_name (sbo_name)
 
-    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-Zj #|FALSE] \
-            [-D] --archive-rebuild
+    sbotest [-Al /path|FALSE] [-NX TRUE|FALSE] [-Zj #|FALSE] \
+            [--no-archive|--archive-force] --series SERIES[,SERIES]
 
     sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-Zj #|FALSE] \
-            [-D] --archive-reverse
+            [-D] [--force] --archive-rebuild
 
     sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-Zj #|FALSE] \
-            [--no-archive|--archive-force] --test-everything
+            [-D] [--force] --archive-reverse
+
+    sbotest [-Al /path|FALSE] [-NSX TRUE|FALSE] [-Zj #|FALSE] \
+            [--no-archive|--archive-force] [--force] --test-everything
 
 ## DISCLAIMER
 
@@ -70,6 +73,9 @@ scripts, use the **\--full-reverse** option; **\--single** tests no
 reverse dependencies. Please note that already-installed scripts can be
 tested only with **\--single**; the existing package on the system is
 not replaced.
+
+With the **\--series** option, test the entirety of one or more series
+(comma-separated) in lieu of a list of packages.
 
 Each test target has a separate testing workflow. **sbotest** attempts
 to minimize package installations and removals during the test run when
@@ -148,19 +154,23 @@ blacklisted packages are ignored. If **STRICT_UPGRADES** is **TRUE**,
 only mismatched packages with lower version or build numbers are removed
 from the archive.
 
+To rebuild even up-to-date packages, use the **\--force** option.
+
 If a script to be rebuilt has an automatic reverse dependency rebuild
 request in */etc/sbotest/sbotest.hints*, its reverse dependencies are
 rebuilt and replaced as well. See [sbotools.hints(5)](sbotools.hints.5.md) for details
 about setting hints.
 
-Incompatible with **\--no-archive** and **\--archive-force**.
+Incompatible with **\--no-archive**, **\--archive-force** and
+**\--series**.
 
 **\--archive-reverse**
 
 Perform an archive rebuild as with **\--archive-rebuild**, but rebuild
 all reverse dependencies as well.
 
-Incompatible with **\--no-archive** and **\--archive-force**.
+Incompatible with **\--no-archive**, **\--archive-force** and
+**\--series**.
 
 **-A\|\--sbo-archive**
 
@@ -186,8 +196,9 @@ Must be used with **pull**.
 
 Generate a report on scripts to be tested, queued packages in the local
 overrides directory and the number of archived packages to be reused. In
-case of **\--archive-rebuild** or **\--archive-reverse**, additionally
-report archived packages to be removed.
+case of **\--archive-rebuild**, **\--archive-reverse** or
+**\--test-everything**, additionally report archived packages to be
+removed.
 
 **-f\|\--full-reverse**
 
@@ -195,10 +206,19 @@ Test all reverse dependencies for the requested scripts rather than the
 first level only. Use **sbotest find \--all-reverse** or pass
 **\--dry-run** to see which scripts would be tested, if compatible.
 
+**\--force**
+
+Pass together with a full-repository or archive build option (including
+**\--test-everything**, **\--archive-rebuild** and
+**\--archive-reverse**) to rebuild up-to-date packages as well.
+
 **-s\|\--single**
 
 Do not test reverse dependencies for any requested script. Enables
 testing for scripts that have already been installed.
+
+Incompatible with **\--archive-rebuild**, **\--archive-reverse** and
+**\--test-everything**.
 
 **-j\|\--jobs**
 
@@ -241,9 +261,9 @@ version. If a **URL**, pull from that URL. Must be used with **pull**.
 **-S\|\--strict-upgrades**
 
 If **TRUE**, delete only mismatched packages with lower version or build
-numbers when running **\--archive-rebuild** or **\--archive-reverse**.
-If **FALSE**, delete all mismatched packages from the archive. Overrides
-the setting in */etc/sbotest/sbotest.conf*.
+numbers when running **\--archive-rebuild**, **\--archive-reverse** or
+**\--test-everything**. If **FALSE**, delete all mismatched packages
+from the archive. Overrides the setting in */etc/sbotest/sbotest.conf*.
 
 **-Z\|\--niceness (FALSE\|-20..19)**
 
@@ -257,15 +277,24 @@ Overrides the **NICENESS** setting.
 
 **\--test-everything**
 
-Perform a full-repository test, respecting the blacklist. All packages
-are rebuilt, except for those that are unsupported or archived and
-up-to-date. Unless running with **\--no-archive**, ensure that the
-package archive directory exists before running.
+Perform a full-repository test, respecting the blacklist. All archived
+packages are rebuilt, except for those that are unsupported up-to-date.
+Use **\--force** to rebuild up-to-date packages as well. Unless running
+with **\--no-archive**, ensure that the package archive directory exists
+before running.
 
 Please note that archived reverse dependencies of outdated packages are
 rebuilt regardless of whether they are up-to-date.
 
-Incompatible with **\--single** and **\--archive-force**.
+Incompatible with **\--single**, **\--archive-force** and **\--series**.
+
+**\--series (SERIES,\...)**
+
+Test all SlackBuilds in a comma-separated list of series in lieu of a
+list of packages.
+
+Incompatible with **\--archive-rebuild**, **\--archive-reverse** and
+**\--test-everything**.
 
 **-X\|\--no-socheck**
 
@@ -412,7 +441,8 @@ options from **sbotools** are ignored. See [sbotools.conf(5)](sbotools.conf.5.md
 8: unable to unset the exec-on-close bit on a temporary file.\
 12: interrupt signal received.\
 13: circular dependencies detected.\
-15: GPG verification failed.
+15: GPG verification failed.\
+17: could not give **SBO_HOME** valid contents.
 
 ## BUGS
 
