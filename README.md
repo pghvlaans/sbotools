@@ -26,7 +26,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 **sbotools** currently supports Slackware 15.0 and beyond. For Slackware 14.0, 14.1 and 14.2, install `sbotools-4.0.2` at the latest. See the **sbotools** [downloads](https://pghvlaans.github.io/sbotools/downloads/) page.
 
 ## Most Recent Changes
-#### Post-Release
+#### 4.4 - 2026-08-07
   * sboupgrade: Accept -A for --all-plus-failures.
   * Util.pm: Reset the color at the end of colored lines, not afterwards.
   * sbocheck: Do not attempt /opt labeling with --lib-search.
@@ -68,23 +68,6 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
     * sboupgrade: Replace --so-check with --no-socheck.
     * sbocheck: Use --no-socheck to skip the default check.
   * Util.pm: Use a relative symlink for SBO_HOME/manual_downloads.
-
-#### 4.2.1 - 2026-07-23
-  * sbofind: Show maintainer names unless in CLASSIC mode; search names with --maintainers.
-  * sbotool: Show maintainer names in the per-script Operations screens.
-  * Download.pm: Ignore content_disposition settings in wgetrc.
-    * Thanks to worriedeland for the heads-up.
-  * Added a setting FORCE_OBSOLETE to treat the obsolete scripts list as a supplementary blacklist on -current.
-    * Do not use unless your repository does not remove outdated scripts.
-    * Thanks to gbschenkel for raising this issue.
-  * sboremove: Offer to remove installed dependencies of uninstalled packages.
-  * SBO::Lib: AArch64 compatibility fixes.
-    * Shared object checks
-    * Handling for scripts supporting only 64- or 32-bit architecture
-  * sbocheck: Search for files and packages depending on one or more libraries with --lib-search
-  * Info.pm: Account for leading spaces in info files
-  * Info.pm: Deal with potential pattern match warning in x64 and x32 checks
-    * Thanks to leoctrl for the report.
 
 ## Previous Changes
 See [ChangeLog.md](https://github.com/pghvlaans/sbotools/blob/master/SBO-Lib/ChangeLog.md) for a record of changes from version 1.9 onward.

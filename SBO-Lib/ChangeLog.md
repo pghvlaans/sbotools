@@ -1,6 +1,6 @@
 # sbotools
 
-#### Post-Release
+#### 4.4 - 2026-08-07
   * sboupgrade: Accept -A for --all-plus-failures.
   * Util.pm: Reset the color at the end of colored lines, not afterwards.
   * sbocheck: Do not attempt /opt labeling with --lib-search.

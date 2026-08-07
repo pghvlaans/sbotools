@@ -13,7 +13,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '4.3';
+our $VERSION = '4.4';
 
 use Cwd qw/ abs_path /;
 use Exporter 'import';
