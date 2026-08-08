@@ -1,5 +1,10 @@
 ## ChangeLog.md
 
+#### Post-Release
+  * Compatibility bump
+  * Account for the new **IDLE_BUILD** setting; add **\--idle-build**
+    * Thanks to shamefulCake1 for the sbotools request
+
 #### 1.3 - 2026-08-07
   * Compatibility bump
   * Account for the new **NICENESS** setting; add **\--niceness**

@@ -3,6 +3,9 @@
   * *sboupgrade*, *sboinstall*: Minor display fixes.
   * *Download.pm*: Use `https://` instead of `ftp://` for sbosrcarch.
     * Thanks to fsLeg for the report.
+  * Added a setting **IDLE_BUILD**; set to **TRUE** to assign the `idle` IO priority class to the build/installation phase
+    * Thanks again to shamefulCake1 for the request and to SCerovec for his insights.
+    * Use the **\--idle-build** option for *sboinstall* and *sboupgrade* to override the setting.
 
 * 4.4 - 2026-08-07
   * *sboupgrade*: Accept **\-A** for **\--all-plus-failures**.
