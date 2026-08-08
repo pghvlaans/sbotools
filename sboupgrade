@@ -575,6 +575,7 @@ if ($config{CLASSIC} eq "TRUE") {
 	wrapsay_color $color_notice, "\n$action queue:";
 	wrapsay join(' ', @$upgrade_queue);
 }
+print "\n" unless $dry_run;
 
 unless ($non_int) {
 	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
@@ -641,16 +642,23 @@ if ($config{NO_SOCHECK} ne "TRUE" and @solib_search and not $no_install and not 
 		}
 		$| = 0;
 		if (@actionable) {
-			wrapsay_color $color_lesser, "\nThe following packages may require rebuilding:", 1;
-			my $had_opt_only;
+			my (@display_normal, @display_opt);
 			for my $sbo (sort @actionable) {
-				my $opt_msg = in $installed_pkg->{$sbo}, @not_opt_only ? "" : " (/opt only)";
-				print "  $sbo$opt_msg\n";
-				$had_opt_only = 1 if $opt_msg;
+				if (in $installed_pkg->{$sbo}, @not_opt_only) {
+					push @display_normal, $sbo;
+				} else {
+					push @display_opt, $sbo;
+				}
 			}
-			if ($had_opt_only) {
-				print "\n";
-				wrapsay_color $color_lesser, "Packages in /opt do not usually require rebuilds.";
+			if (@display_normal) {
+				wrapsay_color $color_lesser, "\nThe following may require rebuilding:", 1;
+				print "  $_\n" for (@display_normal);
+				print "\n" if @display_opt;
+			}
+			if (@display_opt) {
+				wrapsay_color $color_lesser, "\nThe following had failures only in /opt:", 1;
+				print "  $_\n" for (@display_opt);
+				wrapsay_color $color_notice, "Such packages are often binary extractions, which do not require rebuilds.";
 			}
 			for my $sbo (sort @actionable) { push @log_output, "$sbo $installed_vers->{$sbo}:\n$old_libs{$installed_pkg->{$sbo}}\n"; }
 			my $logfile = '/var/log/sboupgrade-solibs.log';
