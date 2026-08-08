@@ -21,7 +21,7 @@
 
     sboupgrade [-h|-v]
 
-    sboupgrade [-NISXbcde TRUE|FALSE] [-Zj #|FALSE] [-Lk
+    sboupgrade [-NISXYbcde TRUE|FALSE] [-Zj #|FALSE] [-Lk
 /path\|FALSE] \
                [-figopqrz] [--batch|--dry-run]
 \--all\|\--all-plus-failures\|sbo_name (sbo_name)
@@ -239,6 +239,13 @@ shared objects provided by outgoing packages are reflected in the
 results. For a full shared object check, see [sbocheck(1)](sbocheck.1.md). This
 option overrides the **NO_SOCHECK** setting.
 
+**-Y\|\--idle-build (FALSE\|TRUE)**
+
+If **TRUE**, use the *idle* IO priority class for **sboupgrade** when
+building and installng packages. If **FALSE**, use the incoming
+**ionice(1)** settings, generally class *none*. See **ionice(1)** for
+more information.
+
 **-Z\|\--niceness (FALSE\|-20..19)**
 
 **If set to a number** from -20 through 19, use that as the absolute
@@ -415,10 +422,10 @@ Otherwise, none known. If found, Issues and Pull Requests to
 
 ## SEE ALSO
 
-[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
-[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1), groupadd(1), setarch(1),
-useradd(1)
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbocutleaves(1)](sbocutleaves.1.md), [sbofind(1)](sbofind.1.md),
+[sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md),
+[sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), ionice(1),
+gpg(1), groupadd(1), setarch(1), useradd(1)
 
 ## AUTHORS
 

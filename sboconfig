@@ -96,6 +96,8 @@ Configuration options (defaults shown):
       NOWRAP: do not automatically wrap sbotools output.
   -X|--no-socheck FALSE:
       NO_SOCHECK: do not check .so dependencies after sbocheck and sboupgrade.
+  -Y|--idle-build FALSE:
+      IDLE_BUILD: if TRUE, use the "idle" IO priority class for build/install.
   -Z|--niceness FALSE:
       NICENESS: if a NUMBER (-20 ~ 19), use that niceness for build/install.
 
@@ -167,6 +169,8 @@ Configuration options (defaults shown):
       NOWRAP: do not automatically wrap sbotest output.
   -X|--no-socheck FALSE:
       NO_SOCHECK: do not check for missing .so dependencies after failures.
+  -Y|--idle-build FALSE:
+      IDLE_BUILD: if TRUE, use the "idle" IO priority class for build/install.
   -Z|--niceness FALSE:
       NICENESS: if a NUMBER (-20 ~ 19), use that niceness for build/install.
 EOF
@@ -182,14 +186,14 @@ unless ($is_sbotest) {
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s', 'instant-stop|I=s', 'niceness|Z=s');
+		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s', 'instant-stop|I=s', 'niceness|Z=s', 'idle-build|Y=s');
 } else {
 	GetOptions(\%options, 'help|h', 'version|v', 'list|l', 'non-default|n', 'reset', 'classic|C=s', 'noclean|c=s',
 		'distclean|d=s', 'jobs|j=s', 'pkg-dir|p=s', 'sbo-home|s=s',
 		'local-overrides|o=s', 'slackware-version|V=s', 'repo|r=s',
 		'build-ignore|b=s', 'branch|B=s', 'rsync|R=s', 'gpg-verify|g=s', 'strict-upgrades|S=s',
 		'cpan-ignore|P=s', 'obsolete-check|O=s', 'etc-profile|e=s', 'log-dir|L=s',
-		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'sbo-archive|A=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s', 'instant-stop|I=s', 'niceness|Z=s');
+		'nowrap|w=s', 'nocolor|K=s', 'no-socheck|X=s', 'sbo-archive|A=s', 'dialogrc|D=s', 'nonet|N=s', 'force-obsolete|F=s', 'instant-stop|I=s', 'niceness|Z=s', 'idle-build|Y=s');
 }
 
 $options{list} = 1 if exists $options{'non-default'};
@@ -231,6 +235,7 @@ my %valid_confs = (
 	'force-obsolete'    => 'FORCE_OBSOLETE',
 	'instant-stop'      => 'INSTANT_STOP',
 	'niceness'          => 'NICENESS',
+	'idle-build'        => 'IDLE_BUILD',
 );
 $valid_confs{"sbo-archive"} = 'SBO_ARCHIVE' if $is_sbotest;
 
@@ -261,6 +266,7 @@ my %params = (
 	FORCE_OBSOLETE    => 'F|--force-obsolete',
 	INSTANT_STOP      => 'I|--instant-stop',
 	NICENESS          => 'Z|--niceness',
+	IDLE_BUILD        => 'Y|--idle-build',
 );
 $params{SBO_ARCHIVE} = 'A|--sbo-archive' if $is_sbotest;
 

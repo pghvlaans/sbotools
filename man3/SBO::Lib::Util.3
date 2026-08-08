@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Prickle-Prickle, Confusion 73, 3192 YOLD" "" "sbotools 4.4"
+.TH SBO::Lib::Util 3 "Setting Orange, Bureaucracy 1, 3192 YOLD" "" "sbotools 4.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -113,7 +113,7 @@ The supported keys are: \f(CW\*(C`NOCLEAN\*(C'\fR, \f(CW\*(C`DISTCLEAN\*(C'\fR, 
 \&\f(CW\*(C`SBO_HOME\*(C'\fR, \f(CW\*(C`LOCAL_OVERRIDES\*(C'\fR, \f(CW\*(C`SLACKWARE_VERSION\*(C'\fR, \f(CW\*(C`REPO\*(C'\fR, \f(CW\*(C`BUILD_IGNORE\*(C'\fR,
 \&\f(CW\*(C`GPG_VERIFY\*(C'\fR, \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR, \f(CW\*(C`STRICT_UPGRADES\*(C'\fR, \f(CW\*(C`GIT_BRANCH\*(C'\fR, \f(CW\*(C`CLASSIC\*(C'\fR,
 \&\f(CW\*(C`CPAN_IGNORE\*(C'\fR, \f(CW\*(C`ETC_PROFILE\*(C'\fR, \f(CW\*(C`LOG_DIR\*(C'\fR, \f(CW\*(C`NOWRAP\*(C'\fR, \f(CW\*(C`NOCOLOR\*(C'\fR, \f(CW\*(C`NO_SOCHECK\*(C'\fR,
-\&\f(CW\*(C`DIALOGRC\*(C'\fR, \f(CW\*(C`NONET\*(C'\fR, \f(CW\*(C`FORCE_OBSOLETE\*(C'\fR, \f(CW\*(C`INSTANT_STOP\*(C'\fR and \f(CW\*(C`NICENESS\*(C'\fR.
+\&\f(CW\*(C`DIALOGRC\*(C'\fR, \f(CW\*(C`NONET\*(C'\fR, \f(CW\*(C`FORCE_OBSOLETE\*(C'\fR, \f(CW\*(C`INSTANT_STOP\*(C'\fR, \f(CW\*(C`NICENESS\*(C'\fR and \f(CW\*(C`IDLE_BUILD\*(C'\fR.
 .ie n .SS $distfiles_dir
 .el .SS \f(CW$distfiles_dir\fP
 .IX Subsection "$distfiles_dir"
@@ -508,6 +508,15 @@ to \f(CW\*(C`TRUE\*(C'\fR. Supplementary setting \f(CW\*(C`SBO_ARCHIVE\*(C'\fR d
 \&\f(CW\*(C`sbotest\*(C'\fR uses timestamped directories under the configured paths.
 .PP
 There is no useful return value.
+.SS read_ionice
+.IX Subsection "read_ionice"
+.Vb 1
+\&  my @ionice = read_ionice();
+.Ve
+.PP
+\&\f(CWread_ionice()\fR parses \f(CWionice(1)\fR output and returns an array with the current \f(CW\*(C`class\*(C'\fR
+and \f(CW\*(C`prioritiy level\*(C'\fR for the running script. The script exits if proper values cannot
+be parsed.
 .SS read_hints
 .IX Subsection "read_hints"
 .Vb 1
@@ -564,6 +573,16 @@ If a \f(CW$msg\fR was supplied, it instead prints:
 .PP
 There is no useful return value. For \f(CW\*(C`_ERR_USAGE\*(C'\fR, use \f(CWusage_error()\fR. For other error
 codes, use \f(CWerror_code()\fR.
+.SS set_ionice
+.IX Subsection "set_ionice"
+.Vb 1
+\&  set_ionice($class, $level);
+.Ve
+.PP
+\&\f(CWset_ionice()\fR takes an array with an \f(CWionice(1)\fR class and level, and runs
+the appropriate command to set the IO priority levels to those settings for the
+running script. The script exits if invalid \f(CWionice(1)\fR settings are passed.
+There is no useful return value.
 .SS show_version
 .IX Subsection "show_version"
 .Vb 1
@@ -681,7 +700,7 @@ The sbotools share the following exit codes:
 .Ve
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
-\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBdialog\fR\|(1), \fBTerm::ANSIColor\fR\|(3)
+\&\fBSBO::Lib\fR\|(3), \fBSBO::Lib::Build\fR\|(3), \fBSBO::Lib::Download\fR\|(3), \fBSBO::Lib::Info\fR\|(3), \fBSBO::Lib::Pkgs\fR\|(3), \fBSBO::Lib::Readme\fR\|(3), \fBSBO::Lib::Repo\fR\|(3), \fBSBO::Lib::Tree\fR\|(3), \fBdialog\fR\|(1), \fBionice\fR\|(1), \fBTerm::ANSIColor\fR\|(3)
 .SH AUTHORS
 .IX Header "AUTHORS"
 SBO::Lib was originally written by Jacob Pipkin <jacob.pipkin@icloud.com> with

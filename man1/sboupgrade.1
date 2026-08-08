@@ -8,7 +8,7 @@ sboupgrade
 .P
 sboupgrade [-h|-v]
 .P
-sboupgrade [-NISXbcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
+sboupgrade [-NISXYbcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
            [-figopqrz] [--batch|--dry-run] --all|--all-plus-failures|sbo_name (sbo_name)
 .P
 sboupgrade [--color|--nocolor] [--wrap|--nowrap] ...
@@ -609,6 +609,33 @@ setting.
 .RE
 .P
 .B
+-Y|--idle-build (FALSE|TRUE)
+.RS
+If
+.B
+TRUE\fR\
+\&, use the
+.I
+idle
+IO priority class for
+.B
+sboupgrade
+when building and installng packages. If
+.B
+FALSE\fR\
+\&, use the incoming
+.B
+ionice(1)
+settings, generally class
+.I
+none\fR\
+\&. See
+.B
+ionice(1)
+for more information.
+.RE
+.P
+.B
 -Z|--niceness (FALSE|-20..19)
 .RS
 .B
@@ -1094,7 +1121,7 @@ Otherwise, none known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sbotool(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), gpg(1), groupadd(1), setarch(1), useradd(1)
+sbocheck(1), sboclean(1), sboconfig(1), sbocutleaves(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sbotool(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), ionice(1), gpg(1), groupadd(1), setarch(1), useradd(1)
 .SH AUTHORS
 .P
 Jacob Pipkin <jacob.pipkin@icloud.com>

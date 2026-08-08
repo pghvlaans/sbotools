@@ -81,13 +81,15 @@ Options (defaults shown first where applicable):
     if TRUE, do not check for missing .so dependencies.
   -z|--force-reqs:
     rebuild dependencies as well.
+  -Y|--idle-build (FALSE|TRUE):
+    if TRUE, use the "idle" IO priority class for build/install.
   -Z|--niceness (FALSE|-20..19)
     if a NUMBER (-20 ~ 19), use that niceness for build/install.
 EOF
 	return 1;
 }
 
-my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $no_socheck, $wrap, $nowrap, $nonet, $all_fails, $get_only, $instant_stop, $niceness);
+my ($help, $vers, $force, $no_install, $no_recall, $non_int, $force_reqs, $reverse, $compat32, $all, $yes_really, $dry_run, $noclean, $distclean, $jobs, $pkg_dir, $log_dir, $build_ignore, $strict_upgrades, $gpg, $etc_profile, $nocolor, $color, $no_socheck, $wrap, $nowrap, $nonet, $all_fails, $get_only, $instant_stop, $niceness, $idle_build);
 
 my $options_ok = GetOptions(
 	'help|h'            => \$help,
@@ -120,6 +122,7 @@ my $options_ok = GetOptions(
 	'get-only|g'        => \$get_only,
 	'instant-stop|I=s'  => \$instant_stop,
 	'niceness|Z=s'      => \$niceness,
+	'idle-build|Y=s'    => \$idle_build,
 );
 
 if ($help) {
@@ -152,6 +155,7 @@ $config{JOBS} = $jobs if $jobs;
 $config{NONET} = $nonet if $nonet;
 $config{INSTANT_STOP} = $instant_stop if $instant_stop;
 $config{NICENESS} = $niceness if $niceness;
+$config{IDLE_BUILD} = $idle_build if $idle_build;
 
 lint_sbo_config($self, %config);
 merge_obsolete();

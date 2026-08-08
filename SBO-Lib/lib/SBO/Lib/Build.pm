@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '4.4';
 
-use SBO::Lib::Util qw/ :config :const :times :colors prompt error_code script_error get_sbo_from_loc check_multilib on_blacklist open_fh open_read uniq save_options wrapsay in in_regexp $userland_32 /;
+use SBO::Lib::Util qw/ :config :const :times :colors prompt error_code script_error get_sbo_from_loc check_multilib on_blacklist open_fh open_read uniq save_options wrapsay in in_regexp read_ionice set_ionice $userland_32 /;
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires get_reverse_reqs /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_filename_from_link check_distfiles stage unstage /;
@@ -725,8 +725,8 @@ with failed builds and the exit status. If there is an argument C<GET_ONLY>, the
 reference contains failed downloads instead of builds.
 
 In case of a mass rebuild, C<process_sbos()> updates the resume file C<resume.temp>
-when a build fails. If the C<NICENESS> setting is not C<FALSE>, that is also handled
-here with C<renice(1)>.
+when a build fails. If the C<NICENESS> or C<IDLE_BUILD> settings are not C<FALSE>,
+they are also handled here with C<renice(1)> and C<ionice(1)>, respectively.
 
 =cut
 
@@ -799,6 +799,8 @@ sub process_sbos {
   my $count = 0;
   chomp(my $existing_nice = `/bin/nice`);
   `/usr/bin/renice $config{NICENESS} $$` if $config{NICENESS} ne "FALSE";
+  my @existing_ionice = read_ionice();
+  `/usr/bin/ionice -c 3 -p $$` if $config{IDLE_BUILD} ne "FALSE";
   FIRST: for my $sbo (@$todo) {
     $count++;
     if (@failure_names) {
@@ -843,6 +845,8 @@ sub process_sbos {
           display_times() unless $config{CLASSIC} eq "TRUE";
           chomp(my $test_nice = `/bin/nice`);
           `/usr/bin/renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
+          my @test_ionice = read_ionice();
+          set_ionice(@existing_ionice) if $config{IDLE_BUILD} ne "FALSE" and $test_ionice[0] == 3;
           return \@failures, $exit;
         }
       } elsif ($count == @$todo or ($config{INSTANT_STOP} eq "TRUE" and $args{NON_INT})) {
@@ -851,6 +855,8 @@ sub process_sbos {
           display_times() unless $config{CLASSIC} eq "TRUE";
           chomp(my $test_nice = `/bin/nice`);
           `/usr/bin/renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
+          my @test_ionice = read_ionice();
+          set_ionice(@existing_ionice) if $config{IDLE_BUILD} ne "FALSE" and $test_ionice[0] == 3;
           return \@failures, $exit;
       }
       next FIRST;
@@ -892,6 +898,8 @@ sub process_sbos {
   display_times() unless $config{CLASSIC} eq "TRUE";
   chomp(my $test_nice = `/bin/nice`);
   `/usr/bin/renice $existing_nice $$` if $config{NICENESS} ne "FALSE" and $test_nice == $config{NICENESS};
+  my @test_ionice = read_ionice();
+  set_ionice(@existing_ionice) if $config{IDLE_BUILD} ne "FALSE" and $test_ionice[0] == 3;
   return \@failures, $err;
 }
 
@@ -1090,7 +1098,7 @@ Build.pm subroutines can return the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Solibs(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), JSON::PP(3), renice(1), unshare(1)
+SBO::Lib(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Solibs(3), SBO::Lib::Tree(3), SBO::Lib::Util(3), ionice(1), JSON::PP(3), renice(1), unshare(1)
 
 =head1 AUTHORS
 

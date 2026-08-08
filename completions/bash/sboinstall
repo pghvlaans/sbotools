@@ -19,7 +19,7 @@ _sboinstall() {
 
   case "${cmd}" in
     sboinstall)
-      opts="-h -v -c -D -d -e -g -I -i -j -k -L -N -o -p -r -R -t -V -q -Z --help --version --color --nocolor --wrap --nowrap --noclean --distclean --etc-profile --get-only --noinstall --norecall --instant-stop --jobs --pkg-dir --log-dir --nonet --niceness --compat32 --nointeractive --norequirements --reinstall --create-template --use-template --template-only --reverse-rebuild --series-rebuild --mass-rebuild --batch --dry-run $REPOLIST"
+      opts="-h -v -c -D -d -e -g -I -i -j -k -L -N -o -p -r -R -t -V -q -Y -Z --help --version --color --nocolor --wrap --nowrap --noclean --distclean --etc-profile --get-only --noinstall --norecall --instant-stop --jobs --pkg-dir --log-dir --nonet --niceness --idle-build --compat32 --nointeractive --norequirements --reinstall --create-template --use-template --template-only --reverse-rebuild --series-rebuild --mass-rebuild --batch --dry-run $REPOLIST"
       if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0
@@ -33,7 +33,7 @@ _sboinstall() {
           COMPREPLY=( $(compgen -W "FALSE" -- "${cur}") )
           return 0
           ;;
-        -c|--noclean|-d|--distclean|-e|--etc-profile|-N|--nonet|-I|--instant-stop)
+        -c|--noclean|-d|--distclean|-e|--etc-profile|-N|--nonet|-I|--instant-stop|-Y|--idle-build)
           COMPREPLY=( $(compgen -W "FALSE TRUE" -- "${cur}") )
           return 0
           ;;

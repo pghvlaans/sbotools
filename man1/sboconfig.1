@@ -15,7 +15,7 @@ sboconfig [-l|-n]
 .P
 sboconfig [--reset]
 .P
-sboconfig [-CFKINOPRSXcbdegw TRUE|FALSE] [-Zj #|FALSE] [-DLpo /path|FALSE] \\
+sboconfig [-CFKINOPRSXYcbdegw TRUE|FALSE] [-Zj #|FALSE] [-DLpo /path|FALSE] \\
           [-s /path|/var/lib/sbotools] [-B branch_name|FALSE] [-V #.#|FALSE] \\
           [-r url|FALSE]
 .SH DESCRIPTION
@@ -675,6 +675,32 @@ ruby
 .I
 _SBo
 packages.
+.RE
+.P
+.B
+-Y|--idle-build (FALSE|TRUE)
+.RS
+.B
+IDLE_BUILD\fR\
+\&: If
+.B
+TRUE\fR\
+\&, use the
+.I
+idle
+IO priority class when building and installng packages. If
+.B
+FALSE\fR\
+\&, use the incoming
+.B
+ionice(1)
+settings, generally class
+.I
+none\fR\
+\&. See
+.B
+ionice(1)
+for more information.
 .RE
 .P
 .B

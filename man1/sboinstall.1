@@ -8,17 +8,17 @@ sboinstall
 .P
 sboinstall [-h|-v]
 .P
-sboinstall [-NIdce TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-NIYdce TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
            [-DRgiopr] [--batch|--dry-run] [--create-template|-t FILE] \\
            sbo_name (sbo_name)
 .P
-sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-NIYcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
            [-Dgi] --use-template FILE
 .P
-sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-NIYcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
            [-Dgioqr] [--create-template|-t FILE] --mass-rebuild
 .P
-sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
+sboinstall [-NIYcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE] \\
            [-Dgioqr] [--create-template|-t FILE] --series-rebuild SERIES,...
 .P
 sboinstall [--color|--nocolor] [--wrap|--nowrap] ...
@@ -562,6 +562,33 @@ and
 .B
 --get-only\fR\
 \&.
+.RE
+.P
+.B
+-Y|--idle-build (FALSE|TRUE)
+.RS
+If
+.B
+TRUE\fR\
+\&, use the
+.I
+idle
+IO priority class for
+.B
+sboinstall
+when building and installng packages. If
+.B
+FALSE\fR\
+\&, use the incoming
+.B
+ionice(1)
+settings, generally class
+.I
+none\fR\
+\&. See
+.B
+ionice(1)
+for more information.
 .RE
 .P
 .B
@@ -1119,7 +1146,7 @@ Otherwise, none known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sbocutleaves(1), sbofind(1), sbohints(1), sboremove(1), sbotool(1), sboupgrade(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), gpg(1), groupadd(1), setarch(1), useradd(1)
+sbocheck(1), sboclean(1), sboconfig(1), sbocutleaves(1), sbofind(1), sbohints(1), sboremove(1), sbotool(1), sboupgrade(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), ionice(1), gpg(1), groupadd(1), setarch(1), useradd(1)
 .SH AUTHORS
 .P
 Jacob Pipkin <jacob.pipkin@icloud.com>

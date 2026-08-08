@@ -25,7 +25,7 @@
 
     sboconfig [--reset]
 
-    sboconfig [-CFKINOPRSXcbdegw TRUE|FALSE] [-Zj #|FALSE] [-DLpo
+    sboconfig [-CFKINOPRSXYcbdegw TRUE|FALSE] [-Zj #|FALSE] [-DLpo
 /path\|FALSE] \
               [-s /path|/var/lib/sbotools] [-B branch_name|FALSE] [-V
 #.#\|FALSE] \
@@ -253,6 +253,13 @@ shared object (solib) dependencies among *\_SBo* packages when running
 [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md). Additionally, [sbocheck(1)](sbocheck.1.md)
 does not search for incompatible **perl**, **python** and **ruby**
 *\_SBo* packages.
+
+**-Y\|\--idle-build (FALSE\|TRUE)**
+
+**IDLE_BUILD**: If **TRUE**, use the *idle* IO priority class when
+building and installng packages. If **FALSE**, use the incoming
+**ionice(1)** settings, generally class *none*. See **ionice(1)** for
+more information.
 
 **-Z\|\--niceness (FALSE\|-20..19)**
 

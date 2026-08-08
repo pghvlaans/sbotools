@@ -8,6 +8,7 @@ package SBO::Lib::Util;
 #% SBOTEST V1.2.2 COMPAT %
 #% SBOTEST V1.2.3 COMPAT %
 #% SBOTEST V1.2.4 COMPAT %
+#% SBOTEST V1.3.1 COMPAT %
 
 use 5.016;
 use strict;
@@ -133,9 +134,11 @@ our @EXPORT_OK = (
     print_color
     print_failures
     prompt
+    read_ionice
     read_hints
     save_options
     script_error
+    set_ionice
     show_version
     slurp
     time_format
@@ -212,7 +215,7 @@ The supported keys are: C<NOCLEAN>, C<DISTCLEAN>, C<JOBS>, C<PKG_DIR>,
 C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
 C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<NOCOLOR>, C<NO_SOCHECK>,
-C<DIALOGRC>, C<NONET>, C<FORCE_OBSOLETE>, C<INSTANT_STOP> and C<NICENESS>.
+C<DIALOGRC>, C<NONET>, C<FORCE_OBSOLETE>, C<INSTANT_STOP>, C<NICENESS> and C<IDLE_BUILD>.
 
 =head2 $distfiles_dir
 
@@ -348,6 +351,7 @@ our %config = (
   FORCE_OBSOLETE => 'FALSE',
   INSTANT_STOP => 'FALSE',
   NICENESS => 'FALSE',
+  IDLE_BUILD => 'FALSE',
 );
 
 if (defined $is_sbotest) {
@@ -965,6 +969,12 @@ sub lint_sbo_config {
       push @invalid, "$warn -I (TRUE or FALSE)";
     }
   }
+  if (exists $configs{IDLE_BUILD}) {
+    unless ($configs{IDLE_BUILD} =~ /^(TRUE|FALSE)$/) {
+      push @invalid, "IDLE_BUILD:" if $running ne 'sboconfig';
+      push @invalid, "$warn -Y (TRUE or FALSE)";
+    }
+  }
   if (exists $configs{JOBS}) {
     unless ($configs{JOBS} =~ /^(\d+|FALSE)$/) {
       push @invalid, "JOBS:" if $running ne 'sboconfig';
@@ -1339,6 +1349,27 @@ sub read_config {
   }
 }
 
+=head2 read_ionice
+
+  my @ionice = read_ionice();
+
+C<read_ionice()> parses C<ionice(1)> output and returns an array with the current C<class>
+and C<prioritiy level> for the running script. The script exits if proper values cannot
+be parsed.
+
+=cut
+
+sub read_ionice {
+  chomp(my $ionice_string = `LANG=C /usr/bin/ionice -p $$`);
+  script_error("Failed to read ionice output; exiting.") unless $ionice_string;
+  return (0, 0) if $ionice_string =~ /^none/;
+  return (3, 0) if $ionice_string eq "idle";
+  my @ionice = split " ", $ionice_string;
+  return (1, $ionice[-1]) if $ionice[0] eq "realtime:" and $ionice[-1] =~ /^\d+$/ and $ionice[-1] < 8;
+  return (2, $ionice[-1]) if $ionice[0] eq "best-effort:" and $ionice[-1] =~ /^\d+$/ and $ionice[-1] < 8;
+  script_error("Failed to parse ionice output; exiting.");
+}
+
 =head2 read_hints
 
   our @listings = read_hints();
@@ -1501,6 +1532,31 @@ sub script_error {
   }
   print color("reset");
   exit _ERR_SCRIPT;
+}
+
+=head2 set_ionice
+
+  set_ionice($class, $level);
+
+C<set_ionice()> takes an array with an C<ionice(1)> class and level, and runs
+the appropriate command to set the IO priority levels to those settings for the
+running script. The script exits if invalid C<ionice(1)> settings are passed.
+There is no useful return value.
+
+=cut
+
+sub set_ionice {
+  script_error("set_ionice requires two arguments.") unless @_ == 2;
+  my ($class, $level) = @_;
+  if ($class == 0 or $class == 3) {
+    `/usr/bin/ionice -c $class -p $$`;
+    return;
+  }
+  if (($class != 1 and $class != 2) or not $level =~ /^\d+$/ or $level > 7) {
+    script_error("set_ionice was passed invalid parameters.");
+  }
+  `/usr/bin/ionice -c $class -n $level -p $$`;
+  return;
 }
 
 =head2 show_version
@@ -1754,7 +1810,7 @@ The sbotools share the following exit codes:
 
 =head1 SEE ALSO
 
-SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), dialog(1), Term::ANSIColor(3)
+SBO::Lib(3), SBO::Lib::Build(3), SBO::Lib::Download(3), SBO::Lib::Info(3), SBO::Lib::Pkgs(3), SBO::Lib::Readme(3), SBO::Lib::Repo(3), SBO::Lib::Tree(3), dialog(1), ionice(1), Term::ANSIColor(3)
 
 =head1 AUTHORS
 

@@ -1286,6 +1286,7 @@ sub display_settings {
 						"\"FORCE_OBSOLETE: $config{FORCE_OBSOLETE}$plus\" \"\" \"If TRUE, treat obsolete scripts as blacklisted on -current.\" \\",
 						"\"GIT_BRANCH: $config{GIT_BRANCH}\" \"\" \"Use this non-default branch for git repos.\" \\",
 						"\"GPG_VERIFY: $config{GPG_VERIFY}$plus\" \"\" \"If TRUE, verify the repo with GPG after fetching.\" \\",
+						"\"IDLE_BUILD: $config{IDLE_BUILD}$plus\" \"\" \"If TRUE, use the idle IO processing class during build/install.\" \\",
 						"\"INSTANT_STOP: $config{INSTANT_STOP}$plus\" \"\" \"If TRUE, offer to stop the queue as soon as one build fails.\" \\",
 						"\"JOBS: $config{JOBS}\" \"\" \"If a number, use this many jobs with make.\" \\",
 						"\"LOCAL_OVERRIDES: $config{LOCAL_OVERRIDES}\" \"\" \"Use this directory for local override scripts.\" \\",
@@ -1377,6 +1378,11 @@ sub display_settings {
 			$explanation = "If TRUE, use GPG to verify the repository and the obsolete\nscript list.";
 			$criterion = "TRUE or FALSE.";
 			$flag = "g";
+		}
+		if ($option =~ /^IDLE_BUILD/) {
+			$explanation = "If TRUE, use the idle IO priority class for build/install.";
+			$criterion = "TRUE or FALSE.";
+			$flag = "Y";
 		}
 		if ($option =~ /^INSTANT_STOP/) {
 			$explanation = "If TRUE, offer to stop the queue as soon as one build fails.";

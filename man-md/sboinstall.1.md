@@ -21,21 +21,21 @@
 
     sboinstall [-h|-v]
 
-    sboinstall [-NIdce TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIYdce TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
 \
                [-DRgiopr] [--batch|--dry-run] [--create-template|-t FILE]
 \
                sbo_name (sbo_name)
 
-    sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIYcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
 \
                [-Dgi] --use-template FILE
 
-    sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIYcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
 \
                [-Dgioqr] [--create-template|-t FILE] --mass-rebuild
 
-    sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIYcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
 \
                [-Dgioqr] [--create-template|-t FILE] --series-rebuild
 SERIES,\...
@@ -227,6 +227,13 @@ Save a template to **FILE**, but do not attempt downloads or builds.
 Non-root users may call **sboinstall** with **\--template-only**.
 
 Incompatible with **\--create-template** and **\--get-only**.
+
+**-Y\|\--idle-build (FALSE\|TRUE)**
+
+If **TRUE**, use the *idle* IO priority class for **sboinstall** when
+building and installng packages. If **FALSE**, use the incoming
+**ionice(1)** settings, generally class *none*. See **ionice(1)** for
+more information.
 
 **-Z\|\--niceness (FALSE\|-20..19)**
 
@@ -433,8 +440,8 @@ Otherwise, none known. If found, Issues and Pull Requests to
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbocutleaves(1)](sbocutleaves.1.md), [sbofind(1)](sbofind.1.md),
 [sbohints(1)](sbohints.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md),
-[sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1),
-groupadd(1), setarch(1), useradd(1)
+[sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), ionice(1),
+gpg(1), groupadd(1), setarch(1), useradd(1)
 
 ## AUTHORS
 
