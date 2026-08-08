@@ -28,6 +28,8 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 ## Most Recent Changes
 #### Post-Release
   * sboupgrade, sboinstall: Minor display fixes.
+  * Download.pm: Use https:// instead of ftp:// for sbosrcarch.
+    * Thanks to fsLeg for the report.
 
 #### 4.4 - 2026-08-07
   * sboupgrade: Accept -A for --all-plus-failures.

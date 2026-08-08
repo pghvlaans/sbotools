@@ -211,7 +211,7 @@ sub get_distfile {
   # didn't verify, try to get it from sbosrcarch instead
   unlink $filename if -f $filename;
   my $sbosrcarch = sprintf(
-    "ftp://slackware.uk/sbosrcarch/by-md5/%s/%s/%s",
+    "https://slackware.uk/sbosrcarch/by-md5/%s/%s/%s",
     substr($info_md5, 0, 1), substr($info_md5, 1, 1), _get_fname($link, $info_md5));
 
   if (system('wget', '--tries=5', $sbosrcarch) == 0 and
