@@ -33,6 +33,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * Added a setting IDLE_BUILD; set to TRUE to assign the idle IO priority class to the build/installation phase
     * Thanks again to shamefulCake1 for the request and to SCerovec for his insights.
     * Use the --idle-build option for sboinstall and sboupgrade to override the setting.
+  * sbocheck, sboupgrade: Do not print a running package count if the terminal is too narrow.
 
 #### 4.4 - 2026-08-07
   * sboupgrade: Accept -A for --all-plus-failures.

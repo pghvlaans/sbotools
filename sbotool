@@ -54,6 +54,17 @@ my $code_dialog_error = defined $ENV{"DIALOG_ERROR"} ? $ENV{"DIALOG_ERROR"} : -1
 
 my $overrides_available = 1 if $config{LOCAL_OVERRIDES} ne "FALSE" and -d -w $config{LOCAL_OVERRIDES};
 
+# The temporary directory from Build.pm isn't needed; use
+# a different one.
+if ($< == 0) {
+	remove_tree($tempdir) if -d $tempdir;
+}
+my $sbotool_tempdir = tempdir(CLEANUP => 1, DIR => "/tmp");
+my $dialog_input = "$sbotool_tempdir/dialog_input";
+my $dialog_output = "$sbotool_tempdir/dialog_output";
+my $dialog_exit = "$sbotool_tempdir/dialog_exit";
+my $command_output = "$sbotool_tempdir/command_output";
+
 my ($terminal_height, $terminal_width);
 my $max_width = 125;
 my ($normal, $wide, $narrow); # All set in terminal_check.
@@ -94,17 +105,6 @@ if (-s $slackbuilds_txt) {
 		for (@$updates) { push @update_names, $_->{name} unless on_blacklist $_->{name}; }
 	}
 }
-
-# The temporary directory from Build.pm isn't needed; use
-# a different one.
-if ($< == 0) {
-	remove_tree($tempdir) if -d $tempdir;
-}
-my $sbotool_tempdir = tempdir(CLEANUP => 1, DIR => "/tmp");
-my $dialog_input = "$sbotool_tempdir/dialog_input";
-my $dialog_output = "$sbotool_tempdir/dialog_output";
-my $dialog_exit = "$sbotool_tempdir/dialog_exit";
-my $command_output = "$sbotool_tempdir/command_output";
 
 unless ($config_menu) {
 	display_main();
@@ -2032,8 +2032,15 @@ EOF
 # $terminal_width are all set here; a sensible maximum height
 # is returned.
 sub terminal_check {
-	chomp(my $lines = `tput lines`);
-	chomp(my $columns = `tput cols`);
+	unless ($has_cols and $has_lines) {
+		my $interior = not $has_cols ? "cols capability" : "lines capability";
+		$interior = (not $has_cols and not $has_lines) ? "cols and lines capabilities" : $interior;
+		prompt($color_notice, "This terminal is missing the $interior; check the value of \$TERM.\nPress ENTER to exit.\n");
+		exit _ERR_USAGE;
+	}
+
+	chomp(my $lines = `/usr/bin/tput lines`);
+	chomp(my $columns = `/usr/bin/tput cols`);
 	if ($lines =~ /\D/ or $columns =~ /\D/) {
 		system("clear");
 		prompt($color_notice, "tput failure; check the value of \$TERM.\nPress ENTER to exit.\n");

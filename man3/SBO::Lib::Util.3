@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Setting Orange, Bureaucracy 1, 3192 YOLD" "" "sbotools 4.4"
+.TH SBO::Lib::Util 3 "Sweetmorn, Bureaucracy 2, 3192 YOLD" "" "sbotools 4.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -124,6 +124,12 @@ downloaded sources are kept.
 .IX Subsection "$download_time"
 The time spent downloading source files. Unless \f(CW\*(C`CLASSIC\*(C'\fR is \f(CW\*(C`TRUE\*(C'\fR, it is
 displayed when all builds are complete.
+.ie n .SS "($has_cols, $has_lines)"
+.el .SS "($has_cols, \f(CW$has_lines\fP)"
+.IX Subsection "($has_cols, $has_lines)"
+These shared variables are true if the running terminal has the \f(CW\*(C`cols\*(C'\fR and \f(CW\*(C`lines\*(C'\fR
+capabilities, respectively. Realistically speaking, this means every remotely modern
+terminal. Relevant for \f(CWsbotool(1)\fR, \f(CWsboupgrade(1)\fR and \f(CWsbocheck(1)\fR.
 .ie n .SS $hint_file
 .el .SS \f(CW$hint_file\fP
 .IX Subsection "$hint_file"

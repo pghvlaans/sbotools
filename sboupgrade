@@ -628,7 +628,8 @@ my ($failures, $exit) = process_sbos(
 print_failures($failures);
 
 if ($config{NO_SOCHECK} ne "TRUE" and @solib_search and not $no_install and not $get_only) {
-	print "\nChecking for broken shared object dependencies from this upgrade...";
+	my $msg = "Checking for broken shared object dependencies from this upgrade...";
+	print "\n$msg";
 	update_known_solibs();
 	my (@actionable, @log_output);
 	my @new_installed = @{ get_installed_packages("SBO", 1) };
@@ -637,14 +638,18 @@ if ($config{NO_SOCHECK} ne "TRUE" and @solib_search and not $no_install and not 
 	my $pkg_count = @new_installed;
 	my $count = 0;
 	if ($pkg_count) {
-		$| = 1;
+		my $msg_length = length($msg) + 6 + 2 * length($pkg_count);
+		my $width = 0;
+		$width = `/usr/bin/tput cols` if $has_cols;
+		my $count_ok = ($width =~ /^\d+$/ and $width > $msg_length);
+		$| = 1 if $count_ok;
 		for my $sbo (keys %$installed_pkg) {
 			$count++;
-			print "\rChecking for broken shared object dependencies from this upgrade... ($count / $pkg_count)";
+			print "\r$msg ($count / $pkg_count)" if $count_ok;
 			next if ignore_tests $sbo;
 			push @actionable, $sbo unless solib_check($installed_pkg->{$sbo}, @solib_search);
 		}
-		$| = 0;
+		$| = 0 if $count_ok;
 		if (@actionable) {
 			my (@display_normal, @display_opt);
 			for my $sbo (sort @actionable) {
