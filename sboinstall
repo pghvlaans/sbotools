@@ -614,7 +614,7 @@ if ($config{CLASSIC} eq "TRUE") {
 	wrapsay_color $color_notice, "\n$action queue:";
 	wrapsay join(' ', @$build_queue);
 }
-print "\n" unless $dry_run;
+print "\n" if $non_int and not $dry_run;
 
 unless ($non_int) {
 	wrapsay_color $color_notice, "\n--noinstall (-i) is in use; built packages will not be installed." if $no_install;
