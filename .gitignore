@@ -3,3 +3,4 @@ t/Sort
 tools/cover.sh
 cover_db
 **/*.swp
+slackbuild/sbotools/*.tar.gz
