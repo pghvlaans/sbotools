@@ -7,7 +7,7 @@ SBOROOT="$(pwd)"
 PWB="$(basename "$SBOROOT")"
 
 if [ ! -d "./man1" ] || [ "$PWB" != "sbotools" ] || [ ! -d "./slackbuild/sbotools" ]; then
-  echo "Run version.sh from the root sbotools directory."
+  echo "Run source_to_slackbuild.sh from the root sbotools directory."
   exit 1
 fi
 
