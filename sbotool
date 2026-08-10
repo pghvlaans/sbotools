@@ -2032,10 +2032,23 @@ EOF
 # $terminal_width are all set here; a sensible maximum height
 # is returned.
 sub terminal_check {
-	unless ($has_cols and $has_lines) {
-		my $interior = not $has_cols ? "cols capability" : "lines capability";
-		$interior = (not $has_cols and not $has_lines) ? "cols and lines capabilities" : $interior;
-		prompt($color_notice, "This terminal is missing the $interior; check the value of \$TERM.\nPress ENTER to exit.\n");
+	unless ($has_cols and $has_clear and $has_lines) {
+		my $msg = "tput failure:";
+		$msg .= " cols" unless $has_cols;
+		$msg .= " clear" unless $has_clear;
+		$msg .= " lines" unless $has_lines;
+		$msg .= ".";
+		if (exists $ENV{TERM}) {
+			$msg .= "\n\nThe value of \$TERM is $ENV{TERM}.\n";
+		} else {
+			$msg .= "\n\n\$TERM does not have a value.\n";
+		}
+		if ($has_clear) {
+			$msg .= "Press ENTER to exit.";
+			prompt($color_warn, $msg);
+		} else {
+			wrapsay_color $color_warn, $msg;
+		}
 		exit _ERR_USAGE;
 	}
 
@@ -2043,14 +2056,20 @@ sub terminal_check {
 	chomp(my $columns = `/usr/bin/tput cols`);
 	if ($lines =~ /\D/ or $columns =~ /\D/) {
 		system("clear");
-		prompt($color_notice, "tput failure; check the value of \$TERM.\nPress ENTER to exit.\n");
+		my $msg = "tput failure;";
+		if (exists $ENV{TERM}) {
+			$msg .= " the value of \$TERM is $ENV{TERM}.\n";
+		} else {
+			$msg .= " \$TERM does not have a value.\n";
+		}
+		prompt($color_warn, "$msg\nPress ENTER to exit.\n");
 		exit _ERR_USAGE;
 	}
 
 	if ($lines < 25 or $columns < 80) {
 		system("clear");
 		prompt($color_notice, "Please resize the terminal to at least 80x25 to run sbotool.\nPress ENTER to try again.");
-		terminal_check();
+		return terminal_check();
 	}
 
 	$terminal_height = $lines;
@@ -2064,4 +2083,4 @@ sub terminal_check {
 	return $max_height;
 }
 
-END { unless ($help or $show_version) { $exit = $?; remove_tree($sbotool_tempdir) if -d $sbotool_tempdir; system("clear"); exit $exit } else { print "\n"; exit 0; } }
+END { unless ($help or $show_version) { $exit = $?; remove_tree($sbotool_tempdir) if -d $sbotool_tempdir; system("clear") if $has_clear; exit $exit } else { print "\n"; exit 0; } }

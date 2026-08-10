@@ -150,15 +150,21 @@ Ensure that the terminal window is at least 80x25 characters to run
 sbotool\fR\
 \&. The
 .B
-lines
-and
+lines\fR\
+\&,
 .B
 cols
+and
+.B
+clear
 terminal capabilities are required;
 .B
 tput(1)
 can be used to check. This should not be a problem for any remotely
-modern terminal.
+modern terminal, provided that the
+.B
+TERM
+environment variable is set correctly.
 .P
 A copy of the
 .B

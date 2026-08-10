@@ -59,6 +59,7 @@ my @EXPORT_CONFIG = qw{
   $color_file
   $distfiles_dir
   $has_cols
+  $has_clear
   $has_lines
   $hint_file
   @ignore_tests
@@ -229,11 +230,11 @@ downloaded sources are kept.
 The time spent downloading source files. Unless C<CLASSIC> is C<TRUE>, it is
 displayed when all builds are complete.
 
-=head2 ($has_cols, $has_lines)
+=head2 ($has_cols, $has_clear, $has_lines)
 
-These shared variables are true if the running terminal has the C<cols> and C<lines>
-capabilities, respectively. Realistically speaking, this means every remotely modern
-terminal. Relevant for C<sbotool(1)>, C<sboupgrade(1)> and C<sbocheck(1)>.
+These shared variables are true if the running terminal has the C<cols>, C<clear>
+and C<lines> capabilities, respectively. Realistically speaking, this means every
+remotely modern terminal, unless C<$TERM> has been set incorrectly.
 
 =head2 $hint_file
 
@@ -318,6 +319,7 @@ our $rem_pkg_db = '/var/lib/pkgtools/removed_packages';
 our $script_db = '/var/lib/pkgtools/scripts';
 
 our $has_cols = system("/usr/bin/tput cols 2>/dev/null 1>/dev/null") == 0;
+our $has_clear = system("/usr/bin/tput clear 2>/dev/null 1>/dev/null") == 0;
 our $has_lines = system("/usr/bin/tput lines 2>/dev/null 1>/dev/null") == 0;
 
 # global config variables

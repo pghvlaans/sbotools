@@ -9,6 +9,8 @@
     * Use the --idle-build option for sboinstall and sboupgrade to override the setting.
   * sbocheck, sboupgrade: Do not print a running package count if the terminal is too narrow.
   * Util.pm: Do not wrap messages if the terminal is too narrow.
+  * sbotool: Explicitly require the clear capability.
+  * sbotool: Get updated dimensions after the terminal resize prompt.
 
 #### 4.4 - 2026-08-07
   * sboupgrade: Accept -A for --all-plus-failures.
