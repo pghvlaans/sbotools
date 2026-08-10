@@ -2049,7 +2049,7 @@ sub terminal_check {
 		} else {
 			wrapsay_color $color_warn, $msg;
 		}
-		exit _ERR_USAGE;
+		exit _ERR_TPUT;
 	}
 
 	chomp(my $lines = `/usr/bin/tput lines 2>/dev/null`);
@@ -2063,7 +2063,7 @@ sub terminal_check {
 			$msg .= " \$TERM does not have a value.\n";
 		}
 		prompt($color_warn, "$msg\nPress ENTER to exit.\n");
-		exit _ERR_USAGE;
+		exit _ERR_TPUT;
 	}
 
 	if ($lines < 25 or $columns < 80) {

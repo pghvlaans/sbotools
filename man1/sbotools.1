@@ -396,6 +396,93 @@ to
 .B
 TRUE
 to prevent this behavior.
+.SH EXIT CODES
+.P
+.B
+sbotools
+scripts can exit with the following codes:
+.RS
+
+0:  all operations were succesful.
+.RE
+.RS
+1:  a usage error occured, such as specifying invalid options.
+.RE
+.RS
+2:  a script or module error occurred.
+.RE
+.RS
+3:  a SlackBuild exited non-zero.
+.RE
+.RS
+4:  unable to md5sum verify the source file(s).
+.RE
+.RS
+5:  unable to download the source file(s).
+.RE
+.RS
+6:  unable to obtain a required file handle.
+.RE
+.RS
+7:  unable to get required info from the
+.I
+info
+file.
+.RE
+.RS
+8:  unable to unset the exec-on-close bit on a temporary file.
+.RE
+.RS
+9:  multilib has not been set up (where required).
+.RE
+.RS
+10:
+.B
+convertpkg-compat32
+exited non-zero.
+.RE
+.RS
+11: the
+.B
+convertpkg-compat32
+script cannot be found (where required).
+.RE
+.RS
+12: interrupt signal received.
+.RE
+.RS
+13: circular dependencies detected.
+.RE
+.RS
+14: in
+.B
+batch\fR\
+\&,
+.B
+nointeractive
+or
+.B
+dry-run\fR\
+\&, required user or group missing.
+.RE
+.RS
+15: GPG verification failed.
+.RE
+.RS
+16: reading keyboard input failed.
+.RE
+.RS
+17: could not give
+.B
+SBO_HOME
+valid contents.
+.RE
+.RS
+18: terminal lacks the required capabilities to run
+.B
+sbotool(1)\fR\
+\&.
+.RE
 .SH BUGS
 .P
 None known. If found, Issues and Pull Requests to

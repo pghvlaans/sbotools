@@ -105,6 +105,7 @@ The sbotools share the following exit codes:
   _ERR_GPG           15  GPG verification failed
   _ERR_STDIN         16  reading keyboard input failed
   _ERR_SBO_HOME      17  could not give SBO_HOME valid contents
+  _ERR_TPUT          18  needed terminal capabilities absent
 
 
 =head1 SEE ALSO
