@@ -7,6 +7,7 @@
     * Thanks again to shamefulCake1 for the request and to SCerovec for his insights.
     * Use the **\--idle-build** option for *sboinstall* and *sboupgrade* to override the setting.
   * *sbocheck*, *sboupgrade*: Do not print a running package count if the terminal is too narrow.
+  * *Util.pm*: Do not wrap messages if the terminal is too narrow.
 
 * 4.4 - 2026-08-07
   * *sboupgrade*: Accept **\-A** for **\--all-plus-failures**.
