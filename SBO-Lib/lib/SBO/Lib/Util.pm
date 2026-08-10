@@ -318,9 +318,13 @@ our $pkg_db = '/var/lib/pkgtools/packages';
 our $rem_pkg_db = '/var/lib/pkgtools/removed_packages';
 our $script_db = '/var/lib/pkgtools/scripts';
 
-our $has_cols = system("/usr/bin/tput cols 2>/dev/null 1>/dev/null") == 0;
-our $has_clear = system("/usr/bin/tput clear 2>/dev/null 1>/dev/null") == 0;
-our $has_lines = system("/usr/bin/tput lines 2>/dev/null 1>/dev/null") == 0;
+our ($has_cols, $has_clear, $has_lines);
+$has_cols = $has_clear = $has_lines = system("/usr/bin/tput cols clear lines 2>/dev/null 1>/dev/null") == 0;
+unless ($has_cols) {
+  $has_cols = system("/usr/bin/tput cols 2>/dev/null 1>/dev/null") == 0;
+  $has_clear = system("/usr/bin/tput clear 2>/dev/null 1>/dev/null") == 0;
+  $has_lines = system("/usr/bin/tput lines 2>/dev/null 1>/dev/null") == 0;
+}
 
 # global config variables
 my $req_dir = $ENV{SBOTOOLS_CONF_DIR};
@@ -1286,7 +1290,9 @@ sub prompt {
   $q = sprintf '%s [%s] ', $q, $def eq 'yes' ? 'y' : 'n' if defined $def;
   say "" if defined $extra_line;
   my $printcolor = colorvalid($color) ? $color : $color_default;
-  unless ($config{NOWRAP} eq 'TRUE') {
+  unless ($config{NOWRAP} eq 'TRUE' or
+          not $has_cols or
+          `/usr/bin/tput cols 2>/dev/null` < 73) {
     $columns = 73;
     if ($config{NOCOLOR} ne 'TRUE') {
       print color($printcolor). wrap('', '', $q). color($color_default);

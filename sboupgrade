@@ -640,7 +640,7 @@ if ($config{NO_SOCHECK} ne "TRUE" and @solib_search and not $no_install and not 
 	if ($pkg_count) {
 		my $msg_length = length($msg) + 6 + 2 * length($pkg_count);
 		my $width = 0;
-		$width = `/usr/bin/tput cols` if $has_cols;
+		$width = `/usr/bin/tput cols 2>/dev/null` if $has_cols;
 		my $count_ok = ($width =~ /^\d+$/ and $width > $msg_length);
 		$| = 1 if $count_ok;
 		for my $sbo (keys %$installed_pkg) {

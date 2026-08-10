@@ -192,7 +192,7 @@ sub evaluate_series {
 	my $msg = "Checking packages for system incompatibility...";
 	my $msg_length = length($msg) + 6 + 2 * length($pkg_count);
 	my $width = 0;
-	$width = `/usr/bin/tput cols` if $has_cols;
+	$width = `/usr/bin/tput cols 2>/dev/null` if $has_cols;
 	my $count_ok = ($width =~ /^\d+$/ and $width > $msg_length);
 	$msg =~ s/packages/$pkg_count packages/g unless $count_ok;
 	print "\n$msg";
@@ -224,7 +224,7 @@ sub evaluate_solibs {
 	}
 	my $msg_length = length($msg) + 6 + 2 * length($pkg_count);
 	my $width = 0;
-	$width = `/usr/bin/tput cols` if $has_cols;
+	$width = `/usr/bin/tput cols 2>/dev/null` if $has_cols;
 	my $count_ok = ($width =~ /^\d+$/ and $width > $msg_length);
 	$msg =~ s/packages/$pkg_count packages/g unless $count_ok;
 	print $msg;

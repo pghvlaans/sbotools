@@ -2052,8 +2052,8 @@ sub terminal_check {
 		exit _ERR_USAGE;
 	}
 
-	chomp(my $lines = `/usr/bin/tput lines`);
-	chomp(my $columns = `/usr/bin/tput cols`);
+	chomp(my $lines = `/usr/bin/tput lines 2>/dev/null`);
+	chomp(my $columns = `/usr/bin/tput cols 2>/dev/null`);
 	if ($lines =~ /\D/ or $columns =~ /\D/) {
 		system("clear");
 		my $msg = "tput failure;";
