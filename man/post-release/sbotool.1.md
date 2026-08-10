@@ -71,9 +71,10 @@ documentation.
 ## STARTUP
 
 Ensure that the terminal window is at least 80x25 characters to run
-**sbotool**. The **lines** and **cols** terminal capabilities are
-required; **tput(1)** can be used to check. This should not be a problem
-for any remotely modern terminal.
+**sbotool**. The **lines**, **cols** and **clear** terminal capabilities
+are required; **tput(1)** can be used to check. This should not be a
+problem for any remotely modern terminal, provided that the **TERM**
+environment variable is set correctly.
 
 A copy of the **SlackBuilds.org** repository must be fetched when using
 **sbotools** for the first time, or when the **sbotools** directory has
