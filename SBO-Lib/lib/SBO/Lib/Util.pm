@@ -1739,7 +1739,8 @@ sub warn_color {
   wrapsay($msg, $trail);
 
 C<wrapsay()> outputs a message with the lines wrapped at 72 characters and
-a trailing newline. There is no useful return value. Optional C<$trail>
+a trailing newline. Messages are not wrapped if the running terminal is too
+narrow than the wrap width. There is no useful return value. Optional C<$trail>
 outputs an extra newline if present.
 
 Use this subroutine whenever it is either obvious that the output exceeds
@@ -1752,7 +1753,9 @@ for use in scripts (e.g., queue reports from C<sbofind(1)>).
 sub wrapsay {
   script_error("wrapsay requires an argument.") unless @_ >= 1;
   my ($msg, $trail) = @_;
-  unless ($config{NOWRAP} eq 'TRUE') {
+  unless ($config{NOWRAP} eq 'TRUE' or
+          not $has_cols or
+          `/usr/bin/tput cols 2>/dev/null` < 73) {
     $columns = 73;
     print wrap('', '', "$msg\n");
   } else {
@@ -1769,8 +1772,8 @@ sub wrapsay {
 C<wrapsay_color()> takes a color, a message and any true value if a trailing line
 is required. It applies a color, prints a wrapped message at 72 characters and
 resets the color at the end of the line. No colors are used unless C<NOCOLOR> is
-C<FALSE>; please note that C<print_color()> checks the configuration value. There
-is no useful return value.
+C<FALSE>; please note that C<print_color()> checks the configuration value. Messages
+are not wrapped if the terminal is too narrow. There is no useful return value.
 
 =cut
 
@@ -1785,7 +1788,9 @@ sub wrapsay_color {
   }
   say "" if defined $extra_line;
   print_color($color);
-  unless ($config{NOWRAP} eq 'TRUE') {
+  unless ($config{NOWRAP} eq 'TRUE' or
+          not $has_cols or
+          `/usr/bin/tput cols 2>/dev/null` < 73) {
     $columns = 73;
     print wrap('', '', "$msg");
   } else {

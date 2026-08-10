@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Sweetmorn, Bureaucracy 2, 3192 YOLD" "" "sbotools 4.4"
+.TH SBO::Lib::Util 3 "Boomtime, Bureaucracy 3, 3192 YOLD" "" "sbotools 4.4"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -663,7 +663,8 @@ automatically after the message. There is no useful return value.
 .Ve
 .PP
 \&\f(CWwrapsay()\fR outputs a message with the lines wrapped at 72 characters and
-a trailing newline. There is no useful return value. Optional \f(CW$trail\fR
+a trailing newline. Messages are not wrapped if the running terminal is too
+narrow than the wrap width. There is no useful return value. Optional \f(CW$trail\fR
 outputs an extra newline if present.
 .PP
 Use this subroutine whenever it is either obvious that the output exceeds
@@ -679,8 +680,8 @@ for use in scripts (e.g., queue reports from \f(CWsbofind(1)\fR).
 \&\f(CWwrapsay_color()\fR takes a color, a message and any true value if a trailing line
 is required. It applies a color, prints a wrapped message at 72 characters and
 resets the color at the end of the line. No colors are used unless \f(CW\*(C`NOCOLOR\*(C'\fR is
-\&\f(CW\*(C`FALSE\*(C'\fR; please note that \f(CWprint_color()\fR checks the configuration value. There
-is no useful return value.
+\&\f(CW\*(C`FALSE\*(C'\fR; please note that \f(CWprint_color()\fR checks the configuration value. Messages
+are not wrapped if the terminal is too narrow. There is no useful return value.
 .SH "EXIT CODES"
 .IX Header "EXIT CODES"
 The sbotools share the following exit codes:
