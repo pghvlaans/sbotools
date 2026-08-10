@@ -10,6 +10,7 @@
   * *Util.pm*: Do not wrap messages if the terminal is too narrow.
   * *sbotool*: Explicitly require the `clear` capability.
   * *sbotool*: Get updated dimensions after the terminal resize prompt.
+  * *SBO::Lib*: Add an exit code for missing terminal capabilities.
 
 * 4.4 - 2026-08-07
   * *sboupgrade*: Accept **\-A** for **\--all-plus-failures**.

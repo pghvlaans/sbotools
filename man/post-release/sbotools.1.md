@@ -3,6 +3,7 @@
 [NAME](#name)\
 [DESCRIPTION](#description)\
 [STARTUP](#startup)\
+[EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
@@ -179,6 +180,32 @@ unless [sboupgrade(1)](sboupgrade.1.md) is running interactively.
 A limited number of SlackBuilds download files when running, which some
 users consider a security risk. Set **NONET** to **TRUE** to prevent
 this behavior.
+
+## EXIT CODES
+
+**sbotools** scripts can exit with the following codes:
+
+0: all operations were succesful.\
+1: a usage error occured, such as specifying invalid options.\
+2: a script or module error occurred.\
+3: a SlackBuild exited non-zero.\
+4: unable to md5sum verify the source file(s).\
+5: unable to download the source file(s).\
+6: unable to obtain a required file handle.\
+7: unable to get required info from the *info* file.\
+8: unable to unset the exec-on-close bit on a temporary file.\
+9: multilib has not been set up (where required).\
+10: **convertpkg-compat32** exited non-zero.\
+11: the **convertpkg-compat32** script cannot be found (where
+required).\
+12: interrupt signal received.\
+13: circular dependencies detected.\
+14: in **batch**, **nointeractive** or **dry-run**, required user or
+group missing.\
+15: GPG verification failed.\
+16: reading keyboard input failed.\
+17: could not give **SBO_HOME** valid contents.\
+18: terminal lacks the required capabilities to run [sbotool(1)](sbotool.1.md).
 
 ## BUGS
 
