@@ -971,7 +971,7 @@ PKGTYPE
 variable sets the compression method for the resulting package.
 .B
 makepkg(1)
-supports a number of values, including
+supports the following:
 .B
 tgz
 (the
@@ -979,29 +979,20 @@ tgz
 SlackBuilds.org
 default),
 .B
-tar.gz\fR\
-\&,
-.B
 txz\fR\
 \&,
 .B
-tar.xz\fR\
-\&,
-.B
-tbz\fR\
-\&,
-.B
-tar.bz2\fR\
-\&,
-.B
-tlz\fR\
-\&,
-.B
-tar.lz
+tbz
 and
 .B
-tar.lzma\fR\
+tlz\fR\
 \&. Any of these can be used without issue.
+.B
+sboinstall
+exits if the value of
+.B
+PKGTYPE
+is unsupported.
 .RE
 .P
 .B

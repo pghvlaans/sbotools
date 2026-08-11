@@ -163,6 +163,8 @@ $config{IDLE_BUILD} = $idle_build if $idle_build;
 lint_sbo_config($self, %config);
 merge_obsolete();
 
+usage_error("Unsupported value of \$PKGTYPE: $ENV{PKGTYPE}") if defined $ENV{PKGTYPE} and not $ENV{PKGTYPE} =~ /^t[gxbl]z$/;
+
 if (!@ARGV and not length $utemp and not $mass_rebuild and not $series_rebuild) { show_usage(); exit 1 }
 if (defined $utemp and not length $utemp) { show_usage(); exit 1 }
 if (defined $ctemp and not length $ctemp) { show_usage(); exit 1 }
