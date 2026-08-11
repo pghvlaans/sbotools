@@ -377,10 +377,10 @@ directory specified by **PKG_DIR** if set.
 **PKGTYPE**
 
 The **PKGTYPE** variable sets the compression method for the resulting
-package. **makepkg(1)** supports a number of values, including **tgz**
-(the **SlackBuilds.org** default), **tar.gz**, **txz**, **tar.xz**,
-**tbz**, **tar.bz2**, **tlz**, **tar.lz** and **tar.lzma**. Any of these
-can be used without issue.
+package. **makepkg(1)** supports the following: **tgz** (the
+**SlackBuilds.org** default), **txz**, **tbz** and **tlz**. Any of these
+can be used without issue. **sboinstall** exits if the value of
+**PKGTYPE** is unsupported.
 
 **TAG**
 
