@@ -4,6 +4,7 @@
   * Compatibility bump
   * Account for the new **IDLE_BUILD** setting; add **\--idle-build**
     * Thanks to shamefulCake1 for the sbotools request
+  * *bin/test*: Correct the valid package types
 
 #### 1.3 - 2026-08-07
   * Compatibility bump
