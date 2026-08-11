@@ -116,6 +116,9 @@ install -m 0644 contrib/* $PKG/usr/share/sbotools
 mkdir -p $PKG/usr/share/applications
 install -m 0644 application/*.desktop $PKG/usr/share/applications
 
+mkdir -p $PKG/usr/share/icons/hicolor/scalable/apps
+install -m 0644 application/*.svg $PKG/usr/share/icons/hicolor/scalable/apps
+
 mkdir -p $PKG/etc/sbotools
 cp etc/{obsolete,perl_vers} $PKG/etc/sbotools
 cp etc/sbotools.conf $PKG/etc/sbotools/sbotools.conf.new

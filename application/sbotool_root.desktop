@@ -4,5 +4,5 @@ Comment=sbotools TUI (as root)
 Exec=su -lc /usr/bin/sbotool
 Type=Application
 Terminal=true
-Icon=utilities-terminal
+Icon=sbotools_root
 Categories=System;Utility;
