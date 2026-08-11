@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=sbotool
+Comment=sbotools TUI
+Exec=/usr/bin/sbotool
+Type=Application
+Terminal=true
+Icon=utilities-terminal
+Categories=System;Utility;

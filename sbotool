@@ -34,7 +34,7 @@ lint_sbo_config($self, %config);
 my $version = $SBO::Lib::VERSION;
 
 my $backtitle = "sbotools-$version";
-$backtitle = $< == 0 ? "$backtitle (root mode)" : "$backtitle (normal user mode)";
+$backtitle = $< == 0 ? "$backtitle (ROOT MODE)" : "$backtitle (normal user mode)";
 my $dialog_base = "/usr/bin/dialog --keep-window --cancel-label \"Back\" --exit-label \"Back\" --backtitle \"$backtitle\"";
 my $dialog_prefix = $dialog_base;
 if (defined $dialogrc and -s $dialogrc) {
