@@ -5,4 +5,4 @@ Exec=su -lc /usr/bin/sbotool
 Type=Application
 Terminal=true
 Icon=sbotools_root
-Categories=System;Utility;
+Categories=System;

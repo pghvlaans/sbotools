@@ -5,4 +5,4 @@ Exec=/usr/bin/sbotool
 Type=Application
 Terminal=true
 Icon=sbotools
-Categories=System;Utility;
+Categories=System;
