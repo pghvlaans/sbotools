@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=sbotool Package Check
-Comment=Check packages for missing solibs and other issues.
+Comment=Check packages for missing solibs and other issues
 Exec=/usr/bin/sbotool --tests
 Type=Application
 Terminal=true

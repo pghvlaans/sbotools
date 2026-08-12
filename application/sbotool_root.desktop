@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=sbotool (as root)
-Comment=sbotools TUI (as root)
+Comment=Manage SBo packages with the sbotools TUI (as root)
 Exec=su -lc /usr/bin/sbotool
 Type=Application
 Terminal=true

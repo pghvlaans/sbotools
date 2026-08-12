@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=sbotool
-Comment=sbotools TUI
+Comment=Browse and query SBo with the sbotools TUI (non-root)
 Exec=/usr/bin/sbotool
 Type=Application
 Terminal=true
 Icon=sbotools
-Categories=System;ConsoleOnly;
+Categories=Utility;ConsoleOnly;
