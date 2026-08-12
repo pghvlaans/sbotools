@@ -24,6 +24,7 @@ search: false
 copyright: K. Eugene Carlson
 copyright_url: "https://github.com/pghvlaans/"
 minimal_mistakes_skin: air
+logo: "https://pghvlaans.github.io/sbotools/assets/images/sbotools.png"
 
 # Build settings
 markdown: kramdown
