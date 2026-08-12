@@ -71,7 +71,7 @@ defaults:
       author_profile: false
       title: false
       sidebar:
-        image: https://pghvlaans.github.io/sbotools/assets/images/sbotools.png
+        image: "https://pghvlaans.github.io/sbotools/assets/images/sbotools.png"
         image_alt: "sbotools"
 
   # ChangeLog
@@ -83,7 +83,7 @@ defaults:
       author_profile: false
       title: false
       sidebar:
-        image: https://pghvlaans.github.io/sbotools/assets/images/sbotools.png
+        image: "https://pghvlaans.github.io/sbotools/assets/images/sbotools.png"
         image_alt: "sbotools"
   # man
   - scope:
@@ -94,7 +94,7 @@ defaults:
       author_profile: false
       title: false
       sidebar:
-        image: https://pghvlaans.github.io/sbotools/assets/images/sbotools.png
+        image: "https://pghvlaans.github.io/sbotools/assets/images/sbotools.png"
         image_alt: "sbotools"
   # downloads
   - scope:
@@ -105,7 +105,7 @@ defaults:
       author_profile: false
       title: false
       sidebar:
-        image: https://pghvlaans.github.io/sbotools/assets/images/sbotools.png
+        image: "https://pghvlaans.github.io/sbotools/assets/images/sbotools.png"
         image_alt: "sbotools"
   # development
   - scope:
@@ -116,7 +116,7 @@ defaults:
       author_profile: false
       title: false
       sidebar:
-        image: https://pghvlaans.github.io/sbotools/assets/images/sbotools.png
+        image: "https://pghvlaans.github.io/sbotools/assets/images/sbotools.png"
         image_alt: "sbotools"
   # sbotest
   - scope:
@@ -127,5 +127,5 @@ defaults:
       author_profile: false
       title: false
       sidebar:
-        image: https://pghvlaans.github.io/sbotools/assets/images/sbotools.png
+        image: "https://pghvlaans.github.io/sbotools/assets/images/sbotools.png"
         image_alt: "sbotools"
