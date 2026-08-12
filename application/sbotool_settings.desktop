@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=sbotools Settings
+Comment=Edit sbotools settings (as root)
+Exec=su -c "/usr/bin/sbotool --config"
+Type=Application
+Terminal=true
+Icon=sbotools_settings
+Categories=Settings;ConsoleOnly;
