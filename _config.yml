@@ -83,7 +83,6 @@ defaults:
       author_profile: false
       title: false
       sidebar:
-	nav: "main"
         image: https://pghvlaans.github.io/sbotools/assets/images/sbotools.png
         image_alt: "sbotools"
   # man
