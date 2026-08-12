@@ -13,6 +13,7 @@
   * *SBO::Lib*: Add an exit code for missing terminal capabilities.
   * *sboinstall*, *sboupgrade*: Lint the value of `$PKGTYPE`, if set.
   * Add desktop entries and icons for *sbotool*.
+  * *sbotool*: Use **\--tests** to access the Package Tests menu directly.
 
 * 4.4 - 2026-08-07
   * *sboupgrade*: Accept **\-A** for **\--all-plus-failures**.
