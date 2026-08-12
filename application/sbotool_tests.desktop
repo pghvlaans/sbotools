@@ -5,4 +5,4 @@ Exec=/usr/bin/sbotool --tests
 Type=Application
 Terminal=true
 Icon=sbotools_tests
-Categories=System;
+Categories=Utility;ConsoleOnly;
