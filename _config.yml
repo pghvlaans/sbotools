@@ -61,10 +61,6 @@ footer:
 atom_feed:
   hide: true
 
-sidebar:
-  image: "/assets/images/sbotools.png"
-  image_alt: "sbotools"
-
 defaults:
   # root directory
   - scope:
@@ -74,7 +70,10 @@ defaults:
       layout: single
       author_profile: false
       title: false
-      sidebar: true
+      sidebar:
+        image: "/assets/images/sbotools.png"
+        image_alt: "sbotools"
+
   # ChangeLog
   - scope:
       path: "ChangeLog"
@@ -83,6 +82,9 @@ defaults:
       layout: man
       author_profile: false
       title: false
+      sidebar:
+        image: "/assets/images/sbotools.png"
+        image_alt: "sbotools"
   # man
   - scope:
       path: "man"
@@ -91,6 +93,9 @@ defaults:
       layout: man
       author_profile: false
       title: false
+      sidebar:
+        image: "/assets/images/sbotools.png"
+        image_alt: "sbotools"
   # downloads
   - scope:
       path: "downloads"
@@ -99,6 +104,9 @@ defaults:
       layout: single
       author_profile: false
       title: false
+      sidebar:
+        image: "/assets/images/sbotools.png"
+        image_alt: "sbotools"
   # development
   - scope:
       path: "development"
@@ -107,6 +115,9 @@ defaults:
       layout: single
       author_profile: false
       title: false
+      sidebar:
+        image: "/assets/images/sbotools.png"
+        image_alt: "sbotools"
   # sbotest
   - scope:
       path: "sbotest"
@@ -115,3 +126,6 @@ defaults:
       layout: single
       author_profile: false
       title: false
+      sidebar:
+        image: "/assets/images/sbotools.png"
+        image_alt: "sbotools"
