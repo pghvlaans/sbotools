@@ -36,6 +36,10 @@ include:
   - ChangeLog
   - sbotest
 
+sidebar:
+  image: https://pghvlaans.github.io/sbotools/assets/images/sbotools.png
+  image_alt: "sbotools"
+
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.
