@@ -61,6 +61,10 @@ footer:
 atom_feed:
   hide: true
 
+sidebar:
+  image: "/assets/images/sbotools.png"
+  image_alt: "sbotools"
+
 defaults:
   # root directory
   - scope:
