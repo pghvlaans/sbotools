@@ -24,10 +24,11 @@ $is_sbotool = 1;
 
 my $exit;
 usage_error("dialog is not installed.") unless -x "/usr/bin/dialog";
-my ($help, $show_version, $dialogrc, $config_menu);
-GetOptions( 'help|h' => \$help, 'version|v' => \$show_version, 'dialogrc|d=s' => \$dialogrc, 'config' => \$config_menu);
+my ($help, $show_version, $dialogrc, $config_menu, $tests_menu);
+GetOptions( 'help|h' => \$help, 'version|v' => \$show_version, 'dialogrc|d=s' => \$dialogrc, 'config' => \$config_menu, 'tests' => \$tests_menu);
 if ($help) { show_usage(); exit 0; }
 if ($show_version) { show_version(); exit 0; }
+if ($tests_menu and $config_menu) { show_usage(); exit 1; }
 
 lint_sbo_config($self, %config);
 
@@ -106,10 +107,12 @@ if (-s $slackbuilds_txt) {
 	}
 }
 
-unless ($config_menu) {
-	display_main();
-} else {
+if ($config_menu) {
 	display_settings();
+} elsif ($tests_menu) {
+	display_tests();
+} else {
+	display_main();
 }
 
 # Once a script has been selected, build a menu of available
@@ -1066,30 +1069,7 @@ sub display_main {
 		new_package_information();
 	}
 
-	if ($option eq "Package Tests") {
-		if (-s $slackbuilds_txt) {
-			($height, $width, $begin_y, $begin_x) = calculate_position("wide", "All Installed\nAll SBo", "Check missing\nInstalled");
-			($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Package Tests\" --menu \"Check intalled packages for missing shared object\ndependencies and perl, python or ruby incompatibility.\" $height $width $height \"All Installed\" \"All installed: solibs, perl, python and ruby.\" \"All SBo\" \"All SBo: solibs, perl, python and ruby.\"", @help_solibs);
-			display_main() if $res == $code_dialog_cancel or $res == $code_dialog_error;
-			my $so_option = $output;
-			if ($option =~ /\w/) {
-				my $log_dir = $< == 0 ? '/var/log' : '/tmp';
-				my $command_time = time();
-				system("clear");
-				system("/usr/sbin/sbocheck -X --type all") if $so_option eq "All SBo";
-				system("/usr/sbin/sbocheck -C --type all") if $so_option eq "All Installed";
-				parse_solib_log("$log_dir/sbocheck-solibs.log", $command_time);
-				parse_solib_log("$log_dir/sbocheck-perl.log", $command_time);
-				parse_solib_log("$log_dir/sbocheck-python.log", $command_time);
-				parse_solib_log("$log_dir/sbocheck-ruby.log", $command_time);
-				prompt $color_notice, "Press ENTER to continue.";
-			}
-		} else { # All-package checks can be done in all cases.
-			system("clear");
-			system("/usr/sbin/sbocheck -C --type all");
-			prompt $color_notice, "Press ENTER to continue.";
-		}
-	}
+	if ($option eq "Package Tests") { display_tests(); }
 
 	if ($option eq "Upgrade All (dry run)" or $option eq "All + Fails (dry run)") {
 		unlink $command_output;
@@ -1471,6 +1451,48 @@ sub display_settings {
 		return;
 	} else {
 		exit;
+	}
+}
+
+# The package test menu. Start here with --tests.
+sub display_tests {
+	my $cancel_label = $tests_menu ? "Exit" : "Back";
+	if (-s $slackbuilds_txt) {
+		my ($height, $width, $begin_y, $begin_x) = calculate_position("wide", "All Installed\nAll SBo", "Check missing");
+		my ($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Package Tests\" --cancel-label \"$cancel_label\" --menu \"Scan intalled packages for potential problems.\" $height $width $height \"All Installed\" \"All installed: solibs, perl, python and ruby.\" \"All SBo\" \"All SBo: solibs, perl, python and ruby.\"", @help_solibs);
+		if ($tests_menu) {
+			exit if $res == $code_dialog_cancel or $res == $code_dialog_error;
+		} else {
+			display_main() if $res == $code_dialog_cancel or $res == $code_dialog_error;
+		}
+		my $so_option = $output;
+		if ($so_option =~ /\w/) {
+			my $log_dir = $< == 0 ? '/var/log' : '/tmp';
+			my $command_time = time();
+			system("clear");
+			system("/usr/sbin/sbocheck -X --type all") if $so_option eq "All SBo";
+			system("/usr/sbin/sbocheck -C --type all") if $so_option eq "All Installed";
+			parse_solib_log("$log_dir/sbocheck-solibs.log", $command_time);
+			parse_solib_log("$log_dir/sbocheck-perl.log", $command_time);
+			parse_solib_log("$log_dir/sbocheck-python.log", $command_time);
+			parse_solib_log("$log_dir/sbocheck-ruby.log", $command_time);
+			prompt $color_notice, "Press ENTER to continue.";
+		}
+	} else { # All-package checks can be done in all cases.
+		my ($height, $width, $begin_y, $begin_x) = calculate_position("normal_cond", "Fetch repo\n\ntest");
+		my ($res, $output) = do_dialog("$dialog_prefix --begin $begin_y $begin_x --title \"Package Tests\" --cancel-label \"$cancel_label\" --yesno \"Fetch the repo to test SBo packages only.\n\nScan all installed packages for missing solibs and perl, python and ruby incompatibility?\" $height $width", @help_solibs);
+		if ($res == $code_dialog_ok) {
+			system("clear");
+			system("/usr/sbin/sbocheck -C --type all");
+			prompt $color_notice, "Press ENTER to continue.";
+		} else {
+			exit if $tests_menu;
+		}
+	}
+	if ($tests_menu) {
+		display_tests();
+	} else {
+		display_main();
 	}
 }
 
@@ -2016,11 +2038,15 @@ Options
     access the sbotools settings menu only.
   -d|--dialogrc FILE:
     a dialogrc file to use; overrides the DIALOGRC setting.
+  --tests
+    access the package tests menu directly.
 
 $self is a dialog-based text user interface for sbotools.
 
 The contents of the menus change based on available actions
 and user permissions.
+
+--config and --tests are incompatible.
 
 sbotool requires a terminal of at least 80 by 25 characters.
 EOF
