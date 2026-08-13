@@ -43,8 +43,8 @@ The current configuration keys are as follows:
 
 **CLASSIC=(FALSE\|TRUE)**
 
-If **TRUE**, automatically enable **RSYNC_DEFAULT**, **BUILD_IGNORE**and
-**NOCOLOR** (overriding the contents of this file). Build increment,
+If **TRUE**, automatically enable **RSYNC_DEFAULT**, **BUILD_IGNORE**
+and **NOCOLOR** (overriding the contents of this file). Build increment,
 out-of-tree SlackBuild and orphaned SlackBuild checks by [sbocheck(1)](sbocheck.1.md)
 are disabled, and previously-used build options are not displayed. This
 provides a more traditional **sbotools** look and feel for those who

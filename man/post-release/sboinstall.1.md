@@ -119,7 +119,7 @@ setting.
 Please note that source files in the manual downloads directory are not
 deleted automatically.
 
-**-e\|\--etc-profile**
+**-e\|\--etc-profile (FALSE\|TRUE)**
 
 If **TRUE**, source any executable scripts in */etc/profile.d* named
 *\*.sh* before running each SlackBuild in the build queue. This option
@@ -149,7 +149,7 @@ overrides the **INSTANT_STOP** setting.
 **-j\|\--jobs (FALSE\|#)**
 
 If **numerical**, pass to the **-j** argument when a SlackBuild invoking
-**make** is run.
+**make** is run. This option overrides the **JOBS** setting.
 
 **-k\|\--pkg-dir (FALSE\|/path)**
 

@@ -92,7 +92,7 @@ number differs.
 **-C\|\--classic (FALSE\|TRUE)**
 
 **CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT**,
-**BUILD_IGNORE**and **NOCOLOR** (overriding the contents of
+**BUILD_IGNORE** and **NOCOLOR** (overriding the contents of
 [sbotools.conf(5)](sbotools.conf.5.md)). Build increment, out-of-tree SlackBuild and
 orphaned SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are disabled, and
 previously-used build options are not displayed. This provides a more

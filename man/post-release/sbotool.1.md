@@ -21,7 +21,7 @@
 
     sbotool [-h|-v]
 
-    sbotool [-d FILE] [--config]
+    sbotool [-d FILE] [--config|--tests]
 
 ## DESCRIPTION
 
@@ -107,6 +107,10 @@ can also specify a file at runtime.
 
 Enter the **Settings** menu directly. [sboconfig(1)](sboconfig.1.md) calls **sbotool**
 with this option when run without flags.
+
+**\--tests**
+
+Enter the **Package Tests** menu directly.
 
 **-d\|\--dialogrc (FILE)**
 
