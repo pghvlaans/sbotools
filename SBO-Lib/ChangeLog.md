@@ -1,6 +1,6 @@
 # sbotools
 
-#### Post-Release
+#### 4.4.1 - 2026-08-13
   * sboupgrade, sboinstall: Minor display fixes.
   * Download.pm: Use https:// instead of ftp:// for sbosrcarch.
     * Thanks to fsLeg for the report.
