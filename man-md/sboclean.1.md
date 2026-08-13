@@ -105,7 +105,8 @@ Turn off **sbotools** word wrapping.
 1: a usage error occurred, such as passing incorrect options to
 **sboclean**.\
 2: a script or module error occurred.\
-16: reading keyboard input failed.
+16: reading keyboard input failed.\
+17: could not give **SBO_HOME** valid contents.
 
 ## BUGS
 

@@ -75,7 +75,7 @@ the upgrade process as well.
 
 Package upgrades occasionally cause breakage due to **\*.so** version
 differences. A check for missing first-order shared object (solib)
-dependencies that may have resulted from running **sboupgrade**is
+dependencies that may have resulted from running **sboupgrade** is
 performed by default after the queue has been procesed, successfully or
 unsuccessfully. Each affected package is logged to
 */var/log/sboupgrade-solibs.log* with a list of missing shared objects
@@ -89,6 +89,32 @@ Root privileges are required to run **sboupgrade** unless passing
 script exits with a diagnostic message.
 
 ## OPTIONS
+
+**\--all**
+
+Upgrade all installed SlackBuilds that are eligible for upgrades,
+including *compat32* packages. This takes the **BUILD_IGNORE** setting
+into account. See [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
+
+Incompatible with **\--all-plus-failures** and **\--compat32**. Please
+note that SlackBuilds installed from a **LOCAL_OVERRIDES** directory are
+upgraded only if the version or build number from this directory varies.
+
+**-A\|\--all-plus-failures**
+
+Upgrade the same installed SlackBuilds that would be upgraded with
+**\--all**, as well as any packages with the *\_SBo* tag that fail the
+**solibs**, **perl**, **python** or **ruby** tests before the upgrade
+process begins.
+
+Because packages with missing solibs only in the */opt* directory are
+usually binary and therefore do not require rebuilds, they are added to
+the queue only if **sboupgrade** is being used interactively.
+**sboupgrade** ignores test failures for any script with an
+*ignore-tests* request in */etc/sbotools/sbotools.hints*. See
+[sbohints(1)](sbohints.1.md) or [sbotools.hints(5)](sbotools.hints.5.md) for details.
+
+Incompatible with **\--all** and **\--compat32**.
 
 **-b\|\--build-ignore (FALSE\|TRUE)**
 
@@ -127,7 +153,7 @@ setting.
 Please note that source files in the manual downloads directory not
 deleted automatically.
 
-**-e\|\--etc-profile**
+**-e\|\--etc-profile (TRUE\|FALSE)**
 
 If **TRUE**, source any executable scripts in */etc/profile.d* named
 *\*.sh* before running each SlackBuild in the build queue. This option
@@ -161,7 +187,7 @@ overrides the **INSTANT_STOP** setting.
 **-j\|\--jobs (FALSE\|#)**
 
 If **numerical**, pass to the **-j** argument when a SlackBuild invoking
-**make** is run.
+**make** is run. This option overrides the **JOBS** setting.
 
 **-k\|\--pkg-dir (FALSE\|/path)**
 
@@ -261,31 +287,6 @@ In the same vein as **\--force**, upgrade the SlackBuild and its
 dependencies, even if upgrades are not required.
 
 Incompatible with **\--nointeractive**.
-
-**\--all**
-
-Upgrade all installed SlackBuilds that are eligible for upgrades,
-including *compat32* packages. This takes the **BUILD_IGNORE** setting
-into account. See [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
-Incompatible with **\--all-plus-failures** and **\--compat32**. Please
-note that SlackBuilds installed from a **LOCAL_OVERRIDES** directory are
-upgraded only if the version or build number from this directory varies.
-
-**-A\|\--all-plus-failures**
-
-Upgrade the same installed SlackBuilds that would be upgraded with
-**\--all**, as well as any packages with the *\_SBo* tag that fail the
-**solibs**, **perl**, **python** or **ruby** tests before the upgrade
-process begins.
-
-Because packages with missing solibs only in the */opt* directory are
-usually binary and therefore do not require rebuilds, they are added to
-the queue only if **sboupgrade** is being used interactively.
-**sboupgrade** ignores test failures for any script with an
-*ignore-tests* request in */etc/sbotools/sbotools.hints*. See
-[sbohints(1)](sbohints.1.md) or [sbotools.hints(5)](sbotools.hints.5.md) for details.
-
-Incompatible with **\--all** and **\--compat32**.
 
 **\--batch**
 
