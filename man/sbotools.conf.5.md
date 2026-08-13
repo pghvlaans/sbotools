@@ -43,8 +43,8 @@ The current configuration keys are as follows:
 
 **CLASSIC=(FALSE\|TRUE)**
 
-If **TRUE**, automatically enable **RSYNC_DEFAULT**, **BUILD_IGNORE**and
-**NOCOLOR** (overriding the contents of this file). Build increment,
+If **TRUE**, automatically enable **RSYNC_DEFAULT**, **BUILD_IGNORE**
+and **NOCOLOR** (overriding the contents of this file). Build increment,
 out-of-tree SlackBuild and orphaned SlackBuild checks by [sbocheck(1)](sbocheck.1.md)
 are disabled, and previously-used build options are not displayed. This
 provides a more traditional **sbotools** look and feel for those who
@@ -127,6 +127,13 @@ By default, upgrades also occur when the build number differs.
 
 Recommended value: **TRUE**
 
+**IDLE_BUILD=(FALSE\|TRUE)**
+
+If **TRUE**, use the *idle* IO priority class when building and
+installng packages. If **FALSE**, use the incoming **ionice(1)**
+settings, generally class *none*. See **ionice(1)** for more
+information.
+
 **LOG_DIR=(FALSE\|/path)**
 
 If set to an **absolute path**, save build logs here. Logs are saved
@@ -135,12 +142,14 @@ with the name of the script and a timestamp. Please note that because
 formatting may differ when running some SlackBuilds unless **LOG_DIR**
 is **FALSE**.
 
-**NICENESS=(FALSE\|-20..19)** If set to a **number** from -20 through
-19, use that as the absolute niceness value for [sboinstall(1)](sboinstall.1.md) and
-[sboupgrade(1)](sboupgrade.1.md) during the building and installation phase. If
-**FALSE**, simply use the niceness value that the script started with,
-generally *0* without user intervention. A lower niceness value gives a
-process greater priority. Use with caution.
+**NICENESS=(FALSE\|-20..19)**
+
+If set to a **number** from -20 through 19, use that as the absolute
+niceness value for [sboinstall(1)](sboinstall.1.md) and [sboupgrade(1)](sboupgrade.1.md) during the
+building and installation phase. If **FALSE**, simply use the niceness
+value that the script started with, generally *0* without user
+intervention. A lower niceness value gives a process greater priority.
+Use with caution.
 
 **NONET=(FALSE\|TRUE)**
 

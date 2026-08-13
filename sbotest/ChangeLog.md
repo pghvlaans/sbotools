@@ -1,6 +1,6 @@
 ## ChangeLog.md
 
-#### Post-Release
+#### 1.3.1 - 2026-08-13
   * Compatibility bump
   * Account for the new **IDLE_BUILD** setting; add **\--idle-build**
     * Thanks to shamefulCake1 for the sbotools request

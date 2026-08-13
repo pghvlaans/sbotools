@@ -25,7 +25,7 @@
 
     sboconfig [--reset]
 
-    sboconfig [-CFKINOPRSXcbdegw TRUE|FALSE] [-Zj #|FALSE] [-DLpo
+    sboconfig [-CFKINOPRSXYcbdegw TRUE|FALSE] [-Zj #|FALSE] [-DLpo
 /path\|FALSE] \
               [-s /path|/var/lib/sbotools] [-B branch_name|FALSE] [-V
 #.#\|FALSE] \
@@ -92,7 +92,7 @@ number differs.
 **-C\|\--classic (FALSE\|TRUE)**
 
 **CLASSIC**: If **TRUE**, automatically enable **RSYNC_DEFAULT**,
-**BUILD_IGNORE**and **NOCOLOR** (overriding the contents of
+**BUILD_IGNORE** and **NOCOLOR** (overriding the contents of
 [sbotools.conf(5)](sbotools.conf.5.md)). Build increment, out-of-tree SlackBuild and
 orphaned SlackBuild checks by [sbocheck(1)](sbocheck.1.md) are disabled, and
 previously-used build options are not displayed. This provides a more
@@ -253,6 +253,13 @@ shared object (solib) dependencies among *\_SBo* packages when running
 [sbocheck(1)](sbocheck.1.md) and [sboupgrade(1)](sboupgrade.1.md). Additionally, [sbocheck(1)](sbocheck.1.md)
 does not search for incompatible **perl**, **python** and **ruby**
 *\_SBo* packages.
+
+**-Y\|\--idle-build (FALSE\|TRUE)**
+
+**IDLE_BUILD**: If **TRUE**, use the *idle* IO priority class when
+building and installng packages. If **FALSE**, use the incoming
+**ionice(1)** settings, generally class *none*. See **ionice(1)** for
+more information.
 
 **-Z\|\--niceness (FALSE\|-20..19)**
 

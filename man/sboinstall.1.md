@@ -21,21 +21,21 @@
 
     sboinstall [-h|-v]
 
-    sboinstall [-NIdce TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIYdce TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
 \
                [-DRgiopr] [--batch|--dry-run] [--create-template|-t FILE]
 \
                sbo_name (sbo_name)
 
-    sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIYcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
 \
                [-Dgi] --use-template FILE
 
-    sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIYcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
 \
                [-Dgioqr] [--create-template|-t FILE] --mass-rebuild
 
-    sboinstall [-NIcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
+    sboinstall [-NIYcde TRUE|FALSE] [-Zj #|FALSE] [-Lk /path|FALSE]
 \
                [-Dgioqr] [--create-template|-t FILE] --series-rebuild
 SERIES,\...
@@ -57,7 +57,7 @@ exits with an error message if circular dependencies are detected.
 **sboinstall** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
 or the md5sum check fails, a new download is attempted from
-<ftp://slackware.uk/sbosrcarch/> as a fallback measure. To verify
+<https://slackware.uk/sbosrcarch/> as a fallback measure. To verify
 sources for the queue and download if needed, use **\--get-only**.
 Manually-downloaded source files (such as those requiring a license
 agreement) can be placed in *SBO_HOME/manual_downloads* prior to running
@@ -119,7 +119,7 @@ setting.
 Please note that source files in the manual downloads directory are not
 deleted automatically.
 
-**-e\|\--etc-profile**
+**-e\|\--etc-profile (FALSE\|TRUE)**
 
 If **TRUE**, source any executable scripts in */etc/profile.d* named
 *\*.sh* before running each SlackBuild in the build queue. This option
@@ -149,7 +149,7 @@ overrides the **INSTANT_STOP** setting.
 **-j\|\--jobs (FALSE\|#)**
 
 If **numerical**, pass to the **-j** argument when a SlackBuild invoking
-**make** is run.
+**make** is run. This option overrides the **JOBS** setting.
 
 **-k\|\--pkg-dir (FALSE\|/path)**
 
@@ -227,6 +227,13 @@ Save a template to **FILE**, but do not attempt downloads or builds.
 Non-root users may call **sboinstall** with **\--template-only**.
 
 Incompatible with **\--create-template** and **\--get-only**.
+
+**-Y\|\--idle-build (FALSE\|TRUE)**
+
+If **TRUE**, use the *idle* IO priority class for **sboinstall** when
+building and installng packages. If **FALSE**, use the incoming
+**ionice(1)** settings, generally class *none*. See **ionice(1)** for
+more information.
 
 **-Z\|\--niceness (FALSE\|-20..19)**
 
@@ -370,10 +377,10 @@ directory specified by **PKG_DIR** if set.
 **PKGTYPE**
 
 The **PKGTYPE** variable sets the compression method for the resulting
-package. **makepkg(1)** supports a number of values, including **tgz**
-(the **SlackBuilds.org** default), **tar.gz**, **txz**, **tar.xz**,
-**tbz**, **tar.bz2**, **tlz**, **tar.lz** and **tar.lzma**. Any of these
-can be used without issue.
+package. **makepkg(1)** supports the following: **tgz** (the
+**SlackBuilds.org** default), **txz**, **tbz** and **tlz**. Any of these
+can be used without issue. **sboinstall** exits if the value of
+**PKGTYPE** is unsupported.
 
 **TAG**
 
@@ -433,8 +440,8 @@ Otherwise, none known. If found, Issues and Pull Requests to
 
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbocutleaves(1)](sbocutleaves.1.md), [sbofind(1)](sbofind.1.md),
 [sbohints(1)](sbohints.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sboupgrade(1)](sboupgrade.1.md),
-[sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1),
-groupadd(1), setarch(1), useradd(1)
+[sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), ionice(1),
+gpg(1), groupadd(1), setarch(1), useradd(1)
 
 ## AUTHORS
 

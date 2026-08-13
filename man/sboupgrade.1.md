@@ -21,7 +21,7 @@
 
     sboupgrade [-h|-v]
 
-    sboupgrade [-NISXbcde TRUE|FALSE] [-Zj #|FALSE] [-Lk
+    sboupgrade [-NISXYbcde TRUE|FALSE] [-Zj #|FALSE] [-Lk
 /path\|FALSE] \
                [-figopqrz] [--batch|--dry-run]
 \--all\|\--all-plus-failures\|sbo_name (sbo_name)
@@ -41,7 +41,7 @@ error message if circular dependencies are detected.
 **sboupgrade** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
 or the md5sum check fails, a new download is attempted from
-<ftp://slackware.uk/sbosrcarch/> as a fallback measure. To verify
+<https://slackware.uk/sbosrcarch/> as a fallback measure. To verify
 sources for the queue and download if needed, use **\--get-only**.
 Manually-downloaded source files (such as those requiring a license
 agreement) can be placed in *SBO_HOME/manual_downloads* prior to running
@@ -75,7 +75,7 @@ the upgrade process as well.
 
 Package upgrades occasionally cause breakage due to **\*.so** version
 differences. A check for missing first-order shared object (solib)
-dependencies that may have resulted from running **sboupgrade**is
+dependencies that may have resulted from running **sboupgrade** is
 performed by default after the queue has been procesed, successfully or
 unsuccessfully. Each affected package is logged to
 */var/log/sboupgrade-solibs.log* with a list of missing shared objects
@@ -89,6 +89,32 @@ Root privileges are required to run **sboupgrade** unless passing
 script exits with a diagnostic message.
 
 ## OPTIONS
+
+**\--all**
+
+Upgrade all installed SlackBuilds that are eligible for upgrades,
+including *compat32* packages. This takes the **BUILD_IGNORE** setting
+into account. See [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
+
+Incompatible with **\--all-plus-failures** and **\--compat32**. Please
+note that SlackBuilds installed from a **LOCAL_OVERRIDES** directory are
+upgraded only if the version or build number from this directory varies.
+
+**-A\|\--all-plus-failures**
+
+Upgrade the same installed SlackBuilds that would be upgraded with
+**\--all**, as well as any packages with the *\_SBo* tag that fail the
+**solibs**, **perl**, **python** or **ruby** tests before the upgrade
+process begins.
+
+Because packages with missing solibs only in the */opt* directory are
+usually binary and therefore do not require rebuilds, they are added to
+the queue only if **sboupgrade** is being used interactively.
+**sboupgrade** ignores test failures for any script with an
+*ignore-tests* request in */etc/sbotools/sbotools.hints*. See
+[sbohints(1)](sbohints.1.md) or [sbotools.hints(5)](sbotools.hints.5.md) for details.
+
+Incompatible with **\--all** and **\--compat32**.
 
 **-b\|\--build-ignore (FALSE\|TRUE)**
 
@@ -127,7 +153,7 @@ setting.
 Please note that source files in the manual downloads directory not
 deleted automatically.
 
-**-e\|\--etc-profile**
+**-e\|\--etc-profile (TRUE\|FALSE)**
 
 If **TRUE**, source any executable scripts in */etc/profile.d* named
 *\*.sh* before running each SlackBuild in the build queue. This option
@@ -161,7 +187,7 @@ overrides the **INSTANT_STOP** setting.
 **-j\|\--jobs (FALSE\|#)**
 
 If **numerical**, pass to the **-j** argument when a SlackBuild invoking
-**make** is run.
+**make** is run. This option overrides the **JOBS** setting.
 
 **-k\|\--pkg-dir (FALSE\|/path)**
 
@@ -239,6 +265,13 @@ shared objects provided by outgoing packages are reflected in the
 results. For a full shared object check, see [sbocheck(1)](sbocheck.1.md). This
 option overrides the **NO_SOCHECK** setting.
 
+**-Y\|\--idle-build (FALSE\|TRUE)**
+
+If **TRUE**, use the *idle* IO priority class for **sboupgrade** when
+building and installng packages. If **FALSE**, use the incoming
+**ionice(1)** settings, generally class *none*. See **ionice(1)** for
+more information.
+
 **-Z\|\--niceness (FALSE\|-20..19)**
 
 **If set to a number** from -20 through 19, use that as the absolute
@@ -254,31 +287,6 @@ In the same vein as **\--force**, upgrade the SlackBuild and its
 dependencies, even if upgrades are not required.
 
 Incompatible with **\--nointeractive**.
-
-**\--all**
-
-Upgrade all installed SlackBuilds that are eligible for upgrades,
-including *compat32* packages. This takes the **BUILD_IGNORE** setting
-into account. See [sboconfig(1)](sboconfig.1.md) and [sbotools.conf(5)](sbotools.conf.5.md).
-Incompatible with **\--all-plus-failures** and **\--compat32**. Please
-note that SlackBuilds installed from a **LOCAL_OVERRIDES** directory are
-upgraded only if the version or build number from this directory varies.
-
-**-A\|\--all-plus-failures**
-
-Upgrade the same installed SlackBuilds that would be upgraded with
-**\--all**, as well as any packages with the *\_SBo* tag that fail the
-**solibs**, **perl**, **python** or **ruby** tests before the upgrade
-process begins.
-
-Because packages with missing solibs only in the */opt* directory are
-usually binary and therefore do not require rebuilds, they are added to
-the queue only if **sboupgrade** is being used interactively.
-**sboupgrade** ignores test failures for any script with an
-*ignore-tests* request in */etc/sbotools/sbotools.hints*. See
-[sbohints(1)](sbohints.1.md) or [sbotools.hints(5)](sbotools.hints.5.md) for details.
-
-Incompatible with **\--all** and **\--compat32**.
 
 **\--batch**
 
@@ -354,10 +362,10 @@ directory specified by **PKG_DIR** if set.
 **PKGTYPE**
 
 The **PKGTYPE** variable sets the compression method for the resulting
-package. **makepkg(1)** supports a number of values, including **tgz**
-(the **SlackBuilds.org** default), **tar.gz**, **txz**, **tar.xz**,
-**tbz**, **tar.bz2**, **tlz**, **tar.lz** and **tar.lzma**. Any of these
-can be used without issue.
+package. **makepkg(1)** supports the following: **tgz** (the
+**SlackBuilds.org** default), **txz**, **tbz** and **tlz**. Any of these
+can be used without issue. **sboupgrade** exits if the value of
+**PKGTYPE** is unsupported.
 
 **TAG**
 
@@ -415,10 +423,10 @@ Otherwise, none known. If found, Issues and Pull Requests to
 
 ## SEE ALSO
 
-[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbofind(1)](sbofind.1.md), [sbohints(1)](sbohints.1.md),
-[sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md), [sbotools.colors(5)](sbotools.colors.5.md),
-[sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), gpg(1), groupadd(1), setarch(1),
-useradd(1)
+[sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbocutleaves(1)](sbocutleaves.1.md), [sbofind(1)](sbofind.1.md),
+[sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sbotool(1)](sbotool.1.md),
+[sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), ionice(1),
+gpg(1), groupadd(1), setarch(1), useradd(1)
 
 ## AUTHORS
 

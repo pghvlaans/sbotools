@@ -5,6 +5,7 @@
 [DESCRIPTION](#description)\
 [STARTUP](#startup)\
 [OPTIONS](#options)\
+[EXIT CODES](#exit-codes)\
 [BUGS](#bugs)\
 [SEE ALSO](#see-also)\
 [AUTHORS](#authors)\
@@ -20,7 +21,7 @@
 
     sbotool [-h|-v]
 
-    sbotool [-d FILE] [--config]
+    sbotool [-d FILE] [--config|--tests]
 
 ## DESCRIPTION
 
@@ -71,9 +72,10 @@ documentation.
 ## STARTUP
 
 Ensure that the terminal window is at least 80x25 characters to run
-**sbotool**. The **lines** and **cols** terminal capabilities are
-required; **tput(1)** can be used to check. This should not be a problem
-for any remotely modern terminal.
+**sbotool**. The **lines**, **cols** and **clear** terminal capabilities
+are required; **tput(1)** can be used to check. This should not be a
+problem for any remotely modern terminal, provided that the **TERM**
+environment variable is set correctly.
 
 A copy of the **SlackBuilds.org** repository must be fetched when using
 **sbotools** for the first time, or when the **sbotools** directory has
@@ -106,6 +108,10 @@ can also specify a file at runtime.
 Enter the **Settings** menu directly. [sboconfig(1)](sboconfig.1.md) calls **sbotool**
 with this option when run without flags.
 
+**\--tests**
+
+Enter the **Package Tests** menu directly.
+
 **-d\|\--dialogrc (FILE)**
 
 Use this dialogrc file for the current run of **sbotool**. Overrides the
@@ -118,6 +124,32 @@ Show help information.
 **-v\|\--version**
 
 Show version information.
+
+## EXIT CODES
+
+**sbotools** scripts can exit with the following codes:
+
+0: all operations were succesful.\
+1: a usage error occured, such as specifying invalid options.\
+2: a script or module error occurred.\
+3: a SlackBuild exited non-zero.\
+4: unable to md5sum verify the source file(s).\
+5: unable to download the source file(s).\
+6: unable to obtain a required file handle.\
+7: unable to get required info from the *info* file.\
+8: unable to unset the exec-on-close bit on a temporary file.\
+9: multilib has not been set up (where required).\
+10: **convertpkg-compat32** exited non-zero.\
+11: the **convertpkg-compat32** script cannot be found (where
+required).\
+12: interrupt signal received.\
+13: circular dependencies detected.\
+14: in **batch**, **nointeractive** or **dry-run**, required user or
+group missing.\
+15: GPG verification failed.\
+16: reading keyboard input failed.\
+17: could not give **SBO_HOME** valid contents.\
+18: terminal lacks the required capabilities to run [sbotool(1)](sbotool.1.md).
 
 ## BUGS
 
