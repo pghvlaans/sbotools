@@ -1,4 +1,8 @@
 # ChangeLog
+* 4.4.2 - 2026-08-14
+  * *Util.pm*: Do not check the number of columns unless the terminal has been resized.
+  * *sbocheck*, *sboupgrade*: Improved terminal width checks.
+
 * 4.4.1 - 2026-08-13
   * *sboupgrade*, *sboinstall*: Minor display fixes.
   * *Download.pm*: Use `https://` instead of `ftp://` for sbosrcarch.

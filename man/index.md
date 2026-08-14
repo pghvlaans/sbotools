@@ -1,4 +1,4 @@
-The pages here reflect version 4.4.1 (2026-08-13). For post-release pages, see [post-release](/sbotools/man/post-release).
+The pages here reflect version 4.4.2 (2026-08-14). For post-release pages, see [post-release](/sbotools/man/post-release).
 
 * [sbotools(1)](sbotools.1.md)
     * A summary man page with brief descriptions of the tools.
