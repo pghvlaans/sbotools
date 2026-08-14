@@ -26,6 +26,10 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 **sbotools** currently supports Slackware 15.0 and beyond. For Slackware 14.0, 14.1 and 14.2, install `sbotools-4.0.2` at the latest. See the **sbotools** [downloads](https://pghvlaans.github.io/sbotools/downloads/) page.
 
 ## Most Recent Changes
+#### 4.4.2 - 2026-08-14
+  * Util.pm: Do not check the number of columns unless the terminal has been resized.
+  * sbocheck, sboupgrade: Improved terminal width checks.
+
 #### 4.4.1 - 2026-08-13
   * sboupgrade, sboinstall: Minor display fixes.
   * Download.pm: Use https:// instead of ftp:// for sbosrcarch.

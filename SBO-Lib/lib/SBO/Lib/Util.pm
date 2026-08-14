@@ -14,7 +14,7 @@ use 5.016;
 use strict;
 use warnings;
 
-our $VERSION = '4.4.1';
+our $VERSION = '4.4.2';
 
 use Cwd qw/ abs_path /;
 use Exporter 'import';
@@ -24,6 +24,8 @@ use File::Path qw/ make_path /;
 use SBO::ThirdParty::Sort::Versions;
 use Term::ANSIColor qw/ color colorvalid /;
 use Text::Wrap qw/ wrap $columns /;
+
+use sigtrap qw/ handler _resized WINCH /;
 
 my $consts;
 use constant $consts = {
@@ -58,6 +60,7 @@ my @EXPORT_CONFIG = qw{
   $conf_dir
   $conf_file
   $color_file
+  $current_cols
   $distfiles_dir
   $has_cols
   $has_clear
@@ -146,6 +149,7 @@ our @EXPORT_OK = (
     show_version
     slurp
     time_format
+    tput_update
     uniq
     usage_error
     version_cmp
@@ -220,6 +224,13 @@ C<SBO_HOME>, C<LOCAL_OVERRIDES>, C<SLACKWARE_VERSION>, C<REPO>, C<BUILD_IGNORE>,
 C<GPG_VERIFY>, C<RSYNC_DEFAULT>, C<STRICT_UPGRADES>, C<GIT_BRANCH>, C<CLASSIC>,
 C<CPAN_IGNORE>, C<ETC_PROFILE>, C<LOG_DIR>, C<NOWRAP>, C<NOCOLOR>, C<NO_SOCHECK>,
 C<DIALOGRC>, C<NONET>, C<FORCE_OBSOLETE>, C<INSTANT_STOP>, C<NICENESS> and C<IDLE_BUILD>.
+
+=head2 $current_cols
+
+The number of columns in the terminal. It is always equal to C<0> if the C<cols>
+terminal capability is not available. Except for the initial call, use C<tput_update()>
+to set the value; using C<tput(1)> directly outside of the C<sbotool(1)> context
+can otherwise introduce lag.
 
 =head2 $distfiles_dir
 
@@ -312,6 +323,8 @@ and any downloaded sources are hardlinked in.
 
 =cut
 
+our $resized = 0;
+
 our $arch = get_arch();
 our $anticipated_next = "15.1";
 
@@ -319,13 +332,14 @@ our $pkg_db = '/var/lib/pkgtools/packages';
 our $rem_pkg_db = '/var/lib/pkgtools/removed_packages';
 our $script_db = '/var/lib/pkgtools/scripts';
 
-our ($has_cols, $has_clear, $has_lines);
+our ($has_cols, $has_clear, $has_lines, $current_cols);
 $has_cols = $has_clear = $has_lines = system("/usr/bin/tput cols clear lines 2>/dev/null 1>/dev/null") == 0;
 unless ($has_cols) {
   $has_cols = system("/usr/bin/tput cols 2>/dev/null 1>/dev/null") == 0;
   $has_clear = system("/usr/bin/tput clear 2>/dev/null 1>/dev/null") == 0;
   $has_lines = system("/usr/bin/tput lines 2>/dev/null 1>/dev/null") == 0;
 }
+$current_cols = $has_cols ? `/usr/bin/tput cols 2>/dev/null` : 0;
 
 # global config variables
 my $req_dir = $ENV{SBOTOOLS_CONF_DIR};
@@ -1291,9 +1305,10 @@ sub prompt {
   $q = sprintf '%s [%s] ', $q, $def eq 'yes' ? 'y' : 'n' if defined $def;
   say "" if defined $extra_line;
   my $printcolor = colorvalid($color) ? $color : $color_default;
+  tput_update();
   unless ($config{NOWRAP} eq 'TRUE' or
           not $has_cols or
-          `/usr/bin/tput cols 2>/dev/null` < 73) {
+          $current_cols < 73) {
     $columns = 73;
     if ($config{NOCOLOR} ne 'TRUE') {
       print color($printcolor). wrap('', '', $q). color($color_default);
@@ -1631,6 +1646,22 @@ sub time_format {
   return "$hours:$minutes:$seconds";
 }
 
+=head2 tput_update
+
+  tput_update();
+
+C<tput_update()> updates the number of columns in the terminal using C<tput(1)>,
+provided that the C<cols> capability is available and the terminal has been resized
+since the last update.
+
+=cut
+
+sub tput_update {
+  return unless $has_cols and $resized;
+  $current_cols = `/usr/bin/tput cols 2>/dev/null`;
+  $resized = 0;
+}
+
 =head2 uniq
 
   my @uniq = uniq(@duplicates);
@@ -1762,9 +1793,10 @@ for use in scripts (e.g., queue reports from C<sbofind(1)>).
 sub wrapsay {
   script_error("wrapsay requires an argument.") unless @_ >= 1;
   my ($msg, $trail) = @_;
+  tput_update();
   unless ($config{NOWRAP} eq 'TRUE' or
           not $has_cols or
-          `/usr/bin/tput cols 2>/dev/null` < 73) {
+          $current_cols < 73) {
     $columns = 73;
     print wrap('', '', "$msg\n");
   } else {
@@ -1797,9 +1829,10 @@ sub wrapsay_color {
   }
   say "" if defined $extra_line;
   print_color($color);
+  tput_update();
   unless ($config{NOWRAP} eq 'TRUE' or
           not $has_cols or
-          `/usr/bin/tput cols 2>/dev/null` < 73) {
+          $current_cols < 73) {
     $columns = 73;
     print wrap('', '', "$msg");
   } else {
@@ -1859,5 +1892,9 @@ Copyright (C) 2024-2026, K. Eugene Carlson.
 Copyright (C) 2026, K. Eugene Carlson, Jacob Pipkin.
 
 =cut
+
+sub _resized {
+  $resized = 1;
+}
 
 1;

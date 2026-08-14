@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Util 3"
-.TH SBO::Lib::Util 3 "Setting Orange, Bureaucracy 6, 3192 YOLD" "" "sbotools 4.4.1"
+.TH SBO::Lib::Util 3 "Sweetmorn, Bureaucracy 7, 3192 YOLD" "" "sbotools 4.4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -114,6 +114,13 @@ The supported keys are: \f(CW\*(C`NOCLEAN\*(C'\fR, \f(CW\*(C`DISTCLEAN\*(C'\fR, 
 \&\f(CW\*(C`GPG_VERIFY\*(C'\fR, \f(CW\*(C`RSYNC_DEFAULT\*(C'\fR, \f(CW\*(C`STRICT_UPGRADES\*(C'\fR, \f(CW\*(C`GIT_BRANCH\*(C'\fR, \f(CW\*(C`CLASSIC\*(C'\fR,
 \&\f(CW\*(C`CPAN_IGNORE\*(C'\fR, \f(CW\*(C`ETC_PROFILE\*(C'\fR, \f(CW\*(C`LOG_DIR\*(C'\fR, \f(CW\*(C`NOWRAP\*(C'\fR, \f(CW\*(C`NOCOLOR\*(C'\fR, \f(CW\*(C`NO_SOCHECK\*(C'\fR,
 \&\f(CW\*(C`DIALOGRC\*(C'\fR, \f(CW\*(C`NONET\*(C'\fR, \f(CW\*(C`FORCE_OBSOLETE\*(C'\fR, \f(CW\*(C`INSTANT_STOP\*(C'\fR, \f(CW\*(C`NICENESS\*(C'\fR and \f(CW\*(C`IDLE_BUILD\*(C'\fR.
+.ie n .SS $current_cols
+.el .SS \f(CW$current_cols\fP
+.IX Subsection "$current_cols"
+The number of columns in the terminal. It is always equal to \f(CW0\fR if the \f(CW\*(C`cols\*(C'\fR
+terminal capability is not available. Except for the initial call, use \f(CWtput_update()\fR
+to set the value; using \f(CWtput(1)\fR directly outside of the \f(CWsbotool(1)\fR context
+can otherwise introduce lag.
 .ie n .SS $distfiles_dir
 .el .SS \f(CW$distfiles_dir\fP
 .IX Subsection "$distfiles_dir"
@@ -615,6 +622,15 @@ The contents are then returned. On error, it returns \f(CW\*(C`undef\*(C'\fR.
 .PP
 \&\f(CWtime_format()\fR takes a number of seconds (integer or otherwise) and returns
 a string H:MM:SS.
+.SS tput_update
+.IX Subsection "tput_update"
+.Vb 1
+\&  tput_update();
+.Ve
+.PP
+\&\f(CWtput_update()\fR updates the number of columns in the terminal using \f(CWtput(1)\fR,
+provided that the \f(CW\*(C`cols\*(C'\fR capability is available and the terminal has been resized
+since the last update.
 .SS uniq
 .IX Subsection "uniq"
 .Vb 1

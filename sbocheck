@@ -14,7 +14,7 @@
 use 5.16.0;
 use strict;
 use warnings FATAL => 'all';
-use SBO::Lib qw/ update_tree build_cmp get_all_available get_available_updates get_installed_packages get_removed_builds get_obsolete script_error open_fh in is_local is_obsolete is_orphaned show_version get_local_outdated_versions on_blacklist open_read series_check solib_check $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config version_cmp usage_error wrapsay :colors $match_mode %old_libs @not_opt_only %config :config /;
+use SBO::Lib qw/ update_tree build_cmp get_all_available get_available_updates get_installed_packages get_removed_builds get_obsolete script_error open_fh in is_local is_obsolete is_orphaned show_version get_local_outdated_versions on_blacklist open_read series_check solib_check $slackbuilds_txt slackbuilds_or_fetch verify_gpg lint_sbo_config tput_update version_cmp usage_error wrapsay :colors $match_mode %old_libs @not_opt_only %config :config /;
 use Getopt::Long qw(:config no_ignore_case_always bundling);
 use File::Basename;
 use List::Util 'max';
@@ -191,9 +191,8 @@ sub evaluate_series {
 	}
 	my $msg = "Checking packages for system incompatibility...";
 	my $msg_length = length($msg) + 6 + 2 * length($pkg_count);
-	my $width = 0;
-	$width = `/usr/bin/tput cols 2>/dev/null` if $has_cols;
-	my $count_ok = ($width =~ /^\d+$/ and $width > $msg_length);
+	tput_update();
+	my $count_ok = ($current_cols > $msg_length);
 	$msg =~ s/packages/$pkg_count packages/g unless $count_ok;
 	print "\n$msg";
 	my $count = 0;
@@ -203,7 +202,8 @@ sub evaluate_series {
 			next unless in $sbo, @to_check;
 		}
 		$count++;
-		print "\r$msg ($count / $pkg_count)" if $count_ok;
+		tput_update();
+		print "\r$msg ($count / $pkg_count)" if $count_ok and $current_cols > $msg_length;
 		my @results = series_check($installed_pkg->{$sbo}, @series_to_check);
 		push @bad_perl, "$sbo $installed_vers->{$sbo}" unless $results[0];
 		push @bad_python, "$sbo $installed_vers->{$sbo}" unless $results[1];
@@ -223,9 +223,8 @@ sub evaluate_solibs {
 		return;
 	}
 	my $msg_length = length($msg) + 6 + 2 * length($pkg_count);
-	my $width = 0;
-	$width = `/usr/bin/tput cols 2>/dev/null` if $has_cols;
-	my $count_ok = ($width =~ /^\d+$/ and $width > $msg_length);
+	tput_update();
+	my $count_ok = ($current_cols > $msg_length);
 	$msg =~ s/packages/$pkg_count packages/g unless $count_ok;
 	print $msg;
 	my $count = 0;
@@ -235,7 +234,8 @@ sub evaluate_solibs {
 			next unless in $sbo, @to_check;
 		}
 		$count++;
-		print "\r$msg ($count / $pkg_count)" if $count_ok;
+		tput_update();
+		print "\r$msg ($count / $pkg_count)" if $count_ok and $current_cols > $msg_length;
 		push @actionable, $sbo unless solib_check($installed_pkg->{$sbo}, @lib_search);
 	}
 	$| = 0 if $count_ok;
