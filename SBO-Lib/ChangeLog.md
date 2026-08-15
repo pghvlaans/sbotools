@@ -1,5 +1,8 @@
 # sbotools
 
+#### Post-Release
+  * tools: Add a script to make a submission-ready archive.
+
 #### 4.4.2 - 2026-08-14
   * Util.pm: Do not check the number of columns unless the terminal has been resized.
   * sbocheck, sboupgrade: Improved terminal width checks.
