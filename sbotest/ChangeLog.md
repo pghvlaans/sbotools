@@ -1,5 +1,8 @@
 ## ChangeLog.md
 
+#### Post-Release
+  * tools: Add a script to make a submission-ready archive.
+
 #### 1.3.1 - 2026-08-13
   * Compatibility bump
   * Account for the new **IDLE_BUILD** setting; add **\--idle-build**
