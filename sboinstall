@@ -469,6 +469,7 @@ FIRST: for my $sbo (@$build_queue) {
 			$reinstall_label = "reinstall";
 			$agreed_label = "Reinstalling";
 		}
+		$inst_label .= " (non-SBo)" if $std_names{$sbo};
 		$agreed_label = $get_only ? "Downloading sources." : $agreed_label;
 		my $inst_msg = sprintf "%s (%s) is $inst_label.", $name, $inst_names{$name}{pkg};
 		$inst_msg = $config{CLASSIC} eq 'TRUE' ? $inst_msg : $inst_msg. "\n  ($inst_names{$name}{created})";

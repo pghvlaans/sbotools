@@ -28,6 +28,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
 ## Most Recent Changes
 #### Post-Release
   * tools: Add a script to make a submission-ready archive.
+  * sboinstall: Additional "non-SBo" indicator.
 
 #### 4.4.2 - 2026-08-14
   * Util.pm: Do not check the number of columns unless the terminal has been resized.
