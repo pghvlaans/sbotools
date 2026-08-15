@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Make sbotools.tar and put it in the root sbotools directory
-# directory for submission to SBo.
+# for submission to SBo.
 
 # Run only after the new version has been uploaded to the website.
 
