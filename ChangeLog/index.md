@@ -3,6 +3,7 @@
   * tools: Add a script to make a submission-ready archive.
   * *sboinstall*: Additional "non-SBo" indicator.
   * *sboinstall*, *sboupgrade*: Find and report installed `.new` files resulting from the queue.
+  * *Readme.pm*: Consistent newlines for incoming option display; no text wrapping.
 
 * 4.4.2 - 2026-08-14
   * *Util.pm*: Do not check the number of columns unless the terminal has been resized.
