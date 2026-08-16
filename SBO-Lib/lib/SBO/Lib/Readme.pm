@@ -169,11 +169,11 @@ sub ask_previous {
     if ($exit) {
       warn_color $color_lesser, $fh;
     } else {
-      my $prev_opts = <$fh>;
+      chomp(my $prev_opts = <$fh>);
       if ($config{CLASSIC} ne "TRUE") {
         wrapsay_color $color_notice, "\nOptions were previously specified for $sbo:\n";
-        wrapsay "\n$prev_opts\n";
-        if (prompt($color_notice, "\nUse these options to build $sbo?", default => 'yes')) {
+        say "$prev_opts\n";
+        if (prompt($color_notice, "Use these options to build $sbo?", default => 'yes')) {
           my $opts = $prev_opts;
           return $opts;
         }
