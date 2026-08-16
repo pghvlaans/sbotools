@@ -53,6 +53,21 @@ into account. In case of
 their reverse dependencies rebuilt as well. The script exits
 with an error message if circular dependencies are detected.
 .P
+Once
+.B
+sboinstall
+has finished the queue, it reports completed builds, installed
+.I
+\&.new
+files from the completed builds, skipped builds, time taken and
+failed builds. Only skipped and failed builds are reported if the
+.B
+CLASSIC
+setting is
+.B
+TRUE\fR\
+\&.
+.P
 .B
 sboinstall
 attempts to download the sources from the

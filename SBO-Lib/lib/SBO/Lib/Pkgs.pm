@@ -23,6 +23,7 @@ our @EXPORT_OK = qw{
   get_installed_cpans
   get_installed_packages
   get_local_outdated_versions
+  get_newfiles
   get_removed_builds
   $perl_pkg
   $ruby_pkg
@@ -329,6 +330,43 @@ sub get_local_outdated_versions {
   }
 
   return @outdated;
+}
+
+=head2 get_newfiles
+
+  my @newfiles = get_newfiles(@pkg_names);
+
+C<get_newfiles()> takes an array of package names and returns a sorted list of installed
+C<.new> files as a reminder to handle them. Files are registered if the non-new file is
+still present on the system.
+
+=cut
+
+sub get_newfiles {
+  script_error("get_newfiles requires at least one argument.") unless @_;
+  my @names = @_;
+  my @newfiles;
+  my $pkglist = get_installed_packages("SBO", 1);
+  for my $pkg (@$pkglist) {
+    next unless in $pkg->{name}, @names;
+    my ($fh, $error) = open_read("$pkg_db/$pkg->{pkg}");
+    next if $error;
+    my $start_reading;
+    while (<$fh>) {
+      $start_reading = 1 if $_ eq "./\n";
+      next unless defined $start_reading;
+      chomp(my $line = $_);
+      next unless $line =~ /\.new$/;
+      my $newfile = "/$line";
+      next unless -f $newfile;
+      my $oldfile = $newfile;
+      $oldfile =~ s/\.new$//;
+      push @newfiles, $newfile if -f $oldfile;
+    }
+    close $fh;
+  }
+  @newfiles = sort @newfiles;
+  return @newfiles;
 }
 
 =head2 get_removed_builds

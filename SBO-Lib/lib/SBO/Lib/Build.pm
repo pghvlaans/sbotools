@@ -12,7 +12,7 @@ use SBO::Lib::Util qw/ :config :const :times :colors prompt error_code script_er
 use SBO::Lib::Tree qw/ get_sbo_location /;
 use SBO::Lib::Info qw/ get_sbo_version check_x32 get_requires get_reverse_reqs /;
 use SBO::Lib::Download qw/ get_sbo_downloads get_filename_from_link check_distfiles stage unstage /;
-use SBO::Lib::Pkgs qw/ get_installed_packages /;
+use SBO::Lib::Pkgs qw/ get_installed_packages get_newfiles /;
 
 use Exporter 'import';
 use Fcntl qw(F_SETFD F_GETFD);
@@ -840,7 +840,7 @@ sub process_sbos {
         if (prompt $color_lesser, "$sbo failed to build. Continue with the rest of the queue?", default => "no") {
           next FIRST;
         } else {
-          if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
+          report_successes($args{NOINSTALL}, $success_label, @successes) if @successes and $config{CLASSIC} ne "TRUE";
           if (@skipped) { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
           display_times() unless $config{CLASSIC} eq "TRUE";
           chomp(my $test_nice = `/bin/nice`);
@@ -850,7 +850,7 @@ sub process_sbos {
           return \@failures, $exit;
         }
       } elsif ($count == @$todo or ($config{INSTANT_STOP} eq "TRUE" and $args{NON_INT})) {
-          if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
+          report_successes($args{NOINSTALL}, $success_label, @successes) if @successes and $config{CLASSIC} ne "TRUE";
           if (@skipped) { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
           display_times() unless $config{CLASSIC} eq "TRUE";
           chomp(my $test_nice = `/bin/nice`);
@@ -893,7 +893,7 @@ sub process_sbos {
   }
   write_resume($todo, $opts, $cmds, $mtemp_resume, @successes, @failure_names) if $mass;
   unlink $mtemp_resume if $mass and -f $mtemp_resume and not @failures;
-  if (@successes and $config{CLASSIC} ne "TRUE") { wrapsay_color $color_notice, "\nBuilt:"; wrapsay join(" ", @successes); }
+  report_successes($args{NOINSTALL}, $success_label, @successes) if @successes and $config{CLASSIC} ne "TRUE";
   if (@skipped) { wrapsay_color $color_lesser, "\nSkipped:"; wrapsay join(" ", @skipped); }
   display_times() unless $config{CLASSIC} eq "TRUE";
   chomp(my $test_nice = `/bin/nice`);
@@ -988,6 +988,30 @@ sub rationalize_queue {
   }
 
   return [ @result_queue ];
+}
+
+=head2 report_successes
+
+  report_successes($args{NOINSTALL}, $success_label, @successes);
+
+C<report_successes()> takes the C<NOINSTALL> argument, a success label and a list
+of packages that built successfully. It prints the successes and any C<.new> files
+resulting from their installation. It is not exported and there is no useful return
+value.
+
+=cut
+
+sub report_successes {
+  script_error("report_successes requires three arguments.") unless @_ >= 3;
+  my ($noinstall, $success_label, @successes) = @_;
+  wrapsay_color $color_notice, "\n$success_label";
+  wrapsay join(" ", @successes);
+  my @newfiles = get_newfiles(@successes) unless $noinstall;
+  if (@newfiles) {
+    my $files_label = @newfiles == 1 ? "file" : "files";
+    wrapsay_color $color_notice, "\n.new $files_label found:";
+    say "  $_" for (@newfiles);
+  }
 }
 
 =head2 run_tee

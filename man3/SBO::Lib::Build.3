@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Build 3"
-.TH SBO::Lib::Build 3 "Sweetmorn, Bureaucracy 7, 3192 YOLD" "" "sbotools 4.4.2"
+.TH SBO::Lib::Build 3 "Pungenday, Bureaucracy 9, 3192 YOLD" "" "sbotools 4.4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -306,6 +306,16 @@ package installations and removals during test runs. Intuitiveness is not
 to be expected in \f(CWsbotest(1)\fR queues.
 .PP
 The rearranged queue is returned.
+.SS report_successes
+.IX Subsection "report_successes"
+.Vb 1
+\&  report_successes($args{NOINSTALL}, $success_label, @successes);
+.Ve
+.PP
+\&\f(CWreport_successes()\fR takes the \f(CW\*(C`NOINSTALL\*(C'\fR argument, a success label and a list
+of packages that built successfully. It prints the successes and any \f(CW\*(C`.new\*(C'\fR files
+resulting from their installation. It is not exported and there is no useful return
+value.
 .SS run_tee
 .IX Subsection "run_tee"
 .Vb 1

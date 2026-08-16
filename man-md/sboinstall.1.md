@@ -54,6 +54,11 @@ case of **\--reinstall**, scripts with automatic reverse dependency
 rebuilds have their reverse dependencies rebuilt as well. The script
 exits with an error message if circular dependencies are detected.
 
+Once **sboinstall** has finished the queue, it reports completed builds,
+installed *.new* files from the completed builds, skipped builds, time
+taken and failed builds. Only skipped and failed builds are reported if
+the **CLASSIC** setting is **TRUE**.
+
 **sboinstall** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
 or the md5sum check fails, a new download is attempted from
