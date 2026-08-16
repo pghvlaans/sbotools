@@ -64,7 +64,8 @@ fourtysixandtwo (feedback about the overzealous 'missing' script prompt;
 fsLeg (fixed bash completion for sbocheck; reported a failed download
        error)
 Geremias (originally reported the info parse bug before version 3.3)
-gbschenkel (pointed out the need for FORCE_OBSOLETE)
+gbschenkel (pointed out the need for FORCE_OBSOLETE; assistance with
+            the obsolete scripts list)
 hackedhead (requested installation templates and sboupgrade --all)
 iluvatar1 (reported an .info parse bug)
 J. Milgram (proposed the sbocheck orphaned builds report)
