@@ -38,6 +38,11 @@ install any non-installed dependencies in the build queue, taking the
 hints in [sbotools.hints(5)](sbotools.hints.5.md) into account. The script exits with an
 error message if circular dependencies are detected.
 
+Once **sboupgrade** has finished the queue, it reports completed builds,
+installed *.new* files from the completed builds, skipped builds, time
+taken and failed builds. Only skipped and failed builds are reported if
+the **CLASSIC** setting is **TRUE**.
+
 **sboupgrade** attempts to download the sources from the *DOWNLOAD* or
 *DOWNLOAD_x86_64* variables in the *info* file. If either the download
 or the md5sum check fails, a new download is attempted from
