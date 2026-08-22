@@ -7,6 +7,7 @@
   * *sbocheck*: Account for multiple package copies in checks.
   * *Pkgs.pm*: Error out if any SBo package is installed more than once.
     * *sboclean*, *sboconfig* and *sbohints* can still run under this condition.
+  * *sbofind*: Move file displays to the end.
 
 * 4.4.2 - 2026-08-14
   * *Util.pm*: Do not check the number of columns unless the terminal has been resized.
