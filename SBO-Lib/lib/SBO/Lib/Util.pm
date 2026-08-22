@@ -642,6 +642,7 @@ sub error_code {
   script_error("error_code requires two arguments.") unless @_ == 2;
   my $msg = shift;
   if (defined $is_sbotool and -x "/usr/bin/dialog") {
+    $msg =~ s|\"|\\"|g;
     system("/usr/bin/dialog --title \"Error\" --ok-label \"Exit\" --msgbox \"$msg\" 0 0");
     exit shift;
   }
@@ -1546,7 +1547,9 @@ codes, use C<error_code()>.
 sub script_error {
   if (@_) {
     if (defined $is_sbotool and -x "/usr/bin/dialog") {
-      system("/usr/bin/dialog --title \"Error\" --ok-label \"Exit\" --msgbox \"A fatal script error has occurred:\n$_[0]\nExiting.\" 0 0");
+      my $msg = $_[0];
+      $msg =~ s|\"|\\"|g;
+      system("/usr/bin/dialog --title \"Error\" --ok-label \"Exit\" --msgbox \"A fatal script error has occurred:\n$msg\nExiting.\" 0 0");
       exit _ERR_USAGE;
     }
     if ($config{NOCOLOR} ne 'TRUE') {
@@ -1693,6 +1696,7 @@ error codes, use C<error_code()>.
 sub usage_error {
   my $msg = shift;
   if (defined $is_sbotool and -x "/usr/bin/dialog") {
+    $msg =~ s|\"|\\"|g;
     system("/usr/bin/dialog --title \"Error\" --ok-label \"Exit\" --msgbox \"$msg\" 0 0");
     exit _ERR_USAGE;
   }

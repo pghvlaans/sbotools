@@ -9,6 +9,7 @@
   * Pkgs.pm: Error out if any SBo package is installed more than once.
     * sboclean, sboconfig and sbohints can still run under this condition.
   * sbofind: Move file displays to the end.
+  * Util.pm: Escape error message quotes in dialog output.
 
 #### 4.4.2 - 2026-08-14
   * Util.pm: Do not check the number of columns unless the terminal has been resized.
