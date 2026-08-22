@@ -69,6 +69,11 @@ provides superior efficiency and fine-tuned option control to
 experienced users. See the **Man Pages** menu to read further user
 documentation.
 
+**sbotool** cannot run if any *\_SBo* package is installed more than
+once. If this is the case, a list of such packages is displayed and the
+program errors out. Use **removepkg(8)** to fix the problem and try
+again.
+
 ## STARTUP
 
 Ensure that the terminal window is at least 80x25 characters to run
@@ -161,7 +166,7 @@ None known. If found, Issues and Pull Requests to
 [sbocheck(1)](sbocheck.1.md), [sboclean(1)](sboclean.1.md), [sboconfig(1)](sboconfig.1.md), [sbocutleaves(1)](sbocutleaves.1.md), [sbofind(1)](sbofind.1.md),
 [sbohints(1)](sbohints.1.md), [sboinstall(1)](sboinstall.1.md), [sboremove(1)](sboremove.1.md), [sboupgrade(1)](sboupgrade.1.md), sbotools(1),
 [sbotools.colors(5)](sbotools.colors.5.md), [sbotools.conf(5)](sbotools.conf.5.md), [sbotools.hints(5)](sbotools.hints.5.md), dialog(1),
-tput(1)
+removepkg(8), tput(1)
 
 ## AUTHORS
 

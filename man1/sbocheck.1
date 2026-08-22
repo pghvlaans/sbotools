@@ -271,10 +271,15 @@ sboconfig(1)
 or
 .B
 sbotools.conf(5)\fR\
-). If an invalid configuration is detected in
+).
+.P
+If an invalid configuration is detected in
 .I
 /etc/sbotools/sbotools.conf\fR\
-\&, the script exits with a diagnostic message.
+\&, or any
+.I
+_SBo
+package is installed more than once, the script exits with a diagnostic message.
 .SH OPTIONS
 .P
 .B

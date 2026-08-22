@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Pkgs 3"
-.TH SBO::Lib::Pkgs 3 "Pungenday, Bureaucracy 9, 3192 YOLD" "" "sbotools 4.4.2"
+.TH SBO::Lib::Pkgs 3 "Prickle-Prickle, Bureaucracy 15, 3192 YOLD" "" "sbotools 4.4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -134,6 +134,9 @@ The default behavior is to retain the package lists for future calls; add a true
 to the arguments to clear them instead. This is irrelevant when running \f(CW\*(C`sbotest\*(C'\fR.
 .PP
 The \f(CW\*(C`perl\*(C'\fR and \f(CW\*(C`ruby\*(C'\fR package file names are found at this time.
+.PP
+If any SBo package is found to be installed more than once, a list of such duplicates
+is displayed and the script errors out.
 .SS get_local_outdated_versions
 .IX Subsection "get_local_outdated_versions"
 .Vb 1

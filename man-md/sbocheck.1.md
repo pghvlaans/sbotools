@@ -99,9 +99,11 @@ Non-root users can only call **sbocheck** with the **\--nopull**,
 **\--lib-search**, **\--type**, **\--no-socheck**, **\--no-orphans**,
 **\--help** and **\--version** flags. **sbocheck** issues a warning if
 the directory specified with **LOCAL_OVERRIDES** does not exist (see
-[sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)). If an invalid configuration
-is detected in */etc/sbotools/sbotools.conf*, the script exits with a
-diagnostic message.
+[sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
+
+If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, or any *\_SBo* package is installed more
+than once, the script exits with a diagnostic message.
 
 ## OPTIONS
 

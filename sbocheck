@@ -153,12 +153,11 @@ get_all_available();
 
 # In case of package tests
 my @requested = @ARGV if $pkg_check;
-my (@to_check, @missing, @installed, $installed_pkg, $installed_vers, $scope, $pkg_count);
+my (@to_check, @missing, @installed, $installed_pkg, $scope, $pkg_count);
 if ($socheck or $pkg_check or $full_check or $auto_series) {
 	$scope = ($pkg_check or $full_check) ? "ALL" : "SBO";
 	@installed = @{ get_installed_packages($scope) };
 	$installed_pkg = +{ map {; $_->{name}, $_->{pkg} } @installed };
-	$installed_vers = +{ map {; $_->{name}, $_->{version} } @installed };
 	for my $request (@requested) {
 		if (exists $installed_pkg->{$request}) {
 			push @to_check, $request;
@@ -197,17 +196,17 @@ sub evaluate_series {
 	print "\n$msg";
 	my $count = 0;
 	$| = 1 if $count_ok;
-	for my $sbo (keys %$installed_pkg) {
+	for my $sbo (@installed) {
 		if ($pkg_check) {
-			next unless in $sbo, @to_check;
+			next unless in $sbo->{name}, @to_check;
 		}
 		$count++;
 		tput_update();
 		print "\r$msg ($count / $pkg_count)" if $count_ok and $current_cols > $msg_length;
-		my @results = series_check($installed_pkg->{$sbo}, @series_to_check);
-		push @bad_perl, "$sbo $installed_vers->{$sbo}" unless $results[0];
-		push @bad_python, "$sbo $installed_vers->{$sbo}" unless $results[1];
-		push @bad_ruby, "$sbo $installed_vers->{$sbo}" unless $results[2];
+		my @results = series_check($sbo->{pkg}, @series_to_check);
+		push @bad_perl, "$sbo->{name} $sbo->{version}" unless $results[0];
+		push @bad_python, "$sbo->{name} $sbo->{version}" unless $results[1];
+		push @bad_ruby, "$sbo->{name} $sbo->{version}" unless $results[2];
 	}
 	$| = 0 if $count_ok;
 	print "\n";
@@ -229,14 +228,14 @@ sub evaluate_solibs {
 	print $msg;
 	my $count = 0;
 	$| = 1 if $count_ok;
-	for my $sbo (keys %$installed_pkg) {
+	for my $sbo (@installed) {
 		if ($pkg_check) {
-			next unless in $sbo, @to_check;
+			next unless in $sbo->{name}, @to_check;
 		}
 		$count++;
 		tput_update();
 		print "\r$msg ($count / $pkg_count)" if $count_ok and $current_cols > $msg_length;
-		push @actionable, $sbo unless solib_check($installed_pkg->{$sbo}, @lib_search);
+		push @actionable, $sbo unless solib_check($sbo->{pkg}, @lib_search);
 	}
 	$| = 0 if $count_ok;
 	if ($lib_search) {
@@ -252,8 +251,8 @@ sub evaluate_solibs {
 				my $found;
 				push @to_rebuild, "$lib:";
 				for my $sbo (sort @actionable) {
-					if ($old_libs{$installed_pkg->{$sbo}} =~ /$lib(:| \(x86\))/) {
-						push @to_rebuild, "  $sbo $installed_vers->{$sbo}";
+					if ($old_libs{$sbo->{pkg}} =~ /$lib(:| \(x86\))/) {
+						push @to_rebuild, "  $sbo->{name} $sbo->{version}";
 						$found = 1;
 					}
 				}
@@ -263,7 +262,7 @@ sub evaluate_solibs {
 			push @to_rebuild, "";
 			push @to_rebuild, "FILE DETAILS\n";
 		}
-		for my $sbo (sort @actionable) { push @to_rebuild, "$sbo $installed_vers->{$sbo}:\n$old_libs{$installed_pkg->{$sbo}}"; }
+		for my $sbo (sort @actionable) { push @to_rebuild, "$sbo->{name} $sbo->{version}:\n$old_libs{$sbo->{pkg}}"; }
 	}
 	return @to_rebuild;
 }

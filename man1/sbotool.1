@@ -144,6 +144,17 @@ See the
 .B
 Man Pages
 menu to read further user documentation.
+.P
+.B
+sbotool
+cannot run if any
+.I
+_SBo
+package is installed more than once. If this is the case, a list of
+such packages is displayed and the program errors out. Use
+.B
+removepkg(8)
+to fix the problem and try again.
 .SH STARTUP
 Ensure that the terminal window is at least 80x25 characters to run
 .B
@@ -390,7 +401,7 @@ None known. If found, Issues and Pull Requests to
 are always welcome.
 .SH SEE ALSO
 .P
-sbocheck(1), sboclean(1), sboconfig(1), sbocutleaves(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), dialog(1), tput(1)
+sbocheck(1), sboclean(1), sboconfig(1), sbocutleaves(1), sbofind(1), sbohints(1), sboinstall(1), sboremove(1), sboupgrade(1), sbotools(1), sbotools.colors(5), sbotools.conf(5), sbotools.hints(5), dialog(1), removepkg(8), tput(1)
 .SH AUTHORS
 .P
 Jacob Pipkin <jacob.pipkin@icloud.com>

@@ -89,9 +89,12 @@ automatically after every **sboupgrade** run. To disable the automatic
 checks, set the **NO_SOCHECK** setting to **TRUE**.
 
 Root privileges are required to run **sboupgrade** unless passing
-**\--dry-run**. If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, or if invalid options are specified, the
-script exits with a diagnostic message.
+**\--dry-run**.
+
+If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, invalid options are specified, or any
+*\_SBo* package is installed more than once, the script exits with a
+diagnostic message.
 
 ## OPTIONS
 

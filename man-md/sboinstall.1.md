@@ -89,9 +89,12 @@ base script. Please note that saved build options are not displayed when
 **GPG_VERIFY** is **TRUE**.
 
 Root privileges are required to run **sboinstall** unless passing
-**\--dry-run** or **\--template-only**. If an invalid configuration is
-detected in */etc/sbotools/sbotools.conf*, or if invalid options are
-specified, the script exits with a diagnostic message.
+**\--dry-run** or **\--template-only**.
+
+If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, invalid options are specified, or any
+*\_SBo* package is installed more than once, the script exits with a
+diagnostic message.
 
 ## OPTIONS
 

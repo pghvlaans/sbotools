@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '4.4.2';
 
-use SBO::Lib::Util qw/ :config :const build_cmp in script_error error_code open_read version_cmp uniq /;
+use SBO::Lib::Util qw/ :config :const build_cmp in script_error error_code open_read version_cmp uniq usage_error /;
 use SBO::Lib::Tree qw/ get_sbo_location is_local /;
 use SBO::Lib::Info qw/ get_orig_build_number get_orig_version get_sbo_build_number get_sbo_version /;
 
@@ -221,6 +221,9 @@ to the arguments to clear them instead. This is irrelevant when running C<sbotes
 
 The C<perl> and C<ruby> package file names are found at this time.
 
+If any SBo package is found to be installed more than once, a list of such duplicates
+is displayed and the script errors out.
+
 =cut
 
 sub get_installed_packages {
@@ -272,6 +275,25 @@ sub get_installed_packages {
 
   $dirty_pkgs = [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg}, created => $_->{created} } }
     grep { $types{$_->{name}} eq "DIRTY" } @pkgs ];
+
+  my (@all_pkg_names, @duplicates, @true_duplicates, @disp_duplicates);
+  push @all_pkg_names, $_->{name} for (@$all_pkgs);
+  @all_pkg_names = sort @all_pkg_names;
+  while (@all_pkg_names) {
+    my $item = shift @all_pkg_names;
+    if (@all_pkg_names) {
+      push @duplicates, $item if $item eq $all_pkg_names[0];
+    }
+  }
+  @true_duplicates = grep { in $_->{name}, @duplicates } @$sbo_pkgs;
+  push @disp_duplicates, "  $_->{name}" for (@true_duplicates);
+  @disp_duplicates = uniq sort @disp_duplicates;
+  if (@disp_duplicates == 1) {
+    usage_error("SBo package \"$true_duplicates[0]->{name}\" is installed more than once.\n\nFix this and try again.");
+  } elsif (@disp_duplicates) {
+    my $dupe_string = join "\n", @disp_duplicates;
+    usage_error("SBo packages are installed more than once:\n\n$dupe_string\n\nFix this and try again.");
+  }
 
 return $all_pkgs if $filter eq "ALL";
 return $std_pkgs if $filter eq "STD";

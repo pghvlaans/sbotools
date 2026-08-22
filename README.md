@@ -31,6 +31,9 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboinstall: Additional "non-SBo" indicator.
   * sboinstall, sboupgrade: Find and report installed .new files resulting from the queue.
   * Readme.pm: Consistent newlines for incoming option display; no text wrapping.
+  * sbocheck: Account for multiple package copies in checks.
+  * Pkgs.pm: Error out if any SBo package is installed more than once.
+    * sboclean, sboconfig and sbohints can still run under this condition.
 
 #### 4.4.2 - 2026-08-14
   * Util.pm: Do not check the number of columns unless the terminal has been resized.
