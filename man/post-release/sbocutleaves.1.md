@@ -39,9 +39,11 @@ Use the **\--list** or **\--raw** flags to generate a list of leaf
 packages without taking any other action.
 
 Root privileges are required to run **sbocutleaves** unless passing
-**\--list** or **\--raw**. If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, the script exits with a diagnostic
-message.
+**\--list** or **\--raw**.
+
+If an invalid configuration is detected in
+*/etc/sbotools/sbotools.conf*, or any *\_SBo* package is installed more
+than once, the script exits with a diagnostic message.
 
 ## OPTIONS
 
