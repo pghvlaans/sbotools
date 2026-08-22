@@ -363,13 +363,13 @@ SEARCH: for my $search (@ARGV) {
 				say "Maint:  $maintainer";
 				wrapsay_color $color_warn, "        Orphaned upstream and may be removed." if is_orphaned($name);
 			}
-			say "info:   ". get_file_contents("$location/$name.info") if $show_info;
-			say "README: ". get_file_contents("$location/README") if $show_readme;
 			say "Queue:  ". show_build_queue($name) if $show_queue;
 			say "RevDep: ". show_reverse_dependencies($name) if $show_reverse;
 			say "AllRev: ". show_available_reverse($name) if $all_reverse;
 			say "LstRev: ". last_level_reverse($name) if $last_reverse;
 			say "1stRev: ". first_level_reverse($name) if $first_reverse;
+			say "info:   ". get_file_contents("$location/$name.info") if $show_info;
+			say "README: ". get_file_contents("$location/README") if $show_readme;
 			say '';
 			$notfound = 0;
 		}
