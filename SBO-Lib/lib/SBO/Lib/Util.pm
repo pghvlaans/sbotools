@@ -671,7 +671,7 @@ sub error_code {
 
 C<extract_slack_desc()> takes a package file and a SlackBuild name and extracts the
 C<slack-desc> information; it returns a string that can be written to a new
-C<slack-desc> file if well-formed, and 0 otherwise.
+C<slack-desc> file if well-formed, and C<undef> otherwise.
 
 =cut
 
@@ -680,20 +680,17 @@ sub extract_slack_desc {
   my ($file, $sbo) = @_;
   my ($fh, $exit) = open_read($file);
   error_code("Failed to open $file.", _ERR_OPENFH) if $exit;
-  my $slack_desc = 0;
+  my $slack_desc;
   my $max_length = length("$sbo: ") + 71;
   while (<$fh>) {
     next unless $_ =~ /^$sbo:/;
     last if $_ =~ /^FILE LIST:/;
     next unless length($_) <= $max_length;
-    if ($slack_desc) {
-      $slack_desc .= $_;
-    } else {
-      $slack_desc = $_;
-    }
+    $slack_desc .= $_;
   }
+  return undef unless $slack_desc;
   my $lines = $slack_desc =~ tr/\n//;
-  return 0 unless $lines == 11;
+  return undef unless $lines == 11;
   return $slack_desc;
 }
 
