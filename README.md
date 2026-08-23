@@ -32,7 +32,7 @@ To make **sbotools** packages from the master branch, see [sbotools-git-slackbui
   * sboinstall, sboupgrade: Find and report installed .new files resulting from the queue.
   * Readme.pm: Consistent newlines for incoming option display; no text wrapping.
   * sbocheck: Account for multiple package copies in checks.
-  * Pkgs.pm: Error out if any SBo package is installed more than once.
+  * Pkgs.pm: Error out if any non-blacklisted SBo package is installed more than once.
     * sboclean, sboconfig and sbohints can still run under this condition.
   * sbofind: Move file displays to the end.
   * Util.pm: Escape error message quotes in dialog output.

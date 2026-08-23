@@ -102,8 +102,8 @@ the directory specified with **LOCAL_OVERRIDES** does not exist (see
 [sboconfig(1)](sboconfig.1.md) or [sbotools.conf(5)](sbotools.conf.5.md)).
 
 If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, or any *\_SBo* package is installed more
-than once, the script exits with a diagnostic message.
+*/etc/sbotools/sbotools.conf*, or any non-blacklisted *\_SBo* package is
+installed more than once, the script exits with a diagnostic message.
 
 ## OPTIONS
 

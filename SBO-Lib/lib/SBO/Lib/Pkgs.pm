@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '4.4.2';
 
-use SBO::Lib::Util qw/ :config :const build_cmp in script_error error_code open_read version_cmp uniq usage_error /;
+use SBO::Lib::Util qw/ :config :const build_cmp in script_error error_code on_blacklist open_read version_cmp uniq usage_error /;
 use SBO::Lib::Tree qw/ get_sbo_location is_local /;
 use SBO::Lib::Info qw/ get_orig_build_number get_orig_version get_sbo_build_number get_sbo_version /;
 
@@ -221,8 +221,8 @@ to the arguments to clear them instead. This is irrelevant when running C<sbotes
 
 The C<perl> and C<ruby> package file names are found at this time.
 
-If any SBo package is found to be installed more than once, a list of such duplicates
-is displayed and the script errors out.
+If any non-blacklisted SBo package is found to be installed more than once, a list of
+such duplicates is displayed and the script errors out.
 
 =cut
 
@@ -285,14 +285,18 @@ sub get_installed_packages {
       push @duplicates, $item if $item eq $all_pkg_names[0];
     }
   }
-  @true_duplicates = grep { in $_->{name}, @duplicates } @$sbo_pkgs;
-  push @disp_duplicates, "  $_->{name}" for (@true_duplicates);
-  @disp_duplicates = uniq sort @disp_duplicates;
-  if (@disp_duplicates == 1) {
-    usage_error("SBo package \"$true_duplicates[0]->{name}\" is installed more than once.\n\nFix this and try again.");
-  } elsif (@disp_duplicates) {
-    my $dupe_string = join "\n", @disp_duplicates;
-    usage_error("SBo packages are installed more than once:\n\n$dupe_string\n\nFix this and try again.");
+  if (@duplicates) {
+    @true_duplicates = grep { defined get_sbo_location($_ =~ s/-compat32//gr) and not on_blacklist $_ } @duplicates;
+    if (@true_duplicates) {
+      @true_duplicates = uniq sort @true_duplicates;
+      if (@true_duplicates == 1) {
+        usage_error("SBo package \"$true_duplicates[0]\" is installed more than once.\n\nBlacklist or remove copies and try again.");
+      } else {
+        push @disp_duplicates, "  $_" for (@true_duplicates);
+        my $dupe_string = join "\n", @disp_duplicates;
+        usage_error("SBo packages are installed more than once:\n\n$dupe_string\n\nBlacklist or remove copies and try again.");
+      }
+    }
   }
 
 return $all_pkgs if $filter eq "ALL";
@@ -417,6 +421,7 @@ sub get_removed_builds {
 
 Pkgs.pm subroutines can return the following exit codes:
 
+  _ERR_USAGE         1   usage errors
   _ERR_SCRIPT        2   script or module bug
   _ERR_OPENFH        6   failure to open file handles
 
