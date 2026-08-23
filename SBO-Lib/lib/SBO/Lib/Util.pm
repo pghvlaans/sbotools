@@ -688,6 +688,7 @@ sub extract_slack_desc {
     next unless length($_) <= $max_length;
     $slack_desc .= $_;
   }
+  close $fh;
   return undef unless $slack_desc;
   my $lines = $slack_desc =~ tr/\n//;
   return undef unless $lines == 11;
