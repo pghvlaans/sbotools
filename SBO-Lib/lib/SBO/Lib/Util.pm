@@ -119,6 +119,7 @@ our @EXPORT_OK = (
     check_multilib
     dangerous_directory
     error_code
+    extract_slack_desc
     get_colors
     get_kernel_version
     get_optional
@@ -662,6 +663,38 @@ sub error_code {
   }
   print color($color_default);
   exit shift;
+}
+
+=head2 extract_slack_desc
+
+  my $slack_desc = extract_slack_desc($pkg, $sbo);
+
+C<extract_slack_desc()> takes a package file and a SlackBuild name and extracts the
+C<slack-desc> information; it returns a string that can be written to a new
+C<slack-desc> file if well-formed, and 0 otherwise.
+
+=cut
+
+sub extract_slack_desc {
+  script_error("extract_slack_desc requires a file and a SlackBuild name.") unless @_ == 2 and -f -s $_[0];
+  my ($file, $sbo) = @_;
+  my ($fh, $exit) = open_read($file);
+  error_code("Failed to open $file.", _ERR_OPENFH) if $exit;
+  my $slack_desc = 0;
+  my $max_length = length("$sbo: ") + 71;
+  while (<$fh>) {
+    next unless $_ =~ /^$sbo:/;
+    last if $_ =~ /^FILE LIST:/;
+    next unless length($_) <= $max_length;
+    if ($slack_desc) {
+      $slack_desc .= $_;
+    } else {
+      $slack_desc = $_;
+    }
+  }
+  my $lines = $slack_desc =~ tr/\n//;
+  return 0 unless $lines == 11;
+  return $slack_desc;
 }
 
 =head2 get_arch
