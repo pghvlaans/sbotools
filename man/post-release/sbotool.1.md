@@ -69,10 +69,10 @@ provides superior efficiency and fine-tuned option control to
 experienced users. See the **Man Pages** menu to read further user
 documentation.
 
-**sbotool** cannot run if any *\_SBo* package is installed more than
-once. If this is the case, a list of such packages is displayed and the
-program errors out. Use **removepkg(8)** to fix the problem and try
-again.
+**sbotool** cannot run if any non-blacklisted *\_SBo* package is
+installed more than once. If this is the case, a list of such packages
+is displayed and the program errors out. Use **removepkg(8)** to fix the
+problem and try again.
 
 ## STARTUP
 

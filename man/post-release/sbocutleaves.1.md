@@ -42,8 +42,8 @@ Root privileges are required to run **sbocutleaves** unless passing
 **\--list** or **\--raw**.
 
 If an invalid configuration is detected in
-*/etc/sbotools/sbotools.conf*, or any *\_SBo* package is installed more
-than once, the script exits with a diagnostic message.
+*/etc/sbotools/sbotools.conf*, or any non-blacklisted *\_SBo* package is
+installed more than once, the script exits with a diagnostic message.
 
 ## OPTIONS
 
