@@ -169,7 +169,7 @@ sub get_sbo_locations {
       next unless -f "$loc/$sbo.info";
       $store{$sbo} = $loc;
       $local{$sbo} = $local;
-      push @available, $sbo unless in $sbo, @available;
+      push @available, $sbo;
       my ($sd_fh, $sd_exit) = open_read("$loc/slack-desc");
       next if $sd_exit;
       while (<$sd_fh>) {
@@ -179,6 +179,7 @@ sub get_sbo_locations {
       }
       close $sd_fh;
     }
+    @available = uniq @available;
   }
 
   return %store;
@@ -196,10 +197,9 @@ if it is not.
 
 sub is_local {
   script_error('is_local requires an argument.') unless @_ == 1;
+  script_error('get_sbo_locations or get_all_available must be run before is_local.') unless $ran_locations;
   my $sbo = shift;
   $sbo =~ s/-compat32$//;
-  # Make sure we have checked for the slackbuild in question:
-  get_sbo_location($sbo);
   return !!$local{$sbo};
 }
 

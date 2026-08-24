@@ -19,6 +19,7 @@ use sigtrap qw/ handler _caught_signal ABRT INT QUIT TERM /;
 
 our @EXPORT_OK = qw{
   get_available_updates
+  get_created
   get_inst_names
   get_installed_cpans
   get_installed_packages
@@ -125,6 +126,21 @@ sub get_available_updates {
     return \@updates;
 }
 
+=head2 get_created
+
+  my $created_string = get_created($pkg);
+
+C<get_created()> returns a string with the creation time of a package.
+
+=cut
+
+sub get_created {
+  script_error("get_created requires an argument.") unless @_ == 1;
+  my $pkg = shift;
+  my $created = strftime "%F, %H:%M:%S", localtime((stat "$pkg_db/$pkg")[10]);
+  return $created;
+}
+
 =head2 get_inst_names
 
   my @names = get_inst_names(get_available_updates());
@@ -214,7 +230,7 @@ C<SBO> for in-tree _SBo and _SBocompat32 packages, C<DIRTY> for out-of-tree _SBo
 and C<ALL> for all.
 
 The returned array reference holds a list of hash references representing the names,
-versions, full installed package names and creation times of the returned packages.
+versions and full installed package names of the returned packages.
 
 The default behavior is to retain the package lists for future calls; add a true value
 to the arguments to clear them instead. This is irrelevant when running C<sbotest>.
@@ -247,12 +263,11 @@ sub get_installed_packages {
     $ruby_pkg = $pkg if $name eq "ruby";
     my $numbuild = $build;
     $numbuild =~ s/_SBo(|compat32)$//g ;
-    my $created = strftime "%F, %H:%M:%S", localtime((stat "$pkg_db/$pkg")[10]);
-    push @pkgs, { name => $name, version => $version, build => $build, numbuild => $numbuild, pkg => $pkg, created => $created };
+    push @pkgs, { name => $name, version => $version, build => $build, numbuild => $numbuild, pkg => $pkg };
     $types{$name} = 'STD';
   }
 
-  $all_pkgs = [ map { +{ name => $_->{name}, version => $_->{version}, build=> $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg}, created => $_->{created} } } @pkgs ];
+  $all_pkgs = [ map { +{ name => $_->{name}, version => $_->{version}, build=> $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg} } } @pkgs ];
 
   # SlackBuilds with locations can be marked with SBO, and packages with
   # the _SBo tag but no location can be marked with DIRTY
@@ -267,13 +282,13 @@ sub get_installed_packages {
     }
   }
 
-  $std_pkgs = [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg}, created => $_->{created} } }
+  $std_pkgs = [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg} } }
     grep { $types{$_->{name}} eq "STD" } @pkgs ];
 
-  $sbo_pkgs = [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg}, created => $_->{created} } }
+  $sbo_pkgs = [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg} } }
     grep { $types{$_->{name}} eq "SBO" } @pkgs ];
 
-  $dirty_pkgs = [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg}, created => $_->{created} } }
+  $dirty_pkgs = [ map { +{ name => $_->{name}, version => $_->{version}, build => $_->{build}, numbuild => $_->{numbuild}, pkg => $_->{pkg} } }
     grep { $types{$_->{name}} eq "DIRTY" } @pkgs ];
 
   my (@all_pkg_names, @duplicates, @true_duplicates, @disp_duplicates);

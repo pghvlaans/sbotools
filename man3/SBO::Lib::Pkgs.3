@@ -58,7 +58,7 @@
 .\" ========================================================================
 .\"
 .IX Title "SBO::Lib::Pkgs 3"
-.TH SBO::Lib::Pkgs 3 "Setting Orange, Bureaucracy 16, 3192 YOLD" "" "sbotools 4.4.2"
+.TH SBO::Lib::Pkgs 3 "Sweetmorn, Bureaucracy 17, 3192 YOLD" "" "sbotools 4.4.2"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -95,6 +95,13 @@ packages installed with the _SBo tag with the local repository. It takes a label
 \&\f(CW\*(C`VERS\*(C'\fR for versions, \f(CW\*(C`BUILD\*(C'\fR for build numbers or \f(CW\*(C`BOTH\*(C'\fR for both. It returns
 an array reference to an array of hash references specifying package names,
 installed versions and available versions.
+.SS get_created
+.IX Subsection "get_created"
+.Vb 1
+\&  my $created_string = get_created($pkg);
+.Ve
+.PP
+\&\f(CWget_created()\fR returns a string with the creation time of a package.
 .SS get_inst_names
 .IX Subsection "get_inst_names"
 .Vb 1
@@ -128,7 +135,7 @@ matching the specified \f(CW$type\fR. The available types are \f(CW\*(C`STD\*(C'
 and \f(CW\*(C`ALL\*(C'\fR for all.
 .PP
 The returned array reference holds a list of hash references representing the names,
-versions, full installed package names and creation times of the returned packages.
+versions and full installed package names of the returned packages.
 .PP
 The default behavior is to retain the package lists for future calls; add a true value
 to the arguments to clear them instead. This is irrelevant when running \f(CW\*(C`sbotest\*(C'\fR.
