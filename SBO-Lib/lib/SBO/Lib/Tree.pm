@@ -89,7 +89,7 @@ sub get_orig_location {
   script_error('get_orig_location requires an argument.') unless @_ == 1;
   script_error('get_sbo_locations or get_all_available must be run before get_orig_location.') unless $ran_locations;
   my $sbo = shift;
-  $sbo =~ s/-compat32//;
+  $sbo =~ s/-compat32$//;
   return $orig{$sbo};
 }
 
@@ -124,7 +124,7 @@ or C<get_all_available()> is run before attempting C<get_sbo_location()>.
 
 sub get_sbo_location {
   my $sbo = shift;
-  $sbo =~ s/-compat32//;
+  $sbo =~ s/-compat32$//;
   script_error('get_sbo_location requires an argument.') unless $sbo;
   script_error('get_sbo_locations or get_all_available must be run before get_sbo_location.') unless $ran_locations;
 
@@ -151,11 +151,11 @@ sub get_sbo_locations {
   error_code("Failed to open $slackbuilds_txt; exiting.", $exit) if $exit;
 
   while (my $line = <$fh>) {
-    if (my ($loc, $sbo) = $line =~ m!LOCATION:\s+\.(/[^/]+/([^/\n]+))$!) {
+    if (my ($loc, $sbo) = $line =~ m!^SLACKBUILD LOCATION:\s+\.(/[^/]+/([^/\n]+))$!) {
       $store{$sbo} = $repo_path . $loc;
       $orig{$sbo} = $store{$sbo};
       push @available, $sbo;
-    } elsif (my ($pkg, $description) = $line =~ m/DESCRIPTION:\s+([\S]+)\s+\(([^\n]+)\)$/) {
+    } elsif (my ($pkg, $description) = $line =~ m/^SLACKBUILD SHORT DESCRIPTION:\s+([\S]+)\s+\(([^\n]+)\)$/) {
       $descriptions_generated = 1;
       $descriptions{$pkg} = $description;
     }

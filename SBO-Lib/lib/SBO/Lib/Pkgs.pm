@@ -276,7 +276,7 @@ sub get_installed_packages {
   if (@sbos) {
     foreach my $sbo (@sbos) {
       $types{$sbo} = 'DIRTY';
-      if (defined get_sbo_location($sbo =~ s/-compat32//gr)) {
+      if (defined get_sbo_location($sbo =~ s/-compat32$//gr)) {
          $types{$sbo} = 'SBO';
       }
     }
@@ -301,7 +301,7 @@ sub get_installed_packages {
     }
   }
   if (@duplicates) {
-    @true_duplicates = grep { defined get_sbo_location($_ =~ s/-compat32//gr) and not on_blacklist $_ } @duplicates;
+    @true_duplicates = grep { defined get_sbo_location($_ =~ s/-compat32$//gr) and not on_blacklist $_ } @duplicates;
     if (@true_duplicates) {
       @true_duplicates = uniq sort @true_duplicates;
       if (@true_duplicates == 1) {
