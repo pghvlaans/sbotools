@@ -664,12 +664,11 @@ if ($config{NO_SOCHECK} ne "TRUE" and @solib_search and not $no_install and not 
 			if (@display_normal) {
 				wrapsay_color $color_lesser, "\nThe following may require rebuilding:", 1;
 				print "  $_\n" for (@display_normal);
-				print "\n" if @display_opt;
 			}
 			if (@display_opt) {
 				wrapsay_color $color_lesser, "\nThe following had failures only in /opt:", 1;
 				print "  $_\n" for (@display_opt);
-				wrapsay_color $color_notice, "Such packages are often binary extractions, which do not require rebuilds.";
+				wrapsay_color $color_notice, "\nSuch packages are often binary extractions, which do not require rebuilds.";
 			}
 			for my $sbo (sort @actionable) { push @log_output, "$sbo $installed_vers->{$sbo}:\n$old_libs{$installed_pkg->{$sbo}}\n"; }
 			my $logfile = '/var/log/sboupgrade-solibs.log';
