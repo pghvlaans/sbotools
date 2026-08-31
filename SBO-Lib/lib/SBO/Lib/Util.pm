@@ -189,7 +189,7 @@ SBO::Lib::Util - Utility functions for SBO::Lib and the sbotools.
 
 =head2 $anticipated_next
 
-The anticipated Slackware version number to be supported by SBO, currently 15.1.
+The anticipated Slackware version number to be supported by SBO, currently 16.0.
 
 =head2 $arch
 
@@ -327,7 +327,7 @@ and any downloaded sources are hardlinked in.
 our $resized = 0;
 
 our $arch = get_arch();
-our $anticipated_next = "15.1";
+our $anticipated_next = "16.0";
 
 our $pkg_db = '/var/lib/pkgtools/packages';
 our $rem_pkg_db = '/var/lib/pkgtools/removed_packages';
